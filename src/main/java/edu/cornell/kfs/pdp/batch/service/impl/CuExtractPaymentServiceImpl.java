@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,10 +18,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
@@ -37,8 +40,6 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.country.Country;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
@@ -59,7 +60,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     /**
     * MOD: Overridden to detect if the Bundle ACH Payments system parameter is on and if so, to 
     * call the new extraction bundler method
-    * @see org.kuali.kfs.pdp.batch.service.ExtractPaymentService#extractAchPayments()
     */
     @Override
     public void extractAchPayments() {
@@ -67,9 +67,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
 
         Date processDate = dateTimeService.getCurrentDate();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        PaymentStatus extractedStatus = (PaymentStatus) businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);
+        PaymentStatus extractedStatus = (PaymentStatus) businessObjectService.findBySinglePrimaryKey(PaymentStatus.class,
+                PdpConstants.PaymentStatusCodes.EXTRACTED);
     
-        String achFilePrefix = kualiConfigurationService.getPropertyValueAsString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);
+        String achFilePrefix = kualiConfigurationService.getPropertyValueAsString(
+                PdpKeyConstants.ExtractPayment.ACH_FILENAME);
         achFilePrefix = MessageFormat.format(achFilePrefix, new Object[] { null });
     
         String filename = getOutputFile(achFilePrefix, processDate);
@@ -185,7 +187,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
        }
    }    
     @Override
-    protected void writeExtractCheckFile(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId) {
+    protected void writeExtractCheckFile(PaymentStatus extractedStatus, PaymentProcess p, String filename,
+            Integer processId) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
@@ -200,7 +203,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         //Check whether this is for research participant upload. If the customer profile matches research participant's
         //customer profile, then change the filename to append the RP-Upload prefix.
         if (isResearchParticipantExtractFile(processId)) {
-            String checkFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(PdpKeyConstants.ExtractPayment.CHECK_FILENAME);
+            String checkFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(
+                    PdpKeyConstants.ExtractPayment.CHECK_FILENAME);
             checkFilePrefix = MessageFormat.format(checkFilePrefix, new Object[] { null });
             checkFilePrefix = PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX + KFSConstants.DASH + checkFilePrefix;
             filename = getOutputFile(checkFilePrefix, processDate);
@@ -210,27 +214,29 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
             
             writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId, notificationEmailAddresses);
-            List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId, PdpConstants.DisbursementTypeCodes.CHECK);
+            List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId,
+                    PdpConstants.DisbursementTypeCodes.CHECK);
 
             for (String bankCode : bankCodes) {
                 List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
-                for (Iterator<Integer> iter = disbNbrs.iterator(); iter.hasNext();) {
-                    Integer disbursementNbr = iter.next();
-
+                for (Integer disbursementNbr : disbNbrs) {
                     first = true;
 
                     KualiDecimal totalNetAmount = new KualiDecimal(0);
 
                     // this seems wasteful, but since the total net amount is needed on the first payment detail...it's needed
-                    Iterator<PaymentDetail> i2 = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
+                    Iterator<PaymentDetail> i2 =
+                            paymentDetailService.getByDisbursementNumber(disbursementNbr, processId,
+                                    PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (i2.hasNext()) {
                         PaymentDetail pd = i2.next();
                         totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
                     }
 
-                    List<KualiInteger> paymentGroupIdsSaved = new ArrayList<KualiInteger>();
+                    List<KualiInteger> paymentGroupIdsSaved = new ArrayList<>();
 
-                    Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
+                    Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(
+                            disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (paymentDetails.hasNext()) {
                         PaymentDetail detail = paymentDetails.next();
                         PaymentGroup group = detail.getPaymentGroup();
@@ -252,7 +258,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                 wroteCheckHeaderRecords = true;
                             }
                             
-                            writeOpenTagAttribute(os, 2, "check", "disbursementNbr", group.getDisbursementNbr().toString());
+                            writeOpenTagAttribute(os, 2, "check", "disbursementNbr",
+                                    group.getDisbursementNbr().toString());
 
                             // Write check level information
 
@@ -262,10 +269,12 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeTag(os, 4, "netAmount", totalNetAmount.toString());
 
                             writePayee(os, 4, group);
-                            writeTag(os, 4, "campusAddressIndicator", group.getCampusAddress().booleanValue() ? "Y" : "N");
-                            writeTag(os, 4, "attachmentIndicator", group.getPymtAttachment().booleanValue() ? "Y" : "N");
-                            writeTag(os, 4, "specialHandlingIndicator", group.getPymtSpecialHandling().booleanValue() ? "Y" : "N");
-                            writeTag(os, 4, "immediatePaymentIndicator", group.getProcessImmediate().booleanValue() ? "Y" : "N");
+                            writeTag(os, 4, "campusAddressIndicator", group.getCampusAddress() ? "Y" : "N");
+                            writeTag(os, 4, "attachmentIndicator", group.getPymtAttachment() ? "Y" : "N");
+                            writeTag(os, 4, "specialHandlingIndicator",
+                                    group.getPymtSpecialHandling() ? "Y" : "N");
+                            writeTag(os, 4, "immediatePaymentIndicator",
+                                    group.getProcessImmediate() ? "Y" : "N");
                             writeTag(os, 4, "customerUnivNbr", group.getCustomerInstitutionNumber());
                             writeTag(os, 4, "paymentDate", sdf.format(group.getPaymentDate()));
 
@@ -285,16 +294,19 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                 wroteImmediateHeaderRecords = true;
                             }
                             
-                            writeOpenTagAttribute(osI, 2, "check", "disbursementNbr", group.getDisbursementNbr().toString());
+                            writeOpenTagAttribute(osI, 2, "check", "disbursementNbr",
+                                    group.getDisbursementNbr().toString());
                             // Write check level information
                             writeBank(osI, 4, group.getBank());
                             writeTag(osI, 4, "disbursementDate", sdf.format(processDate));
                             writeTag(osI, 4, "netAmount", totalNetAmount.toString());
                             writePayee(osI, 4, group);
-                            writeTag(osI, 4, "campusAddressIndicator", group.getCampusAddress().booleanValue() ? "Y" : "N");
-                            writeTag(osI, 4, "attachmentIndicator", group.getPymtAttachment().booleanValue() ? "Y" : "N");
-                            writeTag(osI, 4, "specialHandlingIndicator", group.getPymtSpecialHandling().booleanValue() ? "Y" : "N");
-                            writeTag(osI, 4, "immediatePaymentIndicator", group.getProcessImmediate().booleanValue() ? "Y" : "N");
+                            writeTag(osI, 4, "campusAddressIndicator", group.getCampusAddress() ? "Y" : "N");
+                            writeTag(osI, 4, "attachmentIndicator", group.getPymtAttachment() ? "Y" : "N");
+                            writeTag(osI, 4, "specialHandlingIndicator",
+                                    group.getPymtSpecialHandling() ? "Y" : "N");
+                            writeTag(osI, 4, "immediatePaymentIndicator",
+                                    group.getProcessImmediate() ? "Y" : "N");
                             writeTag(osI, 4, "customerUnivNbr", group.getCustomerInstitutionNumber());
                             writeTag(osI, 4, "paymentDate", sdf.format(group.getPaymentDate()));
 
@@ -322,8 +334,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeTag(os, 8, "invTotOtherCreditAmount", detail.getInvTotOtherCreditAmount().toString());
     
                             writeOpenTag(os, 8, "notes");
-                            for (Iterator ix = detail.getNotes().iterator(); ix.hasNext();) {
-                                PaymentNoteText note = (PaymentNoteText) ix.next();
+                            for (PaymentNoteText note : detail.getNotes()) {
                                 writeTag(os, 10, "note", note.getCustomerNoteText());
                             }
                             writeCloseTag(os, 8, "notes");
@@ -348,8 +359,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             writeTag(osI, 8, "invTotOtherCreditAmount", detail.getInvTotOtherCreditAmount().toString());
     
                             writeOpenTag(osI, 8, "notes");
-                            for (Iterator ix = detail.getNotes().iterator(); ix.hasNext();) {
-                                PaymentNoteText note = (PaymentNoteText) ix.next();
+                            for (PaymentNoteText note : detail.getNotes()) {
                                 writeTag(osI, 10, "note", note.getCustomerNoteText());
                             }
                             writeCloseTag(osI, 8, "notes");
@@ -1922,7 +1932,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     } 
     
     @Override
-    protected void writeExtractAchFile(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {
+    protected void writeExtractAchFile(PaymentStatus extractedStatus, String filename, Date processDate,
+            SimpleDateFormat sdf) {
         BufferedWriter os = null;
         try {
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
@@ -1938,7 +1949,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, 
                     PdpConstants.PaymentStatusCodes.PENDING_ACH);
             if (iter.hasNext()) {
-                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename), "UTF-8");
+                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8);
                 os = new BufferedWriter(writer);
                 os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                 writeOpenTag(os, 0, "achPayments");
@@ -1988,7 +1999,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writePayeeSpecificsToAchFile(BufferedWriter os, PaymentGroup paymentGroup, Date processDate, SimpleDateFormat sdf) throws IOException {
         
         try {
-            writeOpenTagAttribute(os, 2, "ach", "disbursementNbr", paymentGroup.getDisbursementNbr().toString());
+            writeOpenTagAttribute(os, 2, "ach", "disbursementNbr",
+                    paymentGroup.getDisbursementNbr().toString());
             PaymentProcess paymentProcess = paymentGroup.getProcess();
             writeTag(os, 4, "processCampus", paymentProcess.getCampusCode());
             writeTag(os, 4, "processId", paymentProcess.getId().toString());
@@ -2036,17 +2048,18 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             writeTag(os, 8, "invTotOtherCreditAmount", paymentDetail.getInvTotOtherCreditAmount().toString());
     
             writeOpenTag(os, 8, "notes");
-            for (Iterator i = paymentDetail.getNotes().iterator(); i.hasNext();) {
-                PaymentNoteText note = (PaymentNoteText) i.next();
+            for (PaymentNoteText note : paymentDetail.getNotes()) {
                 writeTag(os, 10, "note", updateNoteLine(escapeString(note.getCustomerNoteText())));
             }
             writeCloseTag(os, 8, "notes");
     
             writeCloseTag(os, 6, "payment");
     
-            String unit = paymentGroup.getBatch().getCustomerProfile().getChartCode() + "-" + paymentGroup.getBatch().getCustomerProfile().getUnitCode() + "-" + paymentGroup.getBatch().getCustomerProfile().getSubUnitCode();
+            String unit = paymentGroup.getBatch().getCustomerProfile().getChartCode() + "-" +
+                    paymentGroup.getBatch().getCustomerProfile().getUnitCode() + "-" +
+                    paymentGroup.getBatch().getCustomerProfile().getSubUnitCode();
     
-            Integer count = 1;
+            int count = 1;
             if (unitCounts.containsKey(unit)) {
                 count = 1 + unitCounts.get(unit);
             }

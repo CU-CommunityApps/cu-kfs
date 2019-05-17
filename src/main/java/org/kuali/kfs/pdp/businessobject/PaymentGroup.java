@@ -44,7 +44,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -113,30 +112,21 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     protected AchAccountNumber achAccountNumber;
 
-    protected List<PaymentGroupHistory> paymentGroupHistory = new ArrayList<PaymentGroupHistory>();
-    protected List<PaymentDetail> paymentDetails = new ArrayList<PaymentDetail>();
+    protected List<PaymentGroupHistory> paymentGroupHistory = new ArrayList<>();
+    protected List<PaymentDetail> paymentDetails = new ArrayList<>();
 
     public PaymentGroup() {
         super();
     }
 
-    /**
-     * @return dailyReportSpecialHandling
-     */
     public boolean isDailyReportSpecialHandling() {
         return pymtSpecialHandling && !processImmediate;
     }
 
-    /**
-     * @return dailyReportAttachment
-     */
     public boolean isDailyReportAttachment() {
         return !pymtSpecialHandling && !processImmediate && pymtAttachment;
     }
 
-    /**
-     * @return paymentStatusCode
-     */
     public String getPaymentStatusCode() {
         return paymentStatusCode;
     }
@@ -190,27 +180,9 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return (val + "                                        ").substring(0, width - 1);
     }
 
-    /**
-     * This method gets the boolean valuse of a Boolean object.
-     *
-     * @param b the boolean object
-     * @return the boolean value
-     */
-    protected boolean booleanValue(Boolean b) {
-        boolean bv = false;
-        if (b != null) {
-            bv = b.booleanValue();
-        }
-        return bv;
-    }
-
-    /**
-     * @return the note lines
-     */
     public int getNoteLines() {
         int count = 0;
-        for (Iterator iter = this.getPaymentDetails().iterator(); iter.hasNext(); ) {
-            PaymentDetail element = (PaymentDetail) iter.next();
+        for (PaymentDetail element : this.getPaymentDetails()) {
             count++; // Add a line for the invoice #
             count = count + element.getNotes().size();
         }
@@ -222,8 +194,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      */
     public KualiDecimal getNetPaymentAmount() {
         KualiDecimal amt = KualiDecimal.ZERO;
-        for (Iterator iter = this.getPaymentDetails().iterator(); iter.hasNext(); ) {
-            PaymentDetail element = (PaymentDetail) iter.next();
+        for (PaymentDetail element : this.getPaymentDetails()) {
             amt = amt.add(element.getNetPaymentAmount());
         }
         return amt;
@@ -309,23 +280,14 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return achAccountNumber;
     }
 
-    /**
-     * @param aan the achAccountNumber to set.
-     */
     public void setAchAccountNumber(AchAccountNumber aan) {
         this.achAccountNumber = aan;
     }
 
-    /**
-     * @return sortValue
-     */
     public String getSortValue() {
         return sortValue;
     }
 
-    /**
-     * @param sortGroupId the sort value to set.
-     */
     public void setSortValue(int sortGroupId) {
         String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class)
                 .getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID_PARAMETER);
@@ -351,16 +313,12 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return Returns the city.
      * @hibernate.property column="PMT_CTY_NM" length="30"
      */
     public String getCity() {
         return city;
     }
 
-    /**
-     * @param city The city to set.
-     */
     public void setCity(String city) {
         this.city = city;
     }
@@ -374,31 +332,23 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return Returns the country.
      * @hibernate.property column="PMT_CNTRY_NM" length="30"
      */
     public String getCountry() {
         return country;
     }
 
-    /**
-     * @param country The country to set.
-     */
     public void setCountry(String country) {
         this.country = country;
     }
 
     /**
-     * @return Returns the state.
      * @hibernate.property column="PMT_ST_NM" length="30"
      */
     public String getState() {
         return state;
     }
 
-    /**
-     * @param state The state to set.
-     */
     public void setState(String state) {
         this.state = state;
     }
@@ -448,16 +398,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return batch;
     }
 
-    /**
-     * @return the bankCode attribute.
-     */
     public String getBankCode() {
         return bankCode;
     }
 
-    /**
-     * @param bankCode The bankCode value to set.
-     */
     public void setBankCode(String bankCode) {
         this.bankCode = bankCode;
     }
@@ -491,9 +435,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return creditMemoNbr;
     }
 
-    /**
-     * @return disbursementDate
-     */
     public Date getDisbursementDate() {
         return disbursementDate;
     }
@@ -642,58 +583,34 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return zipCd;
     }
 
-    /**
-     * @param s
-     */
     public void setAchBankRoutingNbr(String s) {
         achBankRoutingNbr = s;
     }
 
-    /**
-     * @param string
-     */
     public void setAdviceEmailAddress(String string) {
         adviceEmailAddress = string;
     }
 
-    /**
-     * @param string
-     */
     public void setAlternatePayeeId(String string) {
         alternatePayeeId = string;
     }
 
-    /**
-     * @param string
-     */
     public void setAlternatePayeeIdTypeCd(String string) {
         alternatePayeeIdTypeCd = string;
     }
 
-    /**
-     * @param bank
-     */
     public void setBank(Bank bank) {
         this.bank = bank;
     }
 
-    /**
-     * @param b
-     */
     public void setBatch(Batch b) {
         batch = b;
     }
 
-    /**
-     * @param boolean1
-     */
     public void setCampusAddress(Boolean boolean1) {
         campusAddress = boolean1;
     }
 
-    /**
-     * @param decimal
-     */
     public void setCreditMemoAmount(KualiDecimal decimal) {
         creditMemoAmount = decimal;
     }
@@ -702,31 +619,21 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         creditMemoAmount = new KualiDecimal(decimal);
     }
 
-    /**
-     * @param string
-     */
     public void setCreditMemoNbr(String string) {
         creditMemoNbr = string;
     }
 
-    /**
-     * @param timestamp
-     */
     public void setDisbursementDate(Date timestamp) {
         disbursementDate = timestamp;
     }
 
     /**
-     * @param disbursementDate a string representing the disbursementDate
      * @throws ParseException
      */
     public void setDisbursementDate(String disbursementDate) throws ParseException {
         this.disbursementDate = SpringContext.getBean(DateTimeService.class).convertToSqlDate(disbursementDate);
     }
 
-    /**
-     * @param integer
-     */
     public void setDisbursementNbr(KualiInteger integer) {
         disbursementNbr = integer;
     }
@@ -735,93 +642,54 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         disbursementNbr = new KualiInteger(integer);
     }
 
-    /**
-     * @param dt
-     */
     public void setDisbursementType(DisbursementType dt) {
         disbursementType = dt;
     }
 
-    /**
-     * @param integer
-     */
     public void setId(KualiInteger integer) {
         id = integer;
     }
 
-    /**
-     * @param boolean1
-     */
     public void setEmployeeIndicator(Boolean boolean1) {
         employeeIndicator = boolean1;
     }
 
-    /**
-     * @param string
-     */
     public void setLine1Address(String string) {
         line1Address = string;
     }
 
-    /**
-     * @param string
-     */
     public void setLine2Address(String string) {
         line2Address = string;
     }
 
-    /**
-     * @param string
-     */
     public void setLine3Address(String string) {
         line3Address = string;
     }
 
-    /**
-     * @param string
-     */
     public void setLine4Address(String string) {
         line4Address = string;
     }
 
-    /**
-     * @param boolean1
-     */
     public void setNraPayment(Boolean boolean1) {
         nraPayment = boolean1;
     }
 
-    /**
-     * @param string
-     */
     public void setPayeeId(String string) {
         payeeId = string;
     }
 
-    /**
-     * @param string
-     */
     public void setPayeeIdTypeCd(String string) {
         payeeIdTypeCd = string;
     }
 
-    /**
-     * @param string
-     */
     public void setPayeeName(String string) {
         payeeName = string;
     }
 
-    /**
-     * @param string
-     */
     public void setPayeeOwnerCd(String string) {
         payeeOwnerCd = string;
     }
 
-    /**
-     * @param timestamp
-     */
     public void setPaymentDate(Date timestamp) {
         paymentDate = timestamp;
     }
@@ -835,23 +703,14 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.paymentDate = SpringContext.getBean(DateTimeService.class).convertToSqlDate(paymentDate);
     }
 
-    /**
-     * @param stat
-     */
     public void setPaymentStatus(PaymentStatus stat) {
         paymentStatus = stat;
     }
 
-    /**
-     * @param string
-     */
     public void setPhysCampusProcessCd(String string) {
         physCampusProcessCd = string;
     }
 
-    /**
-     * @param p
-     */
     public void setProcess(PaymentProcess p) {
         if (p != null) {
             processId = p.getId();
@@ -861,37 +720,22 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.process = p;
     }
 
-    /**
-     * @param boolean1
-     */
     public void setProcessImmediate(Boolean boolean1) {
         processImmediate = boolean1;
     }
 
-    /**
-     * @param boolean1
-     */
     public void setPymtAttachment(Boolean boolean1) {
         pymtAttachment = boolean1;
     }
 
-    /**
-     * @param boolean1
-     */
     public void setTaxablePayment(Boolean boolean1) {
         taxablePayment = boolean1;
     }
 
-    /**
-     * @param string
-     */
     public void setZipCd(String string) {
         zipCd = string;
     }
 
-    /**
-     * @param pymtSpecialHandling
-     */
     public void setPymtSpecialHandling(Boolean pymtSpecialHandling) {
         this.pymtSpecialHandling = pymtSpecialHandling;
     }
@@ -928,16 +772,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return buffer.toString();
     }
 
-    /**
-     * @return the achAccountType.
-     */
     public String getAchAccountType() {
         return achAccountType;
     }
 
-    /**
-     * @param achAccountType The achAccountType to set.
-     */
     public void setAchAccountType(String achAccountType) {
         this.achAccountType = achAccountType;
     }
@@ -958,16 +796,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.epicPaymentPaidExtractedDate = epicPaymentPaidExtractedDate;
     }
 
-    /**
-     * @return the batchId attribute.
-     */
     public KualiInteger getBatchId() {
         return batchId;
     }
 
-    /**
-     * @param batchId The batchId value to set.
-     */
     public void setBatchId(KualiInteger batchId) {
         this.batchId = batchId;
     }
@@ -996,16 +828,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.payeeIdTypeCd = idType;
     }
 
-    /**
-     * @return the adviceEmailSentDate attribute.
-     */
     public Timestamp getAdviceEmailSentDate() {
         return adviceEmailSentDate;
     }
 
-    /**
-     * @param adviceEmailSentDate The adviceEmailSentDate value to set.
-     */
     public void setAdviceEmailSentDate(Timestamp adviceEmailSentDate) {
         this.adviceEmailSentDate = adviceEmailSentDate;
     }
@@ -1047,9 +873,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         }
     }
 
-    /**
-     * @return the payeeIdTypeDesc
-     */
     public String getPayeeIdTypeDesc() {
         String payeeIdTypeCd = getPayeeIdTypeCd();
         List<PayeeType> boList = (List) SpringContext.getBean(KeyValuesService.class).findAll(PayeeType.class);

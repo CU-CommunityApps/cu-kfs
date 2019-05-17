@@ -26,11 +26,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.SalesTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.kns.service.DictionaryValidationService;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -195,10 +193,10 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      */
     protected void processAccountingLineOverrides(AccountingDocument financialDocument, List accountingLines) {
         if (!accountingLines.isEmpty()) {
-            for (Iterator i = accountingLines.iterator(); i.hasNext(); ) {
-                AccountingLine line = (AccountingLine) i.next();
-                // line.refreshReferenceObject("account");
-                SpringContext.getBean(PersistenceService.class).retrieveReferenceObjects(line, AccountingLineOverride.REFRESH_FIELDS);
+            PersistenceService persistenceService = SpringContext.getBean(PersistenceService.class);
+            for (Object accountingLine : accountingLines) {
+                AccountingLine line = (AccountingLine) accountingLine;
+                persistenceService.retrieveReferenceObjects(line, AccountingLineOverride.REFRESH_FIELDS);
                 AccountingLineOverride.processForOutput(financialDocument, line);
             }
         }
@@ -816,10 +814,11 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
     protected boolean isSalesTaxRequired(AccountingDocument financialDocument, AccountingLine accountingLine) {
         boolean required = false;
         String docType = SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(financialDocument.getClass());
-        // first we need to check just the doctype to see if it needs the sales tax check
-        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
         // apply the rule, see if it fails
-        ParameterEvaluator docTypeSalesTaxCheckEvaluator = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class, APPLICATION_PARAMETER.DOCTYPE_SALES_TAX_CHECK, docType);
+        ParameterEvaluatorService parameterEvaluatorService = SpringContext.getBean(ParameterEvaluatorService.class);
+        ParameterEvaluator docTypeSalesTaxCheckEvaluator = /*REFACTORME*/
+                parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,
+                        APPLICATION_PARAMETER.DOCTYPE_SALES_TAX_CHECK, docType);
         if (docTypeSalesTaxCheckEvaluator.evaluationSucceeds()) {
             required = true;
         }
@@ -831,7 +830,9 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             String account = accountingLine.getAccountNumber();
             if (!StringUtils.isEmpty(objCd) && !StringUtils.isEmpty(account)) {
                 String compare = account + ":" + objCd;
-                ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class, APPLICATION_PARAMETER.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
+                ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator = /*REFACTORME*/
+                        parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,
+                                APPLICATION_PARAMETER.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
                 if (!salesTaxApplicableAcctAndObjectEvaluator.evaluationSucceeds()) {
                     required = false;
                 }
@@ -851,7 +852,6 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      */
     protected boolean isValidSalesTaxEntered(AccountingLine accountingLine, boolean source, boolean newLine, int index) {
         boolean valid = true;
-        DictionaryValidationService dictionaryValidationService = SpringContext.getBean(DictionaryValidationService.class);
         BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
         String objCd = accountingLine.getFinancialObjectCode();
         String account = accountingLine.getAccountNumber();

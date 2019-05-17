@@ -16,7 +16,8 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
         String subject;
         String message;
         if (StringUtils.isBlank(grantNumber)) {
-            subject = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_SUBJECT_NO_GRANT_NUMBER);
+            subject = kualiConfigurationService.getPropertyValueAsString(
+                    ArKeyConstants.CGINVOICE_EMAIL_SUBJECT_NO_GRANT_NUMBER);
             message = MessageFormat.format(subject, invoice.getDocumentNumber(), 
                     invoice.getInvoiceGeneralDetail().getAward().getProposal().getProposalNumber());
         } else {

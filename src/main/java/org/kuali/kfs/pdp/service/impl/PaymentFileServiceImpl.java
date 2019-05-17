@@ -202,7 +202,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
      * @param paymentInputFileType {@link BatchInputFileType} for payment files
      * @param incomingFileName     name of the payment file to parse
      * @param errorMap             any errors encountered while parsing are adding to
-     * @return {@link PaymentFile} containing the parsed values.
+     * @return {@link PaymentFileLoad} containing the parsed values.
      */
     protected PaymentFileLoad parsePaymentFile(BatchInputFileType paymentInputFileType, String incomingFileName,
             MessageMap errorMap) {
@@ -225,7 +225,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         } catch (ParseException e1) {
             LOG.error("Error parsing xml " + e1.getMessage());
             errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
-                    new String[]{e1.getMessage()});
+                    e1.getMessage());
         }
 
         return paymentFile;
@@ -233,7 +233,6 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
 
     @Override
     public boolean createOutputFile(LoadPaymentStatus status, String inputFileName) {
-
         //add a step to check for directory paths
         prepareDirectories(getRequiredDirectoryNames());
 
