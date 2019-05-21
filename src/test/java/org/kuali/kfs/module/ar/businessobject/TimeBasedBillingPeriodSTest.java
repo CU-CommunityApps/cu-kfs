@@ -12,8 +12,6 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants.BillingFrequencyValues;
 import org.mockito.Mockito;
 
-import edu.cornell.kfs.module.ar.service.CuContractsGrantsBillingUtilityService;
-
 public class TimeBasedBillingPeriodSTest {
     
     private TimeBasedBillingPeriod timeBasedBillingPeriod;
@@ -21,7 +19,6 @@ public class TimeBasedBillingPeriodSTest {
     private Date awardStartDate;
     private Date currentDate;
     private AccountingPeriodService accountingPeriodService;
-    private CuContractsGrantsBillingUtilityService cuContractsGrantsBillingUtilityService;
 
     @Before
     public void setUp() {
@@ -29,7 +26,6 @@ public class TimeBasedBillingPeriodSTest {
         awardStartDate =  buildDate(2018, Calendar.JANUARY, 1);
         currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         accountingPeriodService = Mockito.mock(AccountingPeriodService.class);
-        cuContractsGrantsBillingUtilityService = Mockito.mock(CuContractsGrantsBillingUtilityService.class);
     }
     
     @After
@@ -39,7 +35,6 @@ public class TimeBasedBillingPeriodSTest {
         awardStartDate = null;
         currentDate = null;
         accountingPeriodService = null;
-        cuContractsGrantsBillingUtilityService = null;
     }
     
     @Test
@@ -86,7 +81,7 @@ public class TimeBasedBillingPeriodSTest {
     }
 
     private Date findNextBillingDate(Date lastBilledDate) {
-        timeBasedBillingPeriod = new TimeBasedBillingPeriod(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService, cuContractsGrantsBillingUtilityService);
+        timeBasedBillingPeriod = new TimeBasedBillingPeriod(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
         return timeBasedBillingPeriod.determineStartDateByFrequency();
     }
 
