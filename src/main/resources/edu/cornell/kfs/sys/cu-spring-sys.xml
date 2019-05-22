@@ -36,6 +36,7 @@
 				<value>documentRequeuerJob</value>
 				<value>documentReindexerJob</value>
 				<value>autoCancelBatchJob</value>
+				<value>kimFeedJob</value>
             </list>
         </property>
 		<property name="batchFileDirectories">
@@ -166,7 +167,27 @@
 
 <bean id="FlatFileObjectSpecification" abstract="true" class="org.kuali.kfs.sys.batch.FlatFilePrefixObjectSpecification" />
 
-	
+	<bean id="kimFeedJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="runKimFeedStep"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="runKimFeedStep" class="edu.cornell.kfs.sys.batch.RunKimFeedStep" parent="step">
+		<property name="kimFeedBaseProperties">
+			<props>
+				<prop key="db-url0">${edw.datasource.url}</prop>
+				<prop key="db-username0">${edw.datasource.username}</prop>
+				<prop key="db-password0">${edw.datasource.password}</prop>
+				<prop key="db-url1">${rice.datasource.url}</prop>
+				<prop key="db-username1">${rice.datasource.username}</prop>
+				<prop key="db-password1">${rice.datasource.password}</prop>
+			</props>
+		</property>
+	</bean>
+
 <!-- KFSPTS-985 : User Favorites Profile -->
 
     <bean id="userProcurementProfileValidationService" class="edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl">
