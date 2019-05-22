@@ -1,12 +1,14 @@
 package edu.cornell.kfs.module.ar.service.impl;
 
+import java.text.MessageFormat;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.impl.AREmailServiceImpl;
-
-import java.text.MessageFormat;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.kim.api.identity.Person;
 
 public class CuAREmailServiceImpl extends AREmailServiceImpl {
     
@@ -33,10 +35,10 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
     protected String getMessageBody(ContractsGrantsInvoiceDocument invoice, CustomerAddress customerAddress) {
         String message = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_BODY);
 
+        Person fundManager = invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager();
         return MessageFormat.format(message, customerAddress.getCustomer().getCustomerName(),
-            invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager().getName(),
-            invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager().getPhoneNumber(),
-            invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager().getEmailAddress());
+            fundManager.getFirstName() + KFSConstants.BLANK_SPACE + fundManager.getLastName(), fundManager.getPhoneNumber(),
+            fundManager.getEmailAddress());
     }
 
 }
