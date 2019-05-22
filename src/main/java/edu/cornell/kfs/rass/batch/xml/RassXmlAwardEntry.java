@@ -61,6 +61,10 @@ public class RassXmlAwardEntry implements RassXmlObject {
     @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
     private KualiDecimal totalAmount;
     
+    @XmlElement(name = "Purpose", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    private String purpose;
+    
     @XmlElement(name = "Grant_Number", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String grantNumber;
@@ -257,6 +261,7 @@ public class RassXmlAwardEntry implements RassXmlObject {
                     Objects.equals(directCostAmount, other.getDirectCostAmount()) &&
                     Objects.equals(indirectCostAmount, other.getIndirectCostAmount()) &&
                     Objects.equals(totalAmount, other.getTotalAmount()) &&
+                    StringUtils.equals(purpose, other.getPurpose()) &&
                     StringUtils.equals(grantNumber, other.getGrantNumber()) &&
                     StringUtils.equals(grantDescription, other.getGrantDescription()) &&
                     Objects.equals(federalPassThrough, other.getFederalPassThrough()) &&
@@ -274,7 +279,7 @@ public class RassXmlAwardEntry implements RassXmlObject {
     
     @Override
     public int hashCode() {
-        return Objects.hash(proposalNumber, status, projectTitle, startDate, stopDate, directCostAmount, indirectCostAmount, totalAmount, grantNumber, grantDescription,
+        return Objects.hash(proposalNumber, status, projectTitle, startDate, stopDate, directCostAmount, indirectCostAmount, totalAmount, purpose, grantNumber, grantDescription,
                 federalPassThrough, federalPassThroughAgencyNumber, cfdaNumber, organizationCode, costShareRequired, finalReportDueDate, principalAndCoPrincipalInvestigators);
     }
     
@@ -282,5 +287,13 @@ public class RassXmlAwardEntry implements RassXmlObject {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
 
 }

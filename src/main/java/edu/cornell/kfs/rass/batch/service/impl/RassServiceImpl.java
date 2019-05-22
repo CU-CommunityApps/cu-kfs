@@ -27,6 +27,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
+import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -39,14 +40,18 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.cornell.kfs.rass.RassConstants.RassObjectGroupingUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
+import edu.cornell.kfs.rass.batch.RassBaseObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.RassPropertyDefinition;
+import edu.cornell.kfs.rass.batch.RassValueConverter;
+import edu.cornell.kfs.rass.batch.RassValueConverterBase;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassRoutingService;
 import edu.cornell.kfs.rass.batch.service.RassService;
+import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
@@ -65,7 +70,8 @@ public class RassServiceImpl implements RassService {
     protected DataDictionaryService dataDictionaryService;
     protected RouteHeaderService routeHeaderService;
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
-    protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
+	protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
+    
     protected String rassFilePath;
     protected long documentStatusCheckDelayMillis;
     protected int maxStatusCheckAttempts;
@@ -180,7 +186,7 @@ public class RassServiceImpl implements RassService {
             waitForMatchingPriorDocumentsToFinish(xmlObject, objectDefinition, documentTracker);
             R existingObject = objectDefinition.findExistingObject(xmlObject);
             if (ObjectUtils.isNull(existingObject)) {
-                result = createObject(xmlObject, objectDefinition);
+                result = createObjectAndMaintenanceDocument(xmlObject, objectDefinition);
             } else {
                 result = updateObject(xmlObject, existingObject, objectDefinition);
             }
@@ -268,8 +274,8 @@ public class RassServiceImpl implements RassService {
                 return true;
         }
     }
-
-    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResult<R> createObject(
+    
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> R createObject(
             T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("createObject, Creating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         Supplier<R> businessObjectGenerator = () -> createMinimalObject(objectDefinition.getBusinessObjectClass());
@@ -278,10 +284,17 @@ public class RassServiceImpl implements RassService {
             ((MutableInactivatable) businessObject).setActive(true);
         }
         objectDefinition.processCustomTranslationForBusinessObjectCreate(xmlObject, businessObject);
+        return businessObject;
+    }
+
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResult<R> createObjectAndMaintenanceDocument(
+            T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
+        LOG.info("createObjectAndMaintenanceDocument, Creating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
+        R businessObject = createObject(xmlObject, objectDefinition);
         Pair<R, R> pairWithNewObjectOnly = Pair.of(null, businessObject);
         MaintenanceDocument maintenanceDocument = rassRoutingService.createAndRouteMaintenanceDocument(
                 pairWithNewObjectOnly, KRADConstants.MAINTENANCE_NEW_ACTION, objectDefinition);
-        LOG.info("createObject, Successfully routed document " + maintenanceDocument.getDocumentNumber()
+        LOG.info("createObjectAndMaintenanceDocument, Successfully routed document " + maintenanceDocument.getDocumentNumber()
                 + " to create " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         return new RassBusinessObjectUpdateResult<>(
                 objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(businessObject),
@@ -342,12 +355,21 @@ public class RassServiceImpl implements RassService {
         List<String> missingRequiredFields = new ArrayList<>();
         for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
             Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlPropertyName());
-            Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass, propertyMapping.getBoPropertyName(), xmlPropertyValue);
-            if (cleanedPropertyValue == null && propertyMapping.isRequired()) {
-                missingRequiredFields.add(propertyMapping.getXmlPropertyName());
-            } else {
-                ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(), cleanedPropertyValue);
-            }
+            
+			try {
+				Class converterClass = Class.forName(propertyMapping.getValueConverter());
+				RassValueConverterBase valueConverter = (RassValueConverterBase)converterClass.newInstance();
+	            Object convertedValue = valueConverter.convert(xmlPropertyValue);
+	            Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass, propertyMapping.getBoPropertyName(), convertedValue);
+	            if (cleanedPropertyValue == null && propertyMapping.isRequired()) {
+	                missingRequiredFields.add(propertyMapping.getXmlPropertyName());
+	            } else {
+	                ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(), cleanedPropertyValue);
+	            }
+			} catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+				throw new RuntimeException(propertyMapping.getValueConverter()
+	                    + " is not a valid Converter class ");
+			}
         }
         if (!missingRequiredFields.isEmpty()) {
             throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject)

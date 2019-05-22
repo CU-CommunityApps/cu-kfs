@@ -98,6 +98,8 @@
 	</bean>
 
 	<bean id="rassProperty" abstract="true" class="edu.cornell.kfs.rass.batch.RassPropertyDefinition"/>
+	<bean id="rassValueConverterBase" abstract="true" class="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+	<bean id="rassOrganizationConverter" abstract="true" class="edu.cornell.kfs.rass.batch.RassOrganizationConverter"/>
 
 	<bean id="agencyDefinition" parent="agencyDefinition-parentBean"/>
 	<bean id="agencyDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.AgencyTranslationDefinition"
@@ -121,22 +123,38 @@
 	<bean id="proposalDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.ProposalTranslationDefinition"
 			p:businessObjectService-ref="businessObjectService"
 			p:rootXmlObjectListPropertyName="awards"
+			p:proposalProjectDirectorDefinition-ref="proposalProjectDirectorDefinition"
+			p:dateTimeService-ref="dateTimeService"
 			p:documentTypeName="PRPL">
 		<property name="propertyMappings">
 			<list>
-				<bean parent="rassProperty" p:xmlPropertyName="proposalNumber" p:boPropertyName="proposalNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="status" p:boPropertyName="proposalStatusCode" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="agencyNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectTitle" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="startDate" p:boPropertyName="proposalBeginningDate" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="stopDate" p:boPropertyName="proposalEndingDate" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="proposalDirectCostAmount" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="proposalIndirectCostAmount" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="proposalTotalProjectAmount" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="cfdaNumber" p:boPropertyName="cfdaNumber" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="proposalNumber" p:boPropertyName="proposalNumber" p:required="true" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="status" p:boPropertyName="proposalStatusCode" p:required="false"  p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="agencyNumber" p:required="true"  p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectTitle" p:required="false"  p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="startDate" p:boPropertyName="proposalBeginningDate" p:required="false"  p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="stopDate" p:boPropertyName="proposalEndingDate" p:required="false"  p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="proposalDirectCostAmount" p:required="false"  p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="proposalIndirectCostAmount" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="proposalTotalProjectAmount" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="cfdaNumber" p:boPropertyName="cfdaNumber" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="organizationCode" p:boPropertyName="proposalOrganizations" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassOrganizationConverter"/>
+				<bean parent="rassProperty" p:xmlPropertyName="finalReportDueDate" p:boPropertyName="proposalDueDate" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="principalAndCoPrincipalInvestigators" p:boPropertyName="proposalProjectDirectors" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassProjectDirectorConverter"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="proposalProjectDirectorDefinition" parent="proposalProjectDirectorDefinition-parentBean"/>
+	<bean id="proposalProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.ProposalProjectDirectorTranslation">
+		<property name="propertyMappings">
+			<list>
+				<bean parent="rassProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="proposalPrimaryProjectDirectorIndicator" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectDirectorProjectTitle" p:required="false"/>
 			</list>
 		</property>
 	</bean>
