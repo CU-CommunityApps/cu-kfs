@@ -189,7 +189,7 @@ public class CynergyKimFeed {
 	private static final String LOGGING_CONFIG_FILE_ARG = "loggingConfigFile";
 
 	// Constants related to setting up the datasources.
-	private static final String DB_DRIVER_NAME = "oracle.jdbc.driver.OracleDriver";
+	private static final String DB_DRIVER_NAME = "oracle.jdbc.OracleDriver";
 	private static final String DB_VALIDATION_SQL = "select 1 from dual";
 
 	// Passed to indicate properties should be read from System properties instead of a file
