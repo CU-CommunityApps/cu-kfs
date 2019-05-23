@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
@@ -47,6 +47,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 	private static final Logger LOG = LogManager.getLogger(ProcurementCardFlatInputFileType.class);
     
     private static final String FP_PRCRMNT_CARD_TRN_MT_SEQ = "FP_PRCRMNT_CARD_TRN_MT_SEQ";
+
+    private static final String PAYMENT_TSYS_TRAN_CODE = "0108";
 
     private ProcurementCardTransaction parent;
     private boolean duplicateTransactions = false;
@@ -323,7 +325,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             	duplicateTransactions = false;
             }
         }
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && !duplicateTransactions){	        		        	
+        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && !duplicateTransactions && !transactionRepresentsPayment(line)) {	        		        	
         	
         	ProcurementCardTransaction child = buildProcurementCardTransactionObject();
         	
@@ -395,7 +397,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
         } 
         // Still need to update totals and transaction count so validation works properly, but don't want transactions to be loaded
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && duplicateTransactions){	        		        	
+        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && duplicateTransactions && !transactionRepresentsPayment(line)) {	        		        	
             if (USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65)).equals("D")) {
             	accumulatedDebits = accumulatedDebits.add(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));
             } else {
@@ -444,6 +446,11 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
     protected ProcurementCardTransaction buildProcurementCardTransactionObject() {
         return new ProcurementCardTransaction();
+    }
+
+    protected boolean transactionRepresentsPayment(String line) {
+        String transactionCode = USBankRecordFieldUtils.extractNormalizedString(line, 41, 45);
+        return StringUtils.equals(PAYMENT_TSYS_TRAN_CODE, transactionCode);
     }
 
     protected void parseAccountingInformation(String line, ProcurementCardTransaction child)
