@@ -108,13 +108,13 @@
 			p:documentTypeName="AGCY">
 		<property name="propertyMappings">
 			<list>
-				<bean parent="rassProperty" p:xmlPropertyName="number" p:boPropertyName="agencyNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="reportingName" p:boPropertyName="reportingName" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="fullName" p:boPropertyName="fullName" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="typeCode" p:boPropertyName="agencyTypeCode" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="reportsToAgencyNumber" p:boPropertyName="reportsToAgencyNumber" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="commonName" p:boPropertyName="extension.agencyCommonName" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="agencyOrigin" p:boPropertyName="extension.agencyOriginCode" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="number" p:boPropertyName="agencyNumber" p:required="true" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="reportingName" p:boPropertyName="reportingName" p:required="true" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="fullName" p:boPropertyName="fullName" p:required="true" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="typeCode" p:boPropertyName="agencyTypeCode" p:required="true" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="reportsToAgencyNumber" p:boPropertyName="reportsToAgencyNumber" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="commonName" p:boPropertyName="extension.agencyCommonName" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
+				<bean parent="rassProperty" p:xmlPropertyName="agencyOrigin" p:boPropertyName="extension.agencyOriginCode" p:required="false" p:valueConverter="edu.cornell.kfs.rass.batch.RassValueConverterBase"/>
 			</list>
 		</property>
 	</bean>
