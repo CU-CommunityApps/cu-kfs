@@ -26,6 +26,8 @@
             class="edu.cornell.kfs.rass.batch.service.impl.TestRassRoutingServiceImpl"/>
 
     <bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestAgencyTranslationDefinition"/>
+    
+    <bean id="proposalDefinition" parent="proposalDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestProposalTranslationDefinition"/>
 
     <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
 
@@ -53,6 +55,8 @@
                 <idref bean="rassProperty"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="agencyDefinition-parentBean"/>
+                <idref bean="proposalDefinition"/>
+                <idref bean="proposalDefinition-parentBean"/>
                 <idref bean="batchInputFileService"/>
                 <idref bean="batchInputFileService-parentBean"/>
                 <idref bean="rassXmlInputFileType"/>
