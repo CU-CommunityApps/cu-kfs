@@ -7,6 +7,7 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
@@ -124,6 +125,12 @@ public class RassMockServiceFactory {
                 .then(invocation -> invocation.getArgument(0));
         
         return documentService;
+    }
+    
+    public BusinessObjectService buildMockBusinessObjectService() throws Exception {
+        BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
+        
+        return businessObjectService;
     }
 
     public DataDictionaryService buildMockDataDictionaryService() throws Exception {
