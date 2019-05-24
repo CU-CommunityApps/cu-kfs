@@ -42,6 +42,8 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     @Override
     protected Date determineEndDateByFrequency() {
         final AccountingPeriod accountingPeriod = findPreviousAccountingPeriod(currentDate);
+        LOG.info("determineEndDateByFrequency: returning accountingPeriod.universityFiscalPeriodEndDate = " 
+            + accountingPeriod.getUniversityFiscalPeriodEndDate() + " determined by findPreviousAccountingPeriod(currentDate)");
         return accountingPeriod.getUniversityFiscalPeriodEndDate();
     }
 
@@ -57,12 +59,15 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     protected boolean canThisBeBilledByBillingFrequency() {
         if (ArConstants.BillingFrequencyValues.ANNUALLY.equals(billingFrequency)
                 && accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear() >= accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear()) {
+            LOG.info("canThisBeBilledByBillingFrequency: NO -- billingFrequency = " + billingFrequency + " AND lastBilledDate FY >= currentDate FY");
             return false;
         } else if (StringUtils.equals(findPreviousAccountingPeriod(currentDate).getUniversityFiscalPeriodCode(), findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode()) &&
             accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear().equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear())) {
+            LOG.info("canThisBeBilledByBillingFrequency: NO -- billingFrequency = " + billingFrequency 
+                    + " with previous accounting period fiscal period codes matching for currentDate and lastBilledDate AND lastBilledDate FY = currentDate FY");
             return false;
         }
-
+        LOG.info("canThisBeBilledByBillingFrequency: YES -- billingFrequency = " + billingFrequency);
         return true;
     }
     
@@ -72,10 +77,10 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     @Override
     protected Date determineStartDateByFrequency() {
         if (lastBilledDate == null) {
-            LOG.info("determineStartDateByFrequency, no previous billed date, so award start date is the next start date");
+            LOG.info("determineStartDateByFrequency: lastBilledDate is NULL returning awardStartDate = " + awardStartDate);
             return awardStartDate;
         }
-        
+        LOG.info("determineStartDateByFrequency: returning calculateNextDay(lastBilledDate) where lastBilledDate = " + lastBilledDate);
         return calculateNextDay(lastBilledDate);
     }
 
