@@ -76,5 +76,8 @@
     
     <bean id="arEmailService" parent="arEmailService-parentBean"
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
-
+        
+    <bean id="verifyBillingFrequencyService" parent="verifyBillingFrequencyService-parentBean"
+          class="edu.cornell.kfs.module.ar.batch.service.impl.CuVerifyBillingFrequencyServiceImpl"/>
+          
 </beans>
