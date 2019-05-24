@@ -43,7 +43,6 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceCreateDocumentServiceImpl.class);
     
     protected CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService;
-    protected CuVerifyBillingFrequencyService cuVerifyBillingFrequencyService;
     
     /**
      * Fixes NullPointerException that can occur when getting the award total amount.
@@ -149,7 +148,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
-                    if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award, awardAccount)
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount)
                             && isNotExpenditureAccount(awardAccount)) {
                         validAwardAccounts.add(awardAccount);
                     }
@@ -253,6 +252,48 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         LOG.info("validateAwards: creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(creationProcessTypeCode));
         return super.validateAwards(awards, contractsGrantsInvoiceDocumentErrorLogs, errOutputFile, creationProcessTypeCode);
     }
+    
+    @Override
+    protected void performAwardValidation(Collection<ContractsAndGrantsBillingAward> awards,
+            Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
+            List<ContractsAndGrantsBillingAward> qualifiedAwards) {
+        Set<ContractsAndGrantsBillingAward> awardsWithDuplicateAccounts = findAwardsWithDuplicateAccounts(awards);
+
+        for (ContractsAndGrantsBillingAward award : awards) {
+            List<String> errorList = new ArrayList<>();
+
+            if (award.isExcludedFromInvoicing()) {
+                errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_EXCLUDED_FROM_INVOICING));
+            } else {
+                if (awardsWithDuplicateAccounts.contains(award)) {
+                    errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
+                }
+                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award)) {
+                    errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_LOCB_BILLING_FREQUENCY));
+                } else {
+                    if (award.getAwardBeginningDate() != null) {
+                        if (award.getBillingFrequencyCode() != null && getContractsGrantsBillingAwardVerificationService().isValueOfBillingFrequencyValid(award)) {
+                            if (verifyBillingFrequencyService.validateBillingFrequency(award)) {
+                                validateAward(errorList, award);
+                            } else {
+                                errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_INVALID_BILLING_PERIOD));
+                            }
+                        } else {
+                            errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_BILLING_FREQUENCY_MISSING_ERROR));
+                        }
+                    } else {
+                        errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_START_DATE_MISSING_ERROR));
+                    }
+                }
+            }
+            if (errorList.size() > 0) {
+                invalidGroup.put(award, errorList);
+            } else {
+                qualifiedAwards.add(award);
+            }
+
+        }
+    }
 
     public CuContractsGrantsInvoiceDocumentService getCuContractsGrantsInvoiceDocumentService() {
         return cuContractsGrantsInvoiceDocumentService;
@@ -263,12 +304,4 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         this.cuContractsGrantsInvoiceDocumentService = cuContractsGrantsInvoiceDocumentService;
     }
 
-    public CuVerifyBillingFrequencyService getCuVerifyBillingFrequencyService() {
-        return cuVerifyBillingFrequencyService;
-    }
-
-    public void setCuVerifyBillingFrequencyService(CuVerifyBillingFrequencyService cuVerifyBillingFrequencyService) {
-        this.cuVerifyBillingFrequencyService = cuVerifyBillingFrequencyService;
-    }
-    
 }

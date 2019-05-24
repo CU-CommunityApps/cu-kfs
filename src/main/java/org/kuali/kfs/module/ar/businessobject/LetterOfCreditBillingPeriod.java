@@ -43,10 +43,12 @@ public class LetterOfCreditBillingPeriod extends BillingPeriod {
 
     @Override
     protected boolean canThisBeBilledByBillingFrequency() {
+        boolean currentDateisNotSameDayAsLastBilledDate = !KfsDateUtils.isSameDay(currentDate, lastBilledDate);
+        boolean lastBilledDateIsNotSameDayAsCalculatedPreviousDayBasedOnCurrentDate = !KfsDateUtils.isSameDay(lastBilledDate, calculatePreviousDate(currentDate));
         LOG.info("canThisBeBilledByBillingFrequency: Both must be TRUE to allow LOC billedByBillingFrequency: "
-                + " currentDate and lastBilledDate !(isSameDay) = " + (!KfsDateUtils.isSameDay(currentDate, lastBilledDate)) 
-                + " AND lastBilledDate and calculatePreviousDate !(isSameDay) = " + !KfsDateUtils.isSameDay(lastBilledDate, calculatePreviousDate(currentDate)));
-        return (!KfsDateUtils.isSameDay(currentDate, lastBilledDate) && !KfsDateUtils.isSameDay(lastBilledDate, calculatePreviousDate(currentDate)));
+                + " currentDate and lastBilledDate NOT(isSameDay) = " + currentDateisNotSameDayAsLastBilledDate 
+                + " AND lastBilledDate and calculatePreviousDate !(isSameDay) = " + lastBilledDateIsNotSameDayAsCalculatedPreviousDayBasedOnCurrentDate);
+        return (currentDateisNotSameDayAsLastBilledDate && lastBilledDateIsNotSameDayAsCalculatedPreviousDayBasedOnCurrentDate);
     }
 
     @Override

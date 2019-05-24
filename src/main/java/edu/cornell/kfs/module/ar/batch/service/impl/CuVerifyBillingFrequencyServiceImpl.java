@@ -25,6 +25,7 @@ import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.batch.service.impl.VerifyBillingFrequencyServiceImpl;
 import org.kuali.kfs.module.ar.businessobject.BillingFrequency;
@@ -107,6 +108,14 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
 
     public void setAccountingPeriodService(AccountingPeriodService accountingPeriodService) {
         super.setAccountingPeriodService(accountingPeriodService);
+    }
+
+    public BusinessObjectService getBusinessObjectService() {
+        return super.getBusinessObjectService();
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        super.setBusinessObjectService(businessObjectService);
     }
 
 }
