@@ -55,8 +55,6 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 	            throw new RuntimeException("Attempted to search for a Proposal with a blank Proposal Number");
 	        }
 	   	return getProposalByPrimaryKey(xmlAward.getProposalNumber());
-
-
 	}
 	
 	private Proposal getProposalByPrimaryKey(String proposalNumber) {

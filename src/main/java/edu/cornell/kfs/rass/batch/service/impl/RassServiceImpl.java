@@ -344,35 +344,37 @@ public class RassServiceImpl implements RassService {
         return (R) ObjectUtils.deepCopy(businessObject);
     }
 
-    protected <T extends RassXmlObject, R extends PersistableBusinessObject> R buildAndPopulateBusinessObjectFromPojo(
-            T xmlObject, Supplier<R> businessObjectSupplier, RassObjectTranslationDefinition<T, R> objectDefinition) {
-        Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
-        R businessObject = businessObjectSupplier.get();
-        List<String> missingRequiredFields = new ArrayList<>();
-        for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
-            Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlPropertyName());
-            
+	protected <T extends RassXmlObject, R extends PersistableBusinessObject> R buildAndPopulateBusinessObjectFromPojo(
+			T xmlObject, Supplier<R> businessObjectSupplier, RassObjectTranslationDefinition<T, R> objectDefinition) {
+		Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
+		R businessObject = businessObjectSupplier.get();
+		List<String> missingRequiredFields = new ArrayList<>();
+		for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
+			Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject,
+					propertyMapping.getXmlPropertyName());
+
 			try {
 				Class converterClass = Class.forName(propertyMapping.getValueConverter());
-				RassValueConverterBase valueConverter = (RassValueConverterBase)converterClass.newInstance();
-	            Object convertedValue = valueConverter.convert(xmlPropertyValue);
-	            Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass, propertyMapping.getBoPropertyName(), convertedValue);
-	            if (cleanedPropertyValue == null && propertyMapping.isRequired()) {
-	                missingRequiredFields.add(propertyMapping.getXmlPropertyName());
-	            } else {
-	                ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(), cleanedPropertyValue);
-	            }
+				RassValueConverterBase valueConverter = (RassValueConverterBase) converterClass.newInstance();
+				Object convertedValue = valueConverter.convert(xmlPropertyValue);
+				Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass,
+						propertyMapping.getBoPropertyName(), convertedValue);
+				if (cleanedPropertyValue == null && propertyMapping.isRequired()) {
+					missingRequiredFields.add(propertyMapping.getXmlPropertyName());
+				} else {
+					ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(),
+							cleanedPropertyValue);
+				}
 			} catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-				throw new RuntimeException(propertyMapping.getValueConverter()
-	                    + " is not a valid Converter class ");
+				throw new RuntimeException(propertyMapping.getValueConverter() + " is not a valid Converter class ");
 			}
-        }
-        if (!missingRequiredFields.isEmpty()) {
-            throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject)
-                    + " is missing values for the following required fields: " + missingRequiredFields.toString());
-        }
-        return businessObject;
-    }
+		}
+		if (!missingRequiredFields.isEmpty()) {
+			throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject)
+					+ " is missing values for the following required fields: " + missingRequiredFields.toString());
+		}
+		return businessObject;
+	}
 
     protected Object cleanPropertyValue(
             Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
