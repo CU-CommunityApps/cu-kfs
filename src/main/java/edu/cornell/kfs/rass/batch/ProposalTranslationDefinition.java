@@ -20,7 +20,7 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 	protected BusinessObjectService businessObjectService;
 	protected RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> proposalProjectDirectorDefinition;
 	protected DateTimeService dateTimeService;
-	
+
 	@Override
 	public Class<RassXmlAwardEntry> getXmlObjectClass() {
 		return RassXmlAwardEntry.class;
@@ -43,51 +43,49 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 
 	@Override
 	public List<String> getKeysOfObjectUpdatesToWaitFor(RassXmlAwardEntry xmlAward) {
-        List<String> objectsToWaitFor = new ArrayList<>();
-        objectsToWaitFor.add(
-                RassUtil.buildClassAndKeyIdentifier(Proposal.class, xmlAward.getProposalNumber()));
-        return objectsToWaitFor;
+		List<String> objectsToWaitFor = new ArrayList<>();
+		objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Proposal.class, xmlAward.getProposalNumber()));
+		return objectsToWaitFor;
 	}
 
 	@Override
 	public Proposal findExistingObject(RassXmlAwardEntry xmlAward) {
-	       if (StringUtils.isBlank(xmlAward.getProposalNumber())) {
-	            throw new RuntimeException("Attempted to search for a Proposal with a blank Proposal Number");
-	        }
-	   	return getProposalByPrimaryKey(xmlAward.getProposalNumber());
+		if (StringUtils.isBlank(xmlAward.getProposalNumber())) {
+			throw new RuntimeException("Attempted to search for a Proposal with a blank Proposal Number");
+		}
+		return getProposalByPrimaryKey(xmlAward.getProposalNumber());
 	}
-	
+
 	private Proposal getProposalByPrimaryKey(String proposalNumber) {
 		Map<String, String> fields = new HashMap<>();
 		fields.put("proposalNumber", proposalNumber);
-		Proposal proposal = (Proposal)businessObjectService.findByPrimaryKey(Proposal.class, fields);
+		Proposal proposal = (Proposal) businessObjectService.findByPrimaryKey(Proposal.class, fields);
 		return proposal;
 	}
-	
+
 	@Override
 	public boolean businessObjectEditIsPermitted(RassXmlAwardEntry xmlObject, Proposal oldBusinessObject) {
 		return false;
 	}
-	
+
 	@Override
 	public void processCustomTranslationForBusinessObjectEdit(RassXmlAwardEntry xmlObject, Proposal oldBusinessObject,
 			Proposal newBusinessObject) {
 		super.processCustomTranslationForBusinessObjectEdit(xmlObject, oldBusinessObject, newBusinessObject);
 	}
-	
+
 	@Override
 	public void processCustomTranslationForBusinessObjectCreate(RassXmlAwardEntry xmlObject,
 			Proposal newBusinessObject) {
 		super.processCustomTranslationForBusinessObjectCreate(xmlObject, newBusinessObject);
-		Proposal proposal = (Proposal)newBusinessObject;
+		Proposal proposal = (Proposal) newBusinessObject;
 		proposal.setProposalSubmissionDate(dateTimeService.getCurrentSqlDate());
-		proposal.setProposalAwardTypeCode("S");//default value for RASS
+		proposal.setProposalAwardTypeCode("S");// default value for RASS
 	}
-	
+
 	public void processCustomTranslationForBusinessObject(RassXmlAwardEntry proposalXmlObject,
 			Proposal proposalBusinessObject) {
-		
-		
+
 		proposalXmlObject.getPrincipalAndCoPrincipalInvestigators();
 	}
 
