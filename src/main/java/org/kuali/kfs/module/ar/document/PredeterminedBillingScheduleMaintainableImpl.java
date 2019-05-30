@@ -42,9 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 /*
- * CU Customization:
- * Added the 2019-05-02 patch version of this file as an overlay, to include the FINP-4678 fix.
- * Please remove this overlay once we upgrade to patch version 2019-05-02 or newer.
+ * CU Customization: Overlayed this file to include the FINP-4678 fix from the 2019-05-02 KualiCo patch.
+ * Please remove this overlay once we upgrade to financials version 2019-05-02 or newer.
  */
 /**
  * Methods for the Predetermined Billing Schedule maintenance document UI.
@@ -109,8 +108,7 @@ public class PredeterminedBillingScheduleMaintainableImpl extends FinancialSyste
     public void processAfterRetrieve() {
         PredeterminedBillingSchedule predeterminedBillingSchedule = getPredeterminedBillingSchedule();
         predeterminedBillingSchedule.refreshNonUpdateableReferences();
-        predeterminedBillingSchedule.setAward(null);
-        predeterminedBillingSchedule.setAward(predeterminedBillingSchedule.getAward());
+        predeterminedBillingSchedule.forceAwardUpdate();
         super.processAfterRetrieve();
     }
 
