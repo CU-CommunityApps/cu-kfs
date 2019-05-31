@@ -32,6 +32,8 @@
 	<bean id="SubFundGroup-parentBean" abstract="true" parent="BusinessObjectEntry">
 		<property name="businessObjectClass"
 			value="org.kuali.kfs.coa.businessobject.SubFundGroup" />
+		<property name="name" value="SubFundGroup" />
+		<property name="businessObjectAdminService" ref="defaultBoAdminService" />
 		<property name="inquiryDefinition">
 			<ref bean="SubFundGroup-inquiryDefinition" />
 		</property>
@@ -230,6 +232,7 @@
 
 	<bean id="SubFundGroup-lookupDefinition-parentBean" abstract="true"
 		parent="LookupDefinition">
+		<property name="lookupSearchService" ref="defaultLookupSearchService" />
 		<property name="title" value="Sub-Fund Group Lookup" />
 
 		<property name="defaultSort">
@@ -241,6 +244,50 @@
 				</property>
 			</bean>
 		</property>
+        <property name="lookupAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupDescription" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-extension-subFundGroupDetailedDescr" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupTypeCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-fundGroupCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupWagesIndicator" p:defaultValue=""
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-financialReportingSortCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="SubFundGroup-active" p:defaultValue="Y"
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" />
+            </list>
+        </property>
+        <property name="lookupResultAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupDescription" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-extension-subFundGroupDetailedDescr" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupTypeCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-fundGroupCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-subFundGroupWagesIndicator" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-financialReportingSortCode" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-active" />
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="SubFundGroup-fundGroupBudgetAdjustmentRestrictionLevelCode" />
+            </list>
+        </property>
 		<property name="lookupFields">
 			<list>
 				<bean parent="FieldDefinition" p:attributeName="subFundGroupCode" />
