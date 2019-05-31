@@ -9,6 +9,7 @@
     <import resource="classpath:edu/cornell/kfs/rass/cu-spring-rass.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys-test.xml"/>
+    <import resource="classpath:org/kuali/kfs/coreservice/config/CoreServiceRemoteSpringBeans.xml"/>
 
     <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
         <property name="properties">
@@ -35,8 +36,7 @@
 
     <bean id="maintenanceDocumentService" factory-bean="testServiceFactory" factory-method="buildMockMaintenanceDocumentService"/>
 
-    <bean id="documentService" factory-bean="testServiceFactory" factory-method="buildMockDocumentService"/>
-    
+    <bean id="documentService" factory-bean="testServiceFactory" factory-method="buildMockDocumentService"/>   
 
     <bean id="dataDictionaryService" factory-bean="testServiceFactory" factory-method="buildMockDataDictionaryService"/>
 
