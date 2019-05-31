@@ -31,7 +31,6 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
-import org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition;
 import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
@@ -53,7 +52,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
@@ -65,21 +63,11 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
 
         List<BatchFile> allFiles = getFiles(fieldValues);
         Stream<BatchFile> stream = allFiles.parallelStream();
-        if (sortField != null) {
-            LookupResultAttributeDefinition resultAttributeDefinition = getBusinessObjectDictionaryService()
-                    .getLookupResultAttributeDefinition(businessObjectClass, sortField);
-            if (resultAttributeDefinition != null) {
-                Comparator fieldComparator = resultAttributeDefinition.getComparator();
-                if (!sortAscending) {
-                    fieldComparator = fieldComparator.reversed();
-                }
 
-                final Comparator<Object> comparator = fieldComparator;
-                stream = stream.sorted((file1, file2) -> compare(comparator, file1, file2, sortField));
-            }
-        }
+        BusinessObjectSorter boSorter = new BusinessObjectSorter();
+        List<BusinessObjectBase> sortedAndSliced = boSorter.sort(businessObjectClass, skip, limit, sortField,
+                sortAscending, stream);
 
-        List<BatchFile> sortedAndSliced = stream.skip(skip).limit(limit).collect(Collectors.toList());
         return Pair.of(sortedAndSliced, allFiles.size());
     }
 
