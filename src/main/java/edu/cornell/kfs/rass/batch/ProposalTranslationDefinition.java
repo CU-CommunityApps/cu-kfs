@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
+import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.util.RassUtil;
@@ -20,6 +22,7 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 	protected BusinessObjectService businessObjectService;
 	protected RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> proposalProjectDirectorDefinition;
 	protected DateTimeService dateTimeService;
+	protected ParameterService parameterService;
 
 	@Override
 	public Class<RassXmlAwardEntry> getXmlObjectClass() {
@@ -80,7 +83,9 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 		super.processCustomTranslationForBusinessObjectCreate(xmlObject, newBusinessObject);
 		Proposal proposal = (Proposal) newBusinessObject;
 		proposal.setProposalSubmissionDate(dateTimeService.getCurrentSqlDate());
-		proposal.setProposalAwardTypeCode("S");// default value for RASS
+		String rassProposalAwardType = parameterService.getParameterValueAsString(RassStep.class,
+				RassConstants.RASS_DEFAULT_PROPOSAL_AWARD_TYPE_PARAMETER);
+		proposal.setProposalAwardTypeCode(rassProposalAwardType);
 	}
 
 	public void processCustomTranslationForBusinessObject(RassXmlAwardEntry proposalXmlObject,
@@ -104,6 +109,10 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 
 	public void setDateTimeService(DateTimeService dateTimeService) {
 		this.dateTimeService = dateTimeService;
+	}
+
+	public void setParameterService(ParameterService parameterService) {
+		this.parameterService = parameterService;
 	}
 
 }

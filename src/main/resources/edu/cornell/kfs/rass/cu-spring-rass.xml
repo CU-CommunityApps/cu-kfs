@@ -125,6 +125,7 @@
 			p:rootXmlObjectListPropertyName="awards"
 			p:proposalProjectDirectorDefinition-ref="proposalProjectDirectorDefinition"
 			p:dateTimeService-ref="dateTimeService"
+			p:parameterService-ref="parameterService"
 			p:documentTypeName="PRPL">
 		<property name="propertyMappings">
 			<list>
