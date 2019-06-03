@@ -66,7 +66,7 @@ public class RassServiceImpl implements RassService {
     protected DataDictionaryService dataDictionaryService;
     protected RouteHeaderService routeHeaderService;
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
-	protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
+    protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
     
     protected String rassFilePath;
     protected long documentStatusCheckDelayMillis;
@@ -118,8 +118,8 @@ public class RassServiceImpl implements RassService {
         
         RassBusinessObjectUpdateResultGrouping<Agency> agencyResults = updateBOs(
                 successfullyParsedFiles, agencyDefinition, documentTracker);
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults = updateBOs(
-                        successfullyParsedFiles, proposalDefinition, documentTracker);
+		RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults = updateBOs(successfullyParsedFiles,
+				proposalDefinition, documentTracker);
         RassBusinessObjectUpdateResultGrouping<Award> awardResults = new RassBusinessObjectUpdateResultGrouping<>(
                 Award.class, Collections.emptyList(), RassObjectGroupingUpdateResultCode.SUCCESS);
         LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
