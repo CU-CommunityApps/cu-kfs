@@ -21,11 +21,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -33,11 +37,9 @@ import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.SequenceAccessorService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
+import edu.cornell.kfs.fp.batch.service.ProcurementCardSkippedTransactionEmailService;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.USBankRecordFieldUtils;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
@@ -69,6 +71,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     private DateTimeService dateTimeService;
     private ParameterService parameterService;
     private ProcurementCardErrorEmailService procurementCardErrorEmailService;
+    private ProcurementCardSkippedTransactionEmailService procurementCardSkippedTransactionEmailService;
     
     // USBank record ID's
     // If/when we create dedicated classes for representing these records, 
@@ -160,7 +163,12 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
-    
+
+    public void setProcurementCardSkippedTransactionEmailService(
+            ProcurementCardSkippedTransactionEmailService procurementCardSkippedTransactionEmailService) {
+        this.procurementCardSkippedTransactionEmailService = procurementCardSkippedTransactionEmailService;
+    }
+
     private void initialize() {
          parent = null;
          duplicateTransactions = false;
@@ -184,19 +192,23 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         errorMessages = new ArrayList<String>();
         
         ArrayList<ProcurementCardTransaction> transactions = new ArrayList<ProcurementCardTransaction>();
+        List<ProcurementCardSkippedTransaction> skippedTransactions = new ArrayList<>();
         LOG.info("Beginning parse of file");
         try {                       
             initialize();
         	
             while ((fileLine=bufferedFileReader.readLine()) != null) {
-            	ProcurementCardTransaction theTransaction = generateProcurementCardTransaction(fileLine);
+            	ProcurementCardTransactionResult transactionResult = generateProcurementCardTransaction(fileLine);
                 
-            	if (theTransaction!=null){
+            	if (transactionResult.hasTransaction()) {
+            	    ProcurementCardTransaction theTransaction = transactionResult.getTransaction();
                     if(ObjectUtils.isNotNull(theTransaction.getExtension())) {
                       lineCount = ((ProcurementCardTransactionExtendedAttribute)theTransaction.getExtension()).addAddendumLines(bufferedFileReader, lineCount);
                     }
 
             		transactions.add(theTransaction);
+            	} else if (transactionResult.hasSkippedTransaction()) {
+            	    skippedTransactions.add(transactionResult.getSkippedTransaction());
             	}
             	lineCount++;
             }
@@ -257,10 +269,10 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
      * Other USBank record types (01, 95, 98) are either skipped or used for validation.
      * 
      * @param line The current line
-     * @return A completed transaction or null if there are additional lines in the transaction
+     * @return A result object with a completed transaction, or an empty result object if there are additional lines in the transaction
      * @throws Exception
      */
-    private ProcurementCardTransaction generateProcurementCardTransaction(String line) throws Exception {
+    private ProcurementCardTransactionResult generateProcurementCardTransaction(String line) throws Exception {
 	        
         String recordId = USBankRecordFieldUtils.extractNormalizedString(line, 0, 2);
         if (recordId == null) {
@@ -325,7 +337,15 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             	duplicateTransactions = false;
             }
         }
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && !duplicateTransactions && !transactionRepresentsPayment(line)) {	        		        	
+        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && transactionRepresentsPayment(line)) {
+            KualiDecimal transactionAmount = USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount);
+            ProcurementCardSkippedTransaction skippedTransaction = new ProcurementCardSkippedTransaction();
+            skippedTransaction.setFileLineNumber(lineCount);
+            skippedTransaction.setCardHolderName(parent.getCardHolderName());
+            skippedTransaction.setTransactionAmount(transactionAmount);
+            return new ProcurementCardTransactionResult(skippedTransaction);
+        }
+        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && !duplicateTransactions) {	        		        	
         	
         	ProcurementCardTransaction child = buildProcurementCardTransactionObject();
         	
@@ -393,11 +413,11 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setExtension(extension);
             
             transactionCount++;
-            return child;
+            return new ProcurementCardTransactionResult(child);
 
         } 
         // Still need to update totals and transaction count so validation works properly, but don't want transactions to be loaded
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && duplicateTransactions && !transactionRepresentsPayment(line)) {	        		        	
+        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && duplicateTransactions) {	        		        	
             if (USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65)).equals("D")) {
             	accumulatedDebits = accumulatedDebits.add(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));
             } else {
@@ -437,7 +457,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	
         }
 
-        return null;
+        return ProcurementCardTransactionResult.EMPTY;
     }
 
     protected ProcurementCardTransactionExtendedAttribute buildProcurementCardTransactionExtendedAttributeObject() {
