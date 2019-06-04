@@ -88,12 +88,6 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 		proposal.setProposalAwardTypeCode(rassProposalAwardType);
 	}
 
-	public void processCustomTranslationForBusinessObject(RassXmlAwardEntry proposalXmlObject,
-			Proposal proposalBusinessObject) {
-
-		proposalXmlObject.getPrincipalAndCoPrincipalInvestigators();
-	}
-
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
 	}

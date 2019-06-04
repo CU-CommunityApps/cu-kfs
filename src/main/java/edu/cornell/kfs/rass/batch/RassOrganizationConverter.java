@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 
+import edu.cornell.kfs.rass.RassConstants;
+
 public class RassOrganizationConverter extends RassValueConverterBase {
-	private static final String PROPOSAL_ORG_CHART = "IT";
 
 	public Object convert(Object rassInput) {
 		ProposalOrganization proposalOrganization = new ProposalOrganization();
-		proposalOrganization.setChartOfAccountsCode(PROPOSAL_ORG_CHART);
+		proposalOrganization.setChartOfAccountsCode(RassConstants.PROPOSAL_ORG_CHART);
 		proposalOrganization.setOrganizationCode((String) rassInput);
 		proposalOrganization.setProposalPrimaryOrganizationIndicator(true);
 		List<ProposalOrganization> proposalOrganizations = new ArrayList<>();
