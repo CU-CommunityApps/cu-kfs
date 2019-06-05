@@ -72,12 +72,6 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 	}
 
 	@Override
-	public void processCustomTranslationForBusinessObjectEdit(RassXmlAwardEntry xmlObject, Proposal oldBusinessObject,
-			Proposal newBusinessObject) {
-		super.processCustomTranslationForBusinessObjectEdit(xmlObject, oldBusinessObject, newBusinessObject);
-	}
-
-	@Override
 	public void processCustomTranslationForBusinessObjectCreate(RassXmlAwardEntry xmlObject,
 			Proposal newBusinessObject) {
 		super.processCustomTranslationForBusinessObjectCreate(xmlObject, newBusinessObject);
