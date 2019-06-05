@@ -9,6 +9,7 @@ import edu.cornell.kfs.coa.fixture.SubObjectCodeFixture;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
+import edu.cornell.kfs.fp.batch.businessobject.AmazonBillResultsDTO;
 import edu.cornell.kfs.fp.batch.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
@@ -160,8 +161,9 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
         GroupLevel groupLevelCostCenter = groupLevelCostCenterFixture.toGroupLevel();
         DefaultKfsAccountForAws defaultKfsAccountForAws = defaultKfsAccountForAwsFixture.toDefaultKfsAccountForAwsPojo();
         AccountingXmlDocumentAccountingLine expectedXmlAccountingLine = expectedXmlAccountingLineFixture.toAccountingLinePojo();
+        AmazonBillResultsDTO resultsDto = new AmazonBillResultsDTO();
         AccountingXmlDocumentAccountingLine actualXmlAccountingLine =
-                awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(groupLevelCostCenter, defaultKfsAccountForAws);
+                awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(groupLevelCostCenter, defaultKfsAccountForAws, resultsDto);
 
         LOG.info(String.format("Expect (%s, %s) => (%s, %s, %s)", groupLevelCostCenter.getGroupValue(),
                 defaultKfsAccountForAws.getKfsDefaultAccount(), expectedXmlAccountingLine.getChartCode(),
