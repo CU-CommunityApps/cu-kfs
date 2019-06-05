@@ -10,6 +10,7 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 
 public class RassProjectDirectorConverter extends RassValueConverterBase {
+	protected PersonService personService;
 
 	@Override
 	public Object convert(Object rassInput) {
@@ -18,7 +19,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
 		if (rassAwardPiCoPiEntries != null && rassAwardPiCoPiEntries.size() > 0) {
 			for (RassXMLAwardPiCoPiEntry rassAwardPiCoPi : rassAwardPiCoPiEntries) {
 				ProposalProjectDirector projectDirector = new ProposalProjectDirector();
-				String principalId = SpringContext.getBean(PersonService.class)
+				String principalId = personService
 						.getPersonByPrincipalName(rassAwardPiCoPi.getProjectDirectorPrincipalName()).getPrincipalId();
 				projectDirector.setPrincipalId(principalId);
 				projectDirector.setProposalPrimaryProjectDirectorIndicator(rassAwardPiCoPi.getPrimary());
@@ -27,6 +28,10 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
 		}
 
 		return projectDirectors;
+	}
+
+	public PersonService getPersonService() {
+		return SpringContext.getBean(PersonService.class);
 	}
 
 }
