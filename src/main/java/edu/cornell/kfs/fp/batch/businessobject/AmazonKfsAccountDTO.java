@@ -5,12 +5,13 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.sys.KFSConstants;
 
 public class AmazonKfsAccountDTO {
     
     private String amazonAccoutNumber;
-    private String costCenter;
+    private String costCenterOrKfsDefaultAccountForAWSAccount;
     private String kfsChart;
     private String kfsAccount;
     private String kfsSubAccount;
@@ -19,11 +20,11 @@ public class AmazonKfsAccountDTO {
     private String kfsProject;
     private String kfsOrgRefId;
     
-    public AmazonKfsAccountDTO(String amazonAccountNumber, String costCenter, String defaultKfsChart, String defaultKfsObject) {
+    public AmazonKfsAccountDTO(String amazonAccountNumber, String costCenterOrKfsDefaultAccountForAWSAccount, String defaultKfsChart, String defaultKfsObject) {
         this.amazonAccoutNumber = amazonAccountNumber;
-        this.costCenter = costCenter;
-        if (StringUtils.countMatches(costCenter, KFSConstants.WILDCARD_CHARACTER) == 6) {
-            String[] fullAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenter, KFSConstants.WILDCARD_CHARACTER);
+        this.costCenterOrKfsDefaultAccountForAWSAccount = costCenterOrKfsDefaultAccountForAWSAccount;
+        if (StringUtils.countMatches(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER) == 6) {
+            String[] fullAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER);
             this.kfsChart = fullAccount[0];
             this.kfsAccount = fullAccount[1];
             this.kfsSubAccount = fullAccount[2];
@@ -31,13 +32,13 @@ public class AmazonKfsAccountDTO {
             this.kfsSubObject = fullAccount[4];
             this.kfsProject = fullAccount[5];
             this.kfsOrgRefId = fullAccount[6];
-        } else if (StringUtils.countMatches(costCenter, KFSConstants.DASH) == 1) {
-            String[] accountSubAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenter, KFSConstants.DASH);
+        } else if (StringUtils.countMatches(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.DASH) == 1) {
+            String[] accountSubAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.DASH);
             this.kfsAccount = accountSubAccount[0];
             this.kfsSubAccount = accountSubAccount[1];
             setDefaultChartObject(defaultKfsChart, defaultKfsObject);
         } else {
-            this.kfsAccount = costCenter;
+            this.kfsAccount = costCenterOrKfsDefaultAccountForAWSAccount;
             setDefaultChartObject(defaultKfsChart, defaultKfsObject);
         }
     }
@@ -51,8 +52,8 @@ public class AmazonKfsAccountDTO {
         return amazonAccoutNumber;
     }
 
-    public String getCostCenter() {
-        return costCenter;
+    public String getCostCenterOrKfsDefaultAccountForAWSAccount() {
+        return costCenterOrKfsDefaultAccountForAWSAccount;
     }
 
     public String getKfsChart() {
@@ -84,16 +85,16 @@ public class AmazonKfsAccountDTO {
     }
     
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
     
     @Override
     public boolean equals(Object o) {
         if (o instanceof AmazonKfsAccountDTO) {
-            AmazonKfsAccountDTO other = (AmazonKfsAccountDTO)o;
+            AmazonKfsAccountDTO other = (AmazonKfsAccountDTO) o;
             EqualsBuilder eb = new EqualsBuilder();
             eb.append(amazonAccoutNumber, other.getAmazonAccoutNumber());
-            eb.append(costCenter, other.getCostCenter());
+            eb.append(costCenterOrKfsDefaultAccountForAWSAccount, other.getCostCenterOrKfsDefaultAccountForAWSAccount());
             eb.append(kfsChart, other.getKfsChart());
             eb.append(kfsAccount, other.getKfsAccount());
             eb.append(kfsSubAccount, other.getKfsSubAccount());
@@ -109,7 +110,7 @@ public class AmazonKfsAccountDTO {
     
     @Override
     public int hashCode() {
-        return Objects.hash(amazonAccoutNumber, costCenter, kfsChart, kfsAccount, kfsSubAccount, kfsObject, kfsSubObject, kfsProject, kfsOrgRefId);
+        return Objects.hash(amazonAccoutNumber, costCenterOrKfsDefaultAccountForAWSAccount, kfsChart, kfsAccount, kfsSubAccount, kfsObject, kfsSubObject, kfsProject, kfsOrgRefId);
     }
 
 }
