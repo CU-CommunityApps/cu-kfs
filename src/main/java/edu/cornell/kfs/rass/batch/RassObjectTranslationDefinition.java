@@ -7,11 +7,10 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 
-public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R extends PersistableBusinessObject> {
+public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R extends PersistableBusinessObject> extends RassBaseObjectTranslationDefinition<T,R> {
 
     private String documentTypeName;
     private String rootXmlObjectListPropertyName;
-    private List<RassPropertyDefinition> propertyMappings;
 
     public String getDocumentTypeName() {
         return documentTypeName;
@@ -27,14 +26,6 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
 
     public void setRootXmlObjectListPropertyName(String rootXmlObjectListPropertyName) {
         this.rootXmlObjectListPropertyName = rootXmlObjectListPropertyName;
-    }
-
-    public List<RassPropertyDefinition> getPropertyMappings() {
-        return propertyMappings;
-    }
-
-    public void setPropertyMappings(List<RassPropertyDefinition> propertyMappings) {
-        this.propertyMappings = propertyMappings;
     }
 
     public void processCustomTranslationForBusinessObjectCreate(T xmlObject, R newBusinessObject) {
@@ -64,10 +55,6 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
     public String getObjectLabel() {
         return getBusinessObjectClass().getSimpleName();
     }
-
-    public abstract Class<T> getXmlObjectClass();
-
-    public abstract Class<R> getBusinessObjectClass();
 
     public abstract String printPrimaryKeyValues(T xmlObject);
 
