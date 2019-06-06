@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -34,6 +35,7 @@ import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -312,11 +314,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         document.getBackupLinks().add(link);
     }
     
-    /*
-     * @todo undo this!!!!
-     */
     private boolean shouldBuildDistributionOfIncomeDocument(String awsAccount, String departmentName, KualiDecimal cost) {
-        /*
         for (DocumentHeader dh : findDocumentHeadersForAmazonDetail(awsAccount, departmentName)) {
             try {
                 DistributionOfIncomeAndExpenseDocument di = (DistributionOfIncomeAndExpenseDocument) documentService.getByDocumentHeaderId(dh.getDocumentNumber());
@@ -330,7 +328,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 throw new RuntimeException(e);
             }
         }
-        */
         return true;
     }
     

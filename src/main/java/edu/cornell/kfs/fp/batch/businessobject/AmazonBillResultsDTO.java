@@ -38,9 +38,11 @@ public class AmazonBillResultsDTO {
         LOG.info("logResults, awsAccountWithoutDefaultAccount: " + awsAccountWithoutDefaultAccount);
         LOG.info("logResults, awsAccountWithExistingDI: " + awsAccountWithExistingDI);
         LOG.info("logResults, awsAccountGeneratedDIxml: " + awsAccountGeneratedDIxml);
+        LOG.info("logResults, number of default accounts with errors: " + defaultAccountErrors.size());
         if (!defaultAccountErrors.isEmpty()) {
             LOG.info("logResults, default KFS accounts with errors: " + defaultAccountErrors);
         }
+        LOG.info("logResults, number of cost centers with errors: " + costCenterErrors.size());
         if (!costCenterErrors.isEmpty()) {
             LOG.info("logResults, cost centers with errors: " + costCenterErrors);
         }
