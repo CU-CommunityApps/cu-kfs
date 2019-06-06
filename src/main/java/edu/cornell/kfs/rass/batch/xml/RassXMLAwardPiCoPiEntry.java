@@ -16,7 +16,7 @@ import edu.cornell.kfs.sys.xmladapters.BooleanNullPossibleXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "PI_or_CoPI", namespace = StringUtils.EMPTY)
-public class RassXMLAwardPiCoPiEntry {
+public class RassXMLAwardPiCoPiEntry implements RassXmlObject{
     
     @XmlElement(name = "Primary", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(BooleanNullPossibleXmlAdapter.class)

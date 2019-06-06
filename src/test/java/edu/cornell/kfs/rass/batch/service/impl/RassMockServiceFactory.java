@@ -4,9 +4,11 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
@@ -25,6 +27,7 @@ import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
 import edu.cornell.kfs.rass.RassKeyConstants;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
+import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 
 public class RassMockServiceFactory {
 
@@ -124,6 +127,16 @@ public class RassMockServiceFactory {
                 .then(invocation -> invocation.getArgument(0));
         
         return documentService;
+    }
+    
+    public ParameterService buildMockParameterService() throws Exception {
+        return new MockParameterServiceImpl();
+    }
+    
+    public BusinessObjectService buildMockBusinessObjectService() throws Exception {
+        BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
+        
+        return businessObjectService;
     }
 
     public DataDictionaryService buildMockDataDictionaryService() throws Exception {

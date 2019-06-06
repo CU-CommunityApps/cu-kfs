@@ -34,5 +34,9 @@ public final class RassConstants {
             }
         }
     }
+    
+    public static final String RASS_DEFAULT_PROPOSAL_AWARD_TYPE_PARAMETER = "RASS_DEFAULT_PROPOSAL_AWARD_TYPE";
+    
+    public static final String PROPOSAL_ORG_CHART = "IT";
 
 }

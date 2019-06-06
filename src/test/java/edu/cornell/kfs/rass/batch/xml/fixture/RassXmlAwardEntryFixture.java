@@ -12,13 +12,13 @@ import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 
 public enum RassXmlAwardEntryFixture {
-    FIRST("141414", "OS", "2345", "First Example Project", "2017-12-31", null, 5300000.000, 700000.000, 6000000.000,
+    FIRST("141414", "OS", "2345", "First Example Project", "2017-12-31", null, 5300000.000, 700000.000, 6000000.000, StringUtils.EMPTY,
             StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY, StringUtils.EMPTY, "3434", Boolean.TRUE, null,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
-    ANOTHER("141415", "RS", "24680", "Another Example", null, "2050-12-31", 0.0, 0.0, 0.0,
+    ANOTHER("141415", "RS", "24680", "Another Example", null, "2050-12-31", 0.0, 0.0, 0.0, StringUtils.EMPTY,
             StringUtils.EMPTY, "GRT", null, StringUtils.EMPTY, StringUtils.EMPTY, "2374", Boolean.TRUE, "2022-09-30",
             piFixtures(RassXMLAwardPiCoPiEntryFixture.NO_NAME_PRIMARY)),
-    NULL_AMOUNTS("35656", "RS", "24680", "Award with empty totals", null, "2050-12-31", 0.0, null, null,
+    NULL_AMOUNTS("35656", "RS", "24680", "Award with empty totals", null, "2050-12-31", 0.0, null, null, StringUtils.EMPTY,
             StringUtils.EMPTY, "GRT", null, StringUtils.EMPTY, StringUtils.EMPTY, "2374", Boolean.TRUE, "2022-09-30",
             piFixtures(RassXMLAwardPiCoPiEntryFixture.jdh34_CO_PI));
     public final String proposalNumber;
@@ -30,6 +30,7 @@ public enum RassXmlAwardEntryFixture {
     public final KualiDecimal directCostAmount;
     public final KualiDecimal indirectCostAmount;
     public final KualiDecimal totalAmount;
+    public final String purpose;
     public final String grantNumber;
     public final String grantDescription;
     public final Boolean federalPassThrough;
@@ -42,7 +43,7 @@ public enum RassXmlAwardEntryFixture {
     
     private RassXmlAwardEntryFixture(String proposalNumber, String status, String agencyNumber, String projectTitle,
             String startDateString, String stopDateString, Double directCostAmount, Double indirectCostAmount,
-            Double totalAmount, String grantNumber, String grantDescription, Boolean federalPassThrough,
+            Double totalAmount, String purpose, String grantNumber, String grantDescription, Boolean federalPassThrough,
             String federalPassThroughAgencyNumber, String cfdaNumber, String organizationCode,
             Boolean costShareRequired, String finalReportDueDateString, RassXMLAwardPiCoPiEntryFixture[] piFixtures) {
         this.proposalNumber = proposalNumber;
@@ -54,6 +55,7 @@ public enum RassXmlAwardEntryFixture {
         this.directCostAmount = buildKualiDecimalFromDouble(directCostAmount);
         this.indirectCostAmount = buildKualiDecimalFromDouble(indirectCostAmount);
         this.totalAmount = buildKualiDecimalFromDouble(totalAmount);
+        this.purpose = purpose;
         this.grantNumber = grantNumber;
         this.grantDescription = grantDescription;
         this.federalPassThrough = federalPassThrough;
@@ -97,6 +99,7 @@ public enum RassXmlAwardEntryFixture {
         award.setDirectCostAmount(directCostAmount);
         award.setIndirectCostAmount(indirectCostAmount);
         award.setTotalAmount(totalAmount);
+        award.setPurpose(purpose);
         award.setGrantNumber(grantNumber);
         award.setGrantDescription(grantDescription);
         award.setFederalPassThrough(federalPassThrough);

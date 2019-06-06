@@ -26,12 +26,18 @@
             class="edu.cornell.kfs.rass.batch.service.impl.TestRassRoutingServiceImpl"/>
 
     <bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestAgencyTranslationDefinition"/>
+    
+    <bean id="proposalDefinition" parent="proposalDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestProposalTranslationDefinition"/>
+    
+    <bean id="proposalProjectDirectorDefinition" parent="proposalProjectDirectorDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestProposalProjectDirectorTranslationDefinition"/>
 
     <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
 
     <bean id="maintenanceDocumentService" factory-bean="testServiceFactory" factory-method="buildMockMaintenanceDocumentService"/>
 
-    <bean id="documentService" factory-bean="testServiceFactory" factory-method="buildMockDocumentService"/>
+    <bean id="documentService" factory-bean="testServiceFactory" factory-method="buildMockDocumentService"/>  
+    
+    <bean id="parameterService" factory-bean="testServiceFactory" factory-method="buildMockParameterService"/>   
 
     <bean id="dataDictionaryService" factory-bean="testServiceFactory" factory-method="buildMockDataDictionaryService"/>
 
@@ -42,6 +48,8 @@
     <bean id="configurationService" factory-bean="testServiceFactory" factory-method="buildMockConfigurationService"/>
 
     <bean id="fileStorageService" parent="fileStorageService-parentBean" p:pathPrefix="."/>
+    
+    <bean id="businessObjectService" factory-bean="testServiceFactory" factory-method="buildMockBusinessObjectService"/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
@@ -53,6 +61,10 @@
                 <idref bean="rassProperty"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="agencyDefinition-parentBean"/>
+                <idref bean="proposalDefinition"/>
+                <idref bean="proposalDefinition-parentBean"/>
+                <idref bean="proposalProjectDirectorDefinition"/>
+                <idref bean="proposalProjectDirectorDefinition-parentBean"/>                
                 <idref bean="batchInputFileService"/>
                 <idref bean="batchInputFileService-parentBean"/>
                 <idref bean="rassXmlInputFileType"/>
@@ -64,10 +76,12 @@
                 <idref bean="testServiceFactory"/>
                 <idref bean="maintenanceDocumentService"/>
                 <idref bean="documentService"/>
+                <idref bean="businessObjectService"/>
                 <idref bean="dataDictionaryService"/>
                 <idref bean="enDocumentRouteHeaderService"/>
                 <idref bean="agencyService"/>
                 <idref bean="dateTimeService"/>
+                <idref bean="parameterService"/>
                 <idref bean="configurationService"/>
             </set>
         </property>
