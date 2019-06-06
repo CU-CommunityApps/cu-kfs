@@ -20,30 +20,51 @@ public class AmazonKfsAccountDTO {
     private String kfsProject;
     private String kfsOrgRefId;
     
+    private AmazonKfsAccountDTO() {
+        this.amazonAccoutNumber = StringUtils.EMPTY;
+        this.costCenterOrKfsDefaultAccountForAWSAccount = StringUtils.EMPTY;
+        this.kfsChart = StringUtils.EMPTY;
+        this.kfsAccount = StringUtils.EMPTY;
+        this.kfsSubAccount = StringUtils.EMPTY;
+        this.kfsObject = StringUtils.EMPTY;
+        this.kfsSubObject = StringUtils.EMPTY;
+        this.kfsProject = StringUtils.EMPTY;
+        this.kfsOrgRefId = StringUtils.EMPTY;
+    }
+    
     public AmazonKfsAccountDTO(String amazonAccountNumber, String costCenterOrKfsDefaultAccountForAWSAccount, String defaultKfsChart, String defaultKfsObject) {
-        this.amazonAccoutNumber = amazonAccountNumber;
-        this.costCenterOrKfsDefaultAccountForAWSAccount = costCenterOrKfsDefaultAccountForAWSAccount;
+        this();
+        this.amazonAccoutNumber = normalizeString(amazonAccountNumber);
+        this.costCenterOrKfsDefaultAccountForAWSAccount = normalizeString(costCenterOrKfsDefaultAccountForAWSAccount);
         if (StringUtils.countMatches(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER) == 6) {
             String[] fullAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER);
-            this.kfsChart = fullAccount[0];
-            this.kfsAccount = fullAccount[1];
-            this.kfsSubAccount = fullAccount[2];
-            this.kfsObject = fullAccount[3];
-            this.kfsSubObject = fullAccount[4];
-            this.kfsProject = fullAccount[5];
-            this.kfsOrgRefId = fullAccount[6];
+            this.kfsChart = normalizeString(fullAccount[0]);
+            this.kfsAccount = normalizeString(fullAccount[1]);
+            this.kfsSubAccount = normalizeString(fullAccount[2]);
+            this.kfsObject = normalizeString(fullAccount[3]);
+            this.kfsSubObject = normalizeString(fullAccount[4]);
+            this.kfsProject = normalizeString(fullAccount[5]);
+            this.kfsOrgRefId = normalizeString(fullAccount[6]);
         } else if (StringUtils.countMatches(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.DASH) == 1) {
             String[] accountSubAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.DASH);
-            this.kfsAccount = accountSubAccount[0];
-            this.kfsSubAccount = accountSubAccount[1];
-            setDefaultChartObject(defaultKfsChart, defaultKfsObject);
+            this.kfsAccount = normalizeString(accountSubAccount[0]);
+            this.kfsSubAccount = normalizeString(accountSubAccount[1]);
+            setDefaultValues(defaultKfsChart, defaultKfsObject);
         } else {
-            this.kfsAccount = costCenterOrKfsDefaultAccountForAWSAccount;
-            setDefaultChartObject(defaultKfsChart, defaultKfsObject);
+            this.kfsAccount = normalizeString(costCenterOrKfsDefaultAccountForAWSAccount);
+            setDefaultValues(defaultKfsChart, defaultKfsObject);
         }
     }
     
-    private void setDefaultChartObject(String defaultKfsChart, String defaultKfsObject) {
+    private String normalizeString(String stringValue) {
+        if (StringUtils.isNotBlank(stringValue)) {
+            return StringUtils.trim(stringValue);
+        } else {
+            return StringUtils.EMPTY;
+        }
+    }
+    
+    private void setDefaultValues(String defaultKfsChart, String defaultKfsObject) {
         this.kfsChart = defaultKfsChart;
         this.kfsObject = defaultKfsObject;
     }
@@ -84,6 +105,7 @@ public class AmazonKfsAccountDTO {
         return kfsOrgRefId;
     }
     
+    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }

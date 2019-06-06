@@ -38,6 +38,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -173,7 +174,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
                 defaultKfsAccountForAws.getKfsDefaultAccount(), actualXmlAccountingLine.getChartCode(),
                 actualXmlAccountingLine.getAccountNumber(), actualXmlAccountingLine.getObjectCode()));
 
-        assert(ObjectUtils.equals(expectedXmlAccountingLine, actualXmlAccountingLine));
+        assertEquals(expectedXmlAccountingLine, actualXmlAccountingLine);
     }
 
     private ChartService buildMockChartService() {

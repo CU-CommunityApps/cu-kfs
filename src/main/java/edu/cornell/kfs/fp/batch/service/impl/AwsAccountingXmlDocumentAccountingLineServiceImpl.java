@@ -133,6 +133,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, xmlAccountingLine.getAccountNumber()) 
                 || StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION, xmlAccountingLine.getAccountNumber()) 
                 || !validateAccount(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), logErrorMessage)) {
+            xmlAccountingLine.setChartCode(defaultAccountDto.getKfsChart());
             xmlAccountingLine.setAccountNumber(defaultAccountDto.getKfsAccount());
         }
     }
