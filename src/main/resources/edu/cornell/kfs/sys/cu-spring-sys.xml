@@ -335,4 +335,7 @@
     <bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
           p:lookupableHelperService-ref="batchFileLookupableHelperService"/>
 
+	<bean id="businessObjectJSONMessageBodyWriter"
+		  class="org.kuali.kfs.sys.rest.marshaller.BusinessObjectJSONMessageBodyWriter"
+		  p:businessObjectDictionaryService-ref="businessObjectDictionaryService" />
 </beans>
