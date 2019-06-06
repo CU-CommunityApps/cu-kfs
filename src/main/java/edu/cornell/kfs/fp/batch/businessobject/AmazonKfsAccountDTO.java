@@ -36,7 +36,12 @@ public class AmazonKfsAccountDTO {
         this();
         this.amazonAccoutNumber = normalizeString(amazonAccountNumber);
         this.costCenterOrKfsDefaultAccountForAWSAccount = normalizeString(costCenterOrKfsDefaultAccountForAWSAccount);
-        if (StringUtils.countMatches(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER) == 6) {
+        if (StringUtils.countMatches(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER) == 1) {
+            String[] chartAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER);
+            this.kfsChart = normalizeString(chartAccount[0]);
+            this.kfsAccount = normalizeString(chartAccount[1]);
+            this.kfsObject = defaultKfsObject;
+        } else if (StringUtils.countMatches(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER) == 6) {
             String[] fullAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.WILDCARD_CHARACTER);
             this.kfsChart = normalizeString(fullAccount[0]);
             this.kfsAccount = normalizeString(fullAccount[1]);
@@ -49,10 +54,12 @@ public class AmazonKfsAccountDTO {
             String[] accountSubAccount = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterOrKfsDefaultAccountForAWSAccount, KFSConstants.DASH);
             this.kfsAccount = normalizeString(accountSubAccount[0]);
             this.kfsSubAccount = normalizeString(accountSubAccount[1]);
-            setDefaultValues(defaultKfsChart, defaultKfsObject);
+            this.kfsChart = defaultKfsChart;
+            this.kfsObject = defaultKfsObject;
         } else {
             this.kfsAccount = normalizeString(costCenterOrKfsDefaultAccountForAWSAccount);
-            setDefaultValues(defaultKfsChart, defaultKfsObject);
+            this.kfsChart = defaultKfsChart;
+            this.kfsObject = defaultKfsObject;
         }
     }
     
@@ -62,11 +69,6 @@ public class AmazonKfsAccountDTO {
         } else {
             return StringUtils.EMPTY;
         }
-    }
-    
-    private void setDefaultValues(String defaultKfsChart, String defaultKfsObject) {
-        this.kfsChart = defaultKfsChart;
-        this.kfsObject = defaultKfsObject;
     }
 
     public String getAmazonAccoutNumber() {

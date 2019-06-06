@@ -155,6 +155,13 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
                 DefaultKfsAccountForAwsFixture.AWS_STU_KFS_1023715_INVALID,
                 AccountingXmlDocumentAccountingLineFixture.ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID);
     }
+    
+    @Test
+    public void testVerifyValidChartAccountCostCenter() {
+        verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.CHART_CS_ACCT_J80100_COST_50,
+                DefaultKfsAccountForAwsFixture.AWS_MNO_KFS_INTERNAL,
+                AccountingXmlDocumentAccountingLineFixture.CHART_CS_ACCT_J801000_OBJ_4020_AMOUNT_50_VALID);
+    }
 
     private void verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture groupLevelCostCenterFixture,
                                                        DefaultKfsAccountForAwsFixture defaultKfsAccountForAwsFixture,
