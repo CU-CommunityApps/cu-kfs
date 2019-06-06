@@ -19,7 +19,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
 		if (rassAwardPiCoPiEntries != null && rassAwardPiCoPiEntries.size() > 0) {
 			for (RassXMLAwardPiCoPiEntry rassAwardPiCoPi : rassAwardPiCoPiEntries) {
 				ProposalProjectDirector projectDirector = new ProposalProjectDirector();
-				String principalId = personService
+				String principalId = getPersonService()
 						.getPersonByPrincipalName(rassAwardPiCoPi.getProjectDirectorPrincipalName()).getPrincipalId();
 				projectDirector.setPrincipalId(principalId);
 				projectDirector.setProposalPrimaryProjectDirectorIndicator(rassAwardPiCoPi.getPrimary());
