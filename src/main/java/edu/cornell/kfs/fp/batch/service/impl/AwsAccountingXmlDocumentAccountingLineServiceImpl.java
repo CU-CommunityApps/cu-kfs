@@ -68,7 +68,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         
         AccountingXmlDocumentAccountingLine xmlAccountingLine = buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(costCenterDto);
 
-        fixAccountingLine(xmlAccountingLine, defaultAccountDto);
+        validateAndSetDefaultsAccountingLine(xmlAccountingLine, defaultAccountDto);
         xmlAccountingLine.setAmount(costCenterGroupLevel.getCost());
         return xmlAccountingLine;
     }
@@ -110,7 +110,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         return line;
     }
     
-    private void fixAccountingLine(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto) {
+    private void validateAndSetDefaultsAccountingLine(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto) {
         boolean logErrorMessage = true;
         validateAndSetDefaultsChart(xmlAccountingLine, defaultAccountDto, logErrorMessage);
         validateAndSetDefaultsAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
