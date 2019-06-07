@@ -55,15 +55,15 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         AmazonKfsAccountDTO defaultAccountDto = new AmazonKfsAccountDTO(defaultKfsAccountForAws.getAwsAccount(), defaultKfsAccountForAws.getKfsDefaultAccount(), 
                 getDefaultChartCodeFromParameter(), getDefaultObjectCodeFromParameter());
         
-        if (!resultsDto.defaultAccountErrors.contains(defaultAccountDto) && !validateAmazonKfsAccountDTO(defaultAccountDto, false)) {
-            resultsDto.defaultAccountErrors.add(defaultAccountDto);
+        if (!resultsDto.defaultAccountsWithErrors.contains(defaultAccountDto) && !validateAmazonKfsAccountDTO(defaultAccountDto, false)) {
+            resultsDto.defaultAccountsWithErrors.add(defaultAccountDto);
         }
         
         AmazonKfsAccountDTO costCenterDto = new AmazonKfsAccountDTO(defaultKfsAccountForAws.getAwsAccount(), costCenterGroupValue, 
                 getDefaultChartCodeFromParameter(), getDefaultObjectCodeFromParameter());
         
-        if (!resultsDto.costCenterErrors.contains(defaultAccountDto) && !validateAmazonKfsAccountDTO(costCenterDto, false)) {
-            resultsDto.costCenterErrors.add(defaultAccountDto);
+        if (!resultsDto.costCentersWithErrors.contains(defaultAccountDto) && !validateAmazonKfsAccountDTO(costCenterDto, false)) {
+            resultsDto.costCentersWithErrors.add(costCenterDto);
         }
         
         AccountingXmlDocumentAccountingLine xmlAccountingLine = buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(costCenterDto);
@@ -112,23 +112,23 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
     
     private void fixAccountingLine(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto) {
         boolean logErrorMessage = true;
-        fixChart(xmlAccountingLine, defaultAccountDto, logErrorMessage);
-        fixAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
-        foxSubAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
-        foxObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
-        fixSubObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
-        fixProjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
-        foxOrgRefId(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsChart(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsSubAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsSubObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsProjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsOrgRefId(xmlAccountingLine, defaultAccountDto, logErrorMessage);
     }
 
-    private void fixChart(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
+    private void validateAndSetDefaultsChart(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
             boolean logErrorMessage) {
         if (!validateChartCode(xmlAccountingLine.getChartCode(), logErrorMessage)) {
             xmlAccountingLine.setChartCode(defaultAccountDto.getKfsChart());
         }
     }
 
-    private void fixAccount(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+    private void validateAndSetDefaultsAccount(AccountingXmlDocumentAccountingLine xmlAccountingLine,
             AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
         if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, xmlAccountingLine.getAccountNumber()) 
                 || StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION, xmlAccountingLine.getAccountNumber()) 
@@ -138,7 +138,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         }
     }
 
-    private void foxSubAccount(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+    private void validateAndSetDefaultsSubAccount(AccountingXmlDocumentAccountingLine xmlAccountingLine,
             AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
         if (StringUtils.isNotBlank(xmlAccountingLine.getSubAccountNumber())
                 && !validateSubAccountNumber(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getSubAccountNumber(), logErrorMessage)) {
@@ -148,14 +148,14 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         }
     }
 
-    private void foxObjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+    private void validateAndSetDefaultsObjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
             AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
         if (!validateObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getObjectCode(), logErrorMessage)) {
             xmlAccountingLine.setObjectCode(defaultAccountDto.getKfsObject());
         }
     }
 
-    private void fixSubObjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+    private void validateAndSetDefaultsSubObjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
             AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
         if (StringUtils.isNotBlank(xmlAccountingLine.getSubObjectCode())
                 && !validateSubObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getObjectCode(),
@@ -167,7 +167,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         }
     }
 
-    private void fixProjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+    private void validateAndSetDefaultsProjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
             AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
         if (StringUtils.isNotBlank(xmlAccountingLine.getProjectCode())
                 && !validateProjectCode(xmlAccountingLine.getProjectCode(), logErrorMessage)) {
@@ -177,7 +177,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         }
     }
 
-    private void foxOrgRefId(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+    private void validateAndSetDefaultsOrgRefId(AccountingXmlDocumentAccountingLine xmlAccountingLine,
             AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
         if (StringUtils.isNotBlank(xmlAccountingLine.getOrgRefId())
                 && !validateOrgRefId(xmlAccountingLine.getOrgRefId(), logErrorMessage)) {

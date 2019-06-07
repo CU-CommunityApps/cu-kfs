@@ -15,8 +15,8 @@ public class AmazonBillResultsDTO {
     public List<String> awsAccountWithoutDefaultAccount;
     public List<String> awsAccountWithExistingDI;
     public List<String> awsAccountGeneratedDIxml;
-    public List<AmazonKfsAccountDTO> defaultAccountErrors;
-    public List<AmazonKfsAccountDTO> costCenterErrors;
+    public List<AmazonKfsAccountDTO> defaultAccountsWithErrors;
+    public List<AmazonKfsAccountDTO> costCentersWithErrors;
     
     private static final Logger LOG = LogManager.getLogger(AmazonBillResultsDTO.class);
     
@@ -24,8 +24,8 @@ public class AmazonBillResultsDTO {
         awsAccountWithoutDefaultAccount = new ArrayList<String>();
         awsAccountWithExistingDI = new ArrayList<String>();
         awsAccountGeneratedDIxml = new ArrayList<String>();
-        defaultAccountErrors = new ArrayList<AmazonKfsAccountDTO>();
-        costCenterErrors = new ArrayList<AmazonKfsAccountDTO>();
+        defaultAccountsWithErrors = new ArrayList<AmazonKfsAccountDTO>();
+        costCentersWithErrors = new ArrayList<AmazonKfsAccountDTO>();
     }
     
     public void logResults() {
@@ -38,13 +38,13 @@ public class AmazonBillResultsDTO {
         LOG.info("logResults, awsAccountWithoutDefaultAccount: " + awsAccountWithoutDefaultAccount);
         LOG.info("logResults, awsAccountWithExistingDI: " + awsAccountWithExistingDI);
         LOG.info("logResults, awsAccountGeneratedDIxml: " + awsAccountGeneratedDIxml);
-        LOG.info("logResults, number of default accounts with errors: " + defaultAccountErrors.size());
-        if (!defaultAccountErrors.isEmpty()) {
-            LOG.info("logResults, default KFS accounts with errors: " + defaultAccountErrors);
+        LOG.info("logResults, number of default accounts with errors: " + defaultAccountsWithErrors.size());
+        if (!defaultAccountsWithErrors.isEmpty()) {
+            LOG.info("logResults, default KFS accounts with errors: " + defaultAccountsWithErrors);
         }
-        LOG.info("logResults, number of cost centers with errors: " + costCenterErrors.size());
-        if (!costCenterErrors.isEmpty()) {
-            LOG.info("logResults, cost centers with errors: " + costCenterErrors);
+        LOG.info("logResults, number of cost centers with errors: " + costCentersWithErrors.size());
+        if (!costCentersWithErrors.isEmpty()) {
+            LOG.info("logResults, cost centers with errors: " + costCentersWithErrors);
         }
         LOG.info(headerFooter);
     }
