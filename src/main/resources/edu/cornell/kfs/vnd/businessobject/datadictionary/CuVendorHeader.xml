@@ -39,5 +39,9 @@
     <property name="name" value="extension.vendorLocale"/>
   </bean>
 
+    <bean
+        id="VendorDetail-lookupDefinition"
+        parent="VendorDetail-lookupDefinition-parentBean"
+        p:lookupSearchService-ref="defaultLookupSearchService" />
 
 </beans>
