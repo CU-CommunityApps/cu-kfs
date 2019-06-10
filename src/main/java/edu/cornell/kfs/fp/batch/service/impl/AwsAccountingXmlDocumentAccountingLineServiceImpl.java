@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -112,13 +112,24 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
     
     private void validateAndSetDefaultsAccountingLine(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto) {
         boolean logErrorMessage = true;
+        validateAndSetDefaultsRequiredFields(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsNonRequiredFields(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+    }
+    
+    private void validateAndSetDefaultsRequiredFields(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
+            boolean logErrorMessage) {
         validateAndSetDefaultsChart(xmlAccountingLine, defaultAccountDto, logErrorMessage);
         validateAndSetDefaultsAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
-        validateAndSetDefaultsSubAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
         validateAndSetDefaultsObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+    }
+    
+    private void validateAndSetDefaultsNonRequiredFields(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
+            boolean logErrorMessage) {
+        validateAndSetDefaultsSubAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
         validateAndSetDefaultsSubObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
         validateAndSetDefaultsProjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
         validateAndSetDefaultsOrgRefId(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        
     }
 
     private void validateAndSetDefaultsChart(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
@@ -144,6 +155,8 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
                 && !validateSubAccountNumber(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getSubAccountNumber(), logErrorMessage)) {
             if (validateSubAccountNumber(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), defaultAccountDto.getKfsSubAccount(), logErrorMessage)) {
                 xmlAccountingLine.setSubAccountNumber(defaultAccountDto.getKfsSubAccount());
+            } else {
+                xmlAccountingLine.setSubAccountNumber(StringUtils.EMPTY);
             }
         }
     }
@@ -163,6 +176,8 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             if (validateSubObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getObjectCode(), 
                     defaultAccountDto.getKfsSubObject(), logErrorMessage)) {
                 xmlAccountingLine.setSubObjectCode(defaultAccountDto.getKfsSubObject());
+            } else {
+                xmlAccountingLine.setSubObjectCode(StringUtils.EMPTY);
             }
         }
     }
@@ -173,6 +188,8 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
                 && !validateProjectCode(xmlAccountingLine.getProjectCode(), logErrorMessage)) {
             if (validateProjectCode(defaultAccountDto.getKfsProject(), logErrorMessage)) {
                 xmlAccountingLine.setProjectCode(defaultAccountDto.getKfsProject()); 
+            } else {
+                xmlAccountingLine.setProjectCode(StringUtils.EMPTY);
             }
         }
     }
@@ -183,6 +200,8 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
                 && !validateOrgRefId(xmlAccountingLine.getOrgRefId(), logErrorMessage)) {
             if (validateOrgRefId(defaultAccountDto.getKfsOrgRefId(), logErrorMessage)) {
                 xmlAccountingLine.setOrgRefId(defaultAccountDto.getKfsOrgRefId());
+            } else {
+                xmlAccountingLine.setOrgRefId(StringUtils.EMPTY);
             }
         }
     }
