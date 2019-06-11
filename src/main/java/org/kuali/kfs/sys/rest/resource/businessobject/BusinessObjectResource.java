@@ -18,14 +18,12 @@
  */
 package org.kuali.kfs.sys.rest.resource.businessobject;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountType;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectAdminService;
 import org.kuali.kfs.kns.datadictionary.EntityNotFoundException;
@@ -40,7 +38,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.rest.util.KualiMediaType;
-import org.kuali.kfs.vnd.businessobject.AddressType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kim.api.KimConstants;
@@ -70,7 +67,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -162,86 +158,23 @@ public class BusinessObjectResource {
             throw new NotFoundException();
         }
 
-        MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
-        boolean isJson = false;
-        if (requestHeaders != null && !requestHeaders.isEmpty()) {
-            List<String> contentTypeHeader = requestHeaders.get("content-type");
-            isJson = CollectionUtils.isNotEmpty(contentTypeHeader) && contentTypeHeader.get(0).equalsIgnoreCase("application/json");
+        Class<BusinessObjectBase> classForType = (Class<BusinessObjectBase>) businessObjectEntry.getBusinessObjectClass();
+        BusinessObjectAdminService adminService = getBusinessObjectDictionaryService().getBusinessObjectAdminService(
+                classForType);
+        if (adminService == null) {
+            LOG.error(businessObjectEntry.getName() + "Seems to be missing a BusinessObjectAdminService! This GET " +
+                    "operation can not be performed without a BusinessObjectAdminService.");
+            throw new InternalServerErrorException();
         }
 
-        if (isJson) {
-            try {
-                HashMap<String, String> map = new HashMap<>();
-                if (businessObjectEntry.getBusinessObjectClass().equals(AccountType.class)) {
-                    map.put("accountTypeCode", id);
-                    AccountType accountTypeClass = AccountType.class.newInstance();
-                    AccountType accountType = SpringContext.getBean(LookupDao.class).findObjectByMap(accountTypeClass, map);
-                    return gson.toJson(accountType);
-                }
-                if (businessObjectEntry.getBusinessObjectClass().equals(VendorDetail.class)) {
-                    map.put("vendorHeaderGeneratedIdentifier", id);
-                    VendorDetail clazz = VendorDetail.class.newInstance();
-                    VendorDetail vendorDetail = SpringContext.getBean(LookupDao.class).findObjectByMap(clazz, map);
-                    Properties vendorProperties = new Properties();
-                    safelyAddProperty(vendorProperties, "duns", vendorDetail.getVendorDunsNumber());
-                    safelyAddProperty(vendorProperties, "vendor_nbr", vendorDetail.getVendorNumber());
-                    safelyAddProperty(vendorProperties, "vendor_name", vendorDetail.getVendorName());
-                    vendorProperties.put("activeIndicator", vendorDetail.isActiveIndicator());
-                    addVendorRemitAddressToProperties(vendorProperties, vendorDetail);
-                    return gson.toJson(vendorProperties);
-                }
-            }
-            catch (Exception ex) {
-                LOG.error(ex);
-            }
-            return null;
-
-        } else if (headers.getAcceptableMediaTypes().contains(MediaType.APPLICATION_OCTET_STREAM_TYPE)) {
-            Class<BusinessObjectBase> classForType = (Class<BusinessObjectBase>) businessObjectEntry.getBusinessObjectClass();
-            BusinessObjectAdminService adminService = getBusinessObjectDictionaryService().getBusinessObjectAdminService(
-                    classForType);
-            if (adminService == null) {
-                LOG.error(businessObjectEntry.getName() + "Seems to be missing a BusinessObjectAdminService! This GET " +
-                        "operation can not be performed without a BusinessObjectAdminService.");
-                throw new InternalServerErrorException();
-            }
-
+        List<MediaType> acceptTypes = headers.getAcceptableMediaTypes();
+        if (acceptTypes.contains(MediaType.APPLICATION_OCTET_STREAM_TYPE)) {
             return fileForBusinessObject(businessObjectEntry.getName(), id, adminService);
         } else {
             // this is surely gonna change as we add more support.
             throw new NotSupportedException(
                     gson.toJson("Only " + MediaType.APPLICATION_OCTET_STREAM + " is accepted at this time."));
         }
-    }
-
-    private void safelyAddProperty(Properties properties, String key, String value) {
-        String safeValue = value;
-        if (StringUtils.isBlank(value)) {
-            safeValue = "";
-        }
-        properties.put(key, safeValue);
-    }
-
-    private void addVendorRemitAddressToProperties(Properties vendorProperties, VendorDetail vendorDetail) {
-        List<VendorAddress> vendorAddresses = vendorDetail.getVendorAddresses();
-        if (CollectionUtils.isNotEmpty(vendorAddresses)) {
-            VendorAddress vendorAddress = getVendorAddress(vendorDetail.getVendorAddresses());
-            safelyAddProperty(vendorProperties, "email", vendorAddress.getVendorAddressEmailAddress());
-            safelyAddProperty(vendorProperties, "address_line1", vendorAddress.getVendorLine1Address());
-            safelyAddProperty(vendorProperties, "address_line2", vendorAddress.getVendorLine2Address());
-            safelyAddProperty(vendorProperties, "state", vendorAddress.getVendorStateCode());
-            safelyAddProperty(vendorProperties, "zipcode", vendorAddress.getVendorZipCode());
-            safelyAddProperty(vendorProperties, "country", vendorAddress.getVendorCountryCode());
-        }
-    }
-
-    private VendorAddress getVendorAddress(List<VendorAddress> vendorAddresses) {
-        for (VendorAddress address : vendorAddresses) {
-            if (address.getVendorAddressType().getVendorAddressTypeCode().equalsIgnoreCase("RM")) {
-                return address;
-            }
-        }
-        return vendorAddresses.get(0);
     }
 
     @DELETE
@@ -368,5 +301,76 @@ public class BusinessObjectResource {
 
     protected void setPermissionService(PermissionService permissionService) {
         this.permissionService = permissionService;
+    }
+
+    /* Cornell Customization for eInvoice */
+    @GET
+    @Path("einvoice/{businessObjectName}/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Object getVendorForEinvoice(@PathParam("businessObjectName") BusinessObjectEntry businessObjectEntry,
+                                       @PathParam("id") String id, @Context HttpHeaders headers) {
+        if (businessObjectEntry == null) {
+            throw new NotFoundException();
+        }
+
+        try {
+            HashMap<String, String> map = new HashMap<>();
+            if (businessObjectEntry.getBusinessObjectClass().equals(AccountType.class)) {
+                map.put("accountTypeCode", id);
+                AccountType accountTypeClass = AccountType.class.newInstance();
+                AccountType accountType = SpringContext.getBean(LookupDao.class).findObjectByMap(accountTypeClass, map);
+                return gson.toJson(accountType);
+            }
+            if (businessObjectEntry.getBusinessObjectClass().equals(VendorDetail.class)) {
+                map.put("vendorHeaderGeneratedIdentifier", id);
+                VendorDetail clazz = VendorDetail.class.newInstance();
+                VendorDetail vendorDetail = SpringContext.getBean(LookupDao.class).findObjectByMap(clazz, map);
+                if (vendorDetail != null) {
+                    Properties vendorProperties = new Properties();
+                    safelyAddProperty(vendorProperties, "duns", vendorDetail.getVendorDunsNumber());
+                    safelyAddProperty(vendorProperties, "vendor_nbr", vendorDetail.getVendorNumber());
+                    safelyAddProperty(vendorProperties, "vendor_name", vendorDetail.getVendorName());
+                    vendorProperties.put("activeIndicator", vendorDetail.isActiveIndicator());
+                    addVendorRemitAddressToProperties(vendorProperties, vendorDetail);
+                    return gson.toJson(vendorProperties);
+                }
+            }
+        }
+        catch (Exception ex) {
+            LOG.error(ex);
+        }
+
+        throw new NotSupportedException(gson.toJson(businessObjectEntry.getName() + " is not supported at this time."));
+    }
+
+    private void safelyAddProperty(Properties properties, String key, String value) {
+        String safeValue = value;
+        if (StringUtils.isBlank(value)) {
+            safeValue = "";
+        }
+        properties.put(key, safeValue);
+    }
+
+    private void addVendorRemitAddressToProperties(Properties vendorProperties, VendorDetail vendorDetail) {
+        List<VendorAddress> vendorAddresses = vendorDetail.getVendorAddresses();
+        if (CollectionUtils.isNotEmpty(vendorAddresses)) {
+            VendorAddress vendorAddress = getVendorAddress(vendorDetail.getVendorAddresses());
+            safelyAddProperty(vendorProperties, "email", vendorAddress.getVendorAddressEmailAddress());
+            safelyAddProperty(vendorProperties, "address_line1", vendorAddress.getVendorLine1Address());
+            safelyAddProperty(vendorProperties, "address_line2", vendorAddress.getVendorLine2Address());
+            safelyAddProperty(vendorProperties, "state", vendorAddress.getVendorStateCode());
+            safelyAddProperty(vendorProperties, "zipcode", vendorAddress.getVendorZipCode());
+            safelyAddProperty(vendorProperties, "country", vendorAddress.getVendorCountryCode());
+            safelyAddProperty(vendorProperties, "address_type_code", vendorAddress.getVendorAddressTypeCode());
+        }
+    }
+
+    private VendorAddress getVendorAddress(List<VendorAddress> vendorAddresses) {
+        for (VendorAddress address : vendorAddresses) {
+            if (address.getVendorAddressType().getVendorAddressTypeCode().equalsIgnoreCase("RM")) {
+                return address;
+            }
+        }
+        return vendorAddresses.get(0);
     }
 }
