@@ -1,16 +1,17 @@
 package edu.cornell.kfs.module.ld.businessobject.options;
 
+import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.krad.valuefinder.ValueFinder;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class LaborLedgerBatchFileDirectoryPathFinder implements ValueFinder {
+public class LaborLedgerBatchFileDirectoryPathFinder implements DefaultValueFinder {
 
     /**
      * @see org.kuali.kfs.kns.lookup.valueFinder.ValueFinder#getValue()
      */
-    public String getValue() {
+    @Override
+    public String getDefaultValue() {
         // KualiConfigurationService kualiConfigurationService = SpringContext.getBean(KualiConfigurationService.class);
         // String configProperty =
         // kualiConfigurationService.getPropertyString(KFSConstants.BATCH_FILE_LOOKUP_ROOT_DIRECTORIES);
