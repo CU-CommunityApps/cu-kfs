@@ -305,7 +305,7 @@ public class BusinessObjectResource {
 
     /* Cornell Customization for eInvoice */
     @GET
-    @Path("einvoice/{businessObjectName}/{id}")
+    @Path("einvoice/vendors/{businessObjectName}/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Object getVendorForEinvoice(@PathParam("businessObjectName") BusinessObjectEntry businessObjectEntry,
                                        @PathParam("id") String id, @Context HttpHeaders headers) {
@@ -315,26 +315,41 @@ public class BusinessObjectResource {
 
         try {
             HashMap<String, String> map = new HashMap<>();
-            if (businessObjectEntry.getBusinessObjectClass().equals(AccountType.class)) {
-                map.put("accountTypeCode", id);
-                AccountType accountTypeClass = AccountType.class.newInstance();
-                AccountType accountType = SpringContext.getBean(LookupDao.class).findObjectByMap(accountTypeClass, map);
-                return gson.toJson(accountType);
+            map.put("vendorHeaderGeneratedIdentifier", id);
+            VendorDetail clazz = VendorDetail.class.newInstance();
+            VendorDetail vendorDetail = SpringContext.getBean(LookupDao.class).findObjectByMap(clazz, map);
+
+            if (vendorDetail != null) {
+                Properties vendorProperties = new Properties();
+                safelyAddProperty(vendorProperties, "duns", vendorDetail.getVendorDunsNumber());
+                safelyAddProperty(vendorProperties, "vendor_nbr", vendorDetail.getVendorNumber());
+                safelyAddProperty(vendorProperties, "vendor_name", vendorDetail.getVendorName());
+                vendorProperties.put("activeIndicator", vendorDetail.isActiveIndicator());
+                addVendorRemitAddressToProperties(vendorProperties, vendorDetail);
+                return gson.toJson(vendorProperties);
             }
-            if (businessObjectEntry.getBusinessObjectClass().equals(VendorDetail.class)) {
-                map.put("vendorHeaderGeneratedIdentifier", id);
-                VendorDetail clazz = VendorDetail.class.newInstance();
-                VendorDetail vendorDetail = SpringContext.getBean(LookupDao.class).findObjectByMap(clazz, map);
-                if (vendorDetail != null) {
-                    Properties vendorProperties = new Properties();
-                    safelyAddProperty(vendorProperties, "duns", vendorDetail.getVendorDunsNumber());
-                    safelyAddProperty(vendorProperties, "vendor_nbr", vendorDetail.getVendorNumber());
-                    safelyAddProperty(vendorProperties, "vendor_name", vendorDetail.getVendorName());
-                    vendorProperties.put("activeIndicator", vendorDetail.isActiveIndicator());
-                    addVendorRemitAddressToProperties(vendorProperties, vendorDetail);
-                    return gson.toJson(vendorProperties);
-                }
-            }
+        }
+        catch (Exception ex) {
+            LOG.error(ex);
+        }
+
+        throw new NotSupportedException(gson.toJson(businessObjectEntry.getName() + " is not supported at this time."));
+    }
+    @GET
+    @Path("einvoice/po/{businessObjectName}/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Object getPurchaseOrderForEinvoice(@PathParam("businessObjectName") BusinessObjectEntry businessObjectEntry,
+                                       @PathParam("id") String id, @Context HttpHeaders headers) {
+        if (businessObjectEntry == null) {
+            throw new NotFoundException();
+        }
+
+        try {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("accountTypeCode", id);
+            AccountType accountTypeClass = AccountType.class.newInstance();
+            AccountType accountType = SpringContext.getBean(LookupDao.class).findObjectByMap(accountTypeClass, map);
+            return gson.toJson(accountType);
         }
         catch (Exception ex) {
             LOG.error(ex);

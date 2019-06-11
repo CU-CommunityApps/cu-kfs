@@ -39,17 +39,4 @@
     <property name="name" value="extension.vendorLocale"/>
   </bean>
 
-    <bean id="vendorDetailLookupSearchService"
-          class="org.kuali.kfs.sys.businessobject.lookup.VendorLookupSearchServiceImpl"
-          parent="defaultLookupSearchService"
-          p:lookupDao-ref="lookupDao"
-          p:businessObjectAdminService-ref="defaultBoAdminService"
-          p:businessObjectMetaDataService-ref="businessObjectMetaDataService"
-          p:dataDictionaryService-ref="dataDictionaryService" />
-
-    <bean
-        id="VendorDetail-lookupDefinition"
-        parent="VendorDetail-lookupDefinition-parentBean"
-        p:lookupSearchService-ref="vendorDetailLookupSearchService" />
-
 </beans>
