@@ -9,7 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 
@@ -346,5 +347,10 @@ public class AccountingXmlDocumentAccountingLine {
         return Objects.hash(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId, lineDescription, amount,
                 baseAmount, month01Amount, month02Amount, month03Amount, month04Amount, month05Amount, month06Amount, month07Amount,
                 month08Amount, month09Amount, month10Amount, month11Amount, month12Amount, debitAmount, creditAmount);
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
