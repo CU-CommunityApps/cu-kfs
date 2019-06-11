@@ -39,4 +39,5 @@
     <property name="name" value="extension.vendorLocale"/>
   </bean>
 
+
 </beans>
