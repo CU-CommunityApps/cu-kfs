@@ -36,6 +36,7 @@ import org.kuali.kfs.krad.exception.AuthorizationException;
 import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.rest.util.KualiMediaType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -305,19 +306,14 @@ public class BusinessObjectResource {
 
     /* Cornell Customization for eInvoice */
     @GET
-    @Path("einvoice/vendors/{businessObjectName}/{id}")
+    @Path("einvoice/vendors/{vendorHeaderGeneratedIdentifier}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Object getVendorForEinvoice(@PathParam("businessObjectName") BusinessObjectEntry businessObjectEntry,
-                                       @PathParam("id") String id, @Context HttpHeaders headers) {
-        if (businessObjectEntry == null) {
-            throw new NotFoundException();
-        }
-
+    public Object getVendorForEinvoice(@PathParam("vendorHeaderGeneratedIdentifier") String vendorHeaderGeneratedIdentifier,
+                                       @Context HttpHeaders headers) {
         try {
             HashMap<String, String> map = new HashMap<>();
-            map.put("vendorHeaderGeneratedIdentifier", id);
-            VendorDetail clazz = VendorDetail.class.newInstance();
-            VendorDetail vendorDetail = SpringContext.getBean(LookupDao.class).findObjectByMap(clazz, map);
+            map.put("vendorHeaderGeneratedIdentifier", vendorHeaderGeneratedIdentifier);
+            VendorDetail vendorDetail = SpringContext.getBean(LookupDao.class).findObjectByMap(VendorDetail.class.newInstance(), map);
 
             if (vendorDetail != null) {
                 Properties vendorProperties = new Properties();
@@ -328,34 +324,31 @@ public class BusinessObjectResource {
                 addVendorRemitAddressToProperties(vendorProperties, vendorDetail);
                 return gson.toJson(vendorProperties);
             }
+            else {
+                String message = "Vendor not found";
+                return gson.toJson(message);
+            }
         }
         catch (Exception ex) {
             LOG.error(ex);
+            return gson.toJson(ex);
         }
-
-        throw new NotSupportedException(gson.toJson(businessObjectEntry.getName() + " is not supported at this time."));
     }
-    @GET
-    @Path("einvoice/po/{businessObjectName}/{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Object getPurchaseOrderForEinvoice(@PathParam("businessObjectName") BusinessObjectEntry businessObjectEntry,
-                                       @PathParam("id") String id, @Context HttpHeaders headers) {
-        if (businessObjectEntry == null) {
-            throw new NotFoundException();
-        }
 
+    @GET
+    @Path("einvoice/po/{purapDocumentIdentifier}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Object getPurchaseOrderForEinvoice(@PathParam("purapDocumentIdentifier") String purapDocumentIdentifier, @Context HttpHeaders headers) {
         try {
             HashMap<String, String> map = new HashMap<>();
-            map.put("accountTypeCode", id);
-            AccountType accountTypeClass = AccountType.class.newInstance();
-            AccountType accountType = SpringContext.getBean(LookupDao.class).findObjectByMap(accountTypeClass, map);
-            return gson.toJson(accountType);
+            map.put("purapDocumentIdentifier", purapDocumentIdentifier);
+            PurchaseOrderDocument purchaseOrderDocument = SpringContext.getBean(LookupDao.class).findObjectByMap(PurchaseOrderDocument.class.newInstance(), map);
+            return gson.toJson(purchaseOrderDocument);
         }
         catch (Exception ex) {
             LOG.error(ex);
+            return gson.toJson(ex);
         }
-
-        throw new NotSupportedException(gson.toJson(businessObjectEntry.getName() + " is not supported at this time."));
     }
 
     private void safelyAddProperty(Properties properties, String key, String value) {
