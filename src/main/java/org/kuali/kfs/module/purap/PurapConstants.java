@@ -1182,8 +1182,8 @@ public final class PurapConstants {
         public static String SHIPPING_DESCRIPTION = "Electronic Invoice Shipping";
         public static String DEFAULT_BELOW_LINE_ITEM_DESCRIPTION = "Electronically entered amount";
 
-        public final static String DEFAULT_SHIPPING_DESCRIPTION = "Shipping";
-        public final static String DEFAULT_SPECIAL_HANDLING_DESCRIPTION = "Handling";
+        public static final String DEFAULT_SHIPPING_DESCRIPTION = "Shipping";
+        public static final String DEFAULT_SPECIAL_HANDLING_DESCRIPTION = "Handling";
 
         public static String CXML_ADDRESS_SHIP_TO_ROLE_ID = "shipTo";
         public static String CXML_ADDRESS_BILL_TO_ROLE_ID = "billTo";
@@ -1197,71 +1197,71 @@ public final class PurapConstants {
         /**
          * Here is a list of reject reason type codes
          */
-        public final static String DUNS_INVALID = "INDU";
-        public final static String INVOICE_ID_EMPTY = "IIDE";
-        public final static String INVOICE_DATE_GREATER = "IDAG";
-        public final static String INVOICE_DATE_INVALID = "IDIV";
-        public final static String INFORMATION_ONLY = "INFO";
-        public final static String FILE_FORMAT_INVALID = "INFF";
-        public final static String HEADER_INVOICE_IND_ON = "HIIO";
-        public final static String INVOICE_ORDERS_NOT_FOUND = "NOIV";
-        public final static String DUNS_NOT_FOUND = "NODU";
-        public final static String ITEM_MAPPING_NOT_AVAILABLE = "IMNA";
-        public final static String DISCOUNT_SUMMARY_AMT_MISMATCH = "DSAM";
-        public final static String SPL_HANDLING_SUMMARY_AMT_MISMATCH = "SSAM";
-        public final static String SHIPPING_SUMMARY_AMT_MISMATCH = "SHSA";
-        public final static String ITEM_TYPE_NAME_NOT_AVAILABLE = "ITNA";
-        public final static String INVALID_NUMBER_FORMAT = "NFEX";
-        public final static String PO_ID_EMPTY = "POIE";
-        public final static String PO_ID_INVALID_FORMAT = "POII";
-        public final static String PO_NOT_EXISTS = "PONE";
-        public final static String PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR = "PVNM";
-        public final static String PO_NOT_OPEN = "PONO";
-        public final static String NO_MATCHING_PO_ITEM = "IMLI";
-        public final static String DUPLIATE_INVOICE_LINE_ITEM = "ICSL";
-        public final static String INACTIVE_LINE_ITEM = "ILIA";
-        public final static String CATALOG_NUMBER_MISMATCH = "IICN";
-        public final static String UNIT_OF_MEASURE_MISMATCH = "IUOM";
-        public final static String OUTSTANDING_ENCUMBERED_QTY_AVAILABLE = "UEOQ";
-        public final static String INVOICE_QTY_EMPTY = "IIQE";
-        public final static String PO_ITEM_QTY_LESSTHAN_INVOICE_ITEM_QTY = "PILI";
-        public final static String OUTSTANDING_ENCUMBERED_AMT_AVAILABLE = "UEAA";
-        public final static String PO_ITEM_AMT_LESSTHAN_INVOICE_ITEM_AMT = "PAIA";
-        public final static String PO_COST_SOURCE_EMPTY = "CSEM";
-        public final static String INVOICE_AMT_GREATER_THAN_UPPER_VARIANCE = "AGUV";
-        public final static String INVOICE_AMT_LESSER_THAN_LOWER_VARIANCE = "ALLV";
-        public final static String SALES_TAX_AMT_LESSER_THAN_LOWER_VARIANCE = "STLV";
-        public final static String SALES_TAX_AMT_GREATER_THAN_UPPER_VARIANCE = "STUV";
-        public final static String TAX_SUMMARY_AMT_EXISTS = "STNV";
-        public final static String TAX_SUMMARY_AMT_MISMATCH = "TSAM";
-        public final static String INVOICE_ORDER_DUPLICATE = "EIDU";
+        public static final String DUNS_INVALID = "INDU";
+        public static final String INVOICE_ID_EMPTY = "IIDE";
+        public static final String INVOICE_DATE_GREATER = "IDAG";
+        public static final String INVOICE_DATE_INVALID = "IDIV";
+        public static final String INFORMATION_ONLY = "INFO";
+        public static final String FILE_FORMAT_INVALID = "INFF";
+        public static final String HEADER_INVOICE_IND_ON = "HIIO";
+        public static final String INVOICE_ORDERS_NOT_FOUND = "NOIV";
+        public static final String DUNS_NOT_FOUND = "NODU";
+        public static final String ITEM_MAPPING_NOT_AVAILABLE = "IMNA";
+        public static final String DISCOUNT_SUMMARY_AMT_MISMATCH = "DSAM";
+        public static final String SPL_HANDLING_SUMMARY_AMT_MISMATCH = "SSAM";
+        public static final String SHIPPING_SUMMARY_AMT_MISMATCH = "SHSA";
+        public static final String ITEM_TYPE_NAME_NOT_AVAILABLE = "ITNA";
+        public static final String INVALID_NUMBER_FORMAT = "NFEX";
+        public static final String PO_ID_EMPTY = "POIE";
+        public static final String PO_ID_INVALID_FORMAT = "POII";
+        public static final String PO_NOT_EXISTS = "PONE";
+        public static final String PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR = "PVNM";
+        public static final String PO_NOT_OPEN = "PONO";
+        public static final String NO_MATCHING_PO_ITEM = "IMLI";
+        public static final String DUPLIATE_INVOICE_LINE_ITEM = "ICSL";
+        public static final String INACTIVE_LINE_ITEM = "ILIA";
+        public static final String CATALOG_NUMBER_MISMATCH = "IICN";
+        public static final String UNIT_OF_MEASURE_MISMATCH = "IUOM";
+        public static final String OUTSTANDING_ENCUMBERED_QTY_AVAILABLE = "UEOQ";
+        public static final String INVOICE_QTY_EMPTY = "IIQE";
+        public static final String PO_ITEM_QTY_LESSTHAN_INVOICE_ITEM_QTY = "PILI";
+        public static final String OUTSTANDING_ENCUMBERED_AMT_AVAILABLE = "UEAA";
+        public static final String PO_ITEM_AMT_LESSTHAN_INVOICE_ITEM_AMT = "PAIA";
+        public static final String PO_COST_SOURCE_EMPTY = "CSEM";
+        public static final String INVOICE_AMT_GREATER_THAN_UPPER_VARIANCE = "AGUV";
+        public static final String INVOICE_AMT_LESSER_THAN_LOWER_VARIANCE = "ALLV";
+        public static final String SALES_TAX_AMT_LESSER_THAN_LOWER_VARIANCE = "STLV";
+        public static final String SALES_TAX_AMT_GREATER_THAN_UPPER_VARIANCE = "STUV";
+        public static final String TAX_SUMMARY_AMT_EXISTS = "STNV";
+        public static final String TAX_SUMMARY_AMT_MISMATCH = "TSAM";
+        public static final String INVOICE_ORDER_DUPLICATE = "EIDU";
 
-        public final static String PREQ_WORKLOW_EXCEPTION = "PRWE";
-        public final static String PREQ_DISCOUNT_ERROR = "PRDE";
-        public final static String PREQ_ROUTING_FAILURE = "PRRF";
-        public final static String PREQ_ROUTING_VALIDATION_ERROR = "PRVE";
-        public final static String ERROR_ADDING_SCHEMA = "EASC";
+        public static final String PREQ_WORKLOW_EXCEPTION = "PRWE";
+        public static final String PREQ_DISCOUNT_ERROR = "PRDE";
+        public static final String PREQ_ROUTING_FAILURE = "PRRF";
+        public static final String PREQ_ROUTING_VALIDATION_ERROR = "PRVE";
+        public static final String ERROR_ADDING_SCHEMA = "EASC";
 
 
         public static class RejectDocumentFields{
-            public final static String INVOICE_FILE_NUMBER = "invoiceFileNumber";
-            public final static String INVOICE_FILE_DATE = "invoiceFileDate";
+            public static final String INVOICE_FILE_NUMBER = "invoiceFileNumber";
+            public static final String INVOICE_FILE_DATE = "invoiceFileDate";
 
             //VendorID?
 
-            public final static String VENDOR_DUNS_NUMBER = "vendorDunsNumber";
-            public final static String INVOICE_PO_ID = "invoiceOrderPurchaseOrderIdentifier";
-            public final static String INVOICE_ITEM_LINE_NUMBER = "invoiceItemLineNumber";
-            public final static String INVOICE_ITEM_QUANTITY = "invoiceItemQuantity";
-            public final static String INVOICE_ITEM_UOM = "invoiceItemUnitOfMeasureCode";
-            public final static String INVOICE_ITEM_CATALOG_NUMBER = "invoiceItemCatalogNumber";
-            public final static String INVOICE_ITEM_UNIT_PRICE = "invoiceItemUnitPrice";
-            public final static String INVOICE_ITEM_SUBTOTAL_MAT = "invoiceItemSubTotalAmount";
-            public final static String INVOICE_ITEM_TAX_AMT = "invoiceItemTaxAmount";
-            public final static String INVOICE_ITEM_SPL_HANDLING_AMT = "invoiceItemSpecialHandlingAmount";
-            public final static String INVOICE_ITEM_SHIPPING_AMT = "invoiceItemShippingAmount";
-            public final static String INVOICE_ITEM_DISCOUNT_AMT = "invoiceItemDiscountAmount";
-            public final static String INVOICE_ITEM_NET_AMT = "invoiceItemNetAmount";
+            public static final String VENDOR_DUNS_NUMBER = "vendorDunsNumber";
+            public static final String INVOICE_PO_ID = "invoiceOrderPurchaseOrderIdentifier";
+            public static final String INVOICE_ITEM_LINE_NUMBER = "invoiceItemLineNumber";
+            public static final String INVOICE_ITEM_QUANTITY = "invoiceItemQuantity";
+            public static final String INVOICE_ITEM_UOM = "invoiceItemUnitOfMeasureCode";
+            public static final String INVOICE_ITEM_CATALOG_NUMBER = "invoiceItemCatalogNumber";
+            public static final String INVOICE_ITEM_UNIT_PRICE = "invoiceItemUnitPrice";
+            public static final String INVOICE_ITEM_SUBTOTAL_MAT = "invoiceItemSubTotalAmount";
+            public static final String INVOICE_ITEM_TAX_AMT = "invoiceItemTaxAmount";
+            public static final String INVOICE_ITEM_SPL_HANDLING_AMT = "invoiceItemSpecialHandlingAmount";
+            public static final String INVOICE_ITEM_SHIPPING_AMT = "invoiceItemShippingAmount";
+            public static final String INVOICE_ITEM_DISCOUNT_AMT = "invoiceItemDiscountAmount";
+            public static final String INVOICE_ITEM_NET_AMT = "invoiceItemNetAmount";
 
         }
 

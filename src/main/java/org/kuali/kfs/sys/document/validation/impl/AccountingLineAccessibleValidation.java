@@ -210,7 +210,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     /**
      * Returns the name of the accounting line group which holds the proper authorizer to do the KIM check
      *
-     * @return the name of the accouting line group to get the authorizer from
+     * @return the name of the accounting line group to get the authorizer from
      */
     protected String getGroupName() {
         return (accountingLineForValidation.isSourceAccountingLine() ? KFSConstants.SOURCE_ACCOUNTING_LINES_GROUP_NAME :
@@ -251,8 +251,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     protected String getAccountingLineCollectionProperty() {
         String propertyName;
         if (GlobalVariables.getMessageMap().getErrorPath().size() > 0) {
-            propertyName = GlobalVariables.getMessageMap().getErrorPath().get(0).replaceFirst(".*?document\\."
-                    , "");
+            propertyName = GlobalVariables.getMessageMap().getErrorPath().get(0).replaceFirst(".*?document\\.",
+                    "");
         } else {
             propertyName = accountingLineForValidation.isSourceAccountingLine() ?
                     KFSConstants.PermissionAttributeValue.SOURCE_ACCOUNTING_LINES.value :

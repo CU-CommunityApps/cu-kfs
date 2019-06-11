@@ -53,6 +53,7 @@ import java.util.List;
  * Renders the standard group header/import line.
  */
 public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
+
     private int titleCellSpan = 4;
     private int cellCount = 1;
     private AccountingLineGroupDefinition accountingLineGroupDefinition;

@@ -56,6 +56,7 @@ import java.util.Set;
  */
 @Transactional
 public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtractionService {
+
     private static final Logger LOG = LogManager.getLogger(PaymentSourceExtractionServiceImpl.class);
 
     protected DateTimeService dateTimeService;
@@ -71,11 +72,10 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     boolean testMode = false;
 
     /**
-     * This method extracts all payments from a disbursement voucher with a status code of "A" and uploads them as a batch for
-     * processing.
+     * This method extracts all payments from a disbursement voucher with a status code of "A" and uploads them as a
+     * batch for processing.
      *
      * @return Always returns true if the method completes.
-     * @see org.kuali.kfs.fp.batch.service.DisbursementVoucherExtractService#extractPayments()
      */
     @Override
     public boolean extractPayments() {
@@ -84,8 +84,9 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         }
         final Date processRunDate = dateTimeService.getCurrentDate();
 
-        final Principal uuser = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
-        if (uuser == null) {
+        final Principal user = KimApiServiceLocator.getIdentityService()
+                .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
+        if (user == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("extractPayments() Unable to find user " + KFSConstants.SYSTEM_USER);
             }
@@ -93,12 +94,14 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         }
 
         // Get a list of campuses that have documents with an 'A' (approved) status.
-        Map<String, List<PaymentSource>> campusListMap = paymentSourceToExtractService.retrievePaymentSourcesByCampus(false);
+        Map<String, List<PaymentSource>> campusListMap = paymentSourceToExtractService
+                .retrievePaymentSourcesByCampus(false);
 
         if (campusListMap != null && !campusListMap.isEmpty()) {
             // Process each campus one at a time
             for (String campusCode : campusListMap.keySet()) {
-                extractPaymentsForCampus(campusCode, uuser.getPrincipalId(), processRunDate, campusListMap.get(campusCode));
+                extractPaymentsForCampus(campusCode, user.getPrincipalId(), processRunDate,
+                        campusListMap.get(campusCode));
             }
         }
 
@@ -106,9 +109,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     }
 
     /**
-     * Pulls all disbursement vouchers with status of "A" and marked for immediate payment from the database and builds payment records for them
-     *
-     * @see org.kuali.kfs.fp.batch.service.DisbursementVoucherExtractService#extractImmediatePayments()
+     * Pulls all disbursement vouchers with status of "A" and marked for immediate payment from the database and
+     * builds payment records for them
      */
     @Override
     public void extractImmediatePayments() {
@@ -116,35 +118,39 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
             LOG.debug("extractImmediatePayments() started");
         }
         final Date processRunDate = dateTimeService.getCurrentDate();
-        final Principal uuser = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
+        final Principal uuser = KimApiServiceLocator.getIdentityService()
+                .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
         if (uuser == null) {
             LOG.debug("extractPayments() Unable to find user " + KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
         }
 
         // Get a list of campuses that have documents with an 'A' (approved) status.
-        Map<String, List<PaymentSource>> documentsByCampus = paymentSourceToExtractService.retrievePaymentSourcesByCampus(true);
+        Map<String, List<PaymentSource>> documentsByCampus = paymentSourceToExtractService
+                .retrievePaymentSourcesByCampus(true);
         // Process each campus one at a time
         for (String campusCode : documentsByCampus.keySet()) {
-            extractImmediatePaymentsForCampus(campusCode, uuser.getPrincipalId(), processRunDate, documentsByCampus.get(campusCode));
+            extractImmediatePaymentsForCampus(campusCode, uuser.getPrincipalId(), processRunDate,
+                    documentsByCampus.get(campusCode));
         }
     }
 
     /**
-     * This method extracts all outstanding payments from all the disbursement vouchers in approved status for a given campus and
-     * adds these payments to a batch file that is uploaded for processing.
+     * This method extracts all outstanding payments from all the disbursement vouchers in approved status for a given
+     * campus and adds these payments to a batch file that is uploaded for processing.
      *
      * @param campusCode     The id code of the campus the payments will be retrieved for.
-     * @param user           The user object used when creating the batch file to upload with outstanding payments.
+     * @param principalId    The user object used when creating the batch file to upload with outstanding payments.
      * @param processRunDate This is the date that the batch file is created, often this value will be today's date.
      */
-    protected void extractPaymentsForCampus(String campusCode, String principalId, Date processRunDate, List<? extends PaymentSource> documents) {
+    protected void extractPaymentsForCampus(String campusCode, String principalId, Date processRunDate,
+            List<? extends PaymentSource> documents) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("extractPaymentsForCampus() started for campus: " + campusCode);
         }
 
         Batch batch = createBatch(campusCode, principalId, processRunDate);
-        Integer count = 0;
+        int count = 0;
         KualiDecimal totalAmount = KualiDecimal.ZERO;
 
         for (PaymentSource document : documents) {
@@ -166,17 +172,16 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      * Builds payment batch for Disbursement Vouchers marked as immediate
      *
      * @param campusCode     the campus code the disbursement vouchers should be associated with
-     * @param user           the user responsible building the payment batch (typically the System User, kfs)
+     * @param principalId    the user responsible building the payment batch (typically the System User, kfs)
      * @param processRunDate the time that the job to build immediate payments is run
      */
-    protected void extractImmediatePaymentsForCampus(String campusCode, String principalId, Date processRunDate, List<? extends PaymentSource> documents) {
-        LOG.debug("extractImmediatesPaymentsForCampus() started for campus: " + campusCode);
+    protected void extractImmediatePaymentsForCampus(String campusCode, String principalId, Date processRunDate,
+            List<? extends PaymentSource> documents) {
+        LOG.debug("extractImmediatePaymentsForCampus() started for campus: " + campusCode);
 
         if (!documents.isEmpty()) {
-            final PaymentSource firstPaymentSource = documents.get(0);
-
             Batch batch = createBatch(campusCode, principalId, processRunDate);
-            Integer count = 0;
+            int count = 0;
             KualiDecimal totalAmount = KualiDecimal.ZERO;
 
             for (PaymentSource document : documents) {
@@ -196,7 +201,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     }
 
     /**
-     * This method creates a payment group from the disbursement voucher and batch provided and persists that group to the database.
+     * This method creates a payment group from the disbursement voucher and batch provided and persists that group
+     * to the database.
      *
      * @param document       The document used to build a payment group detail.
      * @param batch          The batch file used to build a payment group and detail.
@@ -207,7 +213,9 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
         final java.sql.Date sqlProcessRunDate = new java.sql.Date(processRunDate.getTime());
         PaymentGroup pg = getPaymentSourceToExtractService().createPaymentGroup(document, sqlProcessRunDate);
-        if (pg != null) { // the payment source returned null instead of a PaymentGroup?  I guess it didn't want to be paid for some reason (for instance, a 0 amount document or doc which didn't have a travel advance, etc)
+        // the payment source returned null instead of a PaymentGroup?  I guess it didn't want to be paid for some
+        // reason (for instance, a 0 amount document or doc which didn't have a travel advance, etc)
+        if (pg != null) {
             pg.setBatch(batch);
             // KFSUPGEADE-973 : Cu mods
             // TODO : override this method may not work. because 'testMode' is  package private.  call super.addPayment will not return pg.
@@ -237,9 +245,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      * This method creates a Batch instance and populates it with the information provided.
      *
      * @param campusCode     The campus code used to retrieve a customer profile to be set on the batch.
-     * @param orgCode        the organization code used to retrieve a customer profile to be set on the batch.
-     * @param subUnitCode    the sub-unit code used to retrieve a customer profile to be set on the batch.
-     * @param user           The user who submitted the batch.
+     * @param principalId    The user who submitted the batch.
      * @param processRunDate The date the batch was submitted and the date the customer profile was generated.
      * @return A fully populated batch instance.
      */
@@ -248,7 +254,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         final String subUnitCode = getPaymentSourceToExtractService().getPreDisbursementCustomerProfileSubUnit();
         CustomerProfile customer = customerProfileService.get(campusCode, orgCode, subUnitCode);
         if (customer == null) {
-            throw new IllegalArgumentException("Unable to find customer profile for " + campusCode + "/" + orgCode + "/" + subUnitCode);
+            throw new IllegalArgumentException("Unable to find customer profile for " + campusCode + "/" + orgCode +
+                    "/" + subUnitCode);
         }
 
         // Create the group for this campus
@@ -269,25 +276,31 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     }
 
     /**
-     * This method retrieves a list of disbursement voucher documents that are in the status provided for the campus code given.
+     * This method retrieves a list of disbursement voucher documents that are in the status provided for the campus
+     * code given.
      *
      * @param statusCode     The status of the disbursement vouchers to be retrieved.
      * @param campusCode     The campus code that the disbursement vouchers will be associated with.
      * @param immediatesOnly only retrieve Disbursement Vouchers marked for immediate payment
      * @return A collection of disbursement voucher objects that meet the search criteria given.
      */
-    protected Collection<DisbursementVoucherDocument> getListByDocumentStatusCodeCampus(String statusCode, String campusCode, boolean immediatesOnly) {
-        LOG.info("getListByDocumentStatusCodeCampus(statusCode=" + statusCode + ", campusCode=" + campusCode + ", immediatesOnly=" + immediatesOnly + ") started");
+    protected Collection<DisbursementVoucherDocument> getListByDocumentStatusCodeCampus(String statusCode,
+            String campusCode, boolean immediatesOnly) {
+        LOG.info("getListByDocumentStatusCodeCampus(statusCode=" + statusCode + ", campusCode=" + campusCode +
+                ", immediatesOnly=" + immediatesOnly + ") started");
 
-        Collection<DisbursementVoucherDocument> list = new ArrayList<DisbursementVoucherDocument>();
+        Collection<DisbursementVoucherDocument> list = new ArrayList<>();
 
         try {
-            Collection<DisbursementVoucherDocument> docs = SpringContext.getBean(FinancialSystemDocumentService.class).findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
+            Collection<DisbursementVoucherDocument> docs = SpringContext.getBean(FinancialSystemDocumentService.class)
+                    .findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
             for (DisbursementVoucherDocument element : docs) {
                 String dvdCampusCode = element.getCampusCode();
 
-                if (dvdCampusCode.equals(campusCode) && KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK.equals(element.getDisbVchrPaymentMethodCode())) {
-                    if ((immediatesOnly && element.isImmediatePaymentIndicator()) || !immediatesOnly) {
+                if (dvdCampusCode.equals(campusCode)
+                        && KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK.equals(
+                                element.getDisbVchrPaymentMethodCode())) {
+                    if (!immediatesOnly || element.isImmediatePaymentIndicator()) {
                         list.add(element);
                     }
                 }
@@ -302,8 +315,6 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
     /**
      * Extracts a single DisbursementVoucherDocument
-     *
-     * @see org.kuali.kfs.fp.batch.service.DisbursementVoucherExtractService#extractImmediatePayment(org.kuali.kfs.fp.document.DisbursementVoucherDocument)
      */
     @Override
     public void extractSingleImmediatePayment(PaymentSource paymentSource) {
@@ -312,7 +323,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         }
         if (getPaymentSourceToExtractService().shouldExtractPayment(paymentSource)) {
             final Date processRunDate = dateTimeService.getCurrentDate();
-            final Principal principal = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
+            final Principal principal = KimApiServiceLocator.getIdentityService()
+                    .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
             if (principal == null) {
                 LOG.debug("extractPayments() Unable to find user " + KFSConstants.SYSTEM_USER);
                 throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
@@ -328,74 +340,40 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
             batch.setPaymentTotalAmount(totalAmount);
 
             businessObjectService.save(batch);
-            paymentFileEmailService.sendPaymentSourceImmediateExtractEmail(paymentSource, getPaymentSourceToExtractService().getImmediateExtractEMailFromAddress(), getPaymentSourceToExtractService().getImmediateExtractEmailToAddresses());
+            paymentFileEmailService.sendPaymentSourceImmediateExtractEmail(paymentSource,
+                    getPaymentSourceToExtractService().getImmediateExtractEMailFromAddress(),
+                    getPaymentSourceToExtractService().getImmediateExtractEmailToAddresses());
         }
     }
 
-    /**
-     * This method sets the dateTimeService instance.
-     *
-     * @param dateTimeService The DateTimeService to be set.
-     */
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    /**
-     * This method sets the customerProfileService instance.
-     *
-     * @param customerProfileService The CustomerProfileService to be set.
-     */
     public void setCustomerProfileService(CustomerProfileService customerProfileService) {
         this.customerProfileService = customerProfileService;
     }
 
-    /**
-     * Sets the businessObjectService attribute value.
-     *
-     * @param businessObjectService The businessObjectService to set.
-     */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    /**
-     * Sets the paymentFileEmailService attribute value.
-     *
-     * @param paymentFileEmailService The paymentFileEmailService to set.
-     */
     public void setPaymentFileEmailService(PdpEmailService paymentFileEmailService) {
         this.paymentFileEmailService = paymentFileEmailService;
     }
 
-    /**
-     * @return the injected implementation of the PaymentSourceToExtractService
-     */
     public PaymentSourceToExtractService<PaymentSource> getPaymentSourceToExtractService() {
         return this.paymentSourceToExtractService;
     }
 
-    /**
-     * Sets the paymentSourceToExtractService so that PaymentSources can be run through the extraction process
-     *
-     * @param paymentSourceToExtractService the paymentSourceToExtractService implementation to use
-     */
     public void setPaymentSourceToExtractService(PaymentSourceToExtractService<PaymentSource> paymentSourceToExtractService) {
         this.paymentSourceToExtractService = paymentSourceToExtractService;
     }
 
-    /**
-     * @return an implementation of the DocumentService
-     */
     public DocumentService getDocumentService() {
         return documentService;
     }
 
-    /**
-     * Sets the implementation of the DocumentService for this service to use
-     *
-     * @param parameterService an implementation of DocumentService
-     */
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
     }
