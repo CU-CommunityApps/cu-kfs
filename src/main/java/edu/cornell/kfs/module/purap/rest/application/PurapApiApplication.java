@@ -1,18 +1,24 @@
 package edu.cornell.kfs.module.purap.rest.application;
 
 import edu.cornell.kfs.module.purap.rest.resource.EinvoiceApiResource;
-import org.kuali.kfs.sys.rest.application.BaseApiApplication;
-import org.kuali.kfs.sys.rest.filter.AcceptHeaderContainerRequestFilter;
-import org.kuali.kfs.sys.rest.resource.AuthenticationResource;
 
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
 
 @ApplicationPath("purap/api/v1")
-public class PurapApiApplication extends BaseApiApplication {
+public class PurapApiApplication extends Application {
+
+    private Set<Object> singletons = new HashSet<>();
 
     public PurapApiApplication() {
-        addSingleton(new AuthenticationResource());
-        addSingleton(new EinvoiceApiResource());
-        addClass(AcceptHeaderContainerRequestFilter.class);
+        singletons.add(new EinvoiceApiResource());
     }
+
+    @Override
+    public Set<Object> getSingletons() {
+        return singletons;
+    }
+
 }
