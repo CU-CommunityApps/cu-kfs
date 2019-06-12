@@ -222,4 +222,17 @@ public class CUPurapConstants {
     public static final String I_WANT_DOC_FEED_FILE_PREFIX = "purap_iwantdoc_";
     public static final String I_WANT_DOC_FEED_FILE_TYPE_INDENTIFIER = "iWantDocumentInputFileType";
 
+    //eInvoice
+    public static final String OBJECT_NOT_FOUND = "Object not found";
+    public static final String ERROR = "error";
+    public static final String DUNS = "duns";
+    public static final String DOCUMENT_NUMBER = "document_number";
+    public static final String DOCUMENT_STATUS = "document_status";
+    public static final String EMAIL = "email";
+    public static final String ADDRESS_LINE1 = "address_line1";
+    public static final String ADDRESS_LINE2 = "address_line2";
+    public static final String STATE = "state";
+    public static final String ZIPCODE = "zipcode";
+    public static final String COUNTRY = "country";
+    public static final String ADDRESS_TYPE_CODE = "address_type_code";
 }
