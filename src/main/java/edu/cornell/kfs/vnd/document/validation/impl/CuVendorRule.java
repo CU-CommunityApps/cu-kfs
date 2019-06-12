@@ -57,7 +57,8 @@ public class CuVendorRule extends CuVendorRuleBase {
         return valid;
     }
 
-    public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {
+    public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
+            PersistableBusinessObject bo) {
         boolean success = super.processCustomAddCollectionLineBusinessRules(document, collectionName, bo);
 
 
@@ -90,7 +91,8 @@ public class CuVendorRule extends CuVendorRuleBase {
         return success;
     }
 
-    public boolean processAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {
+    public boolean processAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
+            PersistableBusinessObject bo) {
         boolean success = super.processAddCollectionLineBusinessRules(document, collectionName, bo);
         if (collectionName.equals(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES)) {
             VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
@@ -168,7 +170,8 @@ public class CuVendorRule extends CuVendorRuleBase {
 
         List<VendorAddress> addresses = newVendor.getVendorAddresses();
         String vendorTypeCode = newVendor.getVendorHeader().getVendorTypeCode();
-        String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType().getVendorAddressTypeRequiredCode();
+        String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType()
+                .getVendorAddressTypeRequiredCode();
         verifyPOTransmissionTypeAllowedForVendorType(vendorTypeCode, addresses);
         for (int i = 0; i < addresses.size(); i++) {
             VendorAddress address = addresses.get(i);

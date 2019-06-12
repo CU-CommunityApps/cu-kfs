@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,8 @@ import org.kuali.kfs.gl.batch.service.impl.FileReconOkLoadOkStatus;
 import org.kuali.kfs.gl.batch.service.impl.ReconciliationBlock;
 import org.kuali.kfs.gl.report.LedgerSummaryReport;
 import org.kuali.kfs.gl.service.impl.EnterpriseFeederStatusAndErrorMessagesWrapper;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
 import org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl;
@@ -36,8 +39,6 @@ import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
@@ -104,10 +105,10 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 String line;
                 int count = 0;
                     
-                String offsetDocTypes = null;
-                if(StringUtils.isNotEmpty(parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE))) {
-                    offsetDocTypes = "," + parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE).replace(";", ",").replace("|", ",") + ",";
-                }
+                Collection<String> offsetDocTypes = parameterService.getParameterValuesAsString(
+                        LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE);
+                offsetDocTypes = offsetDocTypes.stream().map(String::toUpperCase).collect(Collectors.toList());
+
                 while ((line = dataFileReader.readLine()) != null) {
                     try {
                         LaborOriginEntry tempEntry = new LaborOriginEntry();
@@ -138,7 +139,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                         }
                         
                         if(tempEntry.getFinancialBalanceTypeCode() == null || tempEntry.getFinancialBalanceTypeCode().equalsIgnoreCase("IE")) continue;
-                        List<LaborOriginEntry> offsetEntries =  generateOffsets(tempEntry,offsetDocTypes);
+                        List<LaborOriginEntry> offsetEntries = generateOffsets(tempEntry,offsetDocTypes);
                         for(LaborOriginEntry offsetEntry : offsetEntries){
                             if(offsetEntry.getTransactionLedgerEntryAmount().isZero()) continue;
                             enterpriseFeedPs.printf("%s\n", offsetEntry.getLine()); 
@@ -198,7 +199,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
         }
     }
     
-    protected List<LaborOriginEntry> generateOffsets(LaborOriginEntry wageEntry,String offsetDocTypes) {
+    protected List<LaborOriginEntry> generateOffsets(LaborOriginEntry wageEntry, Collection<String> offsetDocTypes) {
         List<LaborOriginEntry> offsetEntries = new ArrayList<LaborOriginEntry>();
         String benefitRateCategoryCode = laborBenefitsCalculationService.getBenefitRateCategoryCode(wageEntry.getChartOfAccountsCode(), wageEntry.getAccountNumber(), wageEntry.getSubAccountNumber());
         Collection<PositionObjectBenefit> positionObjectBenefits = laborPositionObjectBenefitService.getActivePositionObjectBenefits(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(), wageEntry.getFinancialObjectCode());
@@ -261,18 +262,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 offsetEntry.setTransactionDebitCreditCode("D");
             }
             
- 
-            String docTypeCode = offsetDocTypes;
-            if (offsetDocTypes.contains(",")) {
-                String[] splits = offsetDocTypes.split(",");
-                for(String split : splits) {
-                    if(!StringUtils.isEmpty(split)) {
-                        docTypeCode = split;
-                        break;
-                    }
-                }
-            }
-            offsetEntry.setFinancialDocumentTypeCode(docTypeCode);
+            offsetEntry.setFinancialDocumentTypeCode(offsetDocTypes.stream().findFirst().orElse(null));
             offsetEntries.add(offsetEntry);
         }
 

@@ -53,69 +53,69 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
     private RouteHeaderService routeHeaderService;
     private PersonService personService;
-    
 
     @Override
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
-        boolean success = true;
-
         Collection<FinancialSystemDocumentHeader> documentList = getDocumentsToDisapprove();
         LOG.info("Total documents to process " + documentList.size());
-	String documentHeaderId = null;
+        String documentHeaderId = null;
 
-	// CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
-	documentList = getDocumentsWithActualWorkflowStatus(documentList, DocumentStatus.ENROUTE);
-		
-	for (FinancialSystemDocumentHeader result : documentList) {
-	    documentHeaderId = result.getDocumentNumber();
-	    Document document = findDocumentForAutoDisapproval(documentHeaderId);
-	    
-	    if (document != null) {
-	        if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
-	            try {
-	                String successMessage = buildSuccessMessage(document);
-	                autoDisapprovalYearEndDocument(document, annotation);
-	                sendAcknowledgement(document.getDocumentHeader(), annotation);
-	                LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
-	                getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
+        // CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
+        documentList = getDocumentsWithActualWorkflowStatus(documentList, DocumentStatus.ENROUTE);
 
-	            } catch (Exception e) {
-	                LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
-	                String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);
-	                getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-	            }
-	         }
-	    } else {
-	        LOG.error("Document is NULL.  It should never have been null");
-	        String message = ("Error: Document with id: ").concat(documentHeaderId).concat(" - Document is NULL.  It should never have been null");
-	        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-	      }
-	}
-			
-        return success;
+        for (FinancialSystemDocumentHeader result : documentList) {
+            documentHeaderId = result.getDocumentNumber();
+            Document document = findDocumentForAutoDisapproval(documentHeaderId);
+
+           if (document != null) {
+               if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
+                   try {
+                       String successMessage = buildSuccessMessage(document);
+                       autoDisapprovalYearEndDocument(document, annotation);
+                       sendAcknowledgement(document.getDocumentHeader(), annotation);
+                       LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
+                       getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
+                   } catch (Exception e) {
+                       LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
+                       String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);
+                       getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+                   }
+               }
+           } else {
+               LOG.error("Document is NULL.  It should never have been null");
+               String message = ("Error: Document with id: ").concat(documentHeaderId).concat(" - Document is NULL.  It should never have been null");
+               getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+           }
+        }
+
+        return true;
     }
 
-
     protected boolean checkIfRunDateParameterExists() {
-        boolean parameterExists = true;
-        
         // check to make sure the system parameter for run date check has already been setup...
-        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_STEP_RUN_DATE)) {
-            LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE System parameter does not exist in the parameters list.  The job can not continue without this parameter");
-            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine("YEAR_END_AUTO_DISAPPROVE_DOCUMENTS_RUN_DATE System parameter does not exist in the parameters list.  The job can not continue without this parameter");
+        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class,
+                KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_STEP_RUN_DATE)) {
+            LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE System parameter does not exist in the " +
+                    "parameters list.  The job can not continue without this parameter");
+            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
+                    "YEAR_END_AUTO_DISAPPROVE_DOCUMENTS_RUN_DATE System parameter does not exist in the parameters " +
+                            "list.  The job can not continue without this parameter");
             return false;
         }
 	    try {
-	        Date runDate = getDateTimeService().convertToDate(getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
+	        Date runDate = getDateTimeService().convertToDate(
+	                getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class,
+	                        KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
 	    }
 	    catch (ParseException pe) {
 	        LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE can not be determined.");
-	        String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE is invalid.  The auto disapproval job will not use this value.");
+	        String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE " +
+	                "is invalid.  The auto disapproval job will not use this value.");
 	        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);                         
 	        return false;
 	    }
      
-        return parameterExists;
+        return true;
     }
 
     private String buildSuccessMessage(Document document) throws Exception{
@@ -232,71 +232,88 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     }
 
     protected boolean checkIfParentDocumentTypeParameterExists() {
-        boolean parameterExists = true;
-        
         // check to make sure the system parameter for Parent Document Type = FP has been setup...
-        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE)) {
-            LOG.warn("YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE System parameter does not exist in the parameters list.  The job can not continue without this parameter");
-            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine("YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE System parameter does not exist in the parameters list.  The job can not continue without this parameter");
+        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class,
+                KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE)) {
+            LOG.warn("YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE System parameter does not exist in the " +
+                    "parameters list.  The job can not continue without this parameter");
+            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
+                    "YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE System parameter does not exist in the " +
+                            "parameters list.  The job can not continue without this parameter");
             return false;
         }
         List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
         
         for (DocumentType parentDocumentType : parentDocumentTypes) {   
             if (ObjectUtils.isNull(getDocumentTypeService().getDocumentTypeByName(parentDocumentType.getName()))) {
-            	LOG.warn("Invalid Document Type: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE is invalid. The auto disapproval job cannot use this value.");
-            	getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine("Invalid Document Type: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE is invalid. The auto disapproval job cannot use this value.");        	                			
+            	LOG.warn("Invalid Document Type: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE " +
+            	        "is invalid. The auto disapproval job cannot use this value.");
+            	getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
+            	        "Invalid Document Type: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE " +
+            	                "is invalid. The auto disapproval job cannot use this value.");        	                			
             }           
         }
     
-        return parameterExists;
+        return true;
     }
 
     protected boolean checkIfDocumentCompareCreateDateParameterExists() {
-        boolean parameterExists = true;
-        
         // check to make sure the system parameter for create date to compare has been setup...
-        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE)) {
-          LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE System parameter does not exist in the parameters list.  The job can not continue without this parameter");
-          getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE System parameter does not exist in the parameters list.  The job can not continue without this parameter");
-          return false;
+        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class,
+                KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE)) {
+            LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE System parameter does not exist in the " +
+                    "parameters list.  The job can not continue without this parameter");
+            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
+                    "YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE System parameter does not exist in the " +
+                            "parameters list.  The job can not continue without this parameter");
+            return false;
         }
 	    try {
-	        Date compareDate = getDateTimeService().convertToDate(getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
+	        Date compareDate = getDateTimeService().convertToDate(
+	                getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class,
+	                        KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
 	    }
 	    catch (ParseException pe) {
 	        LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE can not be determined.");
-	        String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREAT_DATE is invalid.  The auto disapproval job will not use this value.");
+	        String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREAT_DATE " +
+	                "is invalid.  The auto disapproval job will not use this value.");
 	        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);                         
 	        return false;
 	    }
 	   	
-	   	return parameterExists;
+	   	return true;
     }
  
     protected boolean checkIfDocumentTypesExceptionParameterExists() {
-        boolean parameterExists = true;
-        
         // check to make sure the system parameter for Document Types that are exceptions has been setup...
-        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES)) {
-          LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter does not exist in the parameters list.  The job can not continue without this parameter");
-          getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter does not exist in the parameters list.  The job can not continue without this parameter");
-          return false;
+        if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class,
+                KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES)) {
+            LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter does not exist in the parameters " +
+                    "list.  The job can not continue without this parameter");
+            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
+                    "YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter does not exist in the parameters list. " +
+            "The job can not continue without this parameter");
+            return false;
         }
         
-        Collection<String> documentTypes = getParameterService().getParameterValuesAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES);
-        for (String dT : documentTypes)
-        {
-        	if (ObjectUtils.isNull(getDocumentTypeService().getDocumentTypeByName( dT ))) {        		
-                LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter contains invalid value: \"" + dT + "\" The job can not continue with invalid values in this parameter.");
-                getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter contains invalid value: \"" + dT + "\" The job can not continue with invalid values in this parameter.");
+        boolean parameterExists = true;
+        Collection<String> documentTypes = getParameterService().getParameterValuesAsString(AutoDisapproveDocumentsStep.class,
+                KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES);
+        for (String dT : documentTypes) {
+        	if (ObjectUtils.isNull(getDocumentTypeService().getDocumentTypeByName(dT))) {        		
+                LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter contains invalid value: \"" + dT +
+                        "\" The job can not continue with invalid values in this parameter.");
+                getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
+                        "YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter contains invalid value: \"" + dT +
+                                "\" The job can not continue with invalid values in this parameter.");
                 parameterExists = false;
         	}
         }
         return parameterExists;
     }
 
-    protected void autoDisapprovalYearEndDocument(Document document, String annotationForAutoDisapprovalDocument)  throws Exception {
+    protected void autoDisapprovalYearEndDocument(Document document,
+            String annotationForAutoDisapprovalDocument)  throws Exception {
         Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
         
         Note approveNote = getNoteService().createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
@@ -311,8 +328,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         document.addNote(approveNote);
         
         getDocumentService().prepareWorkflowDocument(document);
-        getDocumentService().superUserDisapproveDocumentWithoutSaving(document, "Disapproval of Outstanding Documents - Year End Cancellation Process");
-        UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(),document.getDocumentHeader().getWorkflowDocument());
+        getDocumentService().superUserDisapproveDocumentWithoutSaving(document,
+                "Disapproval of Outstanding Documents - Year End Cancellation Process");
+        UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(), document.getDocumentHeader().getWorkflowDocument());
    }
 
     /**

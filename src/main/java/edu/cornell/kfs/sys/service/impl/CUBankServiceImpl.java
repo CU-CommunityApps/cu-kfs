@@ -25,10 +25,11 @@ public class CUBankServiceImpl implements CUBankService {
         }
 
         if (parameterService.parameterExists(Bank.class, KFSParameterKeyConstants.DEFAULT_BANK_BY_DOCUMENT_TYPE)) {
-            List<String> parmValues = new ArrayList<String>(parameterService.getSubParameterValuesAsString(Bank.class, KFSParameterKeyConstants.DEFAULT_BANK_BY_DOCUMENT_TYPE, documentTypeCode));
-            if (parmValues != null && !parmValues.isEmpty()) {
+            List<String> parmValues = new ArrayList<>(parameterService
+                    .getSubParameterValuesAsString(Bank.class, KFSParameterKeyConstants.DEFAULT_BANK_BY_DOCUMENT_TYPE,
+                            documentTypeCode));
+            if (!parmValues.isEmpty()) {
                 String defaultBankCode = parmValues.get(0);
-                
                 Bank defaultBank = this.getByPrimaryId(defaultBankCode);
                 
                 // check active status, if not return continuation bank if active

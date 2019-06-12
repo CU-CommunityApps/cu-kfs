@@ -40,15 +40,13 @@ import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 @Transactional
 public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorService {
+
     private static final Logger LOG = LogManager.getLogger(CUVendorServiceImpl.class);
 
     private BusinessObjectService businessObjectService;
     private VendorLookupableHelperServiceImpl vendorLookupableHelperServiceImpl;
     protected DocumentService documentService;
 
-    /**
-     *  @see org.kuali.kfs.vnd.document.service.VendorService#getVendorByDunsNumber(String)
-     */
     public VendorDetail getVendorByVendorName(String vendorName) {
         LOG.info("Entering getVendorByVendorName for vendorName:" + vendorName);
         Map criteria = new HashMap();
@@ -63,9 +61,6 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
         }
     }
 
-    /**
-     * 
-     */
     public VendorDetail getVendorByNamePlusLastFourOfTaxID(String vendorName, String lastFour) {
         LOG.debug("Entering getVendorByNamePlusLastFourOfTaxID for vendorName:" + vendorName + ", last four :" + lastFour);
 
