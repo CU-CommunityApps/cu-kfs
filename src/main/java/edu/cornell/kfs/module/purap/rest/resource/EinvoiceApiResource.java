@@ -56,7 +56,7 @@ public class EinvoiceApiResource {
 
     @GET
     @Path("vendors/{vendorHeaderGeneratedIdentifier}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public String getVendor(@PathParam(PurapPropertyConstants.VENDOR_HEADER_GENERATED_ID) String vendorHeaderGeneratedIdentifier,
                             @Context HttpHeaders headers) {
         try {
@@ -76,7 +76,7 @@ public class EinvoiceApiResource {
 
     @GET
     @Path("po/{purapDocumentIdentifier}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public String getPurchaseOrder(@PathParam(PurapPropertyConstants.PURAP_DOC_ID) String purapDocumentIdentifier, @Context HttpHeaders headers) {
         try {
             HashMap<String, String> map = new HashMap<>();
