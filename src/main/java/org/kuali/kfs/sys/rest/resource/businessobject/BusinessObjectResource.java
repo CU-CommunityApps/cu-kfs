@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kuali.kfs.coa.businessobject.AccountType;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectAdminService;
 import org.kuali.kfs.kns.datadictionary.EntityNotFoundException;
 import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
@@ -39,11 +38,9 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.rest.util.KualiMediaType;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -315,119 +312,6 @@ public class BusinessObjectResource {
     }
 
     /* Cornell Customization for eInvoice */
-    @GET
-    @Path("einvoice/vendors/{vendorHeaderGeneratedIdentifier}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Object getVendorForEinvoice(@PathParam(PurapPropertyConstants.VENDOR_HEADER_GENERATED_ID) String vendorHeaderGeneratedIdentifier,
-                                       @Context HttpHeaders headers) {
-        try {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(PurapPropertyConstants.VENDOR_HEADER_GENERATED_ID, vendorHeaderGeneratedIdentifier);
-            VendorDetail vendorDetail = getLookupDao().findObjectByMap(VendorDetail.class.newInstance(), map);
-            if (vendorDetail == null) {
-                return getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.OBJECT_NOT_FOUND);
-            }
-            return serializeVendorToJson(vendorDetail);
-        }
-        catch (Exception ex) {
-            LOG.error(ex);
-            return gson.toJson(ex);
-        }
-    }
 
-    @GET
-    @Path("einvoice/po/{purapDocumentIdentifier}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Object getPurchaseOrderForEinvoice(@PathParam(PurapPropertyConstants.PURAP_DOC_ID) String purapDocumentIdentifier, @Context HttpHeaders headers) {
-        try {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(PurapPropertyConstants.PURAP_DOC_ID, purapDocumentIdentifier);
-            PurchaseOrderDocument poDoc = getLookupDao().findObjectByMap(PurchaseOrderDocument.class.newInstance(), map);
-            if (poDoc == null) {
-                return getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.OBJECT_NOT_FOUND);
-            }
-            return serializePoDocumentToJson(poDoc);
-        }
-        catch (Exception ex) {
-            LOG.error(ex);
-            return gson.toJson(ex);
-        }
-    }
-
-    private String serializeVendorToJson(VendorDetail vendorDetail) {
-        Properties vendorProperties = new Properties();
-        safelyAddProperty(vendorProperties, CUPurapConstants.DUNS, vendorDetail.getVendorDunsNumber());
-        safelyAddProperty(vendorProperties, PurapPropertyConstants.VENDOR_NUMBER, vendorDetail.getVendorNumber());
-        safelyAddProperty(vendorProperties, PurapPropertyConstants.VENDOR_NAME, vendorDetail.getVendorName());
-        vendorProperties.put(KRADPropertyConstants.ACTIVE_INDICATOR, vendorDetail.isActiveIndicator());
-        addVendorRemitAddressToProperties(vendorProperties, vendorDetail);
-        return gson.toJson(vendorProperties);
-    }
-
-    private String serializePoDocumentToJson(PurchaseOrderDocument poDoc) {
-        Properties poProperties = new Properties();
-        safelyAddProperty(poProperties, PurapPropertyConstants.VENDOR_NUMBER, poDoc.getVendorNumber());
-        safelyAddProperty(poProperties, CUPurapConstants.DOCUMENT_NUMBER, poDoc.getDocumentNumber());
-        safelyAddProperty(poProperties, CUPurapConstants.DOCUMENT_STATUS, poDoc.getApplicationDocumentStatus());
-//        poProperties.put("source_line_count", poDoc.getSourceAccountingLines().size());
-//        poProperties.put("target_line_count", poDoc.getTargetAccountingLines().size());
-        return gson.toJson(poProperties);
-    }
-
-    private void safelyAddProperty(Properties properties, String key, String value) {
-        String safeValue = value;
-        if (StringUtils.isBlank(value)) {
-            safeValue = KFSConstants.EMPTY_STRING;
-        }
-        properties.put(key, safeValue);
-    }
-
-    private void addVendorRemitAddressToProperties(Properties vendorProperties, VendorDetail vendorDetail) {
-        List<VendorAddress> vendorAddresses = vendorDetail.getVendorAddresses();
-        if (CollectionUtils.isNotEmpty(vendorAddresses)) {
-            VendorAddress vendorAddress = getVendorAddress(vendorDetail.getVendorAddresses());
-            safelyAddProperty(vendorProperties, CUPurapConstants.EMAIL, vendorAddress.getVendorAddressEmailAddress());
-            safelyAddProperty(vendorProperties, CUPurapConstants.ADDRESS_LINE1, vendorAddress.getVendorLine1Address());
-            safelyAddProperty(vendorProperties, CUPurapConstants.ADDRESS_LINE2, vendorAddress.getVendorLine2Address());
-            safelyAddProperty(vendorProperties, CUPurapConstants.STATE, vendorAddress.getVendorStateCode());
-            safelyAddProperty(vendorProperties, CUPurapConstants.ZIPCODE, vendorAddress.getVendorZipCode());
-            safelyAddProperty(vendorProperties, CUPurapConstants.COUNTRY, vendorAddress.getVendorCountryCode());
-            safelyAddProperty(vendorProperties, CUPurapConstants.ADDRESS_TYPE_CODE, vendorAddress.getVendorAddressTypeCode());
-        }
-    }
-
-    private VendorAddress getVendorAddress(List<VendorAddress> vendorAddresses) {
-        for (VendorAddress address : vendorAddresses) {
-            if (address.getVendorAddressType().getVendorAddressTypeCode().equalsIgnoreCase(VendorConstants.AddressTypes.REMIT)) {
-                return address;
-            }
-        }
-        return vendorAddresses.get(0);
-    }
-
-    private void addPoLinesToProperties(Properties poProperties, PurchaseOrderDocument poDoc) {
-        List<Properties> poLines = new ArrayList<>();
-        for (GeneralLedgerPendingEntry glLine : poDoc.getGeneralLedgerPendingEntries()) {
-                Properties lineProps = new Properties();
-                lineProps.put("amount", glLine.getTransactionLedgerEntryAmount());
-                lineProps.put("quantity", glLine accountingLine.get());
-                poLines.add(lineProps);
-            }
-        }
-        poProperties.put("source_accounting_lines", poLines.toArray());
-    }
-
-    private String getSimpleJsonObject(String key, String value) {
-        Properties obj = new Properties();
-        obj.put(key, value);
-        return gson.toJson(obj);
-    }
-
-    private LookupDao getLookupDao() {
-        if (lookupDao == null) {
-            lookupDao = SpringContext.getBean(LookupDao.class);
-        }
-        return lookupDao;
-    }
 
 }
