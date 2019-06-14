@@ -9,7 +9,6 @@ import edu.cornell.kfs.coa.fixture.SubObjectCodeFixture;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
-import edu.cornell.kfs.fp.batch.businessobject.AmazonBillResultsDTO;
 import edu.cornell.kfs.fp.batch.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
@@ -38,7 +37,6 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -155,13 +153,6 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
                 DefaultKfsAccountForAwsFixture.AWS_STU_KFS_1023715_INVALID,
                 AccountingXmlDocumentAccountingLineFixture.ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID);
     }
-    
-    @Test
-    public void testVerifyValidChartAccountCostCenter() {
-        verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.CHART_CS_ACCT_J80100_COST_50,
-                DefaultKfsAccountForAwsFixture.AWS_MNO_KFS_INTERNAL,
-                AccountingXmlDocumentAccountingLineFixture.CHART_CS_ACCT_J801000_OBJ_4020_AMOUNT_50_VALID);
-    }
 
     private void verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture groupLevelCostCenterFixture,
                                                        DefaultKfsAccountForAwsFixture defaultKfsAccountForAwsFixture,
@@ -169,9 +160,8 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
         GroupLevel groupLevelCostCenter = groupLevelCostCenterFixture.toGroupLevel();
         DefaultKfsAccountForAws defaultKfsAccountForAws = defaultKfsAccountForAwsFixture.toDefaultKfsAccountForAwsPojo();
         AccountingXmlDocumentAccountingLine expectedXmlAccountingLine = expectedXmlAccountingLineFixture.toAccountingLinePojo();
-        AmazonBillResultsDTO resultsDto = new AmazonBillResultsDTO();
         AccountingXmlDocumentAccountingLine actualXmlAccountingLine =
-                awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(groupLevelCostCenter, defaultKfsAccountForAws, resultsDto);
+                awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(groupLevelCostCenter, defaultKfsAccountForAws);
 
         LOG.info(String.format("Expect (%s, %s) => (%s, %s, %s)", groupLevelCostCenter.getGroupValue(),
                 defaultKfsAccountForAws.getKfsDefaultAccount(), expectedXmlAccountingLine.getChartCode(),
@@ -181,7 +171,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
                 defaultKfsAccountForAws.getKfsDefaultAccount(), actualXmlAccountingLine.getChartCode(),
                 actualXmlAccountingLine.getAccountNumber(), actualXmlAccountingLine.getObjectCode()));
 
-        assertEquals(expectedXmlAccountingLine, actualXmlAccountingLine);
+        assert(ObjectUtils.equals(expectedXmlAccountingLine, actualXmlAccountingLine));
     }
 
     private ChartService buildMockChartService() {
