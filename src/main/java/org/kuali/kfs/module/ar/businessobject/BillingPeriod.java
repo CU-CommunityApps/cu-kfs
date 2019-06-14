@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.ar.businessobject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +57,7 @@ public abstract class BillingPeriod {
         return endDate;
     }
 
-    public static BillingPeriod determineBillingPeriodPriorTo(Date awardStartDate, Date currentDate, Date lastBilledDate, ArConstants.BillingFrequencyValues billingFrequency, AccountingPeriodService accountingPeriodService) {
+    public static BillingPeriod determineBillingPeriodPriorTo(Date awardStartDate, Date currentDate, Date lastBilledDate, ArConstants.BillingFrequencyValues billingFrequency, AccountingPeriodService accountingPeriodService, String creationProcessTypeCode) {
         BillingPeriod billingPeriod;
         if (ArConstants.BillingFrequencyValues.LETTER_OF_CREDIT.equals(billingFrequency)) {
             billingPeriod = new LetterOfCreditBillingPeriod(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
@@ -67,11 +68,21 @@ public abstract class BillingPeriod {
         if (billingPeriod.billable) {
             billingPeriod.startDate = billingPeriod.determineStartDate();
             billingPeriod.endDate = billingPeriod.determineEndDateByFrequency();
+            
+            /**
+             * CU-Mod Adjust endDate to be currentDate when billingPeriod startDate is after billingPeriod endDate AND CINV edoc is being created Manually  
+             */
+            if (StringUtils.isNotBlank(creationProcessTypeCode) 
+                    && StringUtils.equalsIgnoreCase(creationProcessTypeCode, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.getCode())) {
+                billingPeriod.endDate = billingPeriod.adjustEndDateForManualBilling(currentDate);
+            }
             LOG.info("determineBillingPeriodPriorTo: IS billable with billingPeriod.startDate = " + billingPeriod.startDate + " billingPeriod.endDate = " + billingPeriod.endDate);
         }
 
         return billingPeriod;
     }
+    
+    protected abstract Date adjustEndDateForManualBilling(Date currentDate);
 
     protected abstract Date determineEndDateByFrequency();
 

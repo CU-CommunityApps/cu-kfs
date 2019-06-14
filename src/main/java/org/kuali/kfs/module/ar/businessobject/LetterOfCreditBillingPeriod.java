@@ -56,5 +56,15 @@ public class LetterOfCreditBillingPeriod extends BillingPeriod {
         LOG.info("determineStartDateByFrequency: returning lastBilledDate =" + lastBilledDate);
         return lastBilledDate;
     }
+    
+    /*
+     * CU Customization
+     */
+    @Override
+    protected Date adjustEndDateForManualBilling(Date currentDate) {
+        LOG.info("adjustEndDateForManualBilling: Invoked LOC billingPeriod.startDate = " + super.getStartDate() 
+                + " LOC billingPeriod.endDate = " + super.getEndDate() + " with existing endDate being returned. No special logic.");
+        return getEndDate();
+    }
 
 }

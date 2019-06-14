@@ -18,6 +18,8 @@
  */
 package edu.cornell.kfs.module.ar.batch.service.impl;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +35,7 @@ import org.kuali.kfs.module.ar.businessobject.BillingPeriod;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
+import edu.cornell.kfs.module.ar.CuArConstants;
 import edu.cornell.kfs.module.ar.batch.service.CuVerifyBillingFrequencyService;
 
 import java.sql.Date;
@@ -40,28 +43,59 @@ import java.sql.Date;
 public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyServiceImpl implements CuVerifyBillingFrequencyService {
     
     private static final Logger LOG = LogManager.getLogger(CuVerifyBillingFrequencyServiceImpl.class);
+    
+    private Date calculateLastBilledDateBasedOnAwardInvoiceOption(ContractsAndGrantsBillingAward award, String awardInvoiceOption) {
+        Date lastBilledDateToUse;
+        if (StringUtils.equals(awardInvoiceOption, ArConstants.INV_CONTRACT_CONTROL_ACCOUNT)
+                || StringUtils.equals(awardInvoiceOption, ArConstants.INV_ACCOUNT)) {
+            if (CollectionUtils.isNotEmpty(award.getActiveAwardAccounts())) {
+                lastBilledDateToUse = award.getActiveAwardAccounts().get(0).getCurrentLastBilledDate();
+                LOG.info("calculateLastBilledDateBasedOnAwardInvoiceOption: Detected Award invoicingOptionCode = "
+                        + CuArConstants.AwardInvoicingOptionCodeToName.getName(awardInvoiceOption)
+                        + ". Will be using currentLastBilledDate = " + lastBilledDateToUse
+                        + " from Account = " + award.getActiveAwardAccounts().get(0).getAccountNumber());
+            } else {
+                lastBilledDateToUse = award.getLastBilledDate();
+                LOG.error("calculateLastBilledDateBasedOnAwardInvoiceOption: NO active award accounts on Award with invoicingOptionCode = "
+                         + CuArConstants.AwardInvoicingOptionCodeToName.getName(awardInvoiceOption)
+                         + ". Using Award lastBilledDate = " + lastBilledDateToUse);
+            }
+        } else {
+            lastBilledDateToUse = award.getLastBilledDate();
+            LOG.info("calculateLastBilledDateBasedOnAwardInvoiceOption: Detected Award invoicingOptionCode = "
+                    + CuArConstants.AwardInvoicingOptionCodeToName.getName(awardInvoiceOption)
+                    + ". Award lastBilledDate = " + lastBilledDateToUse + " will be used.");
+        }
+        return lastBilledDateToUse;
+    }
 
     @Override
     public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award) {
-        LOG.info("validateBillingFrequency: Called with just Award. Sending Award lastBilledDate = " + award.getLastBilledDate() + " to private method.");
-        return validateBillingFrequency(award, award.getLastBilledDate());
+        LOG.info("validateBillingFrequency: CU-MOD invoked with Award containing creationProcessTypeCode = " 
+                + award.getCgInvoiceDocumentCreationProcessTypeCode() + ". Using Award invoicingOptionCode to determine lastBilledDate to send to private method.");
+        return validateBillingFrequency(award, calculateLastBilledDateBasedOnAwardInvoiceOption(award, award.getInvoicingOptionCode()));
     }
 
     @Override
     public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount) {
-        LOG.info("validateBillingFrequency: Called with Award and Award Account. Sending awardAccount currentLastBilledDate = " + awardAccount.getCurrentLastBilledDate() + " to private method.");
+        LOG.info("validateBillingFrequency: CU-MOD invoked with Award, Award Account. Sending awardAccount = "
+                + awardAccount.getAccountNumber() + " with currentLastBilledDate = "
+                + awardAccount.getCurrentLastBilledDate() + " and Award containing creationProcessTypeCode = "
+                + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()) + " to private method.");
         return validateBillingFrequency(award, awardAccount.getCurrentLastBilledDate());
     }
 
     private boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, Date lastBilledDate) {
-        LOG.info("validateBillingFrequency: For Award/Proposal# = " + award.getProposalNumber() + " with lastBilledDate = " + lastBilledDate);
+        LOG.info("validateBillingFrequency(private): For Award/Proposal# = " + award.getProposalNumber()
+                + " with calculatedLastBilledDate = " + lastBilledDate
+                + " creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()));
         final Date today = getDateTimeService().getCurrentSqlDate();
         AccountingPeriod currPeriod = getAccountingPeriodService().getByDate(today);
 
-        BillingPeriod billingPeriod = getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod);
+        BillingPeriod billingPeriod = getStartDateAndEndDateOfPreviousBillingPeriod(award, lastBilledDate, currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
         if (!billingPeriod.isBillable()) {
-            LOG.info("validateBillingFrequency: NOT VALID: getStartDateAndEndDateOfPreviousBillingPeriod returned billingPeriod" 
-                    + " denoting Award is NOT billable: billingPeriod.startDate = " + billingPeriod.getStartDate() 
+            LOG.info("validateBillingFrequency: NOT VALID: getStartDateAndEndDateOfPreviousBillingPeriod returned billingPeriod"
+                    + " denoting Award is NOT billable: billingPeriod.startDate = " + billingPeriod.getStartDate()
                     + " billingPeriod.endDate = " + billingPeriod.getEndDate());
             return false;
         }
@@ -92,6 +126,18 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         LOG.info("calculateIfWithinGracePeriod: All must be true to be within grace period: beforeGracePeriodEnd = " + beforeGracePeriodEnd + " afterBillingStart = " + afterBillingStart + " haveNotBilledYet = " + haveNotBilledYet);
 
         return afterBillingStart && beforeGracePeriodEnd && haveNotBilledYet;
+    }
+
+    @Override
+    public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, AccountingPeriod currPeriod) {
+        LOG.info("getStartDateAndEndDateOfPreviousBillingPeriod: Basecode method called. Invoking CU-MOD with Award lastBilledDate = "
+                + award.getLastBilledDate() + " and creationProcessTypeCode = " + award.getCgInvoiceDocumentCreationProcessTypeCode());
+        return getStartDateAndEndDateOfPreviousBillingPeriod(award, award.getLastBilledDate(), currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
+    }
+
+    @Override
+    public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, Date calculatedLastBilledDate, AccountingPeriod currPeriod, String creationProcessTypeCode) {
+        return BillingPeriod.determineBillingPeriodPriorTo(award.getAwardBeginningDate(), this.dateTimeService.getCurrentSqlDate(), calculatedLastBilledDate, ArConstants.BillingFrequencyValues.fromCode(award.getBillingFrequencyCode()), this.accountingPeriodService, creationProcessTypeCode);
     }
 
     public DateTimeService getDateTimeService() {

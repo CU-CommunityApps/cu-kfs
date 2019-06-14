@@ -48,7 +48,8 @@
     <bean id="contractsGrantsInvoiceCreateDocumentService" 
           class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
           parent="contractsGrantsInvoiceCreateDocumentService-parentBean"
-          p:cuContractsGrantsInvoiceDocumentService-ref="cuContractsGrantsInvoiceDocumentService" />
+          p:cuContractsGrantsInvoiceDocumentService-ref="cuContractsGrantsInvoiceDocumentService" 
+          p:cuVerifyBillingFrequencyService-ref="cuVerifyBillingFrequencyService"/>
 
     <bean id="cuContractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService" />
     
@@ -77,7 +78,12 @@
     <bean id="arEmailService" parent="arEmailService-parentBean"
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
         
+    <bean id="cuVerifyBillingFrequencyService" parent="verifyBillingFrequencyService" />
     <bean id="verifyBillingFrequencyService" parent="verifyBillingFrequencyService-parentBean"
-          class="edu.cornell.kfs.module.ar.batch.service.impl.CuVerifyBillingFrequencyServiceImpl"/>
+          class="edu.cornell.kfs.module.ar.batch.service.impl.CuVerifyBillingFrequencyServiceImpl" 
+          p:universityDateService-ref="universityDateService"
+          p:businessObjectService-ref="businessObjectService"
+          p:accountingPeriodService-ref="accountingPeriodService"
+          p:dateTimeService-ref="dateTimeService" />
           
 </beans>
