@@ -39,7 +39,6 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
-import edu.cornell.kfs.fp.batch.businessobject.AmazonBillResultsDTO;
 import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
 import edu.cornell.kfs.fp.batch.service.CloudCheckrService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -247,7 +246,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         KualiDecimal targetLineTotal = KualiDecimal.ZERO;
         for (GroupLevel costCenterGroup : awsAccountGroup.getNextLevel()) {
             if (KualiDecimal.ZERO.isLessThan(costCenterGroup.getCost())) {
-                AccountingXmlDocumentAccountingLine targetLine = awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(costCenterGroup, defaultKfsAccount, resultsDTO);
+                AccountingXmlDocumentAccountingLine targetLine = awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(costCenterGroup, defaultKfsAccount);
                 targetLineTotal = targetLineTotal.add(targetLine.getAmount());
                 document.getTargetAccountingLines().add(targetLine);
             } else {
@@ -500,4 +499,34 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         this.emailService = emailService;
     }
 
+    private class AmazonBillResultsDTO {
+        public String masterAccountNumber;
+        public String masterAccountName;
+        public boolean successfullyProcessed;
+        public int numberOfAwsAccountInCloudCheckr;
+        public int xmlCreationCount;
+        public List<String> awsAccountWithoutDefaultAccount;
+        public List<String> awsAccountWithExistingDI;
+        public List<String> awsAccountGeneratedDIxml;
+        
+        public AmazonBillResultsDTO() {
+            awsAccountWithoutDefaultAccount = new ArrayList<String>();
+            awsAccountWithExistingDI = new ArrayList<String>();
+            awsAccountGeneratedDIxml = new ArrayList<String>();
+        }
+        
+        public void logResults() {
+            String headerFooter = "*****************************";
+            LOG.info(headerFooter);
+            LOG.info("logResults, masterAccountNumber: " + masterAccountNumber + " masterAccountName: " + masterAccountName);
+            LOG.info("logResults, successfullyProcessed: " + successfullyProcessed);
+            LOG.info("logResults, numberOfAwsAccountInCloudCheckr: " + numberOfAwsAccountInCloudCheckr);
+            LOG.info("logResults, xmlCreationCount: " + xmlCreationCount);
+            LOG.info("logResults, awsAccountWithoutDefaultAccount: " + awsAccountWithoutDefaultAccount);
+            LOG.info("logResults, awsAccountWithExistingDI: " + awsAccountWithExistingDI);
+            LOG.info("logResults, awsAccountGeneratedDIxml: " + awsAccountGeneratedDIxml);
+            LOG.info(headerFooter);
+        }
+    }
+    
 }
