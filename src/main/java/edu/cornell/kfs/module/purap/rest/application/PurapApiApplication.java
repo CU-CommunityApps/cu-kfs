@@ -7,7 +7,7 @@ import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 
-@ApplicationPath("purap/api/v1")
+@ApplicationPath("einvoice")
 public class PurapApiApplication extends Application {
 
     private Set<Object> singletons = new HashSet<>();
