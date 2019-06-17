@@ -3,9 +3,6 @@ package edu.cornell.kfs.module.purap.web.filter;
 import com.google.gson.Gson;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import javax.servlet.Filter;
