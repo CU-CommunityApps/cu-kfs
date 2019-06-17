@@ -84,6 +84,21 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         return calculateNextDay(lastBilledDate);
     }
 
+    /*
+     * CU Customization
+     */
+    @Override
+    protected Date adjustEndDateForManualBilling(Date currentDate) {
+        LOG.info("adjustEndDateForManualBilling: Invoked. billingPeriod.startDate = " + super.getStartDate() + " billingPeriod.endDate = " + super.getEndDate());
+        if (getStartDate().after(getEndDate())) {
+            LOG.info("adjustEndDateForManualBilling: Returning currentDate = " + currentDate );
+            return currentDate;
+        } else {
+            LOG.info("adjustEndDateForManualBilling: Returning existing endDate = " + getEndDate());
+            return getEndDate();
+        }
+    }
+
     protected AccountingPeriod findPreviousAccountingPeriod(final Date date) {
         final AccountingPeriod currentAccountingPeriod = findAccountingPeriodBy(date);
         final Integer currentAccountingPeriodCode = Integer.parseInt(currentAccountingPeriod.getUniversityFiscalPeriodCode());

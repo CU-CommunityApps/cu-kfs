@@ -164,6 +164,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     private String letterOfCreditFundGroupCode;
     private LetterOfCreditFundGroup letterOfCreditFundGroup;
     private transient String invoiceLink;
+    private transient String cgInvoiceDocumentCreationProcessTypeCode;
 
     public Award() {
         // Must use ArrayList because its get() method automatically grows the array for Struts.
@@ -1189,6 +1190,14 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     public void setInvoiceLink(String invoiceLink) {
         this.invoiceLink = invoiceLink;
+    }
+
+    public String getCgInvoiceDocumentCreationProcessTypeCode() {
+        return cgInvoiceDocumentCreationProcessTypeCode;
+    }
+
+    public void setCgInvoiceDocumentCreationProcessTypeCode(String cgInvoiceDocumentCreationProcessTypeCode) {
+        this.cgInvoiceDocumentCreationProcessTypeCode = cgInvoiceDocumentCreationProcessTypeCode;
     }
 
 }

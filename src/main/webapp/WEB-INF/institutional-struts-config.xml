@@ -236,6 +236,16 @@
             <forward name="basic" path="/jsp/module/ar/ContractsGrantsInvoiceDocument.jsp"/>
         </action>
         
+        
+        <!-- Create button for manual CINV  -->
+        <action path="/arContractsGrantsInvoiceSummary" name="ContractsGrantsInvoiceSummaryForm"
+                scope="request" attribute="KualiForm" parameter="methodToCall"
+                type="edu.cornell.kfs.module.ar.web.struts.CuContractsGrantsInvoiceSummaryAction">
+            <set-property property="cancellable" value="true"/>
+            <forward name="basic"
+                     path="/jsp/module/ar/ContractsGrantsInvoiceSummary.jsp"/>
+        </action>
+        
     </action-mappings>
     
 </struts-config>
