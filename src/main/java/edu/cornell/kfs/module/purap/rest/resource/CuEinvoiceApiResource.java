@@ -33,12 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-@Path("einvoice")
+@Path("api")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class EinvoiceApiResource {
+public class CuEinvoiceApiResource {
 
-    private static final Log LOG = LogFactory.getLog(EinvoiceApiResource.class);
+    private static final Log LOG = LogFactory.getLog(CuEinvoiceApiResource.class);
 
     private LookupDao lookupDao;
     private Gson gson = new Gson();
@@ -51,7 +51,7 @@ public class EinvoiceApiResource {
 
     @GET
     public Response describeEinvoiceApiResource() {
-        return Response.ok("The Cornell eInvoice web tool uses this resource to retrieve data from KFS.").build();
+        return Response.ok(CUPurapConstants.EINVOICE_KFS_API_DESCRIPTION).build();
     }
 
     @GET
@@ -149,14 +149,14 @@ public class EinvoiceApiResource {
             if (obj instanceof PurApItem) {
                 PurApItem purApItem = (PurApItem)obj;
                 Properties lineProps = new Properties();
-                safelyAddProperty(lineProps, "amount", purApItem.getTotalAmount().toString());
-                safelyAddProperty(lineProps, "quantity", purApItem.getItemQuantity().toString());
-                safelyAddProperty(lineProps, "unit_of_measure", purApItem.getItemUnitOfMeasureCode());
-                safelyAddProperty(lineProps, "item_description", purApItem.getItemDescription());
+                safelyAddProperty(lineProps, CUPurapConstants.AMOUNT.toLowerCase(), purApItem.getTotalAmount().toString());
+                safelyAddProperty(lineProps, CUPurapConstants.QUANTITY, purApItem.getItemQuantity().toString());
+                safelyAddProperty(lineProps, CUPurapConstants.UNIT_OF_MEASURE, purApItem.getItemUnitOfMeasureCode());
+                safelyAddProperty(lineProps, CUPurapConstants.ITEM_DESCRIPTION, purApItem.getItemDescription());
                 poLines.add(lineProps);
             }
         }
-        poProperties.put("items", poLines.toArray());
+        poProperties.put(CUPurapConstants.ITEMS, poLines.toArray());
     }
 
     private String getSimpleJsonObject(String key, String value) {
@@ -171,4 +171,5 @@ public class EinvoiceApiResource {
         }
         return lookupDao;
     }
+
 }

@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.rest.application;
 
-import edu.cornell.kfs.module.purap.rest.resource.EinvoiceApiResource;
+import edu.cornell.kfs.module.purap.rest.resource.CuEinvoiceApiResource;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -13,7 +13,7 @@ public class PurapApiApplication extends Application {
     private Set<Object> singletons = new HashSet<>();
 
     public PurapApiApplication() {
-        singletons.add(new EinvoiceApiResource());
+        singletons.add(new CuEinvoiceApiResource());
     }
 
     @Override

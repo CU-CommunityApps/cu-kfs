@@ -235,4 +235,13 @@ public class CUPurapConstants {
     public static final String ZIPCODE = "zipcode";
     public static final String COUNTRY = "country";
     public static final String ADDRESS_TYPE_CODE = "address_type_code";
+    public static final String QUANTITY = "quantity";
+    public static final String UNIT_OF_MEASURE = "unit_of_measure";
+    public static final String ITEM_DESCRIPTION = "item_description";
+    public static final String ITEMS = "items";
+    public static final String UNAUTHORIZED = "Unauthorized";
+    public static final String EINVOICE = "EINVOICE";
+    public static final String EINVOICE_API_KEY_CREDENTIAL_NAME = "einvoice_api_key";
+    public static final String EINVOICE_KFS_API_DESCRIPTION = "The Cornell eInvoice web tool uses this resource to retrieve data from KFS.";
+
 }

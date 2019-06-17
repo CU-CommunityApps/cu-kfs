@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.web.filter;
 
 import com.google.gson.Gson;
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -16,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CuEinvoiceServerAuthFilter implements Filter {
-    private static final String UNAUTHORIZED_JSON = "Unauthorized";
 
     private WebServiceCredentialService webServiceCredentialService;
 
@@ -35,14 +35,13 @@ public class CuEinvoiceServerAuthFilter implements Filter {
         }
         else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println(new Gson().toJson(UNAUTHORIZED_JSON));
+            response.getWriter().println(new Gson().toJson(CUPurapConstants.UNAUTHORIZED));
         }
     }
 
-
     private boolean isAuthorized(HttpServletRequest request) {
-        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue("EINVOICE", "einvoice_api_key");
-        String submittedApiKey = request.getHeader("einvoice_api_key");
+        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CUPurapConstants.EINVOICE, CUPurapConstants.EINVOICE_API_KEY_CREDENTIAL_NAME);
+        String submittedApiKey = request.getHeader(CUPurapConstants.EINVOICE_API_KEY_CREDENTIAL_NAME);
         return !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
     }
 
@@ -57,4 +56,5 @@ public class CuEinvoiceServerAuthFilter implements Filter {
 
         return this.webServiceCredentialService;
     }
+
 }
