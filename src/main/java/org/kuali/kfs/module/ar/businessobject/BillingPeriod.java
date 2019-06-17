@@ -70,7 +70,7 @@ public abstract class BillingPeriod {
             billingPeriod.endDate = billingPeriod.determineEndDateByFrequency();
             
             /**
-             * CU-Mod Adjust endDate to be currentDate when billingPeriod startDate is after billingPeriod endDate AND CINV edoc is being created Manually  
+             * CU Customization Adjust endDate to be currentDate when billingPeriod startDate is after billingPeriod endDate AND CINV edoc is being created Manually  
              */
             if (StringUtils.isNotBlank(creationProcessTypeCode) 
                     && StringUtils.equalsIgnoreCase(creationProcessTypeCode, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.getCode())) {

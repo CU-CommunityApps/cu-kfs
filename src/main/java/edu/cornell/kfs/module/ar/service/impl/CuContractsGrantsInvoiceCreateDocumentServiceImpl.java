@@ -21,7 +21,6 @@ import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAgency;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsOrganization;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
@@ -45,7 +44,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
@@ -150,7 +148,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     @Override
     protected List<ContractsAndGrantsBillingAwardAccount> getValidAwardAccounts(
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award) {
-        LOG.info("getValidAwardAccounts: CU-Mod invoked with creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()));
+        LOG.info("getValidAwardAccounts: CU Customization invoked with creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()));
         if (!ArConstants.BillingFrequencyValues.isMilestone(award) && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts = new ArrayList<>();
             Set<Account> invalidAccounts = harvestAccountsFromContractsGrantsInvoices(getInProgressInvoicesForAward(award));
@@ -210,7 +208,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             if (ObjectUtils.isNotNull(accountToUse)) {
                 computedLastBilledDate = accountToUse.getCurrentLastBilledDate();
             } else {
-                LOG.error("determineLastBilledDateByInvoicingOption: NO award accounts passed to method when award had invoice option of Account or Contract Control Account. lastBilledDate being returned as computedLastBilledDate =" + computedLastBilledDate);
+                LOG.error("determineLastBilledDateByInvoicingOption: Either NO award accounts OR NO NON-Expenditure award accounts passed to method when award had invoice option of Account or Contract Control Account. lastBilledDate being returned as computedLastBilledDate =" + computedLastBilledDate);
             }
         } else if (StringUtils.equalsIgnoreCase(CuArConstants.AwardInvoicingOptionCodeToName.INV_AWARD.getCode(), invoicingOptionCode)
                 || StringUtils.equalsIgnoreCase(CuArConstants.AwardInvoicingOptionCodeToName.INV_SCHEDULE.getCode(), invoicingOptionCode)) {
@@ -224,7 +222,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             List<ContractsAndGrantsBillingAwardAccount> accounts, String chartOfAccountsCode, String organizationCode,
             List<ErrorMessage> errorMessages, List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
             String locCreationType) {
-        LOG.info("createCGInvoiceDocumentByAwardInfo: Basecode method was called. Calculating lastBilledDate to send to CU-mod method of same name.");
+        LOG.info("createCGInvoiceDocumentByAwardInfo: Basecode method was called. Calculating lastBilledDate to send to CU Customization method of same name.");
         Date calculatedLastBilledDate = determineLastBilledDateByInvoicingOption(accounts, awd.getInvoicingOptionCode(), awd.getLastBilledDate());
         LOG.info("createCGInvoiceDocumentByAwardInfo: calculatedLastBilledDate = " + calculatedLastBilledDate
                 + " determined by invoicingOptionCode = " + CuArConstants.AwardInvoicingOptionCodeToName.getName(awd.getInvoicingOptionCode()));
@@ -298,14 +296,14 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award,
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
-        LOG.info("populateInvoiceFromAward: Basecode method was called. Sending award lastBilledDate to CU-MOD method of same name.");
+        LOG.info("populateInvoiceFromAward: Basecode method was called. Sending award lastBilledDate to CU Customization method of same name.");
         populateInvoiceFromAward(award, award.getLastBilledDate(), awardAccounts, document, accountDetails, locCreationType);
     }
   
     protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award, Date calculatedLastBilledDate,
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
-        LOG.info("populateInvoiceFromAward: CU-MOD  calculatedLastBilledDate = " + calculatedLastBilledDate 
+        LOG.info("populateInvoiceFromAward: CU Customization  calculatedLastBilledDate = " + calculatedLastBilledDate 
                 + " locCreationType = " + locCreationType + " creationProcessType = " 
                 + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()));
         if (ObjectUtils.isNotNull(award)) {
@@ -432,7 +430,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     }
     
     /*
-     * CU-MOD: 
+     * CU Customization: 
      *    When billable amount is 0, allow manually created CINV to be created and saved. 
      *    KFS application user creating CINV edoc will manually change billable amount from 0 to desired value
      *    after edoc is created.
@@ -445,7 +443,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                 awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
                 KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
         Date calculatedLastBilledDate = determineLastBilledDateByInvoicingOption(validAwardAccounts, awd.getInvoicingOptionCode(), awd.getLastBilledDate());
-        LOG.info("generateAndSaveContractsAndGrantsInvoiceDocument: CU-modded version: calculatedLastBilledDate = " + calculatedLastBilledDate
+        LOG.info("generateAndSaveContractsAndGrantsInvoiceDocument: CU Customization version: calculatedLastBilledDate = " + calculatedLastBilledDate
                 + " determined by invoicingOptionCode = " + CuArConstants.AwardInvoicingOptionCodeToName.getName(awd.getInvoicingOptionCode()));
         ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, calculatedLastBilledDate, validAwardAccounts,
                 chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,

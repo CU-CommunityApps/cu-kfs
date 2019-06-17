@@ -71,14 +71,15 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
 
     @Override
     public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award) {
-        LOG.info("validateBillingFrequency: CU-MOD invoked with Award containing creationProcessTypeCode = " 
-                + award.getCgInvoiceDocumentCreationProcessTypeCode() + ". Using Award invoicingOptionCode to determine lastBilledDate to send to private method.");
+        LOG.info("validateBillingFrequency: CU Customization invoked with Award containing creationProcessTypeCode = " 
+                + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()) 
+                + ". Using Award invoicingOptionCode to determine lastBilledDate to send to private method.");
         return validateBillingFrequency(award, calculateLastBilledDateBasedOnAwardInvoiceOption(award, award.getInvoicingOptionCode()));
     }
 
     @Override
     public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount) {
-        LOG.info("validateBillingFrequency: CU-MOD invoked with Award, Award Account. Sending awardAccount = "
+        LOG.info("validateBillingFrequency: CU Customization invoked with Award, Award Account. Sending awardAccount = "
                 + awardAccount.getAccountNumber() + " with currentLastBilledDate = "
                 + awardAccount.getCurrentLastBilledDate() + " and Award containing creationProcessTypeCode = "
                 + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()) + " to private method.");
@@ -130,7 +131,7 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
 
     @Override
     public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, AccountingPeriod currPeriod) {
-        LOG.info("getStartDateAndEndDateOfPreviousBillingPeriod: Basecode method called. Invoking CU-MOD with Award lastBilledDate = "
+        LOG.info("getStartDateAndEndDateOfPreviousBillingPeriod: Basecode method called. Invoking CU Customization with Award lastBilledDate = "
                 + award.getLastBilledDate() + " and creationProcessTypeCode = " + award.getCgInvoiceDocumentCreationProcessTypeCode());
         return getStartDateAndEndDateOfPreviousBillingPeriod(award, award.getLastBilledDate(), currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
     }
