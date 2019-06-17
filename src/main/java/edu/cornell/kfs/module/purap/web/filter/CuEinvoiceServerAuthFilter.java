@@ -1,8 +1,12 @@
 package edu.cornell.kfs.module.purap.web.filter;
 
 import com.google.gson.Gson;
+import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.krad.util.KRADUtils;
+import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,8 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CuEinvoiceServerAuthFilter implements Filter {
-
     private static final String UNAUTHORIZED_JSON = "Unauthorized";
+
+    private WebServiceCredentialService webServiceCredentialService;
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -39,18 +44,20 @@ public class CuEinvoiceServerAuthFilter implements Filter {
 
 
     private boolean isAuthorized(HttpServletRequest request) {
-        String eInvoiceApiKey = request.getHeader("auth_einvoice_server_api_key");
-        if (!StringUtils.isEmpty(eInvoiceApiKey)) {
-            return true; //todo compare with config value
-        }
-        return false;
+        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue("EINVOICE", "einvoice_api_key");
+        String submittedApiKey = request.getHeader("einvoice_api_key");
+        return !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
     }
 
     @Override
     public void destroy() {
     }
 
-    protected boolean isUserSessionEstablished(HttpServletRequest request) {
-        return KRADUtils.getUserSessionFromRequest(request) != null;
+    protected WebServiceCredentialService getWebServiceCredentialService() {
+        if (this.webServiceCredentialService == null) {
+            this.webServiceCredentialService = SpringContext.getBean(WebServiceCredentialService.class);
+        }
+
+        return this.webServiceCredentialService;
     }
 }
