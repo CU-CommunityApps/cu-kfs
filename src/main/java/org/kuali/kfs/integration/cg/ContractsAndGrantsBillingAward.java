@@ -375,6 +375,10 @@ public interface ContractsAndGrantsBillingAward extends Billable, ContractsAndGr
 
     List<String> getSelectedAccounts();
     
+    /**
+     *  CU Customization
+     */
+    
     String getCgInvoiceDocumentCreationProcessTypeCode();
     
     void setCgInvoiceDocumentCreationProcessTypeCode(String cgInvoiceDocumentCreationProcessTypeCode);

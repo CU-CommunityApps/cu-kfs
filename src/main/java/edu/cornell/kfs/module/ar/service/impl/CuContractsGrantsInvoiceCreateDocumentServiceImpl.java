@@ -229,6 +229,12 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return this.createCGInvoiceDocumentByAwardInfo(awd, calculatedLastBilledDate, accounts, chartOfAccountsCode, organizationCode, errorMessages, accountDetails, locCreationType);
     }
 
+    /**
+     *   CU Customization:
+     *   Overridden method signature above is from base code interface.
+     *   This method is in Cornell's customized interface due to method signature change.
+     *   Code being used here is minimally modified base code.
+     */
     public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(ContractsAndGrantsBillingAward awd, Date calculatedLastBilledDate,
             List<ContractsAndGrantsBillingAwardAccount> accounts, String chartOfAccountsCode, String organizationCode,
             List<ErrorMessage> errorMessages, List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
@@ -300,6 +306,12 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         populateInvoiceFromAward(award, award.getLastBilledDate(), awardAccounts, document, accountDetails, locCreationType);
     }
   
+    /**
+     *   CU Customization:
+     *   Overridden method signature above is from base code interface.
+     *   This method is in Cornell's customized interface due to method signature change.
+     *   Code being used here is minimally modified base code.
+     */
     protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award, Date calculatedLastBilledDate,
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
