@@ -40,10 +40,6 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
         return true;
     }
 
-    public boolean otherCustomObjectPropertiesHaveDifferences(R oldBusinessObject, R newBusinessObject) {
-        return false;
-    }
-
     public String printObjectLabelAndKeys(T xmlObject) {
         return getObjectLabel() + KFSConstants.BLANK_SPACE + printPrimaryKeyValues(xmlObject);
     }

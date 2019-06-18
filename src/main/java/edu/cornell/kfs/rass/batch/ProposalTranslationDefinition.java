@@ -20,7 +20,6 @@ import edu.cornell.kfs.rass.util.RassUtil;
 public class ProposalTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> {
 
 	protected BusinessObjectService businessObjectService;
-	protected RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> proposalProjectDirectorDefinition;
 	protected DateTimeService dateTimeService;
 	protected ParameterService parameterService;
 
@@ -84,15 +83,6 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
-	}
-
-	public RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> getProposalProjectDirectorDefinition() {
-		return proposalProjectDirectorDefinition;
-	}
-
-	public void setProposalProjectDirectorDefinition(
-			RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> proposalProjectDirectorDefinition) {
-		this.proposalProjectDirectorDefinition = proposalProjectDirectorDefinition;
 	}
 
 	public void setDateTimeService(DateTimeService dateTimeService) {

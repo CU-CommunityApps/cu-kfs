@@ -15,11 +15,13 @@ import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.service.AgencyService;
+import org.kuali.kfs.module.cg.service.AwardService;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -179,6 +181,18 @@ public class RassMockServiceFactory {
                 .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
         
         return configurationService;
+    }
+
+    public AwardService buildMockAwardService() throws Exception {
+        AwardService awardService = Mockito.mock(AwardService.class);
+        
+        return awardService;
+    }
+
+    public PersonService buildMockPersonService() throws Exception {
+        PersonService personService = Mockito.mock(PersonService.class);
+        
+        return personService;
     }
 
 }

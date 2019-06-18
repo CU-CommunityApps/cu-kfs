@@ -29,8 +29,6 @@
     
     <bean id="proposalDefinition" parent="proposalDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestProposalTranslationDefinition"/>
     
-    <bean id="proposalProjectDirectorDefinition" parent="proposalProjectDirectorDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestProposalProjectDirectorTranslationDefinition"/>
-
     <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
 
     <bean id="maintenanceDocumentService" factory-bean="testServiceFactory" factory-method="buildMockMaintenanceDocumentService"/>
@@ -51,6 +49,10 @@
     
     <bean id="businessObjectService" factory-bean="testServiceFactory" factory-method="buildMockBusinessObjectService"/>
 
+    <bean id="awardService" factory-bean="testServiceFactory" factory-method="buildMockAwardService"/>
+
+    <bean id="personService" factory-bean="testServiceFactory" factory-method="buildMockPersonService"/>
+
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
             <set merge="true">
@@ -59,12 +61,27 @@
                 <idref bean="rassRoutingService"/>
                 <idref bean="rassRoutingService-parentBean"/>
                 <idref bean="rassProperty"/>
+                <idref bean="rassListProperty"/>
+                <idref bean="rassListPropertyWithProposalNumberMapping"/>
+                <idref bean="rassValueConverterBase"/>
+                <idref bean="rassProposalOrganizationConverter"/>
+                <idref bean="rassAwardOrganizationConverter"/>
+                <idref bean="rassProposalProjectDirectorConverter"/>
+                <idref bean="rassAwardProjectDirectorConverter"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="agencyDefinition-parentBean"/>
                 <idref bean="proposalDefinition"/>
                 <idref bean="proposalDefinition-parentBean"/>
+                <idref bean="proposalOrganizationDefinition"/>
+                <idref bean="proposalOrganizationDefinition-parentBean"/>
                 <idref bean="proposalProjectDirectorDefinition"/>
-                <idref bean="proposalProjectDirectorDefinition-parentBean"/>                
+                <idref bean="proposalProjectDirectorDefinition-parentBean"/>
+                <idref bean="awardDefinition"/>
+                <idref bean="awardDefinition-parentBean"/>
+                <idref bean="awardOrganizationDefinition"/>
+                <idref bean="awardOrganizationDefinition-parentBean"/>
+                <idref bean="awardProjectDirectorDefinition"/>
+                <idref bean="awardProjectDirectorDefinition-parentBean"/>
                 <idref bean="batchInputFileService"/>
                 <idref bean="batchInputFileService-parentBean"/>
                 <idref bean="rassXmlInputFileType"/>
@@ -83,6 +100,8 @@
                 <idref bean="dateTimeService"/>
                 <idref bean="parameterService"/>
                 <idref bean="configurationService"/>
+                <idref bean="awardService"/>
+                <idref bean="personService"/>
             </set>
         </property>
     </bean>

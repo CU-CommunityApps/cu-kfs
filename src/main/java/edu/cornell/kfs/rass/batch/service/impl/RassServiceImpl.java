@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -41,9 +41,11 @@ import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
+import edu.cornell.kfs.rass.batch.RassListPropertyDefinition;
 import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.RassPropertyDefinition;
-import edu.cornell.kfs.rass.batch.RassValueConverterBase;
+import edu.cornell.kfs.rass.batch.RassSubObjectDefinition;
+import edu.cornell.kfs.rass.batch.RassValueConverter;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassRoutingService;
@@ -63,10 +65,10 @@ public class RassServiceImpl implements RassService {
     protected BatchInputFileType batchInputFileType;
     protected FileStorageService fileStorageService;
     protected RassRoutingService rassRoutingService;
-    protected DataDictionaryService dataDictionaryService;
     protected RouteHeaderService routeHeaderService;
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
     protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
+    protected RassObjectTranslationDefinition<RassXmlAwardEntry, Award> awardDefinition;
     
     protected String rassFilePath;
     protected long documentStatusCheckDelayMillis;
@@ -120,8 +122,8 @@ public class RassServiceImpl implements RassService {
                 successfullyParsedFiles, agencyDefinition, documentTracker);
 		RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults = updateBOs(successfullyParsedFiles,
 				proposalDefinition, documentTracker);
-        RassBusinessObjectUpdateResultGrouping<Award> awardResults = new RassBusinessObjectUpdateResultGrouping<>(
-                Award.class, Collections.emptyList(), RassObjectGroupingUpdateResultCode.SUCCESS);
+        RassBusinessObjectUpdateResultGrouping<Award> awardResults = updateBOs(
+                successfullyParsedFiles, awardDefinition, documentTracker);
         LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
         
         waitForRemainingGeneratedDocumentsToFinish(documentTracker);
@@ -352,21 +354,18 @@ public class RassServiceImpl implements RassService {
 		for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
 			Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject,
 					propertyMapping.getXmlPropertyName());
-
-			try {
-				Class converterClass = Class.forName(propertyMapping.getValueConverter());
-				RassValueConverterBase valueConverter = (RassValueConverterBase) converterClass.newInstance();
-				Object convertedValue = valueConverter.convert(xmlPropertyValue);
-				Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass,
-						propertyMapping.getBoPropertyName(), convertedValue);
-				if (cleanedPropertyValue == null && propertyMapping.isRequired()) {
-					missingRequiredFields.add(propertyMapping.getXmlPropertyName());
-				} else {
-					ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(),
-							cleanedPropertyValue);
-				}
-			} catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-				throw new RuntimeException(propertyMapping.getValueConverter() + " is not a valid Converter class ");
+			RassValueConverter valueConverter = propertyMapping.getValueConverter();
+			Object convertedValue = valueConverter.convert(businessObjectClass, propertyMapping.getBoPropertyName(), xmlPropertyValue);
+			if (convertedValue == null && propertyMapping.isRequired()) {
+				missingRequiredFields.add(propertyMapping.getXmlPropertyName());
+			} else if (propertyMapping instanceof RassListPropertyDefinition) {
+			    RassListPropertyDefinition listPropertyMapping = (RassListPropertyDefinition) propertyMapping;
+			    List<?> newSubObjects = (List<?>) convertedValue;
+			    copyForeignKeyValuesToNewSubObjects(businessObject, listPropertyMapping, newSubObjects);
+			    mergeBusinessObjectListProperty(businessObject, (RassListPropertyDefinition) propertyMapping, (List<?>) convertedValue);
+			} else {
+				ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(),
+						convertedValue);
 			}
 		}
 		if (!missingRequiredFields.isEmpty()) {
@@ -376,57 +375,116 @@ public class RassServiceImpl implements RassService {
 		return businessObject;
 	}
 
-    protected Object cleanPropertyValue(
-            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
-        if (propertyValue instanceof String) {
-            return cleanStringValue(businessObjectClass, propertyName, (String) propertyValue);
+    protected void copyForeignKeyValuesToNewSubObjects(
+            Object businessObject, RassListPropertyDefinition listPropertyMapping, List<?> newSubObjects) {
+        listPropertyMapping.getForeignKeyMappings().forEach((parentPropertyName, subObjectPropertyName) -> {
+            Object foreignKeyValue = ObjectPropertyUtils.getPropertyValue(businessObject, parentPropertyName);
+            for (Object newSubObject : newSubObjects) {
+                ObjectPropertyUtils.setPropertyValue(newSubObject, subObjectPropertyName, foreignKeyValue);
+            }
+        });
+    }
+
+    protected void mergeBusinessObjectListProperty(
+            Object businessObject, RassListPropertyDefinition listPropertyMapping, List<?> newSubObjects) {
+        RassSubObjectDefinition subObjectDefinition = listPropertyMapping.getSubObjectDefinition();
+        List<Object> existingList = ObjectPropertyUtils.getPropertyValue(
+                businessObject, listPropertyMapping.getBoPropertyName());
+        Set<Integer> indexesOfSubObjectsToInactivate = IntStream.range(0, existingList.size())
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.toCollection(HashSet::new));
+        
+        for (Object newSubObject : newSubObjects) {
+            int i = 0;
+            while (i < existingList.size() && !subObjectPrimaryKeysMatch(subObjectDefinition, existingList.get(i), newSubObject)) {
+                i++;
+            }
+            
+            if (i < existingList.size()) {
+                mergeNonPrimaryKeyUpdatesIntoExistingSubObject(subObjectDefinition, existingList.get(i), newSubObject);
+                indexesOfSubObjectsToInactivate.remove(i);
+            } else {
+                existingList.add(newSubObject);
+            }
         }
-        if (propertyValue instanceof Date) {
-        		return cleanDateValue(businessObjectClass, propertyName, (Date) propertyValue);
-        }
-        if (propertyValue instanceof Boolean) {
-    			return cleanBooleanValue(businessObjectClass, propertyName, (Boolean) propertyValue);
-        }
-        	else {
-            return propertyValue;
+        
+        for (Integer indexOfObjectToInactivate : indexesOfSubObjectsToInactivate) {
+            Object existingSubObject = existingList.get(indexOfObjectToInactivate);
+            if (existingSubObject instanceof MutableInactivatable) {
+                ((MutableInactivatable) existingSubObject).setActive(false);
+            }
         }
     }
 
-    protected String cleanStringValue(
-            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, String propertyValue) {
-        String cleanedValue = StringUtils.defaultIfBlank(propertyValue, null);
-        Integer maxLength = dataDictionaryService.getAttributeMaxLength(businessObjectClass, propertyName);
-        if (maxLength != null && maxLength > 0 && StringUtils.length(cleanedValue) > maxLength) {
-            LOG.info("cleanStringValue, Truncating value for business object " + businessObjectClass.getName()
-                    + " and property " + propertyName);
-            cleanedValue = StringUtils.left(cleanedValue, maxLength);
-        }
-        return cleanedValue;
-    }
-    
-    protected java.sql.Date cleanDateValue(
-            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Date propertyValue) {
-        return new java.sql.Date(propertyValue.getTime());
-    }
-    
-    protected Boolean cleanBooleanValue(
-            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Boolean propertyValue) {
-    		if(ObjectUtils.isNull(propertyValue))
-    			return false;
-    		else 
-    			return propertyValue;
+    protected void mergeNonPrimaryKeyUpdatesIntoExistingSubObject(RassSubObjectDefinition subObjectDefinition, Object oldBo, Object newBo) {
+        subObjectDefinition.getNonKeyPropertyNames().stream()
+                .forEach(propertyName -> {
+                    Object newValue = ObjectPropertyUtils.getPropertyValue(newBo, propertyName);
+                    ObjectPropertyUtils.setPropertyValue(oldBo, propertyName, newValue);
+                });
     }
 
     protected <T extends RassXmlObject, R extends PersistableBusinessObject> boolean businessObjectWasUpdatedByXml(
             R oldBo, R newBo, RassObjectTranslationDefinition<T, R> objectDefinition) {
-        boolean basicPropertiesHaveDifferences = objectDefinition.getPropertyMappings().stream()
-                .map(RassPropertyDefinition::getBoPropertyName)
-                .anyMatch(propertyName -> {
-                    Object oldValue = ObjectPropertyUtils.getPropertyValue(oldBo, propertyName);
-                    Object newValue = ObjectPropertyUtils.getPropertyValue(newBo, propertyName);
-                    return !Objects.equals(oldValue, newValue);
+        return objectDefinition.getPropertyMappings().stream()
+                .anyMatch(propertyMapping -> {
+                    if (propertyMapping instanceof RassListPropertyDefinition) {
+                        return !allUnorderedSubObjectsMatchForListProperty(
+                                (RassListPropertyDefinition) propertyMapping, oldBo, newBo);
+                    } else {
+                        return !propertyValuesMatch(propertyMapping.getBoPropertyName(), oldBo, newBo);
+                    }
                 });
-        return basicPropertiesHaveDifferences || objectDefinition.otherCustomObjectPropertiesHaveDifferences(oldBo, newBo);
+    }
+
+    protected boolean allUnorderedSubObjectsMatchForListProperty(RassListPropertyDefinition listPropertyMapping, Object oldBo, Object newBo) {
+        List<?> oldSubObjects = ObjectPropertyUtils.getPropertyValue(oldBo, listPropertyMapping.getBoPropertyName());
+        List<?> newSubObjects = ObjectPropertyUtils.getPropertyValue(newBo, listPropertyMapping.getBoPropertyName());
+        return allUnorderedSubObjectsMatch(listPropertyMapping.getSubObjectDefinition(), oldSubObjects, newSubObjects);
+    }
+
+    protected boolean allUnorderedSubObjectsMatch(RassSubObjectDefinition subObjectDefinition, List<?> oldSubObjects, List<?> newSubObjects) {
+        if (oldSubObjects.size() != newSubObjects.size()) {
+            return false;
+        }
+        
+        List<?> unmatchedSubObjects = new ArrayList<>(oldSubObjects);
+        
+        for (Object newBo : newSubObjects) {
+            int i = 0;
+            while (i < unmatchedSubObjects.size()
+                    && !allMappedSubObjectPropertiesMatch(subObjectDefinition, unmatchedSubObjects.get(i), newBo)) {
+                i++;
+            }
+            
+            if (i < unmatchedSubObjects.size()) {
+                unmatchedSubObjects.remove(i);
+            } else {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    protected boolean allMappedSubObjectPropertiesMatch(RassSubObjectDefinition subObjectDefinition, Object oldBo, Object newBo) {
+        return subObjectPrimaryKeysMatch(subObjectDefinition, oldBo, newBo)
+                && specificSubObjectPropertiesMatch(subObjectDefinition.getNonKeyPropertyNames(), oldBo, newBo);
+    }
+
+    protected boolean subObjectPrimaryKeysMatch(RassSubObjectDefinition subObjectDefinition, Object oldBo, Object newBo) {
+        return specificSubObjectPropertiesMatch(subObjectDefinition.getPrimaryKeyPropertyNames(), oldBo, newBo);
+    }
+
+    protected boolean specificSubObjectPropertiesMatch(List<String> propertyNames, Object oldBo, Object newBo) {
+        return propertyNames.stream()
+                .allMatch(propertyName -> propertyValuesMatch(propertyName, oldBo, newBo));
+    }
+
+    protected boolean propertyValuesMatch(String propertyName, Object oldBo, Object newBo) {
+        Object oldValue = ObjectPropertyUtils.getPropertyValue(oldBo, propertyName);
+        Object newValue = ObjectPropertyUtils.getPropertyValue(newBo, propertyName);
+        return Objects.equals(oldValue, newValue);
     }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
@@ -445,16 +503,20 @@ public class RassServiceImpl implements RassService {
         this.rassRoutingService = rassRoutingService;
     }
 
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-    }
-
     public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
         this.routeHeaderService = routeHeaderService;
     }
 
     public void setAgencyDefinition(RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition) {
         this.agencyDefinition = agencyDefinition;
+    }
+
+    public void setProposalDefinition(RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition) {
+        this.proposalDefinition = proposalDefinition;
+    }
+
+    public void setAwardDefinition(RassObjectTranslationDefinition<RassXmlAwardEntry, Award> awardDefinition) {
+        this.awardDefinition = awardDefinition;
     }
 
     public void setRassFilePath(String rassFilePath) {
@@ -502,9 +564,5 @@ public class RassServiceImpl implements RassService {
             return objectsWithFailedUpdates.contains(classAndKeyIdentifier);
         }
     }
-
-	public void setProposalDefinition(RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition) {
-		this.proposalDefinition = proposalDefinition;
-	}
 
 }
