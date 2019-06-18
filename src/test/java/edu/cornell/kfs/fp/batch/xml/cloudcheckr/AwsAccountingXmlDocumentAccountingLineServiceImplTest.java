@@ -169,6 +169,20 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
                 DefaultKfsAccountForAwsFixture.AWS_BCD_KFS_R583805_70170,
                 AccountingXmlDocumentAccountingLineFixture.CHART_IT_ACCT_R583805_70170_OBJ_6600_AMOUNT_12_VALID);
     }
+    
+    @Test
+    public void testVerifyValidCostCenterNoneDefaultAccountFullAccountStringWithInvalidSubObject() {
+        verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_NONE_COST_12,
+                DefaultKfsAccountForAwsFixture.AWS_BCD_KFS_ACCOUNT_STRING_IT_R589966_NONCA_1000_BAD,
+                AccountingXmlDocumentAccountingLineFixture.CHART_IT_ACCT_R589966_NONCA_OBJ_1000_AMOUNT_12_VALID);
+    }
+    
+    @Test
+    public void testVerifyValidCostCenterNoneDefaultAccountFullAccountStringWithGoodSubObject() {
+        verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_NONE_COST_12,
+                DefaultKfsAccountForAwsFixture.AWS_BCD_KFS_ACCOUNT_STRING_IT_R589966_NONCA_1000_10X,
+                AccountingXmlDocumentAccountingLineFixture.CHART_IT_ACCT_R589966_NONCA_OBJ_1000_10X_AMOUNT_12_VALID);
+    }
 
     private void verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture groupLevelCostCenterFixture,
                                                        DefaultKfsAccountForAwsFixture defaultKfsAccountForAwsFixture,
@@ -313,6 +327,11 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
         when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715,
                 CuFPTestConstants.TEST_OBJ_CODE_4020, CuFPTestConstants.TEST_SUB_OBJ_CODE_10X))
                 .thenReturn(null);
+        
+        mockedSubObjectCode = createMockSubObjectCode(SubObjectCodeFixture.SO_10X);
+        when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966,
+                CuFPTestConstants.TEST_OBJ_CODE_1000, CuFPTestConstants.TEST_SUB_OBJ_CODE_10X))
+                .thenReturn(mockedSubObjectCode);
 
         return subObjectCodeService;
     }
