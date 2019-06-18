@@ -19,6 +19,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -55,41 +56,44 @@ public class CuEinvoiceApiResource {
     }
 
     @GET
-    @Path("vendors/{vendorHeaderGeneratedIdentifier}")
+    @Path("vendors/{vendorNumber}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getVendor(@PathParam(PurapPropertyConstants.VENDOR_HEADER_GENERATED_ID) String vendorHeaderGeneratedIdentifier,
-                            @Context HttpHeaders headers) {
+    public Response getVendor(@PathParam(PurapPropertyConstants.VENDOR_NUMBER) String vendorNumber, @Context HttpHeaders headers) {
         try {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(PurapPropertyConstants.VENDOR_HEADER_GENERATED_ID, vendorHeaderGeneratedIdentifier);
-            VendorDetail vendorDetail = getLookupDao().findObjectByMap(VendorDetail.class.newInstance(), map);
+            HashMap<String, String> vendorCombinedPk = parseVendorNumber(vendorNumber);
+            VendorDetail vendorDetail = getLookupDao().findObjectByMap(VendorDetail.class.newInstance(), vendorCombinedPk);
             if (vendorDetail == null) {
-                return getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.OBJECT_NOT_FOUND);
+                return respondNotFound();
             }
-            return serializeVendorToJson(vendorDetail);
+            String responseBody = serializeVendorToJson(vendorDetail);
+            return Response.ok(responseBody).build();
+        }
+        catch (BadRequestException ex) {
+            return respondBadRequest();
         }
         catch (Exception ex) {
             LOG.error(ex);
-            return gson.toJson(ex);
+            return respondInternalServerError(ex);
         }
     }
 
     @GET
     @Path("po/{purapDocumentIdentifier}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getPurchaseOrder(@PathParam(PurapPropertyConstants.PURAP_DOC_ID) String purapDocumentIdentifier, @Context HttpHeaders headers) {
+    public Response getPurchaseOrder(@PathParam(PurapPropertyConstants.PURAP_DOC_ID) String purapDocumentIdentifier, @Context HttpHeaders headers) {
         try {
             HashMap<String, String> map = new HashMap<>();
             map.put(PurapPropertyConstants.PURAP_DOC_ID, purapDocumentIdentifier);
             PurchaseOrderDocument poDoc = getLookupDao().findObjectByMap(PurchaseOrderDocument.class.newInstance(), map);
             if (poDoc == null) {
-                return getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.OBJECT_NOT_FOUND);
+                return respondNotFound();
             }
-            return serializePoDocumentToJson(poDoc);
+            String responseBody = serializePoDocumentToJson(poDoc);
+            return Response.ok(responseBody).build();
         }
         catch (Exception ex) {
             LOG.error(ex);
-            return gson.toJson(ex);
+            return respondInternalServerError(ex);
         }
     }
 
@@ -170,6 +174,34 @@ public class CuEinvoiceApiResource {
             lookupDao = SpringContext.getBean(LookupDao.class);
         }
         return lookupDao;
+    }
+
+    private HashMap<String,String> parseVendorNumber(String vendorNumber) throws BadRequestException {
+        HashMap<String, String> map = new HashMap<>();
+        if (StringUtils.isEmpty(vendorNumber) || !vendorNumber.contains("-")) {
+            throw new BadRequestException();
+        }
+
+        String generatedVendorHeaderId = vendorNumber.substring(0, vendorNumber.indexOf("-"));
+        String vendorDetailNumber = vendorNumber.substring(vendorNumber.indexOf("-") + 1);
+        map.put(PurapPropertyConstants.VENDOR_HEADER_GENERATED_ID, generatedVendorHeaderId);
+        map.put(PurapPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, vendorDetailNumber);
+        return map;
+    }
+
+    private Response respondBadRequest() {
+        String responseBody = getSimpleJsonObject(CUPurapConstants.ERROR, "Bad Request: Invalid VendorNumber");
+        return Response.status(400).entity(responseBody).build();
+    }
+
+    private Response respondNotFound() {
+        String responseBody = getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.OBJECT_NOT_FOUND);
+        return Response.status(404).entity(responseBody).build();
+    }
+
+    private Response respondInternalServerError(Exception ex) {
+        String responseBody = getSimpleJsonObject(CUPurapConstants.ERROR, ex.toString());
+        return Response.status(500).entity(responseBody).build();
     }
 
 }
