@@ -173,14 +173,14 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     @Test
     public void testVerifyValidCostCenterNoneDefaultAccountFullAccountStringWithInvalidSubObject() {
         verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_NONE_COST_12,
-                DefaultKfsAccountForAwsFixture.AWS_BCD_KFS_ACCOUNT_STRING_IT_R589966_NONCA_1000_BAD,
+                DefaultKfsAccountForAwsFixture.AWS_CDE_KFS_ACCOUNT_STRING_IT_R589966_NONCA_1000_BAD,
                 AccountingXmlDocumentAccountingLineFixture.CHART_IT_ACCT_R589966_NONCA_OBJ_1000_AMOUNT_12_VALID);
     }
     
     @Test
     public void testVerifyValidCostCenterNoneDefaultAccountFullAccountStringWithGoodSubObject() {
         verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_NONE_COST_12,
-                DefaultKfsAccountForAwsFixture.AWS_BCD_KFS_ACCOUNT_STRING_IT_R589966_NONCA_1000_10X,
+                DefaultKfsAccountForAwsFixture.AWS_CDEE_KFS_ACCOUNT_STRING_IT_R589966_NONCA_1000_10X,
                 AccountingXmlDocumentAccountingLineFixture.CHART_IT_ACCT_R589966_NONCA_OBJ_1000_10X_AMOUNT_12_VALID);
     }
 
