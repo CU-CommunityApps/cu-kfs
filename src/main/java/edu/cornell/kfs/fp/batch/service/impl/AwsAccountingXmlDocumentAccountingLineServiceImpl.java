@@ -66,11 +66,25 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             resultsDto.costCentersWithErrors.add(costCenterDto);
         }
         
-        AccountingXmlDocumentAccountingLine xmlAccountingLine = buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(costCenterDto);
+        AccountingXmlDocumentAccountingLine xmlAccountingLine;
+        if (shouldDefaultAccountOverrideCostCenter(costCenterDto)) {
+            xmlAccountingLine = buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(defaultAccountDto);
+        } else {
+            xmlAccountingLine = buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(costCenterDto);
+        }
 
         validateAndSetDefaultsAccountingLine(xmlAccountingLine, defaultAccountDto);
         xmlAccountingLine.setAmount(costCenterGroupLevel.getCost());
         return xmlAccountingLine;
+    }
+    
+    private boolean shouldDefaultAccountOverrideCostCenter(AmazonKfsAccountDTO costCenterDto) {
+        boolean shouldOverride = false;
+        if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, costCenterDto.getKfsAccount())) {
+            LOG.debug("shouldDefaultAccountOverrideCostCenter, found an account of NONE, so cost center should be overriden by default account");
+            shouldOverride = true;
+        }
+        return shouldOverride;
     }
     
     private boolean validateAmazonKfsAccountDTO(AmazonKfsAccountDTO accountDto, boolean logErrorMessage) {

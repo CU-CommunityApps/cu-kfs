@@ -80,7 +80,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_INTERNAL_OBJ_6600_AMOUNT_12("IT", "Internal", null, "6600", null, null, null, null, 12.00),
     CHART_CS_ACCT_J801000_OBJ_4020_AMOUNT_50_VALID("CS", "J801000", null, "6600", null, null, null, null, 50.00),
     ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID("IT", "IT*1023715*97601*4020*109**AEH56*BAR", null, "6600", null, null, null, null, 13.00),
-
+    CHART_IT_ACCT_R583805_70170_OBJ_6600_AMOUNT_12_VALID("IT", "R583805", "70170", "6600", null, null, null, null, 12.00),
     ACCT_1433000_OBJ_4480_DEBIT_55("IT", "1433000", null, "4480", null, null, null, null, 55.00, 0),
     ACCT_C200222_OBJ_5390_CREDIT_55("IT", "C200222", null, "5390", null, null, null, null, 0, 55.00);
 

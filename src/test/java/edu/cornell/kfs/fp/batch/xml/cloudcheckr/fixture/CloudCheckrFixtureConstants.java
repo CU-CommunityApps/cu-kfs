@@ -26,6 +26,7 @@ public class CloudCheckrFixtureConstants {
     public static final String ACCOUNT_1503307 = "1503307";
     public static final String ACCOUNT_165833X = "165833X";
     public static final String ACCOUNT_STRING_R583805_70170 = "R583805-70170";
+    public static final String ACCOUNT_STRING_R589966_70170 = "R589966-70170";
     public static final String ACCOUNT_STRING_R583805_533X = "R583805-533X";
     public static final String ACCOUNT_STRING_IT_R589966_NONCA_1000 = "IT*R589966*NONCA*1000**EB-PLGIFT*AEH56";
     public static final String ACCOUNT_STRING_IT_1023715_97601_4020 = "IT*1023715*97601*4020*109**AEH56";

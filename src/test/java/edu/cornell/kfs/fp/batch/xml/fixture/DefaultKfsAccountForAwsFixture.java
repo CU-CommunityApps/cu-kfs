@@ -1,11 +1,13 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture.CloudCheckrFixtureConstants;
 
 import java.util.Date;
 
 public enum DefaultKfsAccountForAwsFixture {
     AWS_ABC_KFS_1658328("ABC", "1658328"),
+    AWS_BCD_KFS_R583805_70170("BCD", CloudCheckrFixtureConstants.ACCOUNT_STRING_R583805_70170),
     AWS_DEF_KFS_165835X("DEF", "165835X"),
     AWS_GHI_KFS_1658498("GHI", "1658498"),
     AWS_JKL_KFS_J801000("JKL", "CS*J801000**6600***"),
