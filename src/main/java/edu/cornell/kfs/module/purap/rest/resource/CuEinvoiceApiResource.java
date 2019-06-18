@@ -178,19 +178,19 @@ public class CuEinvoiceApiResource {
 
     private HashMap<String,String> parseVendorNumber(String vendorNumber) throws BadRequestException {
         HashMap<String, String> map = new HashMap<>();
-        if (StringUtils.isEmpty(vendorNumber) || !vendorNumber.contains("-")) {
+        if (StringUtils.isEmpty(vendorNumber) || !vendorNumber.contains(CUPurapConstants.DASH)) {
             throw new BadRequestException();
         }
 
-        String generatedVendorHeaderId = vendorNumber.substring(0, vendorNumber.indexOf("-"));
-        String vendorDetailNumber = vendorNumber.substring(vendorNumber.indexOf("-") + 1);
+        String generatedVendorHeaderId = vendorNumber.substring(0, vendorNumber.indexOf(CUPurapConstants.DASH));
+        String vendorDetailNumber = vendorNumber.substring(vendorNumber.indexOf(CUPurapConstants.DASH) + 1);
         map.put(PurapPropertyConstants.VENDOR_HEADER_GENERATED_ID, generatedVendorHeaderId);
         map.put(PurapPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, vendorDetailNumber);
         return map;
     }
 
     private Response respondBadRequest() {
-        String responseBody = getSimpleJsonObject(CUPurapConstants.ERROR, "Bad Request: Invalid VendorNumber");
+        String responseBody = getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.EINVOICE_VENDOR_BAD_REQUEST);
         return Response.status(400).entity(responseBody).build();
     }
 

@@ -243,5 +243,7 @@ public class CUPurapConstants {
     public static final String EINVOICE = "EINVOICE";
     public static final String EINVOICE_API_KEY_CREDENTIAL_NAME = "einvoice_api_key";
     public static final String EINVOICE_KFS_API_DESCRIPTION = "The Cornell eInvoice web tool uses this resource to retrieve data from KFS.";
+    public static final String EINVOICE_VENDOR_BAD_REQUEST = "Bad Request: Invalid VendorNumber";
+    public static final String DASH = "-";
 
 }
