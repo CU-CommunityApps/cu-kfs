@@ -1,20 +1,20 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.businessobject.SubAccount;
+import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
-import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.businessobject.ProjectCode;
-import org.kuali.kfs.coa.service.ChartService;
+import org.kuali.kfs.coa.businessobject.SubAccount;
+import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.service.AccountService;
-import org.kuali.kfs.coa.service.SubAccountService;
+import org.kuali.kfs.coa.service.ChartService;
 import org.kuali.kfs.coa.service.ObjectCodeService;
-import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coa.service.ProjectCodeService;
+import org.kuali.kfs.coa.service.SubAccountService;
+import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
@@ -22,6 +22,8 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.batch.businessobject.AmazonBillResultsDTO;
+import edu.cornell.kfs.fp.batch.businessobject.AmazonKfsAccountDTO;
 import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
@@ -41,222 +43,301 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
     protected ConfigurationService configurationService;
 
     @Override
-    public AccountingXmlDocumentAccountingLine createAccountingXmlDocumentAccountingLine(GroupLevel costCenterGroupLevel,
-                                                                                         DefaultKfsAccountForAws defaultKfsAccountForAws) throws IllegalArgumentException {
+    public AccountingXmlDocumentAccountingLine createAccountingXmlDocumentAccountingLine(GroupLevel costCenterGroupLevel, DefaultKfsAccountForAws defaultKfsAccountForAws, 
+            AmazonBillResultsDTO resultsDto) throws IllegalArgumentException {
         LOG.debug("createAccountingXmlDocumentAccountingLine for " + costCenterGroupLevel.getGroupName());
         if (!costCenterGroupLevel.isCostCenterGroupLevel()) {
             throw new IllegalArgumentException(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_INVALID_GROUP_LEVEL_TYPE));
         }
-
+        
         String costCenterGroupValue = costCenterGroupLevel.getGroupValue();
-        AccountingXmlDocumentAccountingLine xmlAccountingLine = getEmptyAccountingXmlDocumentAccountingLine();
-        if (StringUtils.countMatches(costCenterGroupValue, "*") == 6) {
-            xmlAccountingLine = parseCostCenterGroupLevel(costCenterGroupLevel.getGroupValue());
+        
+        AmazonKfsAccountDTO defaultAccountDto = new AmazonKfsAccountDTO(defaultKfsAccountForAws.getAwsAccount(), defaultKfsAccountForAws.getKfsDefaultAccount(), 
+                getDefaultChartCodeFromParameter(), getDefaultObjectCodeFromParameter());
+        
+        if (!resultsDto.defaultAccountsWithErrors.contains(defaultAccountDto) && !validateAmazonKfsAccountDTO(defaultAccountDto, false)) {
+            resultsDto.defaultAccountsWithErrors.add(defaultAccountDto);
         }
-        else if (StringUtils.countMatches(costCenterGroupValue, "-") == 1) {
-            xmlAccountingLine.setAccountNumber(StringUtils.split(costCenterGroupValue, "-")[0]);
-            xmlAccountingLine.setSubAccountNumber(StringUtils.split(costCenterGroupValue, "-")[1]);
+        
+        AmazonKfsAccountDTO costCenterDto = new AmazonKfsAccountDTO(defaultKfsAccountForAws.getAwsAccount(), costCenterGroupValue, 
+                getDefaultChartCodeFromParameter(), getDefaultObjectCodeFromParameter());
+        
+        if (!resultsDto.costCentersWithErrors.contains(defaultAccountDto) && !validateAmazonKfsAccountDTO(costCenterDto, false)) {
+            resultsDto.costCentersWithErrors.add(costCenterDto);
         }
-        else {
-            xmlAccountingLine.setAccountNumber(costCenterGroupValue);
+        
+        AccountingXmlDocumentAccountingLine xmlAccountingLine;
+        if (shouldDefaultAccountOverrideCostCenter(costCenterDto)) {
+            xmlAccountingLine = buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(defaultAccountDto);
+        } else {
+            xmlAccountingLine = buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(costCenterDto);
         }
 
-        xmlAccountingLine = fixAccountFieldReferences(xmlAccountingLine, defaultKfsAccountForAws.getKfsDefaultAccount());
+        validateAndSetDefaultsAccountingLine(xmlAccountingLine, defaultAccountDto);
         xmlAccountingLine.setAmount(costCenterGroupLevel.getCost());
         return xmlAccountingLine;
     }
-
-    private AccountingXmlDocumentAccountingLine fixAccountFieldReferences(AccountingXmlDocumentAccountingLine xmlAccountingLine, String defaultAccountString) {
-        if (!validateChartCode(xmlAccountingLine.getChartCode())) {
-            String defaultChartCode = getDefaultChartCodeFromParameter();
-            xmlAccountingLine.setChartCode(defaultChartCode);
+    
+    private boolean shouldDefaultAccountOverrideCostCenter(AmazonKfsAccountDTO costCenterDto) {
+        boolean shouldOverride = false;
+        if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, costCenterDto.getKfsAccount())) {
+            LOG.debug("shouldDefaultAccountOverrideCostCenter, found an account of NONE, so cost center should be overriden by default account");
+            shouldOverride = true;
         }
-
-        if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, xmlAccountingLine.getAccountNumber())) {
-            xmlAccountingLine = getDefaultAccountingLine(defaultAccountString);
+        return shouldOverride;
+    }
+    
+    private boolean validateAmazonKfsAccountDTO(AmazonKfsAccountDTO accountDto, boolean logErrorMessage) {
+        boolean valid = true;
+        if (!validateChartCode(accountDto.getKfsChart(), logErrorMessage)) {
+            valid = false;
+        } else if (!StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, accountDto.getKfsAccount()) 
+                && !StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION, accountDto.getKfsAccount()) 
+                && !validateAccount(accountDto.getKfsChart(), accountDto.getKfsAccount(), logErrorMessage)) {
+            valid = false;
+        } else if (StringUtils.isNotBlank(accountDto.getKfsSubAccount()) 
+                && !validateSubAccountNumber(accountDto.getKfsChart(), accountDto.getKfsAccount(), accountDto.getKfsSubAccount(), logErrorMessage)) {
+            valid = false;
+        } else if (!validateObjectCode(accountDto.getKfsChart(), accountDto.getKfsObject(), logErrorMessage)) {
+            valid = false;
+        } else if (StringUtils.isNotBlank(accountDto.getKfsSubObject()) 
+                && !validateSubObjectCode(accountDto.getKfsChart(), accountDto.getKfsAccount(), accountDto.getKfsObject(), accountDto.getKfsSubObject(), logErrorMessage)) {
+            valid = false;
+        } else if (StringUtils.isNotBlank(accountDto.getKfsProject())  && !validateProjectCode(accountDto.getKfsProject(), logErrorMessage)) {
+            valid = false;
+        } else if (StringUtils.isNotBlank(accountDto.getKfsOrgRefId())  && !validateOrgRefId(accountDto.getKfsOrgRefId(), logErrorMessage)) {
+            valid = false;
         }
-
-        if (!StringUtils.equalsIgnoreCase(defaultAccountString, CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION) &&
-                !validateAccount(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber())) {
-            xmlAccountingLine = getDefaultAccountingLine(defaultAccountString);
-        }
-
-        if (!validateObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getObjectCode())) {
-            String defaultObjectCode = getDefaultObjectCodeFromParameter();
-            xmlAccountingLine.setObjectCode(defaultObjectCode);
-        }
-
-        if (!validateSubAccountNumber(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getSubAccountNumber())) {
-            xmlAccountingLine.setSubAccountNumber(StringUtils.EMPTY);
-        }
-        if (!validateSubObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getObjectCode(),
-                xmlAccountingLine.getSubObjectCode())) {
-            xmlAccountingLine.setSubObjectCode(StringUtils.EMPTY);
-        }
-        if (!validateProjectCode(xmlAccountingLine.getProjectCode())) {
-            xmlAccountingLine.setProjectCode(StringUtils.EMPTY);
-        }
-        if (!validateOrgRefId(xmlAccountingLine.getOrgRefId())) {
-            xmlAccountingLine.setOrgRefId(StringUtils.EMPTY);
-        }
-
-        return xmlAccountingLine;
+        return valid;
+    }
+    
+    private AccountingXmlDocumentAccountingLine buildAccountingXmlDocumentAccountingLineFromAmazonKfsAccountDTO(AmazonKfsAccountDTO accountDto) {
+        AccountingXmlDocumentAccountingLine line = new AccountingXmlDocumentAccountingLine();
+        line.setChartCode(accountDto.getKfsChart());
+        line.setAccountNumber(accountDto.getKfsAccount());
+        line.setSubAccountNumber(accountDto.getKfsSubAccount());
+        line.setObjectCode(accountDto.getKfsObject());
+        line.setSubObjectCode(accountDto.getKfsSubObject());
+        line.setProjectCode(accountDto.getKfsProject());
+        line.setOrgRefId(accountDto.getKfsOrgRefId());
+        line.setLineDescription(StringUtils.EMPTY);
+        return line;
+    }
+    
+    private void validateAndSetDefaultsAccountingLine(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto) {
+        boolean logErrorMessage = true;
+        validateAndSetDefaultsRequiredFields(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsNonRequiredFields(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+    }
+    
+    private void validateAndSetDefaultsRequiredFields(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
+            boolean logErrorMessage) {
+        validateAndSetDefaultsChart(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+    }
+    
+    private void validateAndSetDefaultsNonRequiredFields(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
+            boolean logErrorMessage) {
+        validateAndSetDefaultsSubAccount(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsSubObjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsProjectCode(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        validateAndSetDefaultsOrgRefId(xmlAccountingLine, defaultAccountDto, logErrorMessage);
+        
     }
 
-    private boolean validateChartCode(String chartCode) {
+    private void validateAndSetDefaultsChart(AccountingXmlDocumentAccountingLine xmlAccountingLine, AmazonKfsAccountDTO defaultAccountDto,
+            boolean logErrorMessage) {
+        if (!validateChartCode(xmlAccountingLine.getChartCode(), logErrorMessage)) {
+            xmlAccountingLine.setChartCode(defaultAccountDto.getKfsChart());
+        }
+    }
+
+    private void validateAndSetDefaultsAccount(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+            AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
+        if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, xmlAccountingLine.getAccountNumber()) 
+                || StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION, xmlAccountingLine.getAccountNumber()) 
+                || !validateAccount(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), logErrorMessage)) {
+            xmlAccountingLine.setChartCode(defaultAccountDto.getKfsChart());
+            xmlAccountingLine.setAccountNumber(defaultAccountDto.getKfsAccount());
+        }
+    }
+
+    private void validateAndSetDefaultsSubAccount(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+            AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
+        if (StringUtils.isNotBlank(xmlAccountingLine.getSubAccountNumber())
+                && !validateSubAccountNumber(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getSubAccountNumber(), logErrorMessage)) {
+            if (validateSubAccountNumber(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), defaultAccountDto.getKfsSubAccount(), logErrorMessage)) {
+                xmlAccountingLine.setSubAccountNumber(defaultAccountDto.getKfsSubAccount());
+            } else {
+                xmlAccountingLine.setSubAccountNumber(StringUtils.EMPTY);
+            }
+        }
+    }
+
+    private void validateAndSetDefaultsObjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+            AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
+        if (!validateObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getObjectCode(), logErrorMessage)) {
+            xmlAccountingLine.setObjectCode(defaultAccountDto.getKfsObject());
+        }
+    }
+
+    private void validateAndSetDefaultsSubObjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+            AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
+        if (StringUtils.isNotBlank(xmlAccountingLine.getSubObjectCode())
+                && !validateSubObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getObjectCode(),
+                        xmlAccountingLine.getSubObjectCode(), logErrorMessage)) {
+            if (validateSubObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber(), xmlAccountingLine.getObjectCode(), 
+                    defaultAccountDto.getKfsSubObject(), logErrorMessage)) {
+                xmlAccountingLine.setSubObjectCode(defaultAccountDto.getKfsSubObject());
+            } else {
+                xmlAccountingLine.setSubObjectCode(StringUtils.EMPTY);
+            }
+        }
+    }
+
+    private void validateAndSetDefaultsProjectCode(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+            AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
+        if (StringUtils.isNotBlank(xmlAccountingLine.getProjectCode())
+                && !validateProjectCode(xmlAccountingLine.getProjectCode(), logErrorMessage)) {
+            if (validateProjectCode(defaultAccountDto.getKfsProject(), logErrorMessage)) {
+                xmlAccountingLine.setProjectCode(defaultAccountDto.getKfsProject()); 
+            } else {
+                xmlAccountingLine.setProjectCode(StringUtils.EMPTY);
+            }
+        }
+    }
+
+    private void validateAndSetDefaultsOrgRefId(AccountingXmlDocumentAccountingLine xmlAccountingLine,
+            AmazonKfsAccountDTO defaultAccountDto, boolean logErrorMessage) {
+        if (StringUtils.isNotBlank(xmlAccountingLine.getOrgRefId())
+                && !validateOrgRefId(xmlAccountingLine.getOrgRefId(), logErrorMessage)) {
+            if (validateOrgRefId(defaultAccountDto.getKfsOrgRefId(), logErrorMessage)) {
+                xmlAccountingLine.setOrgRefId(defaultAccountDto.getKfsOrgRefId());
+            } else {
+                xmlAccountingLine.setOrgRefId(StringUtils.EMPTY);
+            }
+        }
+    }
+
+    private boolean validateChartCode(String chartCode, boolean logErrorMessage) {
+        boolean valid = true;
         if (StringUtils.isBlank(chartCode)) {
-            return false;
+            valid = false;
+        } else {
+            Chart chart = chartService.getByPrimaryId(chartCode);
+            if (ObjectUtils.isNull(chart)) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_NOT_FOUND), chartCode), logErrorMessage);
+                valid = false;
+            } else if (!chart.isActive()) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_INACTIVE), chartCode), logErrorMessage);
+                valid = false;
+            }
         }
-        Chart chart = chartService.getByPrimaryId(chartCode);
-        if (ObjectUtils.isNull(chart)) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_NOT_FOUND), chartCode));
-            return false;
-        }
-        if (!chart.isActive()) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_INACTIVE), chartCode));
-            return false;
-        }
-        return true;
+        return valid;
     }
-
-    private AccountingXmlDocumentAccountingLine parseCostCenterGroupLevel(String costCenterGroupLevelValue) {
-        String[] costCenterGroupValueSplit = StringUtils.splitByWholeSeparatorPreserveAllTokens(costCenterGroupLevelValue,"*", -1);
-        AccountingXmlDocumentAccountingLine ret = getEmptyAccountingXmlDocumentAccountingLine();
-        ret.setChartCode(costCenterGroupValueSplit[0]);
-        ret.setAccountNumber(costCenterGroupValueSplit[1]);
-        ret.setSubAccountNumber(costCenterGroupValueSplit[2]);
-        ret.setObjectCode(costCenterGroupValueSplit[3]);
-        ret.setSubObjectCode(costCenterGroupValueSplit[4]);
-        ret.setProjectCode(costCenterGroupValueSplit[5]);
-        ret.setOrgRefId(costCenterGroupValueSplit[6]);
-
-        return ret;
-    }
-
-    private boolean validateAccount(String chartCode, String accountNumber) {
+    
+    private boolean validateAccount(String chartCode, String accountNumber, boolean logErrorMessage) {
+        boolean valid = true;
         if (StringUtils.isBlank(accountNumber)) {
-            LOG.error(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NUMBER_BLANK));
-            return false;
+            logAccountValidationError(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NUMBER_BLANK), logErrorMessage);
+            valid = false;
+        } else if (StringUtils.equalsIgnoreCase(accountNumber, CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION)) {
+            valid = true;
+        } else {
+            Account account = accountService.getByPrimaryId(chartCode, accountNumber);
+            if (ObjectUtils.isNull(account)) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NOT_FOUND), chartCode, accountNumber), logErrorMessage);
+                valid = false;
+            } else if (account.isClosed()) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_CLOSED), chartCode, accountNumber), logErrorMessage);
+                valid = false;
+            } else if (account.isExpired()) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_EXPIRED), chartCode, accountNumber), logErrorMessage);
+                valid = false;
+            }
         }
+        return valid;
+    }
 
-        if (StringUtils.equalsIgnoreCase(accountNumber, CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION)) {
-            return true;
+    private boolean validateObjectCode(String chartCode, String objectCodeValue, boolean logErrorMessage) {
+        boolean valid = true;
+        if (StringUtils.isNotBlank(objectCodeValue)) {
+            ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chartCode, objectCodeValue);
+            if (ObjectUtils.isNull(objectCode)) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND), 
+                        chartCode, objectCodeValue), logErrorMessage);
+                valid = false;
+            } else if (!objectCode.isActive()) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_INACTIVE), 
+                        chartCode, objectCodeValue), logErrorMessage);
+                valid = false;
+            }
         }
+        return valid;
+    }
 
-        Account account = accountService.getByPrimaryId(chartCode, accountNumber);
-        if (ObjectUtils.isNull(account)) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NOT_FOUND), chartCode, accountNumber));
-            return false;
+    private boolean validateSubAccountNumber(String chartCode, String accountNumber, String subAccountNumber, boolean logErrorMessage) {
+        boolean valid = true;
+        if (StringUtils.isNotBlank(subAccountNumber)) {
+            SubAccount subAccount = subAccountService.getByPrimaryId(chartCode, accountNumber, subAccountNumber);
+            if (ObjectUtils.isNull(subAccount)) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_NOT_FOUND), 
+                        chartCode, accountNumber, subAccountNumber), logErrorMessage);
+                valid = false;
+            } else if (!subAccount.isActive()) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_INACTIVE), 
+                        chartCode, accountNumber, subAccountNumber), logErrorMessage);
+                valid = false;
+            }
         }
-        if (account.isClosed()) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_CLOSED), chartCode, accountNumber));
-            return false;
+        return valid;
+    }
+
+    private boolean validateSubObjectCode(String chartCode, String accountNumber, String objectCode, String subObjectCode, boolean logErrorMessage) {
+        boolean valid = true;
+        if (StringUtils.isNotBlank(subObjectCode)) {
+            SubObjectCode subObject = subObjectCodeService.getByPrimaryIdForCurrentYear(chartCode, accountNumber, objectCode, subObjectCode);
+            if (ObjectUtils.isNull(subObject)) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_NOT_FOUND), 
+                        chartCode, accountNumber, objectCode, subObjectCode), logErrorMessage);
+                valid = false;
+            } else if (!subObject.isActive()) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_INACTIVE), 
+                        chartCode, accountNumber, objectCode, subObjectCode), logErrorMessage);
+                valid = false;
+            }
         }
-        if (account.isExpired()) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_EXPIRED), chartCode, accountNumber));
+        return valid;
+    }
+
+    private boolean validateProjectCode(String projectCodeValue, boolean logErrorMessage) {
+        boolean valid = true;
+        if (StringUtils.isNotBlank(projectCodeValue)) {
+            ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeValue);
+            if (ObjectUtils.isNull(projectCode)) {
+                logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_NOT_FOUND), projectCodeValue), logErrorMessage);
+                valid = false;
+            } else if (!projectCode.isActive()) {
+                LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_INACTIVE), projectCodeValue));
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    private boolean validateOrgRefId(String orgRefId, boolean logErrorMessage) {
+        if (StringUtils.isNotBlank(orgRefId) && orgRefId.length() > 8) {
+            logAccountValidationError(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ORG_REF_ID_TOO_LONG), orgRefId), logErrorMessage);
             return false;
         }
         return true;
     }
-
-    private boolean validateObjectCode(String chartCode, String objectCodeValue) {
-        if (StringUtils.isBlank(objectCodeValue)) {
-            return false;
+    
+    private void logAccountValidationError(String message, boolean logErrorMessage) {
+        if (logErrorMessage) {
+            LOG.error("logAccountValidationError, " + message);
         }
-
-        ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chartCode, objectCodeValue);
-        if (ObjectUtils.isNull(objectCode)) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND), chartCode, objectCodeValue));
-            return false;
-        }
-        if (!objectCode.isActive()) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_INACTIVE), chartCode, objectCodeValue));
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateSubAccountNumber(String chartCode, String accountNumber, String subAccountNumber) {
-        if (StringUtils.isBlank(subAccountNumber)) {
-            return true;
-        }
-
-        SubAccount subAccount = subAccountService.getByPrimaryId(chartCode, accountNumber, subAccountNumber);
-        if (ObjectUtils.isNull(subAccount)) {
-            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_NOT_FOUND);
-            LOG.error(String.format(errorMessage, chartCode, accountNumber, subAccountNumber));
-            return false;
-        }
-        if (!subAccount.isActive()) {
-            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_INACTIVE);
-            LOG.error(String.format(errorMessage, chartCode, accountNumber, subAccountNumber));
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateSubObjectCode(String chartCode, String accountNumber, String objectCode, String subObjectCode) {
-        if (StringUtils.isBlank(subObjectCode)) {
-            return true;
-        }
-
-        SubObjectCode subObject = subObjectCodeService.getByPrimaryIdForCurrentYear(chartCode, accountNumber, objectCode, subObjectCode);
-        if (ObjectUtils.isNull(subObject)) {
-            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_NOT_FOUND);
-            LOG.error(String.format(errorMessage, chartCode, accountNumber, objectCode, subObjectCode));
-            return false;
-        }
-        if (!subObject.isActive()) {
-            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_INACTIVE);
-            LOG.error(String.format(errorMessage, chartCode, accountNumber, objectCode, subObjectCode));
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateProjectCode(String projectCodeValue) {
-        if (StringUtils.isBlank(projectCodeValue)) {
-            return true;
-        }
-
-        ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeValue);
-        if (ObjectUtils.isNull(projectCode)) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_NOT_FOUND), projectCodeValue));
-            return false;
-        }
-        if (!projectCode.isActive()) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_INACTIVE), projectCodeValue));
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateOrgRefId(String orgRefId) {
-        if (StringUtils.isBlank(orgRefId)) {
-            return true;
-        }
-        if (orgRefId.length() > 8) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ORG_REF_ID_TOO_LONG), orgRefId));
-            return false;
-        }
-        return true;
-    }
-
-    private AccountingXmlDocumentAccountingLine getDefaultAccountingLine(String defaultAccountString) {
-        AccountingXmlDocumentAccountingLine xmlAccountingLine = getEmptyAccountingXmlDocumentAccountingLine();
-
-        if (StringUtils.countMatches(defaultAccountString, "*") == 6) {
-            xmlAccountingLine = parseCostCenterGroupLevel(defaultAccountString);
-        }
-        else if (StringUtils.countMatches(defaultAccountString, "-") == 1) {
-            xmlAccountingLine.setAccountNumber(StringUtils.split(defaultAccountString, "-")[0]);
-            xmlAccountingLine.setSubAccountNumber(StringUtils.split(defaultAccountString, "-")[1]);
-        }
-        else {
-            xmlAccountingLine.setAccountNumber(defaultAccountString);
-        }
-
-        return xmlAccountingLine;
     }
 
     private String getDefaultChartCodeFromParameter() {
@@ -269,18 +350,6 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         return getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPONENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PARAMETER_NAME);
-    }
-
-    private AccountingXmlDocumentAccountingLine getEmptyAccountingXmlDocumentAccountingLine() {
-        AccountingXmlDocumentAccountingLine xmlAccountingLine = new AccountingXmlDocumentAccountingLine();
-        xmlAccountingLine.setChartCode(getDefaultChartCodeFromParameter());
-        xmlAccountingLine.setSubAccountNumber(StringUtils.EMPTY);
-        xmlAccountingLine.setObjectCode(getDefaultObjectCodeFromParameter());
-        xmlAccountingLine.setSubObjectCode(StringUtils.EMPTY);
-        xmlAccountingLine.setProjectCode(StringUtils.EMPTY);
-        xmlAccountingLine.setOrgRefId(StringUtils.EMPTY);
-        xmlAccountingLine.setLineDescription(StringUtils.EMPTY);
-        return xmlAccountingLine;
     }
 
     public ParameterService getParameterService() {
