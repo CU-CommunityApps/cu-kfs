@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.rest.resource;
 
 import com.google.gson.Gson;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.dataaccess.impl.EinvoiceDaoOjb;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -30,9 +31,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Path("api")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -56,20 +59,38 @@ public class CuEinvoiceApiResource {
     }
 
     @GET
+    @Path("vendors")
+    public Response getVendor(@Context HttpHeaders headers) {
+        try {
+            List<String> vendorNumbers = getVendorNumbersFromRequest();
+            List<VendorDetail> vendors = SpringContext.getBean(EinvoiceDaoOjb.class).getVendors(vendorNumbers);
+            List<Properties> vendorsSerialized = vendors.stream().map(vendor -> getVendorProperties(vendor)).collect(Collectors.toList());
+            return Response.ok(gson.toJson(vendorsSerialized)).build();
+        }
+        catch (BadRequestException ex) {
+            return respondGetVendorsBadRequest();
+        }
+        catch (Exception ex) {
+            LOG.error(ex);
+            return respondInternalServerError(ex);
+        }
+    }
+
+    @GET
     @Path("vendors/{vendorNumber}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getVendor(@PathParam(PurapPropertyConstants.VENDOR_NUMBER) String vendorNumber, @Context HttpHeaders headers) {
         try {
+
             HashMap<String, String> vendorCombinedPk = parseVendorNumber(vendorNumber);
             VendorDetail vendorDetail = getLookupDao().findObjectByMap(VendorDetail.class.newInstance(), vendorCombinedPk);
             if (vendorDetail == null) {
                 return respondNotFound();
             }
-            String responseBody = serializeVendorToJson(vendorDetail);
+            String responseBody =  gson.toJson(getVendorProperties(vendorDetail));
             return Response.ok(responseBody).build();
         }
         catch (BadRequestException ex) {
-            return respondBadRequest();
+            return respondGetVendorBadRequest();
         }
         catch (Exception ex) {
             LOG.error(ex);
@@ -79,7 +100,6 @@ public class CuEinvoiceApiResource {
 
     @GET
     @Path("po/{purapDocumentIdentifier}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getPurchaseOrder(@PathParam(PurapPropertyConstants.PURAP_DOC_ID) String purapDocumentIdentifier, @Context HttpHeaders headers) {
         try {
             HashMap<String, String> map = new HashMap<>();
@@ -97,14 +117,23 @@ public class CuEinvoiceApiResource {
         }
     }
 
-    private String serializeVendorToJson(VendorDetail vendorDetail) {
+    private List<String> getVendorNumbersFromRequest() {
+        String vendorNumbersString = servletRequest.getParameter(CUPurapConstants.VENDOR_NUMBERS);
+        if (StringUtils.isEmpty(vendorNumbersString)) {
+            throw new BadRequestException();
+        }
+        String[] vendorNumbers = vendorNumbersString.split(CUPurapConstants.COMMA);
+        return Arrays.asList(vendorNumbers);
+    }
+
+    private Properties getVendorProperties(VendorDetail vendorDetail) {
         Properties vendorProperties = new Properties();
         safelyAddProperty(vendorProperties, CUPurapConstants.DUNS, vendorDetail.getVendorDunsNumber());
         safelyAddProperty(vendorProperties, PurapPropertyConstants.VENDOR_NUMBER, vendorDetail.getVendorNumber());
-        safelyAddProperty(vendorProperties, PurapPropertyConstants.VENDOR_NAME, vendorDetail.getVendorName());
+        safelyAddProperty(vendorProperties, CUPurapConstants.VENDOR_NAME, vendorDetail.getVendorName());
         vendorProperties.put(KRADPropertyConstants.ACTIVE_INDICATOR, vendorDetail.isActiveIndicator());
         addVendorRemitAddressToProperties(vendorProperties, vendorDetail);
-        return gson.toJson(vendorProperties);
+        return vendorProperties;
     }
 
     private String serializePoDocumentToJson(PurchaseOrderDocument poDoc) {
@@ -131,6 +160,7 @@ public class CuEinvoiceApiResource {
             safelyAddProperty(vendorProperties, CUPurapConstants.EMAIL, vendorAddress.getVendorAddressEmailAddress());
             safelyAddProperty(vendorProperties, CUPurapConstants.ADDRESS_LINE1, vendorAddress.getVendorLine1Address());
             safelyAddProperty(vendorProperties, CUPurapConstants.ADDRESS_LINE2, vendorAddress.getVendorLine2Address());
+            safelyAddProperty(vendorProperties, CUPurapConstants.CITY, vendorAddress.getVendorCityName());
             safelyAddProperty(vendorProperties, CUPurapConstants.STATE, vendorAddress.getVendorStateCode());
             safelyAddProperty(vendorProperties, CUPurapConstants.ZIPCODE, vendorAddress.getVendorZipCode());
             safelyAddProperty(vendorProperties, CUPurapConstants.COUNTRY, vendorAddress.getVendorCountryCode());
@@ -156,7 +186,10 @@ public class CuEinvoiceApiResource {
                 safelyAddProperty(lineProps, CUPurapConstants.AMOUNT.toLowerCase(), purApItem.getTotalAmount().toString());
                 safelyAddProperty(lineProps, CUPurapConstants.QUANTITY, purApItem.getItemQuantity().toString());
                 safelyAddProperty(lineProps, CUPurapConstants.UNIT_OF_MEASURE, purApItem.getItemUnitOfMeasureCode());
-                safelyAddProperty(lineProps, CUPurapConstants.ITEM_DESCRIPTION, purApItem.getItemDescription());
+                safelyAddProperty(lineProps, CUPurapConstants.DESCRIPTION, purApItem.getItemDescription());
+                lineProps.put(CUPurapConstants.UNIT_PRICE, purApItem.getItemUnitPrice());
+                lineProps.put(CUPurapConstants.LINE_NUMBER, purApItem.getItemLineNumber());
+                lineProps.put(CUPurapConstants.PART_NUMBER, purApItem.getItemAuxiliaryPartIdentifier());
                 poLines.add(lineProps);
             }
         }
@@ -189,8 +222,13 @@ public class CuEinvoiceApiResource {
         return map;
     }
 
-    private Response respondBadRequest() {
+    private Response respondGetVendorBadRequest() {
         String responseBody = getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.EINVOICE_VENDOR_BAD_REQUEST);
+        return Response.status(400).entity(responseBody).build();
+    }
+
+    private Response respondGetVendorsBadRequest() {
+        String responseBody = getSimpleJsonObject(CUPurapConstants.ERROR, CUPurapConstants.EINVOICE_GET_VENDORS_BAD_REQUEST);
         return Response.status(400).entity(responseBody).build();
     }
 
