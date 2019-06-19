@@ -21,8 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +32,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -50,8 +53,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     
     private static final String FP_PRCRMNT_CARD_TRN_MT_SEQ = "FP_PRCRMNT_CARD_TRN_MT_SEQ";
 
-    private static final String PAYMENT_TSYS_TRAN_CODE = "0108";
-
     private ProcurementCardTransaction parent;
     private boolean duplicateTransactions = false;
     private int transactionCount = 0;
@@ -71,7 +72,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     private DateTimeService dateTimeService;
     private ParameterService parameterService;
     private ProcurementCardErrorEmailService procurementCardErrorEmailService;
-    private ProcurementCardSkippedTransactionEmailService procurementCardSkippedTransactionEmailService;
+    protected ProcurementCardSkippedTransactionEmailService procurementCardSkippedTransactionEmailService;
     
     // USBank record ID's
     // If/when we create dedicated classes for representing these records, 
@@ -470,7 +471,23 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
     protected boolean transactionRepresentsPayment(String line) {
         String transactionCode = USBankRecordFieldUtils.extractNormalizedString(line, 41, 45);
-        return StringUtils.equals(PAYMENT_TSYS_TRAN_CODE, transactionCode);
+        
+        Collection<String> transactionTypesToSkip = parameterService.getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, "CARD_TRANSACTION_TYPES_TO_SKIP");
+        LOG.info("transactionRepresentsPayment: transactionTypesToSkip: " + transactionTypesToSkip);
+        
+        boolean skipTransaction = false;
+        
+        if (CollectionUtils.isNotEmpty(transactionTypesToSkip)) {
+            if (transactionTypesToSkip.contains(transactionCode)) {
+                skipTransaction = true;
+                LOG.info("transactionRepresentsPayment, the transaction type " + transactionCode + " is set to be skipped");
+            } else {
+                LOG.info("transactionRepresentsPayment, the transaction type " + transactionCode + " is NOT set to be skipped");
+            }
+        }
+        
+        return skipTransaction;
     }
 
     protected void parseAccountingInformation(String line, ProcurementCardTransaction child)
