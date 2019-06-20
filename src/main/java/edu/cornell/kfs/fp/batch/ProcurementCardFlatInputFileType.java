@@ -185,7 +185,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
          fileFooterDebits = new KualiDecimal(0);
     }
     
-
     public Object parse(byte[] fileByteContent) throws ParseException {
         BufferedReader bufferedFileReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent)));
         String fileLine;
@@ -216,6 +215,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             
             if (CollectionUtils.isNotEmpty(skippedTransactions)) {
                 LOG.error("fileByteContent, there were " + skippedTransactions.size() + " transactions skipped.");
+                procurementCardSkippedTransactionEmailService.sendSkippedTransactionEmail(skippedTransactions);
             }
             
         	if (totalDebits.compareTo(fileFooterDebits.abs()) != 0) {
@@ -474,10 +474,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
     protected boolean transactionRepresentsPayment(String line) {
         String transactionCode = USBankRecordFieldUtils.extractNormalizedString(line, 41, 45);
-        
         Collection<String> transactionTypesToSkip = parameterService.getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, "CARD_TRANSACTION_TYPES_TO_SKIP");
-        
         boolean skipTransaction = false;
         
         if (CollectionUtils.isNotEmpty(transactionTypesToSkip)) {
@@ -488,7 +486,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
                 LOG.debug("transactionRepresentsPayment, the transaction type " + transactionCode + " is NOT set to be skipped");
             }
         }
-        
         return skipTransaction;
     }
 
