@@ -7,7 +7,8 @@ import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 public enum RassXMLAwardPiCoPiEntryFixture {
     cah292_PRIMARY(Boolean.TRUE, "cah292"),
     NO_NAME_PRIMARY(Boolean.TRUE, StringUtils.EMPTY),
-    jdh34_CO_PI(Boolean.FALSE, "jdh34");
+    jdh34_CO_PI(Boolean.FALSE, "jdh34"),
+    mgw3_PRIMARY(Boolean.TRUE, "mgw3");
     
     public final Boolean primary;
     public final String projectDirectorPrincipalName;

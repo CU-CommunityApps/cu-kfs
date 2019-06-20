@@ -2,12 +2,15 @@ package edu.cornell.kfs.rass.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,17 +21,25 @@ import org.junit.Test;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
+import org.kuali.kfs.module.cg.businessobject.CGProjectDirector;
+import org.kuali.kfs.module.cg.businessobject.Primaryable;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
+import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.service.AgencyService;
+import org.kuali.kfs.module.cg.service.AwardService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Stubber;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
+import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.rass.RassConstants.RassObjectGroupingUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
@@ -38,6 +49,7 @@ import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
+import edu.cornell.kfs.rass.batch.xml.fixture.RassXMLAwardPiCoPiEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlDocumentWrapperFixture;
@@ -49,10 +61,14 @@ import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
 public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
     private AgencyService mockAgencyService;
+    private BusinessObjectService mockBusinessObjectService;
+    private AwardService mockAwardService;
     private TestRassServiceImpl rassService;
     private TestRassRoutingServiceImpl rassRoutingService;
 
     private List<Maintainable> agencyUpdates;
+    private List<Maintainable> proposalUpdates;
+    private List<Maintainable> awardUpdates;
 
     @Before
     @Override
@@ -60,7 +76,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         super.setUp();
         
         agencyUpdates = new ArrayList<>();
+        proposalUpdates = new ArrayList<>();
+        awardUpdates = new ArrayList<>();
         mockAgencyService = springContext.getBean(RassTestConstants.AGENCY_SERVICE_BEAN_NAME, AgencyService.class);
+        mockBusinessObjectService = springContext.getBean(RassTestConstants.BUSINESS_OBJECT_SERVICE_BEAN_NAME, BusinessObjectService.class);
+        mockAwardService = springContext.getBean(RassTestConstants.AWARD_SERVICE_BEAN_NAME, AwardService.class);
         rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, TestRassServiceImpl.class);
         
         rassRoutingService = springContext.getBean(RassTestConstants.RASS_ROUTING_SERVICE_BEAN_NAME, TestRassRoutingServiceImpl.class);
@@ -390,6 +410,19 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
     }
 
+    @Test
+    public void testCreateSingleProposalAndAward() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW))));
+    }
+
     private void assertXmlContentsPerformExpectedObjectUpdates(List<RassXmlDocumentWrapperFixture> xmlContents,
             ExpectedProcessingResults expectedProcessingResults) throws Exception {
         List<RassXmlFileParseResult> fileResults = xmlContents.stream()
@@ -400,6 +433,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         RassXmlProcessingResults actualResults = rassService.updateKFS(fileResults);
         
         assertAgenciesWereUpdatedAndReportedAsExpected(expectedProcessingResults, actualResults);
+        assertProposalsWereUpdatedAndReportedAsExpected(expectedProcessingResults, actualResults);
+        assertAwardsWereUpdatedAndReportedAsExpected(expectedProcessingResults, actualResults);
     }
 
     private RassXmlFileParseResult encaseWrapperInSuccessfulFileResult(RassXmlDocumentWrapper documentWrapper) {
@@ -410,12 +445,33 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             ExpectedProcessingResults expectedProcessingResults, RassXmlProcessingResults actualProcessingResults) {
         ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencyResultGrouping = expectedProcessingResults
                 .getExpectedAgencyResults();
-        List<ExpectedObjectUpdateResult<RassXmlAgencyEntryFixture>> expectedSuccessfulAgencyChanges = findExpectedSuccessfulResults(
-                expectedAgencyResultGrouping.getExpectedObjectUpdateResults());
         RassBusinessObjectUpdateResultGrouping<Agency> actualAgencyResultGrouping = actualProcessingResults.getAgencyResults();
         
         assertCorrectObjectResultsWereReported(expectedAgencyResultGrouping, actualAgencyResultGrouping);
-        assertAgenciesWereUpdatedAsExpected(expectedSuccessfulAgencyChanges);
+        assertObjectsWereUpdatedAsExpected(expectedAgencyResultGrouping, agencyUpdates,
+                this::assertAgencyWasUpdatedAsExpected);
+    }
+
+    private void assertProposalsWereUpdatedAndReportedAsExpected(
+            ExpectedProcessingResults expectedProcessingResults, RassXmlProcessingResults actualProcessingResults) {
+        ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResultGrouping = expectedProcessingResults
+                .getExpectedProposalResults();
+        RassBusinessObjectUpdateResultGrouping<Proposal> actualProposalResultGrouping = actualProcessingResults.getProposalResults();
+        
+        assertCorrectObjectResultsWereReported(expectedProposalResultGrouping, actualProposalResultGrouping);
+        assertObjectsWereUpdatedAsExpected(expectedProposalResultGrouping, proposalUpdates,
+                this::assertProposalWasUpdatedAsExpected);
+    }
+
+    private void assertAwardsWereUpdatedAndReportedAsExpected(
+            ExpectedProcessingResults expectedProcessingResults, RassXmlProcessingResults actualProcessingResults) {
+        ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedProposalResultGrouping = expectedProcessingResults
+                .getExpectedAwardResults();
+        RassBusinessObjectUpdateResultGrouping<Award> actualAwardResultGrouping = actualProcessingResults.getAwardResults();
+        
+        assertCorrectObjectResultsWereReported(expectedProposalResultGrouping, actualAwardResultGrouping);
+        assertObjectsWereUpdatedAsExpected(expectedProposalResultGrouping, awardUpdates,
+                this::assertAwardWasUpdatedAsExpected);
     }
 
     private <E extends Enum<E>, R extends PersistableBusinessObject> void assertCorrectObjectResultsWereReported(
@@ -444,27 +500,119 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         }
     }
 
-    private void assertAgenciesWereUpdatedAsExpected(List<ExpectedObjectUpdateResult<RassXmlAgencyEntryFixture>> expectedResults) {
-        assertEquals("Wrong number of agencies created or updated", expectedResults.size(), agencyUpdates.size());
+    private <E extends Enum<E>, R extends PersistableBusinessObject> void assertObjectsWereUpdatedAsExpected(
+            ExpectedObjectUpdateResultGrouping<E, R> expectedResultGrouping, List<Maintainable> actualResults,
+            ObjectUpdateValidator<E, R> resultValidator) {
+        
+        List<ExpectedObjectUpdateResult<E>> expectedResults = findExpectedSuccessfulResults(
+                expectedResultGrouping.getExpectedObjectUpdateResults());
+        Class<R> businessObjectClass = expectedResultGrouping.getBusinessObjectClass();
+        String objectLabel = businessObjectClass.getSimpleName();
+        
+        assertEquals("Wrong number of " + objectLabel + " objects created or updated", expectedResults.size(), actualResults.size());
         for (int i = 0; i < expectedResults.size(); i++) {
-            ExpectedObjectUpdateResult<RassXmlAgencyEntryFixture> expectedResult = expectedResults.get(i);
-            Maintainable actualResult = agencyUpdates.get(i);
-            assertEquals("Wrong maintenance action for agency at index " + i,
+            ExpectedObjectUpdateResult<E> expectedResult = expectedResults.get(i);
+            Maintainable actualResult = actualResults.get(i);
+            assertEquals("Wrong maintenance action for " + objectLabel + " at index " + i,
                     expectedResult.getExpectedMaintenanceAction(), actualResult.getMaintenanceAction());
             
-            RassXmlAgencyEntryFixture expectedAgency = expectedResult.getBusinessObjectFixture();
-            Agency actualAgency = (Agency) actualResult.getDataObject();
-            assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedAgency.number, actualAgency.getAgencyNumber());
-            assertEqualsOrBothBlank("Wrong reporting name at index " + i, expectedAgency.reportingName, actualAgency.getReportingName());
-            assertEqualsOrBothBlank("Wrong full name at index " + i, expectedAgency.getTruncatedFullName(), actualAgency.getFullName());
-            assertEqualsOrBothBlank("Wrong type code at index " + i, expectedAgency.typeCode, actualAgency.getAgencyTypeCode());
-            assertEqualsOrBothBlank("Wrong reports-to agency number at index " + i,
-                    expectedAgency.reportsToAgencyNumber, actualAgency.getReportsToAgencyNumber());
-            
-            AgencyExtendedAttribute actualExtension = (AgencyExtendedAttribute) actualAgency.getExtension();
-            assertEqualsOrBothBlank("Wrong common name at index " + i,
-                    expectedAgency.getTruncatedCommonName(), actualExtension.getAgencyCommonName());
-            assertEqualsOrBothBlank("Wrong origin code at index " + i, expectedAgency.agencyOrigin, actualExtension.getAgencyOriginCode());
+            E expectedObjectFixture = expectedResult.getBusinessObjectFixture();
+            R actualObject = businessObjectClass.cast(actualResult.getDataObject());
+            resultValidator.assertObjectWasUpdatedAsExpected(expectedObjectFixture, actualObject, i);
+        }
+    }
+
+    private void assertAgencyWasUpdatedAsExpected(RassXmlAgencyEntryFixture expectedAgency, Agency actualAgency, int i) {
+        assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedAgency.number, actualAgency.getAgencyNumber());
+        assertEqualsOrBothBlank("Wrong reporting name at index " + i, expectedAgency.reportingName, actualAgency.getReportingName());
+        assertEqualsOrBothBlank("Wrong full name at index " + i, expectedAgency.getTruncatedFullName(), actualAgency.getFullName());
+        assertEqualsOrBothBlank("Wrong type code at index " + i, expectedAgency.typeCode, actualAgency.getAgencyTypeCode());
+        assertEqualsOrBothBlank("Wrong reports-to agency number at index " + i,
+                expectedAgency.reportsToAgencyNumber, actualAgency.getReportsToAgencyNumber());
+        
+        AgencyExtendedAttribute actualExtension = (AgencyExtendedAttribute) actualAgency.getExtension();
+        assertEqualsOrBothBlank("Wrong common name at index " + i,
+                expectedAgency.getTruncatedCommonName(), actualExtension.getAgencyCommonName());
+        assertEqualsOrBothBlank("Wrong origin code at index " + i, expectedAgency.agencyOrigin, actualExtension.getAgencyOriginCode());
+    }
+
+    private void assertProposalWasUpdatedAsExpected(RassXmlAwardEntryFixture expectedProposal, Proposal actualProposal, int i) {
+        List<ProposalOrganization> proposalOrganizations = actualProposal.getProposalOrganizations();
+        assertEquals("Wrong number of proposal organizations at index " + i, 1, proposalOrganizations.size());
+        ProposalOrganization proposalOrganization = proposalOrganizations.get(0);
+        assertNotNull("Proposal organization should not have been null at index " + i, proposalOrganization);
+        
+        assertEqualsOrBothBlank("Wrong proposal number at index " + i, expectedProposal.proposalNumber, actualProposal.getProposalNumber());
+        assertEqualsOrBothBlank("Wrong proposal status at index " + i, expectedProposal.status, actualProposal.getProposalStatusCode());
+        assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedProposal.agencyNumber, actualProposal.getAgencyNumber());
+        assertEqualsOrBothBlank("Wrong project title at index " + i, expectedProposal.projectTitle, actualProposal.getProposalProjectTitle());
+        assertEquals("Wrong start date at index " + i, expectedProposal.getStartDateAsSqlDate(), actualProposal.getProposalBeginningDate());
+        assertEquals("Wrong stop date at index " + i, expectedProposal.getStopDateAsSqlDate(), actualProposal.getProposalEndingDate());
+        assertEquals("Wrong direct cost amount at index " + i, expectedProposal.directCostAmount, actualProposal.getProposalDirectCostAmount());
+        assertEquals("Wrong indirect cost amount at index " + i, expectedProposal.indirectCostAmount, actualProposal.getProposalIndirectCostAmount());
+        assertEqualsOrBothBlank("Wrong proposal purpose at index " + i, expectedProposal.purpose, actualProposal.getProposalPurposeCode());
+        assertEqualsOrBothBlank("Wrong grant number at index " + i, expectedProposal.grantNumber, actualProposal.getGrantNumber());
+        assertEquals("Wrong federal pass-through indicator at index " + i,
+                expectedProposal.federalPassThrough, actualProposal.getProposalFederalPassThroughIndicator());
+        assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
+                expectedProposal.federalPassThroughAgencyNumber, actualProposal.getFederalPassThroughAgencyNumber());
+        assertEqualsOrBothBlank("Wrong CFDA number at index " + i, expectedProposal.cfdaNumber, actualProposal.getCfdaNumber());
+        assertEqualsOrBothBlank("Wrong organization code at index " + i,
+                expectedProposal.organizationCode, proposalOrganization.getOrganizationCode());
+        
+        assertProjectDirectorsWereUpdatedAsExpected(expectedProposal, actualProposal.getProposalProjectDirectors(), i);
+    }
+
+    private void assertAwardWasUpdatedAsExpected(RassXmlAwardEntryFixture expectedAward, Award actualAward, int i) {
+        List<AwardOrganization> awardOrganizations = actualAward.getAwardOrganizations();
+        assertEquals("Wrong number of award organizations at index " + i, 1, awardOrganizations.size());
+        AwardOrganization awardOrganization = awardOrganizations.get(0);
+        assertNotNull("Award organization should not have been null at index " + i, awardOrganization);
+        
+        assertEqualsOrBothBlank("Wrong proposal number at index " + i, expectedAward.proposalNumber, actualAward.getProposalNumber());
+        assertEqualsOrBothBlank("Wrong award status at index " + i, expectedAward.status, actualAward.getAwardStatusCode());
+        assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedAward.agencyNumber, actualAward.getAgencyNumber());
+        assertEqualsOrBothBlank("Wrong project title at index " + i, expectedAward.projectTitle, actualAward.getAwardProjectTitle());
+        assertEquals("Wrong start date at index " + i, expectedAward.getStartDateAsSqlDate(), actualAward.getAwardBeginningDate());
+        assertEquals("Wrong stop date at index " + i, expectedAward.getStopDateAsSqlDate(), actualAward.getAwardEndingDate());
+        assertEquals("Wrong direct cost amount at index " + i, expectedAward.directCostAmount, actualAward.getAwardDirectCostAmount());
+        assertEquals("Wrong indirect cost amount at index " + i, expectedAward.indirectCostAmount, actualAward.getAwardIndirectCostAmount());
+        assertEqualsOrBothBlank("Wrong award purpose at index " + i, expectedAward.purpose, actualAward.getAwardPurposeCode());
+        assertEqualsOrBothBlank("Wrong grant description at index " + i, expectedAward.grantDescription, actualAward.getGrantDescriptionCode());
+        assertEquals("Wrong federal pass-through indicator at index " + i,
+                expectedAward.federalPassThrough, actualAward.getFederalPassThroughIndicator());
+        assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
+                expectedAward.federalPassThroughAgencyNumber, actualAward.getFederalPassThroughAgencyNumber());
+        assertEqualsOrBothBlank("Wrong organization code at index " + i,
+                expectedAward.organizationCode, awardOrganization.getOrganizationCode());
+        
+        AwardExtendedAttribute actualExtension = (AwardExtendedAttribute) actualAward.getExtension();
+        assertEquals("Wrong cost share required indicator at index " + i,
+                expectedAward.costShareRequired, actualExtension.isCostShareRequired());
+        assertEquals("Wrong final fiscal report date at index " + i,
+                expectedAward.getFinalReportDueDateAsSqlDate(), actualExtension.getFinalFiscalReportDate());
+        
+        assertProjectDirectorsWereUpdatedAsExpected(expectedAward, actualAward.getAwardProjectDirectors(), i);
+    }
+
+    private void assertProjectDirectorsWereUpdatedAsExpected(
+            RassXmlAwardEntryFixture expectedAwardOrProposal, List<? extends CGProjectDirector> actualDirectors, int i) {
+        List<RassXMLAwardPiCoPiEntryFixture> expectedDirectors = expectedAwardOrProposal.piFixtures;
+        assertEquals("Wrong number of directors at index " + i, expectedDirectors.size(), actualDirectors.size());
+        
+        for (int j = 0; j < expectedDirectors.size(); j++) {
+            String multiIndex = i + KFSConstants.COMMA + j;
+            RassXMLAwardPiCoPiEntryFixture expectedDirector = expectedDirectors.get(j);
+            CGProjectDirector actualDirector = actualDirectors.get(j);
+            assertEquals("Wrong proposal number for director at index " + multiIndex,
+                    expectedAwardOrProposal.proposalNumber, actualDirector.getProposalNumber());
+            assertEquals("Wrong principal ID/name for director at index " + multiIndex
+                    + " in spite of principalId/principalName equivalency for this test scenario",
+                    expectedDirector.projectDirectorPrincipalName, actualDirector.getPrincipalId());
+            assertTrue("A primary director indicator should have been supported for director at index " + multiIndex,
+                    actualDirector instanceof Primaryable);
+            assertEquals("Wrong primary director indicator for director at index " + multiIndex,
+                    expectedDirector.primary, ((Primaryable) actualDirector).isPrimary());
         }
     }
 
@@ -488,6 +636,12 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         if (businessObject instanceof Agency) {
             objectKey = ((Agency) businessObject).getAgencyNumber();
             recordModifiedAgencyAndUpdateAgencyService(maintainable);
+        } else if (businessObject instanceof Proposal) {
+            objectKey = ((Proposal) businessObject).getProposalNumber();
+            recordModifiedProposalAndUpdateBusinessObjectService(maintainable);
+        } else if (businessObject instanceof Award) {
+            objectKey = ((Award) businessObject).getProposalNumber();
+            recordModifiedAwardAndUpdateAwardService(maintainable);
         } else {
             fail("Maintenance document had an unexpected business object type: " + businessObject.getClass());
         }
@@ -511,6 +665,23 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         agencyUpdates.add(agencyMaintainable);
         Mockito.doReturn(agency)
                 .when(mockAgencyService).getByPrimaryId(agencyNumber);
+    }
+
+    private void recordModifiedProposalAndUpdateBusinessObjectService(Maintainable proposalMaintainable) {
+        Proposal proposal = (Proposal) proposalMaintainable.getDataObject();
+        Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
+                KFSPropertyConstants.PROPOSAL_NUMBER, proposal.getProposalNumber());
+        proposalUpdates.add(proposalMaintainable);
+        Mockito.doReturn(proposal)
+                .when(mockBusinessObjectService).findByPrimaryKey(Proposal.class, proposalPrimaryKeys);
+    }
+
+    private void recordModifiedAwardAndUpdateAwardService(Maintainable awardMaintainable) {
+        Award award = (Award) awardMaintainable.getDataObject();
+        String proposalNumber = award.getProposalNumber();
+        awardUpdates.add(awardMaintainable);
+        Mockito.doReturn(award)
+                .when(mockAwardService).getByPrimaryId(proposalNumber);
     }
 
     private void overrideStatusesReturnedByRouteHeaderService(int documentNumberAsInt, String... routeStatuses) {
@@ -554,7 +725,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         return new ExpectedObjectUpdateResultGrouping<>(Proposal.class, resultCode, expectedProposals);
     }
 
-    @SuppressWarnings("unused")
     private ExpectedObjectUpdateResult<RassXmlAwardEntryFixture> proposal(RassXmlAwardEntryFixture awardFixture, RassObjectUpdateResultCode resultCode) {
         return new ExpectedObjectUpdateResult<>(awardFixture, resultCode, fixture -> fixture.proposalNumber);
     }
@@ -565,9 +735,13 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         return new ExpectedObjectUpdateResultGrouping<>(Award.class, resultCode, expectedAwards);
     }
 
-    @SuppressWarnings("unused")
     private ExpectedObjectUpdateResult<RassXmlAwardEntryFixture> award(RassXmlAwardEntryFixture awardFixture, RassObjectUpdateResultCode resultCode) {
         return new ExpectedObjectUpdateResult<>(awardFixture, resultCode, fixture -> fixture.proposalNumber);
+    }
+
+    @FunctionalInterface
+    private interface ObjectUpdateValidator<T, U> {
+        void assertObjectWasUpdatedAsExpected(T expectedObject, U actualObject, int index);
     }
 
 }

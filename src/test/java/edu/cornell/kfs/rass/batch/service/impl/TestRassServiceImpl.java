@@ -3,8 +3,10 @@ package edu.cornell.kfs.rass.batch.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
+import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
@@ -26,10 +28,10 @@ public class TestRassServiceImpl extends RassServiceImpl {
         R businessObject = super.createMinimalObject(businessObjectClass);
         if (businessObject instanceof Agency) {
             businessObject.setExtension(new AgencyExtendedAttribute());
+        } else if (businessObject instanceof Award) {
+            businessObject.setExtension(new AwardExtendedAttribute());
         }
         return businessObject;
     }
 
-    
-    
 }
