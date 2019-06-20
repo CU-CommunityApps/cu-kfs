@@ -198,21 +198,26 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         try {                       
             initialize();
         	
-            while ((fileLine=bufferedFileReader.readLine()) != null) {
-            	ProcurementCardTransactionResult transactionResult = generateProcurementCardTransaction(fileLine);
-                
-            	if (transactionResult.hasTransaction()) {
-            	    ProcurementCardTransaction theTransaction = transactionResult.getTransaction();
-                    if(ObjectUtils.isNotNull(theTransaction.getExtension())) {
-                      lineCount = ((ProcurementCardTransactionExtendedAttribute)theTransaction.getExtension()).addAddendumLines(bufferedFileReader, lineCount);
-                    }
+            while ((fileLine = bufferedFileReader.readLine()) != null) {
+                ProcurementCardTransactionResult transactionResult = generateProcurementCardTransaction(fileLine);
 
-            		transactions.add(theTransaction);
-            	} else if (transactionResult.hasSkippedTransaction()) {
-            	    skippedTransactions.add(transactionResult.getSkippedTransaction());
-            	}
-            	lineCount++;
+                if (transactionResult.hasTransaction()) {
+                    ProcurementCardTransaction theTransaction = transactionResult.getTransaction();
+                    if (ObjectUtils.isNotNull(theTransaction.getExtension())) {
+                        lineCount = ((ProcurementCardTransactionExtendedAttribute) theTransaction.getExtension())
+                                .addAddendumLines(bufferedFileReader, lineCount);
+                    }
+                    transactions.add(theTransaction);
+                } else if (transactionResult.hasSkippedTransaction()) {
+                    skippedTransactions.add(transactionResult.getSkippedTransaction());
+                }
+                lineCount++;
             }
+            
+            if (CollectionUtils.isNotEmpty(skippedTransactions)) {
+                LOG.error("fileByteContent, there were " + skippedTransactions.size() + " transactions skipped.");
+            }
+            
         	if (totalDebits.compareTo(fileFooterDebits.abs()) != 0) {
         		StringBuffer sb = new StringBuffer();
         		sb.append("The sum of all debits does not match the value given in the file footer.");
@@ -231,19 +236,17 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         		sb.append(fileFooterCredits);
         		throw new Exception(sb.toString());
         	}
-        	if ( (headerTransactionCount!=footerTransactionCount) || 
-        		 (headerTransactionCount!=transactionCount) ||
-        		 (footerTransactionCount!=transactionCount) ){
-        		StringBuffer sb = new StringBuffer();
-        		sb.append("There is a discrepancy between the number of transactions counted during the ingestion process.");
-        		sb.append(" Transactions in header: ");
-        		sb.append(headerTransactionCount);
-        		sb.append(" Transactions in footer: ");
-        		sb.append(footerTransactionCount);
-        		sb.append(" Transactions counted while parsing file: ");
-        		sb.append(transactionCount);
-        		throw new Exception(sb.toString());
-        	}
+            if ((headerTransactionCount != footerTransactionCount)
+                    || (headerTransactionCount != transactionCount + skippedTransactions.size())
+                    || (footerTransactionCount != transactionCount + skippedTransactions.size())) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("There is a discrepancy between the number of transactions counted during the ingestion process.");
+                sb.append(" Transactions in header: ").append(headerTransactionCount);
+                sb.append(" Transactions in footer: ").append(footerTransactionCount);
+                sb.append(" Transactions counted while parsing file: ").append(transactionCount);
+                sb.append(" Transactions skipped while parsing file: ").append(skippedTransactions.size());
+                throw new Exception(sb.toString());
+            }
         } catch (IOException e) {
             LOG.error("Error encountered reading from file content", e);
             throw new ParseException("Error encountered reading from file content", e);
@@ -474,7 +477,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         
         Collection<String> transactionTypesToSkip = parameterService.getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, "CARD_TRANSACTION_TYPES_TO_SKIP");
-        LOG.info("transactionRepresentsPayment: transactionTypesToSkip: " + transactionTypesToSkip);
         
         boolean skipTransaction = false;
         
@@ -483,7 +485,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
                 skipTransaction = true;
                 LOG.info("transactionRepresentsPayment, the transaction type " + transactionCode + " is set to be skipped");
             } else {
-                LOG.info("transactionRepresentsPayment, the transaction type " + transactionCode + " is NOT set to be skipped");
+                LOG.debug("transactionRepresentsPayment, the transaction type " + transactionCode + " is NOT set to be skipped");
             }
         }
         
