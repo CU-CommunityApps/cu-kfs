@@ -41,6 +41,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSkippedTransactionEmailService;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
@@ -341,7 +342,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             	duplicateTransactions = false;
             }
         }
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && transactionRepresentsPayment(line)) {
+        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && shouldTransactionLineBySkipped(line)) {
             KualiDecimal transactionAmount = USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount);
             ProcurementCardSkippedTransaction skippedTransaction = new ProcurementCardSkippedTransaction();
             skippedTransaction.setFileLineNumber(lineCount);
@@ -421,7 +422,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 
         } 
         // Still need to update totals and transaction count so validation works properly, but don't want transactions to be loaded
-        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && duplicateTransactions) {	        		        	
+        if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && duplicateTransactions){	        		        	
             if (USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65)).equals("D")) {
             	accumulatedDebits = accumulatedDebits.add(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));
             } else {
@@ -472,18 +473,18 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         return new ProcurementCardTransaction();
     }
 
-    protected boolean transactionRepresentsPayment(String line) {
+    protected boolean shouldTransactionLineBySkipped(String line) {
         String transactionCode = USBankRecordFieldUtils.extractNormalizedString(line, 41, 45);
         Collection<String> transactionTypesToSkip = parameterService.getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, "CARD_TRANSACTION_TYPES_TO_SKIP");
+                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTION_TYPES_TO_SKIP);
         boolean skipTransaction = false;
         
         if (CollectionUtils.isNotEmpty(transactionTypesToSkip)) {
             if (transactionTypesToSkip.contains(transactionCode)) {
                 skipTransaction = true;
-                LOG.info("transactionRepresentsPayment, the transaction type " + transactionCode + " is set to be skipped");
+                LOG.info("shouldTransactionLineBySkipped, the transaction type " + transactionCode + " is set to be skipped");
             } else {
-                LOG.debug("transactionRepresentsPayment, the transaction type " + transactionCode + " is NOT set to be skipped");
+                LOG.debug("shouldTransactionLineBySkipped, the transaction type " + transactionCode + " is NOT set to be skipped");
             }
         }
         return skipTransaction;

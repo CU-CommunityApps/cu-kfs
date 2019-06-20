@@ -11,6 +11,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.ProcurementCardSkippedTransaction;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSkippedTransactionEmailService;
 
@@ -37,7 +38,7 @@ public class ProcurementCardSkippedTransactionEmailServiceImpl implements Procur
     protected Set<String> getToAddresses() {
         Set<String> addresses = new HashSet<String>();
         addresses.add(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, "CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS"));
+                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS));
         return addresses;
     }
     
