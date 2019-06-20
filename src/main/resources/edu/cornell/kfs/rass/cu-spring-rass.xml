@@ -181,6 +181,7 @@
 		</property>
 		<property name="nonKeyPropertyNames">
 			<list>
+				<value>proposalPrimaryOrganizationIndicator</value>
 				<value>active</value>
 			</list>
 		</property>
@@ -242,6 +243,7 @@
 		</property>
 		<property name="nonKeyPropertyNames">
 			<list>
+				<value>awardPrimaryOrganizationIndicator</value>
 				<value>active</value>
 			</list>
 		</property>

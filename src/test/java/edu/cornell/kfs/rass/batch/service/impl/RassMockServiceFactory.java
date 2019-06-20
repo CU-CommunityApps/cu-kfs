@@ -231,7 +231,7 @@ public class RassMockServiceFactory {
     public PersonService buildMockPersonService() throws Exception {
         PersonService personService = Mockito.mock(PersonService.class);
         
-        Stream.of(UserNameFixture.mgw3)
+        Stream.of(UserNameFixture.mgw3, UserNameFixture.kan2, UserNameFixture.mo14)
                 .forEach(fixture -> {
                     Person mockPerson = MockPersonUtil.createMockPerson(fixture);
                     String principalName = mockPerson.getPrincipalName();

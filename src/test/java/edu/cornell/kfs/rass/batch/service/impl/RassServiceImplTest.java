@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -423,6 +424,116 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
 
+    @Test
+    public void testUpdateSingleAward() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_UPDATE_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+
+    @Test
+    public void testUpdateOrgCodeOnExistingAward() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_ORG_UPDATE_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V3_ORG_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+
+    @Test
+    public void testUpdateDirectorsOnExistingAward() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V4_DIRECTOR_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+
+    @Test
+    public void testAlternateUpdateOfDirectorsOnExistingAward() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE2),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V5_DIRECTOR_CHANGE2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+
+    @Test
+    public void testSkipUpdatesWhenLoadingUnchangedAward() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_UNCHANGED_AWARD_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testLoadNewAwardAndSkipSubsequentDuplicate() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_DUPLICATED_NEW_AWARD_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testLoadAwardWithMissingRequiredField() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_CREATE_MISSING_FIELD_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                        proposals(RassObjectGroupingUpdateResultCode.ERROR,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR))));
+    }
+
+    @Test
+    public void testLoadMultipleAgenciesAndProposalsAndAwards() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_AND_AWARDS_FILE),
+                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+
     private void assertXmlContentsPerformExpectedObjectUpdates(List<RassXmlDocumentWrapperFixture> xmlContents,
             ExpectedProcessingResults expectedProcessingResults) throws Exception {
         List<RassXmlFileParseResult> fileResults = xmlContents.stream()
@@ -564,11 +675,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     private void assertAwardWasUpdatedAsExpected(RassXmlAwardEntryFixture expectedAward, Award actualAward, int i) {
-        List<AwardOrganization> awardOrganizations = actualAward.getAwardOrganizations();
-        assertEquals("Wrong number of award organizations at index " + i, 1, awardOrganizations.size());
-        AwardOrganization awardOrganization = awardOrganizations.get(0);
-        assertNotNull("Award organization should not have been null at index " + i, awardOrganization);
-        
         assertEqualsOrBothBlank("Wrong proposal number at index " + i, expectedAward.proposalNumber, actualAward.getProposalNumber());
         assertEqualsOrBothBlank("Wrong award status at index " + i, expectedAward.status, actualAward.getAwardStatusCode());
         assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedAward.agencyNumber, actualAward.getAgencyNumber());
@@ -583,8 +689,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 expectedAward.federalPassThrough, actualAward.getFederalPassThroughIndicator());
         assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
                 expectedAward.federalPassThroughAgencyNumber, actualAward.getFederalPassThroughAgencyNumber());
-        assertEqualsOrBothBlank("Wrong organization code at index " + i,
-                expectedAward.organizationCode, awardOrganization.getOrganizationCode());
         
         AwardExtendedAttribute actualExtension = (AwardExtendedAttribute) actualAward.getExtension();
         assertEquals("Wrong cost share required indicator at index " + i,
@@ -592,7 +696,24 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEquals("Wrong final fiscal report date at index " + i,
                 expectedAward.getFinalReportDueDateAsSqlDate(), actualExtension.getFinalFiscalReportDate());
         
+        assertAwardOrganizationsWereUpdatedAsExpected(expectedAward.organizations, actualAward.getAwardOrganizations(), i);
         assertProjectDirectorsWereUpdatedAsExpected(expectedAward, actualAward.getAwardProjectDirectors(), i);
+    }
+
+    private void assertAwardOrganizationsWereUpdatedAsExpected(
+            List<Pair<String, Boolean>> expectedOrganizations, List<AwardOrganization> actualOrganizations, int i) {
+        assertEquals("Wrong number of award organizations at index " + i, expectedOrganizations.size(), actualOrganizations.size());
+        for (int j = 0; j < expectedOrganizations.size(); j++) {
+            String multiIndex = i + KFSConstants.COMMA + j;
+            Pair<String, Boolean> expectedOrgData = expectedOrganizations.get(j);
+            AwardOrganization actualOrganization = actualOrganizations.get(j);
+            assertEquals("Wrong org code for organization at index " + multiIndex,
+                    expectedOrgData.getLeft(), actualOrganization.getOrganizationCode());
+            assertEquals("Wrong primary indicator for organization at index " + multiIndex,
+                    true, actualOrganization.isPrimary());
+            assertEquals("Wrong active indicator for organization at index " + multiIndex,
+                    expectedOrgData.getRight(), actualOrganization.isActive());
+        }
     }
 
     private void assertProjectDirectorsWereUpdatedAsExpected(
