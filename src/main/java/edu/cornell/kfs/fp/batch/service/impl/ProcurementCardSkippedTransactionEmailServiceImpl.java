@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,17 +45,23 @@ public class ProcurementCardSkippedTransactionEmailServiceImpl implements Procur
     
     protected String buildEmailMessage(List<ProcurementCardSkippedTransaction> skippedTransactions) {
         StringBuilder sb = new StringBuilder();
-        sb.append("The ").append(bankFileType).append(" bank file had the following transactions skipped: ");
-        sb.append(KFSConstants.NEWLINE).append(KFSConstants.NEWLINE);
+        //sb.append("The ").append(bankFileType).append(" bank file had the following transactions skipped: ");
+        String body = MessageFormat.format(getEmailBodyTempalte(), bankFileType);
+        sb.append(body).append(KFSConstants.NEWLINE).append(KFSConstants.NEWLINE);
         
         for (ProcurementCardSkippedTransaction skippedTransaction : skippedTransactions) {
             sb.append("File Line Number: ").append(skippedTransaction.getFileLineNumber());
-            sb.append("  Card Holder Name: ").append(skippedTransaction.getCardHolderName());
-            sb.append("  Transaction Amount: ").append(skippedTransaction.getTransactionAmount());
+            sb.append(" Card Holder Name: ").append(skippedTransaction.getCardHolderName());
+            sb.append(" Transaction Amount: ").append(skippedTransaction.getTransactionAmount());
             sb.append(KFSConstants.NEWLINE);
         }
         
         return sb.toString();
+    }
+    
+    protected String getEmailBodyTempalte() {
+        return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE);
     }
 
     public ParameterService getParameterService() {

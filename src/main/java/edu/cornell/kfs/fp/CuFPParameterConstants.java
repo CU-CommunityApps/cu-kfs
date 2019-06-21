@@ -72,6 +72,7 @@ public class CuFPParameterConstants {
     public static class ProcurementCardDocument {
         public static final String CARD_TRANSACTION_TYPES_TO_SKIP = "CARD_TRANSACTION_TYPES_TO_SKIP";
         public static final String CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS = "CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS";
+        public static final String CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE = "CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE";
     }
 
 }
