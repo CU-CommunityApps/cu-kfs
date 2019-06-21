@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:dd="http://rice.kuali.org/dd"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+	
+	<bean id="AgencyAddress-agencyAddressName" parent="AgencyAddress-agencyAddressName-parentBean" p:maxLength="45">
+		<property name="control">
+            <bean parent="TextControlDefinition" p:size="47"/>
+        </property>
+	</bean>
+	
+	<bean id="AgencyAddress-agencyLine1StreetAddress" parent="AgencyAddress-agencyLine1StreetAddress-parentBean" p:maxLength="45">
+		<property name="control">
+            <bean parent="TextControlDefinition" p:size="47"/>
+        </property>
+	</bean>
+	
+	<bean id="AgencyAddress-agencyLine2StreetAddress" parent="AgencyAddress-agencyLine2StreetAddress-parentBean" p:maxLength="45">
+		<property name="control">
+            <bean parent="TextControlDefinition" p:size="47"/>
+        </property>
+	</bean>
+	
+	<bean id="AgencyAddress-agencyLine3StreetAddress" parent="AgencyAddress-agencyLine3StreetAddress-parentBean" p:maxLength="45">
+		<property name="control">
+            <bean parent="TextControlDefinition" p:size="47"/>
+        </property>
+	</bean>
+	
+	<bean id="AgencyAddress-agencyLine4StreetAddress" parent="AgencyAddress-agencyLine4StreetAddress-parentBean" p:maxLength="45">
+		<property name="control">
+            <bean parent="TextControlDefinition" p:size="47"/>
+        </property>
+	</bean>
+
+</beans>
