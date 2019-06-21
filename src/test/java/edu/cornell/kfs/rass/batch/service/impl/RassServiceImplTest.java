@@ -34,6 +34,7 @@ import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.module.cg.service.AwardService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.mockito.Mockito;
@@ -653,6 +654,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         ProposalOrganization proposalOrganization = proposalOrganizations.get(0);
         assertNotNull("Proposal organization should not have been null at index " + i, proposalOrganization);
         
+        assertEquals("Wrong proposal/award type at index " + i,
+                RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE, actualProposal.getProposalAwardTypeCode());
         assertEqualsOrBothBlank("Wrong proposal number at index " + i, expectedProposal.proposalNumber, actualProposal.getProposalNumber());
         assertEqualsOrBothBlank("Wrong proposal status at index " + i, expectedProposal.status, actualProposal.getProposalStatusCode());
         assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedProposal.agencyNumber, actualProposal.getAgencyNumber());
@@ -675,6 +678,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     private void assertAwardWasUpdatedAsExpected(RassXmlAwardEntryFixture expectedAward, Award actualAward, int i) {
+        assertEquals("Wrong proposal/award type at index " + i,
+                RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE, actualAward.getProposalAwardTypeCode());
         assertEqualsOrBothBlank("Wrong proposal number at index " + i, expectedAward.proposalNumber, actualAward.getProposalNumber());
         assertEqualsOrBothBlank("Wrong award status at index " + i, expectedAward.status, actualAward.getAwardStatusCode());
         assertEqualsOrBothBlank("Wrong agency number at index " + i, expectedAward.agencyNumber, actualAward.getAgencyNumber());
@@ -695,6 +700,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 expectedAward.costShareRequired, actualExtension.isCostShareRequired());
         assertEquals("Wrong final fiscal report date at index " + i,
                 expectedAward.getFinalReportDueDateAsSqlDate(), actualExtension.getFinalFiscalReportDate());
+        assertEquals("Wrong final-financial-report-required flag value at index " + i,
+                expectedAward.getExpectedFinalFinancialReportRequiredIndicator(), actualExtension.isFinalFinancialReportRequired());
         
         assertAwardOrganizationsWereUpdatedAsExpected(expectedAward.organizations, actualAward.getAwardOrganizations(), i);
         assertProjectDirectorsWereUpdatedAsExpected(expectedAward, actualAward.getAwardProjectDirectors(), i);
@@ -734,6 +741,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                     actualDirector instanceof Primaryable);
             assertEquals("Wrong primary director indicator for director at index " + multiIndex,
                     expectedDirector.primary, ((Primaryable) actualDirector).isPrimary());
+            assertTrue("An active-object indicator should have been supported for director at index " + multiIndex,
+                    actualDirector instanceof MutableInactivatable);
+            assertEquals("Wrong active indicator for director at index " + multiIndex,
+                    expectedDirector.active, ((MutableInactivatable) actualDirector).isActive());
         }
     }
 

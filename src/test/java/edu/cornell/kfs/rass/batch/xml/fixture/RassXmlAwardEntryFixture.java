@@ -17,6 +17,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.rass.RassConstants;
+import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
@@ -199,6 +200,7 @@ public enum RassXmlAwardEntryFixture {
     public Proposal toProposal() {
         Proposal proposal = new Proposal();
         
+        proposal.setProposalAwardTypeCode(RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
         proposal.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         proposal.setProposalStatusCode(defaultToNullIfBlank(status));
         proposal.setAgencyNumber(defaultToNullIfBlank(agencyNumber));
@@ -254,6 +256,7 @@ public enum RassXmlAwardEntryFixture {
     public Award toAward() {
         Award award = new Award();
         
+        award.setProposalAwardTypeCode(RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
         award.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         award.setAwardStatusCode(defaultToNullIfBlank(status));
         award.setAgencyNumber(defaultToNullIfBlank(agencyNumber));
@@ -271,6 +274,7 @@ public enum RassXmlAwardEntryFixture {
         extension.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         extension.setCostShareRequired(defaultToFalseIfNull(costShareRequired));
         extension.setFinalFiscalReportDate(getFinalReportDueDateAsSqlDate());
+        extension.setFinalFinancialReportRequired(getExpectedFinalFinancialReportRequiredIndicator());
         award.setExtension(extension);
         
         List<AwardOrganization> awardOrganizations = award.getAwardOrganizations();
@@ -335,6 +339,10 @@ public enum RassXmlAwardEntryFixture {
 
     public java.sql.Date getFinalReportDueDateAsSqlDate() {
         return buildSqlDateFromDateTime(finalReportDueDate);
+    }
+
+    public boolean getExpectedFinalFinancialReportRequiredIndicator() {
+        return finalReportDueDate != null;
     }
 
     private java.sql.Date buildSqlDateFromDateTime(DateTime dateTime) {

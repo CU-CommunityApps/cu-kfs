@@ -206,6 +206,8 @@
 	<bean id="awardDefinition" parent="awardDefinition-parentBean"/>
 	<bean id="awardDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.AwardTranslationDefinition"
 			p:awardService-ref="awardService"
+			p:dateTimeService-ref="dateTimeService"
+			p:parameterService-ref="parameterService"
 			p:rootXmlObjectListPropertyName="awards"
 			p:documentTypeName="AWRD">
 		<property name="propertyMappings">
