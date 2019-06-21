@@ -45,7 +45,6 @@ public class ProcurementCardSkippedTransactionEmailServiceImpl implements Procur
     
     protected String buildEmailMessage(List<ProcurementCardSkippedTransaction> skippedTransactions) {
         StringBuilder sb = new StringBuilder();
-        //sb.append("The ").append(bankFileType).append(" bank file had the following transactions skipped: ");
         String body = MessageFormat.format(getEmailBodyTempalte(), bankFileType);
         sb.append(body).append(KFSConstants.NEWLINE).append(KFSConstants.NEWLINE);
         
