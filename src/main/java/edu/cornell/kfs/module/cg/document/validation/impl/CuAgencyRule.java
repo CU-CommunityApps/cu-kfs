@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.cg.document.validation.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.CGConstants;
@@ -13,9 +15,12 @@ import edu.cornell.kfs.rass.RassConstants;
 
 @SuppressWarnings("deprecation")
 public class CuAgencyRule extends AgencyRule {
+    private static final Logger LOG = LogManager.getLogger(CuAgencyRule.class);
 
     @Override
     protected boolean validateAgencyReportingName(MaintenanceDocument document) {
+        LOG.debug("entering validateAgencyReportingName");
+        
         String agencyReportingName = newAgency.getReportingName();
         String agencyExistsValue = newAgency.getCustomerCreationOptionCode();
         if (CGConstants.AGENCY_CREATE_NEW_CUSTOMER_CODE.equalsIgnoreCase(agencyExistsValue)) {
@@ -31,8 +36,10 @@ public class CuAgencyRule extends AgencyRule {
     
     @Override
     protected boolean checkAgencyReportsTo(MaintenanceDocument document) {
-        if (ObjectUtils.isNotNull(newAgency.getReportsToAgencyNumber())) {
-            if (ObjectUtils.isNotNull(newAgency.getReportsToAgency())) {
+        LOG.debug("entering checkAgencyReportsTo");
+        
+        if (StringUtils.isNotBlank(newAgency.getReportsToAgencyNumber())) {
+            if (ObjectUtils.isNull(newAgency.getReportsToAgency())) {
                 putFieldError(RassConstants.REPORTS_TO_AGENCY_NUMBER, KFSKeyConstants.ERROR_AGENCY_NOT_FOUND, newAgency.getReportsToAgencyNumber());
                 return false;
             }
