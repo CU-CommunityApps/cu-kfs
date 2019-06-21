@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.purap.dataaccess.impl;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.dataaccess.EinvoiceDao;
+import edu.cornell.kfs.module.purap.dataaccess.CuEinvoiceDao;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -10,7 +10,7 @@ import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb
 
 import java.util.List;
 
-public class EinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements EinvoiceDao {
+public class CuCuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvoiceDao {
 
     public List<VendorDetail> getVendors(List<String> vendorNumbers) {
         Criteria criteria = new Criteria();

@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.purap.rest.resource;
 
 import com.google.gson.Gson;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.dataaccess.impl.EinvoiceDaoOjb;
+import edu.cornell.kfs.module.purap.dataaccess.impl.CuCuEinvoiceDaoOjb;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -63,7 +63,7 @@ public class CuEinvoiceApiResource {
     public Response getVendor(@Context HttpHeaders headers) {
         try {
             List<String> vendorNumbers = getVendorNumbersFromRequest();
-            List<VendorDetail> vendors = SpringContext.getBean(EinvoiceDaoOjb.class).getVendors(vendorNumbers);
+            List<VendorDetail> vendors = SpringContext.getBean(CuCuEinvoiceDaoOjb.class).getVendors(vendorNumbers);
             List<Properties> vendorsSerialized = vendors.stream().map(vendor -> getVendorProperties(vendor)).collect(Collectors.toList());
             return Response.ok(gson.toJson(vendorsSerialized)).build();
         }

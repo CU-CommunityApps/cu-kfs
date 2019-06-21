@@ -182,7 +182,7 @@
 
     <filter-mapping>
         <filter-name>CuEinvoiceServerAuthFilter</filter-name>
-        <url-pattern>/cornell/einvoice/*</url-pattern>
+        <url-pattern>/einvoice/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

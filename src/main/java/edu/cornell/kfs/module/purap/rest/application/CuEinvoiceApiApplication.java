@@ -8,11 +8,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @ApplicationPath("einvoice")
-public class PurapApiApplication extends Application {
+public class CuEinvoiceApiApplication extends Application {
 
     private Set<Object> singletons = new HashSet<>();
 
-    public PurapApiApplication() {
+    public CuEinvoiceApiApplication() {
         singletons.add(new CuEinvoiceApiResource());
     }
 

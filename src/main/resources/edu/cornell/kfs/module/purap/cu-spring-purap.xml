@@ -257,5 +257,5 @@
 	<import resource="document/validation/configuration/PurchaseOrderValidation.xml" />
 
 	<bean id="eInvoiceDao" parent="platformAwareDao"
-		  class="edu.cornell.kfs.module.purap.dataaccess.impl.EinvoiceDaoOjb"/>
+		  class="edu.cornell.kfs.module.purap.dataaccess.impl.CuCuEinvoiceDaoOjb"/>
 </beans>
