@@ -32,16 +32,15 @@ public class CuEinvoiceServerAuthFilter implements Filter {
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (isAuthorized(request)) {
             chain.doFilter(request, response);
-        }
-        else {
+        } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println(new Gson().toJson(CUPurapConstants.UNAUTHORIZED));
+            response.getWriter().println(new Gson().toJson(CUPurapConstants.Einvoice.UNAUTHORIZED));
         }
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CUPurapConstants.EINVOICE, CUPurapConstants.EINVOICE_API_KEY_CREDENTIAL_NAME);
-        String submittedApiKey = request.getHeader(CUPurapConstants.EINVOICE_API_KEY_CREDENTIAL_NAME);
+        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CUPurapConstants.Einvoice.EINVOICE, CUPurapConstants.Einvoice.EINVOICE_API_KEY_CREDENTIAL_NAME);
+        String submittedApiKey = request.getHeader(CUPurapConstants.Einvoice.EINVOICE_API_KEY_CREDENTIAL_NAME);
         return !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
     }
 
