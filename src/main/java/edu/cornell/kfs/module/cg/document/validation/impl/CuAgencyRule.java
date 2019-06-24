@@ -12,7 +12,6 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.module.cg.CuCGKeyConstants;
-import edu.cornell.kfs.rass.RassConstants;
 
 @SuppressWarnings("deprecation")
 public class CuAgencyRule extends AgencyRule {
