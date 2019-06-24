@@ -9,6 +9,7 @@ import org.kuali.kfs.module.cg.CGConstants;
 import org.kuali.kfs.module.cg.document.validation.impl.AgencyRule;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.module.cg.CuCGKeyConstants;
 import edu.cornell.kfs.rass.RassConstants;
@@ -27,7 +28,7 @@ public class CuAgencyRule extends AgencyRule {
             if (StringUtils.isBlank(agencyReportingName)
                     || ((agencyReportingName.length() > 0) 
                             && (agencyReportingName.substring(0, 1).equalsIgnoreCase(KFSConstants.BLANK_SPACE)))) {
-                putFieldError(RassConstants.REPORTING_NAME, CuCGKeyConstants.AgencyConstants.ERROR_AGENCY_NAME_NOT_BLANK_OR_NO_SPACE_IN_FIRST_CHARACTER);
+                putFieldError(KFSPropertyConstants.REPORTING_NAME, CuCGKeyConstants.AgencyConstants.ERROR_AGENCY_NAME_NOT_BLANK_OR_NO_SPACE_IN_FIRST_CHARACTER);
                 return false;
             }
         }
@@ -40,7 +41,7 @@ public class CuAgencyRule extends AgencyRule {
         
         if (StringUtils.isNotBlank(newAgency.getReportsToAgencyNumber())) {
             if (ObjectUtils.isNull(newAgency.getReportsToAgency())) {
-                putFieldError(RassConstants.REPORTS_TO_AGENCY_NUMBER, KFSKeyConstants.ERROR_AGENCY_NOT_FOUND, newAgency.getReportsToAgencyNumber());
+                putFieldError(KFSPropertyConstants.REPORTS_TO_AGENCY_NUMBER, KFSKeyConstants.ERROR_AGENCY_NOT_FOUND, newAgency.getReportsToAgencyNumber());
                 return false;
             }
         }
