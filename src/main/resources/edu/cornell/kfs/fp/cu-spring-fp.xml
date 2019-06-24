@@ -221,6 +221,20 @@
         <property name="dateTimeService">
            <ref bean="dateTimeService"/>
         </property>
+        <property name="procurementCardSkippedTransactionEmailService">
+           <ref bean="procurementCardSkippedTransactionEmailService"/>
+        </property>
+    </bean>
+    
+    <bean id="procurementCardSkippedTransactionEmailService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardSkippedTransactionEmailServiceImpl">
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+        <property name="emailService">
+            <ref bean="emailService"/>
+        </property>
+        <property name="messageSubject" value="Procument card bank file had transactions skipped"/>
+        <property name="bankFileType" value="PCDO"/>
     </bean>
     
      <bean id="procurementCardInputFileType"  parent="procurementCardInputFileType-parentBean"/>
@@ -739,6 +753,18 @@
            <ref bean="dateTimeService"/>
         </property>
         <property name="corporateBilledCorporatePaidCreateDocumentService" ref="corporateBilledCorporatePaidCreateDocumentService"/>
+        <property name="procurementCardSkippedTransactionEmailService" ref="corporateBilledCorporatePaidSkippedTransactionEmailService"/>
+    </bean>
+    
+    <bean id="corporateBilledCorporatePaidSkippedTransactionEmailService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardSkippedTransactionEmailServiceImpl">
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+        <property name="emailService">
+            <ref bean="emailService"/>
+        </property>
+        <property name="messageSubject" value="Corporate billed corporate paid bank file had transactions skipped"/>
+        <property name="bankFileType" value="CBCP"/>
     </bean>
     
     <bean id="corporateBilledCorporatePaidErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidErrorEmailServiceImpl">
