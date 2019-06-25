@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
@@ -319,11 +320,13 @@ public class ConcurDetailLineGroupForCollector {
         nextTransactionSequenceNumber = 1;
         unusedCashAdvanceAmountsByReportEntryId.clear();
         unusedCashAdvanceAmountsByReportEntryId.putAll(totalCashAdvanceAmountsByReportEntryId);
+        CollectorBatch temporaryCashCollectorBatch = new CollectorBatch();
+        CollectorBatch temporaryCorporateCardPersonalExpenseCollectorBatch = new CollectorBatch();
         
         for (String keyForGroupingOfRegularLines : orderedKeysForGroupingRegularCashAndCorpCardLines) {
             addOriginEntriesForCorporateCardLines(entryConsumer,
                     getSubGroup(ConcurSAECollectorLineType.CORP_CARD, keyForGroupingOfRegularLines));
-            addOriginEntriesForCashLines(entryConsumer,
+            addOriginEntriesForCashLines(temporaryCashCollectorBatch::addOriginEntry,
                     getSubGroup(ConcurSAECollectorLineType.CASH, keyForGroupingOfRegularLines));
         }
         
@@ -344,8 +347,60 @@ public class ConcurDetailLineGroupForCollector {
             addOffsetOriginEntriesForUnusedAtmCashAdvanceAmountLines(entryConsumer, unusedAtmAmountSubGroup);
         }
         
-        addOriginEntriesForCorpCardPersonalExpenseDebitLines(entryConsumer);
+        addOriginEntriesForCorpCardPersonalExpenseDebitLines(temporaryCorporateCardPersonalExpenseCollectorBatch::addOriginEntry);
         addOriginEntriesForCorpCardPersonalExpenseCreditLines(entryConsumer);
+        
+        cleanupAndAddCashAndCorporateCardPersonalExpenseEntries(entryConsumer, temporaryCashCollectorBatch, temporaryCorporateCardPersonalExpenseCollectorBatch);
+    }
+    
+	private void cleanupAndAddCashAndCorporateCardPersonalExpenseEntries(Consumer<OriginEntryFull> entryConsumer, CollectorBatch temporaryCashCollectorBatch,
+			CollectorBatch temporaryCorporateCardPersonalExpenseCollectorBatch) {
+		List<OriginEntryFull> nonPaymentOffsetCashEntries = temporaryCashCollectorBatch.getOriginEntries().stream()
+				.filter(entry -> !collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode()))
+				.collect(Collectors.toList());
+		addEntries(entryConsumer, nonPaymentOffsetCashEntries);
+
+		List<OriginEntryFull> paymentOffsetCashEntries = temporaryCashCollectorBatch.getOriginEntries().stream().filter(
+				entry -> collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode()))
+				.collect(Collectors.toList());
+		KualiDecimal cashTotal = calculateTotalAmountForEntries(paymentOffsetCashEntries);
+
+		List<OriginEntryFull> corporateCardPersonalExpenseDebitEntries = temporaryCorporateCardPersonalExpenseCollectorBatch
+				.getOriginEntries().stream().filter(entry -> collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode()))
+				.collect(Collectors.toList());
+		KualiDecimal corporateCardPersonalExpenseDebitTotal = calculateTotalAmountForEntries(
+				corporateCardPersonalExpenseDebitEntries);
+
+		if (cashTotal.isGreaterThan(corporateCardPersonalExpenseDebitTotal)) {
+			KualiDecimal totalDeductionsLeft = corporateCardPersonalExpenseDebitTotal;
+			for (OriginEntryFull entry : paymentOffsetCashEntries) {
+				KualiDecimal newTransactionAmount = entry.getTransactionLedgerEntryAmount().subtract(totalDeductionsLeft);
+				if (newTransactionAmount.isNegative()) {
+					totalDeductionsLeft = newTransactionAmount;
+					newTransactionAmount = KualiDecimal.ZERO;
+				} else {
+					totalDeductionsLeft = KualiDecimal.ZERO;
+				}
+				entry.setTransactionLedgerEntryAmount(newTransactionAmount);
+			}
+		} else {
+			addEntries(entryConsumer, corporateCardPersonalExpenseDebitEntries);
+		}
+
+		addEntries(entryConsumer, paymentOffsetCashEntries);
+	}
+	
+	protected void addEntries(Consumer<OriginEntryFull> entryConsumer, List<OriginEntryFull> entries) {
+		for(OriginEntryFull entry : entries) {
+			entryConsumer.accept(entry);
+		}
+	}
+
+	
+    protected KualiDecimal calculateTotalAmountForEntries(List<OriginEntryFull> originEntries) {
+        return originEntries.stream()
+                .map(OriginEntryFull::getTransactionLedgerEntryAmount)
+                .reduce(KualiDecimal.ZERO, KualiDecimal::add);
     }
 
     protected void addOriginEntriesForCashLines(
