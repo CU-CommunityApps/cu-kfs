@@ -251,6 +251,7 @@ public class CUPurapConstants {
         public static final String EINVOICE_VENDOR_BAD_REQUEST = "Invalid VendorNumber";
         public static final String EINVOICE_GET_VENDORS_BAD_REQUEST = "Expecting vendor_numbers in url query parameters";
         public static final String VENDOR_NUMBERS = "vendor_numbers";
-        public static final String COMBINED_VENDOR_PK_SQL = "TO_CHAR(VNDR_HDR_GNRTD_ID) || '-' || TO_CHAR(VNDR_DTL_ASND_ID)";
+        public static final String VENDOR_GENERATED_HEADER_ID = "VNDR_HDR_GNRTD_ID";
+        public static final String VENDOR_DETAIL_ASSIGNED_ID = "VNDR_DTL_ASND_ID";
     }
 }
