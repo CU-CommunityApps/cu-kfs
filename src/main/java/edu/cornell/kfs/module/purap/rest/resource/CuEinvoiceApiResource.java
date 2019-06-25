@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.kfs.krad.dao.LookupDao;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -83,10 +84,10 @@ public class CuEinvoiceApiResource {
 
             HashMap<String, String> vendorCombinedPk = parseVendorNumber(vendorNumber);
             VendorDetail vendorDetail = getLookupDao().findObjectByMap(VendorDetail.class.newInstance(), vendorCombinedPk);
-            if (vendorDetail == null) {
+            if (ObjectUtils.isNull(vendorDetail)) {
                 return respondNotFound();
             }
-            String responseBody =  gson.toJson(getVendorProperties(vendorDetail));
+            String responseBody = gson.toJson(getVendorProperties(vendorDetail));
             return Response.ok(responseBody).build();
         }
         catch (BadRequestException ex) {
@@ -105,7 +106,7 @@ public class CuEinvoiceApiResource {
             HashMap<String, String> map = new HashMap<>();
             map.put(PurapPropertyConstants.PURAP_DOC_ID, purapDocumentIdentifier);
             PurchaseOrderDocument poDoc = getLookupDao().findObjectByMap(PurchaseOrderDocument.class.newInstance(), map);
-            if (poDoc == null) {
+            if (ObjectUtils.isNull(poDoc)) {
                 return respondNotFound();
             }
             String responseBody = serializePoDocumentToJson(poDoc);
@@ -198,14 +199,14 @@ public class CuEinvoiceApiResource {
     }
 
     private LookupDao getLookupDao() {
-        if (lookupDao == null) {
+        if (ObjectUtils.isNull(lookupDao)) {
             lookupDao = SpringContext.getBean(LookupDao.class);
         }
         return lookupDao;
     }
 
     private CuEinvoiceDao getCuEinvoiceDao() {
-        if (cuEinvoiceDao == null) {
+        if (ObjectUtils.isNull(null)) {
             cuEinvoiceDao = SpringContext.getBean(CuEinvoiceDaoOjb.class);
         }
         return cuEinvoiceDao;
