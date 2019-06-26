@@ -320,47 +320,45 @@ public class ConcurDetailLineGroupForCollector {
         nextTransactionSequenceNumber = 1;
         unusedCashAdvanceAmountsByReportEntryId.clear();
         unusedCashAdvanceAmountsByReportEntryId.putAll(totalCashAdvanceAmountsByReportEntryId);
-        CollectorBatch temporaryCashCollectorBatch = new CollectorBatch();
+        CollectorBatch temporaryCollectorBatch = new CollectorBatch();
         CollectorBatch temporaryCorporateCardPersonalExpenseCollectorBatch = new CollectorBatch();
         
         for (String keyForGroupingOfRegularLines : orderedKeysForGroupingRegularCashAndCorpCardLines) {
-            addOriginEntriesForCorporateCardLines(entryConsumer,
+            addOriginEntriesForCorporateCardLines(temporaryCollectorBatch::addOriginEntry,
                     getSubGroup(ConcurSAECollectorLineType.CORP_CARD, keyForGroupingOfRegularLines));
-            addOriginEntriesForCashLines(temporaryCashCollectorBatch::addOriginEntry,
+            addOriginEntriesForCashLines(temporaryCollectorBatch::addOriginEntry,
                     getSubGroup(ConcurSAECollectorLineType.CASH, keyForGroupingOfRegularLines));
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> atmFeeDebitSubGroup : getSubGroupsOfType(ConcurSAECollectorLineType.ATM_FEE_DEBIT)) {
-            addOriginEntriesForAtmFeeDebitLines(entryConsumer, atmFeeDebitSubGroup);
+            addOriginEntriesForAtmFeeDebitLines(temporaryCollectorBatch::addOriginEntry, atmFeeDebitSubGroup);
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> cashAdvanceSubGroup : getSubGroupsOfType(ConcurSAECollectorLineType.REQUESTED_CASH_ADVANCE)) {
-            addOriginEntriesForRequestedCashAdvanceLines(entryConsumer, cashAdvanceSubGroup);
+            addOriginEntriesForRequestedCashAdvanceLines(temporaryCollectorBatch::addOriginEntry, cashAdvanceSubGroup);
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> atmCashAdvanceSubGroup : getSubGroupsOfType(ConcurSAECollectorLineType.ATM_CASH_ADVANCE)) {
-            addOriginEntriesForAtmCashAdvanceLines(entryConsumer, atmCashAdvanceSubGroup);
+            addOriginEntriesForAtmCashAdvanceLines(temporaryCollectorBatch::addOriginEntry, atmCashAdvanceSubGroup);
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> unusedAtmAmountSubGroup : getSubGroupsOfType(
                 ConcurSAECollectorLineType.ATM_UNUSED_CASH_ADVANCE)) {
-            addOffsetOriginEntriesForUnusedAtmCashAdvanceAmountLines(entryConsumer, unusedAtmAmountSubGroup);
+            addOffsetOriginEntriesForUnusedAtmCashAdvanceAmountLines(temporaryCollectorBatch::addOriginEntry, unusedAtmAmountSubGroup);
         }
         
         addOriginEntriesForCorpCardPersonalExpenseDebitLines(temporaryCorporateCardPersonalExpenseCollectorBatch::addOriginEntry);
-        addOriginEntriesForCorpCardPersonalExpenseCreditLines(entryConsumer);
+        addOriginEntriesForCorpCardPersonalExpenseCreditLines(temporaryCollectorBatch::addOriginEntry);
         
-        cleanupAndAddCashAndCorporateCardPersonalExpenseEntries(entryConsumer, temporaryCashCollectorBatch, temporaryCorporateCardPersonalExpenseCollectorBatch);
+        cleanupCashAndAddCorporateCardPersonalExpenseEntries(temporaryCollectorBatch, temporaryCorporateCardPersonalExpenseCollectorBatch);
+        
+        addEntries(entryConsumer, temporaryCollectorBatch.getOriginEntries());
     }
     
-	private void cleanupAndAddCashAndCorporateCardPersonalExpenseEntries(Consumer<OriginEntryFull> entryConsumer, CollectorBatch temporaryCashCollectorBatch,
+	private void cleanupCashAndAddCorporateCardPersonalExpenseEntries(CollectorBatch temporaryCollectorBatch,
 			CollectorBatch temporaryCorporateCardPersonalExpenseCollectorBatch) {
-		List<OriginEntryFull> nonPaymentOffsetCashEntries = temporaryCashCollectorBatch.getOriginEntries().stream()
-				.filter(entry -> !collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode()))
-				.collect(Collectors.toList());
-		addEntries(entryConsumer, nonPaymentOffsetCashEntries);
 
-		List<OriginEntryFull> paymentOffsetCashEntries = temporaryCashCollectorBatch.getOriginEntries().stream().filter(
+		List<OriginEntryFull> paymentOffsetCashEntries = temporaryCollectorBatch.getOriginEntries().stream().filter(
 				entry -> collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode()))
 				.collect(Collectors.toList());
 		KualiDecimal cashTotal = calculateTotalAmountForEntries(paymentOffsetCashEntries);
@@ -384,10 +382,8 @@ public class ConcurDetailLineGroupForCollector {
 				entry.setTransactionLedgerEntryAmount(newTransactionAmount);
 			}
 		} else {
-			addEntries(entryConsumer, corporateCardPersonalExpenseDebitEntries);
+			addEntries(temporaryCollectorBatch::addOriginEntry, corporateCardPersonalExpenseDebitEntries);
 		}
-
-		addEntries(entryConsumer, paymentOffsetCashEntries);
 	}
 	
 	protected void addEntries(Consumer<OriginEntryFull> entryConsumer, List<OriginEntryFull> entries) {
@@ -395,7 +391,6 @@ public class ConcurDetailLineGroupForCollector {
 			entryConsumer.accept(entry);
 		}
 	}
-
 	
     protected KualiDecimal calculateTotalAmountForEntries(List<OriginEntryFull> originEntries) {
         return originEntries.stream()
