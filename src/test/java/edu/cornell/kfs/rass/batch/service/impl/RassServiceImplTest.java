@@ -25,6 +25,8 @@ import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.module.cg.businessobject.AwardFundManager;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.CGProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Primaryable;
@@ -704,6 +706,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 expectedAward.getExpectedFinalFinancialReportRequiredIndicator(), actualExtension.isFinalFinancialReportRequired());
         
         assertAwardOrganizationsWereUpdatedAsExpected(expectedAward.organizations, actualAward.getAwardOrganizations(), i);
+        assertAwardAccountWasUpdatedAsExpected(expectedAward, actualAward.getAwardAccounts(), i);
+        assertAwardFundManagerWasUpdatedAsExpected(expectedAward, actualAward.getAwardFundManagers(), i);
         assertProjectDirectorsWereUpdatedAsExpected(expectedAward, actualAward.getAwardProjectDirectors(), i);
     }
 
@@ -721,6 +725,35 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             assertEquals("Wrong active indicator for organization at index " + multiIndex,
                     expectedOrgData.getRight(), actualOrganization.isActive());
         }
+    }
+
+    private void assertAwardAccountWasUpdatedAsExpected(
+            RassXmlAwardEntryFixture expectedAward, List<AwardAccount> actualAwardAccounts, int i) {
+        assertEquals("Wrong number of award accounts at index " + i, 1, actualAwardAccounts.size());
+        
+        AwardAccount actualAwardAccount = actualAwardAccounts.get(0);
+        String expectedDirectorPrincipalId = expectedAward.getPrimaryProjectDirectorPrincipalNameAsPrincipalId();
+        assertEquals("Wrong award account proposal number at index " + i,
+                expectedAward.proposalNumber, actualAwardAccount.getProposalNumber());
+        assertEquals("Wrong award account principal ID at index " + i,
+                expectedDirectorPrincipalId, actualAwardAccount.getPrincipalId());
+        assertEquals("Wrong chart code for award account at index " + i,
+                RassTestConstants.DEFAULT_AWARD_CHART, actualAwardAccount.getChartOfAccountsCode());
+        assertEquals("Wrong account number for award account at index " + i,
+                RassTestConstants.DEFAULT_AWARD_ACCOUNT, actualAwardAccount.getAccountNumber());
+    }
+
+    private void assertAwardFundManagerWasUpdatedAsExpected(
+            RassXmlAwardEntryFixture expectedAward, List<AwardFundManager> actualFundManagers, int i) {
+        assertEquals("Wrong number of fund managers at index " + i, 1, actualFundManagers.size());
+        
+        AwardFundManager actualFundManager = actualFundManagers.get(0);
+        assertEquals("Wrong fund manager proposal number at index " + i,
+                expectedAward.proposalNumber, actualFundManager.getProposalNumber());
+        assertEquals("Wrong fund manager principal ID at index " + i,
+                RassTestConstants.DEFAULT_FUND_MANAGER_PRINCIPAL_ID, actualFundManager.getPrincipalId());
+        assertTrue("Fund manager should have been flagged as primary at index " + i,
+                actualFundManager.isPrimaryFundManagerIndicator());
     }
 
     private void assertProjectDirectorsWereUpdatedAsExpected(

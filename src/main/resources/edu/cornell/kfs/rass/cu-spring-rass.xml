@@ -208,6 +208,7 @@
 			p:awardService-ref="awardService"
 			p:dateTimeService-ref="dateTimeService"
 			p:parameterService-ref="parameterService"
+			p:personService-ref="personService"
 			p:rootXmlObjectListPropertyName="awards"
 			p:documentTypeName="AWRD">
 		<property name="propertyMappings">

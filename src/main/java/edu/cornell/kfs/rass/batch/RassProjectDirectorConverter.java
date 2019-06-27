@@ -34,7 +34,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
 				}
 				projectDirector.setPrincipalId(projectDirectorPerson.getPrincipalId());
 				ObjectPropertyUtils.setPropertyValue(
-				        projectDirector, projectDirectorPrimaryIndicatorPropertyName, rassAwardPiCoPi.getPrimary());
+				        projectDirector, projectDirectorPrimaryIndicatorPropertyName, getNullSafePrimaryDirectorFlag(rassAwardPiCoPi));
 				projectDirectors.add(projectDirector);
 			}
 		}
@@ -53,6 +53,10 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
             throw new RuntimeException("Unable to create project director of type "
                     + projectDirectorImplementationClass.getName(), e);
         }
+    }
+
+    protected Boolean getNullSafePrimaryDirectorFlag(RassXMLAwardPiCoPiEntry rassAwardPiCoPi) {
+        return rassAwardPiCoPi.getPrimary() != null ? rassAwardPiCoPi.getPrimary() : Boolean.FALSE;
     }
 
 	public void setPersonService(PersonService personService) {

@@ -1,5 +1,7 @@
 package edu.cornell.kfs.rass;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 public final class RassTestConstants {
 
     private RassTestConstants() {
@@ -13,6 +15,11 @@ public final class RassTestConstants {
     public static final Integer DEFAULT_DD_FIELD_MAX_LENGTH = Integer.valueOf(50);
     public static final String ERROR_OBJECT_KEY = "ERR";
     public static final String LONG_OBJECT_KEY = "KEY_WITH_EXTREMELY_LONG_TEXT_LENGTH";
+    public static final String DEFAULT_AWARD_CHART = RassConstants.PROPOSAL_ORG_CHART;
+    public static final String DEFAULT_AWARD_ACCOUNT = "3575357";
+    public static final String DEFAULT_AWARD_ACCOUNT_PARAMETER_VALUE = DEFAULT_AWARD_CHART
+            + CUKFSConstants.COLON + DEFAULT_AWARD_ACCOUNT;
+    public static final String DEFAULT_FUND_MANAGER_PRINCIPAL_ID = "mgw3";
 
     public static final String RASS_SERVICE_BEAN_NAME = "rassService";
     public static final String RASS_ROUTING_SERVICE_BEAN_NAME = "rassRoutingService";

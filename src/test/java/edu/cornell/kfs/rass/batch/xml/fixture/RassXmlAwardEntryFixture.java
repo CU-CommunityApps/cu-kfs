@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
 import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
+import org.kuali.kfs.module.cg.businessobject.AwardFundManager;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
@@ -285,6 +287,9 @@ public enum RassXmlAwardEntryFixture {
         buildAwardProjectDirectorsStream()
                 .forEach(awardProjectDirectors::add);
         
+        award.getAwardAccounts().add(buildDefaultAwardAccount());
+        award.getAwardFundManagers().add(buildDefaultAwardFundManager());
+        
         return award;
     }
 
@@ -321,12 +326,37 @@ public enum RassXmlAwardEntryFixture {
         return projectDirector;
     }
 
+    private AwardAccount buildDefaultAwardAccount() {
+        AwardAccount awardAccount = new AwardAccount();
+        awardAccount.setProposalNumber(proposalNumber);
+        awardAccount.setPrincipalId(getPrimaryProjectDirectorPrincipalNameAsPrincipalId());
+        awardAccount.setChartOfAccountsCode(RassTestConstants.DEFAULT_AWARD_CHART);
+        awardAccount.setAccountNumber(RassTestConstants.DEFAULT_AWARD_ACCOUNT);
+        return awardAccount;
+    }
+
+    private AwardFundManager buildDefaultAwardFundManager() {
+        AwardFundManager fundManager = new AwardFundManager();
+        fundManager.setProposalNumber(proposalNumber);
+        fundManager.setPrincipalId(RassTestConstants.DEFAULT_FUND_MANAGER_PRINCIPAL_ID);
+        fundManager.setPrimaryFundManagerIndicator(true);
+        return fundManager;
+    }
+
     private Date buildDateFromDateTime(DateTime dateTime) {
         if (dateTime != null) {
             return dateTime.toDate();
         } else {
             return null;
         }
+    }
+
+    public String getPrimaryProjectDirectorPrincipalNameAsPrincipalId() {
+        return piFixtures.stream()
+                .filter(piFixture -> defaultToFalseIfNull(piFixture.primary))
+                .map(piFixture -> piFixture.projectDirectorPrincipalName)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No primary director specified on Award fixture " + proposalNumber));
     }
 
     public java.sql.Date getStartDateAsSqlDate() {
