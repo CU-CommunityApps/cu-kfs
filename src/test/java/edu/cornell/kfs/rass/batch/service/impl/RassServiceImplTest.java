@@ -732,11 +732,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEquals("Wrong number of award accounts at index " + i, 1, actualAwardAccounts.size());
         
         AwardAccount actualAwardAccount = actualAwardAccounts.get(0);
-        String expectedDirectorPrincipalId = expectedAward.getPrimaryProjectDirectorPrincipalNameAsPrincipalId();
         assertEquals("Wrong award account proposal number at index " + i,
                 expectedAward.proposalNumber, actualAwardAccount.getProposalNumber());
         assertEquals("Wrong award account principal ID at index " + i,
-                expectedDirectorPrincipalId, actualAwardAccount.getPrincipalId());
+                RassTestConstants.DEFAULT_PROJECT_DIRECTOR_PRINCIPAL_ID, actualAwardAccount.getPrincipalId());
         assertEquals("Wrong chart code for award account at index " + i,
                 RassTestConstants.DEFAULT_AWARD_CHART, actualAwardAccount.getChartOfAccountsCode());
         assertEquals("Wrong account number for award account at index " + i,

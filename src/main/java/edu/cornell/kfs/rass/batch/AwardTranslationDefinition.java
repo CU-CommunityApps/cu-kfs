@@ -15,14 +15,11 @@ import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.service.AwardService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.module.cg.CuCGPropertyConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassParameterConstants;
-import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.util.RassUtil;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -32,7 +29,6 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     private AwardService awardService;
     private DateTimeService dateTimeService;
     private ParameterService parameterService;
-    private PersonService personService;
 
     public void setAwardService(AwardService awardService) {
         this.awardService = awardService;
@@ -44,10 +40,6 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
     }
 
     @Override
@@ -86,8 +78,12 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     }
 
     protected AwardAccount createDefaultAwardAccount(RassXmlAwardEntry xmlAward) {
-        String directorPrincipalId = findPrimaryProjectDirectorPrincipalId(xmlAward);
         Pair<String, String> defaultChartAndAccount = getChartAndAccountForDefaultAwardAccount();
+        String directorPrincipalId = parameterService.getParameterValueAsString(
+                RassStep.class, RassParameterConstants.DEFAULT_PROJECT_DIRECTOR);
+        if (StringUtils.isBlank(directorPrincipalId)) {
+            throw new RuntimeException("Default project director parameter cannot be blank");
+        }
         
         AwardAccount awardAccount = new AwardAccount();
         awardAccount.setProposalNumber(xmlAward.getProposalNumber());
@@ -95,26 +91,6 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         awardAccount.setChartOfAccountsCode(defaultChartAndAccount.getLeft());
         awardAccount.setAccountNumber(defaultChartAndAccount.getRight());
         return awardAccount;
-    }
-
-    protected String findPrimaryProjectDirectorPrincipalId(RassXmlAwardEntry xmlAward) {
-        String directorPrincipalName = xmlAward.getPrincipalAndCoPrincipalInvestigators().stream()
-                .filter(this::projectDirectorHasPrimaryFlagAndIsPrimary)
-                .map(RassXMLAwardPiCoPiEntry::getProjectDirectorPrincipalName)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No primary project director was specified for Award "
-                        + xmlAward.getProposalNumber()));
-        
-        Person director = personService.getPersonByPrincipalName(directorPrincipalName);
-        if (ObjectUtils.isNull(director)) {
-            throw new RuntimeException("Primary project director could not be found for Award "
-                    + xmlAward.getProposalNumber());
-        }
-        return director.getPrincipalId();
-    }
-
-    protected boolean projectDirectorHasPrimaryFlagAndIsPrimary(RassXMLAwardPiCoPiEntry director) {
-        return Boolean.TRUE.equals(director.getPrimary());
     }
 
     protected Pair<String, String> getChartAndAccountForDefaultAwardAccount() {

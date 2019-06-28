@@ -39,6 +39,7 @@ public class MockParameterServiceImpl implements ParameterService {
                 "Payment for [payeeIdentifierTypeCode] of [payeeIdNumber] will go to [bankAccountTypeCode] account at [bankRouting.bankName].");
         parameters.put(RassConstants.RASS_DEFAULT_PROPOSAL_AWARD_TYPE_PARAMETER, RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
         parameters.put(RassParameterConstants.DEFAULT_AWARD_ACCOUNT, RassTestConstants.DEFAULT_AWARD_ACCOUNT_PARAMETER_VALUE);
+        parameters.put(RassParameterConstants.DEFAULT_PROJECT_DIRECTOR, RassTestConstants.DEFAULT_PROJECT_DIRECTOR_PRINCIPAL_ID);
         parameters.put(RassParameterConstants.DEFAULT_FUND_MANAGER, RassTestConstants.DEFAULT_FUND_MANAGER_PRINCIPAL_ID);
 
     }

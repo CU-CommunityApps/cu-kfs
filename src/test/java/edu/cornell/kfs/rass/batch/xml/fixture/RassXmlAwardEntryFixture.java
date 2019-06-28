@@ -329,7 +329,7 @@ public enum RassXmlAwardEntryFixture {
     private AwardAccount buildDefaultAwardAccount() {
         AwardAccount awardAccount = new AwardAccount();
         awardAccount.setProposalNumber(proposalNumber);
-        awardAccount.setPrincipalId(getPrimaryProjectDirectorPrincipalNameAsPrincipalId());
+        awardAccount.setPrincipalId(RassTestConstants.DEFAULT_PROJECT_DIRECTOR_PRINCIPAL_ID);
         awardAccount.setChartOfAccountsCode(RassTestConstants.DEFAULT_AWARD_CHART);
         awardAccount.setAccountNumber(RassTestConstants.DEFAULT_AWARD_ACCOUNT);
         return awardAccount;
@@ -349,14 +349,6 @@ public enum RassXmlAwardEntryFixture {
         } else {
             return null;
         }
-    }
-
-    public String getPrimaryProjectDirectorPrincipalNameAsPrincipalId() {
-        return piFixtures.stream()
-                .filter(piFixture -> defaultToFalseIfNull(piFixture.primary))
-                .map(piFixture -> piFixture.projectDirectorPrincipalName)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No primary director specified on Award fixture " + proposalNumber));
     }
 
     public java.sql.Date getStartDateAsSqlDate() {
