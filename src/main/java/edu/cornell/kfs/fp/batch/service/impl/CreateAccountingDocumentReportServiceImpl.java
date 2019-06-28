@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -115,11 +116,14 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_SUB_HEADER));
         
-        List<CreateAccountingDocumentReportItemDetail> documentsInError = reportItem.getDocumentsInError();
-        boolean validationErrorNotDetected = true;
+        List<CreateAccountingDocumentReportItemDetail> documentsInError = 
+                reportItem.getDocumentsInError().stream().filter(detail -> detail.isRawDataValidationError()).collect(Collectors.toList());
         
         if (CollectionUtils.isNotEmpty(documentsInError)) {
-            documentsInError.stream().forEach(detail -> generateValidationErrorDetail(detail, validationErrorNotDetected));
+            documentsInError.stream().forEach(detail -> generateValidationErrorDetail(detail));
+        } else {
+            reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_DOCUMENTS_NONE));
         }
     }
     
@@ -127,17 +131,16 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_SUB_HEADER));
         
-        List<CreateAccountingDocumentReportItemDetail> documentsInError = reportItem.getDocumentsInError();
-        boolean businessRuleErrorNotDetected = true;
-        
+        List<CreateAccountingDocumentReportItemDetail> documentsInError = 
+                reportItem.getDocumentsInError().stream().filter(detail -> detail.isNotRawDataValidationError()).collect(Collectors.toList());
+
         if (CollectionUtils.isNotEmpty(documentsInError)) {
-            documentsInError.stream().forEach(detail -> generateBusinessRuleErrorDetail(detail, businessRuleErrorNotDetected));
-        }
-        
-        if (CollectionUtils.isEmpty(documentsInError) || businessRuleErrorNotDetected) {
+            documentsInError.stream().forEach(detail -> generateBusinessRuleErrorDetail(detail));
+        } else {
             reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(
                     CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_DOCUMENTS_NONE));
         }
+        
     }
     
     private void generateSuccessDocumentSection(List<CreateAccountingDocumentReportItemDetail> successDocuments) {
@@ -151,9 +154,8 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         }
     }
     
-    private void generateValidationErrorDetail(CreateAccountingDocumentReportItemDetail detail, boolean validationErrorNotDetected) {
+    private void generateValidationErrorDetail(CreateAccountingDocumentReportItemDetail detail) {
         if (detail.isRawDataValidationError()) {
-            validationErrorNotDetected = false;
             reportWriterService.writeNewLines(1);
             reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(
                     CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_RAW_DATA));
@@ -165,9 +167,8 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         }
     }
     
-    private void generateBusinessRuleErrorDetail(CreateAccountingDocumentReportItemDetail detail, boolean businessRuleErrorNotDetected) {
+    private void generateBusinessRuleErrorDetail(CreateAccountingDocumentReportItemDetail detail) {
         if (detail.isNotRawDataValidationError()) {
-            businessRuleErrorNotDetected = false;
             generateSharedDetails(detail);
             reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                     CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_DOCUMENTS_MESSAGE), detail.getErrorMessage()));
