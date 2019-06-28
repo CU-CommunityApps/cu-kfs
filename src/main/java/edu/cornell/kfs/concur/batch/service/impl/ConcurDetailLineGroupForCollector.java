@@ -363,11 +363,15 @@ public class ConcurDetailLineGroupForCollector {
 				.collect(Collectors.toList());
 		KualiDecimal cashTotal = calculateTotalAmountForEntries(paymentOffsetCashEntries);
 
-		List<OriginEntryFull> corporateCardPersonalExpenseDebitEntries = temporaryCorporateCardPersonalExpenseCollectorBatch
+		List<OriginEntryFull> paymentOffsetCorporateCardPersonalExpenseDebitEntries = temporaryCorporateCardPersonalExpenseCollectorBatch
 				.getOriginEntries().stream().filter(entry -> collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode()))
 				.collect(Collectors.toList());
+		List<OriginEntryFull> nonPaymentOffsetCorporateCardPersonalExpenseDebitEntries = temporaryCorporateCardPersonalExpenseCollectorBatch
+				.getOriginEntries().stream().filter(entry -> !collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode()))
+				.collect(Collectors.toList());
+		
 		KualiDecimal corporateCardPersonalExpenseDebitTotal = calculateTotalAmountForEntries(
-				corporateCardPersonalExpenseDebitEntries);
+				paymentOffsetCorporateCardPersonalExpenseDebitEntries);
 
 		if (cashTotal.isGreaterThan(corporateCardPersonalExpenseDebitTotal)) {
 			KualiDecimal totalDeductionsLeft = corporateCardPersonalExpenseDebitTotal;
@@ -382,8 +386,9 @@ public class ConcurDetailLineGroupForCollector {
 				entry.setTransactionLedgerEntryAmount(newTransactionAmount);
 			}
 		} else {
-			addEntries(temporaryCollectorBatch::addOriginEntry, corporateCardPersonalExpenseDebitEntries);
+			addEntries(temporaryCollectorBatch::addOriginEntry, paymentOffsetCorporateCardPersonalExpenseDebitEntries);
 		}
+		addEntries(temporaryCollectorBatch::addOriginEntry, nonPaymentOffsetCorporateCardPersonalExpenseDebitEntries);
 	}
 	
 	protected void addEntries(Consumer<OriginEntryFull> entryConsumer, List<OriginEntryFull> entries) {
