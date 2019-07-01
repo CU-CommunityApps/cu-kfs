@@ -245,7 +245,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testWaitForRouteStatusAfterUpdateToSameAgency() throws Exception {
         overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
-                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
                 xmlFiles(
@@ -262,7 +262,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testWaitForRouteStatusAfterUpdateToReferencedAgency() throws Exception {
         overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
-                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD,
+                KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
                 xmlFiles(
@@ -280,7 +281,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     public void testTimeoutOfRouteStatusCheck() throws Exception {
         overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_ENROUTE_CD,
-                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
                 xmlFiles(
@@ -352,7 +353,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testWaitOnlyAtEndIfObjectUpdatesDoNotReferencePriorOnes() throws Exception {
         overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
-                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
                 xmlFiles(
@@ -370,7 +371,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     public void testHandleRoutingTimeoutQuietlyIfObjectUpdatesDoNotReferencePriorOnes() throws Exception {
         overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_ENROUTE_CD,
-                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
                 xmlFiles(
@@ -632,6 +633,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             
             E expectedObjectFixture = expectedResult.getBusinessObjectFixture();
             R actualObject = businessObjectClass.cast(actualResult.getDataObject());
+            if (actualObject instanceof MutableInactivatable) {
+                assertTrue(objectLabel + " at index " + i + " should have been marked as active",
+                        ((MutableInactivatable) actualObject).isActive());
+            }
             resultValidator.assertObjectWasUpdatedAsExpected(expectedObjectFixture, actualObject, i);
         }
     }
@@ -721,7 +726,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             assertEquals("Wrong org code for organization at index " + multiIndex,
                     expectedOrgData.getLeft(), actualOrganization.getOrganizationCode());
             assertEquals("Wrong primary indicator for organization at index " + multiIndex,
-                    true, actualOrganization.isPrimary());
+                    expectedOrgData.getRight(), actualOrganization.isPrimary());
             assertEquals("Wrong active indicator for organization at index " + multiIndex,
                     expectedOrgData.getRight(), actualOrganization.isActive());
         }

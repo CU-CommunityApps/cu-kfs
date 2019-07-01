@@ -9,7 +9,7 @@ public enum RassXMLAwardPiCoPiEntryFixture {
     NO_NAME_PRIMARY(Boolean.TRUE, StringUtils.EMPTY),
     jdh34_CO_PI(Boolean.FALSE, "jdh34"),
     mgw3_PRIMARY(Boolean.TRUE, "mgw3"),
-    mgw3_PRIMARY_INACTIVE(Boolean.TRUE, "mgw3", Boolean.FALSE),
+    mgw3_CO_PI_INACTIVE(Boolean.FALSE, "mgw3", Boolean.FALSE),
     mo14_PRIMARY(Boolean.TRUE, "mo14"),
     mo14_CO_PI(Boolean.FALSE, "mo14"),
     mo14_CO_PI_INACTIVE(Boolean.FALSE, "mo14", Boolean.FALSE),

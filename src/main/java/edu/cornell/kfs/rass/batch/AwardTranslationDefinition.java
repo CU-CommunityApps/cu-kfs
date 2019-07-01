@@ -75,6 +75,9 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         newAward.getAwardFundManagers().add(createDefaultFundManager(xmlAward));
         updateFinalFinancialReportRequiredFlag(xmlAward, newAward);
         updateAwardLastUpdateDate(newAward);
+        
+        refreshReferenceObject(newAward, KFSPropertyConstants.PROPOSAL);
+        refreshReferenceObject(newAward, KFSPropertyConstants.AGENCY);
     }
 
     protected AwardAccount createDefaultAwardAccount(RassXmlAwardEntry xmlAward) {

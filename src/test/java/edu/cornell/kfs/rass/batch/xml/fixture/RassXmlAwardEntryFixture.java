@@ -59,12 +59,12 @@ public enum RassXmlAwardEntryFixture {
     SOME_DEPARTMENT_PROJECT_V4_DIRECTOR_CHANGE("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01",
             "2020-11-30", 45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number, "66667",
             primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, false,
-            piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY_INACTIVE, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI_INACTIVE,
+            piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_CO_PI_INACTIVE, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI_INACTIVE,
                     RassXMLAwardPiCoPiEntryFixture.kan2_PRIMARY)),
     SOME_DEPARTMENT_PROJECT_V5_DIRECTOR_CHANGE2("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01",
             "2020-11-30", 45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number, "66667",
             primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, false,
-            piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY_INACTIVE, RassXMLAwardPiCoPiEntryFixture.mo14_PRIMARY));
+            piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_CO_PI_INACTIVE, RassXMLAwardPiCoPiEntryFixture.mo14_PRIMARY));
 
     public final String proposalNumber;
     public final String status;
@@ -298,14 +298,14 @@ public enum RassXmlAwardEntryFixture {
                 .map(orgData -> buildAwardOrganization(orgData.getLeft(), orgData.getRight()));
     }
 
-    private AwardOrganization buildAwardOrganization(String orgCode, Boolean active) {
+    private AwardOrganization buildAwardOrganization(String orgCode, Boolean activeAndPrimary) {
         AwardOrganization awardOrganization = new AwardOrganization();
         
         awardOrganization.setChartOfAccountsCode(RassConstants.PROPOSAL_ORG_CHART);
         awardOrganization.setOrganizationCode(defaultToNullIfBlank(orgCode));
         awardOrganization.setProposalNumber(defaultToNullIfBlank(proposalNumber));
-        awardOrganization.setAwardPrimaryOrganizationIndicator(true);
-        awardOrganization.setActive(active);
+        awardOrganization.setAwardPrimaryOrganizationIndicator(activeAndPrimary);
+        awardOrganization.setActive(activeAndPrimary);
         
         return awardOrganization;
     }

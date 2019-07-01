@@ -171,7 +171,8 @@
 	</bean>
 
 	<bean id="proposalOrganizationDefinition" parent="proposalOrganizationDefinition-parentBean"/>
-	<bean id="proposalOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition">
+	<bean id="proposalOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:primaryIndicatorPropertyName="proposalPrimaryOrganizationIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>
 				<value>chartOfAccountsCode</value>
@@ -188,7 +189,8 @@
 	</bean>
 
 	<bean id="proposalProjectDirectorDefinition" parent="proposalProjectDirectorDefinition-parentBean"/>
-	<bean id="proposalProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition">
+	<bean id="proposalProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:primaryIndicatorPropertyName="proposalPrimaryProjectDirectorIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>
 				<value>principalId</value>
@@ -235,7 +237,8 @@
 	</bean>
 
 	<bean id="awardOrganizationDefinition" parent="awardOrganizationDefinition-parentBean"/>
-	<bean id="awardOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition">
+	<bean id="awardOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:primaryIndicatorPropertyName="awardPrimaryOrganizationIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>
 				<value>chartOfAccountsCode</value>
@@ -252,7 +255,8 @@
 	</bean>
 
 	<bean id="awardProjectDirectorDefinition" parent="awardProjectDirectorDefinition-parentBean"/>
-	<bean id="awardProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition">
+	<bean id="awardProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:primaryIndicatorPropertyName="awardPrimaryProjectDirectorIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>
 				<value>principalId</value>

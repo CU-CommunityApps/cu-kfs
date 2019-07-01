@@ -26,6 +26,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.Primaryable;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -260,7 +261,6 @@ public class RassServiceImpl implements RassService {
     protected boolean shouldKeepWaitingForDocument(String documentId) {
         String documentStatus = routeHeaderService.getDocumentStatus(documentId);
         switch (documentStatus) {
-            case KewApiConstants.ROUTE_HEADER_PROCESSED_CD :
             case KewApiConstants.ROUTE_HEADER_FINAL_CD :
                 return false;
             case KewApiConstants.ROUTE_HEADER_EXCEPTION_CD :
@@ -278,9 +278,6 @@ public class RassServiceImpl implements RassService {
         LOG.info("createObject, Creating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         Supplier<R> businessObjectGenerator = () -> createMinimalObject(objectDefinition.getBusinessObjectClass());
         R businessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectGenerator, objectDefinition);
-        if (businessObject instanceof MutableInactivatable) {
-            ((MutableInactivatable) businessObject).setActive(true);
-        }
         objectDefinition.processCustomTranslationForBusinessObjectCreate(xmlObject, businessObject);
         return businessObject;
     }
@@ -372,6 +369,7 @@ public class RassServiceImpl implements RassService {
 			throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject)
 					+ " is missing values for the following required fields: " + missingRequiredFields.toString());
 		}
+		objectDefinition.makeBusinessObjectActiveIfApplicable(xmlObject, businessObject);
 		return businessObject;
 	}
 
@@ -412,6 +410,10 @@ public class RassServiceImpl implements RassService {
             Object existingSubObject = existingList.get(indexOfObjectToInactivate);
             if (existingSubObject instanceof MutableInactivatable) {
                 ((MutableInactivatable) existingSubObject).setActive(false);
+            }
+            if (existingSubObject instanceof Primaryable && StringUtils.isNotBlank(subObjectDefinition.getPrimaryIndicatorPropertyName())) {
+                ObjectPropertyUtils.setPropertyValue(
+                        existingSubObject, subObjectDefinition.getPrimaryIndicatorPropertyName(), Boolean.FALSE);
             }
         }
     }
