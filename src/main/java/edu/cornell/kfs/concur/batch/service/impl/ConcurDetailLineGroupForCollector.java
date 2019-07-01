@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
@@ -486,7 +485,7 @@ public class ConcurDetailLineGroupForCollector {
         }
     }
 
-    protected void addOriginEntriesForCorpCardPersonalExpenseDebitLines( List<OriginEntryFull> temporaryCollectorEntries, List<OriginEntryFull> temporaryCorporateCardPersonalExpenseCollectorEntries) {
+    protected void addOriginEntriesForCorpCardPersonalExpenseDebitLines(List<OriginEntryFull> temporaryCollectorEntries, List<OriginEntryFull> temporaryCorporateCardPersonalExpenseCollectorEntries) {
         if (getLineMapOfType(ConcurSAECollectorLineType.CORP_CARD_PERSONAL_DEBIT).isEmpty()) {
             return;
         }
@@ -507,12 +506,12 @@ public class ConcurDetailLineGroupForCollector {
             KualiDecimal personalOffsetAdjustment = calculatePersonalOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
                     totalSubGroupAmount, currentReimbursableCashAmount, newReimbursableCashAmount);
             
-            addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(
-            		temporaryCorporateCardPersonalExpenseCollectorEntries::add, corpCardPersonalDebits, paymentOffsetAdjustment, personalOffsetAdjustment);
+            addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(temporaryCorporateCardPersonalExpenseCollectorEntries::add, corpCardPersonalDebits,
+                    paymentOffsetAdjustment, personalOffsetAdjustment);
             
             currentReimbursableCashAmount = newReimbursableCashAmount;
         }
-        
+
         cleanupCashAndAddCorporateCardPersonalExpenseEntries(temporaryCollectorEntries, temporaryCorporateCardPersonalExpenseCollectorEntries);
     }
 
