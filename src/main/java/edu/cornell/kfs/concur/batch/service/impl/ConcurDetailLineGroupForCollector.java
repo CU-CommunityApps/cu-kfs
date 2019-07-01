@@ -319,33 +319,83 @@ public class ConcurDetailLineGroupForCollector {
         nextTransactionSequenceNumber = 1;
         unusedCashAdvanceAmountsByReportEntryId.clear();
         unusedCashAdvanceAmountsByReportEntryId.putAll(totalCashAdvanceAmountsByReportEntryId);
+        List<OriginEntryFull> temporaryCollectorEntries = new ArrayList<OriginEntryFull>();
+        List<OriginEntryFull> temporaryCorporateCardPersonalExpenseCollectorEntries = new ArrayList<OriginEntryFull>();
         
         for (String keyForGroupingOfRegularLines : orderedKeysForGroupingRegularCashAndCorpCardLines) {
-            addOriginEntriesForCorporateCardLines(entryConsumer,
+            addOriginEntriesForCorporateCardLines(temporaryCollectorEntries::add,
                     getSubGroup(ConcurSAECollectorLineType.CORP_CARD, keyForGroupingOfRegularLines));
-            addOriginEntriesForCashLines(entryConsumer,
+            addOriginEntriesForCashLines(temporaryCollectorEntries::add,
                     getSubGroup(ConcurSAECollectorLineType.CASH, keyForGroupingOfRegularLines));
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> atmFeeDebitSubGroup : getSubGroupsOfType(ConcurSAECollectorLineType.ATM_FEE_DEBIT)) {
-            addOriginEntriesForAtmFeeDebitLines(entryConsumer, atmFeeDebitSubGroup);
+            addOriginEntriesForAtmFeeDebitLines(temporaryCollectorEntries::add, atmFeeDebitSubGroup);
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> cashAdvanceSubGroup : getSubGroupsOfType(ConcurSAECollectorLineType.REQUESTED_CASH_ADVANCE)) {
-            addOriginEntriesForRequestedCashAdvanceLines(entryConsumer, cashAdvanceSubGroup);
+            addOriginEntriesForRequestedCashAdvanceLines(temporaryCollectorEntries::add, cashAdvanceSubGroup);
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> atmCashAdvanceSubGroup : getSubGroupsOfType(ConcurSAECollectorLineType.ATM_CASH_ADVANCE)) {
-            addOriginEntriesForAtmCashAdvanceLines(entryConsumer, atmCashAdvanceSubGroup);
+            addOriginEntriesForAtmCashAdvanceLines(temporaryCollectorEntries::add, atmCashAdvanceSubGroup);
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> unusedAtmAmountSubGroup : getSubGroupsOfType(
                 ConcurSAECollectorLineType.ATM_UNUSED_CASH_ADVANCE)) {
-            addOffsetOriginEntriesForUnusedAtmCashAdvanceAmountLines(entryConsumer, unusedAtmAmountSubGroup);
+            addOffsetOriginEntriesForUnusedAtmCashAdvanceAmountLines(temporaryCollectorEntries::add, unusedAtmAmountSubGroup);
         }
         
-        addOriginEntriesForCorpCardPersonalExpenseDebitLines(entryConsumer);
-        addOriginEntriesForCorpCardPersonalExpenseCreditLines(entryConsumer);
+        addOriginEntriesForCorpCardPersonalExpenseDebitLines(temporaryCollectorEntries, temporaryCorporateCardPersonalExpenseCollectorEntries);
+        addOriginEntriesForCorpCardPersonalExpenseCreditLines(temporaryCollectorEntries::add);
+
+        addEntries(entryConsumer, temporaryCollectorEntries);
+    }
+
+    private void cleanupCashAndAddCorporateCardPersonalExpenseEntries(List<OriginEntryFull> temporaryCollectorEntries,
+            List<OriginEntryFull> temporaryCorporateCardPersonalExpenseCollectorEntries) {
+
+        List<OriginEntryFull> paymentOffsetCashEntries = temporaryCollectorEntries.stream()
+                .filter(entry -> collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode())).collect(Collectors.toList());
+        KualiDecimal cashTotal = calculateTotalAmountForEntries(paymentOffsetCashEntries);
+
+        List<OriginEntryFull> paymentOffsetCorporateCardPersonalExpenseDebitEntries = temporaryCorporateCardPersonalExpenseCollectorEntries.stream()
+                .filter(entry -> collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode())).collect(Collectors.toList());
+        List<OriginEntryFull> nonPaymentOffsetCorporateCardPersonalExpenseDebitEntries = temporaryCorporateCardPersonalExpenseCollectorEntries.stream()
+                .filter(entry -> !collectorHelper.paymentOffsetObjectCode.equalsIgnoreCase(entry.getFinancialObjectCode())).collect(Collectors.toList());
+
+        KualiDecimal corporateCardPersonalExpenseDebitTotal = calculateTotalAmountForEntries(paymentOffsetCorporateCardPersonalExpenseDebitEntries);
+
+        if (cashTotal.isGreaterEqual(corporateCardPersonalExpenseDebitTotal)) {
+            KualiDecimal totalDeductionsLeft = corporateCardPersonalExpenseDebitTotal;
+            for (OriginEntryFull entry : paymentOffsetCashEntries) {
+                KualiDecimal newTransactionAmount = entry.getTransactionLedgerEntryAmount().subtract(totalDeductionsLeft);
+                if (newTransactionAmount.isNegative()) {
+                    totalDeductionsLeft = newTransactionAmount.abs();
+                    newTransactionAmount = KualiDecimal.ZERO;
+                } else {
+                    totalDeductionsLeft = KualiDecimal.ZERO;
+                }
+                if (newTransactionAmount.isZero()) {
+                    temporaryCollectorEntries.remove(entry);
+                } else {
+                    entry.setTransactionLedgerEntryAmount(newTransactionAmount);
+                }
+            }
+        } else {
+            addEntries(temporaryCollectorEntries::add, paymentOffsetCorporateCardPersonalExpenseDebitEntries);
+        }
+        addEntries(temporaryCollectorEntries::add, nonPaymentOffsetCorporateCardPersonalExpenseDebitEntries);
+    }
+
+    protected void addEntries(Consumer<OriginEntryFull> entryConsumer, List<OriginEntryFull> entries) {
+        for (OriginEntryFull entry : entries) {
+            entryConsumer.accept(entry);
+        }
+    }
+
+    protected KualiDecimal calculateTotalAmountForEntries(List<OriginEntryFull> originEntries) {
+        return originEntries.stream().map(OriginEntryFull::getTransactionLedgerEntryAmount).reduce(KualiDecimal.ZERO, KualiDecimal::add);
     }
 
     protected void addOriginEntriesForCashLines(
@@ -435,7 +485,7 @@ public class ConcurDetailLineGroupForCollector {
         }
     }
 
-    protected void addOriginEntriesForCorpCardPersonalExpenseDebitLines(Consumer<OriginEntryFull> entryConsumer) {
+    protected void addOriginEntriesForCorpCardPersonalExpenseDebitLines(List<OriginEntryFull> temporaryCollectorEntries, List<OriginEntryFull> temporaryCorporateCardPersonalExpenseCollectorEntries) {
         if (getLineMapOfType(ConcurSAECollectorLineType.CORP_CARD_PERSONAL_DEBIT).isEmpty()) {
             return;
         }
@@ -456,11 +506,13 @@ public class ConcurDetailLineGroupForCollector {
             KualiDecimal personalOffsetAdjustment = calculatePersonalOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
                     totalSubGroupAmount, currentReimbursableCashAmount, newReimbursableCashAmount);
             
-            addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(
-                    entryConsumer, corpCardPersonalDebits, paymentOffsetAdjustment, personalOffsetAdjustment);
+            addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(temporaryCorporateCardPersonalExpenseCollectorEntries::add, corpCardPersonalDebits,
+                    paymentOffsetAdjustment, personalOffsetAdjustment);
             
             currentReimbursableCashAmount = newReimbursableCashAmount;
         }
+
+        cleanupCashAndAddCorporateCardPersonalExpenseEntries(temporaryCollectorEntries, temporaryCorporateCardPersonalExpenseCollectorEntries);
     }
 
     protected KualiDecimal calculatePaymentOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
