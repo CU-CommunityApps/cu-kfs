@@ -18,12 +18,10 @@
         </property>
     </bean>
 
-    <bean id="rassService" parent="rassService-parentBean" class="edu.cornell.kfs.rass.batch.service.impl.TestRassServiceImpl"
+    <bean id="rassUpdateService" parent="rassUpdateService-parentBean"
+            class="edu.cornell.kfs.rass.batch.service.impl.TestRassUpdateServiceImpl"
             p:documentStatusCheckDelayMillis="50"
             p:maxStatusCheckAttempts="3"/>
-
-    <bean id="rassRoutingService" parent="rassRoutingService-parentBean"
-            class="edu.cornell.kfs.rass.batch.service.impl.TestRassRoutingServiceImpl"/>
 
     <bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestAgencyTranslationDefinition"/>
     
@@ -60,8 +58,8 @@
             <set merge="true">
                 <idref bean="rassService"/>
                 <idref bean="rassService-parentBean"/>
-                <idref bean="rassRoutingService"/>
-                <idref bean="rassRoutingService-parentBean"/>
+                <idref bean="rassUpdateService"/>
+                <idref bean="rassUpdateService-parentBean"/>
                 <idref bean="rassProperty"/>
                 <idref bean="rassListProperty"/>
                 <idref bean="rassListPropertyWithProposalNumberMapping"/>

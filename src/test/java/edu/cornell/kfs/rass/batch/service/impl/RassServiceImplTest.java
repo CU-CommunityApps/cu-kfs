@@ -67,8 +67,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     private AgencyService mockAgencyService;
     private BusinessObjectService mockBusinessObjectService;
     private AwardService mockAwardService;
-    private TestRassServiceImpl rassService;
-    private TestRassRoutingServiceImpl rassRoutingService;
+    private RassServiceImpl rassService;
+    private TestRassUpdateServiceImpl rassUpdateService;
 
     private List<Maintainable> agencyUpdates;
     private List<Maintainable> proposalUpdates;
@@ -85,10 +85,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         mockAgencyService = springContext.getBean(RassTestConstants.AGENCY_SERVICE_BEAN_NAME, AgencyService.class);
         mockBusinessObjectService = springContext.getBean(RassTestConstants.BUSINESS_OBJECT_SERVICE_BEAN_NAME, BusinessObjectService.class);
         mockAwardService = springContext.getBean(RassTestConstants.AWARD_SERVICE_BEAN_NAME, AwardService.class);
-        rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, TestRassServiceImpl.class);
+        rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, RassServiceImpl.class);
         
-        rassRoutingService = springContext.getBean(RassTestConstants.RASS_ROUTING_SERVICE_BEAN_NAME, TestRassRoutingServiceImpl.class);
-        rassRoutingService.setDocumentTracker(this::processMaintenanceDocument);
+        rassUpdateService = springContext.getBean(RassTestConstants.RASS_UPDATE_SERVICE_BEAN_NAME, TestRassUpdateServiceImpl.class);
+        rassUpdateService.setDocumentTracker(this::processMaintenanceDocument);
     }
 
     @After
@@ -98,7 +98,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         agencyUpdates = null;
         mockAgencyService = null;
         rassService = null;
-        rassRoutingService = null;
+        rassUpdateService = null;
     }
 
     @Test
