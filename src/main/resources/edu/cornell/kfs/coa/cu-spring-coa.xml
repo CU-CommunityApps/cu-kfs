@@ -142,7 +142,6 @@
     
     <bean id="accountReversionFiscalYearMaker" parent="FiscalYearMaker">
 		<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountReversion" /> 
-		<property name="fiscalYearOneBehind" value="true" />
 	</bean>
 	
 	<bean id="accountReversionDetailFiscalYearMaker" parent="FiscalYearMaker">
@@ -153,7 +152,6 @@
 		    <value>edu.cornell.kfs.coa.businessobject.AccountReversion</value>
 		  </set>
 		</property>	
-		<property name="fiscalYearOneBehind" value="true" />
 	</bean>	
     
     <bean name="accountReversionTrickleDownInactivationService" parent="accountReversionTrickleDownInactivationService-parentBean" />
@@ -190,6 +188,14 @@
     <bean name="globalObjectWithIndirectCostRecoveryAccountsService" parent="globalObjectWithIndirectCostRecoveryAccountsService-parentBean" />
 	<bean name="globalObjectWithIndirectCostRecoveryAccountsService-parentBean" abstract="true" 
 		class="edu.cornell.kfs.coa.service.impl.GlobalObjectWithIndirectCostRecoveryAccountsServiceImpl">	
+    </bean>
+
+    <bean id="organizationReversionFiscalYearMaker" parent="FiscalYearMaker"
+          p:fiscalYearOneBehind="false">
+    </bean>
+
+    <bean id="organizationReversionDetailFiscalYearMaker" parent="FiscalYearMaker"
+          p:fiscalYearOneBehind="false">
     </bean>
 
 </beans>
