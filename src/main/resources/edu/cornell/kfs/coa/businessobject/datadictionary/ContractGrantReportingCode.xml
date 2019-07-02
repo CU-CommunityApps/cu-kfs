@@ -107,7 +107,8 @@
 
   <bean id="ContractGrantReportingCode-lookupDefinition" parent="ContractGrantReportingCode-lookupDefinition-parentBean"/>
 
-  <bean id="ContractGrantReportingCode-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+  <bean id="ContractGrantReportingCode-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:lookupSearchService-ref="defaultLookupSearchService">
     <property name="title" value="CG Reporting Code Lookup"/>
     
     <property name="defaultSort">
@@ -120,6 +121,31 @@
         </property>
         <property name="sortAscending" value="false"/>
       </bean>
+    </property>
+    <property name="lookupAttributeDefinitions">
+      <list>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="ContractGrantReportingCode-chartOfAccountsCode"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="ContractGrantReportingCode-code"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="ContractGrantReportingCode-name"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="ContractGrantReportingCode-active"
+                p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" p:defaultValue="Y"/>
+      </list>
+    </property>
+    <property name="lookupResultAttributeDefinitions">
+      <list>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="ContractGrantReportingCode-chartOfAccountsCode"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="ContractGrantReportingCode-code"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="ContractGrantReportingCode-name"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="ContractGrantReportingCode-active"/>
+      </list>
     </property>
     <property name="lookupFields">
       <list>

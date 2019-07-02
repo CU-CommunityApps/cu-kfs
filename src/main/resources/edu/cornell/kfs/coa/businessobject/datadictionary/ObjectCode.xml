@@ -267,7 +267,7 @@
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectLevelCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
-                      parent="ObjectCode-extension-cgReportingCode"/>
+                      parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectTypeCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
@@ -298,7 +298,7 @@
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-financialObjectLevelCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
-                      parent="ObjectCode-extension-cgReportingCode"/>
+                      parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-financialObjectTypeCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"

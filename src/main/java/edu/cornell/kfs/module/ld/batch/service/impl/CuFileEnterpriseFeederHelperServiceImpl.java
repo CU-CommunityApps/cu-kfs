@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.service.impl.ExceptionCaughtStatus;
@@ -25,6 +24,7 @@ import org.kuali.kfs.gl.report.LedgerSummaryReport;
 import org.kuali.kfs.gl.service.impl.EnterpriseFeederStatusAndErrorMessagesWrapper;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
 import org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl;
@@ -39,8 +39,6 @@ import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-
-import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
 public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeederHelperServiceImpl {
     private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederHelperServiceImpl.class); 
@@ -106,7 +104,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 int count = 0;
                     
                 Collection<String> offsetDocTypes = parameterService.getParameterValuesAsString(
-                        LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_DOCTYPE);
+                        LaborEnterpriseFeedStep.class, LaborConstants.BenefitCalculation.LABOR_BENEFIT_OFFSET_DOCTYPE);
                 offsetDocTypes = offsetDocTypes.stream().map(String::toUpperCase).collect(Collectors.toList());
 
                 while ((line = dataFileReader.readLine()) != null) {
@@ -246,7 +244,8 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             
-            String originCode = parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
+            String originCode = parameterService.getParameterValueAsString(
+                    LaborEnterpriseFeedStep.class, LaborConstants.BenefitCalculation.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
             
             offsetEntry.setFinancialSystemOriginationCode(originCode);
             offsetEntry.setDocumentNumber(wageEntry.getDocumentNumber());
