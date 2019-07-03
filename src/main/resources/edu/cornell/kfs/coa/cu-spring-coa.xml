@@ -191,11 +191,18 @@
     </bean>
 
     <bean id="organizationReversionFiscalYearMaker" parent="FiscalYearMaker"
-          p:fiscalYearOneBehind="false">
-    </bean>
+          p:businessObjectClass="org.kuali.kfs.coa.businessobject.OrganizationReversion"
+          p:fiscalYearOneBehind="false"/>
 
     <bean id="organizationReversionDetailFiscalYearMaker" parent="FiscalYearMaker"
+          p:businessObjectClass="org.kuali.kfs.coa.businessobject.OrganizationReversionDetail"
           p:fiscalYearOneBehind="false">
+        <property name="parentClasses">
+            <set>
+                <value>org.kuali.kfs.coa.businessobject.ObjectCode</value>
+                <value>org.kuali.kfs.coa.businessobject.OrganizationReversion</value>
+            </set>
+        </property>
     </bean>
 
 </beans>
