@@ -172,6 +172,7 @@
 
 	<bean id="proposalOrganizationDefinition" parent="proposalOrganizationDefinition-parentBean"/>
 	<bean id="proposalOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:subObjectClass="org.kuali.kfs.module.cg.businessobject.ProposalOrganization"
 			p:primaryIndicatorPropertyName="proposalPrimaryOrganizationIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>
@@ -190,6 +191,7 @@
 
 	<bean id="proposalProjectDirectorDefinition" parent="proposalProjectDirectorDefinition-parentBean"/>
 	<bean id="proposalProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:subObjectClass="org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector"
 			p:primaryIndicatorPropertyName="proposalPrimaryProjectDirectorIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>
@@ -238,6 +240,7 @@
 
 	<bean id="awardOrganizationDefinition" parent="awardOrganizationDefinition-parentBean"/>
 	<bean id="awardOrganizationDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:subObjectClass="org.kuali.kfs.module.cg.businessobject.AwardOrganization"
 			p:primaryIndicatorPropertyName="awardPrimaryOrganizationIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>
@@ -256,6 +259,7 @@
 
 	<bean id="awardProjectDirectorDefinition" parent="awardProjectDirectorDefinition-parentBean"/>
 	<bean id="awardProjectDirectorDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.RassSubObjectDefinition"
+			p:subObjectClass="org.kuali.kfs.module.cg.businessobject.AwardProjectDirector"
 			p:primaryIndicatorPropertyName="awardPrimaryProjectDirectorIndicator">
 		<property name="primaryKeyPropertyNames">
 			<list>

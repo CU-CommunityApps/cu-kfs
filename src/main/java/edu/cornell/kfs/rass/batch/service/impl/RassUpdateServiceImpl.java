@@ -209,6 +209,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         
         Supplier<R> businessObjectCopier = () -> deepCopyObject(oldBusinessObject);
         R newBusinessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectCopier, objectDefinition);
+        updateOldBusinessObjectForMaintenanceDocumentCompatibility(oldBusinessObject, newBusinessObject, objectDefinition);
         objectDefinition.processCustomTranslationForBusinessObjectEdit(xmlObject, oldBusinessObject, newBusinessObject);
         
         if (businessObjectWasUpdatedByXml(oldBusinessObject, newBusinessObject, objectDefinition)) {
@@ -315,6 +316,30 @@ public class RassUpdateServiceImpl implements RassUpdateService {
                     Object newValue = ObjectPropertyUtils.getPropertyValue(newBo, propertyName);
                     ObjectPropertyUtils.setPropertyValue(oldBo, propertyName, newValue);
                 });
+    }
+
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> void updateOldBusinessObjectForMaintenanceDocumentCompatibility(
+            R oldBusinessObject, R newBusinessObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
+        objectDefinition.getPropertyMappings().stream()
+                .filter(propertyDefinition -> propertyDefinition instanceof RassListPropertyDefinition)
+                .map(propertyDefinition -> (RassListPropertyDefinition) propertyDefinition)
+                .forEach(listPropertyDefinition -> addFillerSubObjectsToListOnOldBusinessObjectIfNeeded(
+                        oldBusinessObject, newBusinessObject, listPropertyDefinition));
+    }
+
+    protected <R extends PersistableBusinessObject> void addFillerSubObjectsToListOnOldBusinessObjectIfNeeded(
+            R oldBusinessObject, R newBusinessObject, RassListPropertyDefinition listPropertyDefinition) {
+        String listPropertyName = listPropertyDefinition.getBoPropertyName();
+        List<Object> oldList = ObjectPropertyUtils.getPropertyValue(oldBusinessObject, listPropertyName);
+        List<Object> newList = ObjectPropertyUtils.getPropertyValue(newBusinessObject, listPropertyName);
+        if (oldList.size() < newList.size()) {
+            RassSubObjectDefinition subObjectDefinition = listPropertyDefinition.getSubObjectDefinition();
+            Class<? extends PersistableBusinessObject> subObjectClass = subObjectDefinition.getSubObjectClass();
+            for (int i = oldList.size(); i < newList.size(); i++) {
+                PersistableBusinessObject minimalSubObject = createMinimalObject(subObjectClass);
+                oldList.add(minimalSubObject);
+            }
+        }
     }
 
     protected <T extends RassXmlObject, R extends PersistableBusinessObject> boolean businessObjectWasUpdatedByXml(
