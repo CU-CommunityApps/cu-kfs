@@ -54,6 +54,11 @@ public class TestRassUpdateServiceImpl extends RassUpdateServiceImpl {
     }
 
     @Override
+    protected void materializeProxiedCollectionsOnExistingObject(Object existingObject) {
+        // Do nothing.
+    }
+
+    @Override
     protected <T extends RassXmlObject, R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentInternal(
             Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<T, R> objectDefinition)
             throws WorkflowException {

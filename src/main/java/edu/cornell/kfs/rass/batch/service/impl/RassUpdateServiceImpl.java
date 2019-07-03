@@ -1,5 +1,6 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -76,6 +77,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             if (ObjectUtils.isNull(existingObject)) {
                 result = createObjectAndMaintenanceDocument(xmlObject, objectDefinition);
             } else {
+                materializeProxiedCollectionsOnExistingObject(existingObject);
                 result = updateObject(xmlObject, existingObject, objectDefinition);
             }
             LOG.info("processObject, Successfully processed " + objectDefinition.printObjectLabelAndKeys(xmlObject));
@@ -103,6 +105,14 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             LOG.info("waitForRemainingGeneratedDocumentsToFinish, Finished waiting for maintenance documents");
         } catch (RuntimeException e) {
             LOG.error("waitForRemainingGeneratedDocumentsToFinish, Unexpected error while checking document route statuses", e);
+        }
+    }
+
+    protected void materializeProxiedCollectionsOnExistingObject(Object existingObject) {
+        try {
+            ObjectUtils.materializeUpdateableCollections(existingObject);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
