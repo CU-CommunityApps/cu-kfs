@@ -33,7 +33,6 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
 
     private static final String ACTIVE_INDICATOR = "activeIndicator";
     
-    
     public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus, Date currentSqlDate) {
        Criteria header = new Criteria();
         Criteria detail = new Criteria();
@@ -55,8 +54,8 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         //header.addAndCriteria(endDate);
         header.addAndCriteria(b2b);
 
-        VendorContract contract = (VendorContract) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(VendorContract.class, header));
-        return contract;
+        return (VendorContract) getPersistenceBrokerTemplate()
+                .getObjectByQuery(new QueryByCriteria(VendorContract.class, header));
     }        
     
     public List<BusinessObject> getSearchResults(Map<String,String> fieldValues) {

@@ -47,6 +47,7 @@ import java.util.Map;
  * @see org.kuali.kfs.vnd.businessobject.VendorHeader
  */
 public class VendorDetail extends PersistableBusinessObjectBase implements VendorRoutingComparable {
+
     private static Logger LOG = LogManager.getLogger(VendorDetail.class);
 
     private Integer vendorHeaderGeneratedIdentifier;
@@ -212,9 +213,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         this.vendorSoldToAssignedIdentifier = vendorSoldToAssignedIdentifier;
     }
 
-    /**
-     * @return the vendorSoldToNumber.
-     */
     public String getVendorSoldToNumber() {
         String headerId = "";
         String detailId = "";
@@ -261,9 +259,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         }
     }
 
-    /**
-     * @return the vendorSoldToName
-     */
     public String getVendorSoldToName() {
         return this.vendorSoldToName;
     }
@@ -442,7 +437,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     /**
-     * @param vendorPaymentTerms The vendorPaymentTerms to set.
      * @deprecated
      */
     @Deprecated
@@ -455,7 +449,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     /**
-     * @param vendorShippingTitle The vendorShippingTitle to set.
      * @deprecated
      */
     @Deprecated
@@ -468,7 +461,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     /**
-     * @param vendorShippingPaymentTerms The vendorShippingPaymentTerms to set.
      * @deprecated
      */
     @Deprecated
@@ -481,7 +473,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     /**
-     * @param vendorInactiveReason The vendorInactiveReason to set.
      * @deprecated
      */
     @Deprecated
@@ -616,7 +607,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     /**
-     * @param vendorRestrictedPerson The vendorRestrictedPerson to set.
      * @deprecated
      */
     @Deprecated
@@ -688,10 +678,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         this.defaultFaxNumber = defaultFaxNumber;
     }
 
-
-    /**
-     * @see org.kuali.kfs.vnd.businessobject.VendorRoutingComparable#isEqualForRouting(Object)
-     */
     @Override
     public boolean isEqualForRouting(Object toCompare) {
         LOG.debug("Entering isEqualForRouting.");
@@ -762,14 +748,11 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     public VendorDetail getVendorParent() {
-        Map<String, String> tmpValues = new HashMap<String, String>();
-        List<VendorDetail> relatedVendors = new ArrayList<VendorDetail>();
+        Map<String, String> tmpValues = new HashMap<>();
         tmpValues.put(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID,
                 getVendorHeaderGeneratedIdentifier().toString());
         tmpValues.put(VendorPropertyConstants.VENDOR_PARENT_INDICATOR, "Y");
-        VendorDetail parentVendor = SpringContext.getBean(LookupService.class).findObjectBySearch(VendorDetail.class,
-                tmpValues);
-        return parentVendor;
+        return SpringContext.getBean(LookupService.class).findObjectBySearch(VendorDetail.class, tmpValues);
     }
 
     public String getVendorParentName() {
@@ -806,17 +789,11 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return sb.toString();
     }
 
-    /**
-     * @return the boNotes attribute.
-     */
     public List<Note> getBoNotes() {
         VendorService vendorService = SpringContext.getBean(VendorService.class);
         return vendorService.getVendorNotes(this);
     }
 
-    /**
-     * @param boNotes The boNotes to set.
-     */
     public void setBoNotes(List boNotes) {
         this.boNotes = boNotes;
     }

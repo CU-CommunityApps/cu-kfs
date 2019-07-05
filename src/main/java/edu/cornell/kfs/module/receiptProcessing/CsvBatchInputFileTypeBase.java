@@ -73,7 +73,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
         }
 
         List<String> headerList = getCsvHeaderList();
-        Object parsedContents = null;
+        Object parsedContents;
         try {
             // validate csv header
             ByteArrayInputStream validateFileContents = new ByteArrayInputStream(fileByteContent);
@@ -89,7 +89,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
             //parse and create List of Maps base on enum value names as map keys
             List<Map<String, String>> dataMapList = new ArrayList<>();
             Map<String, String> rowMap;
-            int index = 0;
+            int index;
             for (String[] row : dataList) {
                 rowMap = new LinkedHashMap<>();
                 // reset index
@@ -180,7 +180,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
      * @param parsedContent
      * @return
      */
-    abstract protected Object convertParsedObjectToVO(Object parsedContent);
+    protected abstract Object convertParsedObjectToVO(Object parsedContent);
 
     @Override
     public String getAuthorPrincipalName(File file) {

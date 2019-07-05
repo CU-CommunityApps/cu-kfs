@@ -15,23 +15,24 @@
  */
 package com.rsmart.kuali.kfs.module.ld.businessobject.defaultvalue;
 
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.valuefinder.ValueFinder;
 
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
-public class FiscalYearFinder implements ValueFinder {
+public class FiscalYearFinder implements DefaultValueFinder {
 
     private ParameterService parameterService;
     
     /**
      * @see org.kuali.kfs.kns.lookup.valueFinder.ValueFinder#getValue()
      */
-    public String getValue() {
+    @Override
+    public String getDefaultValue() {
         String offsetParmValue = getParameterService().getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_CALCULATION_OFFSET);
         
         if(offsetParmValue.equalsIgnoreCase("n")) {

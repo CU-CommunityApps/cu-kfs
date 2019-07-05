@@ -26,7 +26,8 @@ public class CuPaymentSourceHelperServiceImpl extends PaymentSourceHelperService
             maxNoteLines = Integer.parseInt(maxNoteLinesParam);
         }
         catch (NumberFormatException nfe) {
-            throw new IllegalArgumentException("Invalid Max Notes Lines parameter, value: "+maxNoteLinesParam+" cannot be converted to an integer");
+            throw new IllegalArgumentException("Invalid Max Notes Lines parameter, value: " + maxNoteLinesParam +
+                    " cannot be converted to an integer");
         }
 
         // The WordUtils should be sufficient for the majority of cases.  This method will
@@ -40,17 +41,16 @@ public class CuPaymentSourceHelperServiceImpl extends PaymentSourceHelperService
         // Loop through all the note lines.
         for (String noteLine : noteLines) {
             if (previousLineCount < (maxNoteLines - 3) && !StringUtils.isEmpty(noteLine)) {
-
                 // This should only happen if we encounter a word that is greater than the max length.
                 // The only concern I have for this occurring is with URLs/email addresses.
                 if (noteLine.length() >CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
                     for (String choppedWord : chopWord(noteLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE)) {
-
                         // Make sure we're still under the maximum number of note lines.
                         if (previousLineCount < (maxNoteLines - 3) && !StringUtils.isEmpty(choppedWord)) {
                             pnt = new PaymentNoteText();
                             pnt.setCustomerNoteLineNbr(new KualiInteger(previousLineCount++));
-                        pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + choppedWord.replaceAll("\\n", "").trim());
+                            pnt.setCustomerNoteText(
+                                    CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + choppedWord.replaceAll("\\n", "").trim());
                         } else {
                             // We can't add any additional note lines, or we'll exceed the maximum, therefore
                             // just break out of the loop early - there's nothing left to do.
@@ -62,11 +62,12 @@ public class CuPaymentSourceHelperServiceImpl extends PaymentSourceHelperService
                     // correct line location.
                     pnt = new PaymentNoteText();
                     pnt.setCustomerNoteLineNbr(new KualiInteger(previousLineCount++));
-                pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + noteLine.replaceAll("\\n", "").trim());
-            }
+                    pnt.setCustomerNoteText(
+                            CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + noteLine.replaceAll("\\n", "").trim());
+                }
 
-                if(pnt != null) {
-                pnts.add(pnt); // This should never be null at this point, but...
+                if (pnt != null) {
+                    pnts.add(pnt); // This should never be null at this point, but...
                 }
             }
         }

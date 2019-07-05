@@ -25,6 +25,7 @@ import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArKeyConstants;
+import org.kuali.kfs.module.ar.ArPropertyConstants.ContractsGrantsInvoiceDocumentErrorLogLookupFields;
 import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
 import org.kuali.kfs.module.ar.businessobject.AwardAccountObjectCodeTotalBilled;
 import org.kuali.kfs.module.ar.businessobject.Bill;
@@ -107,6 +108,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                 contractsGrantsInvoiceDocumentErrorCategory.setErrorMessageText(vCat);
                 contractsGrantsInvoiceDocumentErrorLog.getErrorMessages().add(contractsGrantsInvoiceDocumentErrorCategory);
             }
+
+            int errorAccountsMax = dataDictionaryService.getAttributeMaxLength(ContractsGrantsInvoiceDocumentErrorLog.class, ContractsGrantsInvoiceDocumentErrorLogLookupFields.ACCOUNTS);
+            contractsGrantsInvoiceDocumentErrorLog.setAccounts(StringUtils.left(contractsGrantsInvoiceDocumentErrorLog.getAccounts(), errorAccountsMax));
 
             contractsGrantsInvoiceDocumentErrorLog.setErrorDate(dateTimeService.getCurrentTimestamp());
             contractsGrantsInvoiceDocumentErrorLog.setCreationProcessTypeCode(creationProcessTypeCode);

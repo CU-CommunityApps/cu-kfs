@@ -11,23 +11,26 @@ import org.kuali.kfs.sys.service.BankService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
-public class CuBankCodeValidation{
+public class CuBankCodeValidation {
 
 	protected static volatile BankService bankService;
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
-    public static boolean validate(Document document, String bankCode, String bankCodeProperty, boolean requireDeposit, boolean requireDisbursement) {
+    public static boolean validate(Document document, String bankCode, String bankCodeProperty, boolean requireDeposit,
+            boolean requireDisbursement) {
         if (document != null && !getBankService().isBankSpecificationEnabledForDocument(document.getClass())) {
             return true;
         }
         return validate(bankCode, bankCodeProperty, requireDeposit, requireDisbursement);
     }
 
-    public static boolean validate(String bankCode, String bankCodeProperty, boolean requireDeposit, boolean requireDisbursement) {
+    public static boolean validate(String bankCode, String bankCodeProperty, boolean requireDeposit,
+            boolean requireDisbursement) {
         return validate(bankCode, bankCodeProperty, null, requireDeposit, requireDisbursement);
     }
 
-    public static boolean validate(String bankCode, String bankCodeProperty, String paymentMethodCode, boolean requireDeposit, boolean requireDisbursement) {
+    public static boolean validate(String bankCode, String bankCodeProperty, String paymentMethodCode, boolean requireDeposit,
+            boolean requireDisbursement) {
         if (!getBankService().isBankSpecificationEnabled()) {
             return true;
         }
@@ -75,9 +78,6 @@ public class CuBankCodeValidation{
         return paymentMethodGeneralLedgerPendingEntryService;
     }
     
-    /**
-     * @return the default implementation of the BankService
-     */
     protected static BankService getBankService() {
         if (bankService == null) {
             bankService = SpringContext.getBean(BankService.class);

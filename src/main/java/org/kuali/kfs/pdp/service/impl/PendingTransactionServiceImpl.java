@@ -70,7 +70,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     protected static String FDOC_TYP_CD_CANCEL_ACH = "ACHC";
     protected static String FDOC_TYP_CD_CANCEL_CHECK = "CHKC";
 
-    public final static String REF_FDOC_TYP_CD_LIABILITY_CHECK = "PO";
+    public static final String REF_FDOC_TYP_CD_LIABILITY_CHECK = "PO";
 
     private PendingTransactionDao glPendingTransactionDao;
     protected AccountingPeriodService accountingPeriodService;
