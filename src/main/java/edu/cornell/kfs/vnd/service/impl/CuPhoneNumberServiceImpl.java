@@ -14,17 +14,18 @@ public class CuPhoneNumberServiceImpl extends PhoneNumberServiceImpl {
             return unformattedNumber;
         }
         String formattedNumber = unformattedNumber.replaceAll("\\D", "");
-        Integer defaultPhoneNumberDigits = new Integer(parameterService.getParameterValueAsString(VendorDetail.class, VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS));
-        // Before moving to the parameter table:
-        // if ( formattedNumber.length() != VendorConstants.GENERIC_DEFAULT_PHONE_NUM_DIGITS ) {
+        Integer defaultPhoneNumberDigits = new Integer(parameterService.getParameterValueAsString(VendorDetail.class,
+                VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS));
         if (formattedNumber.length() < defaultPhoneNumberDigits) {
             return unformattedNumber;
         }
-        else if(formattedNumber.length() > defaultPhoneNumberDigits) { // assume phone number includes an extension and format using only the first 10 characters
-            return formattedNumber.substring(0, 3) + "-" + formattedNumber.substring(3, 6) + "-" + formattedNumber.substring(6, 10);
+        else if (formattedNumber.length() > defaultPhoneNumberDigits) { // assume phone number includes an extension and format using only the first 10 characters
+            return formattedNumber.substring(0, 3) + "-" + formattedNumber.substring(3, 6) + "-" +
+                    formattedNumber.substring(6, 10);
         }
         else {
-            return formattedNumber.substring(0, 3) + "-" + formattedNumber.substring(3, 6) + "-" + formattedNumber.substring(6, 10);
+            return formattedNumber.substring(0, 3) + "-" + formattedNumber.substring(3, 6) + "-" +
+                    formattedNumber.substring(6, 10);
         }
     }
 

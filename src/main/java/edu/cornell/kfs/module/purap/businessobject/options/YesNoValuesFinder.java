@@ -12,7 +12,7 @@ public class YesNoValuesFinder extends KeyValuesBase {
 	private static final long serialVersionUID = 1L;
 
     public List<KeyValue> getKeyValues() {
-        List<KeyValue> keyValues = new ArrayList<KeyValue>();
+        List<KeyValue> keyValues = new ArrayList<>();
         
         keyValues.add(new ConcreteKeyValue("N", "No"));
         keyValues.add(new ConcreteKeyValue("Y", "Yes"));

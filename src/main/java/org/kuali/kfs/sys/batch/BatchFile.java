@@ -18,17 +18,17 @@
  */
 package org.kuali.kfs.sys.batch;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.service.BatchFileAdminService;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.util.Base64;
-import java.util.Date;
 
 public class BatchFile extends TransientBusinessObjectBase {
     public static final String CACHE_NAME = KFSConstants.APPLICATION_NAMESPACE_CODE + "/" + "BatchFile";
@@ -102,25 +102,14 @@ public class BatchFile extends TransientBusinessObjectBase {
      */
     public String getId() {
         String encoded;
-        try {
-            String fullPath = getPath() + File.separator + getFileName();
-            encoded = Base64.getEncoder().encodeToString(fullPath.getBytes("utf-8"));
-        } catch (UnsupportedEncodingException uee) {
-            LOG.error("Wow! UTF-8 seems to be unsupported!");
-            encoded = "*error*";
-        }
+        String fullPath = getPath() + File.separator + getFileName();
+        encoded = Base64.getEncoder().encodeToString(fullPath.getBytes(StandardCharsets.UTF_8));
         return encoded;
     }
 
     private String decodeId(String id) {
         byte[] pathAsBytes = Base64.getDecoder().decode(id);
-        String path = null;
-        try {
-            path = new String(pathAsBytes, "utf-8");
-        } catch (UnsupportedEncodingException uee) {
-            LOG.error("Wow! UTF-8 seems to be unsupported!");
-        }
-        return path;
+        return new String(pathAsBytes, StandardCharsets.UTF_8);
     }
 
 }

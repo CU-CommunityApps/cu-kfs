@@ -37,9 +37,8 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
         boolean valid = true;
 
         if (StringUtils.equals(KFSConstants.COUNTRY_CODE_UNITED_STATES, postalCountryCode)) {
-
             if (StringUtils.isBlank(stateCode)) {
-                valid &= false;
+                valid = false;
                 if (StringUtils.isNotBlank(statePropertyConstant)) {
                     GlobalVariables.getMessageMap().putError(statePropertyConstant,
                             KFSKeyConstants.ERROR_US_REQUIRES_STATE);
@@ -47,7 +46,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
             }
 
             if (StringUtils.isBlank(postalCode)) {
-                valid &= false;
+                valid = false;
                 if (StringUtils.isNotBlank(postalCodePropertyConstant)) {
                     GlobalVariables.getMessageMap().putError(postalCodePropertyConstant,
                             KFSKeyConstants.ERROR_US_REQUIRES_ZIP);
@@ -55,7 +54,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
             } else {
                 ZipcodeValidationPattern zipPattern = getZipcodeValidatePattern();
                 if (!zipPattern.matches(StringUtils.defaultString(postalCode))) {
-                    valid &= false;
+                    valid = false;
                     if (StringUtils.isNotBlank(postalCodePropertyConstant)) {
                         GlobalVariables.getMessageMap().putError(postalCodePropertyConstant,
                                 KFSKeyConstants.ERROR_POSTAL_CODE_INVALID);
@@ -69,10 +68,9 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
         if (StringUtils.isNotBlank(postalCountryCode) && StringUtils.isNotBlank(stateCode)) {
             State state = getStateService().getState(postalCountryCode, stateCode);
             if (state == null) {
+                valid = false;
                 GlobalVariables.getMessageMap().putError(statePropertyConstant,
                         KFSKeyConstants.ERROR_STATE_CODE_INVALID, stateCode);
-                //KFSPTS-3490
-                valid = false;
             }
         }
 

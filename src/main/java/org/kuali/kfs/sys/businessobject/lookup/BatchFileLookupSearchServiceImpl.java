@@ -55,10 +55,12 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
+
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(Class<? extends BusinessObjectBase> businessObjectClass,
+    public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(
+            Class<? extends BusinessObjectBase> businessObjectClass,
             MultivaluedMap<String, String> fieldValues, int skip, int limit, String sortField, boolean sortAscending) {
 
         List<BatchFile> allFiles = getFiles(fieldValues);
@@ -260,10 +262,7 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
             if (fromDate != null && fromDate.after(lastModifiedDate)) {
                 return false;
             }
-            if (toDate != null && toDate.before(lastModifiedDate)) {
-                return false;
-            }
-            return true;
+            return toDate == null || !toDate.before(lastModifiedDate);
         }
     }
 }

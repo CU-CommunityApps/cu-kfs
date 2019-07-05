@@ -68,7 +68,6 @@ import org.kuali.rice.krad.bo.BusinessObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +75,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 //RICE20 This class needs to be fixed to support pre-rice2.0 features
 public class FinancialSystemSearchableAttribute extends DataDictionarySearchableAttribute {
+
     private static final Logger LOG = LogManager.getLogger(FinancialSystemSearchableAttribute.class);
 
     protected static final String DISPLAY_TYPE_SEARCH_ATTRIBUTE_LABEL = "Search Result Type";
@@ -85,7 +85,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     protected static final String DOCUMENT_DISPLAY_TYPE_VALUE = "document";
     protected static final String DISPLAY_TYPE_SEARCH_ATTRIBUTE_NAME = "displayType";
 
-    protected static final List<KeyValue> SEARCH_RESULT_TYPE_OPTION_LIST = new ArrayList<KeyValue>(2);
+    protected static final List<KeyValue> SEARCH_RESULT_TYPE_OPTION_LIST = new ArrayList<>(2);
 
     static {
         SEARCH_RESULT_TYPE_OPTION_LIST.add(new ConcreteKeyValue(DOCUMENT_DISPLAY_TYPE_VALUE, DOCUMENT_DISPLAY_TYPE_LABEL));
@@ -93,7 +93,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     }
 
     // used to map the special fields to the DD Entry that validate it.
-    private static final Map<String, String> magicFields = new HashMap<String, String>();
+    private static final Map<String, String> magicFields = new HashMap<>();
 
     static {
         magicFields.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, SourceAccountingLine.class.getSimpleName());
@@ -129,11 +129,11 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         DocumentEntry entry = ddService.getDataDictionary().getDocumentEntry(documentTypeName);
 
         if (entry != null) {
-
             Class<? extends Document> docClass = entry.getDocumentClass();
 
             if (AccountingDocument.class.isAssignableFrom(docClass)) {
-                Map<String, AccountingLineGroupDefinition> alGroups = ((FinancialSystemTransactionalDocumentEntry) entry).getAccountingLineGroups();
+                Map<String, AccountingLineGroupDefinition> alGroups =
+                        ((FinancialSystemTransactionalDocumentEntry) entry).getAccountingLineGroups();
                 Class alClass = SourceAccountingLine.class;
 
                 if (ObjectUtils.isNotNull(alGroups)) {
@@ -142,7 +142,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                     }
                 }
 
-                BusinessObject alBusinessObject = null;
+                BusinessObject alBusinessObject;
 
                 try {
                     alBusinessObject = (BusinessObject) alClass.newInstance();
@@ -150,43 +150,56 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                     throw new RuntimeException("Unable to instantiate accounting line class: " + alClass, cnfe);
                 }
 
-                Field chartField = FieldUtils.getPropertyField(alClass, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, true);
+                Field chartField = FieldUtils.getPropertyField(alClass, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,
+                        true);
                 chartField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_STRING);
                 chartField.setColumnVisible(true);
-                LookupUtils.setFieldQuickfinder(alBusinessObject, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartField, Collections.singletonList(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE));
+                LookupUtils.setFieldQuickfinder(alBusinessObject, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,
+                        chartField, Collections.singletonList(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE));
                 docSearchRows.add(new Row(Collections.singletonList(chartField)));
 
-                Field orgField = FieldUtils.getPropertyField(Organization.class, KFSPropertyConstants.ORGANIZATION_CODE, true);
+                Field orgField = FieldUtils.getPropertyField(Organization.class, KFSPropertyConstants.ORGANIZATION_CODE,
+                        true);
                 orgField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_STRING);
                 orgField.setColumnVisible(true);
-                LookupUtils.setFieldQuickfinder(new Account(), KFSPropertyConstants.ORGANIZATION_CODE, orgField, Collections.singletonList(KFSPropertyConstants.ORGANIZATION_CODE));
+                LookupUtils.setFieldQuickfinder(new Account(), KFSPropertyConstants.ORGANIZATION_CODE, orgField,
+                        Collections.singletonList(KFSPropertyConstants.ORGANIZATION_CODE));
                 docSearchRows.add(new Row(Collections.singletonList(orgField)));
 
                 Field accountField = FieldUtils.getPropertyField(alClass, KFSPropertyConstants.ACCOUNT_NUMBER, true);
                 accountField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_STRING);
                 accountField.setColumnVisible(true);
-                LookupUtils.setFieldQuickfinder(alBusinessObject, KFSPropertyConstants.ACCOUNT_NUMBER, accountField, Collections.singletonList(KFSPropertyConstants.ACCOUNT_NUMBER));
+                LookupUtils.setFieldQuickfinder(alBusinessObject, KFSPropertyConstants.ACCOUNT_NUMBER, accountField,
+                        Collections.singletonList(KFSPropertyConstants.ACCOUNT_NUMBER));
                 docSearchRows.add(new Row(Collections.singletonList(accountField)));
             }
 
             boolean displayedLedgerPostingDoc = false;
             if (LaborLedgerPostingDocumentForSearching.class.isAssignableFrom(docClass)) {
-                Field searchField = FieldUtils.getPropertyField(GeneralLedgerPendingEntry.class, KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, true);
+                Field searchField = FieldUtils.getPropertyField(GeneralLedgerPendingEntry.class,
+                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, true);
                 searchField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_STRING);
-                LookupUtils.setFieldQuickfinder(new GeneralLedgerPendingEntry(), KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, searchField, Collections.singletonList(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE));
+                LookupUtils.setFieldQuickfinder(new GeneralLedgerPendingEntry(),
+                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, searchField,
+                        
+                        Collections.singletonList(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE));
                 docSearchRows.add(new Row(Collections.singletonList(searchField)));
                 displayedLedgerPostingDoc = true;
             }
 
             if (GeneralLedgerPostingDocument.class.isAssignableFrom(docClass) && !displayedLedgerPostingDoc) {
-                Field searchField = FieldUtils.getPropertyField(GeneralLedgerPendingEntry.class, KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, true);
+                Field searchField = FieldUtils.getPropertyField(GeneralLedgerPendingEntry.class,
+                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, true);
                 searchField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_STRING);
-                LookupUtils.setFieldQuickfinder(new GeneralLedgerPendingEntry(), KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, searchField, Collections.singletonList(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE));
+                LookupUtils.setFieldQuickfinder(new GeneralLedgerPendingEntry(),
+                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, searchField,
+                        Collections.singletonList(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE));
                 docSearchRows.add(new Row(Collections.singletonList(searchField)));
             }
 
             if (AmountTotaling.class.isAssignableFrom(docClass)) {
-                Field searchField = FieldUtils.getPropertyField(FinancialSystemDocumentHeader.class, KFSPropertyConstants.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, true);
+                Field searchField = FieldUtils.getPropertyField(FinancialSystemDocumentHeader.class,
+                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, true);
                 searchField.setFieldDataType(SearchableAttributeConstants.DATA_TYPE_FLOAT);
                 docSearchRows.add(new Row(Collections.singletonList(searchField)));
             }
@@ -201,7 +214,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     }
 
     @Override
-    public List<DocumentAttribute> extractDocumentAttributes(ExtensionDefinition extensionDefinition, DocumentWithContent documentWithContent) {
+    public List<DocumentAttribute> extractDocumentAttributes(ExtensionDefinition extensionDefinition,
+            DocumentWithContent documentWithContent) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("extractDocumentAttributes( " + extensionDefinition + ", " + documentWithContent + " )");
         }
@@ -217,7 +231,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         }
         if (doc != null) {
             if (doc instanceof AmountTotaling && ((AmountTotaling) doc).getTotalDollarAmount() != null) {
-                DocumentAttributeDecimal.Builder searchableAttributeValue = DocumentAttributeDecimal.Builder.create(KFSPropertyConstants.FINANCIAL_DOCUMENT_TOTAL_AMOUNT);
+                DocumentAttributeDecimal.Builder searchableAttributeValue = DocumentAttributeDecimal.Builder.create(
+                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TOTAL_AMOUNT);
                 searchableAttributeValue.setValue(((AmountTotaling) doc).getTotalDollarAmount().bigDecimalValue());
                 searchAttrValues.add(searchableAttributeValue.build());
             }
@@ -256,12 +271,14 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     }
 
     @Override
-    public List<RemotableAttributeError> validateDocumentAttributeCriteria(ExtensionDefinition extensionDefinition, DocumentSearchCriteria documentSearchCriteria) {
+    public List<RemotableAttributeError> validateDocumentAttributeCriteria(ExtensionDefinition extensionDefinition,
+            DocumentSearchCriteria documentSearchCriteria) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("validateDocumentAttributeCriteria( " + extensionDefinition + ", " + documentSearchCriteria + " )");
         }
         // this list is irrelevant. the validation errors are put on the stack in the validationService.
-        List<RemotableAttributeError> errors = super.validateDocumentAttributeCriteria(extensionDefinition, documentSearchCriteria);
+        List<RemotableAttributeError> errors = super.validateDocumentAttributeCriteria(extensionDefinition,
+                documentSearchCriteria);
 
         DictionaryValidationService validationService = SpringContext.getBean(DictionaryValidationService.class);
         Map<String, List<String>> paramMap = documentSearchCriteria.getDocumentAttributeValues();
@@ -284,13 +301,14 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     }
 
     /**
-     * Harvest chart of accounts code, account number, and organization code as searchable attributes from an accounting document
+     * Harvest chart of accounts code, account number, and organization code as searchable attributes from an
+     * accounting document
      *
      * @param accountingDoc the accounting document to pull values from
      * @return a List of searchable values
      */
     protected List<DocumentAttribute> harvestAccountingDocumentSearchableAttributes(AccountingDocument accountingDoc) {
-        List<DocumentAttribute> searchAttrValues = new ArrayList<DocumentAttribute>();
+        List<DocumentAttribute> searchAttrValues = new ArrayList<>();
 
         for (AccountingLine line : (List<AccountingLine>) accountingDoc.getSourceAccountingLines()) {
             addSearchableAttributesForAccountingLine(searchAttrValues, line);
@@ -309,7 +327,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
      * @return a List of searchable values
      */
     protected List<DocumentAttribute> harvestGLPDocumentSearchableAttributes(GeneralLedgerPostingDocument doc) {
-        List<DocumentAttribute> searchAttrValues = new ArrayList<DocumentAttribute>();
+        List<DocumentAttribute> searchAttrValues = new ArrayList<>();
 
         for (GeneralLedgerPendingEntry glpe : doc.getGeneralLedgerPendingEntries()) {
             addSearchableAttributesForGLPE(searchAttrValues, glpe);
@@ -323,28 +341,31 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
      * @param LLPDoc the LLP document to pull values from
      * @return a List of searchable values
      */
-    protected List<DocumentAttribute> harvestLLPDocumentSearchableAttributes(LaborLedgerPostingDocumentForSearching LLPDoc) {
-        List<DocumentAttribute> searchAttrValues = new ArrayList<DocumentAttribute>();
+    protected List<DocumentAttribute> harvestLLPDocumentSearchableAttributes(
+            LaborLedgerPostingDocumentForSearching LLPDoc) {
+        List<DocumentAttribute> searchAttrValues = new ArrayList<>();
 
-        for (Iterator itr = LLPDoc.getLaborLedgerPendingEntriesForSearching().iterator(); itr.hasNext(); ) {
-            LaborLedgerPendingEntryForSearching llpe = (LaborLedgerPendingEntryForSearching) itr.next();
+        for (Object llpeObj : LLPDoc.getLaborLedgerPendingEntriesForSearching()) {
+            LaborLedgerPendingEntryForSearching llpe = (LaborLedgerPendingEntryForSearching) llpeObj;
             addSearchableAttributesForLLPE(searchAttrValues, llpe);
         }
         return searchAttrValues;
     }
 
     /**
-     * Pulls the default searchable attributes - chart code, account number, and account organization code - from a given accounting line and populates
-     * the searchable attribute values in the given list
+     * Pulls the default searchable attributes - chart code, account number, and account organization code - from a
+     * given accounting line and populates the searchable attribute values in the given list
      *
      * @param searchAttrValues a List of SearchableAttributeValue objects to populate
      * @param accountingLine   an AccountingLine to get values from
      */
-    protected void addSearchableAttributesForAccountingLine(List<DocumentAttribute> searchAttrValues, AccountingLine accountingLine) {
+    protected void addSearchableAttributesForAccountingLine(List<DocumentAttribute> searchAttrValues,
+            AccountingLine accountingLine) {
         DocumentAttributeString.Builder searchableAttributeValue;
         if (!ObjectUtils.isNull(accountingLine)) {
             if (!StringUtils.isBlank(accountingLine.getChartOfAccountsCode())) {
-                searchableAttributeValue = DocumentAttributeString.Builder.create(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
+                searchableAttributeValue = DocumentAttributeString.Builder.create(
+                        KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
                 searchableAttributeValue.setValue(accountingLine.getChartOfAccountsCode());
                 searchAttrValues.add(searchableAttributeValue.build());
             }
@@ -355,7 +376,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                 searchAttrValues.add(searchableAttributeValue.build());
             }
 
-            if (!ObjectUtils.isNull(accountingLine.getAccount()) && !StringUtils.isBlank(accountingLine.getAccount().getOrganizationCode())) {
+            if (!ObjectUtils.isNull(accountingLine.getAccount())
+                    && !StringUtils.isBlank(accountingLine.getAccount().getOrganizationCode())) {
                 searchableAttributeValue = DocumentAttributeString.Builder.create(KFSPropertyConstants.ORGANIZATION_CODE);
                 searchableAttributeValue.setValue(accountingLine.getAccount().getOrganizationCode());
                 searchAttrValues.add(searchableAttributeValue.build());
@@ -370,13 +392,14 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
      * @param searchAttrValues a List of SearchableAttributeValue objects to populate
      * @param glpe             a GeneralLedgerPendingEntry to get values from
      */
-    protected void addSearchableAttributesForGLPE(List<DocumentAttribute> searchAttrValues, GeneralLedgerPendingEntry glpe) {
+    protected void addSearchableAttributesForGLPE(List<DocumentAttribute> searchAttrValues,
+            GeneralLedgerPendingEntry glpe) {
         if (glpe != null && !StringUtils.isBlank(glpe.getFinancialDocumentTypeCode())) {
-            DocumentAttributeString.Builder searchableAttributeValue = DocumentAttributeString.Builder.create(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE);
+            DocumentAttributeString.Builder searchableAttributeValue = DocumentAttributeString.Builder.create(
+                    KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE);
             searchableAttributeValue.setValue(glpe.getFinancialDocumentTypeCode());
             searchAttrValues.add(searchableAttributeValue.build());
         }
-
     }
 
     /**
@@ -386,9 +409,11 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
      * @param searchAttrValues a List of SearchableAttributeValue objects to populate
      * @param llpe             a LaborLedgerPendingEntry to get values from
      */
-    protected void addSearchableAttributesForLLPE(List<DocumentAttribute> searchAttrValues, LaborLedgerPendingEntryForSearching llpe) {
+    protected void addSearchableAttributesForLLPE(List<DocumentAttribute> searchAttrValues,
+            LaborLedgerPendingEntryForSearching llpe) {
         if (llpe != null && !StringUtils.isBlank(llpe.getFinancialDocumentTypeCode())) {
-            DocumentAttributeString.Builder searchableAttributeValue = DocumentAttributeString.Builder.create(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE);
+            DocumentAttributeString.Builder searchableAttributeValue = DocumentAttributeString.Builder.create(
+                    KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE);
             searchableAttributeValue.setValue(llpe.getFinancialDocumentTypeCode());
             searchAttrValues.add(searchableAttributeValue.build());
         }
@@ -405,7 +430,6 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         searchField.setFieldValidValues(SEARCH_RESULT_TYPE_OPTION_LIST);
         searchField.setPropertyValue(DOCUMENT_DISPLAY_TYPE_VALUE);
         searchField.setDefaultValue(DOCUMENT_DISPLAY_TYPE_VALUE);
-
         return new Row(Collections.singletonList(searchField));
     }
 

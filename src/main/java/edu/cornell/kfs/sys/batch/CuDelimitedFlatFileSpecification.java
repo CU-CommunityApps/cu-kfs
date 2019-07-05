@@ -13,13 +13,15 @@ public class CuDelimitedFlatFileSpecification extends DelimitedFlatFileSpecifica
     private static final Logger LOG = LogManager.getLogger(CuDelimitedFlatFileSpecification.class);
 
     @Override
-    public void parseLineIntoObject(FlatFileObjectSpecification parseSpecification, String lineToParse, Object parseIntoObject, int lineNumber) {
+    public void parseLineIntoObject(FlatFileObjectSpecification parseSpecification, String lineToParse,
+            Object parseIntoObject, int lineNumber) {
         throw new UnsupportedOperationException("This specification does not support splitting up parsed lines on its own; "
                 + "please use the overloaded method that accepts a pre-split line as input and has similar logic to the superclass's parsing.");
     }
 
     @Override
-    public void parseLineIntoObject(FlatFileObjectSpecification parseSpecification, String[] lineSegments, Object parseIntoObject, int lineNumber) {
+    public void parseLineIntoObject(FlatFileObjectSpecification parseSpecification, String[] lineSegments,
+            Object parseIntoObject, int lineNumber) {
         for (FlatFilePropertySpecification propertySpecification : parseSpecification.getParseProperties()) {
             try {
                 DelimitedFlatFilePropertySpecification delimitedPropertySpecification = (DelimitedFlatFilePropertySpecification) propertySpecification;
