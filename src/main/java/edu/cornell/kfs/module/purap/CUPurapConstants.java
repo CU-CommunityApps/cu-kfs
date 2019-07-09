@@ -222,36 +222,4 @@ public class CUPurapConstants {
     public static final String I_WANT_DOC_FEED_FILE_PREFIX = "purap_iwantdoc_";
     public static final String I_WANT_DOC_FEED_FILE_TYPE_INDENTIFIER = "iWantDocumentInputFileType";
 
-    public static final class Einvoice {
-        public static final String OBJECT_NOT_FOUND = "Object not found";
-        public static final String ERROR = "error";
-        public static final String DUNS = "duns";
-        public static final String VENDOR_NAME = "vendor_name";
-        public static final String DOCUMENT_NUMBER = "document_number";
-        public static final String DOCUMENT_STATUS = "document_status";
-        public static final String EMAIL = "email";
-        public static final String ADDRESS_LINE1 = "address_line1";
-        public static final String ADDRESS_LINE2 = "address_line2";
-        public static final String STATE = "state";
-        public static final String CITY = "city";
-        public static final String ZIPCODE = "zipcode";
-        public static final String COUNTRY = "country";
-        public static final String ADDRESS_TYPE_CODE = "address_type_code";
-        public static final String QUANTITY = "quantity";
-        public static final String UNIT_OF_MEASURE = "unit_of_measure";
-        public static final String DESCRIPTION = "description";
-        public static final String UNIT_PRICE = "unit_price";
-        public static final String LINE_NUMBER = "line_number";
-        public static final String PART_NUMBER = "part_number";
-        public static final String ITEMS = "items";
-        public static final String UNAUTHORIZED = "Unauthorized";
-        public static final String EINVOICE = "EINVOICE";
-        public static final String EINVOICE_API_KEY_CREDENTIAL_NAME = "einvoice_api_key";
-        public static final String EINVOICE_KFS_API_DESCRIPTION = "The Cornell eInvoice web tool uses this resource to retrieve data from KFS.";
-        public static final String EINVOICE_VENDOR_BAD_REQUEST = "Invalid VendorNumber";
-        public static final String EINVOICE_GET_VENDORS_BAD_REQUEST = "Expecting vendor_numbers in url query parameters";
-        public static final String VENDOR_NUMBERS = "vendor_numbers";
-        public static final String VENDOR_GENERATED_HEADER_ID = "VNDR_HDR_GNRTD_ID";
-        public static final String VENDOR_DETAIL_ASSIGNED_ID = "VNDR_DTL_ASND_ID";
-    }
 }
