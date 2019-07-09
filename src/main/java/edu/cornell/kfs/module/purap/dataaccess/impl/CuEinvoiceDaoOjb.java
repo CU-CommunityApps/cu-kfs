@@ -3,6 +3,8 @@ package edu.cornell.kfs.module.purap.dataaccess.impl;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.dataaccess.CuEinvoiceDao;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -17,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvoiceDao {
+
+    private static final Log LOG = LogFactory.getLog(CuEinvoiceDaoOjb.class);
 
     public List<VendorDetail> getVendors(List<String> vendorNumbers) throws BadRequestException {
         HashMap<Integer, List<Integer>> vendorDetailToHeaderMap = buildVendorDetailMap(vendorNumbers);
@@ -45,30 +49,27 @@ public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvo
     }
 
     private void addVendorToMap(HashMap<Integer, List<Integer>> vendorDetailToHeaderMap, String vendorNumber) {
-        Integer vendorDetailAssignedId = getVendorDetailId(vendorNumber);
-        Integer vendorHeaderGeneratedId = getVendorHeaderId(vendorNumber);
-        List<Integer> vendorHeaderNumbers = vendorDetailToHeaderMap.get(vendorDetailAssignedId);
-        if (ObjectUtils.isNull(vendorHeaderNumbers)){
-            vendorHeaderNumbers = new ArrayList<>();
-            vendorDetailToHeaderMap.put(vendorDetailAssignedId, vendorHeaderNumbers);
-        }
-        vendorHeaderNumbers.add(vendorHeaderGeneratedId);
-    }
-
-    private Integer getVendorHeaderId(String vendorNumber) throws BadRequestException {
         try {
-            return Integer.parseInt(StringUtils.substringBeforeLast(vendorNumber, KFSConstants.DASH));
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException();
+            Integer vendorDetailAssignedId = getVendorDetailId(vendorNumber);
+            Integer vendorHeaderGeneratedId = getVendorHeaderId(vendorNumber);
+            List<Integer> vendorHeaderNumbers = vendorDetailToHeaderMap.get(vendorDetailAssignedId);
+            if (ObjectUtils.isNull(vendorHeaderNumbers)) {
+                vendorHeaderNumbers = new ArrayList<>();
+                vendorDetailToHeaderMap.put(vendorDetailAssignedId, vendorHeaderNumbers);
+            }
+            vendorHeaderNumbers.add(vendorHeaderGeneratedId);
+        }
+        catch (NumberFormatException ex) {
+            LOG.debug("addVendorToMap, invalid vendorNumber " + StringUtils.defaultIfBlank(vendorNumber, "[blank]"));
         }
     }
 
-    private Integer getVendorDetailId(String vendorNumber) throws BadRequestException {
-        try {
-            return Integer.parseInt(StringUtils.substringAfterLast(vendorNumber, KFSConstants.DASH));
-        } catch (NumberFormatException ex) {
-            throw new BadRequestException();
-        }
+    private Integer getVendorHeaderId(String vendorNumber) throws NumberFormatException {
+        return Integer.parseInt(StringUtils.substringBeforeLast(vendorNumber, KFSConstants.DASH));
+    }
+
+    private Integer getVendorDetailId(String vendorNumber) throws NumberFormatException {
+        return Integer.parseInt(StringUtils.substringAfterLast(vendorNumber, KFSConstants.DASH));
     }
 
 }
