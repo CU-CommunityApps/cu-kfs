@@ -182,7 +182,7 @@
 
     <filter-mapping>
         <filter-name>CuEinvoiceServerAuthFilter</filter-name>
-        <url-pattern>/einvoice/*</url-pattern>
+        <url-pattern>/ws/einvoice/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
