@@ -3,16 +3,19 @@ package edu.cornell.kfs.rass.batch;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 
 import edu.cornell.kfs.rass.RassConstants;
 
-public class RassOrganizationConverter extends RassValueConverterBase {
+public class RassOrganizationConverterForProposal extends RassValueConverterBase {
 
-	public Object convert(Object rassInput) {
+	@Override
+	public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
+		String organizationCode = (String) propertyValue;
 		ProposalOrganization proposalOrganization = new ProposalOrganization();
 		proposalOrganization.setChartOfAccountsCode(RassConstants.PROPOSAL_ORG_CHART);
-		proposalOrganization.setOrganizationCode((String) rassInput);
+		proposalOrganization.setOrganizationCode(organizationCode);
 		proposalOrganization.setProposalPrimaryOrganizationIndicator(true);
 		List<ProposalOrganization> proposalOrganizations = new ArrayList<>();
 		proposalOrganizations.add(proposalOrganization);

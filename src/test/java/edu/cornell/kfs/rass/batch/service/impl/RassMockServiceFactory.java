@@ -1,7 +1,10 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -14,20 +17,32 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.Proposal;
+import org.kuali.kfs.module.cg.document.ProposalMaintainableImpl;
 import org.kuali.kfs.module.cg.service.AgencyService;
+import org.kuali.kfs.module.cg.service.AwardService;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
+import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
+import edu.cornell.kfs.module.cg.document.CuAwardMaintainableImpl;
 import edu.cornell.kfs.rass.RassKeyConstants;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
+import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
+import edu.cornell.kfs.sys.util.MockPersonUtil;
+
 
 public class RassMockServiceFactory {
 
@@ -89,6 +104,12 @@ public class RassMockServiceFactory {
             case RassTestConstants.AGENCY_DOC_TYPE_NAME :
                 expectedBusinessObjectClass = Agency.class;
                 break;
+            case RassTestConstants.PROPOSAL_DOC_TYPE_NAME :
+                expectedBusinessObjectClass = Proposal.class;
+                break;
+            case RassTestConstants.AWARD_DOC_TYPE_NAME :
+                expectedBusinessObjectClass = Award.class;
+                break;
             default :
                 throw new IllegalArgumentException("Cannot find BO class for document type " + documentTypeName);
         }
@@ -105,6 +126,10 @@ public class RassMockServiceFactory {
         switch (documentTypeName) {
             case RassTestConstants.AGENCY_DOC_TYPE_NAME :
                 return CuAgencyMaintainableImpl.class;
+            case RassTestConstants.PROPOSAL_DOC_TYPE_NAME :
+                return ProposalMaintainableImpl.class;
+            case RassTestConstants.AWARD_DOC_TYPE_NAME :
+                return CuAwardMaintainableImpl.class;
             default :
                 throw new IllegalArgumentException("Cannot find maintainable class for document type " + documentTypeName);
         }
@@ -135,6 +160,15 @@ public class RassMockServiceFactory {
     
     public BusinessObjectService buildMockBusinessObjectService() throws Exception {
         BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
+        
+        Arrays.stream(RassXmlAwardEntryFixture.values())
+                .filter(fixture -> fixture.existsByDefaultForSearching)
+                .forEach(fixture -> {
+                    Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
+                            KFSPropertyConstants.PROPOSAL_NUMBER, fixture.proposalNumber);
+                    Mockito.when(businessObjectService.findByPrimaryKey(Proposal.class, proposalPrimaryKeys))
+                            .thenReturn(fixture.toProposal());
+                });
         
         return businessObjectService;
     }
@@ -179,6 +213,33 @@ public class RassMockServiceFactory {
                 .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
         
         return configurationService;
+    }
+
+    public AwardService buildMockAwardService() throws Exception {
+        AwardService awardService = Mockito.mock(AwardService.class);
+        
+        Arrays.stream(RassXmlAwardEntryFixture.values())
+                .filter(fixture -> fixture.existsByDefaultForSearching)
+                .forEach(fixture -> {
+                    Mockito.when(awardService.getByPrimaryId(fixture.proposalNumber))
+                            .thenReturn(fixture.toAward());
+                });
+        
+        return awardService;
+    }
+
+    public PersonService buildMockPersonService() throws Exception {
+        PersonService personService = Mockito.mock(PersonService.class);
+        
+        Stream.of(UserNameFixture.mgw3, UserNameFixture.kan2, UserNameFixture.mo14)
+                .forEach(fixture -> {
+                    Person mockPerson = MockPersonUtil.createMockPerson(fixture);
+                    String principalName = mockPerson.getPrincipalName();
+                    Mockito.when(personService.getPersonByPrincipalName(principalName))
+                            .thenReturn(mockPerson);
+                });
+        
+        return personService;
     }
 
 }

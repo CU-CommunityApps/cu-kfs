@@ -7,13 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.vnd.VendorParameterConstants;
 import org.kuali.kfs.coreservice.api.parameter.Parameter;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.vnd.VendorParameterConstants;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.rass.RassConstants;
+import edu.cornell.kfs.rass.RassParameterConstants;
+import edu.cornell.kfs.rass.RassTestConstants;
 
 public class MockParameterServiceImpl implements ParameterService {
 
@@ -35,7 +37,10 @@ public class MockParameterServiceImpl implements ParameterService {
         parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT, "New ACH Account in KFS.");
         parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_BODY,
                 "Payment for [payeeIdentifierTypeCode] of [payeeIdNumber] will go to [bankAccountTypeCode] account at [bankRouting.bankName].");
-        parameters.put(RassConstants.RASS_DEFAULT_PROPOSAL_AWARD_TYPE_PARAMETER, "S");
+        parameters.put(RassConstants.RASS_DEFAULT_PROPOSAL_AWARD_TYPE_PARAMETER, RassTestConstants.DEFAULT_PROPOSAL_AWARD_TYPE);
+        parameters.put(RassParameterConstants.DEFAULT_AWARD_ACCOUNT, RassTestConstants.DEFAULT_AWARD_ACCOUNT_PARAMETER_VALUE);
+        parameters.put(RassParameterConstants.DEFAULT_PROJECT_DIRECTOR, RassTestConstants.DEFAULT_PROJECT_DIRECTOR_PRINCIPAL_ID);
+        parameters.put(RassParameterConstants.DEFAULT_FUND_MANAGER, RassTestConstants.DEFAULT_FUND_MANAGER_PRINCIPAL_ID);
 
     }
 

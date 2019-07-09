@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -20,7 +21,6 @@ import edu.cornell.kfs.rass.util.RassUtil;
 public class ProposalTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> {
 
 	protected BusinessObjectService businessObjectService;
-	protected RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> proposalProjectDirectorDefinition;
 	protected DateTimeService dateTimeService;
 	protected ParameterService parameterService;
 
@@ -48,6 +48,10 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 	public List<String> getKeysOfObjectUpdatesToWaitFor(RassXmlAwardEntry xmlAward) {
 		List<String> objectsToWaitFor = new ArrayList<>();
 		objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Proposal.class, xmlAward.getProposalNumber()));
+		objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAward.getAgencyNumber()));
+		if (StringUtils.isNotBlank(xmlAward.getFederalPassThroughAgencyNumber())) {
+		    objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAward.getFederalPassThroughAgencyNumber()));
+		}
 		return objectsToWaitFor;
 	}
 
@@ -84,15 +88,6 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
-	}
-
-	public RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> getProposalProjectDirectorDefinition() {
-		return proposalProjectDirectorDefinition;
-	}
-
-	public void setProposalProjectDirectorDefinition(
-			RassBaseObjectTranslationDefinition<RassXMLAwardPiCoPiEntry, ProposalProjectDirector> proposalProjectDirectorDefinition) {
-		this.proposalProjectDirectorDefinition = proposalProjectDirectorDefinition;
 	}
 
 	public void setDateTimeService(DateTimeService dateTimeService) {

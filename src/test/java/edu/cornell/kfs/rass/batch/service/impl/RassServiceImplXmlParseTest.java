@@ -43,14 +43,14 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
     private static final String RASS_EMPTY = "rass_empty";
     private static final String RASS_BAD_FORMAT = "rass_bad_format";
 
-    private TestRassServiceImpl rassService;
+    private RassServiceImpl rassService;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         createTargetTestDirectory();
-        rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, TestRassServiceImpl.class);
+        rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, RassServiceImpl.class);
     }
 
     @After
