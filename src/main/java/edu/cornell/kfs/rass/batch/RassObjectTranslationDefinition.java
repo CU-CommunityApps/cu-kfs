@@ -29,7 +29,7 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
         this.rootXmlObjectListPropertyName = rootXmlObjectListPropertyName;
     }
 
-    public void makeBusinessObjectActiveIfApplicable(PersistableBusinessObject newBusinessObject) {
+    public <T extends RassXmlObject, R extends PersistableBusinessObject> void makeBusinessObjectActiveIfApplicable(T xmlObject, R newBusinessObject) {
         if (newBusinessObject instanceof MutableInactivatable) {
             ((MutableInactivatable) newBusinessObject).setActive(true);
         }
