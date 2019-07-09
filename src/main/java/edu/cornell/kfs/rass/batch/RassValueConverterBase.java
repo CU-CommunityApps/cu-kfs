@@ -32,14 +32,22 @@ public class RassValueConverterBase implements RassValueConverter {
             return cleanDateValue(businessObjectClass, propertyName, (Date) propertyValue);
         } else if (propertyValue instanceof Boolean) {
             return cleanBooleanValue(businessObjectClass, propertyName, (Boolean) propertyValue);
+        } else if (ObjectUtils.isNull(propertyValue)) {
+            LOG.debug("cleanSimplePropertyValue, property " +  StringUtils.defaultIfBlank(propertyName, "[Blank]")
+                    + " is null on business object " + businessObjectClass.getName());
         } else {
-            return propertyValue;
+            LOG.debug("cleanSimplePropertyValue, no cleaning for property " +  StringUtils.defaultIfBlank(propertyName, "[Blank]")
+                    + "  on business object " + businessObjectClass.getName() + " (value: " + propertyValue.toString() + ")");
         }
+        return propertyValue;
     }
 
     protected String cleanStringValue(
             Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, String propertyValue) {
         String cleanedValue = StringUtils.defaultIfBlank(propertyValue, null);
+        if (ObjectUtils.isNotNull(cleanedValue)) {
+            cleanedValue = cleanedValue.trim();
+        }
         Integer maxLength = dataDictionaryService.getAttributeMaxLength(businessObjectClass, propertyName);
         if (maxLength != null && maxLength > 0 && StringUtils.length(cleanedValue) > maxLength) {
             LOG.info("cleanStringValue, Truncating value for business object " + businessObjectClass.getName()
