@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 
@@ -28,6 +29,12 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
         this.rootXmlObjectListPropertyName = rootXmlObjectListPropertyName;
     }
 
+    public <T extends RassXmlObject, R extends PersistableBusinessObject> void makeBusinessObjectActiveIfApplicable(T xmlObject, R newBusinessObject) {
+        if (newBusinessObject instanceof MutableInactivatable) {
+            ((MutableInactivatable) newBusinessObject).setActive(true);
+        }
+    }
+
     public void processCustomTranslationForBusinessObjectCreate(T xmlObject, R newBusinessObject) {
         // Do nothing by default.
     }
@@ -38,10 +45,6 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
 
     public boolean businessObjectEditIsPermitted(T xmlObject, R oldBusinessObject) {
         return true;
-    }
-
-    public boolean otherCustomObjectPropertiesHaveDifferences(R oldBusinessObject, R newBusinessObject) {
-        return false;
     }
 
     public String printObjectLabelAndKeys(T xmlObject) {

@@ -5,7 +5,7 @@ public class RassPropertyDefinition {
     private String xmlPropertyName;
     private String boPropertyName;
     private boolean required;
-    private String valueConverter;
+    private RassValueConverter valueConverter;
     
     public String getXmlPropertyName() {
         return xmlPropertyName;
@@ -32,11 +32,11 @@ public class RassPropertyDefinition {
         this.required = required;
     }
 
-	public String getValueConverter() {
+	public RassValueConverter getValueConverter() {
 		return valueConverter;
 	}
 
-	public void setValueConverter(String valueConverter) {
+	public void setValueConverter(RassValueConverter valueConverter) {
 		this.valueConverter = valueConverter;
 	}
 
