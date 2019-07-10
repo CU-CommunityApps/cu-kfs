@@ -70,6 +70,7 @@ public class CuEinvoiceApiResource {
             List<Properties> vendorsSerialized = vendors.stream().map(vendor -> getVendorProperties(vendor)).collect(Collectors.toList());
             return Response.ok(gson.toJson(vendorsSerialized)).build();
         } catch (BadRequestException ex) {
+            LOG.error(ex);
             return respondGetVendorsBadRequest();
         } catch (Exception ex) {
             LOG.error(ex);
@@ -89,11 +90,10 @@ public class CuEinvoiceApiResource {
             }
             String responseBody = gson.toJson(getVendorProperties(vendorDetail));
             return Response.ok(responseBody).build();
-        }
-        catch (BadRequestException ex) {
+        } catch (BadRequestException ex) {
+            LOG.error(ex);
             return respondGetVendorBadRequest();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.error(ex);
             return respondInternalServerError(ex);
         }
