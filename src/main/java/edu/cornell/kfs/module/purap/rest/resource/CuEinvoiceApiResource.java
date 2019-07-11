@@ -106,7 +106,7 @@ public class CuEinvoiceApiResource {
             String responseBody = serializePoDocumentToJson(poDoc);
             return Response.ok(responseBody).build();
         } catch (Exception ex) {
-            LOG.error(ex);
+            LOG.error("getPurchaseOrder", ex);
             return respondInternalServerError(ex);
         }
     }
