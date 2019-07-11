@@ -69,12 +69,9 @@ public class CuEinvoiceApiResource {
             List<VendorDetail> vendors = getCuEinvoiceDao().getVendors(vendorNumbers);
             List<Properties> vendorsSerialized = vendors.stream().map(vendor -> getVendorProperties(vendor)).collect(Collectors.toList());
             return Response.ok(gson.toJson(vendorsSerialized)).build();
-        } catch (BadRequestException ex) {
-            LOG.error(ex);
-            return respondGetVendorsBadRequest();
         } catch (Exception ex) {
             LOG.error(ex);
-            return respondInternalServerError(ex);
+            return ex instanceof BadRequestException ? respondGetVendorsBadRequest() : respondInternalServerError(ex);
         }
     }
 
@@ -90,12 +87,9 @@ public class CuEinvoiceApiResource {
             }
             String responseBody = gson.toJson(getVendorProperties(vendorDetail));
             return Response.ok(responseBody).build();
-        } catch (BadRequestException ex) {
-            LOG.error(ex);
-            return respondGetVendorBadRequest();
         } catch (Exception ex) {
             LOG.error(ex);
-            return respondInternalServerError(ex);
+            return ex instanceof BadRequestException ? respondGetVendorBadRequest() : respondInternalServerError(ex);
         }
     }
 
@@ -206,7 +200,7 @@ public class CuEinvoiceApiResource {
     }
 
     private CuEinvoiceDao getCuEinvoiceDao() {
-        if (ObjectUtils.isNull(null)) {
+        if (ObjectUtils.isNull(cuEinvoiceDao)) {
             cuEinvoiceDao = SpringContext.getBean(CuEinvoiceDaoOjb.class);
         }
         return cuEinvoiceDao;

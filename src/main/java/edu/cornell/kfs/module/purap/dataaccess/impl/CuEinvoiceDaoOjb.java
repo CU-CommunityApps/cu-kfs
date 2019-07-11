@@ -13,7 +13,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
-import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +21,7 @@ public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvo
 
     private static final Log LOG = LogFactory.getLog(CuEinvoiceDaoOjb.class);
 
-    public List<VendorDetail> getVendors(List<String> vendorNumbers) throws BadRequestException {
+    public List<VendorDetail> getVendors(List<String> vendorNumbers) {
         HashMap<Integer, List<Integer>> vendorDetailToHeaderMap = buildVendorDetailMap(vendorNumbers);
         Criteria criteria = buildQueryCriteria(vendorDetailToHeaderMap);
         Query query = QueryFactory.newQuery(VendorDetail.class, criteria);
