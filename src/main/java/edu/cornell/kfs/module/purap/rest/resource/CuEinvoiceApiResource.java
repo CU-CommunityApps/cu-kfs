@@ -63,14 +63,14 @@ public class CuEinvoiceApiResource {
 
     @GET
     @Path("vendors")
-    public Response getVendor(@Context HttpHeaders headers) {
+    public Response getVendors(@Context HttpHeaders headers) {
         try {
             List<String> vendorNumbers = getVendorNumbersFromRequest();
             List<VendorDetail> vendors = getCuEinvoiceDao().getVendors(vendorNumbers);
             List<Properties> vendorsSerialized = vendors.stream().map(vendor -> getVendorProperties(vendor)).collect(Collectors.toList());
             return Response.ok(gson.toJson(vendorsSerialized)).build();
         } catch (Exception ex) {
-            LOG.error(ex);
+            LOG.error("getVendors", ex);
             return ex instanceof BadRequestException ? respondGetVendorsBadRequest() : respondInternalServerError(ex);
         }
     }
@@ -88,7 +88,7 @@ public class CuEinvoiceApiResource {
             String responseBody = gson.toJson(getVendorProperties(vendorDetail));
             return Response.ok(responseBody).build();
         } catch (Exception ex) {
-            LOG.error(ex);
+            LOG.error("getVendor", ex);
             return ex instanceof BadRequestException ? respondGetVendorBadRequest() : respondInternalServerError(ex);
         }
     }
