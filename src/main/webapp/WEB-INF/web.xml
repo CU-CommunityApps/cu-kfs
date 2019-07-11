@@ -97,6 +97,11 @@
         <filter-class>edu.cornell.kfs.concur.rest.authentication.ConcurAuthenticationFilter</filter-class>
     </filter>
 
+    <filter>
+        <filter-name>CuEinvoiceServerAuthFilter</filter-name>
+        <filter-class>edu.cornell.kfs.module.purap.web.filter.CuEinvoiceServerAuthFilter</filter-class>
+    </filter>
+
     <!--  FILTER MAPPINGS  -->
 
     <filter-mapping>
@@ -173,6 +178,11 @@
         <url-pattern>/purap/api/*</url-pattern>
         <url-pattern>/vnd/api/*</url-pattern>
         <url-pattern>/app/sys/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>CuEinvoiceServerAuthFilter</filter-name>
+        <url-pattern>/ws/einvoice/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
