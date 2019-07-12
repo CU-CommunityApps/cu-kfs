@@ -25,6 +25,8 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	private Date budgetEndingDate;
 	private KualiDecimal budgetTotalAmount;
 	private boolean everify;
+	private String primeAgreementNumber;
+	private String autoApproveReason;
 
 	public boolean isCostShareRequired() {
 		return costShareRequired;
@@ -97,5 +99,21 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	public void setEverify(boolean everify) {
 	    this.everify = everify;
 	}
+
+    public String getPrimeAgreementNumber() {
+        return primeAgreementNumber;
+    }
+
+    public void setPrimeAgreementNumber(String primeAgreementNumber) {
+        this.primeAgreementNumber = primeAgreementNumber;
+    }
+
+    public String getAutoApproveReason() {
+        return autoApproveReason;
+    }
+
+    public void setAutoApproveReason(String autoApproveReason) {
+        this.autoApproveReason = autoApproveReason;
+    }
 
 }

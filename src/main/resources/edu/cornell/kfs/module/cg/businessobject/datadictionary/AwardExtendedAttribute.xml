@@ -17,6 +17,8 @@
             <ref bean="AwardExtendedAttribute-budgetEndingDate"/>
             <ref bean="AwardExtendedAttribute-budgetTotalAmount"/>
             <ref bean="AwardExtendedAttribute-everify"/>
+            <ref bean="AwardExtendedAttribute-primeAgreementNumber"/>
+            <ref bean="AwardExtendedAttribute-autoApproveReason"/>
       </list> 
     </property> 
     </bean> 
@@ -99,5 +101,18 @@
         </property>
         <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
   	</bean>
+  	
+  	<bean id="AwardExtendedAttribute-primeAgreementNumber" parent="AwardExtendedAttribute-primeAgreementNumber-parentBean"/>
+  	<bean id="AwardExtendedAttribute-primeAgreementNumber-parentBean" abstract="true" parent="Award-proposal.grantNumber"
+  		p:name="primeAgreementNumber" p:label="Prime Agreement Number" p:shortLabel="Prime Agreement #"/>
+  	
+  	<bean id="AwardExtendedAttribute-autoApproveReason" parent="AwardExtendedAttribute-autoApproveReason-parentBean"/>
+  	<bean id="AwardExtendedAttribute-autoApproveReason-parentBean" abstract="true" parent="AttributeDefinition" p:name="autoApproveReason"
+          p:label="Auto Approve Reason" p:shortLabel="Auto Approve Reason" p:maxLength="120"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
+        <property name="control">
+            <bean parent="TextareaControlDefinition" p:rows="2" p:cols="60"/>
+        </property>
+    </bean>
 
 </beans> 

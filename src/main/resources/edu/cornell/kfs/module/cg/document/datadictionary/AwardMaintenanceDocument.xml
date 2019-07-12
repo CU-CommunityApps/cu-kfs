@@ -109,6 +109,35 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="maintainableItems"/>
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="federalPassThroughAgency.fullName"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="extension.primeAgreementNumber"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <bean parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="AwardMaintenanceDocument-Invoicing"/>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="maintainableItems"/>
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="autoApproveIndicator"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="extension.autoApproveReason"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>

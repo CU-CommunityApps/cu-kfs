@@ -32,6 +32,8 @@
                 <ref bean="Award-extension-budgetBeginningDate"/>
                 <ref bean="Award-extension-budgetEndingDate"/>
                 <ref bean="Award-extension-budgetTotalAmount"/>
+                <ref bean="Award-extension-primeAgreementNumber"/>
+                <ref bean="Award-extension-autoApproveReason"/>
                 <ref bean="Award-invoiceLink"/>
             </list>
         </property>
@@ -125,6 +127,16 @@
         <property name="control">
             <bean parent="TextControlDefinition" p:size="15"/>
         </property>
+    </bean>
+    
+    <bean id="Award-extension-primeAgreementNumber" parent="Award-extension-primeAgreementNumber-parentBean"/>
+    <bean id="Award-extension-primeAgreementNumber-parentBean" abstract="true" parent="AwardExtendedAttribute-primeAgreementNumber">
+        <property name="name" value="extension.primeAgreementNumber"/>
+    </bean>
+    
+    <bean id="Award-extension-autoApproveReason" parent="Award-extension-autoApproveReason-parentBean"/>
+    <bean id="Award-extension-autoApproveReason-parentBean" abstract="true" parent="AwardExtendedAttribute-autoApproveReason">
+        <property name="name" value="extension.autoApproveReason"/>
     </bean>
 
     <bean parent="DataDictionaryBeanOverride">
