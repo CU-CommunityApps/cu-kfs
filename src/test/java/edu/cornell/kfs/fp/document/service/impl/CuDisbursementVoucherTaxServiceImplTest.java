@@ -209,7 +209,7 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 
 		@Override
 		public ParameterEvaluator getParameterEvaluator(
-				Class<? extends Object> componentClass, String parameterName) {
+				Class componentClass, String parameterName) {
 			return null;
 		}
 
@@ -221,7 +221,7 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 
 		@Override
 		public ParameterEvaluator getParameterEvaluator(
-				Class<? extends Object> componentClass, String parameterName,
+				Class componentClass, String parameterName,
 				String constrainedValue) {
 			return new MockParameterEvaluator(componentClass, parameterName, constrainedValue);
 		}
@@ -235,14 +235,14 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 
 		@Override
 		public ParameterEvaluator getParameterEvaluator(
-				Class<? extends Object> componentClass, String parameterName,
+				Class componentClass, String parameterName,
 				String constrainingValue, String constrainedValue) {
 			return null;
 		}
 
 		@Override
 		public ParameterEvaluator getParameterEvaluator(
-				Class<? extends Object> componentClass,
+				Class componentClass,
 				String allowParameterName, String denyParameterName,
 				String constrainingValue, String constrainedValue) {
 			return null;
@@ -270,7 +270,7 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 
 		@Override
 		public boolean evaluateAndAddError(
-				Class<? extends Object> businessObjectOrDocumentClass,
+				Class businessObjectOrDocumentClass,
 				String constrainedPropertyName) {
 
 			return false;
@@ -278,7 +278,7 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 
 		@Override
 		public boolean evaluateAndAddError(
-				Class<? extends Object> businessObjectOrDocumentClass,
+				Class businessObjectOrDocumentClass,
 				String constrainedPropertyName, String userEditablePropertyName) {
 			return false;
 		}
