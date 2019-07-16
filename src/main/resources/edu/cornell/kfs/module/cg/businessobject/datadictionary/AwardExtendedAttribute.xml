@@ -19,6 +19,7 @@
             <ref bean="AwardExtendedAttribute-everify"/>
             <ref bean="AwardExtendedAttribute-primeAgreementNumber"/>
             <ref bean="AwardExtendedAttribute-autoApproveReason"/>
+            <ref bean="AwardExtendedAttribute-purchasOrderNumber"/>
       </list> 
     </property> 
     </bean> 
@@ -114,5 +115,9 @@
             <bean parent="TextareaControlDefinition" p:rows="2" p:cols="60"/>
         </property>
     </bean>
+    
+    <bean id="AwardExtendedAttribute-purchasOrderNumber" parent="AwardExtendedAttribute-purchasOrderNumber-parentBean"/>
+    <bean id="AwardExtendedAttribute-purchasOrderNumber-parentBean" abstract="true" parent="Proposal-grantNumber"
+          p:name="purchasOrderNumber" p:label="Purchas Order #" p:shortLabel="PO #"/>
 
 </beans> 

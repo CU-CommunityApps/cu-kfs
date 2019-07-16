@@ -141,6 +141,25 @@
             </list>
         </property>
     </bean>
+    
+    <bean parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="AwardMaintenanceDocument-Invoicing"/>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="maintainableItems"/>
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="minInvoiceAmount"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="extension.purchasOrderNumber"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
 
     <bean id="AwardMaintenanceDocument-workflowAttributes"
           parent="AwardMaintenanceDocument-workflowAttributes-parentBean">

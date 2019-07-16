@@ -34,6 +34,7 @@
                 <ref bean="Award-extension-budgetTotalAmount"/>
                 <ref bean="Award-extension-primeAgreementNumber"/>
                 <ref bean="Award-extension-autoApproveReason"/>
+                <ref bean="Award-extension-purchasOrderNumber"/>
                 <ref bean="Award-invoiceLink"/>
             </list>
         </property>
@@ -137,6 +138,11 @@
     <bean id="Award-extension-autoApproveReason" parent="Award-extension-autoApproveReason-parentBean"/>
     <bean id="Award-extension-autoApproveReason-parentBean" abstract="true" parent="AwardExtendedAttribute-autoApproveReason">
         <property name="name" value="extension.autoApproveReason"/>
+    </bean>
+    
+    <bean id="Award-extension-purchasOrderNumber" parent="Award-extension-purchasOrderNumber-parentBean"/>
+    <bean id="Award-extension-purchasOrderNumber-parentBean" abstract="true" parent="AwardExtendedAttribute-purchasOrderNumber">
+        <property name="name" value="extension.purchasOrderNumber"/>
     </bean>
 
     <bean parent="DataDictionaryBeanOverride">
