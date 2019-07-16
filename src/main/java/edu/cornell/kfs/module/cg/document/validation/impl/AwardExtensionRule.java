@@ -44,6 +44,7 @@ public class AwardExtensionRule extends AwardRule {
         success &= checkForDuplicateAwardOrganization();
         success &= checkEndAfterBegin(((AwardExtendedAttribute) newAwardCopy.getExtension()).getBudgetBeginningDate(),
                 ((AwardExtendedAttribute) newAwardCopy.getExtension()).getBudgetEndingDate(), CUKFSPropertyConstants.AWARD_EXTENSION_BUDGET_ENDING_DATE);
+        success &= checkAutoApproveReason();
     	
     	return success;
     }
@@ -229,6 +230,21 @@ public class AwardExtensionRule extends AwardRule {
 
 		return success;
 	}
+	
+	protected boolean checkAutoApproveReason() {
+        boolean success = true;
+        Award award = (Award) super.getNewBo();
+        
+        if (!award.getAutoApproveIndicator()) {
+            AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
+            if (StringUtils.isBlank(awardExtendedAttribute.getAutoApproveReason())) {
+                putFieldError("extension.autoApproveReason", CUKFSKeyConstants.ERROR_AUTO_APPROVE_REASON_REQUIRED);
+                success = false;
+            }
+        }
+        
+        return success;
+    }
 
     /**
      * Checks for null on the nullable Billing Frequency Code field. Fixes NullPointerException.
