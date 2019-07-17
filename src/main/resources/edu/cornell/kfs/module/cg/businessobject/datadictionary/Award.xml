@@ -35,6 +35,7 @@
                 <ref bean="Award-extension-primeAgreementNumber"/>
                 <ref bean="Award-extension-autoApproveReason"/>
                 <ref bean="Award-extension-purchasOrderNumber"/>
+                <ref bean="Award-AwardAccount-extension-accountPurchaseOrderNumber"/>
                 <ref bean="Award-invoiceLink"/>
             </list>
         </property>
@@ -143,6 +144,11 @@
     <bean id="Award-extension-purchasOrderNumber" parent="Award-extension-purchasOrderNumber-parentBean"/>
     <bean id="Award-extension-purchasOrderNumber-parentBean" abstract="true" parent="AwardExtendedAttribute-purchasOrderNumber">
         <property name="name" value="extension.purchasOrderNumber"/>
+    </bean>
+    
+    <bean id="Award-AwardAccount-extension-accountPurchaseOrderNumber" parent="Award-AwardAccount-extension-accountPurchaseOrderNumber-parentBean"/>
+    <bean id="Award-AwardAccount-extension-accountPurchaseOrderNumber-parentBean" abstract="true" parent="AwardAccountExtendedAttribute-accountPurchaseOrderNumber-parentBean">
+        <property name="name" value="awardAccounts.extension.accountPurchaseOrderNumber"/>
     </bean>
 
     <bean parent="DataDictionaryBeanOverride">
