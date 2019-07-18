@@ -237,7 +237,6 @@ public class CUPurapConstants {
         public static final String ZIPCODE = "zipcode";
         public static final String COUNTRY = "country";
         public static final String ADDRESS_TYPE_CODE = "address_type_code";
-        public static final String QUANTITY = "quantity";
         public static final String UNIT_OF_MEASURE = "unit_of_measure";
         public static final String DESCRIPTION = "description";
         public static final String UNIT_PRICE = "unit_price";
@@ -253,5 +252,11 @@ public class CUPurapConstants {
         public static final String VENDOR_NUMBERS = "vendor_numbers";
         public static final String VENDOR_GENERATED_HEADER_ID = "VNDR_HDR_GNRTD_ID";
         public static final String VENDOR_DETAIL_ASSIGNED_ID = "VNDR_DTL_ASND_ID";
+        public static final String ITEM_TYPE_DESCRIPTION = "item_type_description";
+        public static final String ITEM_TYPE_CODE = "item_type_code";
+        public static final String PO_ITEM_ID = "po_item_id";
+        public static final String INVOICED_AMOUNT = "invoiced_amount";
+        public static final String PO_QUANTITY = "po_quantity";
+        public static final String INVOICE_QUANTITY = "invoice_quantity";
     }
 }
