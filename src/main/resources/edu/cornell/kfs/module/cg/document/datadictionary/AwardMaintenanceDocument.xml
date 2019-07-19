@@ -204,27 +204,6 @@
             </list>
         </property>
     </bean>
-    
-    <!-- 
-    <bean parent="DataDictionaryBeanOverride">
-        <property name="beanName" value="AwardMaintenanceDocument-Accounts"/>
-        <property name="fieldOverrides">
-            <list>
-                <bean parent="FieldOverrideForListElementInsert">
-                    <property name="propertyName" value="maintainableItems"/>
-                    <property name="element">
-                        <bean parent="MaintainableFieldDefinition" p:name="projectDirector.principalName"/>
-                    </property>
-                    <property name="insertAfter">
-                        <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="extension.accountPurchaseOrderNumber"/>
-                        </list>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-     -->
 
     <bean id="AwardMaintenanceDocument-workflowAttributes"
           parent="AwardMaintenanceDocument-workflowAttributes-parentBean">
