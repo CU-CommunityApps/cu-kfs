@@ -1,11 +1,16 @@
 package edu.cornell.kfs.vnd.document.validation.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -16,15 +21,13 @@ import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
+import org.kuali.kfs.vnd.businessobject.VendorContact;
+import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;
@@ -46,6 +49,7 @@ public class CuVendorRule extends CuVendorRuleBase {
         }
       
         valid &= processCuAddressValidation(document);
+        valid &= processContactPhoneNumberValidation(document);
 		valid &= checkGeneralLiabilityAmountAndExpiration(document);
 		valid &= checkAutoLiabilityAmountAndExpiration(document);
 		valid &= checkWorkmansCompAmountAndExpiration(document);
@@ -55,6 +59,24 @@ public class CuVendorRule extends CuVendorRuleBase {
 		valid &= checkInsuranceRequired(document);
         
         return valid;
+    }
+
+    @Override
+    protected void refreshSubObjects(VendorDetail vendor) {
+        super.refreshSubObjects(vendor);
+        if (vendor == null) {
+            return;
+        }
+        
+        if (vendor.getVendorContacts() != null) {
+            for (VendorContact contact : vendor.getVendorContacts()) {
+                if (contact.getVendorContactPhoneNumbers() != null) {
+                    for (VendorContactPhoneNumber contactPhoneNumber : contact.getVendorContactPhoneNumbers()) {
+                        contactPhoneNumber.refreshNonUpdateableReferences();
+                    }
+                }
+            }
+        }
     }
 
     public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
@@ -686,5 +708,29 @@ public class CuVendorRule extends CuVendorRuleBase {
         valid &= checkPOHasPaymentTerms(document);
 		return valid;
 	}
+
+    protected boolean processContactPhoneNumberValidation(MaintenanceDocument document) {
+        final String ERROR_PATH_TEMPLATE = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_CONTACT + "[{0}]"
+                + KFSConstants.DELIMITER + CUVendorPropertyConstants.VENDOR_CONTACT_PHONE_NUMBERS + "[{1}]";
+        VendorDetail newVendor = (VendorDetail) document.getNewMaintainableObject().getDataObject();
+        int oldErrorCount = GlobalVariables.getMessageMap().getErrorCount();
+        int newErrorCount;
+        int i = 0;
+        
+        for (VendorContact contact : newVendor.getVendorContacts()) {
+            int j = 0;
+            for (VendorContactPhoneNumber contactPhoneNumber : contact.getVendorContactPhoneNumbers()) {
+                String errorPath = MessageFormat.format(ERROR_PATH_TEMPLATE, i, j);
+                GlobalVariables.getMessageMap().addToErrorPath(errorPath);
+                getDictionaryValidationService().validateBusinessObject(contactPhoneNumber);
+                GlobalVariables.getMessageMap().clearErrorPath();
+                j++;
+            }
+            i++;
+        }
+        
+        newErrorCount = GlobalVariables.getMessageMap().getErrorCount();
+        return oldErrorCount == newErrorCount;
+    }
 
 }
