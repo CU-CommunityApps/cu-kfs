@@ -19,7 +19,7 @@ public class AutoApproveDisabledSuspensionCategory extends SuspensionCategoryBas
             return false;
         } else {
             AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
-            LOG.debug("shouldSuspend, auto apporve is NOT selected so suspend!");
+            LOG.debug("shouldSuspend, auto apporve is NOT selected so suspend because : " + awardExtension.getAutoApproveReason());
             return true;
         }
     }
