@@ -49,6 +49,4 @@ public class CUVendorPropertyConstants {
     public static final String VENDOR_HEADER_SUPPLIER_DIVERSITY_CODE = "vendorHeader.vendorSupplierDiversities.vendorSupplierDiversityCode";	
 
     public static final String VENDOR_PAYMENT_TERMS = "vendorPaymentTermsCode";
-
-    public static final String VENDOR_CONTACT_PHONE_NUMBERS = "vendorContactPhoneNumbers";
 }
