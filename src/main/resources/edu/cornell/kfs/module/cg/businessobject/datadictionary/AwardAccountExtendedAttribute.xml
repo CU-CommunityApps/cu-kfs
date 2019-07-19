@@ -11,10 +11,17 @@
 		<property name="objectLabel" value="AwardAccountExtendedAttribute" />
 		<property name="attributes">
 			<list>
+				<ref bean="AwardAccountExtendedAttribute--proposalNumber" />
+				<ref bean="AwardAccountExtendedAttribute-chartOfAccountsCode" />
+				<ref bean="AwardAccountExtendedAttribute-accountNumber" />
 				<ref bean="AwardAccountExtendedAttribute-accountPurchaseOrderNumber" />
 			</list>
 		</property>
 	</bean>
+	
+	<dd:boAttributeRef id="AwardAccountExtendedAttribute--proposalNumber" parent="Award-proposalNumber"/> 
+	<dd:boAttributeRef id="AwardAccountExtendedAttribute-chartOfAccountsCode" parent="AwardAccount-chartOfAccountsCode"/> 
+	<dd:boAttributeRef id="AwardAccountExtendedAttribute-accountNumber" parent="AwardAccount-accountNumber"/> 
 	
 	<bean id="AwardAccountExtendedAttribute-accountPurchaseOrderNumber" parent="AwardAccountExtendedAttribute-accountPurchaseOrderNumber-parentBean"/>
     <bean id="AwardAccountExtendedAttribute-accountPurchaseOrderNumber-parentBean" abstract="true" parent="Proposal-grantNumber"
