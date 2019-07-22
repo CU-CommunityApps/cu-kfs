@@ -256,6 +256,7 @@ public class CUPurapConstants {
         public static final String ITEM_TYPE_CODE = "item_type_code";
         public static final String PO_ITEM_ID = "po_item_id";
         public static final String INVOICED_AMOUNT = "invoiced_amount";
+        public static final String AMOUNT = "amount";
         public static final String PO_QUANTITY = "po_quantity";
         public static final String INVOICE_QUANTITY = "invoice_quantity";
     }

@@ -173,8 +173,8 @@ public class CuEinvoiceApiResource {
             if (obj instanceof PurchaseOrderItem) {
                 PurchaseOrderItem poItem = (PurchaseOrderItem)obj;
                 Properties lineProps = new Properties();
-                safelyAddProperty(lineProps, CUPurapConstants.AMOUNT.toLowerCase(), poItem.getTotalAmount());
-                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.INVOICED_AMOUNT.toLowerCase(), poItem.getItemInvoicedTotalAmount());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.AMOUNT, poItem.getTotalAmount());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.INVOICED_AMOUNT, poItem.getItemInvoicedTotalAmount());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PO_QUANTITY, poItem.getItemQuantity());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.INVOICE_QUANTITY, poItem.getItemInvoicedTotalQuantity());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.UNIT_OF_MEASURE, poItem.getItemUnitOfMeasureCode());
@@ -196,15 +196,15 @@ public class CuEinvoiceApiResource {
     }
 
     private void safelyAddProperty(Properties properties, String key, KualiDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.floatValue());
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
     }
 
     private void safelyAddProperty(Properties properties, String key, BigDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.floatValue());
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
     }
 
     private void safelyAddProperty(Properties properties, String key, Integer value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.intValue());
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value);
     }
 
     private void safelyAddProperty(Properties properties, String key, ItemType value) {
