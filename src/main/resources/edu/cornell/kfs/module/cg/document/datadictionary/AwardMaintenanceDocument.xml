@@ -153,7 +153,7 @@
                     </property>
                     <property name="insertAfter">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="extension.purchasOrderNumber"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="extension.purchaseOrderNumber"/>
                         </list>
                     </property>
                 </bean>

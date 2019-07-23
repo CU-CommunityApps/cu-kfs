@@ -14,7 +14,7 @@
         <field-descriptor name="everify" column="E_VERIFY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
         <field-descriptor name="primeAgreementNumber" column="PRIME_AGREEMENT_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="autoApproveReason" column="AUTO_APPROVE_REASON_TXT" jdbc-type="VARCHAR" />
-        <field-descriptor name="purchasOrderNumber" column="PO_NBR" jdbc-type="VARCHAR" />
+        <field-descriptor name="purchaseOrderNumber" column="PO_NBR" jdbc-type="VARCHAR" />
     </class-descriptor>
     
     <class-descriptor class="org.kuali.kfs.module.cg.businessobject.Award" table="CG_AWD_T">

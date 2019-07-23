@@ -19,7 +19,7 @@
             <ref bean="AwardExtendedAttribute-everify"/>
             <ref bean="AwardExtendedAttribute-primeAgreementNumber"/>
             <ref bean="AwardExtendedAttribute-autoApproveReason"/>
-            <ref bean="AwardExtendedAttribute-purchasOrderNumber"/>
+            <ref bean="AwardExtendedAttribute-purchaseOrderNumber"/>
       </list> 
     </property> 
     </bean> 
@@ -116,8 +116,8 @@
         </property>
     </bean>
     
-    <bean id="AwardExtendedAttribute-purchasOrderNumber" parent="AwardExtendedAttribute-purchasOrderNumber-parentBean"/>
-    <bean id="AwardExtendedAttribute-purchasOrderNumber-parentBean" abstract="true" parent="Proposal-grantNumber"
-          p:name="purchasOrderNumber" p:label="Purchas Order #" p:shortLabel="PO #"/>
+    <bean id="AwardExtendedAttribute-purchaseOrderNumber" parent="AwardExtendedAttribute-purchaseOrderNumber-parentBean"/>
+    <bean id="AwardExtendedAttribute-purchaseOrderNumber-parentBean" abstract="true" parent="Proposal-grantNumber"
+          p:name="purchaseOrderNumber" p:label="Purchas Order #" p:shortLabel="PO #"/>
 
 </beans> 

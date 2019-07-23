@@ -27,7 +27,7 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	private boolean everify;
 	private String primeAgreementNumber;
 	private String autoApproveReason;
-	private String purchasOrderNumber;
+	private String purchaseOrderNumber;
 
 	public boolean isCostShareRequired() {
 		return costShareRequired;
@@ -117,12 +117,12 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
         this.autoApproveReason = autoApproveReason;
     }
 
-    public String getPurchasOrderNumber() {
-        return purchasOrderNumber;
+    public String getpurchaseOrderNumber() {
+        return purchaseOrderNumber;
     }
 
-    public void setPurchasOrderNumber(String purchasOrderNumber) {
-        this.purchasOrderNumber = purchasOrderNumber;
+    public void setpurchaseOrderNumber(String purchaseOrderNumber) {
+        this.purchaseOrderNumber = purchaseOrderNumber;
     }
 
 }
