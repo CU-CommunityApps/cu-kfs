@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.cg.document.validation.impl;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +22,6 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.springframework.util.CollectionUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -261,7 +261,7 @@ public class AwardExtensionRule extends AwardRule {
 	        LOG.debug("shouldEnforceAutoApproveReasonRule, the bypass intiators: " + byPassInitiators);
 	    }
 	    
-	    if (!CollectionUtils.isEmpty(byPassInitiators) && byPassInitiators.contains(documentInitiator)) {
+	    if (CollectionUtils.isNotEmpty(byPassInitiators) && byPassInitiators.contains(documentInitiator)) {
 	        LOG.debug("shouldEnforceAutoApproveReasonRule, the document initiator is in the list of bypass initiators, so do not enfource for the auto approve reason rule.");
 	        return false;
 	    }
