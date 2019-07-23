@@ -11,7 +11,7 @@
 		<property name="objectLabel" value="AwardAccountExtendedAttribute" />
 		<property name="attributes">
 			<list>
-				<ref bean="AwardAccou ntExtendedAttribute-proposalNumber" />
+				<ref bean="AwardAccountExtendedAttribute-proposalNumber" />
 				<ref bean="AwardAccountExtendedAttribute-chartOfAccountsCode" />
 				<ref bean="AwardAccountExtendedAttribute-accountNumber" />
 				<ref bean="AwardAccountExtendedAttribute-accountPurchaseOrderNumber" />
