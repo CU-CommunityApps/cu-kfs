@@ -203,53 +203,42 @@
         <field-descriptor name="name" column="CG_AGENCY_ORIGIN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     </class-descriptor>
-    
-    <class-descriptor class="org.kuali.kfs.module.cg.businessobject.AwardAccount" table="CG_AWD_ACCT_T">
-        <field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="VARCHAR" primarykey="true"
-                          index="true"/>
-        <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true"
-                          index="true"/>
-        <field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true"
-                          index="true"/>
-        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-        <field-descriptor name="principalId" column="PERSON_UNVL_ID" jdbc-type="VARCHAR" index="true"/>
-        <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR"
-                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-        <field-descriptor name="finalBilledIndicator" column="FNL_BILLED_IND" jdbc-type="VARCHAR"
-                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-        <field-descriptor name="currentLastBilledDate" column="CURR_LST_BILLED_DT" jdbc-type="DATE"/>
-        <field-descriptor name="previousLastBilledDate" column="PREV_LST_BILLED_DT" jdbc-type="DATE"/>
-        <reference-descriptor name="award" class-ref="org.kuali.kfs.module.cg.businessobject.Award"
-                              auto-retrieve="true" auto-update="none"
-                              auto-delete="none" proxy="true">
-            <foreignkey field-ref="proposalNumber"/>
-        </reference-descriptor>
-        <reference-descriptor name="account" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true"
-                              auto-update="none"
-                              auto-delete="none" proxy="true">
-            <foreignkey field-ref="chartOfAccountsCode"/>
-            <foreignkey field-ref="accountNumber"/>
-        </reference-descriptor>
-        <reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart"
-                              auto-retrieve="true"
-                              auto-update="none" auto-delete="none" proxy="true">
-            <foreignkey field-ref="chartOfAccountsCode"/>
-        </reference-descriptor>
-        <reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.cg.businessobject.AwardAccountExtendedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
-            <foreignkey field-ref="proposalNumber" />
-            <foreignkey field-ref="chartOfAccountsCode" />
-            <foreignkey field-ref="accountNumber" />
+
+	<class-descriptor class="org.kuali.kfs.module.cg.businessobject.AwardAccount" table="CG_AWD_ACCT_T">
+		<field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+		<field-descriptor name="principalId" column="PERSON_UNVL_ID" jdbc-type="VARCHAR" index="true" />
+		<field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="finalBilledIndicator" column="FNL_BILLED_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="currentLastBilledDate" column="CURR_LST_BILLED_DT" jdbc-type="DATE" />
+		<field-descriptor name="previousLastBilledDate" column="PREV_LST_BILLED_DT" jdbc-type="DATE" />
+		<reference-descriptor name="award" class-ref="org.kuali.kfs.module.cg.businessobject.Award" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+			<foreignkey field-ref="proposalNumber" />
 		</reference-descriptor>
-    </class-descriptor>
-    
-    <class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AwardAccountExtendedAttribute" table="CG_AWD_ACCT_TX">
-        <field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
-        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
-        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-        <field-descriptor name="accountPurchaseOrderNumber" column="PO_NBR" jdbc-type="VARCHAR"/>
-    </class-descriptor>
+		<reference-descriptor name="account" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+			<foreignkey field-ref="chartOfAccountsCode" />
+			<foreignkey field-ref="accountNumber" />
+		</reference-descriptor>
+		<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+			<foreignkey field-ref="chartOfAccountsCode" />
+		</reference-descriptor>
+		<reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.cg.businessobject.AwardAccountExtendedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+			<foreignkey field-ref="proposalNumber" />
+			<foreignkey field-ref="chartOfAccountsCode" />
+			<foreignkey field-ref="accountNumber" />
+		</reference-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AwardAccountExtendedAttribute" table="CG_AWD_ACCT_TX">
+		<field-descriptor name="proposalNumber" column="CGPRPSL_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+		<field-descriptor name="accountPurchaseOrderNumber" column="PO_NBR" jdbc-type="VARCHAR" />
+	</class-descriptor>
 
 </descriptor-repository>
