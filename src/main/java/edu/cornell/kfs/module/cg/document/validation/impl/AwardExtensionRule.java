@@ -237,10 +237,10 @@ public class AwardExtensionRule extends AwardRule {
 		return success;
 	}
 	
-	protected boolean checkAutoApproveReason(MaintenanceDocument document) {
+    protected boolean checkAutoApproveReason(MaintenanceDocument document) {
         boolean success = true;
         Award award = (Award) super.getNewBo();
-        
+
         if (shouldEnforceAutoApproveReasonRule(document) && !award.getAutoApproveIndicator()) {
             AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
             if (StringUtils.isBlank(awardExtendedAttribute.getAutoApproveReason())) {
@@ -248,26 +248,28 @@ public class AwardExtensionRule extends AwardRule {
                 success = false;
             }
         }
-        
+
         return success;
     }
-	
-	private boolean shouldEnforceAutoApproveReasonRule(MaintenanceDocument document) {
-	    String documentInitiator = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-	    Collection<String> byPassInitiators = getParameterService().getParameterValuesAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, 
-	            CUKFSConstants.CGParms.AWARD_RULE_COMPNONENT, CUKFSConstants.CGParms.BYPASS_AWARD_EXTENSION_AUTO_APPROVE_REASON_RULE_INITIATORS);
-	    if (LOG.isDebugEnabled()) {
-	        LOG.debug("shouldEnforceAutoApproveReasonRule, the document intiator: " + documentInitiator);
-	        LOG.debug("shouldEnforceAutoApproveReasonRule, the bypass intiators: " + byPassInitiators);
-	    }
-	    
-	    if (CollectionUtils.isNotEmpty(byPassInitiators) && byPassInitiators.contains(documentInitiator)) {
-	        LOG.debug("shouldEnforceAutoApproveReasonRule, the document initiator is in the list of bypass initiators, so do not enfource for the auto approve reason rule.");
-	        return false;
-	    }
-	    
-	    return true;
-	}
+
+    private boolean shouldEnforceAutoApproveReasonRule(MaintenanceDocument document) {
+        String documentInitiator = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        Collection<String> byPassInitiators = getParameterService().getParameterValuesAsString(
+                KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS,
+                CUKFSConstants.CGParms.AWARD_RULE_COMPNONENT,
+                CUKFSConstants.CGParms.BYPASS_AWARD_EXTENSION_AUTO_APPROVE_REASON_RULE_INITIATORS);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("shouldEnforceAutoApproveReasonRule, the document intiator: " + documentInitiator);
+            LOG.debug("shouldEnforceAutoApproveReasonRule, the bypass intiators: " + byPassInitiators);
+        }
+
+        if (CollectionUtils.isNotEmpty(byPassInitiators) && byPassInitiators.contains(documentInitiator)) {
+            LOG.debug("shouldEnforceAutoApproveReasonRule, the document initiator is in the list of bypass initiators, so do not enforce for the auto approve reason rule.");
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Checks for null on the nullable Billing Frequency Code field. Fixes NullPointerException.

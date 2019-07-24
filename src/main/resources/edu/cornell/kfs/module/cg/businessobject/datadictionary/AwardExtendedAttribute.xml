@@ -118,6 +118,6 @@
 
 	<bean id="AwardExtendedAttribute-purchaseOrderNumber" parent="AwardExtendedAttribute-purchaseOrderNumber-parentBean" />
 	<bean id="AwardExtendedAttribute-purchaseOrderNumber-parentBean" abstract="true" parent="Proposal-grantNumber"
-		p:name="purchaseOrderNumber" p:label="Purchas Order #" p:shortLabel="PO #" />
+		p:name="purchaseOrderNumber" p:label="Purchase Order #" p:shortLabel="PO #" />
 
 </beans> 
