@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,15 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         if (ObjectUtils.isNotNull(totalCostInvoiceDetail)) {
             localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.TOTAL_PROGRAM_OUTLAYS_TO_DATE,
                     totalCostInvoiceDetail.getTotalAmountBilledToDate().add(document.getInvoiceGeneralDetail().getCostShareAmount()));
+        }
+        
+        if (CollectionUtils.isNotEmpty(document.getDirectCostInvoiceDetails())) {
+            List<ContractsGrantsInvoiceDetail> indirectDetails = document.getDirectCostInvoiceDetails().stream()
+                    .filter(detail -> detail.getCostCategory().isIndirectCostIndicator())
+                    .collect(Collectors.toList());
+            List<ContractsGrantsInvoiceDetail> indirectExcludedDetails = document.getDirectCostInvoiceDetails().stream()
+                    .filter(detail -> !detail.getCostCategory().isIndirectCostIndicator())
+                    .collect(Collectors.toList());
         }
         
         if (!localParameterMap.isEmpty()) {
