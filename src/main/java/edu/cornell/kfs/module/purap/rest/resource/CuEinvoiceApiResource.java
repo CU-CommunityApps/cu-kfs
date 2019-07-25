@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.rest.resource;
 
 import com.google.gson.Gson;
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.dataaccess.CuEinvoiceDao;
 import edu.cornell.kfs.module.purap.dataaccess.impl.CuEinvoiceDaoOjb;
@@ -12,13 +13,15 @@ import org.kuali.kfs.krad.dao.LookupDao;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
-import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.businessobject.ItemType;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +35,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -79,7 +83,6 @@ public class CuEinvoiceApiResource {
     @Path("vendors/{vendorNumber}")
     public Response getVendor(@PathParam(PurapPropertyConstants.VENDOR_NUMBER) String vendorNumber, @Context HttpHeaders headers) {
         try {
-
             HashMap<String, String> vendorCombinedPk = parseVendorNumber(vendorNumber);
             VendorDetail vendorDetail = getLookupDao().findObjectByMap(VendorDetail.class.newInstance(), vendorCombinedPk);
             if (ObjectUtils.isNull(vendorDetail)) {
@@ -99,6 +102,7 @@ public class CuEinvoiceApiResource {
         try {
             HashMap<String, String> map = new HashMap<>();
             map.put(PurapPropertyConstants.PURAP_DOC_ID, purapDocumentIdentifier);
+            map.put(PurapPropertyConstants.PURCHASE_ORDER_CURRENT_INDICATOR, CuFPConstants.YES);
             PurchaseOrderDocument poDoc = getLookupDao().findObjectByMap(PurchaseOrderDocument.class.newInstance(), map);
             if (ObjectUtils.isNull(poDoc)) {
                 return respondNotFound();
@@ -139,10 +143,6 @@ public class CuEinvoiceApiResource {
         return gson.toJson(poProperties);
     }
 
-    private void safelyAddProperty(Properties properties, String key, String value) {
-        properties.put(key, StringUtils.defaultIfBlank(value, KFSConstants.EMPTY_STRING));
-    }
-
     private void addVendorRemitAddressToProperties(Properties vendorProperties, VendorDetail vendorDetail) {
         List<VendorAddress> vendorAddresses = vendorDetail.getVendorAddresses();
         if (CollectionUtils.isNotEmpty(vendorAddresses)) {
@@ -170,20 +170,45 @@ public class CuEinvoiceApiResource {
     private void addPoItemsToProperties(Properties poProperties, List poItems) {
         List<Properties> poLines = new ArrayList<>();
         for (Object obj : poItems) {
-            if (obj instanceof PurApItem) {
-                PurApItem purApItem = (PurApItem)obj;
+            if (obj instanceof PurchaseOrderItem) {
+                PurchaseOrderItem poItem = (PurchaseOrderItem)obj;
                 Properties lineProps = new Properties();
-                safelyAddProperty(lineProps, CUPurapConstants.AMOUNT.toLowerCase(), purApItem.getTotalAmount().toString());
-                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.QUANTITY, purApItem.getItemQuantity().toString());
-                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.UNIT_OF_MEASURE, purApItem.getItemUnitOfMeasureCode());
-                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.DESCRIPTION, purApItem.getItemDescription());
-                lineProps.put(CUPurapConstants.Einvoice.UNIT_PRICE, purApItem.getItemUnitPrice());
-                lineProps.put(CUPurapConstants.Einvoice.LINE_NUMBER, purApItem.getItemLineNumber());
-                lineProps.put(CUPurapConstants.Einvoice.PART_NUMBER, purApItem.getItemAuxiliaryPartIdentifier());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.AMOUNT, poItem.getTotalAmount());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.INVOICED_AMOUNT, poItem.getItemInvoicedTotalAmount());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PO_QUANTITY, poItem.getItemQuantity());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.INVOICE_QUANTITY, poItem.getItemInvoicedTotalQuantity());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.UNIT_OF_MEASURE, poItem.getItemUnitOfMeasureCode());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.DESCRIPTION, poItem.getItemDescription());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.UNIT_PRICE, poItem.getItemUnitPrice());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.LINE_NUMBER, poItem.getItemLineNumber());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PART_NUMBER, poItem.getItemAuxiliaryPartIdentifier());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.ITEM_TYPE_DESCRIPTION, poItem.getItemType());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.ITEM_TYPE_CODE, poItem.getItemTypeCode());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PO_ITEM_ID, poItem.getItemIdentifier());
                 poLines.add(lineProps);
             }
         }
         poProperties.put(CUPurapConstants.Einvoice.ITEMS, poLines.toArray());
+    }
+
+    private void safelyAddProperty(Properties properties, String key, String value) {
+        properties.put(key, StringUtils.defaultIfBlank(value, KFSConstants.EMPTY_STRING));
+    }
+
+    private void safelyAddProperty(Properties properties, String key, KualiDecimal value) {
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
+    }
+
+    private void safelyAddProperty(Properties properties, String key, BigDecimal value) {
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
+    }
+
+    private void safelyAddProperty(Properties properties, String key, Integer value) {
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value);
+    }
+
+    private void safelyAddProperty(Properties properties, String key, ItemType value) {
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.getItemTypeDescription());
     }
 
     private String getSimpleJsonObject(String key, String value) {
