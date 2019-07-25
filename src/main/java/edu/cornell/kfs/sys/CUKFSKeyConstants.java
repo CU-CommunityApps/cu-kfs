@@ -75,6 +75,7 @@ public class CUKFSKeyConstants {
     public static final String ERROR_DV_INITIATOR_INVALID_PRIMARY_DEPARTMENT = "error.dv.initiatorInvalidPrimaryDepartment";
     
     public static final String ERROR_FINAL_FINANCIAL_REPORT_DATE_REQUIRED = "error.cg.requiredFinancialReportDateNotSupplied";    
+    public static final String ERROR_AUTO_APPROVE_REASON_REQUIRED = "error.cg.requiredAutoApporoveRason";
     
     // Account Reversion Errors
     public static final String ERROR_DOCUMENT_GLOBAL_ACCT_REVERSION_BUDGET_REVERSION_INCOMPLETE = 
