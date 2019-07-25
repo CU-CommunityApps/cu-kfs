@@ -3,7 +3,10 @@ package edu.cornell.kfs.module.cg.document.validation.impl;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.integration.ar.AccountsReceivableModuleBillingService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.module.cg.CGConstants;
@@ -16,6 +19,7 @@ import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.validation.impl.AwardRule;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -31,6 +35,8 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 @SuppressWarnings("deprecation")
 public class AwardExtensionRule extends AwardRule {
+    private static final Logger LOG = LogManager.getLogger(AwardExtensionRule.class);
+    
 	protected ParameterService parameterService;
 
     @Override
@@ -44,6 +50,7 @@ public class AwardExtensionRule extends AwardRule {
         success &= checkForDuplicateAwardOrganization();
         success &= checkEndAfterBegin(((AwardExtendedAttribute) newAwardCopy.getExtension()).getBudgetBeginningDate(),
                 ((AwardExtendedAttribute) newAwardCopy.getExtension()).getBudgetEndingDate(), CUKFSPropertyConstants.AWARD_EXTENSION_BUDGET_ENDING_DATE);
+        success &= checkAutoApproveReason(document);
     	
     	return success;
     }
@@ -229,6 +236,40 @@ public class AwardExtensionRule extends AwardRule {
 
 		return success;
 	}
+	
+    protected boolean checkAutoApproveReason(MaintenanceDocument document) {
+        boolean success = true;
+        Award award = (Award) super.getNewBo();
+
+        if (shouldEnforceAutoApproveReasonRule(document) && !award.getAutoApproveIndicator()) {
+            AwardExtendedAttribute awardExtendedAttribute = (AwardExtendedAttribute) award.getExtension();
+            if (StringUtils.isBlank(awardExtendedAttribute.getAutoApproveReason())) {
+                putFieldError("extension.autoApproveReason", CUKFSKeyConstants.ERROR_AUTO_APPROVE_REASON_REQUIRED);
+                success = false;
+            }
+        }
+
+        return success;
+    }
+
+    private boolean shouldEnforceAutoApproveReasonRule(MaintenanceDocument document) {
+        String documentInitiator = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        Collection<String> byPassInitiators = getParameterService().getParameterValuesAsString(
+                KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS,
+                CUKFSConstants.CGParms.AWARD_RULE_COMPNONENT,
+                CUKFSConstants.CGParms.BYPASS_AWARD_EXTENSION_AUTO_APPROVE_REASON_RULE_INITIATORS);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("shouldEnforceAutoApproveReasonRule, the document intiator: " + documentInitiator);
+            LOG.debug("shouldEnforceAutoApproveReasonRule, the bypass intiators: " + byPassInitiators);
+        }
+
+        if (CollectionUtils.isNotEmpty(byPassInitiators) && byPassInitiators.contains(documentInitiator)) {
+            LOG.debug("shouldEnforceAutoApproveReasonRule, the document initiator is in the list of bypass initiators, so do not enforce for the auto approve reason rule.");
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Checks for null on the nullable Billing Frequency Code field. Fixes NullPointerException.

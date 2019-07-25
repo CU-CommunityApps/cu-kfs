@@ -114,6 +114,8 @@ public class CUKFSConstants {
 
     public static class CGParms{
     	public static final String ACCOUNTS_EXEMPT_FROM_MULTIPLE_AWARDS_VALIDATION = "ACCOUNTS_EXEMPT_FROM_MULTIPLE_AWARDS_VALIDATION";
+    	public static final String BYPASS_AWARD_EXTENSION_AUTO_APPROVE_REASON_RULE_INITIATORS = "BYPASS_AWARD_EXTENSION_AUTO_APPROVE_REASON_RULE_INITIATORS";
+    	public static final String AWARD_RULE_COMPNONENT = "AwardRule";
     }
     
     public static final String COA_DOCUMENT_TYPE = "COA";
