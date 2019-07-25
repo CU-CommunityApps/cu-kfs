@@ -64,9 +64,14 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             List<ContractsGrantsInvoiceDetail> indirectDetails = document.getDirectCostInvoiceDetails().stream()
                     .filter(detail -> detail.getCostCategory().isIndirectCostIndicator())
                     .collect(Collectors.toList());
+            
+            processContractsGrantsInvoiceDetail(localParameterMap, indirectDetails, "indirect");
+            
             List<ContractsGrantsInvoiceDetail> indirectExcludedDetails = document.getDirectCostInvoiceDetails().stream()
                     .filter(detail -> !detail.getCostCategory().isIndirectCostIndicator())
                     .collect(Collectors.toList());
+            
+            processContractsGrantsInvoiceDetail(localParameterMap, indirectExcludedDetails, "indirectExcluded");
         }
         
         if (!localParameterMap.isEmpty()) {
@@ -75,6 +80,43 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         }
         
         return templateParameters;
+    }
+    
+    private void processContractsGrantsInvoiceDetail(Map<String, Object> localParameterMap, List<ContractsGrantsInvoiceDetail> invoiceDetails, String detailType) {
+        int i = 0;
+        ContractsGrantsInvoiceDetail firstDetail = null;
+        String invoiceFieldStarter = ArPropertyConstants.INVOICE_DETAIL + "_" + detailType;
+        
+        KualiDecimal budgetTotal = KualiDecimal.ZERO;
+        KualiDecimal currentExpenseTotal = KualiDecimal.ZERO;
+        KualiDecimal comulativeExpenseTotal = KualiDecimal.ZERO;
+        
+        for (ContractsGrantsInvoiceDetail detail : invoiceDetails) {
+            if (firstDetail == null) {
+                firstDetail = detail;
+            }
+            String thisInvoiceFieldStarter = invoiceFieldStarter + "[" + i + "].";
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.INVOICE_DETAIL_IDENTIFIER, detail.getInvoiceDetailIdentifier());
+            localParameterMap.put(thisInvoiceFieldStarter + KFSPropertyConstants.DOCUMENT_NUMBER, detail.getDocumentNumber());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.CATEGORY, detail.getCostCategory().getCategoryName());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.TOTAL_BUDGET, detail.getTotalBudget());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.INVOICE_AMOUNT, detail.getInvoiceAmount());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.CUMULATIVE_EXPENDITURES, detail.getCumulativeExpenditures());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.BUDGET_REMAINING, detail.getBudgetRemaining());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.TOTAL_PREVIOUSLY_BILLED, detail.getTotalPreviouslyBilled());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.TOTAL_AMOUNT_BILLED_TO_DATE, detail.getTotalAmountBilledToDate());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.AMOUNT_REMAINING_TO_BILL, firstDetail.getAmountRemainingToBill());
+            
+            budgetTotal = budgetTotal.add(detail.getTotalBudget());
+            currentExpenseTotal = currentExpenseTotal.add(detail.getInvoiceAmount());
+            comulativeExpenseTotal = comulativeExpenseTotal.add(detail.getCumulativeExpenditures());
+            
+            i++;
+        }
+        
+        localParameterMap.put(detailType + "_totalBudtet", budgetTotal);
+        localParameterMap.put(detailType + "_totalExpense", currentExpenseTotal);
+        localParameterMap.put(detailType + "_totalComulative", comulativeExpenseTotal);
     }
     
     @Override
