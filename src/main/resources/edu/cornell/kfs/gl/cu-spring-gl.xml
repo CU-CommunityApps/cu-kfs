@@ -307,19 +307,6 @@
 		</property>
 	</bean>
 
-    <!--
-        NOTE: This "parentBean" override is only meant for including part of the FINP-5464 fix.
-        Please remove this bean once we upgrade to the financials 2019-05-16 release or later.
-     -->
-    <bean id="glAccountBalanceLookupableHelperService-parentBean"
-          class="org.kuali.kfs.gl.businessobject.lookup.AccountBalanceLookupableHelperServiceImpl"
-          parent="generalLedgerLookupableHelperService-parentBean" abstract="true"
-          p:persistenceStructureService-ref="persistenceStructureService" p:lookupService-ref="lookupService"
-          p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
-          p:businessObjectMetaDataService-ref="businessObjectMetaDataService"
-          p:dataDictionaryService-ref="dataDictionaryService" p:accountBalanceService-ref="glAccountBalanceService"
-          p:postAccountBalance-ref="glPostGlAccountBalance" p:optionsService-ref="optionsService"/>
-
 	<bean id="glCurrentAccountBalanceLookupableHelperService" parent="generalLedgerLookupableHelperService-parentBean"
 				class="edu.cornell.kfs.gl.businessobject.lookup.CuCurrentAccountBalanceLookupableHelperServiceImpl" scope="prototype">
 		<property name="personService" ref="personService"/>
