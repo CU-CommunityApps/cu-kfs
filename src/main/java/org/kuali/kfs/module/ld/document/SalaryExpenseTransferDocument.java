@@ -21,7 +21,7 @@ package org.kuali.kfs.module.ld.document;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.module.ld.LaborConstants;
-import org.kuali.kfs.module.ld.businessobject.ErrorCertification;
+import org.kuali.kfs.module.ld.businessobject.LateAdjustment;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.util.LaborPendingEntryGenerator;
@@ -43,11 +43,11 @@ import java.util.Map;
 /**
  * Labor Document Class for the Salary Expense Transfer Document.
  */
-public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentBase implements ErrorCertifiable {
+public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentBase implements LateAdjustable {
     protected static final org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(SalaryExpenseTransferDocument.class);
 
     protected Map<String, KualiDecimal> approvalObjectCodeBalances;
-    protected ErrorCertification errorCertification;
+    protected LateAdjustment lateAdjustment;
 
     public SalaryExpenseTransferDocument() {
         super();
@@ -73,23 +73,23 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     }
 
     /**
-     * Gets the errorCertification attribute.
+     * Gets the lateAdjustment attribute.
      *
-     * @return Returns the errorCertification.
+     * @return Returns the lateAdjustment.
      */
     @Override
-    public ErrorCertification getErrorCertification() {
-        return errorCertification;
+    public LateAdjustment getLateAdjustment() {
+        return lateAdjustment;
     }
 
     /**
-     * Sets the errorCertification attribute value.
+     * Sets the lateAdjustment attribute value.
      *
-     * @param errorCertification The errorCertification to set.
+     * @param lateAdjustment The lateAdjustment to set.
      */
     @Override
-    public void setErrorCertification(ErrorCertification errorCertification) {
-        this.errorCertification = errorCertification;
+    public void setLateAdjustment(LateAdjustment lateAdjustment) {
+        this.lateAdjustment = lateAdjustment;
     }
 
     /**
@@ -195,9 +195,8 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
 //            laborLedgerPendingEntry.setTransactionLedgerEntryDescription(personName.length() > descriptionLength ? personName.substring(0, descriptionLength - 1) : personName);
 //        }
 
-        // KFSCNTRB-846 Need to set doc number on Error Certification object because it's the primary key; otherwise OJB complains
-        if (errorCertification != null) {
-            errorCertification.setDocumentNumber(this.documentNumber);
+        if (lateAdjustment != null) {
+            lateAdjustment.setDocumentNumber(this.documentNumber);
         }
     }
 

@@ -94,6 +94,34 @@
                        </list>
                    </property>
                </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="lookupAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
+                   <property name="element">
+                       <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                               parent="PositionData-departmentId"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                                   parent="PositionData-extension-orgCode"/>
+                       </list>
+                   </property>
+               </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="lookupResultAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
+                   <property name="element">
+                       <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                               parent="PositionData-departmentId"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                                   parent="PositionData-extension-orgCode"/>
+                       </list>
+                   </property>
+               </bean>
            </list>
        </property>
    </bean>
