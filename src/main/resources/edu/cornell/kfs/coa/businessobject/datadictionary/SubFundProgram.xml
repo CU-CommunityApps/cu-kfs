@@ -92,7 +92,7 @@
     <property name="shortLabel" value="Sub-Fund Program Description"/>
     <property name="maxLength" value="255"/>
     <property name="control">
-      <bean parent="TextControlDefinition" p:size="40"/>
+      <bean parent="TextareaControlDefinition" p:rows="3" p:cols="60"/>
     </property>
   </bean>
   
