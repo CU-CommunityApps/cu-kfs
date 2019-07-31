@@ -170,7 +170,7 @@ public class RassReportServiceImpl implements RassReportService {
                 break;
         }
 
-        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + " : " + filteresdResults.size() + ".";
+        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + ": " + filteresdResults.size() + ".";
         reportWriterService.writeFormattedMessageLine(reportMessage);
     }
 
@@ -264,7 +264,7 @@ public class RassReportServiceImpl implements RassReportService {
                         + result.getDocumentId();
                 break;
             case ERROR:
-                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " that resulted in error. \n Error(s): "
+                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " resulted in error. \n Error(s): "
                         + result.getErrorMessage();
                 break;
             case SKIPPED:
