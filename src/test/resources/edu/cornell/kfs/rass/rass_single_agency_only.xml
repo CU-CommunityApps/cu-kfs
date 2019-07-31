@@ -1,0 +1,16 @@
+<Kfs>
+  <Extract_Begin_Timestamp>2019-03-16T22:15:07.273</Extract_Begin_Timestamp>
+  <Awards>
+  </Awards>
+  <Agencies>
+    <Agency>
+      <Number>555</Number>
+      <Reporting_Name>Limited</Reporting_Name>
+      <Full_Name>Limited Ltd.</Full_Name>
+      <Type_Code>C</Type_Code>
+      <Reports_to_Agency_Number>468</Reports_to_Agency_Number>
+      <Common_Name>Limited Ltd.</Common_Name>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+  </Agencies>
+</Kfs>
