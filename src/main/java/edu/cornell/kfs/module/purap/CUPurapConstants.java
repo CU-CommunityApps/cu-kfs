@@ -259,5 +259,6 @@ public class CUPurapConstants {
         public static final String AMOUNT = "amount";
         public static final String PO_QUANTITY = "po_quantity";
         public static final String INVOICE_QUANTITY = "invoice_quantity";
+        public static final String NULL = "null";
     }
 }

@@ -196,15 +196,15 @@ public class CuEinvoiceApiResource {
     }
 
     private void safelyAddProperty(Properties properties, String key, KualiDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.doubleValue());
+        properties.put(key, ObjectUtils.isNull(value) ? CUPurapConstants.Einvoice.NULL : value.doubleValue());
     }
 
     private void safelyAddProperty(Properties properties, String key, BigDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.doubleValue());
+        properties.put(key, ObjectUtils.isNull(value) ? CUPurapConstants.Einvoice.NULL : value.doubleValue());
     }
 
     private void safelyAddProperty(Properties properties, String key, Integer value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value);
+        properties.put(key, ObjectUtils.isNull(value) ? CUPurapConstants.Einvoice.NULL : value);
     }
 
     private void safelyAddProperty(Properties properties, String key, ItemType value) {
