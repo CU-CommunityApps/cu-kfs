@@ -7,8 +7,6 @@ import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 
 public interface ConcurStandardAccountingExtractCashAdvanceService {
     
-    boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line);
-    
     boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line);
     
     boolean isAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine line);
@@ -20,4 +18,9 @@ public interface ConcurStandardAccountingExtractCashAdvanceService {
     ConcurAccountInfo findAccountingInfoForCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line, 
             List<ConcurStandardAccountingExtractDetailLine> saeLines);
     
+    boolean isPreTripCashAdvanceRequestLine(ConcurStandardAccountingExtractDetailLine line);
+    
+    boolean isPreTripCashAdvanceIssuedByCashAdmin(ConcurStandardAccountingExtractDetailLine line);
+    
+    boolean isCashAdvanceToBeAppliedToReimbursement(ConcurStandardAccountingExtractDetailLine line);
 }
