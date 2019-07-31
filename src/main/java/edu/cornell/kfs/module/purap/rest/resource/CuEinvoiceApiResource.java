@@ -196,11 +196,11 @@ public class CuEinvoiceApiResource {
     }
 
     private void safelyAddProperty(Properties properties, String key, KualiDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.doubleValue());
     }
 
     private void safelyAddProperty(Properties properties, String key, BigDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
+        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.doubleValue());
     }
 
     private void safelyAddProperty(Properties properties, String key, Integer value) {
