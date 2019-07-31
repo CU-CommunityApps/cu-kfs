@@ -9,18 +9,25 @@ public class RassBusinessObjectUpdateResult<R extends PersistableBusinessObject>
     private final String primaryKey;
     private final String documentId;
     private final RassObjectUpdateResultCode resultCode;
+    private final String errorMessage;
 
     public RassBusinessObjectUpdateResult(Class<R> businessObjectClass, String primaryKey,
             RassObjectUpdateResultCode resultCode) {
-        this(businessObjectClass, primaryKey, null, resultCode);
+        this(businessObjectClass, primaryKey, null, resultCode, null);
+    }
+    
+    public RassBusinessObjectUpdateResult(Class<R> businessObjectClass, String primaryKey,
+            RassObjectUpdateResultCode resultCode, String errorMessage) {
+        this(businessObjectClass, primaryKey, null, resultCode, errorMessage);
     }
 
     public RassBusinessObjectUpdateResult(Class<R> businessObjectClass, String primaryKey, String documentId,
-            RassObjectUpdateResultCode resultCode) {
+            RassObjectUpdateResultCode resultCode, String errorMessage) {
         this.businessObjectClass = businessObjectClass;
         this.primaryKey = primaryKey;
         this.documentId = documentId;
         this.resultCode = resultCode;
+        this.errorMessage = errorMessage;
     }
 
     public Class<R> getBusinessObjectClass() {
@@ -37,6 +44,10 @@ public class RassBusinessObjectUpdateResult<R extends PersistableBusinessObject>
 
     public RassObjectUpdateResultCode getResultCode() {
         return resultCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
 }

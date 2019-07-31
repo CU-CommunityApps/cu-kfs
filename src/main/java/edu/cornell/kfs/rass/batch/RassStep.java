@@ -11,11 +11,14 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
+import edu.cornell.kfs.rass.batch.service.RassReportService;
 import edu.cornell.kfs.rass.batch.service.RassService;
 
 public class RassStep extends AbstractStep {
 
     private RassService rassService;
+    private RassReportService rassReportService;
+    
     private static final Logger LOG = LogManager.getLogger(RassStep.class);
 
     @Override
@@ -28,6 +31,7 @@ public class RassStep extends AbstractStep {
         List<RassXmlFileParseResult> successfulResults = findSuccessfullyParsedFileResults(parseResults);
         RassXmlProcessingResults processingResults = rassService.updateKFS(successfulResults);
         RassBatchJobReport report = new RassBatchJobReport(parseResults, processingResults);
+        rassReportService.writeBatchJobReport(report);
         sendReport(report);
         return true;
     }
@@ -40,10 +44,15 @@ public class RassStep extends AbstractStep {
 
     protected void sendReport(RassBatchJobReport report) {
         LOG.debug("sendReport, The report-sending functionality has not been implemented yet.");
+        rassReportService.sendReportEmail();
     }
 
     public void setRassService(RassService rassService) {
         this.rassService = rassService;
+    }
+
+    public void setRassReportService(RassReportService rassReportService) {
+        this.rassReportService = rassReportService;
     }
 
 }

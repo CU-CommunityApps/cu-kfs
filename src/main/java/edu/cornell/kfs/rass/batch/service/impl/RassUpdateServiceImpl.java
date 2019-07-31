@@ -5,23 +5,27 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -36,7 +40,9 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.AutoPopulatingList;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
 import edu.cornell.kfs.rass.RassKeyConstants;
@@ -85,7 +91,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             LOG.error("processObject, Failed to process update for " + objectDefinition.printObjectLabelAndKeys(xmlObject), e);
             result = new RassBusinessObjectUpdateResult<>(
                     objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
-                    RassObjectUpdateResultCode.ERROR);
+                    RassObjectUpdateResultCode.ERROR, e.getMessage());
         }
         return result;
     }
@@ -194,7 +200,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
                 + " to create " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         return new RassBusinessObjectUpdateResult<>(
                 objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(businessObject),
-                maintenanceDocument.getDocumentNumber(), RassObjectUpdateResultCode.SUCCESS_NEW);
+                maintenanceDocument.getDocumentNumber(), RassObjectUpdateResultCode.SUCCESS_NEW, StringUtils.EMPTY);
     }
 
     protected <R extends PersistableBusinessObject> R createMinimalObject(Class<R> businessObjectClass) {
@@ -230,7 +236,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
                     + " to edit " + objectDefinition.printObjectLabelAndKeys(xmlObject));
             return new RassBusinessObjectUpdateResult<>(
                     objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(newBusinessObject),
-                    maintenanceDocument.getDocumentNumber(), RassObjectUpdateResultCode.SUCCESS_EDIT);
+                    maintenanceDocument.getDocumentNumber(), RassObjectUpdateResultCode.SUCCESS_EDIT, StringUtils.EMPTY);
         } else {
             LOG.info("updateObject, Skipping updates for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
                     + " because either no changes were made or changes were only made to the truncated data portions");
@@ -421,7 +427,11 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             return GlobalVariables.doInNewGlobalVariables(
                     buildSessionForSystemUser(),
                     () -> createAndRouteMaintenanceDocumentInternal(businessObjects, maintenanceAction, objectDefinition));
-        } catch (Exception e) {
+        }
+        catch(ValidationException ve) {
+            throw new RuntimeException(ve.getMessage());
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -445,10 +455,43 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         maintenanceDocument.getDocumentHeader().setDocumentDescription(
                 buildDocumentDescription(newBo, maintenanceAction, objectDefinition));
         
+        try {
         maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(
                 maintenanceDocument, annotation, null);
+        } catch(ValidationException ve) {
+            LOG.error("createAndRouteMaintenanceDocumentInternal, Error routing document # " + maintenanceDocument.getDocumentNumber() + " " + ve.getMessage(), ve);
+            String errorMessage = buildValidationErrorMessage((ValidationException) ve);
+            LOG.error("createAndRouteMaintenanceDocumentInternal: Could not route document - " + errorMessage);
+            throw new ValidationException(errorMessage);
+        }
         
         return maintenanceDocument;
+    }
+    
+    public String buildValidationErrorMessage(ValidationException validationException) {
+        try {
+            Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
+            return errorMessages.values().stream().flatMap(List::stream)
+                    .map(this::buildValidationErrorMessageForSingleError)
+                    .collect(Collectors.joining(KFSConstants.NEWLINE, KFSConstants.NEWLINE, KFSConstants.NEWLINE));
+        } catch (RuntimeException e) {
+            LOG.error("buildValidationErrorMessage: Could not build validation error message", e);
+            return CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE;
+        }
+    }
+
+    protected String buildValidationErrorMessageForSingleError(ErrorMessage errorMessage) {
+        String errorMessageString = configurationService.getPropertyValueAsString(errorMessage.getErrorKey());
+        if (StringUtils.isBlank(errorMessageString)) {
+            throw new RuntimeException("Cannot find error message for key: " + errorMessage.getErrorKey());
+        }
+        
+        String[] messageParameters = errorMessage.getMessageParameters();
+        if (ArrayUtils.isNotEmpty(messageParameters)) {
+            return MessageFormat.format(errorMessageString, messageParameters);
+        } else {
+            return errorMessageString;
+        }
     }
 
     protected <R extends PersistableBusinessObject> String buildDocumentDescription(
