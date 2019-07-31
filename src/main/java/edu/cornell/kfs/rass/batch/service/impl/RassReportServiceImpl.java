@@ -170,7 +170,7 @@ public class RassReportServiceImpl implements RassReportService {
                 break;
         }
 
-        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + " : " + filteresdResults.size();
+        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + " : " + filteresdResults.size() + ".";
         reportWriterService.writeFormattedMessageLine(reportMessage);
     }
 
@@ -236,7 +236,7 @@ public class RassReportServiceImpl implements RassReportService {
         String objectName = businessObjectClass.getSimpleName();
         switch (resultCode) {
             case SUCCESS_NEW:
-                header = "** " + objectName + " objects successfully created";
+                header = "** " + objectName + " objects successfully created:";
                 break;
             case SUCCESS_EDIT:
                 header = "** " + objectName + " objects successfully updated:";
