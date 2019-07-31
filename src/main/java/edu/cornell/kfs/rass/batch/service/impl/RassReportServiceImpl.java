@@ -256,11 +256,11 @@ public class RassReportServiceImpl implements RassReportService {
         String reportMessage = StringUtils.EMPTY;
         switch (result.getResultCode()) {
             case SUCCESS_NEW:
-                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " created, document #: "
+                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " created by document #: "
                         + result.getDocumentId();
                 break;
             case SUCCESS_EDIT:
-                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " updated, document #: "
+                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " updated by document #: "
                         + result.getDocumentId();
                 break;
             case ERROR:
