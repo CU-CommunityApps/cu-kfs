@@ -1,0 +1,81 @@
+<Kfs>
+  <Extract_Begin_Timestamp>2019-03-20T23:59:59.273</Extract_Begin_Timestamp>
+  <Awards>
+    <Award>
+      <Proposal_Number>556677</Proposal_Number>
+      <Status>OS</Status>
+      <Agency_Number>468</Agency_Number>
+      <Project_Title>Some University's Sample Project</Project_Title>
+      <Start_Date>2019-01-15</Start_Date>
+      <Stop_Date>2019-12-24</Stop_Date>
+      <Direct_Cost_Amount>25000.00</Direct_Cost_Amount>
+      <Indirect_Cost_Amount>5000.00</Indirect_Cost_Amount>
+      <Total_Amount>30000.00</Total_Amount>
+      <Purpose>H</Purpose>
+      <Grant_Number>98765</Grant_Number>
+      <Grant_Description>GRT</Grant_Description>
+      <Federal_Pass_Through>N</Federal_Pass_Through>
+      <Federal_Pass_Through_Agency_Number/>
+      <CFDA_Number>53135</CFDA_Number>
+      <Organization_Code>1500</Organization_Code>
+      <Cost_Share_Required>Y</Cost_Share_Required>
+      <Final_Fiscal_Report_Due_Date>2019-11-30</Final_Fiscal_Report_Due_Date>
+      <PI_and_CoPIs>
+        <PI_or_CoPI>
+          <Primary>Y</Primary>
+          <Project_Director_Principal_Name>mgw3</Project_Director_Principal_Name>
+        </PI_or_CoPI>
+      </PI_and_CoPIs>
+    </Award>
+    <Award>
+      <Proposal_Number>123789</Proposal_Number>
+      <Status>OS</Status>
+      <Agency_Number>468</Agency_Number>
+      <Project_Title>Some Internal Department Project</Project_Title>
+      <Start_Date>2019-03-01</Start_Date>
+      <Stop_Date>2020-11-30</Stop_Date>
+      <Direct_Cost_Amount>45000.00</Direct_Cost_Amount>
+      <Indirect_Cost_Amount>30000.00</Indirect_Cost_Amount>
+      <Total_Amount>75000.00</Total_Amount>
+      <Purpose>H</Purpose>
+      <Grant_Number>34343</Grant_Number>
+      <Grant_Description>CON</Grant_Description>
+      <Federal_Pass_Through>Y</Federal_Pass_Through>
+      <Federal_Pass_Through_Agency_Number>101</Federal_Pass_Through_Agency_Number>
+      <CFDA_Number>66667</CFDA_Number>
+      <Organization_Code>2211</Organization_Code>
+      <Cost_Share_Required>N</Cost_Share_Required>
+      <Final_Fiscal_Report_Due_Date>2020-10-12</Final_Fiscal_Report_Due_Date>
+      <PI_and_CoPIs>
+        <PI_or_CoPI>
+          <Primary>Y</Primary>
+          <Project_Director_Principal_Name>mgw3</Project_Director_Principal_Name>
+        </PI_or_CoPI>
+        <PI_or_CoPI>
+          <Primary>N</Primary>
+          <Project_Director_Principal_Name>mo14</Project_Director_Principal_Name>
+        </PI_or_CoPI>
+      </PI_and_CoPIs>
+    </Award>
+  </Awards>
+  <Agencies>
+    <Agency>
+      <Number>555</Number>
+      <Reporting_Name>Limited</Reporting_Name>
+      <Full_Name>Limited Ltd.</Full_Name>
+      <Type_Code>C</Type_Code>
+      <Reports_to_Agency_Number>468</Reports_to_Agency_Number>
+      <Common_Name>Limited Ltd.</Common_Name>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+    <Agency>
+      <Number>468</Number>
+      <Reporting_Name>Some</Reporting_Name>
+      <Full_Name>Some University</Full_Name>
+      <Type_Code>U</Type_Code>
+      <Reports_to_Agency_Number/>
+      <Common_Name>Some Other University</Common_Name>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+  </Agencies>
+</Kfs>
