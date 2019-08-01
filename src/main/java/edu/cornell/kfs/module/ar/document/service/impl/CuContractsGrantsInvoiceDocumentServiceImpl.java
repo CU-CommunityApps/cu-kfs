@@ -83,9 +83,10 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         KualiDecimal directCostInvoiceAmount = KualiDecimal.ZERO;
         KualiDecimal directCosttotalAmountBilledToDate = KualiDecimal.ZERO;
         
-        for (ContractsGrantsInvoiceDetail detail : document.getDirectCostInvoiceDetails()) {
+        
+        for (ContractsGrantsInvoiceDetail detail : document.getInvoiceDetails()) {
             String thisInvoiceFieldStarter = ArPropertyConstants.INVOICE_DETAIL + "[" + i + "].";
-            if (detail.getCostCategory().isIndirectCostIndicator()) {
+            if (detail.isIndirectCostIndicator()) {
                 thisInvoiceFieldStarter = thisInvoiceFieldStarter + "MTDCY";
                 indirectCostTotalBudget = indirectCostTotalBudget.add(detail.getTotalBudget());
                 indirectCostInvoiceAmount = indirectCostInvoiceAmount.add(detail.getInvoiceAmount());
@@ -96,16 +97,19 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 directCostInvoiceAmount = directCostInvoiceAmount.add(detail.getInvoiceAmount());
                 directCosttotalAmountBilledToDate = directCosttotalAmountBilledToDate.add(detail.getTotalAmountBilledToDate());
             }
-            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.CATEGORY, detail.getCostCategory().getCategoryName());
+            putKeyValueInMap(localParameterMap, thisInvoiceFieldStarter + ArPropertyConstants.CATEGORY, detail.getCostCategory().getCategoryName());
+            //localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.CATEGORY, detail.getCostCategory().getCategoryName());
             localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.TOTAL_BUDGET, detail.getTotalBudget());
             localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.INVOICE_AMOUNT, detail.getInvoiceAmount());
             localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.TOTAL_AMOUNT_BILLED_TO_DATE, detail.getTotalAmountBilledToDate());
             i++;
         }
-        
-        localParameterMap.put("directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget);
-        localParameterMap.put("inDirectCostInvoiceDetail.totalBudget", indirectCostTotalBudget);
-        localParameterMap.put("totalInvoiceDetail.MTDCtotalBudget", directCostTotalBudget.add(indirectCostTotalBudget));
+        putKeyValueInMap(localParameterMap, "directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget);
+        //localParameterMap.put("directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget);
+        putKeyValueInMap(localParameterMap, "directCostInvoiceDetail.totalBudget", indirectCostTotalBudget);
+        //localParameterMap.put("inDirectCostInvoiceDetail.totalBudget", indirectCostTotalBudget);
+        putKeyValueInMap(localParameterMap, "directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget.add(indirectCostTotalBudget));
+        //localParameterMap.put("totalInvoiceDetail.MTDCtotalBudget", directCostTotalBudget.add(indirectCostTotalBudget));
         
         localParameterMap.put("directCostInvoiceDetail.MTDCinvoiceAmount", directCostInvoiceAmount);
         localParameterMap.put("inDirectCostInvoiceDetail.invoiceAmount", indirectCostInvoiceAmount);
@@ -114,6 +118,21 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         localParameterMap.put("directCostInvoiceDetail.MTDCtotalAmountBilledToDate", directCosttotalAmountBilledToDate);
         localParameterMap.put("inDirectCostInvoiceDetail.totalAmountBilledToDate", indirectCosttotalAmountBilledToDate);
         localParameterMap.put("totalInvoiceDetail.MTDCtotalAmountBilledToDate", directCosttotalAmountBilledToDate.add(indirectCosttotalAmountBilledToDate));
+        
+        localParameterMap.put("totalInvoiceDetail.MTDCtotalIndirectBaseBudget", value);
+        localParameterMap.put("totalInvoiceDetail.MTDCtotalIndirectExclusionsBudget", value);
+        
+        localParameterMap.put("totalInvoiceDetail.MTDCtotalIndirectBaseinvoiceAmount", value);
+        localParameterMap.put("totalInvoiceDetail.MTDCtotalIndirectExclusionsinvoiceAmount", value);
+        
+        localParameterMap.put("directCostInvoiceDetail.MTDCtotalIndirectBaseAmountBilledToDate", value);
+        localParameterMap.put("totalInvoiceDetail.MTDCtotalIndirectExclusionsAmountBilledToDate", value);
+        
+    }
+    
+    private void putKeyValueInMap(Map<String, Object> localParameterMap, String key, Object value) {
+        LOG.info("putKeyValueInMap, key: " + key + " value: " + value);
+        localParameterMap.put(key, value);
     }
     
     @Override
