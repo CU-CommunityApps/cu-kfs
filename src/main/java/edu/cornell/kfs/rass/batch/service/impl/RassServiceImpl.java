@@ -154,6 +154,7 @@ public class RassServiceImpl implements RassService {
         
         return new RassBusinessObjectUpdateResultGrouping<R>(objectDefinition.getBusinessObjectClass(), objectResults, groupingResultCode);
     }
+
     
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;

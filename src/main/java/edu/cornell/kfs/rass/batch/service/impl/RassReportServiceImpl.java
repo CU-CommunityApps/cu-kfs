@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -39,7 +39,7 @@ public class RassReportServiceImpl implements RassReportService {
     public void sendReportEmail() {
         BodyMailMessage message = new BodyMailMessage();
         String fromAddress = getFromAddress();
-        Collection<String> toAddresses = getToAddressses();
+        Collection<String> toAddresses = getToAddresses();
         message.setFromAddress(fromAddress);
         String subject = reportWriterService.getTitle();
         message.setSubject(subject);
@@ -60,7 +60,7 @@ public class RassReportServiceImpl implements RassReportService {
         }
     }
 
-    private Collection<String> getToAddressses() {
+    private Collection<String> getToAddresses() {
         return parameterService.getParameterValuesAsString(RassStep.class, RassParameterConstants.TO_REPORT_EMAIL_ADDRESSES);
     }
 
@@ -146,15 +146,15 @@ public class RassReportServiceImpl implements RassReportService {
 
     private <R extends PersistableBusinessObject> void writeResultsSummaryToReportByResultCode(List<RassBusinessObjectUpdateResult<R>> results,
             RassObjectUpdateResultCode resultCode, Class businessObjectClass) {
-        List<RassBusinessObjectUpdateResult<R>> filteresdResults = results.stream().filter(result -> resultCode.equals(result.getResultCode()))
+        List<RassBusinessObjectUpdateResult<R>> filteredResults = results.stream().filter(result -> resultCode.equals(result.getResultCode()))
                 .collect(Collectors.toList());
-        writeSummaryLineToReport(filteresdResults, resultCode, businessObjectClass);
+        writeSummaryLineToReport(filteredResults, resultCode, businessObjectClass);
     }
 
     private <R extends PersistableBusinessObject> void writeSummaryLineToReport(List<RassBusinessObjectUpdateResult<R>> filteresdResults,
             RassObjectUpdateResultCode resultCode, Class businessObjectClass) {
 
-        String resultMessage = StringUtils.EMPTY;
+        String resultMessage;
         switch (resultCode) {
             case SUCCESS_NEW:
                 resultMessage = " created";
@@ -167,6 +167,9 @@ public class RassReportServiceImpl implements RassReportService {
                 break;
             case SKIPPED:
                 resultMessage = " skipped";
+                break;
+            default:
+                resultMessage = StringUtils.EMPTY;
                 break;
         }
 
@@ -182,7 +185,7 @@ public class RassReportServiceImpl implements RassReportService {
         reportWriterService.writeNewLines(1);
         writeProposalDetailsToReport(rassBatchJobReport);
         reportWriterService.writeNewLines(1);
-        writeAwardsDetailsToReport(rassBatchJobReport);
+        writeAwardDetailsToReport(rassBatchJobReport);
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** End of Report Details ***");
         reportWriterService.writeNewLines(1);
@@ -202,7 +205,7 @@ public class RassReportServiceImpl implements RassReportService {
         writeResultsDetailsToReport(proposalResults, Proposal.class, false);
     }
 
-    private void writeAwardsDetailsToReport(RassBatchJobReport rassBatchJobReport) {
+    private void writeAwardDetailsToReport(RassBatchJobReport rassBatchJobReport) {
         RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
         RassBusinessObjectUpdateResultGrouping<Award> awardResultGrouping = processingResults.getAwardResults();
         List<RassBusinessObjectUpdateResult<Award>> awardResults = awardResultGrouping.getObjectResults();
@@ -221,18 +224,18 @@ public class RassReportServiceImpl implements RassReportService {
 
     private <R extends PersistableBusinessObject> void writeResultsDetailsToReportByResultCode(List<RassBusinessObjectUpdateResult<R>> results,
             Class businessObjectClass, RassObjectUpdateResultCode resultCode) {
-        List<RassBusinessObjectUpdateResult<R>> filteresdResults = results.stream().filter(result -> resultCode.equals(result.getResultCode()))
+        List<RassBusinessObjectUpdateResult<R>> filteredResults = results.stream().filter(result -> resultCode.equals(result.getResultCode()))
                 .collect(Collectors.toList());
 
         writeHeaderForResultsDetailsByResultCode(businessObjectClass, resultCode);
 
-        for (RassBusinessObjectUpdateResult<R> result : filteresdResults) {
+        for (RassBusinessObjectUpdateResult<R> result : filteredResults) {
             writeResultDetailToReport(result);
         }
     }
 
     private void writeHeaderForResultsDetailsByResultCode(Class businessObjectClass, RassObjectUpdateResultCode resultCode) {
-        String header = StringUtils.EMPTY;
+        String header;
         String objectName = businessObjectClass.getSimpleName();
         switch (resultCode) {
             case SUCCESS_NEW:
@@ -247,28 +250,35 @@ public class RassReportServiceImpl implements RassReportService {
             case SKIPPED:
                 header = "** " + objectName + " objects that were skipped:";
                 break;
+            default:
+                header = StringUtils.EMPTY;
+                break;
         }
         reportWriterService.writeNewLines(1);
         reportWriterService.writeFormattedMessageLine(header);
     }
 
     private <R extends PersistableBusinessObject> void writeResultDetailToReport(RassBusinessObjectUpdateResult<R> result) {
-        String reportMessage = StringUtils.EMPTY;
+        String reportMessage;
+        String messagePrefix = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey();
         switch (result.getResultCode()) {
             case SUCCESS_NEW:
-                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " created by document #: "
+                reportMessage = messagePrefix + " created by document #: "
                         + result.getDocumentId();
                 break;
             case SUCCESS_EDIT:
-                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " updated by document #: "
+                reportMessage = messagePrefix + " updated by document #: "
                         + result.getDocumentId();
                 break;
             case ERROR:
-                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " resulted in error. \n Error(s): "
+                reportMessage = messagePrefix + " resulted in error. \n Error(s): "
                         + result.getErrorMessage();
                 break;
             case SKIPPED:
-                reportMessage = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey() + " skipped.";
+                reportMessage = messagePrefix + " skipped.";
+                break;
+            default:
+                reportMessage = StringUtils.EMPTY;
                 break;
         }
 

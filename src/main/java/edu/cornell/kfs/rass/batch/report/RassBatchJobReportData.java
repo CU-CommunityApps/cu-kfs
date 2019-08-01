@@ -17,22 +17,11 @@ public class RassBatchJobReportData {
     protected int numberOfAwardsWithBusinessRuleFailures;
     protected List<String> awardsInRASSFeedNotRequiringUpdatingInKFS;
 
-    // **** Agency business rule failures *****
-    // WIll contain the agencies, and the business rule failures that preventing them from routing
     protected Map<String, List<String>> agenciesErrorMessages;
-
-    // ** Agency documents successfully created ***
-    // Will contain the agencies and their document numbers that were successfully created
     protected Map<String, String> successfullyProcessedAgenciesDocumentNumbers;
-
-    // **** Proposal business rule failures *****
     protected Map<String, List<String>> proposalErrorMessages;
-    // ** Proposal documents successfully created ***
     protected Map<String, String> successfullyProcessedProposalsDocumentNumbers;
-
-    // **** Award business rule failures *****
     protected Map<String, List<String>> awardErrorMessages;
-    // ** Award documents successfully created ***
     protected Map<String, String> successfullyProcessedAwardsDocumentNumbers;
 
     public int getNumberOfAgenciesCreated() {

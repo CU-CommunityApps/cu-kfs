@@ -43,7 +43,6 @@ public class RassStep extends AbstractStep {
     }
 
     protected void sendReport(RassBatchJobReport report) {
-        LOG.debug("sendReport, The report-sending functionality has not been implemented yet.");
         rassReportService.sendReportEmail();
     }
 
