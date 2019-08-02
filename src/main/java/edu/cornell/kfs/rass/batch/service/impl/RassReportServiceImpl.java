@@ -151,7 +151,7 @@ public class RassReportServiceImpl implements RassReportService {
         writeSummaryLineToReport(filteredResults, resultCode, businessObjectClass);
     }
 
-    private <R extends PersistableBusinessObject> void writeSummaryLineToReport(List<RassBusinessObjectUpdateResult<R>> filteresdResults,
+    private <R extends PersistableBusinessObject> void writeSummaryLineToReport(List<RassBusinessObjectUpdateResult<R>> filteredResults,
             RassObjectUpdateResultCode resultCode, Class businessObjectClass) {
 
         String resultMessage;
@@ -173,7 +173,7 @@ public class RassReportServiceImpl implements RassReportService {
                 break;
         }
 
-        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + ": " + filteresdResults.size() + ".";
+        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + ": " + filteredResults.size() + ".";
         reportWriterService.writeFormattedMessageLine(reportMessage);
     }
 
