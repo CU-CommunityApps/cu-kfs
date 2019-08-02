@@ -78,6 +78,12 @@
 			p:routeHeaderService-ref="enDocumentRouteHeaderService"
 			p:documentStatusCheckDelayMillis="1000"
 			p:maxStatusCheckAttempts="60"/>
+			
+    	<bean id="rassReportService" parent="rassReportService-parentBean"/>
+	<bean id="rassReportService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassReportServiceImpl"
+			p:emailService-ref="emailService"
+			p:parameterService-ref="parameterService"
+			p:reportWriterService-ref="rassReportWriterService"/>
 
 	<bean id="rassXmlInputFileType" parent="rassXmlInputFileType-parentBean"/>
 	<bean id="rassXmlInputFileType-parentBean" abstract="true" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase"
@@ -95,6 +101,16 @@
 		<property name="rassService">
 			<ref bean="rassService" />
 		</property>
+		<property name="rassReportService">
+			<ref bean="rassReportService" />
+		</property>		
+	</bean>
+
+	<bean id="rassReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
+		parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/rass" />
+		<property name="fileNamePrefix" value="rass_report_" />
+		<property name="title" value="RASS Batch Job Report File" />
 	</bean>
 
 	<bean id="rassProperty" abstract="true" class="edu.cornell.kfs.rass.batch.RassPropertyDefinition" p:valueConverter-ref="rassValueConverterBase"/>
