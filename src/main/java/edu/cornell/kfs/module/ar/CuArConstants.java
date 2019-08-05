@@ -10,7 +10,7 @@ public class CuArConstants {
     public static final int CINV_DATE_RANGE_END_DATE_START_INDEX = 14;
     public static final String QUESTION_NEWLINE_STRING = "[br]";
 
-    public static enum AwardInvoicingOptionCodeToName {
+    public enum AwardInvoicingOptionCodeToName {
         INV_AWARD(ArIntegrationConstants.AwardInvoicingOptions.INV_AWARD, "Invoice By Award"),
         INV_ACCOUNT(ArIntegrationConstants.AwardInvoicingOptions.INV_ACCOUNT, "Invoice By Account"),
         INV_CONTRACT_CONTROL_ACCOUNT(ArIntegrationConstants.AwardInvoicingOptions.INV_CONTRACT_CONTROL_ACCOUNT, "Invoice By Contract Control Account"),

@@ -63,13 +63,6 @@ import java.util.List;
 public class PendingTransactionServiceImpl implements PendingTransactionService {
     private static final Logger LOG = LogManager.getLogger(PendingTransactionServiceImpl.class);
 
-    protected static String FDOC_TYP_CD_PROCESS_ACH = "ACHD";
-    protected static String FDOC_TYP_CD_PROCESS_CHECK = "CHKD";
-    protected static String FDOC_TYP_CD_CANCEL_REISSUE_ACH = "ACHR";
-    protected static String FDOC_TYP_CD_CANCEL_REISSUE_CHECK = "CHKR";
-    protected static String FDOC_TYP_CD_CANCEL_ACH = "ACHC";
-    protected static String FDOC_TYP_CD_CANCEL_CHECK = "CHKC";
-
     public static final String REF_FDOC_TYP_CD_LIABILITY_CHECK = "PO";
 
     private PendingTransactionDao glPendingTransactionDao;
@@ -91,17 +84,17 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
     @Override
     public void generatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_PROCESS_ACH, FDOC_TYP_CD_PROCESS_CHECK, false, false);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_PROCESS_ACH, PdpConstants.FDOC_TYP_CD_PROCESS_CHECK, false, false);
     }
 
     @Override
     public void generateCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_ACH, FDOC_TYP_CD_CANCEL_CHECK, true, false);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true, false);
     }
 
     @Override
     public void generateCancelReissueGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_REISSUE_ACH, FDOC_TYP_CD_CANCEL_REISSUE_CHECK, true, false);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_REISSUE_ACH, PdpConstants.FDOC_TYP_CD_CANCEL_REISSUE_CHECK, true, false);
     }
 
     @Override

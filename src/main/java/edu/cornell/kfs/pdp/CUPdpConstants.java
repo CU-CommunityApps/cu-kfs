@@ -46,4 +46,7 @@ public class CUPdpConstants {
     public static final String PAYEE_TYPE_CODE_EMPLOYEE = "E";
     public static final String PAYEE_TYPE_CODE_ALUMNI = "A";
     public static final String PAYEE_TYPE_CODE_STUDENT = "S";
+
+    public static final String FDOC_TYP_CD_STOP_CHECK = "CHKS";
+    public static final String FDOC_TYP_CD_STALE_CHECK = "CHKL";
 }
