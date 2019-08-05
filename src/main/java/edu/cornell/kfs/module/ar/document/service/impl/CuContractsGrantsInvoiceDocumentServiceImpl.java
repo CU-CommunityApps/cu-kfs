@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.ar.document.service.impl;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType;
+import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
@@ -29,6 +33,7 @@ import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocum
 import org.kuali.kfs.module.ar.report.PdfFormattingMap;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
@@ -40,6 +45,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl implements CuContractsGrantsInvoiceDocumentService {
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentServiceImpl.class);
+    
+    protected BusinessObjectService businessObjectService;
 
     @Override
     protected Map<String, String> getTemplateParameterList(ContractsGrantsInvoiceDocument document) {
@@ -75,17 +82,34 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     private void processInvoiceDetails(ContractsGrantsInvoiceDocument document, Map<String, Object> localParameterMap) {
         int i = 0;
         
-        KualiDecimal indirectCostTotalBudget = KualiDecimal.ZERO;
-        KualiDecimal indirectCostInvoiceAmount = KualiDecimal.ZERO;
-        KualiDecimal indirectCosttotalAmountBilledToDate = KualiDecimal.ZERO;
+        //KualiDecimal indirectCostTotalBudget = KualiDecimal.ZERO;
+        //KualiDecimal indirectCostInvoiceAmount = KualiDecimal.ZERO;
+        //KualiDecimal indirectCosttotalAmountBilledToDate = KualiDecimal.ZERO;
         
-        KualiDecimal directCostTotalBudget = KualiDecimal.ZERO;
-        KualiDecimal directCostInvoiceAmount = KualiDecimal.ZERO;
-        KualiDecimal directCosttotalAmountBilledToDate = KualiDecimal.ZERO;
+        //KualiDecimal directCostTotalBudget = KualiDecimal.ZERO;
+        //KualiDecimal directCostInvoiceAmount = KualiDecimal.ZERO;
+        //KualiDecimal directCosttotalAmountBilledToDate = KualiDecimal.ZERO;
+        
+        List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes = document.getInvoiceDetailAccountObjectCodes();
         
         
         for (ContractsGrantsInvoiceDetail detail : document.getInvoiceDetails()) {
             String thisInvoiceFieldStarter = ArPropertyConstants.INVOICE_DETAIL + "[" + i + "].";
+            
+            List<InvoiceDetailAccountObjectCode> detailAccounts = invoiceDetailAccountObjectCodes.stream()
+                    .filter(account -> StringUtils.equalsIgnoreCase(account.getCategoryCode(), detail.getCategoryCode()))
+                    .collect(Collectors.toList());
+            
+            InvoiceDetailAmounts mdcnAmounts = new InvoiceDetailAmounts();
+            InvoiceDetailAmounts mdcyAmounts = new InvoiceDetailAmounts();
+            
+            for (InvoiceDetailAccountObjectCode detailAccount : detailAccounts) {
+                if (isObjectCodeICRExcluded(detailAccount.getChartOfAccountsCode(), detailAccount.getFinancialObjectCode())) {
+                } else {
+                    
+                }
+            }
+            
             if (detail.isIndirectCostIndicator()) {
                 thisInvoiceFieldStarter = thisInvoiceFieldStarter + "MTDCY";
                 indirectCostTotalBudget = indirectCostTotalBudget.add(detail.getTotalBudget());
@@ -97,19 +121,15 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 directCostInvoiceAmount = directCostInvoiceAmount.add(detail.getInvoiceAmount());
                 directCosttotalAmountBilledToDate = directCosttotalAmountBilledToDate.add(detail.getTotalAmountBilledToDate());
             }
-            putKeyValueInMap(localParameterMap, thisInvoiceFieldStarter + ArPropertyConstants.CATEGORY, detail.getCostCategory().getCategoryName());
-            //localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.CATEGORY, detail.getCostCategory().getCategoryName());
+            localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.CATEGORY, detail.getCostCategory().getCategoryName());
             localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.TOTAL_BUDGET, detail.getTotalBudget());
             localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.INVOICE_AMOUNT, detail.getInvoiceAmount());
             localParameterMap.put(thisInvoiceFieldStarter + ArPropertyConstants.TOTAL_AMOUNT_BILLED_TO_DATE, detail.getTotalAmountBilledToDate());
             i++;
         }
-        putKeyValueInMap(localParameterMap, "directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget);
-        //localParameterMap.put("directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget);
-        putKeyValueInMap(localParameterMap, "directCostInvoiceDetail.totalBudget", indirectCostTotalBudget);
-        //localParameterMap.put("inDirectCostInvoiceDetail.totalBudget", indirectCostTotalBudget);
-        putKeyValueInMap(localParameterMap, "directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget.add(indirectCostTotalBudget));
-        //localParameterMap.put("totalInvoiceDetail.MTDCtotalBudget", directCostTotalBudget.add(indirectCostTotalBudget));
+        localParameterMap.put("directCostInvoiceDetail.MTDCtotalBudget", directCostTotalBudget);
+        localParameterMap.put("inDirectCostInvoiceDetail.totalBudget", indirectCostTotalBudget);
+        localParameterMap.put("totalInvoiceDetail.MTDCtotalBudget", directCostTotalBudget.add(indirectCostTotalBudget));
         
         localParameterMap.put("directCostInvoiceDetail.MTDCinvoiceAmount", directCostInvoiceAmount);
         localParameterMap.put("inDirectCostInvoiceDetail.invoiceAmount", indirectCostInvoiceAmount);
@@ -130,9 +150,13 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         
     }
     
-    private void putKeyValueInMap(Map<String, Object> localParameterMap, String key, Object value) {
-        LOG.info("putKeyValueInMap, key: " + key + " value: " + value);
-        localParameterMap.put(key, value);
+    private boolean isObjectCodeICRExcluded(String chartCode, String objectCode) {
+        Map fieldValues = new HashMap();
+        fieldValues.put("chartOfAccountsCode", chartCode);
+        fieldValues.put("financialObjectCode", objectCode);
+        fieldValues.put("active", true);
+        Collection<IndirectCostRecoveryExclusionType> icrExclusionTypes = businessObjectService.findMatching(IndirectCostRecoveryExclusionType.class, fieldValues);
+        return org.apache.commons.collections.CollectionUtils.isNotEmpty(icrExclusionTypes);
     }
     
     @Override
@@ -321,4 +345,40 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return Optional.empty();
     }
 
+    public BusinessObjectService getBusinessObjectService() {
+        if (businessObjectService == null) {
+            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        }
+        return businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+    
+    private class InvoiceDetailAmounts {
+        public KualiDecimal totalBudget;
+        public KualiDecimal invoiceAmount;
+        public KualiDecimal invoiceAmmountBilledToDate;
+        
+        public InvoiceDetailAmounts() {
+            totalBudget = KualiDecimal.ZERO;
+            invoiceAmount = KualiDecimal.ZERO;
+            invoiceAmmountBilledToDate = KualiDecimal.ZERO;
+        }
+        
+        public void addToTotalBudget(KualiDecimal amount) {
+            totalBudget = totalBudget.add(amount);
+        }
+        
+        public void addToInvoiceAmount(KualiDecimal amount) {
+            invoiceAmount = invoiceAmount.add(amount);
+        }
+        
+        public void addToInvoiceAmmountBilledToDate(KualiDecimal amount) {
+            invoiceAmmountBilledToDate = invoiceAmmountBilledToDate.add(amount);
+        }
+    }
 }
+
+
