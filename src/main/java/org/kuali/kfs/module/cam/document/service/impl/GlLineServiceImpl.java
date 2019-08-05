@@ -639,14 +639,24 @@ public class GlLineServiceImpl implements GlLineService {
                 detail.setExpenditureFinancialDocumentNumber(entry.getDocumentNumber());
                 detail.setExpenditureFinancialDocumentTypeCode(replaceFiller(entry.getFinancialDocumentTypeCode()));
                 detail.setExpenditureFinancialDocumentPostedDate(entry.getTransactionDate());
-                detail.setPurchaseOrderNumber(replaceFiller(entry.getReferenceFinancialDocumentNumber()));
+                detail.setPurchaseOrderNumber(replaceFiller(fetchReferenceFinancialDocumentNumberIfPreqOrCmDocument(entry)));
                 detail.setTransferPaymentIndicator(false);
+
                 detail.refreshNonUpdateableReferences();
                 appliedPayments.add(detail);
             }
         }
 
         return appliedPayments;
+    }
+
+    protected String fetchReferenceFinancialDocumentNumberIfPreqOrCmDocument(GeneralLedgerEntry entry) {
+        if (KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST.equals(entry.getFinancialDocumentTypeCode()) ||
+            KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO.equals(entry.getFinancialDocumentTypeCode())) {
+            return entry.getReferenceFinancialDocumentNumber();
+        }
+
+        return null;
     }
 
     /**
@@ -720,40 +730,6 @@ public class GlLineServiceImpl implements GlLineService {
 
         //save the updated gl entry in CAB
         businessObjectService.save(matchingGLEntry);
-    }
-
-    /**
-     * NOTE: This method is not used anywhere in project.
-     * Creates asset payment detail based on GL line. to CAB
-     *
-     * @param entry    GeneralLedgerEntry
-     * @param document Document
-     * @return AssetPaymentDetail
-     */
-    protected AssetPaymentDetail createAssetPaymentDetail(GeneralLedgerEntry entry, Document document, int seqNo,
-            Integer capitalAssetLineNumber) {
-        // This is not added to constructor in CAMS to provide module isolation from CAMS
-        AssetPaymentDetail detail = new AssetPaymentDetail();
-        detail.setDocumentNumber(document.getDocumentNumber());
-        detail.setSequenceNumber(seqNo);
-        detail.setPostingYear(entry.getUniversityFiscalYear());
-        detail.setPostingPeriodCode(entry.getUniversityFiscalPeriodCode());
-        detail.setChartOfAccountsCode(entry.getChartOfAccountsCode());
-        detail.setAccountNumber(replaceFiller(entry.getAccountNumber()));
-        detail.setSubAccountNumber(replaceFiller(entry.getSubAccountNumber()));
-        detail.setFinancialObjectCode(replaceFiller(entry.getFinancialObjectCode()));
-        detail.setFinancialSubObjectCode(replaceFiller(entry.getFinancialSubObjectCode()));
-        detail.setProjectCode(replaceFiller(entry.getProjectCode()));
-        detail.setOrganizationReferenceId(replaceFiller(entry.getOrganizationReferenceId()));
-        KualiDecimal capitalAssetAmount = getCapitalAssetAmount(entry, capitalAssetLineNumber);
-        detail.setAmount(capitalAssetAmount);
-        detail.setExpenditureFinancialSystemOriginationCode(replaceFiller(entry.getFinancialSystemOriginationCode()));
-        detail.setExpenditureFinancialDocumentNumber(entry.getDocumentNumber());
-        detail.setExpenditureFinancialDocumentTypeCode(replaceFiller(entry.getFinancialDocumentTypeCode()));
-        detail.setExpenditureFinancialDocumentPostedDate(entry.getTransactionDate());
-        detail.setPurchaseOrderNumber(replaceFiller(entry.getReferenceFinancialDocumentNumber()));
-        detail.setTransferPaymentIndicator(false);
-        return detail;
     }
 
     /**
