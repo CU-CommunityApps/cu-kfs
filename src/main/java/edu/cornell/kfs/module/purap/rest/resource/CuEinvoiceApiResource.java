@@ -182,7 +182,7 @@ public class CuEinvoiceApiResource {
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.DESCRIPTION, poItem.getItemDescription());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.UNIT_PRICE, poItem.getItemUnitPrice());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.LINE_NUMBER, poItem.getItemLineNumber());
-                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PART_NUMBER, poItem.getItemAuxiliaryPartIdentifier());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PART_NUMBER, poItem.getItemCatalogNumber());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.ITEM_TYPE_DESCRIPTION, poItem.getItemType());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.ITEM_TYPE_CODE, poItem.getItemTypeCode());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PO_ITEM_ID, poItem.getItemIdentifier());
