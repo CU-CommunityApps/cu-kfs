@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType;
-import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
@@ -36,8 +35,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-
-import com.amazonaws.services.s3.internal.MD5DigestCalculatingInputStream;
 
 import edu.cornell.kfs.module.ar.CuArConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
@@ -146,7 +143,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         fieldValues.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, objectCode);
         fieldValues.put(KFSPropertyConstants.ACTIVE, KFSConstants.ACTIVE_INDICATOR);
         Collection<IndirectCostRecoveryExclusionType> icrExclusionTypes = businessObjectService.findMatching(IndirectCostRecoveryExclusionType.class, fieldValues);
-        return org.apache.commons.collections.CollectionUtils.isNotEmpty(icrExclusionTypes);
+        return CollectionUtils.isNotEmpty(icrExclusionTypes);
     }
 
     private void populateMdcSubTotalPlaceholders(Map<String, Object> localParameterMap, InvoiceDetailAmounts mdcyTotals, InvoiceDetailAmounts mdcnTotals) {
