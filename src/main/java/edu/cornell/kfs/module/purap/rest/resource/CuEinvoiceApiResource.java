@@ -153,7 +153,8 @@ public class CuEinvoiceApiResource {
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.CITY, vendorAddress.getVendorCityName());
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.STATE, vendorAddress.getVendorStateCode());
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.ZIPCODE, vendorAddress.getVendorZipCode());
-            safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.COUNTRY, vendorAddress.getVendorCountryCode());
+            safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.COUNTRY_CODE, vendorAddress.getVendorCountryCode());
+            safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.COUNTRY_NAME, vendorAddress.getVendorCountry().getName());
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.ADDRESS_TYPE_CODE, vendorAddress.getVendorAddressTypeCode());
         }
     }
