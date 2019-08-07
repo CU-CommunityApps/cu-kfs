@@ -286,10 +286,10 @@ public class RassReportServiceImpl implements RassReportService {
     }
     
     private String buildErrorLines(String prefix, String errorMessage) {
-        StringBuffer errorLines = new StringBuffer();
+        StringBuilder errorLines = new StringBuilder();
         String[] lines = errorMessage.split(KFSConstants.NEWLINE);
         for (String line : lines) {
-            if (StringUtils.isNoneBlank(line)) {
+            if (StringUtils.isNotBlank(line)) {
                 errorLines.append(prefix);
                 errorLines.append(line);
                 errorLines.append(KFSConstants.NEWLINE);
