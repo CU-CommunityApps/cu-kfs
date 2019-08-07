@@ -62,11 +62,13 @@ public class RassReportServiceImpl implements RassReportService {
     }
 
     private Collection<String> getToAddresses() {
-        return parameterService.getParameterValuesAsString(RassStep.class, RassParameterConstants.TO_REPORT_EMAIL_ADDRESSES);
+        return parameterService.getParameterValuesAsString(RassStep.class,
+                RassParameterConstants.TO_REPORT_EMAIL_ADDRESSES);
     }
 
     private String getFromAddress() {
-        return parameterService.getParameterValueAsString(RassStep.class, RassParameterConstants.FROM_REPORT_EMAIL_ADDRESS);
+        return parameterService.getParameterValueAsString(RassStep.class,
+                RassParameterConstants.FROM_REPORT_EMAIL_ADDRESS);
     }
 
     public String getFileContents(String fileName) {
@@ -88,9 +90,11 @@ public class RassReportServiceImpl implements RassReportService {
 
         for (RassXmlFileParseResult fileParseResult : fileParseResults) {
             if (RassConstants.RassParseResultCode.ERROR.equals(fileParseResult.getResultCode())) {
-                reportWriterService.writeFormattedMessageLine("RASS file: " + fileParseResult.getRassXmlFileName() + " hasn't been processed successfully");
+                reportWriterService.writeFormattedMessageLine(
+                        "RASS file: " + fileParseResult.getRassXmlFileName() + " hasn't been processed successfully");
             } else {
-                reportWriterService.writeFormattedMessageLine("RASS file: " + fileParseResult.getRassXmlFileName() + " has been processed successfully");
+                reportWriterService.writeFormattedMessageLine(
+                        "RASS file: " + fileParseResult.getRassXmlFileName() + " has been processed successfully");
 
                 writeReportSummary(rassBatchJobReport);
                 writeReportDetails(rassBatchJobReport);
@@ -123,7 +127,8 @@ public class RassReportServiceImpl implements RassReportService {
 
     private void writeProposalSummaryToReport(RassBatchJobReport rassBatchJobReport) {
         RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = processingResults.getProposalResults();
+        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = processingResults
+                .getProposalResults();
         List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
         writeBOResultsSummaryToReport(proposalResults, Proposal.class, false);
     }
@@ -135,25 +140,31 @@ public class RassReportServiceImpl implements RassReportService {
         writeBOResultsSummaryToReport(awardResults, Award.class, true);
     }
 
-    private <R extends PersistableBusinessObject> void writeBOResultsSummaryToReport(List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass,
-            boolean shouldReportUpdates) {
-        writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SUCCESS_NEW, businessObjectClass);
+    private <R extends PersistableBusinessObject> void writeBOResultsSummaryToReport(
+            List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass, boolean shouldReportUpdates) {
+        writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SUCCESS_NEW,
+                businessObjectClass);
         if (shouldReportUpdates) {
-            writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT, businessObjectClass);
+            writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT,
+                    businessObjectClass);
         }
-        writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.ERROR, businessObjectClass);
-        writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SKIPPED, businessObjectClass);
+        writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.ERROR,
+                businessObjectClass);
+        writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SKIPPED,
+                businessObjectClass);
     }
 
-    private <R extends PersistableBusinessObject> void writeResultsSummaryToReportByResultCode(List<RassBusinessObjectUpdateResult<R>> results,
-            RassObjectUpdateResultCode resultCode, Class businessObjectClass) {
-        List<RassBusinessObjectUpdateResult<R>> filteredResults = results.stream().filter(result -> resultCode.equals(result.getResultCode()))
-                .collect(Collectors.toList());
+    private <R extends PersistableBusinessObject> void writeResultsSummaryToReportByResultCode(
+            List<RassBusinessObjectUpdateResult<R>> results, RassObjectUpdateResultCode resultCode,
+            Class businessObjectClass) {
+        List<RassBusinessObjectUpdateResult<R>> filteredResults = results.stream()
+                .filter(result -> resultCode.equals(result.getResultCode())).collect(Collectors.toList());
         writeSummaryLineToReport(filteredResults, resultCode, businessObjectClass);
     }
 
-    private <R extends PersistableBusinessObject> void writeSummaryLineToReport(List<RassBusinessObjectUpdateResult<R>> filteredResults,
-            RassObjectUpdateResultCode resultCode, Class businessObjectClass) {
+    private <R extends PersistableBusinessObject> void writeSummaryLineToReport(
+            List<RassBusinessObjectUpdateResult<R>> filteredResults, RassObjectUpdateResultCode resultCode,
+            Class businessObjectClass) {
 
         String resultMessage;
         switch (resultCode) {
@@ -174,7 +185,8 @@ public class RassReportServiceImpl implements RassReportService {
                 break;
         }
 
-        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + ": " + filteredResults.size() + ".";
+        String reportMessage = "Number of " + businessObjectClass.getSimpleName() + " objects" + resultMessage + ": "
+                + filteredResults.size() + ".";
         reportWriterService.writeFormattedMessageLine(reportMessage);
     }
 
@@ -201,7 +213,8 @@ public class RassReportServiceImpl implements RassReportService {
 
     private void writeProposalDetailsToReport(RassBatchJobReport rassBatchJobReport) {
         RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = processingResults.getProposalResults();
+        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = processingResults
+                .getProposalResults();
         List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
         writeResultsDetailsToReport(proposalResults, Proposal.class, false);
     }
@@ -213,20 +226,25 @@ public class RassReportServiceImpl implements RassReportService {
         writeResultsDetailsToReport(awardResults, Award.class, true);
     }
 
-    private <R extends PersistableBusinessObject> void writeResultsDetailsToReport(List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass,
-            boolean shouldReportUpdates) {
-        writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.SUCCESS_NEW);
+    private <R extends PersistableBusinessObject> void writeResultsDetailsToReport(
+            List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass, boolean shouldReportUpdates) {
+        writeResultsDetailsToReportByResultCode(results, businessObjectClass,
+                RassConstants.RassObjectUpdateResultCode.SUCCESS_NEW);
         if (shouldReportUpdates) {
-            writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT);
+            writeResultsDetailsToReportByResultCode(results, businessObjectClass,
+                    RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT);
         }
-        writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.ERROR);
-        writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.SKIPPED);
+        writeResultsDetailsToReportByResultCode(results, businessObjectClass,
+                RassConstants.RassObjectUpdateResultCode.ERROR);
+        writeResultsDetailsToReportByResultCode(results, businessObjectClass,
+                RassConstants.RassObjectUpdateResultCode.SKIPPED);
     }
 
-    private <R extends PersistableBusinessObject> void writeResultsDetailsToReportByResultCode(List<RassBusinessObjectUpdateResult<R>> results,
-            Class businessObjectClass, RassObjectUpdateResultCode resultCode) {
-        List<RassBusinessObjectUpdateResult<R>> filteredResults = results.stream().filter(result -> resultCode.equals(result.getResultCode()))
-                .collect(Collectors.toList());
+    private <R extends PersistableBusinessObject> void writeResultsDetailsToReportByResultCode(
+            List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass,
+            RassObjectUpdateResultCode resultCode) {
+        List<RassBusinessObjectUpdateResult<R>> filteredResults = results.stream()
+                .filter(result -> resultCode.equals(result.getResultCode())).collect(Collectors.toList());
 
         writeHeaderForResultsDetailsByResultCode(businessObjectClass, resultCode);
 
@@ -235,7 +253,8 @@ public class RassReportServiceImpl implements RassReportService {
         }
     }
 
-    private void writeHeaderForResultsDetailsByResultCode(Class businessObjectClass, RassObjectUpdateResultCode resultCode) {
+    private void writeHeaderForResultsDetailsByResultCode(Class businessObjectClass,
+            RassObjectUpdateResultCode resultCode) {
         String header;
         String objectName = businessObjectClass.getSimpleName();
         switch (resultCode) {
@@ -259,17 +278,16 @@ public class RassReportServiceImpl implements RassReportService {
         reportWriterService.writeFormattedMessageLine(header);
     }
 
-    private <R extends PersistableBusinessObject> void writeResultDetailToReport(RassBusinessObjectUpdateResult<R> result) {
+    private <R extends PersistableBusinessObject> void writeResultDetailToReport(
+            RassBusinessObjectUpdateResult<R> result) {
         String reportMessage;
         String messagePrefix = result.getBusinessObjectClass().getSimpleName() + " #: " + result.getPrimaryKey();
         switch (result.getResultCode()) {
             case SUCCESS_NEW:
-                reportMessage = messagePrefix + " created by document #: "
-                        + result.getDocumentId();
+                reportMessage = messagePrefix + " created by document #: " + result.getDocumentId();
                 break;
             case SUCCESS_EDIT:
-                reportMessage = messagePrefix + " updated by document #: "
-                        + result.getDocumentId();
+                reportMessage = messagePrefix + " updated by document #: " + result.getDocumentId();
                 break;
             case ERROR:
                 reportMessage = buildErrorLines(messagePrefix + " error: ", result.getErrorMessage());
@@ -284,15 +302,15 @@ public class RassReportServiceImpl implements RassReportService {
 
         reportWriterService.writeFormattedMessageLine(reportMessage);
     }
-    
+
     private String buildErrorLines(String prefix, String errorMessage) {
         StringBuffer errorLines = new StringBuffer();
         String[] lines = errorMessage.split(KFSConstants.NEWLINE);
-        for(String line : lines) {
-            if(StringUtils.isNoneBlank(line)) {
-            errorLines.append(prefix);
-            errorLines.append(line);
-            errorLines.append(KFSConstants.NEWLINE);
+        for (String line : lines) {
+            if (StringUtils.isNoneBlank(line)) {
+                errorLines.append(prefix);
+                errorLines.append(line);
+                errorLines.append(KFSConstants.NEWLINE);
             }
         }
         return errorLines.toString();
