@@ -12,6 +12,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
@@ -271,8 +272,7 @@ public class RassReportServiceImpl implements RassReportService {
                         + result.getDocumentId();
                 break;
             case ERROR:
-                reportMessage = messagePrefix + " resulted in error. \n Error(s): "
-                        + result.getErrorMessage();
+                reportMessage = buildErrorLines(messagePrefix + " error: ", result.getErrorMessage());
                 break;
             case SKIPPED:
                 reportMessage = messagePrefix + " skipped.";
@@ -283,6 +283,19 @@ public class RassReportServiceImpl implements RassReportService {
         }
 
         reportWriterService.writeFormattedMessageLine(reportMessage);
+    }
+    
+    private String buildErrorLines(String prefix, String errorMessage) {
+        StringBuffer errorLines = new StringBuffer();
+        String[] lines = errorMessage.split(KFSConstants.NEWLINE);
+        for(String line : lines) {
+            if(StringUtils.isNoneBlank(line)) {
+            errorLines.append(prefix);
+            errorLines.append(line);
+            errorLines.append(KFSConstants.NEWLINE);
+            }
+        }
+        return errorLines.toString();
     }
 
     public EmailService getEmailService() {

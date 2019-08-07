@@ -18,7 +18,7 @@ public class RassStep extends AbstractStep {
 
     private RassService rassService;
     private RassReportService rassReportService;
-    
+
     private static final Logger LOG = LogManager.getLogger(RassStep.class);
 
     @Override
@@ -36,7 +36,8 @@ public class RassStep extends AbstractStep {
         return true;
     }
 
-    protected List<RassXmlFileParseResult> findSuccessfullyParsedFileResults(List<RassXmlFileParseResult> parseResults) {
+    protected List<RassXmlFileParseResult> findSuccessfullyParsedFileResults(
+            List<RassXmlFileParseResult> parseResults) {
         return parseResults.stream()
                 .filter(parseResult -> RassParseResultCode.SUCCESS.equals(parseResult.getResultCode()))
                 .collect(Collectors.toCollection(ArrayList::new));

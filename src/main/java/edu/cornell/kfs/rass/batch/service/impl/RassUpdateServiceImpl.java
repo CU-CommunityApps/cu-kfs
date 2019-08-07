@@ -447,7 +447,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         try {
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             return errorMessages.values().stream().flatMap(List::stream).map(this::buildValidationErrorMessageForSingleError)
-                    .collect(Collectors.joining(KFSConstants.NEWLINE, KFSConstants.NEWLINE, KFSConstants.NEWLINE));
+                    .collect(Collectors.joining(KFSConstants.NEWLINE));
         } catch (RuntimeException e) {
             LOG.error("buildValidationErrorMessage: Could not build validation error message", e);
             return CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE;
