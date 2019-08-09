@@ -153,7 +153,8 @@ public class CuEinvoiceApiResource {
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.CITY, vendorAddress.getVendorCityName());
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.STATE, vendorAddress.getVendorStateCode());
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.ZIPCODE, vendorAddress.getVendorZipCode());
-            safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.COUNTRY, vendorAddress.getVendorCountryCode());
+            safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.COUNTRY_CODE, vendorAddress.getVendorCountryCode());
+            safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.COUNTRY_NAME, vendorAddress.getVendorCountry().getName());
             safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.ADDRESS_TYPE_CODE, vendorAddress.getVendorAddressTypeCode());
         }
     }
@@ -181,7 +182,7 @@ public class CuEinvoiceApiResource {
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.DESCRIPTION, poItem.getItemDescription());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.UNIT_PRICE, poItem.getItemUnitPrice());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.LINE_NUMBER, poItem.getItemLineNumber());
-                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PART_NUMBER, poItem.getItemAuxiliaryPartIdentifier());
+                safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PART_NUMBER, poItem.getItemCatalogNumber());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.ITEM_TYPE_DESCRIPTION, poItem.getItemType());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.ITEM_TYPE_CODE, poItem.getItemTypeCode());
                 safelyAddProperty(lineProps, CUPurapConstants.Einvoice.PO_ITEM_ID, poItem.getItemIdentifier());
@@ -196,15 +197,15 @@ public class CuEinvoiceApiResource {
     }
 
     private void safelyAddProperty(Properties properties, String key, KualiDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
+        properties.put(key, ObjectUtils.isNull(value) ? CUPurapConstants.Einvoice.NULL : value.doubleValue());
     }
 
     private void safelyAddProperty(Properties properties, String key, BigDecimal value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value.toString());
+        properties.put(key, ObjectUtils.isNull(value) ? CUPurapConstants.Einvoice.NULL : value.doubleValue());
     }
 
     private void safelyAddProperty(Properties properties, String key, Integer value) {
-        properties.put(key, ObjectUtils.isNull(value) ? KFSConstants.EMPTY_STRING : value);
+        properties.put(key, ObjectUtils.isNull(value) ? CUPurapConstants.Einvoice.NULL : value);
     }
 
     private void safelyAddProperty(Properties properties, String key, ItemType value) {
