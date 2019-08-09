@@ -243,7 +243,7 @@ public final class PurapConstants {
     private PurapConstants() {
     }
 
-    private static final Map<String, Class<?>> uncopyableFields() {
+    private static Map<String, Class<?>> uncopyableFields() {
         Map<String, Class<?>> fields = new HashMap<>();
         fields.put(KFSConstants.VERSION_NUMBER, null);
         fields.put("LOG", null);
@@ -254,14 +254,14 @@ public final class PurapConstants {
         return fields;
     }
 
-    private static final Map<String, Class<?>> uncopyableItemFields() {
+    private static Map<String, Class<?>> uncopyableItemFields() {
         Map<String, Class<?>> fields = new HashMap<>();
         fields.put(PurapPropertyConstants.ITEM_IDENTIFIER, null);
         fields.put(PurapPropertyConstants.ACCOUNTS, null);
         return fields;
     }
 
-    private static final Map<String, Class<?>> uncopyablePREQItemFields() {
+    private static Map<String, Class<?>> uncopyablePREQItemFields() {
         Map<String, Class<?>> fields = new HashMap<>(ITEM_UNCOPYABLE_FIELDS);
         fields.put(PurapPropertyConstants.QUANTITY, null);
         fields.put(PurapPropertyConstants.EXTENDED_PRICE, null);
@@ -270,7 +270,7 @@ public final class PurapConstants {
         return fields;
     }
 
-    public static final Map<String, Class> uncopyableFieldsForPurchaseOrder() {
+    public static Map<String, Class> uncopyableFieldsForPurchaseOrder() {
         Map<String, Class> returnMap = new HashMap<>();
         returnMap.put(KFSPropertyConstants.DOCUMENT_NUMBER, null);
         returnMap.put(PurapPropertyConstants.ITEM_IDENTIFIER, PurchaseOrderItem.class);
@@ -285,7 +285,7 @@ public final class PurapConstants {
         return returnMap;
     }
 
-    public static final Map<String, Class<?>> uncopyableFieldsForSplitPurchaseOrder() {
+    public static Map<String, Class<?>> uncopyableFieldsForSplitPurchaseOrder() {
         Map<String, Class<?>> returnMap = new HashMap<>();
         returnMap.put(KFSPropertyConstants.DOCUMENT_HEADER, null);
         returnMap.put(PurapPropertyConstants.PURAP_DOC_ID, null);
@@ -632,7 +632,7 @@ public final class PurapConstants {
          * Do not include 'OPEN' status in this map. The 'OPEN' status is the default status that is set when no status exists for a
          * particular pending transmission type code.
          */
-        private static final Map<String, String> getStatusesByTransmissionType() {
+        private static Map<String, String> getStatusesByTransmissionType() {
             Map<String, String> statusByTrans = new HashMap<>();
             statusByTrans.put(PurapConstants.POTransmissionMethods.PRINT, APPDOC_PENDING_PRINT);
             statusByTrans.put(PurapConstants.POTransmissionMethods.ELECTRONIC, APPDOC_PENDING_CXML);
@@ -908,7 +908,7 @@ public final class PurapConstants {
             STATUSES_POSTROUTE.add(APPDOC_AUTO_APPROVED);
         }
 
-        public static final HashMap<String, String> getPaymentRequestAppDocDisapproveStatuses(){
+        public static HashMap<String, String> getPaymentRequestAppDocDisapproveStatuses() {
 
             HashMap<String, String> appDocStatusMap = new HashMap<>();
 
@@ -927,7 +927,7 @@ public final class PurapConstants {
             return appDocStatusMap;
     }
 
-        public static final List<String> getNodesRequiringCorrectingGeneralLedgerEntries(){
+        public static List<String> getNodesRequiringCorrectingGeneralLedgerEntries() {
             List<String> returnList = new ArrayList<>();
 
             returnList.add(NODE_ACCOUNT_REVIEW);
@@ -1282,7 +1282,7 @@ public final class PurapConstants {
     public static final class CAMS_REQUIREDNESS_FIELDS {
         public static final Map<String, String> REQUIREDNESS_FIELDS_BY_PARAMETER_NAMES = getRequirednessFieldsByParameterNames();
         
-        private static final Map<String, String> getRequirednessFieldsByParameterNames() {
+        private static Map<String, String> getRequirednessFieldsByParameterNames() {
             Map<String, String> fieldsByParameterNames = new HashMap<>();
             fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_NUMBER_ON_REQUISITION, "itemCapitalAssets.capitalAssetNumber");
             fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TRANSACTION_TYPE_ON_REQUISITION, "capitalAssetTransactionTypeCode");

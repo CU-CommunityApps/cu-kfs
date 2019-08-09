@@ -236,7 +236,7 @@
 		<property name="title" value="Sub-Fund Group Lookup" />
 
 		<property name="defaultSort">
-			<bean parent="SortDefinition" p:sortAscending="false">
+			<bean parent="SortDefinition">
 				<property name="attributeNames">
 					<list>
 						<value>subFundGroupCode</value>
