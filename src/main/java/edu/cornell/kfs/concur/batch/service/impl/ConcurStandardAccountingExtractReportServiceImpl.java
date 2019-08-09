@@ -47,6 +47,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     protected String expensesPaidOnCorporateCardLabel;
     protected String transactionsBypassedLabel;
     protected String pdpRecordsProcessedLabel;
+    protected String cashAdvanceRequestsBypassedLabel;
     protected String reportValidationErrorsSubTitle;
     protected String reportValidationErrorsSubTitleXXXXNote;
     protected String reportMissingObjectCodesSubTitle;
@@ -122,6 +123,9 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
 
         String pdpRecordsProcessedLabel = (StringUtils.isEmpty(reportData.getPdpRecordsProcessed().getItemLabel())) ?
                 getPdpRecordsProcessedLabel() : reportData.getPdpRecordsProcessed().getItemLabel();
+                
+        String cashAdvanceRequestsBypassedLabel = (StringUtils.isEmpty(reportData.getCashAdvanceRequestsBypassed().getItemLabel())) ?
+                getCashAdvanceRequestsBypassedLabel() : reportData.getCashAdvanceRequestsBypassed().getItemLabel();
 
         getReportWriterService().writeSubTitle(this.getSummarySubTitle());
         getReportWriterService().writeNewLines(1);
@@ -155,6 +159,10 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
         getReportWriterService().writeFormattedMessageLine(rowFormat, 
                 pdpRecordsProcessedLabel, reportData.getPdpRecordsProcessed().getRecordCount(),
                 reportData.getPdpRecordsProcessed().getDollarAmount().toString());
+        
+        getReportWriterService().writeFormattedMessageLine(rowFormat, 
+                cashAdvanceRequestsBypassedLabel, reportData.getCashAdvanceRequestsBypassed().getRecordCount(),
+                reportData.getCashAdvanceRequestsBypassed().getDollarAmount().toString());
 
         getReportWriterService().pageBreak();
     }
@@ -470,6 +478,14 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
 
     public void setPdpRecordsProcessedLabel(String pdpRecordsProcessedLabel) {
         this.pdpRecordsProcessedLabel = pdpRecordsProcessedLabel;
+    }
+
+    public String getCashAdvanceRequestsBypassedLabel() {
+        return cashAdvanceRequestsBypassedLabel;
+    }
+
+    public void setCashAdvanceRequestsBypassedLabel(String cashAdvanceRequestsBypassedLabel) {
+        this.cashAdvanceRequestsBypassedLabel = cashAdvanceRequestsBypassedLabel;
     }
 
     public String getReportValidationErrorsSubTitle() {

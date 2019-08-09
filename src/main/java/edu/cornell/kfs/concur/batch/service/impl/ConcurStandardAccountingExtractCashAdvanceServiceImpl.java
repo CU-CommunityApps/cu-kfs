@@ -15,13 +15,8 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
 	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractCashAdvanceServiceImpl.class);
 
     @Override
-    public boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
-        return StringUtils.isNotBlank(line.getCashAdvanceKey());
-    }
-    
-    @Override
     public boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
-        return isCashAdvanceLine(line) && StringUtils.equalsIgnoreCase(
+        return isCashAdvanceToBeAppliedToReimbursement(line) && StringUtils.equalsIgnoreCase(
                 ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID, line.getCashAdvancePaymentCodeName());
     }
     
@@ -33,7 +28,7 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
     
     @Override
     public boolean isAtmFeeCreditLine(ConcurStandardAccountingExtractDetailLine line) {
-        return isCashAdvanceLine(line)
+        return isCashAdvanceToBeAppliedToReimbursement(line)
                 && StringUtils.equalsIgnoreCase(ConcurConstants.EXPENSE_TYPE_ATM_FEE, line.getExpenseType())
                 && StringUtils.equalsIgnoreCase(ConcurConstants.CREDIT, line.getJournalDebitCredit());
     }
@@ -54,7 +49,7 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
             LOG.debug("findAccountingInfoForCashAdvanceLine, cashAdvanceReportEntryId: " + cashAdvanceReportEntryId);
         }
         for (ConcurStandardAccountingExtractDetailLine line : saeLines) {
-            if (StringUtils.equalsIgnoreCase(line.getReportEntryId(), cashAdvanceReportEntryId) && !isCashAdvanceLine(line)) {
+            if (StringUtils.equalsIgnoreCase(line.getReportEntryId(), cashAdvanceReportEntryId) && !isCashAdvanceToBeAppliedToReimbursement(line)) {
                 info.setChart(line.getChartOfAccountsCode());
                 info.setAccountNumber(line.getAccountNumber());
                 info.setSubAccountNumber(line.getSubAccountNumber());
@@ -69,6 +64,41 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
             }
         }
         return info;
+    }
+    
+    private boolean cashAdvanceKeyExists(ConcurStandardAccountingExtractDetailLine line) {
+        return StringUtils.isNotBlank(line.getCashAdvanceKey());
+    }
+    
+    @Override
+    public boolean isPreTripCashAdvanceRequestLine(ConcurStandardAccountingExtractDetailLine saeLine) {
+        if (StringUtils.isNotEmpty(saeLine.getCashAdvancePaymentCodeName()) 
+                && StringUtils.equalsIgnoreCase(saeLine.getCashAdvancePaymentCodeName(), ConcurConstants.SAE_REQUESTED_CASH_ADVANCE_INDICATOR)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public boolean isPreTripCashAdvanceIssuedByCashAdmin(ConcurStandardAccountingExtractDetailLine saeLine) {
+        if (StringUtils.isNotBlank(saeLine.getCashAdvanceTransactionType())
+                && StringUtils.equalsIgnoreCase(saeLine.getCashAdvanceTransactionType(), ConcurConstants.SAE_REQUESTED_CASH_ADVANCE_APPROVED_BY_CONCUR_ADMIN)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public boolean isCashAdvanceToBeAppliedToReimbursement(ConcurStandardAccountingExtractDetailLine saeLine) {
+        if ( (StringUtils.isNotBlank(saeLine.getCashAdvanceTransactionType())
+                && StringUtils.equalsIgnoreCase(saeLine.getCashAdvanceTransactionType(), ConcurConstants.SAE_CASH_ADVANCE_BEING_APPLIED_TO_TRIP_REIMBURSEMENT))
+              && cashAdvanceKeyExists(saeLine) ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

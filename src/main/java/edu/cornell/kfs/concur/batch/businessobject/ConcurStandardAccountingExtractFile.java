@@ -14,6 +14,7 @@ public class ConcurStandardAccountingExtractFile {
     private String batchId;
     private List<ConcurStandardAccountingExtractDetailLine> concurStandardAccountingExtractDetailLines;
     private String originalFileName;
+    private String fullyQualifiedRequestedCashAdvancesPdpFileName;
 
     public ConcurStandardAccountingExtractFile() {
         concurStandardAccountingExtractDetailLines = new ArrayList<ConcurStandardAccountingExtractDetailLine>();
@@ -68,10 +69,19 @@ public class ConcurStandardAccountingExtractFile {
         this.originalFileName = originalFileName;
     }
 
+    public String getFullyQualifiedRequestedCashAdvancesPdpFileName() {
+        return fullyQualifiedRequestedCashAdvancesPdpFileName;
+    }
+
+    public void setFullyQualifiedRequestedCashAdvancesPdpFileName(String fullyQualifiedRequestedCashAdvancesPdpFileName) {
+        this.fullyQualifiedRequestedCashAdvancesPdpFileName = fullyQualifiedRequestedCashAdvancesPdpFileName;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder(" batchDate: ").append(batchDate).append(" recordCount: ").append(recordCount);
         sb.append(" journalAmountTotal: ").append(journalAmountTotal).append(" batchId: ").append(batchId);
         sb.append(" originalFileName: ").append(originalFileName);
+        sb.append(" fullyQualifiedRequestedCashAdvancesPdpFileName: ").append(fullyQualifiedRequestedCashAdvancesPdpFileName);
         return sb.toString();
     }
 }
