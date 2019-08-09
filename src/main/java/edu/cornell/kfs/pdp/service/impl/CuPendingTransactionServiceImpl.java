@@ -90,9 +90,6 @@ import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
 public class CuPendingTransactionServiceImpl extends PendingTransactionServiceImpl implements CuPendingTransactionService{
     private static final Logger LOG = LogManager.getLogger(CuPendingTransactionServiceImpl.class);
     
-    protected static String FDOC_TYP_CD_STOP_CHECK = "CHKS";
-    protected static String FDOC_TYP_CD_STALE_CHECK = "CHKL";
-    
 	private DocumentService documentService;
     private NoteService noteService;
     private CheckReconciliationDao checkReconciliationDao;
@@ -107,7 +104,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_ACH, FDOC_TYP_CD_CANCEL_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true);
     }
 
     /**
@@ -120,7 +117,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_CANCEL_ACH, FDOC_TYP_CD_STOP_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, CUPdpConstants.FDOC_TYP_CD_STOP_CHECK, true);
     }
     
     
@@ -129,7 +126,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
     public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, FDOC_TYP_CD_STALE_CHECK, FDOC_TYP_CD_STALE_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, true);
     }
     
     /**
@@ -185,7 +182,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             glPendingTransaction.setFdocNbr(paymentGroup.getDisbursementNbr().toString());
             
             // if stale
-            if (StringUtils.equals(FDOC_TYP_CD_STALE_CHECK, checkFdocTypeCod)) {
+            if (StringUtils.equals(CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, checkFdocTypeCod)) {
                 ParameterService parameterService = SpringContext.getBean(ParameterService.class);
 
                 String clAcct = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_ACCOUNT);
