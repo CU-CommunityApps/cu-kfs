@@ -15,10 +15,14 @@
         </property>
     </bean>
 
-  <bean id="Agency-agencyNumber" parent="Agency-agencyNumber-parentBean">
+  <bean id="Agency-agencyNumber" parent="Agency-agencyNumber-parentBean" p:maxLength="6">
 
     <property name="validationPattern">
       <bean parent="AlphaNumericValidationPattern" />
+    </property>
+    
+    <property name="control">
+      <bean parent="TextControlDefinition" p:size="6"/>
     </property>
     
   </bean>
