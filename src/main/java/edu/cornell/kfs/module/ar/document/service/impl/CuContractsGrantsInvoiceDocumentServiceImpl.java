@@ -108,10 +108,12 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 if (isObjectCodeICRExcluded(detailAccount.getChartOfAccountsCode(), detailAccount.getFinancialObjectCode())) {
                     mdcyAmounts.addToInvoiceAmmountBilledToDate(detailAccount.getCumulativeExpenditures());
                     mdcyAmounts.addToInvoiceAmount(detailAccount.getCurrentExpenditures());
+                    // I don't have access to a budget total here, so this calculation is TBD.  I need a budget total that hasn't been previously consolidate that also has an object code associated
                     mdcyAmounts.addToTotalBudget(KualiDecimal.ZERO);
                 } else {
                     mdcnAmounts.addToInvoiceAmmountBilledToDate(detailAccount.getCumulativeExpenditures());
                     mdcnAmounts.addToInvoiceAmount(detailAccount.getCurrentExpenditures());
+                    // I don't have access to a budget total here, so this calculation is TBD.  I need a budget total that hasn't been previously consolidate that also has an object code associated
                     mdcnAmounts.addToTotalBudget(KualiDecimal.ZERO);
                     
                 }
