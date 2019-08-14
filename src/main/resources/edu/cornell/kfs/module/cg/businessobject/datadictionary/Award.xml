@@ -195,7 +195,7 @@
                     <property name="propertyName" value="inquiryFields"/>
                     <property name="propertyNameForElementCompare" value="attributeName"/>
                     <property name="element">
-                        <bean parent="FieldDefinition" p:attributeName="federalPassThroughIndicator"/>
+                        <bean parent="FieldDefinition" p:attributeName="federalPassThroughAgency.fullName"/>
                     </property>
                     <property name="insertAfter">
                         <list>
@@ -248,7 +248,7 @@
                     <property name="propertyName" value="inquiryFields[0].inquiryFields"/>
                     <property name="propertyNameForElementCompare" value="attributeName"/>
                     <property name="element">
-                        <bean parent="FieldDefinition" p:attributeName="projectDirector.principalName"/>
+                        <bean parent="FieldDefinition" p:attributeName="projectDirector.name"/>
                     </property>
                     <property name="insertAfter">
                         <list>
