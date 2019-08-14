@@ -147,19 +147,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         Collection<IndirectCostRecoveryExclusionType> icrExclusionTypes = businessObjectService.findMatching(IndirectCostRecoveryExclusionType.class, fieldValues);
         return CollectionUtils.isNotEmpty(icrExclusionTypes);
     }
-    
-    protected KualiDecimal getBudgetBalanceAmount(Balance balance, boolean firstFiscalPeriod) {
-        KualiDecimal balanceAmount = balance.getContractsGrantsBeginningBalanceAmount().add(balance.getAccountLineAnnualBalanceAmount());
-        if (firstFiscalPeriod && !includePeriod13InPeriod01Calculations()) {
-            balanceAmount = balanceAmount.subtract(balance.getMonth13Amount());
-        }
-        return balanceAmount;
-    }
-    
-    protected boolean includePeriod13InPeriod01Calculations() {
-        return getParameterService().getParameterValueAsBoolean(ContractsGrantsInvoiceDocument.class,
-                ArParameterKeyConstants.INCLUDE_PERIOD_13_IN_BUDGET_AND_CURRENT_IND_PARM_NM, Boolean.FALSE);
-    }
 
     private void populateMdcSubTotalPlaceholders(Map<String, Object> localParameterMap, InvoiceDetailAmounts mdcyTotals, InvoiceDetailAmounts mdcnTotals) {
         localParameterMap.put(CuArConstants.MTDC_TOTAL_INDIRECT_BASE_BUDGET_PLACEHOLDER, mdcnTotals.totalBudget);
