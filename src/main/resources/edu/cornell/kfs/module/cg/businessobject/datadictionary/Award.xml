@@ -191,6 +191,71 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquiryFields"/>
+                    <property name="propertyNameForElementCompare" value="attributeName"/>
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="federalPassThroughAgency.fullName"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.primeAgreementNumber"/>
+                        </list>
+                    </property>
+                </bean>
+                
+            </list>
+        </property>
+    </bean>
+    
+    <bean parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="Award-inquirySectionDefinition-invoicing"/>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquiryFields"/>
+                    <property name="propertyNameForElementCompare" value="attributeName"/>
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="autoApproveIndicator"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.autoApproveReason"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquiryFields"/>
+                    <property name="propertyNameForElementCompare" value="attributeName"/>
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="minInvoiceAmount"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.purchaseOrderNumber"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="Award-inquirySectionDefinition-accounts"/>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquiryFields[0].inquiryFields"/>
+                    <property name="propertyNameForElementCompare" value="attributeName"/>
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="projectDirector.name"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.accountPurchaseOrderNumber"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>
