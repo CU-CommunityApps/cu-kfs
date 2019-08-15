@@ -235,7 +235,8 @@ public class CUPurapConstants {
         public static final String STATE = "state";
         public static final String CITY = "city";
         public static final String ZIPCODE = "zipcode";
-        public static final String COUNTRY = "country";
+        public static final String COUNTRY_CODE = "country_code";
+        public static final String COUNTRY_NAME = "country_name";
         public static final String ADDRESS_TYPE_CODE = "address_type_code";
         public static final String UNIT_OF_MEASURE = "unit_of_measure";
         public static final String DESCRIPTION = "description";
@@ -259,5 +260,6 @@ public class CUPurapConstants {
         public static final String AMOUNT = "amount";
         public static final String PO_QUANTITY = "po_quantity";
         public static final String INVOICE_QUANTITY = "invoice_quantity";
+        public static final String NULL = "null";
     }
 }
