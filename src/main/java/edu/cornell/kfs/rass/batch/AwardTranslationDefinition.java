@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
@@ -25,6 +27,7 @@ import edu.cornell.kfs.rass.util.RassUtil;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class AwardTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAwardEntry, Award> {
+    private static final Logger LOG = LogManager.getLogger(AwardTranslationDefinition.class);
 
     private AwardService awardService;
     private DateTimeService dateTimeService;
@@ -72,7 +75,7 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         newAward.setProposalAwardTypeCode(proposalAwardTypeCode);
         newAward.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
         newAward.getAwardAccounts().add(createDefaultAwardAccount(xmlAward));
-        newAward.getAwardFundManagers().add(createDefaultFundManager(xmlAward));
+        addPrimaryFundManager(xmlAward, newAward);
         updateFinalFinancialReportRequiredFlag(xmlAward, newAward);
         updateAwardLastUpdateDate(newAward);
         
@@ -110,19 +113,24 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         }
         return Pair.of(defaultChart, defaultAccount);
     }
-
-    protected AwardFundManager createDefaultFundManager(RassXmlAwardEntry xmlAward) {
-        String fundManagerPrincipalId = parameterService.getParameterValueAsString(
-                RassStep.class, RassParameterConstants.DEFAULT_FUND_MANAGER);
-        if (StringUtils.isBlank(fundManagerPrincipalId)) {
-            throw new RuntimeException("Default fund manager parameter cannot be blank");
+    
+    protected void addPrimaryFundManager(RassXmlAwardEntry xmlAward, Award award) {
+        if (ObjectUtils.isNull(award.getAwardPrimaryFundManager())) {
+            LOG.info("addPrimaryFundManager, there is no primary fund manager, so add default fund manager.");
+            String fundManagerPrincipalId = parameterService.getParameterValueAsString(
+                    RassStep.class, RassParameterConstants.DEFAULT_FUND_MANAGER);
+            if (StringUtils.isBlank(fundManagerPrincipalId)) {
+                throw new RuntimeException("Default fund manager parameter cannot be blank");
+            }
+            
+            AwardFundManager fundManager = new AwardFundManager();
+            fundManager.setProposalNumber(xmlAward.getProposalNumber());
+            fundManager.setPrincipalId(fundManagerPrincipalId);
+            fundManager.setPrimaryFundManagerIndicator(true);
+            award.getAwardFundManagers().add(fundManager);
+        } else {
+            LOG.info("addPrimaryFundManager, primary fund manager already exists, no need to add default.");
         }
-        
-        AwardFundManager fundManager = new AwardFundManager();
-        fundManager.setProposalNumber(xmlAward.getProposalNumber());
-        fundManager.setPrincipalId(fundManagerPrincipalId);
-        fundManager.setPrimaryFundManagerIndicator(true);
-        return fundManager;
     }
 
     @Override
@@ -135,6 +143,7 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         refreshReferenceObject(newAward, CuCGPropertyConstants.GRANT_DESCRIPTION);
         refreshReferenceObject(newAward, KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY);
         updateFinalFinancialReportRequiredFlag(xmlAward, newAward);
+        addPrimaryFundManager(xmlAward, newAward);
         updateAwardLastUpdateDate(newAward);
     }
 
