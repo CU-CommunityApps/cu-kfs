@@ -25,6 +25,7 @@ import edu.cornell.kfs.rass.RassConstants.RassObjectGroupingUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
 import edu.cornell.kfs.rass.batch.PendingDocumentTracker;
+import edu.cornell.kfs.rass.batch.RassBatchUtils;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
@@ -33,7 +34,6 @@ import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassService;
 import edu.cornell.kfs.rass.batch.service.RassUpdateService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
-import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntryComparator;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
@@ -132,7 +132,7 @@ public class RassServiceImpl implements RassService {
                 
                 if (Agency.class.getSimpleName().equals(objectDefinition.getObjectLabel())) {
                     LOG.info("updateBOs, found a collection of Agencies, need to do our custom sort.");
-                    Collections.sort((List<RassXmlAgencyEntry>)xmlObjects, new RassXmlAgencyEntryComparator());
+                    xmlObjects = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate((List<RassXmlAgencyEntry>) xmlObjects);
                 }
                 
                 LOG.info("updateBOs, Found " + xmlObjects.size()
