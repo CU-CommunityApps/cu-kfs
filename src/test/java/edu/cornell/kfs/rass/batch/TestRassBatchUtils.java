@@ -6,9 +6,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,25 +24,26 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class TestRassBatchUtils {
+    private static final String FULL_EXTRACT_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-full-extract-agencies.xml";
     private static final Logger LOG = LogManager.getLogger(TestRassBatchUtils.class);
     private CUMarshalService cuMarshalService;
-    private RassXmlDocumentWrapper rassXmlDocumentWrapper;
 
     @Before
     public void setUp() throws Exception {
+        Configurator.setLevel(RassBatchUtils.class.getName(), Level.DEBUG);
         cuMarshalService = new CUMarshalServiceImpl();
-        File xmlFile = new File(RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-full-extract-agencies.xml");
-        rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
     }
 
     @After
     public void tearDown() throws Exception {
         cuMarshalService = null;
-        rassXmlDocumentWrapper = null;
     }
 
     @Test
-    public void checkBeforeSort() {
+    public void checkFullExtractBeforeSort() throws JAXBException {
+        File xmlFile = new File(FULL_EXTRACT_FILE_NAME);
+        RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
+        
         TestResults results = checkReportsToAgencyBeforeChildAgencies(rassXmlDocumentWrapper.getAgencies());
         LOG.info("checkBeforeSort, processed: " + results.processedAgencies);
         LOG.info("checkBeforeSort, failed: " + results.failedAgencies);
@@ -46,7 +51,10 @@ public class TestRassBatchUtils {
     }
     
     @Test
-    public void checkAfterSort() {
+    public void checkFullExtractAfterSort() throws JAXBException {
+        File xmlFile = new File(FULL_EXTRACT_FILE_NAME);
+        RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
+        
         int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
         List<RassXmlAgencyEntry> sortedAgencyEntries = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
