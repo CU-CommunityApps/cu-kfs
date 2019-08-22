@@ -33,6 +33,7 @@ import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassService;
 import edu.cornell.kfs.rass.batch.service.RassUpdateService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
+import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntryComparator;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
@@ -128,6 +129,11 @@ public class RassServiceImpl implements RassService {
                 
                 List<?> xmlObjects = (List<?>) ObjectPropertyUtils.getPropertyValue(
                         documentWrapper, objectDefinition.getRootXmlObjectListPropertyName());
+                
+                if (Agency.class.getSimpleName().equals(objectDefinition.getObjectLabel())) {
+                    LOG.info("updateBOs, found a collection of Agencies, need to do our custom sort.");
+                    Collections.sort((List<RassXmlAgencyEntry>)xmlObjects, new RassXmlAgencyEntryComparator());
+                }
                 
                 LOG.info("updateBOs, Found " + xmlObjects.size()
                         + KFSConstants.BLANK_SPACE + objectDefinition.getObjectLabel() + " objects to process");
