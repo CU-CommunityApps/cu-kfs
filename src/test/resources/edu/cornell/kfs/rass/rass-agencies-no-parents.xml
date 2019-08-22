@@ -1,0 +1,44 @@
+<Kfs>
+	<Extract_Begin_Timestamp>2019-08-21T05:46:01.634949
+	</Extract_Begin_Timestamp>
+	<Awards>
+	</Awards>
+	<Agencies>
+		<Agency>
+			<Number>12</Number>
+			<Reporting_Name>Idiap</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>13</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>15</Number>
+			<Reporting_Name>Idiap</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>13</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>11</Number>
+			<Reporting_Name>Idiap</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>13</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>14</Number>
+			<Reporting_Name>Idiap</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>13</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+	</Agencies>
+</Kfs>

@@ -25,6 +25,8 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class TestRassBatchUtils {
     private static final String FULL_EXTRACT_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-full-extract-agencies.xml";
+    private static final String NO_PARENTS_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agencies-no-parents.xml";
+    private static final String SINGLE_AWARD_FILE = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass_single_award_only.xml";
     private static final Logger LOG = LogManager.getLogger(TestRassBatchUtils.class);
     private CUMarshalService cuMarshalService;
 
@@ -65,6 +67,30 @@ public class TestRassBatchUtils {
         LOG.info("checkAfterSort, processed: " + results.processedAgencies);
         LOG.info("checkAfterSort, failed: " + results.failedAgencies);
         assertTrue("There shoulld be no agencies before their reports to agency after the sort", results.failedAgencies.size() == 0);
+    }
+    
+    @Test
+    public void testNoParentAgengiesFile() throws JAXBException {
+        File xmlFile = new File(NO_PARENTS_FILE_NAME);
+        RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
+        
+        int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
+        List<RassXmlAgencyEntry> sortedAgencyEntries = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
+        int postSortCount = sortedAgencyEntries.size();
+        
+        assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
+    }
+    
+    @Test
+    public void testSingleAwardFile() throws JAXBException {
+        File xmlFile = new File(SINGLE_AWARD_FILE);
+        RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
+        
+        int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
+        List<RassXmlAgencyEntry> sortedAgencyEntries = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
+        int postSortCount = sortedAgencyEntries.size();
+        
+        assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
     }
     
     private TestResults checkReportsToAgencyBeforeChildAgencies(List<RassXmlAgencyEntry> agencies) {
