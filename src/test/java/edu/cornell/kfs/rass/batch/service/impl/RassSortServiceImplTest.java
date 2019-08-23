@@ -1,4 +1,4 @@
-package edu.cornell.kfs.rass.batch;
+package edu.cornell.kfs.rass.batch.service.impl;
 
 import static org.junit.Assert.*;
 
@@ -23,22 +23,25 @@ import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapperMarshalTest;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
-public class TestRassBatchUtils {
+public class RassSortServiceImplTest {
     private static final String FULL_EXTRACT_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-full-extract-agencies.xml";
     private static final String NO_PARENTS_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agencies-no-parents.xml";
     private static final String SINGLE_AWARD_FILE = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass_single_award_only.xml";
-    private static final Logger LOG = LogManager.getLogger(TestRassBatchUtils.class);
+    private static final Logger LOG = LogManager.getLogger(RassSortServiceImplTest.class);
     private CUMarshalService cuMarshalService;
+    private RassSortServiceImpl rassSortServiceImpl;
 
     @Before
     public void setUp() throws Exception {
-        Configurator.setLevel(RassBatchUtils.class.getName(), Level.DEBUG);
+        Configurator.setLevel(RassSortServiceImpl.class.getName(), Level.DEBUG);
         cuMarshalService = new CUMarshalServiceImpl();
+        rassSortServiceImpl = new RassSortServiceImpl();
     }
 
     @After
     public void tearDown() throws Exception {
         cuMarshalService = null;
+        rassSortServiceImpl = null;
     }
 
     @Test
@@ -58,7 +61,7 @@ public class TestRassBatchUtils {
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
         int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
-        List<RassXmlAgencyEntry> sortedAgencyEntries = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
+        List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
         assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
@@ -75,7 +78,7 @@ public class TestRassBatchUtils {
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
         int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
-        List<RassXmlAgencyEntry> sortedAgencyEntries = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
+        List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
         assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
@@ -87,7 +90,7 @@ public class TestRassBatchUtils {
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
         int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
-        List<RassXmlAgencyEntry> sortedAgencyEntries = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
+        List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
         assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);

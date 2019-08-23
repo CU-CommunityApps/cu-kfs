@@ -25,13 +25,13 @@ import edu.cornell.kfs.rass.RassConstants.RassObjectGroupingUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
 import edu.cornell.kfs.rass.batch.PendingDocumentTracker;
-import edu.cornell.kfs.rass.batch.RassBatchUtils;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassService;
+import edu.cornell.kfs.rass.batch.service.RassSortService;
 import edu.cornell.kfs.rass.batch.service.RassUpdateService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
@@ -50,6 +50,7 @@ public class RassServiceImpl implements RassService {
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
     protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
     protected RassObjectTranslationDefinition<RassXmlAwardEntry, Award> awardDefinition;
+    protected RassSortService rassSortService;
 
     protected String rassFilePath;
 
@@ -132,7 +133,7 @@ public class RassServiceImpl implements RassService {
                 
                 if (Agency.class.getSimpleName().equals(objectDefinition.getObjectLabel())) {
                     LOG.info("updateBOs, found a collection of Agencies, need to do our custom sort.");
-                    xmlObjects = RassBatchUtils.sortRassXmlAgencyEntriesForUpdate((List<RassXmlAgencyEntry>) xmlObjects);
+                    xmlObjects = rassSortService.sortRassXmlAgencyEntriesForUpdate((List<RassXmlAgencyEntry>) xmlObjects);
                 }
                 
                 LOG.info("updateBOs, Found " + xmlObjects.size()
@@ -192,6 +193,10 @@ public class RassServiceImpl implements RassService {
 
     public void setRassFilePath(String rassFilePath) {
         this.rassFilePath = rassFilePath;
+    }
+
+    public void setRassSortService(RassSortService rassSortService) {
+        this.rassSortService = rassSortService;
     }
 
 }

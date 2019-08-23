@@ -1,4 +1,4 @@
-package edu.cornell.kfs.rass.batch;
+package edu.cornell.kfs.rass.batch.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.cornell.kfs.rass.batch.service.RassSortService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 
-public final class RassBatchUtils {
-    private static final Logger LOG = LogManager.getLogger(RassBatchUtils.class);
-    
-    private RassBatchUtils() {
-        throw new IllegalAccessError("should not build an instance of utility classes");
-    }
-    
-    public static List<RassXmlAgencyEntry> sortRassXmlAgencyEntriesForUpdate(List<RassXmlAgencyEntry> agencies) {
+public class RassSortServiceImpl implements RassSortService {
+    private static final Logger LOG = LogManager.getLogger(RassSortServiceImpl.class);
+
+    @Override
+    public List<RassXmlAgencyEntry> sortRassXmlAgencyEntriesForUpdate(List<RassXmlAgencyEntry> agencies) {
         List<RassXmlAgencyEntry> sortedAgencies = new ArrayList<RassXmlAgencyEntry>();
         List<String> agencyNumberInSortedList = new ArrayList<String>();
         List<RassXmlAgencyEntry> leftOverAgencies = new ArrayList<RassXmlAgencyEntry>();

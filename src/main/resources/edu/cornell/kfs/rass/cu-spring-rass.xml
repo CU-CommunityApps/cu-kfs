@@ -67,7 +67,11 @@
 			p:rassUpdateService-ref="rassUpdateService"
 			p:agencyDefinition-ref="agencyDefinition"
 			p:proposalDefinition-ref="proposalDefinition"
-			p:awardDefinition-ref="awardDefinition"/>
+			p:awardDefinition-ref="awardDefinition"
+			p:rassSortService-ref="rassSortService"/>
+			
+	<bean id="rassSortService" parent="rassSortService-parentBean"/>
+	<bean id="rassSortService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassSortServiceImpl"/>
 
 	<bean id="rassUpdateService" parent="rassUpdateService-parentBean"/>
 	<bean id="rassUpdateService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassUpdateServiceImpl"
