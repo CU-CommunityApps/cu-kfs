@@ -10,61 +10,79 @@ import org.apache.logging.log4j.Logger;
 
 import edu.cornell.kfs.rass.batch.service.RassSortService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
+import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 
 public class RassSortServiceImpl implements RassSortService {
     private static final Logger LOG = LogManager.getLogger(RassSortServiceImpl.class);
 
     @Override
     public List<RassXmlAgencyEntry> sortRassXmlAgencyEntriesForUpdate(List<RassXmlAgencyEntry> agencies) {
-        List<RassXmlAgencyEntry> sortedAgencies = new ArrayList<RassXmlAgencyEntry>();
-        List<String> agencyNumberInSortedList = new ArrayList<String>();
-        List<RassXmlAgencyEntry> leftOverAgencies = new ArrayList<RassXmlAgencyEntry>();
-        
+        AgenciesSortHelper sortedAgencyHelper = new AgenciesSortHelper();
+        sortParentAgencies(agencies, sortedAgencyHelper);
+        sortChildAgencies(sortedAgencyHelper);
+        sortLeftOverAgencies(sortedAgencyHelper);
+        return sortedAgencyHelper.sortedAgencies;
+    }
+
+    private void sortParentAgencies(List<RassXmlAgencyEntry> agencies, AgenciesSortHelper sortedAgencyHelper) {
         for (RassXmlAgencyEntry entry : agencies) {
             if (StringUtils.isBlank(entry.getReportsToAgencyNumber())) {
-                agencyNumberInSortedList.add(entry.getNumber());
-                sortedAgencies.add(entry);
+                sortedAgencyHelper.agencyNumberInSortedList.add(entry.getNumber());
+                sortedAgencyHelper.sortedAgencies.add(entry);
             } else {
-                leftOverAgencies.add(entry);
+                sortedAgencyHelper.leftOverAgencies.add(entry);
             }
         }
-        
-        LOG.debug("sortRassXmlAgencyEntriesForUpdate, number of angencies without reports to agencies: " + sortedAgencies.size());
-        
+        LOG.debug("sortParentAgencies, number of angencies without reports to agencies: " + sortedAgencyHelper.sortedAgencies.size());
+    }
+
+    private void sortChildAgencies(AgenciesSortHelper sortedAgencyHelper) {
         boolean isWeedingSuccessfull = true;
         int loopCount = 0;
-        while (CollectionUtils.isNotEmpty(leftOverAgencies) && isWeedingSuccessfull) {
-            LOG.debug("sortRassXmlAgencyEntriesForUpdate. the loop count: " + loopCount);
-            LOG.debug("sortRassXmlAgencyEntriesForUpdate, number of agencies in the sorted list during sort loop: " + sortedAgencies.size());
+        while (CollectionUtils.isNotEmpty(sortedAgencyHelper.leftOverAgencies) && isWeedingSuccessfull) {
+            LOG.debug("sortChildAgencies. the loop count: " + loopCount);
+            LOG.debug("sortChildAgencies, number of agencies in the sorted list during sort loop: " + sortedAgencyHelper.sortedAgencies.size());
             List<RassXmlAgencyEntry> newLeftOverAgencies = new ArrayList<RassXmlAgencyEntry>();
             
-            for (RassXmlAgencyEntry entry : leftOverAgencies) {
-                if (agencyNumberInSortedList.contains(entry.getReportsToAgencyNumber())) {
-                    agencyNumberInSortedList.add(entry.getNumber());
-                    sortedAgencies.add(entry);
+            for (RassXmlAgencyEntry entry : sortedAgencyHelper.leftOverAgencies) {
+                if (sortedAgencyHelper.agencyNumberInSortedList.contains(entry.getReportsToAgencyNumber())) {
+                    sortedAgencyHelper.agencyNumberInSortedList.add(entry.getNumber());
+                    sortedAgencyHelper.sortedAgencies.add(entry);
                 } else {
                     newLeftOverAgencies.add(entry);
                 }
             }
             
-            if (leftOverAgencies.size() == newLeftOverAgencies.size()) {
+            if (sortedAgencyHelper.leftOverAgencies.size() == newLeftOverAgencies.size()) {
                 isWeedingSuccessfull = false;
             } else {
-                leftOverAgencies = newLeftOverAgencies;
+                sortedAgencyHelper.leftOverAgencies = newLeftOverAgencies;
             }
             loopCount++;
         }
         
-        LOG.debug("sortRassXmlAgencyEntriesForUpdate, number of agencies in the sorted list after main sort loop: " + sortedAgencies.size());
-        
-        if (CollectionUtils.isNotEmpty(leftOverAgencies)) {
-            LOG.debug("sortRassXmlAgencyEntriesForUpdate, number of lefter over agencies: " + leftOverAgencies.size());
-            sortedAgencies.addAll(leftOverAgencies);
+        LOG.debug("sortChildAgencies, number of agencies in the sorted list after main sort loop: " + sortedAgencyHelper.sortedAgencies.size());
+    }
+
+    private void sortLeftOverAgencies(AgenciesSortHelper sortedAgencyHelper) {
+        if (CollectionUtils.isNotEmpty(sortedAgencyHelper.leftOverAgencies)) {
+            LOG.debug("sortRassXmlAgencyEntriesForUpdate, number of lefter over agencies: " + sortedAgencyHelper.leftOverAgencies.size());
+            sortedAgencyHelper.sortedAgencies.addAll(sortedAgencyHelper.leftOverAgencies);
         }
         
-        LOG.debug("sortRassXmlAgencyEntriesForUpdate, number of agencies in the sorted list after sort completion: " + sortedAgencies.size());
+        LOG.debug("sortRassXmlAgencyEntriesForUpdate, number of agencies in the sorted list after sort completion: " + sortedAgencyHelper.sortedAgencies.size());
+    }
+    
+    private class AgenciesSortHelper {
+        public List<RassXmlAgencyEntry> sortedAgencies;
+        public List<String> agencyNumberInSortedList;
+        public List<RassXmlAgencyEntry> leftOverAgencies;
         
-        return sortedAgencies;
+        AgenciesSortHelper() {
+            sortedAgencies = new ArrayList<RassXmlAgencyEntry>();
+            agencyNumberInSortedList = new ArrayList<String>();
+            leftOverAgencies = new ArrayList<RassXmlAgencyEntry>();
+        }
     }
 
 }

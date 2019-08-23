@@ -58,6 +58,8 @@
             <set merge="true">
                 <idref bean="rassService"/>
                 <idref bean="rassService-parentBean"/>
+                <idref bean="rassSortService"/>
+                <idref bean="rassSortService-parentBean"/>
                 <idref bean="rassUpdateService"/>
                 <idref bean="rassUpdateService-parentBean"/>
                 <idref bean="rassProperty"/>
