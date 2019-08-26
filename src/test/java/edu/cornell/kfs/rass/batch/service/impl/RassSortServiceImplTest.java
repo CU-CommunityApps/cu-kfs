@@ -45,18 +45,18 @@ public class RassSortServiceImplTest {
     }
 
     @Test
-    public void checkFullExtractBeforeSort() throws JAXBException {
+    public void testFullExtractBeforeSort() throws JAXBException {
         File xmlFile = new File(FULL_EXTRACT_FILE_NAME);
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
         TestResults results = checkReportsToAgencyBeforeChildAgencies(rassXmlDocumentWrapper.getAgencies());
-        LOG.info("checkBeforeSort, processed: " + results.processedAgencies);
-        LOG.info("checkBeforeSort, failed: " + results.failedAgencies);
+        LOG.info("testFullExtractBeforeSort, processed: " + results.processedAgencies);
+        LOG.info("testFullExtractBeforeSort, failed: " + results.failedAgencies);
         assertTrue("There shoulld be some agencies before their reports to agency before the sort", results.failedAgencies.size() > 0);
     }
     
     @Test
-    public void checkFullExtractAfterSort() throws JAXBException {
+    public void testFullExtractAfterSort() throws JAXBException {
         File xmlFile = new File(FULL_EXTRACT_FILE_NAME);
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
@@ -64,12 +64,16 @@ public class RassSortServiceImplTest {
         List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
-        assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
+        validateSortCount(preSortCount, postSortCount);
         
         TestResults results = checkReportsToAgencyBeforeChildAgencies(sortedAgencyEntries);
-        LOG.info("checkAfterSort, processed: " + results.processedAgencies);
-        LOG.info("checkAfterSort, failed: " + results.failedAgencies);
+        LOG.info("testFullExtractAfterSort, processed: " + results.processedAgencies);
+        LOG.info("testFullExtractAfterSort, failed: " + results.failedAgencies);
         assertTrue("There shoulld be no agencies before their reports to agency after the sort", results.failedAgencies.size() == 0);
+    }
+
+    private void validateSortCount(int preSortCount, int postSortCount) {
+        assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
     }
     
     @Test
@@ -81,7 +85,7 @@ public class RassSortServiceImplTest {
         List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
-        assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
+        validateSortCount(preSortCount, postSortCount);
     }
     
     @Test
@@ -93,7 +97,7 @@ public class RassSortServiceImplTest {
         List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
-        assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
+        validateSortCount(preSortCount, postSortCount);
     }
     
     private TestResults checkReportsToAgencyBeforeChildAgencies(List<RassXmlAgencyEntry> agencies) {

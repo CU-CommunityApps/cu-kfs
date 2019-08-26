@@ -143,8 +143,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_CREATE_UPDATE_FILE),
                 expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW),
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
     }
@@ -234,8 +234,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
                 expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW),
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW),
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED),
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
@@ -528,8 +528,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_AND_AWARDS_FILE),
                 expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW),
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
