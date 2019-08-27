@@ -1,6 +1,7 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -113,11 +114,16 @@ public class RassSortServiceImplTest {
         
         validateSortCount(preSortCount, postSortCount);
         
-        RassXmlAgencyEntry agency3001 = sortedAgencyEntries.get(sortedAgencyEntries.size() - 2);
-        assertEquals("The second to last agency should be 3001", "30001", agency3001.getNumber());
+        String[] expectedAgencyNumbers = {"Cappa", "Alpha", "Delta", "Beta"};
         
-        RassXmlAgencyEntry agency3002 = sortedAgencyEntries.get(sortedAgencyEntries.size() - 1);
-        assertEquals("The last agency should be 3002", "30002", agency3002.getNumber());
+        assertEquals("expected count should match actualCount", expectedAgencyNumbers.length, sortedAgencyEntries.size());
+        
+        int i = 0;
+        for (RassXmlAgencyEntry entry : sortedAgencyEntries) {
+            assertEquals("Agency index " + i + " should equal expected value", expectedAgencyNumbers[i], entry.getNumber());
+            i++;
+        }
+        
     }
     
     private TestResults checkReportsToAgencyBeforeChildAgencies(List<RassXmlAgencyEntry> agencies) {
