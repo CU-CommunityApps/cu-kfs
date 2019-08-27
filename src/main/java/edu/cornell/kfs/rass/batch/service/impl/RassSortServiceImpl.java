@@ -70,7 +70,7 @@ public class RassSortServiceImpl implements RassSortService {
             if (CollectionUtils.isNotEmpty(agencySortHelper.leftOverAgencies)) {
                 sortAgenciesWithReportsToAgencyThatHasBeenSorted(agencySortHelper);
                 if (CollectionUtils.isNotEmpty(agencySortHelper.leftOverAgencies)) {
-                    LOG.error("sortLeftOverAgencies, number of left over agencies that could NOT be sorted: " + agencySortHelper.leftOverAgencies.size());
+                    LOG.info("sortLeftOverAgencies, number of left over agencies that could NOT be sorted: " + agencySortHelper.leftOverAgencies.size());
                     LOG.info("sortLeftOverAgencies, unsorted agencies: " + agencySortHelper.leftOverAgencies);
                     agencySortHelper.sortedAgencies.addAll(agencySortHelper.leftOverAgencies);
                 }
