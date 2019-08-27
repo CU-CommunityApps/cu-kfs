@@ -2,9 +2,7 @@ package edu.cornell.kfs.rass.batch.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -15,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.rass.batch.service.RassSortService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntryComparator;
-import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 
 public class RassSortServiceImpl implements RassSortService {
     private static final Logger LOG = LogManager.getLogger(RassSortServiceImpl.class);

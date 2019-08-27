@@ -1,0 +1,71 @@
+<Kfs>
+	<Extract_Begin_Timestamp>2019-08-21T05:46:01.634949
+	</Extract_Begin_Timestamp>
+	<Awards>
+	</Awards>
+	<Agencies>
+		<Agency>
+			<Number>20000</Number>
+			<Reporting_Name>IdiapX</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>30000</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>40000</Number>
+			<Reporting_Name>IdiapX</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>30000</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>10000</Number>
+			<Reporting_Name>Idiapx</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>30000</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>40000</Number>
+			<Reporting_Name>IdiapX</Reporting_Name>
+			<Full_Name>Idiap Research Institute</Full_Name>
+			<Type_Code>O</Type_Code>
+			<Reports_to_Agency_Number>30000</Reports_to_Agency_Number>
+			<Common_Name>Idiap Research Institute</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>30000</Number>
+			<Reporting_Name>EPFxL</Reporting_Name>
+			<Full_Name>Ecole Polytechnique Federale de Lausanne</Full_Name>
+			<Type_Code>U</Type_Code>
+			<Reports_to_Agency_Number />
+			<Common_Name>Ecole Polytechnique Federale de Lausanne</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>30001</Number>
+			<Reporting_Name>EPFxL</Reporting_Name>
+			<Full_Name>Ecole Polytechnique Federale de Lausanne</Full_Name>
+			<Type_Code>U</Type_Code>
+			<Reports_to_Agency_Number>2</Reports_to_Agency_Number>
+			<Common_Name>Ecole Polytechnique Federale de Lausanne</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+		<Agency>
+			<Number>30002</Number>
+			<Reporting_Name>EPFxL</Reporting_Name>
+			<Full_Name>Ecole Polytechnique Federale de Lausanne</Full_Name>
+			<Type_Code>U</Type_Code>
+			<Reports_to_Agency_Number>30001</Reports_to_Agency_Number>
+			<Common_Name>Ecole Polytechnique Federale de Lausanne</Common_Name>
+			<Agency_Origin>Foreign</Agency_Origin>
+		</Agency>
+	</Agencies>
+</Kfs>

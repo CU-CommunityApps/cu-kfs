@@ -26,7 +26,9 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 public class RassSortServiceImplTest {
     private static final String FULL_EXTRACT_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-full-extract-agencies.xml";
     private static final String NO_PARENTS_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agencies-no-parents.xml";
+    private static final String LEFT_OVER_AGENCY_TEST_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agency-left-over-test.xml";
     private static final String SINGLE_AWARD_FILE = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass_single_award_only.xml";
+    
     private static final Logger LOG = LogManager.getLogger(RassSortServiceImplTest.class);
     private CUMarshalService cuMarshalService;
     private RassSortServiceImpl rassSortServiceImpl;
@@ -98,6 +100,24 @@ public class RassSortServiceImplTest {
         int postSortCount = sortedAgencyEntries.size();
         
         validateSortCount(preSortCount, postSortCount);
+    }
+    
+    @Test
+    public void testLeftOverAgencySort() throws JAXBException {
+        File xmlFile = new File(LEFT_OVER_AGENCY_TEST_FILE_NAME);
+        RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
+        
+        int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
+        List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
+        int postSortCount = sortedAgencyEntries.size();
+        
+        validateSortCount(preSortCount, postSortCount);
+        
+        RassXmlAgencyEntry agency3001 = sortedAgencyEntries.get(sortedAgencyEntries.size() - 2);
+        assertEquals("The second to last agency should be 3001", "30001", agency3001.getNumber());
+        
+        RassXmlAgencyEntry agency3002 = sortedAgencyEntries.get(sortedAgencyEntries.size() - 1);
+        assertEquals("The last agency should be 3002", "30002", agency3002.getNumber());
     }
     
     private TestResults checkReportsToAgencyBeforeChildAgencies(List<RassXmlAgencyEntry> agencies) {
