@@ -104,10 +104,15 @@ public class AwardExtensionRule extends AwardRule {
         super.setNewBo(newAwardCopy);
         oldAwardCopy = (Award) super.getOldBo();
     }
-	
+
     /**
-     * checks if the required federal pass through agency number is filled in if the
-     * federal pass through indicator is yes
+     * Verifies the required federal pass through agency number is filled in when the
+     * federal pass through indicator is set.
+     * 
+     * This method matches the CuProposalRule class method of the same name with the same signature. 
+     * This logic had to be duplicated because both basecode classes ProposalRule and AwardRule extended
+     * basecode class CGMaintenanceDocumentRuleBase with Cornell needing to locally customize both basecode
+     * extended implementations.
      */
     @Override
     protected boolean checkFederalPassThrough() {
