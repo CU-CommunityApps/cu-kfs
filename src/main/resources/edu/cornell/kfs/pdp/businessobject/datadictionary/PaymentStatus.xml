@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2019 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PaymentStatus" parent="PaymentStatus-parentBean"/>
+    <bean id="PaymentStatus-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="org.kuali.kfs.pdp.businessobject.PaymentStatus" p:objectLabel="Payment Status"
+          p:businessObjectAdminService-ref="defaultBoAdminService" p:name="PaymentStatus"
+          p:inquiryDefinition-ref="PaymentStatus-inquiryDefinition"
+          p:lookupDefinition-ref="PaymentStatus-lookupDefinition">
+        <property name="attributes">
+            <list>
+                <ref bean="PaymentStatus-code"/>
+                <ref bean="PaymentStatus-name"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="PaymentStatus-code" parent="PaymentStatus-code-parentBean"/>
+    <bean id="PaymentStatus-code-parentBean" abstract="true" parent="AttributeDefinition" p:name="code"
+          p:forceUppercase="true" p:label="Payment Status Code" p:shortLabel="Payment Status" p:maxLength="4"
+          p:validationPattern-ref="AlphaNumericValidation" p:required="true">
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="paymentStatusValuesFinder"
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
+
+    <bean id="PaymentStatus-name" parent="PaymentStatus-name-parentBean"/>
+    <bean id="PaymentStatus-name-parentBean" abstract="true" parent="AttributeDefinition" p:name="name"
+          p:label="Payment Status Name" p:shortLabel="Name" p:maxLength="40" p:required="true"
+          p:control-ref="StandardNameTextControl"/>
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="PaymentStatus-inquiryDefinition" parent="PaymentStatus-inquiryDefinition-parentBean"/>
+    <bean id="PaymentStatus-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Payment Status Inquiry">
+        <property name="inquirySections">
+            <list>
+                <ref bean="PaymentStatus-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentStatus-inquirySectionDefinition" parent="PaymentStatus-inquirySectionDefinition-parentBean"/>
+    <bean id="PaymentStatus-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="" p:numberOfColumns="1">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="PaymentStatus-lookupDefinition" parent="PaymentStatus-lookupDefinition-parentBean"/>
+    <bean id="PaymentStatus-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Payment Status Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>code</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="PaymentStatus-code"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="PaymentStatus-name"/>
+            </list>
+        </property>
+        <property name="lookupResultAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PaymentStatus-code"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PaymentStatus-name"/>
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentStatusValuesFinder" class="org.kuali.kfs.pdp.businessobject.options.PaymentStatusValuesFinder"/>
+</beans>
