@@ -11,8 +11,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.After;
 import org.junit.Before;
@@ -25,12 +23,10 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class RassSortServiceImplTest {
-    private static final String FULL_EXTRACT_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-full-extract-agencies.xml";
-    private static final String NO_PARENTS_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agencies-no-parents.xml";
-    private static final String LEFT_OVER_AGENCY_TEST_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agency-left-over-test.xml";
+    private static final String AGENCY_BASIC_TEST_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agency-basic-test.xml";
+    private static final String AGENCIES_WITH_REPORTS_TO_AGENCY_NOT_IN_FILE_FILE_NAME = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass-agencies-with-reports-agancy-not-in-file.xml";
     private static final String SINGLE_AWARD_FILE = RassXmlDocumentWrapperMarshalTest.RASS_EXAMPLE_FILE_BASE_PATH + "rass_single_award_only.xml";
     
-    private static final Logger LOG = LogManager.getLogger(RassSortServiceImplTest.class);
     private CUMarshalService cuMarshalService;
     private RassSortServiceImpl rassSortServiceImpl;
 
@@ -46,21 +42,19 @@ public class RassSortServiceImplTest {
         cuMarshalService = null;
         rassSortServiceImpl = null;
     }
-
+    
     @Test
-    public void testFullExtractBeforeSort() throws JAXBException {
-        File xmlFile = new File(FULL_EXTRACT_FILE_NAME);
+    public void basicAgencyFileBeforeSortTest() throws JAXBException {
+        File xmlFile = new File(AGENCY_BASIC_TEST_FILE_NAME);
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
-        TestResults results = checkReportsToAgencyBeforeChildAgencies(rassXmlDocumentWrapper.getAgencies());
-        LOG.info("testFullExtractBeforeSort, processed: " + results.processedAgencies);
-        LOG.info("testFullExtractBeforeSort, failed: " + results.failedAgencies);
+        SortAgenciesTestResults results = buildSortAgenciesTestResults(rassXmlDocumentWrapper.getAgencies());
         assertTrue("There shoulld be some agencies before their reports to agency before the sort", results.failedAgencies.size() > 0);
     }
     
     @Test
-    public void testFullExtractAfterSort() throws JAXBException {
-        File xmlFile = new File(FULL_EXTRACT_FILE_NAME);
+    public void basicAgencyFileAfterSortTest() throws JAXBException {
+        File xmlFile = new File(AGENCY_BASIC_TEST_FILE_NAME);
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
         int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
@@ -69,26 +63,12 @@ public class RassSortServiceImplTest {
         
         validateSortCount(preSortCount, postSortCount);
         
-        TestResults results = checkReportsToAgencyBeforeChildAgencies(sortedAgencyEntries);
-        LOG.info("testFullExtractAfterSort, processed: " + results.processedAgencies);
-        LOG.info("testFullExtractAfterSort, failed: " + results.failedAgencies);
+        SortAgenciesTestResults results = buildSortAgenciesTestResults(sortedAgencyEntries);
         assertTrue("There shoulld be no agencies before their reports to agency after the sort", results.failedAgencies.size() == 0);
     }
 
     private void validateSortCount(int preSortCount, int postSortCount) {
         assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
-    }
-    
-    @Test
-    public void testNoParentAgengiesFile() throws JAXBException {
-        File xmlFile = new File(NO_PARENTS_FILE_NAME);
-        RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
-        
-        int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
-        List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
-        int postSortCount = sortedAgencyEntries.size();
-        
-        validateSortCount(preSortCount, postSortCount);
     }
     
     @Test
@@ -104,8 +84,8 @@ public class RassSortServiceImplTest {
     }
     
     @Test
-    public void testLeftOverAgencySort() throws JAXBException {
-        File xmlFile = new File(LEFT_OVER_AGENCY_TEST_FILE_NAME);
+    public void testAgenciesWithReportsToAgecnyNotInFile() throws JAXBException {
+        File xmlFile = new File(AGENCIES_WITH_REPORTS_TO_AGENCY_NOT_IN_FILE_FILE_NAME);
         RassXmlDocumentWrapper rassXmlDocumentWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         
         int preSortCount = rassXmlDocumentWrapper.getAgencies().size();
@@ -114,7 +94,7 @@ public class RassSortServiceImplTest {
         
         validateSortCount(preSortCount, postSortCount);
         
-        String[] expectedAgencyNumbers = {"Cappa", "Alpha", "Delta", "Beta"};
+        String[] expectedAgencyNumbers = {"Gamma", "Alpha", "Delta", "Beta"};
         
         assertEquals("expected count should match actualCount", expectedAgencyNumbers.length, sortedAgencyEntries.size());
         
@@ -126,8 +106,8 @@ public class RassSortServiceImplTest {
         
     }
     
-    private TestResults checkReportsToAgencyBeforeChildAgencies(List<RassXmlAgencyEntry> agencies) {
-        TestResults results = new TestResults();
+    private SortAgenciesTestResults buildSortAgenciesTestResults(List<RassXmlAgencyEntry> agencies) {
+        SortAgenciesTestResults results = new SortAgenciesTestResults();
         
         for (RassXmlAgencyEntry agency : agencies) {
             if (StringUtils.isNotBlank(agency.getReportsToAgencyNumber())) {
@@ -144,11 +124,11 @@ public class RassSortServiceImplTest {
         return results;
     }
     
-    private class TestResults {
+    private class SortAgenciesTestResults {
         public List<String> processedAgencies;
         public List<String> failedAgencies;
         
-        TestResults() {
+        SortAgenciesTestResults() {
             processedAgencies = new ArrayList<String>();
             failedAgencies = new ArrayList<String>();
         }

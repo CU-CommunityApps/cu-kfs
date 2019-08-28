@@ -19,7 +19,7 @@ public class RassSortServiceImpl implements RassSortService {
         AgenciesSortHelper agencySortHelper = new AgenciesSortHelper();
         sortAgenciesWithNoReportsToAgency(agencies, agencySortHelper);
         sortAgenciesWithReportsToAgencyThatHasBeenSorted(agencySortHelper);
-        sortLeftOverAgencies(agencySortHelper);
+        sortAnyUnsortedAgencies(agencySortHelper);
         return agencySortHelper.sortedAgencies;
     }
 
@@ -29,7 +29,7 @@ public class RassSortServiceImpl implements RassSortService {
                 agencySortHelper.agencyNumberInSortedList.add(entry.getNumber());
                 agencySortHelper.sortedAgencies.add(entry);
             } else {
-                agencySortHelper.leftOverAgencies.add(entry);
+                agencySortHelper.unsortedAgencies.add(entry);
             }
         }
         LOG.debug("sortAgenciesWithNoReportsToAgency, number of angencies without reports to agencies: " + agencySortHelper.sortedAgencies.size());
@@ -38,63 +38,65 @@ public class RassSortServiceImpl implements RassSortService {
     private void sortAgenciesWithReportsToAgencyThatHasBeenSorted(AgenciesSortHelper agencySortHelper) {
         boolean isWeedingSuccessfull = true;
         int loopCount = 0;
-        while (CollectionUtils.isNotEmpty(agencySortHelper.leftOverAgencies) && isWeedingSuccessfull) {
+        while (CollectionUtils.isNotEmpty(agencySortHelper.unsortedAgencies) && isWeedingSuccessfull) {
             LOG.debug("sortAgenciesWithReportsToAgencyThatHasBeenSorted. the loop count: " + loopCount);
             LOG.debug("sortAgenciesWithReportsToAgencyThatHasBeenSorted, number of agencies in the sorted list during sort loop: " + agencySortHelper.sortedAgencies.size());
-            List<RassXmlAgencyEntry> newLeftOverAgencies = new ArrayList<RassXmlAgencyEntry>();
+            List<RassXmlAgencyEntry> newUnsortedAgencies = new ArrayList<RassXmlAgencyEntry>();
             
-            for (RassXmlAgencyEntry entry : agencySortHelper.leftOverAgencies) {
+            for (RassXmlAgencyEntry entry : agencySortHelper.unsortedAgencies) {
                 if (agencySortHelper.agencyNumberInSortedList.contains(entry.getReportsToAgencyNumber())) {
                     agencySortHelper.agencyNumberInSortedList.add(entry.getNumber());
                     agencySortHelper.sortedAgencies.add(entry);
                 } else {
-                    newLeftOverAgencies.add(entry);
+                    newUnsortedAgencies.add(entry);
                 }
             }
             
-            if (agencySortHelper.leftOverAgencies.size() == newLeftOverAgencies.size()) {
+            if (agencySortHelper.unsortedAgencies.size() == newUnsortedAgencies.size()) {
                 isWeedingSuccessfull = false;
             }
-            agencySortHelper.leftOverAgencies = newLeftOverAgencies;
+            agencySortHelper.unsortedAgencies = newUnsortedAgencies;
             loopCount++;
         }
         
         LOG.debug("sortAgenciesWithReportsToAgencyThatHasBeenSorted, number of agencies in the sorted list after main sort loop: " + agencySortHelper.sortedAgencies.size());
     }
 
-    private void sortLeftOverAgencies(AgenciesSortHelper agencySortHelper) {
-        if (CollectionUtils.isNotEmpty(agencySortHelper.leftOverAgencies)) {
-            LOG.debug("sortLeftOverAgencies, number of left over agencies: " + agencySortHelper.leftOverAgencies.size());
+    private void sortAnyUnsortedAgencies(AgenciesSortHelper agencySortHelper) {
+        if (CollectionUtils.isNotEmpty(agencySortHelper.unsortedAgencies)) {
+            LOG.debug("sortAnyUnsortedAgencies, number of unsorted agencies: " + agencySortHelper.unsortedAgencies.size());
             sortAgenciesWithReportsToAgencyNotInRASSInput(agencySortHelper);
-            LOG.debug("sortLeftOverAgencies, number of left over agencies after finding left over parents: " + agencySortHelper.leftOverAgencies.size());
-            if (CollectionUtils.isNotEmpty(agencySortHelper.leftOverAgencies)) {
+            LOG.debug("sortAnyUnsortedAgencies, number of unsorted agencies after finding unsorted parents: " + agencySortHelper.unsortedAgencies.size());
+            if (CollectionUtils.isNotEmpty(agencySortHelper.unsortedAgencies)) {
                 sortAgenciesWithReportsToAgencyThatHasBeenSorted(agencySortHelper);
-                if (CollectionUtils.isNotEmpty(agencySortHelper.leftOverAgencies)) {
-                    LOG.info("sortLeftOverAgencies, number of left over agencies that could NOT be sorted: " + agencySortHelper.leftOverAgencies.size());
-                    LOG.info("sortLeftOverAgencies, unsorted agencies: " + agencySortHelper.leftOverAgencies);
-                    agencySortHelper.sortedAgencies.addAll(agencySortHelper.leftOverAgencies);
+                if (CollectionUtils.isNotEmpty(agencySortHelper.unsortedAgencies)) {
+                    LOG.info("sortAnyUnsortedAgencies, number of unsorted agencies: " + agencySortHelper.unsortedAgencies.size());
+                    LOG.info("sortAnyUnsortedAgencies, unsorted agencies: " + agencySortHelper.unsortedAgencies);
+                    agencySortHelper.sortedAgencies.addAll(agencySortHelper.unsortedAgencies);
                 }
             }
+        } else {
+            LOG.debug("sortAnyUnsortedAgencies, There were no unsorted agencies after main sort routine.");
         }
     }
     
     private void sortAgenciesWithReportsToAgencyNotInRASSInput(AgenciesSortHelper agencySortHelper) {
-        List<RassXmlAgencyEntry> newLeftOverAgencies = new ArrayList<RassXmlAgencyEntry>();
-        for (RassXmlAgencyEntry entry : agencySortHelper.leftOverAgencies) {
-            if (isReportsToAgencyNumberAnAgencyInLeftOverAgencyList(entry.getReportsToAgencyNumber(), agencySortHelper.leftOverAgencies)) {
-                newLeftOverAgencies.add(entry);
+        List<RassXmlAgencyEntry> newUnsortedAgencies = new ArrayList<RassXmlAgencyEntry>();
+        for (RassXmlAgencyEntry entry : agencySortHelper.unsortedAgencies) {
+            if (isReportsToAgencyNumberAnAgencyInUnsortedAgencyList(entry.getReportsToAgencyNumber(), agencySortHelper.unsortedAgencies)) {
+                newUnsortedAgencies.add(entry);
             } else {
                 agencySortHelper.sortedAgencies.add(entry);
                 agencySortHelper.agencyNumberInSortedList.add(entry.getNumber());
                 
             }
         }
-        agencySortHelper.leftOverAgencies = newLeftOverAgencies;
+        agencySortHelper.unsortedAgencies = newUnsortedAgencies;
     }
     
-    private boolean isReportsToAgencyNumberAnAgencyInLeftOverAgencyList(String reportsToAgencyNumber, List<RassXmlAgencyEntry> leftOverAgencies) {
-        for (RassXmlAgencyEntry leftOverAgency : leftOverAgencies) {
-            if (StringUtils.equalsIgnoreCase(leftOverAgency.getNumber(), reportsToAgencyNumber)) {
+    private boolean isReportsToAgencyNumberAnAgencyInUnsortedAgencyList(String reportsToAgencyNumber, List<RassXmlAgencyEntry> unsortedAgencies) {
+        for (RassXmlAgencyEntry agencyEntry : unsortedAgencies) {
+            if (StringUtils.equalsIgnoreCase(agencyEntry.getNumber(), reportsToAgencyNumber)) {
                 return true;
             }
         }
@@ -104,12 +106,12 @@ public class RassSortServiceImpl implements RassSortService {
     private class AgenciesSortHelper {
         public List<RassXmlAgencyEntry> sortedAgencies;
         public List<String> agencyNumberInSortedList;
-        public List<RassXmlAgencyEntry> leftOverAgencies;
+        public List<RassXmlAgencyEntry> unsortedAgencies;
         
         AgenciesSortHelper() {
             sortedAgencies = new ArrayList<RassXmlAgencyEntry>();
             agencyNumberInSortedList = new ArrayList<String>();
-            leftOverAgencies = new ArrayList<RassXmlAgencyEntry>();
+            unsortedAgencies = new ArrayList<RassXmlAgencyEntry>();
         }
     }
 

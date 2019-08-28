@@ -6,14 +6,14 @@
 	<Agencies>
 		<Agency>
 			<Number>Alpha</Number>
-			<Reports_to_Agency_Number>Cappa</Reports_to_Agency_Number>
+			<Reports_to_Agency_Number>Gamma</Reports_to_Agency_Number>
 		</Agency>
 		<Agency>
 			<Number>Beta</Number>
 			<Reports_to_Agency_Number>Delta</Reports_to_Agency_Number>
 		</Agency>
 		<Agency>
-			<Number>Cappa</Number>
+			<Number>Gamma</Number>
 			<Reports_to_Agency_Number>XX</Reports_to_Agency_Number>
 		</Agency>
 		<Agency>

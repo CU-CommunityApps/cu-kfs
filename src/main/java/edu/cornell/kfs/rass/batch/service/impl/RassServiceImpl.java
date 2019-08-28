@@ -132,7 +132,7 @@ public class RassServiceImpl implements RassService {
                         documentWrapper, objectDefinition.getRootXmlObjectListPropertyName());
                 
                 if (Agency.class.getSimpleName().equals(objectDefinition.getObjectLabel())) {
-                    LOG.info("updateBOs, found a collection of Agencies, need to do our custom sort.");
+                    LOG.info("updateBOs, found a collection of Agencies, we need to sort the agencies such any agencies that are the 'reports to agency' for other agencies are created or updated first.");
                     xmlObjects = rassSortService.sortRassXmlAgencyEntriesForUpdate((List<RassXmlAgencyEntry>) xmlObjects);
                 }
                 
