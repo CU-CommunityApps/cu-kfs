@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2019 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
+
+    <bean id="ShippingPaymentTerms" parent="ShippingPaymentTerms-parentBean"/>
+    <bean id="ShippingPaymentTerms-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="org.kuali.kfs.vnd.businessobject.ShippingPaymentTerms"
+          p:businessObjectAdminService-ref="defaultBoAdminService" p:name="ShippingPaymentTerms"
+          p:inquiryDefinition-ref="ShippingPaymentTerms-inquiryDefinition"
+          p:lookupDefinition-ref="ShippingPaymentTerms-lookupDefinition"
+          p:titleAttribute="vendorShippingPaymentTermsCode" p:objectLabel="Shipping Payment Terms">
+        <property name="attributes">
+            <list>
+                <ref bean="ShippingPaymentTerms-vendorShippingPaymentTermsCode"/>
+                <ref bean="ShippingPaymentTerms-vendorShippingPaymentTermsDescription"/>
+                <ref bean="ShippingPaymentTerms-vendorShippingPaymentTermsPayIndicator"/>
+                <ref bean="ShippingPaymentTerms-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="ShippingPaymentTerms-vendorShippingPaymentTermsCode"
+          parent="ShippingPaymentTerms-vendorShippingPaymentTermsCode-parentBean"/>
+    <bean id="ShippingPaymentTerms-vendorShippingPaymentTermsCode-parentBean" abstract="true"
+          parent="AttributeDefinition" p:name="vendorShippingPaymentTermsCode" p:forceUppercase="true"
+          p:label="Shipping Payment Terms Code" p:shortLabel="Code" p:maxLength="4"
+          p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="6"/>
+        </property>
+    </bean>
+
+    <bean id="ShippingPaymentTerms-vendorShippingPaymentTermsDescription"
+          parent="ShippingPaymentTerms-vendorShippingPaymentTermsDescription-parentBean"/>
+    <bean id="ShippingPaymentTerms-vendorShippingPaymentTermsDescription-parentBean" abstract="true"
+          parent="AttributeDefinition" p:name="vendorShippingPaymentTermsDescription" p:forceUppercase="false"
+          p:label="Shipping Payment Terms Description" p:shortLabel="Description" p:maxLength="45"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="47"/>
+        </property>
+    </bean>
+
+    <bean id="ShippingPaymentTerms-vendorShippingPaymentTermsPayIndicator"
+          parent="ShippingPaymentTerms-vendorShippingPaymentTermsPayIndicator-parentBean"/>
+    <bean id="ShippingPaymentTerms-vendorShippingPaymentTermsPayIndicator-parentBean" abstract="true"
+          parent="AttributeDefinition" p:name="vendorShippingPaymentTermsPayIndicator" p:forceUppercase="false"
+          p:label="Shipping Payment Terms Pay Indicator" p:shortLabel="Indicator" p:maxLength="1" p:type="BOOLEAN">
+        <property name="control">
+            <bean parent="CheckboxControlDefinition"/>
+        </property>
+    </bean>
+
+    <bean id="ShippingPaymentTerms-active" parent="ShippingPaymentTerms-active-parentBean"/>
+    <bean id="ShippingPaymentTerms-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
+          p:name="active"/>
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="ShippingPaymentTerms-inquiryDefinition" parent="ShippingPaymentTerms-inquiryDefinition-parentBean"/>
+    <bean id="ShippingPaymentTerms-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Shipping Payment Terms Inquiry">
+        <property name="inquirySections">
+            <list>
+                <ref bean="ShippingPaymentTerms-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ShippingPaymentTerms-inquirySectionDefinition"
+          parent="ShippingPaymentTerms-inquirySectionDefinition-parentBean"/>
+    <bean id="ShippingPaymentTerms-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition"
+          abstract="true" p:title="" p:numberOfColumns="1">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsCode"/>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsPayIndicator"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="ShippingPaymentTerms-lookupDefinition" parent="ShippingPaymentTerms-lookupDefinition-parentBean"/>
+    <bean id="ShippingPaymentTerms-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Shipping Payment Terms Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+        <property name="lookupAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="ShippingPaymentTerms-vendorShippingPaymentTermsCode"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="ShippingPaymentTerms-vendorShippingPaymentTermsDescription"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="ShippingPaymentTerms-vendorShippingPaymentTermsPayIndicator"
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                      parent="ShippingPaymentTerms-active"
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" p:defaultValue="Y"/>
+            </list>
+        </property>
+        <property name="lookupResultAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="ShippingPaymentTerms-vendorShippingPaymentTermsCode"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="ShippingPaymentTerms-vendorShippingPaymentTermsDescription"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="ShippingPaymentTerms-vendorShippingPaymentTermsPayIndicator"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="ShippingPaymentTerms-active"/>
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsCode"/>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsPayIndicator"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsCode"/>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="vendorShippingPaymentTermsPayIndicator"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+</beans>

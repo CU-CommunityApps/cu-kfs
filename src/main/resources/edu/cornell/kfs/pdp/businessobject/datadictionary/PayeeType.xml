@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2019 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PayeeType" parent="PayeeType-parentBean"/>
+    <bean id="PayeeType-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="org.kuali.kfs.pdp.businessobject.PayeeType" p:titleAttribute="code"
+          p:inquiryDefinition-ref="PayeeType-inquiryDefinition" p:lookupDefinition-ref="PayeeType-lookupDefinition"
+          p:businessObjectAdminService-ref="defaultBoAdminService" p:name="PayeeType"
+          p:objectLabel="Payee Type">
+        <property name="attributes">
+            <list>
+                <ref bean="PayeeType-code"/>
+                <ref bean="PayeeType-name"/>
+                <ref bean="PayeeType-achEligible"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="PayeeType-code" parent="PayeeType-code-parentBean"/>
+    <bean id="PayeeType-code-parentBean" abstract="true" parent="AttributeDefinition" p:name="code"
+          p:forceUppercase="true" p:label="Payee Type Code" p:shortLabel="Payee Type Code" p:maxLength="1"
+          p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="1"/>
+        </property>
+    </bean>
+
+    <bean id="PayeeType-name" parent="PayeeType-name-parentBean"/>
+    <bean id="PayeeType-name-parentBean" abstract="true" parent="AttributeDefinition" p:name="name"
+          p:label="Payee Type Description" p:shortLabel="Payee Type Description" p:maxLength="200" p:required="true"
+          p:control-ref="StandardNameTextControl"/>
+
+    <bean id="PayeeType-achEligible" parent="PayeeType-achEligible-parentBean"/>
+    <bean id="PayeeType-achEligible-parentBean" abstract="true" parent="GenericAttributes-genericBoolean"
+          p:name="achEligible" p:label="ACH Eligible" p:shortLabel="ACHEligible" p:required="true"/>
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="PayeeType-inquiryDefinition" parent="PayeeType-inquiryDefinition-parentBean"/>
+    <bean id="PayeeType-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Payee Type Inquiry">
+        <property name="inquirySections">
+            <list>
+                <ref bean="PayeeType-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PayeeType-inquirySectionDefinition" parent="PayeeType-inquirySectionDefinition-parentBean"/>
+    <bean id="PayeeType-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="" p:numberOfColumns="1">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:attributeName="achEligible"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="PayeeType-lookupDefinition" parent="PayeeType-lookupDefinition-parentBean"/>
+    <bean id="PayeeType-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Payee Type Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>code</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="PayeeType-code"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="PayeeType-name"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="PayeeType-achEligible"
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" p:defaultValue=""/>
+            </list>
+        </property>
+        <property name="lookupResultAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeType-code"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeType-name"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeType-achEligible"/>
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:attributeName="achEligible"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:attributeName="achEligible"/>
+            </list>
+        </property>
+    </bean>
+</beans>
