@@ -61,13 +61,13 @@ public class RassSortServiceImplTest {
         List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
-        validateSortCount(preSortCount, postSortCount);
+        assortListCountsMatch(preSortCount, postSortCount);
         
         SortAgenciesTestResults results = buildSortAgenciesTestResults(sortedAgencyEntries);
         assertTrue("There shoulld be no agencies before their reports to agency after the sort", results.failedAgencies.size() == 0);
     }
 
-    private void validateSortCount(int preSortCount, int postSortCount) {
+    private void assortListCountsMatch(int preSortCount, int postSortCount) {
         assertEquals("The sort should return the same nnumber of agencies as was passed in", preSortCount, postSortCount);
     }
     
@@ -80,7 +80,8 @@ public class RassSortServiceImplTest {
         List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
-        validateSortCount(preSortCount, postSortCount);
+        assortListCountsMatch(preSortCount, postSortCount);
+        assertEquals("There shouldn't be any agencies in this test", 0, postSortCount);
     }
     
     @Test
@@ -92,7 +93,7 @@ public class RassSortServiceImplTest {
         List<RassXmlAgencyEntry> sortedAgencyEntries = rassSortServiceImpl.sortRassXmlAgencyEntriesForUpdate(rassXmlDocumentWrapper.getAgencies());
         int postSortCount = sortedAgencyEntries.size();
         
-        validateSortCount(preSortCount, postSortCount);
+        assortListCountsMatch(preSortCount, postSortCount);
         
         String[] expectedAgencyNumbers = {"Gamma", "Alpha", "Delta", "Beta"};
         
