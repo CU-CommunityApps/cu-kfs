@@ -20,12 +20,13 @@ public class RassValueConverterBase implements RassValueConverter {
     }
 
     @Override
-    public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
-        return cleanSimplePropertyValue(businessObjectClass, propertyName, propertyValue);
+    public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
+        return cleanSimplePropertyValue(businessObjectClass, propertyMapping, propertyValue);
     }
 
     protected Object cleanSimplePropertyValue(
-            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
+            Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
+        String propertyName = propertyMapping.getBoPropertyName();
         if (propertyValue instanceof String) {
             return cleanStringValue(businessObjectClass, propertyName, (String) propertyValue);
         } else if (propertyValue instanceof Date) {

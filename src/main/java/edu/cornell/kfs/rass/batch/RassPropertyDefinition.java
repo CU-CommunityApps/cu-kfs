@@ -6,6 +6,7 @@ public class RassPropertyDefinition {
     private String boPropertyName;
     private boolean required;
     private RassValueConverter valueConverter;
+    private boolean allowTruncate;
     
     public String getXmlPropertyName() {
         return xmlPropertyName;
@@ -39,5 +40,13 @@ public class RassPropertyDefinition {
 	public void setValueConverter(RassValueConverter valueConverter) {
 		this.valueConverter = valueConverter;
 	}
+
+    public boolean isAllowTruncate() {
+        return allowTruncate;
+    }
+
+    public void setAllowTruncate(boolean allowTruncate) {
+        this.allowTruncate = allowTruncate;
+    }
 
 }

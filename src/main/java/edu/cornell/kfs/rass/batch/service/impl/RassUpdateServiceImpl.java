@@ -252,7 +252,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
             Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlPropertyName());
             RassValueConverter valueConverter = propertyMapping.getValueConverter();
-            Object convertedValue = valueConverter.convert(businessObjectClass, propertyMapping.getBoPropertyName(), xmlPropertyValue);
+            Object convertedValue = valueConverter.convert(businessObjectClass, propertyMapping, xmlPropertyValue);
             if (convertedValue == null && propertyMapping.isRequired()) {
                 missingRequiredFields.add(propertyMapping.getXmlPropertyName());
             } else if (propertyMapping instanceof RassListPropertyDefinition) {
