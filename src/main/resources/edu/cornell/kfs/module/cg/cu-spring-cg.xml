@@ -35,5 +35,8 @@
 		<property name="documentHelperService" ref="documentHelperService"/>
 		<property name="permissionService" ref="permissionService"/>
     </bean>
+    
+    <bean id="cuCGMaintenanceDocumentService" parent="cuCGMaintenanceDocumentService-parentBean" />
+    <bean id="cuCGMaintenanceDocumentService-parentBean" class="edu.cornell.kfs.module.cg.document.service.impl.CuCGMaintenanceDocumentServiceImpl" abstract="true"/>
 
 </beans>
