@@ -81,10 +81,6 @@ public class RassXmlAwardEntry implements RassXmlObject {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String federalPassThroughAgencyNumber;
     
-    @XmlElement(name = "CFDA_Number", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    private String cfdaNumber;
-    
     @XmlElement(name = "Organization_Code", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String organizationCode;
@@ -209,14 +205,6 @@ public class RassXmlAwardEntry implements RassXmlObject {
         this.federalPassThroughAgencyNumber = federalPassThroughAgencyNumber;
     }
 
-    public String getCfdaNumber() {
-        return cfdaNumber;
-    }
-
-    public void setCfdaNumber(String cfdaNumber) {
-        this.cfdaNumber = cfdaNumber;
-    }
-
     public String getOrganizationCode() {
         return organizationCode;
     }
@@ -266,7 +254,6 @@ public class RassXmlAwardEntry implements RassXmlObject {
                     StringUtils.equals(grantDescription, other.getGrantDescription()) &&
                     Objects.equals(federalPassThrough, other.getFederalPassThrough()) &&
                     StringUtils.equals(federalPassThroughAgencyNumber, other.getFederalPassThroughAgencyNumber()) &&
-                    StringUtils.equals(cfdaNumber, other.getCfdaNumber()) &&
                     StringUtils.equals(organizationCode, other.getOrganizationCode()) &&
                     Objects.equals(costShareRequired, other.getCostShareRequired()) &&
                     Objects.equals(finalReportDueDate, other.getFinalReportDueDate()) &&
@@ -280,7 +267,7 @@ public class RassXmlAwardEntry implements RassXmlObject {
     @Override
     public int hashCode() {
         return Objects.hash(proposalNumber, status, projectTitle, startDate, stopDate, directCostAmount, indirectCostAmount, totalAmount, purpose, grantNumber, grantDescription,
-                federalPassThrough, federalPassThroughAgencyNumber, cfdaNumber, organizationCode, costShareRequired, finalReportDueDate, principalAndCoPrincipalInvestigators);
+                federalPassThrough, federalPassThroughAgencyNumber, organizationCode, costShareRequired, finalReportDueDate, principalAndCoPrincipalInvestigators);
     }
     
     @Override
