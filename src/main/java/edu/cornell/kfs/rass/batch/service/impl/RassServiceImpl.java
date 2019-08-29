@@ -31,6 +31,7 @@ import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassService;
+import edu.cornell.kfs.rass.batch.service.RassSortService;
 import edu.cornell.kfs.rass.batch.service.RassUpdateService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
@@ -49,6 +50,7 @@ public class RassServiceImpl implements RassService {
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
     protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
     protected RassObjectTranslationDefinition<RassXmlAwardEntry, Award> awardDefinition;
+    protected RassSortService rassSortService;
 
     protected String rassFilePath;
 
@@ -129,6 +131,11 @@ public class RassServiceImpl implements RassService {
                 List<?> xmlObjects = (List<?>) ObjectPropertyUtils.getPropertyValue(
                         documentWrapper, objectDefinition.getRootXmlObjectListPropertyName());
                 
+                if (Agency.class.getSimpleName().equals(objectDefinition.getObjectLabel())) {
+                    LOG.info("updateBOs, found a collection of Agencies, we need to sort the agencies such any agencies that are the 'reports to agency' for other agencies are created or updated first.");
+                    xmlObjects = rassSortService.sortRassXmlAgencyEntriesForUpdate((List<RassXmlAgencyEntry>) xmlObjects);
+                }
+                
                 LOG.info("updateBOs, Found " + xmlObjects.size()
                         + KFSConstants.BLANK_SPACE + objectDefinition.getObjectLabel() + " objects to process");
                 for (Object xmlObject : xmlObjects) {
@@ -186,6 +193,10 @@ public class RassServiceImpl implements RassService {
 
     public void setRassFilePath(String rassFilePath) {
         this.rassFilePath = rassFilePath;
+    }
+
+    public void setRassSortService(RassSortService rassSortService) {
+        this.rassSortService = rassSortService;
     }
 
 }
