@@ -28,6 +28,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.module.cg.document.service.CuCGMaintenanceDocumentService;
 import edu.cornell.kfs.module.cg.service.CuAwardAccountService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -37,7 +38,8 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 public class AwardExtensionRule extends AwardRule {
     private static final Logger LOG = LogManager.getLogger(AwardExtensionRule.class);
     
-	protected ParameterService parameterService;
+    protected ParameterService parameterService;
+    protected CuCGMaintenanceDocumentService cuCGMaintenanceDocumentService;
 
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
@@ -107,26 +109,19 @@ public class AwardExtensionRule extends AwardRule {
 
     /**
      * Verifies the required federal pass through agency number is filled in when the
-     * federal pass through indicator is set.
-     * 
-     * This method matches the CuProposalRule class method of the same name with the same signature. 
-     * This logic had to be duplicated because both basecode classes ProposalRule and AwardRule extended
-     * basecode class CGMaintenanceDocumentRuleBase with Cornell needing to locally customize both basecode
-     * extended implementations.
+     * federal pass through indicator is set. Uses a service method to perform this check
+     * so the same logic is invoked for both Awards and Proposals.
      */
     @Override
     protected boolean checkFederalPassThrough() {
-        boolean success = true;
-
-        boolean federalPassThroughIndicator = newAwardCopy.getFederalPassThroughIndicator();
-        String federalPassThroughAgencyNumber = newAwardCopy.getFederalPassThroughAgencyNumber();
-
-        if (federalPassThroughIndicator && StringUtils.isBlank(federalPassThroughAgencyNumber)) {
-            putFieldError(KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY_NUMBER,
-                    KFSKeyConstants.ERROR_FPT_AGENCY_NUMBER_REQUIRED);
-            success = false;
+        boolean success = getCuCGMaintenanceDocumentService().validFederalPassThroughData(
+                newAwardCopy.getFederalPassThroughIndicator(), 
+                newAwardCopy.getFederalPassThroughAgencyNumber());
+               
+        if (!success) {
+            putFieldError(KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY_NUMBER, KFSKeyConstants.ERROR_FPT_AGENCY_NUMBER_REQUIRED);
         }
-
+        
         return success;
     }
 
@@ -331,5 +326,12 @@ public class AwardExtensionRule extends AwardRule {
             parameterService = SpringContext.getBean(ParameterService.class);
         }
         return parameterService;
+    }
+    
+    public CuCGMaintenanceDocumentService getCuCGMaintenanceDocumentService() {
+        if ( cuCGMaintenanceDocumentService == null ) {
+            cuCGMaintenanceDocumentService = SpringContext.getBean(CuCGMaintenanceDocumentService.class);
+        }
+        return cuCGMaintenanceDocumentService;
     }
 }
