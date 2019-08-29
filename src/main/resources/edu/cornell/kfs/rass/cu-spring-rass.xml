@@ -176,7 +176,6 @@
 				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="cfdaNumber" p:boPropertyName="cfdaNumber" p:required="false"/>
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="organizationCode" p:boPropertyName="proposalOrganizations" p:required="false"
 						p:valueConverter-ref="rassProposalOrganizationConverter" p:subObjectDefinition-ref="proposalOrganizationDefinition"/>
 				<bean parent="rassProperty" p:xmlPropertyName="finalReportDueDate" p:boPropertyName="proposalDueDate" p:required="false"/>

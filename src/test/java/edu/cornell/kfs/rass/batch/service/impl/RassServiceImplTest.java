@@ -677,7 +677,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 expectedProposal.federalPassThrough, actualProposal.getProposalFederalPassThroughIndicator());
         assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
                 expectedProposal.federalPassThroughAgencyNumber, actualProposal.getFederalPassThroughAgencyNumber());
-        assertEqualsOrBothBlank("Wrong CFDA number at index " + i, expectedProposal.cfdaNumber, actualProposal.getCfdaNumber());
         assertEqualsOrBothBlank("Wrong organization code at index " + i,
                 expectedProposal.organizationCode, proposalOrganization.getOrganizationCode());
         
