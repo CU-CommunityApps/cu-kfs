@@ -93,6 +93,26 @@ public class RassXmlAwardEntry implements RassXmlObject {
     @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
     private Date finalReportDueDate;
     
+    @XmlElement(name = "Budget_Start", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
+    private Date budgetStartDate;
+    
+    @XmlElement(name = "Budget_Stop", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
+    private Date budgetStopDate;
+    
+    @XmlElement(name = "Budget_Total", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
+    private KualiDecimal budgetTotalAmount;
+    
+    @XmlElement(name = "Sponsor_Award_Number", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    private String sponsorAwardNumber;
+    
+    @XmlElement(name = "Pricing_Type", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    private String pricingType;
+    
     @XmlElementWrapper(name = "PI_and_CoPIs", namespace = StringUtils.EMPTY)
     @XmlElement(name = "PI_or_CoPI", namespace = StringUtils.EMPTY)
     private List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators;
@@ -278,9 +298,49 @@ public class RassXmlAwardEntry implements RassXmlObject {
 	public String getPurpose() {
 		return purpose;
 	}
+	
+    public Date getBudgetStartDate() {
+        return budgetStartDate;
+    }
+
+    public void setBudgetStartDate(Date budgetStartDate) {
+        this.budgetStartDate = budgetStartDate;
+    }
 
 	public void setPurpose(String purpose) {
 		this.purpose = purpose;
 	}
+
+    public Date getBudgetStopDate() {
+        return budgetStopDate;
+    }
+
+    public void setBudgetStopDate(Date budgetStopDate) {
+        this.budgetStopDate = budgetStopDate;
+    }
+
+    public KualiDecimal getBudgetTotalAmount() {
+        return budgetTotalAmount;
+    }
+
+    public void setBudgetTotalAmount(KualiDecimal budgetTotalAmount) {
+        this.budgetTotalAmount = budgetTotalAmount;
+    }
+
+    public String getSponsorAwardNumber() {
+        return sponsorAwardNumber;
+    }
+
+    public void setSponsorAwardNumber(String sponsorAwardNumber) {
+        this.sponsorAwardNumber = sponsorAwardNumber;
+    }
+
+    public String getPricingType() {
+        return pricingType;
+    }
+
+    public void setPricingType(String pricingType) {
+        this.pricingType = pricingType;
+    }
 
 }
