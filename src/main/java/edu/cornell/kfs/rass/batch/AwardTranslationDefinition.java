@@ -1,7 +1,9 @@
 package edu.cornell.kfs.rass.batch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,6 +17,7 @@ import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardFundManager;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.service.AwardService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
@@ -84,34 +87,41 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     }
 
     protected AwardAccount createDefaultAwardAccount(RassXmlAwardEntry xmlAward) {
-        Pair<String, String> defaultChartAndAccount = getChartAndAccountForDefaultAwardAccount();
-        String directorPrincipalId = parameterService.getParameterValueAsString(
-                RassStep.class, RassParameterConstants.DEFAULT_PROJECT_DIRECTOR);
+        Map<String, String> defaultAwardAccountAttributes = getDefaultAwardAccountAttributes();
+        String directorPrincipalId = parameterService.getParameterValueAsString(RassStep.class, RassParameterConstants.DEFAULT_PROJECT_DIRECTOR);
         if (StringUtils.isBlank(directorPrincipalId)) {
             throw new RuntimeException("Default project director parameter cannot be blank");
         }
-        
         AwardAccount awardAccount = new AwardAccount();
         awardAccount.setProposalNumber(xmlAward.getProposalNumber());
         awardAccount.setPrincipalId(directorPrincipalId);
-        awardAccount.setChartOfAccountsCode(defaultChartAndAccount.getLeft());
-        awardAccount.setAccountNumber(defaultChartAndAccount.getRight());
+        awardAccount.setChartOfAccountsCode(defaultAwardAccountAttributes.get(KFSPropertyConstants.CHART));
+        awardAccount.setAccountNumber(defaultAwardAccountAttributes.get(KFSPropertyConstants.ACCOUNT_NUMBER));
+        awardAccount.setActive(defaultAccountIndicatorIsActive(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR));
         return awardAccount;
     }
+    
+    protected boolean defaultAccountIndicatorIsActive(String rowIndicatorValue) {
+        return StringUtils.equals(rowIndicatorValue, KFSConstants.ACTIVE_INDICATOR) ? true : false;
+    }
 
-    protected Pair<String, String> getChartAndAccountForDefaultAwardAccount() {
-        String defaultChartAndAccount = parameterService.getParameterValueAsString(
-                RassStep.class, RassParameterConstants.DEFAULT_AWARD_ACCOUNT);
-        if (StringUtils.countMatches(defaultChartAndAccount, CUKFSConstants.COLON) != 1) {
-            throw new RuntimeException("Default chart-and-account parameter must contain one colon separator");
+    protected Map<String, String> getDefaultAwardAccountAttributes() {
+        String defaultAttributes = parameterService.getParameterValueAsString(RassStep.class, RassParameterConstants.DEFAULT_AWARD_ACCOUNT);
+        if (StringUtils.countMatches(defaultAttributes, CUKFSConstants.COLON) != 2) {
+            throw new RuntimeException("Default Award Account KFS System Parameter must contain two colon separators.");
         }
-        
-        String defaultChart = StringUtils.substringBefore(defaultChartAndAccount, CUKFSConstants.COLON);
-        String defaultAccount = StringUtils.substringAfter(defaultChartAndAccount, CUKFSConstants.COLON);
-        if (StringUtils.isBlank(defaultChart) || StringUtils.isBlank(defaultAccount)) {
-            throw new RuntimeException("Default chart-and-account parameter cannot have a blank chart or account");
+        String defaultChart = StringUtils.substringBefore(defaultAttributes, CUKFSConstants.COLON);
+        defaultAttributes = StringUtils.substringAfter(defaultAttributes, CUKFSConstants.COLON);
+        String defaultAccountNumber = StringUtils.substringBefore(defaultAttributes, CUKFSConstants.COLON);
+        String defaulAccountActiveIndicator = StringUtils.substringAfter(defaultAttributes, CUKFSConstants.COLON);
+        if (StringUtils.isBlank(defaultChart) || StringUtils.isBlank(defaultAccountNumber) || StringUtils.isBlank(defaulAccountActiveIndicator)) {
+            throw new RuntimeException("Default Award Account KFS System Parameter cannot have a blank chart or account or account active indicator.");
         }
-        return Pair.of(defaultChart, defaultAccount);
+        Map<String, String> defaultValuePairs = new HashMap<String, String>();
+        defaultValuePairs.put(KFSPropertyConstants.CHART, defaultChart);
+        defaultValuePairs.put(KFSPropertyConstants.ACCOUNT_NUMBER, defaultAccountNumber);
+        defaultValuePairs.put(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR, defaulAccountActiveIndicator);
+        return defaultValuePairs;
     }
     
     protected void addPrimaryFundManager(RassXmlAwardEntry xmlAward, Award award) {
