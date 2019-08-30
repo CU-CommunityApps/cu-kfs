@@ -299,6 +299,10 @@ public class RassXmlAwardEntry implements RassXmlObject {
 		return purpose;
 	}
 	
+	public void setPurpose(String purpose) {
+	    this.purpose = purpose;
+	}
+	
     public Date getBudgetStartDate() {
         return budgetStartDate;
     }
@@ -306,10 +310,6 @@ public class RassXmlAwardEntry implements RassXmlObject {
     public void setBudgetStartDate(Date budgetStartDate) {
         this.budgetStartDate = budgetStartDate;
     }
-
-	public void setPurpose(String purpose) {
-		this.purpose = purpose;
-	}
 
     public Date getBudgetStopDate() {
         return budgetStopDate;
