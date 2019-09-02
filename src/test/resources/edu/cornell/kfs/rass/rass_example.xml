@@ -40,8 +40,8 @@
       <Budget_Start>2017-12-31</Budget_Start>
       <Budget_Stop>2022-12-31</Budget_Stop>
       <Budget_Total>9000000.000</Budget_Total>
-      <Sponsor_Award_Number>9000000.000</Sponsor_Award_Number>
-      <Pricing_Type>9000000.000</Pricing_Type>
+      <Sponsor_Award_Number>1234S</Sponsor_Award_Number>
+      <Pricing_Type>COST</Pricing_Type>
       <Stop_Date/>
       <Purpose/>
       <Grant_Number/>
