@@ -42,6 +42,8 @@
                       p:attributeToHighlightOnFail="organizationCode"/>
                 <bean parent="ReferenceDefinition" p:attributeName="subcontractor" p:collection="awardSubcontractors"
                       p:attributeToHighlightOnFail="subcontractorNumber"/>
+                <bean parent="ReferenceDefinition" p:attributeName="instrumentType"
+                      p:attributeToHighlightOnFail="instrumentTypeCode"/>                    
             </list>
         </property>
         <property name="businessRulesClass"
