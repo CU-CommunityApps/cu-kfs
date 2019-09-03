@@ -11,7 +11,7 @@ import edu.cornell.kfs.rass.RassConstants;
 public class RassOrganizationConverterForAward extends RassValueConverterBase {
 
     @Override
-    public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
+    public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
         String organizationCode = (String) propertyValue;
         AwardOrganization awardOrganization = new AwardOrganization();
         awardOrganization.setChartOfAccountsCode(RassConstants.PROPOSAL_ORG_CHART);
