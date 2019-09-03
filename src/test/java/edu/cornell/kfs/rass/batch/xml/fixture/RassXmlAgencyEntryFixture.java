@@ -6,6 +6,7 @@ import org.kuali.kfs.module.cg.businessobject.Agency;
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public enum RassXmlAgencyEntryFixture {
     SOME("468", "Some", "Some University", "U", "", "Some University", "USA"),
@@ -77,11 +78,19 @@ public enum RassXmlAgencyEntryFixture {
     }
 
     public String getTruncatedFullName() {
-        return StringUtils.left(fullName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
+        if (StringUtils.length(fullName) > RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH) {
+            return StringUtils.left(fullName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH - CUKFSConstants.ELLIPSIS.length()) + CUKFSConstants.ELLIPSIS;
+        } else {
+            return fullName;
+        }
     }
 
     public String getTruncatedCommonName() {
-        return StringUtils.left(commonName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
+        if (StringUtils.length(commonName) > RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH) {
+            return StringUtils.left(commonName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH - CUKFSConstants.ELLIPSIS.length()) + CUKFSConstants.ELLIPSIS;
+        } else {
+            return commonName;
+        }
     }
 
     private String defaultToNullIfBlank(String value) {

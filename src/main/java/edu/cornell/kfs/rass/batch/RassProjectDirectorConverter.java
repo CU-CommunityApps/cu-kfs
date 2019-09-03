@@ -20,7 +20,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
+	public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
 		List<RassXMLAwardPiCoPiEntry> rassAwardPiCoPiEntries = (List<RassXMLAwardPiCoPiEntry>) propertyValue;
 		List<CGProjectDirector> projectDirectors = new ArrayList<>();
 		if (rassAwardPiCoPiEntries != null && rassAwardPiCoPiEntries.size() > 0) {
