@@ -11,7 +11,7 @@ import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.mockito.Mockito;
 
-public class RassValueConverterBaseTEst {
+public class RassValueConverterBaseTest {
     private RassValueConverterBase rassValueConverterBase;
     private static final String TEST_STRING = "Testing String";
 
