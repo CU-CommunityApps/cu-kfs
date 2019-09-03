@@ -6,7 +6,7 @@ public class RassPropertyDefinition {
     private String boPropertyName;
     private boolean required;
     private RassValueConverter valueConverter;
-    private boolean allowTruncate;
+    private boolean truncateWithEllipsis;
     
     public String getXmlPropertyName() {
         return xmlPropertyName;
@@ -41,12 +41,12 @@ public class RassPropertyDefinition {
 		this.valueConverter = valueConverter;
 	}
 
-    public boolean isAllowTruncate() {
-        return allowTruncate;
+    public boolean isTruncateWithEllipsis() {
+        return truncateWithEllipsis;
     }
 
-    public void setAllowTruncate(boolean allowTruncate) {
-        this.allowTruncate = allowTruncate;
+    public void setTruncateWithEllipsis(boolean truncateWithEllipsis) {
+        this.truncateWithEllipsis = truncateWithEllipsis;
     }
 
 }

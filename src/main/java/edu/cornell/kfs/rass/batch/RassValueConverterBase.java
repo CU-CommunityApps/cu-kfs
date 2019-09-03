@@ -9,6 +9,8 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 public class RassValueConverterBase implements RassValueConverter {
 
     private static final Logger LOG = LogManager.getLogger(RassValueConverterBase.class);
@@ -26,34 +28,44 @@ public class RassValueConverterBase implements RassValueConverter {
 
     protected Object cleanSimplePropertyValue(
             Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
-        String propertyName = propertyMapping.getBoPropertyName();
         if (propertyValue instanceof String) {
-            return cleanStringValue(businessObjectClass, propertyName, (String) propertyValue);
+            propertyValue = cleanStringValue(businessObjectClass, propertyMapping, (String) propertyValue);
         } else if (propertyValue instanceof Date) {
-            return cleanDateValue(businessObjectClass, propertyName, (Date) propertyValue);
+            propertyValue = cleanDateValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Date) propertyValue);
         } else if (propertyValue instanceof Boolean) {
-            return cleanBooleanValue(businessObjectClass, propertyName, (Boolean) propertyValue);
-        } else if (ObjectUtils.isNull(propertyValue)) {
-            LOG.debug("cleanSimplePropertyValue, property " +  StringUtils.defaultIfBlank(propertyName, "[Blank]")
-                    + " is null on business object " + businessObjectClass.getName());
-        } else {
-            LOG.debug("cleanSimplePropertyValue, no cleaning for property " +  StringUtils.defaultIfBlank(propertyName, "[Blank]")
-                    + "  on business object " + businessObjectClass.getName() + " (value: " + propertyValue.toString() + ")");
+            return cleanBooleanValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Boolean) propertyValue);
+        } else if (LOG.isDebugEnabled()) {
+            String propertyNameForLogging = StringUtils.defaultIfBlank(propertyMapping.getBoPropertyName(), "[Blank]");
+            if (ObjectUtils.isNull(propertyValue)) {
+                LOG.debug("cleanSimplePropertyValue, property " +  propertyNameForLogging + " is null on business object " 
+                        + businessObjectClass.getName());
+            } else {
+                LOG.debug("cleanSimplePropertyValue, no cleaning for property " +  propertyNameForLogging 
+                        + "  on business object " + businessObjectClass.getName() + " (value: " + propertyValue.toString() + ")");
+            }
         }
         return propertyValue;
     }
 
     protected String cleanStringValue(
-            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, String propertyValue) {
+            Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, String propertyValue) {
+        String propertyName = propertyMapping.getBoPropertyName();
         String cleanedValue = StringUtils.defaultIfBlank(propertyValue, null);
         if (ObjectUtils.isNotNull(cleanedValue)) {
             cleanedValue = cleanedValue.trim();
         }
         Integer maxLength = dataDictionaryService.getAttributeMaxLength(businessObjectClass, propertyName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("cleanStringValue, businessObjectClass: " + businessObjectClass + " propertyName: " + propertyName + " has a maximum size of " + maxLength);
+        }
         if (maxLength != null && maxLength > 0 && StringUtils.length(cleanedValue) > maxLength) {
-            LOG.info("cleanStringValue, Truncating value for business object " + businessObjectClass.getName()
-                    + " and property " + propertyName);
-            cleanedValue = StringUtils.left(cleanedValue, maxLength);
+            if (propertyMapping.isTruncateWithEllipsis()) {
+                cleanedValue = StringUtils.left(cleanedValue, maxLength - CUKFSConstants.ELLIPSIS.length()) + CUKFSConstants.ELLIPSIS;
+            } else {
+                cleanedValue = StringUtils.left(cleanedValue, maxLength);
+            }
+            LOG.info("cleanStringValue, Truncating value for business object " + businessObjectClass.getName() 
+                + " and property " + propertyName + " to a value of '" + cleanedValue + "'");
         }
         return cleanedValue;
     }

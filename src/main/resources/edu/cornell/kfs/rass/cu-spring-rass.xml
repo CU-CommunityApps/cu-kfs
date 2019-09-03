@@ -148,11 +148,11 @@
 		<property name="propertyMappings">
 			<list>
 				<bean parent="rassProperty" p:xmlPropertyName="number" p:boPropertyName="agencyNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="reportingName" p:boPropertyName="reportingName" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="fullName" p:boPropertyName="fullName" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="reportingName" p:boPropertyName="reportingName" p:required="true" p:truncateWithEllipsis="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="fullName" p:boPropertyName="fullName" p:required="true" p:truncateWithEllipsis="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="typeCode" p:boPropertyName="agencyTypeCode" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="reportsToAgencyNumber" p:boPropertyName="reportsToAgencyNumber" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="commonName" p:boPropertyName="extension.agencyCommonName" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="commonName" p:boPropertyName="extension.agencyCommonName" p:required="false" p:truncateWithEllipsis="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="agencyOrigin" p:boPropertyName="extension.agencyOriginCode" p:required="false"/>
 			</list>
 		</property>
@@ -170,14 +170,14 @@
 				<bean parent="rassProperty" p:xmlPropertyName="proposalNumber" p:boPropertyName="proposalNumber" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="status" p:boPropertyName="proposalStatusCode" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="agencyNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectTitle" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectTitle" p:required="false" p:truncateWithEllipsis="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="startDate" p:boPropertyName="proposalBeginningDate" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="stopDate" p:boPropertyName="proposalEndingDate" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="proposalDirectCostAmount" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="proposalIndirectCostAmount" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="proposalTotalProjectAmount" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false" p:truncateWithEllipsis="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="organizationCode" p:boPropertyName="proposalOrganizations" p:required="false"
@@ -238,7 +238,7 @@
 				<bean parent="rassProperty" p:xmlPropertyName="proposalNumber" p:boPropertyName="proposalNumber" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="status" p:boPropertyName="awardStatusCode" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="agencyNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="awardProjectTitle" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="awardProjectTitle" p:required="true" p:truncateWithEllipsis="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="startDate" p:boPropertyName="awardBeginningDate" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="stopDate" p:boPropertyName="awardEndingDate" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="awardDirectCostAmount" p:required="true"/>
