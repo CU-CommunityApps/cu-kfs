@@ -28,12 +28,13 @@ public class RassValueConverterBase implements RassValueConverter {
 
     protected Object cleanSimplePropertyValue(
             Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
+        Object cleanedValue = propertyValue;
         if (propertyValue instanceof String) {
-            propertyValue = cleanStringValue(businessObjectClass, propertyMapping, (String) propertyValue);
+            cleanedValue = cleanStringValue(businessObjectClass, propertyMapping, (String) propertyValue);
         } else if (propertyValue instanceof Date) {
-            propertyValue = cleanDateValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Date) propertyValue);
+            cleanedValue = cleanDateValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Date) propertyValue);
         } else if (propertyValue instanceof Boolean) {
-            return cleanBooleanValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Boolean) propertyValue);
+            cleanedValue =  cleanBooleanValue(businessObjectClass, propertyMapping.getBoPropertyName(), (Boolean) propertyValue);
         } else if (LOG.isDebugEnabled()) {
             String propertyNameForLogging = StringUtils.defaultIfBlank(propertyMapping.getBoPropertyName(), "[Blank]");
             if (ObjectUtils.isNull(propertyValue)) {
@@ -44,7 +45,7 @@ public class RassValueConverterBase implements RassValueConverter {
                         + "  on business object " + businessObjectClass.getName() + " (value: " + propertyValue.toString() + ")");
             }
         }
-        return propertyValue;
+        return cleanedValue;
     }
 
     protected String cleanStringValue(

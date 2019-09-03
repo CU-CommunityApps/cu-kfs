@@ -6,6 +6,7 @@ import org.kuali.kfs.module.cg.businessobject.Agency;
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public enum RassXmlAgencyEntryFixture {
     SOME("468", "Some", "Some University", "U", "", "Some University", "USA"),
@@ -15,8 +16,8 @@ public enum RassXmlAgencyEntryFixture {
     LIMITED_LTD("555", "Limited", "Limited Ltd.", "C", "468", "Limited Ltd.", "USA", false),
     UNLIMITED_LTD("556", "Unlimited", "Unlimited Ltd.", "C", "555", "Unlimited Ltd.", "USA", false),
     FIJI_DOT("975", "Fiji_DoT", "Fiji Department of Treasury", "G", "", "Fiji Treasury Department", "Foreign", false),
-    DoS_LONG_DESC("579", "SM", "United States Department of Something with Very...", "F", "",
-            "Some United States Government Department with a...", "USA", false),
+    DoS_LONG_DESC("579", "SM", "United States Department of Something with Very Long Text", "F", "",
+            "Some United States Government Department with a Significantly Long Name", "USA", false),
     SOME_V2_MISSING_REQ_FIELD("468", "Some", "", "U", "", "Some Other University", "USA", false),
     LONG_KEY(RassTestConstants.LONG_OBJECT_KEY, "LongKey", "Long Key", "C", "", "Long key to force doc description truncate", "USA", false),
     FORCE_ERROR(RassTestConstants.ERROR_OBJECT_KEY, "ForceError", "Force Error", "C", "", "Force an error!", "USA", false);
@@ -77,11 +78,19 @@ public enum RassXmlAgencyEntryFixture {
     }
 
     public String getTruncatedFullName() {
-        return StringUtils.left(fullName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
+        if (StringUtils.length(fullName) > RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH) {
+            return StringUtils.left(fullName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH - CUKFSConstants.ELLIPSIS.length()) + CUKFSConstants.ELLIPSIS;
+        } else {
+            return fullName;
+        }
     }
 
     public String getTruncatedCommonName() {
-        return StringUtils.left(commonName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
+        if (StringUtils.length(commonName) > RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH) {
+            return StringUtils.left(commonName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH - CUKFSConstants.ELLIPSIS.length()) + CUKFSConstants.ELLIPSIS;
+        } else {
+            return commonName;
+        }
     }
 
     private String defaultToNullIfBlank(String value) {
