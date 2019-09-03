@@ -58,7 +58,7 @@ public class RassValueConverterBaseTest {
     }
     
     @Test
-    public void testTruncateWithOutEllipsisNullProperthyBoolean() {
+    public void testTruncateWithOutEllipsisNullPropertyBoolean() {
         rassValueConverterBase.setDataDictionaryService(buildMockDataDictionaryService(5));
         String expectedResult = "Testi";
         
