@@ -264,7 +264,7 @@
 				<bean parent="rassProperty" p:xmlPropertyName="budgetStartDate" p:boPropertyName="extension.budgetBeginningDate" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="budgetStopDate" p:boPropertyName="extension.budgetEndingDate" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="budgetTotalAmount" p:boPropertyName="extension.budgetTotalAmount" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="sponsorAwardNumber" p:boPropertyName="extension.primeAgreementNumber" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="sponsorAwardNumber" p:boPropertyName="extension.primeAgreementNumber" p:required="false" p:truncateWithEllipsis="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="pricingType" p:boPropertyName="instrumentTypeCode" p:required="false"/>
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="principalAndCoPrincipalInvestigators" p:boPropertyName="awardProjectDirectors"
 						p:required="true" p:valueConverter-ref="rassAwardProjectDirectorConverter" p:subObjectDefinition-ref="awardProjectDirectorDefinition"/>
