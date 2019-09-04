@@ -12,7 +12,7 @@ public class RassPurposeCodeConverter extends RassValueConverterBase {
     private ParameterService parameterService;
 
     @Override
-    public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
+    public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
         return getMappedProposalPurposeValue((String) propertyValue);
     }
 
