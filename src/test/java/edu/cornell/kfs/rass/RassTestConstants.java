@@ -17,8 +17,9 @@ public final class RassTestConstants {
     public static final String LONG_OBJECT_KEY = "KEY_WITH_EXTREMELY_LONG_TEXT_LENGTH";
     public static final String DEFAULT_AWARD_CHART = RassConstants.PROPOSAL_ORG_CHART;
     public static final String DEFAULT_AWARD_ACCOUNT = "3575357";
+    public static final String DEFAULT_AWARD_ACCOUNT_ACTIVE_INDICATOR = "N";
     public static final String DEFAULT_AWARD_ACCOUNT_PARAMETER_VALUE = DEFAULT_AWARD_CHART
-            + CUKFSConstants.COLON + DEFAULT_AWARD_ACCOUNT;
+            + CUKFSConstants.COLON + DEFAULT_AWARD_ACCOUNT + CUKFSConstants.COLON + DEFAULT_AWARD_ACCOUNT_ACTIVE_INDICATOR;
     public static final String DEFAULT_FUND_MANAGER_PRINCIPAL_ID = "mgw3";
     public static final String DEFAULT_PROJECT_DIRECTOR_PRINCIPAL_ID = "mo14";
 
