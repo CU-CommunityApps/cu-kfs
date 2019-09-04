@@ -97,12 +97,12 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         awardAccount.setPrincipalId(directorPrincipalId);
         awardAccount.setChartOfAccountsCode(defaultAwardAccountAttributes.get(KFSPropertyConstants.CHART));
         awardAccount.setAccountNumber(defaultAwardAccountAttributes.get(KFSPropertyConstants.ACCOUNT_NUMBER));
-        awardAccount.setActive(defaultAccountIndicatorIsActive(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR));
+        awardAccount.setActive(defaultAccountIndicatorIsActive(defaultAwardAccountAttributes.get(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR)));
         return awardAccount;
     }
     
     protected boolean defaultAccountIndicatorIsActive(String rowIndicatorValue) {
-        return StringUtils.equals(rowIndicatorValue, KFSConstants.ACTIVE_INDICATOR) ? true : false;
+        return StringUtils.equals(rowIndicatorValue, KFSConstants.ACTIVE_INDICATOR);
     }
 
     protected Map<String, String> getDefaultAwardAccountAttributes() {
@@ -113,14 +113,14 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         String defaultChart = StringUtils.substringBefore(defaultAttributes, CUKFSConstants.COLON);
         defaultAttributes = StringUtils.substringAfter(defaultAttributes, CUKFSConstants.COLON);
         String defaultAccountNumber = StringUtils.substringBefore(defaultAttributes, CUKFSConstants.COLON);
-        String defaulAccountActiveIndicator = StringUtils.substringAfter(defaultAttributes, CUKFSConstants.COLON);
-        if (StringUtils.isBlank(defaultChart) || StringUtils.isBlank(defaultAccountNumber) || StringUtils.isBlank(defaulAccountActiveIndicator)) {
+        String defaultAccountActiveIndicator = StringUtils.substringAfter(defaultAttributes, CUKFSConstants.COLON);
+        if (StringUtils.isBlank(defaultChart) || StringUtils.isBlank(defaultAccountNumber) || StringUtils.isBlank(defaultAccountActiveIndicator)) {
             throw new RuntimeException("Default Award Account KFS System Parameter cannot have a blank chart or account or account active indicator.");
         }
         Map<String, String> defaultValuePairs = new HashMap<String, String>();
         defaultValuePairs.put(KFSPropertyConstants.CHART, defaultChart);
         defaultValuePairs.put(KFSPropertyConstants.ACCOUNT_NUMBER, defaultAccountNumber);
-        defaultValuePairs.put(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR, defaulAccountActiveIndicator);
+        defaultValuePairs.put(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR, defaultAccountActiveIndicator);
         return defaultValuePairs;
     }
     
