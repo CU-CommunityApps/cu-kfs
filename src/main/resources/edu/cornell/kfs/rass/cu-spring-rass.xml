@@ -131,6 +131,8 @@
 			p:dataDictionaryService-ref="dataDictionaryService"/>
 	<bean id="rassProposalOrganizationConverter" class="edu.cornell.kfs.rass.batch.RassOrganizationConverterForProposal"/>
 	<bean id="rassAwardOrganizationConverter" class="edu.cornell.kfs.rass.batch.RassOrganizationConverterForAward"/>
+	<bean id="rassPurposeCodeConverter" class="edu.cornell.kfs.rass.batch.RassPurposeCodeConverter"
+			p:parameterService-ref="parameterService"/>
 	<bean id="rassProposalProjectDirectorConverter" class="edu.cornell.kfs.rass.batch.RassProjectDirectorConverter"
 			p:personService-ref="personService"
 			p:projectDirectorImplementationClass="org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector"
@@ -176,7 +178,7 @@
 				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="proposalDirectCostAmount" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="proposalIndirectCostAmount" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="proposalTotalProjectAmount" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false" p:valueConverter-ref="rassPurposeCodeConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
@@ -243,7 +245,7 @@
 				<bean parent="rassProperty" p:xmlPropertyName="stopDate" p:boPropertyName="awardEndingDate" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="awardDirectCostAmount" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="awardIndirectCostAmount" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="awardPurposeCode" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="awardPurposeCode" p:required="true" p:valueConverter-ref="rassPurposeCodeConverter"/>
 				<bean parent="rassProperty" p:xmlPropertyName="grantDescription" p:boPropertyName="grantDescriptionCode" p:required="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="federalPassThroughIndicator" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>

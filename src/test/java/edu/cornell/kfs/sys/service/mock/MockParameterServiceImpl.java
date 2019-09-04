@@ -147,7 +147,7 @@ public class MockParameterServiceImpl implements ParameterService {
 
     @Override
     public String getSubParameterValueAsString(String namespaceCode, String componentCode, String parameterName, String subParameterName) {
-        return null;
+        return subParameterName;
     }
 
     @Override
