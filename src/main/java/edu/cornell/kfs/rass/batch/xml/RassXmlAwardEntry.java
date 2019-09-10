@@ -105,17 +105,25 @@ public class RassXmlAwardEntry implements RassXmlObject {
     @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
     private KualiDecimal budgetTotalAmount;
     
-    @XmlElement(name = "Sponsor_Award_Number", namespace = StringUtils.EMPTY)
+    @XmlElement(name = "Prime_Agreement_Number", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    private String sponsorAwardNumber;
+    private String primeAgreementNumber;
     
     @XmlElement(name = "Pricing_Type", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String pricingType;
     
+    @XmlElement(name = "E_Verify", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(BooleanNullPossibleXmlAdapter.class)
+    private Boolean everify;
+    
+    @XmlElement(name = "Final_Financial_Report_Required", namespace = StringUtils.EMPTY)
+    @XmlJavaTypeAdapter(BooleanNullPossibleXmlAdapter.class)
+    private Boolean finalFinancialReportRequired;
+    
     @XmlElementWrapper(name = "PI_and_CoPIs", namespace = StringUtils.EMPTY)
     @XmlElement(name = "PI_or_CoPI", namespace = StringUtils.EMPTY)
-    private List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators;
+    private List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators;   
     
     public RassXmlAwardEntry() {
         principalAndCoPrincipalInvestigators = new ArrayList<RassXMLAwardPiCoPiEntry>();
@@ -327,20 +335,36 @@ public class RassXmlAwardEntry implements RassXmlObject {
         this.budgetTotalAmount = budgetTotalAmount;
     }
 
-    public String getSponsorAwardNumber() {
-        return sponsorAwardNumber;
-    }
-
-    public void setSponsorAwardNumber(String sponsorAwardNumber) {
-        this.sponsorAwardNumber = sponsorAwardNumber;
-    }
-
     public String getPricingType() {
         return pricingType;
     }
 
     public void setPricingType(String pricingType) {
         this.pricingType = pricingType;
+    }
+
+    public String getPrimeAgreementNumber() {
+        return primeAgreementNumber;
+    }
+
+    public void setPrimeAgreementNumber(String primeAgreementNumber) {
+        this.primeAgreementNumber = primeAgreementNumber;
+    }
+
+    public Boolean getEverify() {
+        return everify;
+    }
+
+    public void setEverify(Boolean everify) {
+        this.everify = everify;
+    }
+
+    public Boolean getFinalFinancialReportRequired() {
+        return finalFinancialReportRequired;
+    }
+
+    public void setFinalFinancialReportRequired(Boolean finalFinancialReportRequired) {
+        this.finalFinancialReportRequired = finalFinancialReportRequired;
     }
 
 }

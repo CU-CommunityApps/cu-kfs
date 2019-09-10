@@ -131,9 +131,10 @@
 			p:dataDictionaryService-ref="dataDictionaryService"/>
 	<bean id="rassProposalOrganizationConverter" class="edu.cornell.kfs.rass.batch.RassOrganizationConverterForProposal"/>
 	<bean id="rassAwardOrganizationConverter" class="edu.cornell.kfs.rass.batch.RassOrganizationConverterForAward"/>
-	
 	<bean id="rassPurposeCodeConverter" class="edu.cornell.kfs.rass.batch.RassPurposeCodeConverter"
 			p:parameterService-ref="parameterService"/>
+	<bean id="rassInstrumentTypeCodeConverter" class="edu.cornell.kfs.rass.batch.RassInstrumentTypeCodeConverter"
+			p:parameterService-ref="parameterService"/>	
 	<bean id="rassAgencyTypeConverter" class="edu.cornell.kfs.rass.batch.RassAgencyTypeConverter"
 			p:parameterService-ref="parameterService"/>
 	<bean id="rassProposalStatusConverter" class="edu.cornell.kfs.rass.batch.RassProposalStatusConverter"
@@ -264,8 +265,10 @@
 				<bean parent="rassProperty" p:xmlPropertyName="budgetStartDate" p:boPropertyName="extension.budgetBeginningDate" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="budgetStopDate" p:boPropertyName="extension.budgetEndingDate" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="budgetTotalAmount" p:boPropertyName="extension.budgetTotalAmount" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="sponsorAwardNumber" p:boPropertyName="extension.primeAgreementNumber" p:required="false" p:truncateWithEllipsis="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="pricingType" p:boPropertyName="instrumentTypeCode" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="primeAgreementNumber" p:boPropertyName="extension.primeAgreementNumber" p:required="false" p:truncateWithEllipsis="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="pricingType" p:boPropertyName="instrumentTypeCode" p:required="false" p:valueConverter-ref="rassInstrumentTypeCodeConverter"/>
+				<bean parent="rassProperty" p:xmlPropertyName="everify" p:boPropertyName="extension.everify" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="finalFinancialReportRequired" p:boPropertyName="extension.finalFinancialReportRequired" p:required="false"/>				
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="principalAndCoPrincipalInvestigators" p:boPropertyName="awardProjectDirectors"
 						p:required="true" p:valueConverter-ref="rassAwardProjectDirectorConverter" p:subObjectDefinition-ref="awardProjectDirectorDefinition"/>
 			</list>
