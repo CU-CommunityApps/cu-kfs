@@ -40,8 +40,10 @@
       <Budget_Start>2017-12-31</Budget_Start>
       <Budget_Stop>2022-12-31</Budget_Stop>
       <Budget_Total>9000000.000</Budget_Total>
-      <Sponsor_Award_Number>1234S</Sponsor_Award_Number>
+      <Prime_Agreement_Number>1234S</Prime_Agreement_Number>
       <Pricing_Type>COST</Pricing_Type>
+      <E_Verify>Y</E_Verify>
+      <Final_Financial_Report_Required>N</Final_Financial_Report_Required>
       <Stop_Date/>
       <Purpose/>
       <Grant_Number/>

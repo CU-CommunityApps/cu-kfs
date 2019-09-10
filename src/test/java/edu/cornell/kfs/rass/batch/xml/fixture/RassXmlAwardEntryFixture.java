@@ -27,46 +27,46 @@ import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 public enum RassXmlAwardEntryFixture {
     FIRST("141414", "OS", "2345", "First Example Project", "2017-12-31", null, 5300000.000, 700000.000, 6000000.000, StringUtils.EMPTY,
             StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY, primaryOrg("3434"), Boolean.TRUE, null, null, null, null, 
-            StringUtils.EMPTY, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
+            StringUtils.EMPTY,  null, null, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
     SECOND("141414", "OS", "2345", "First Example Project", "2017-12-31", null, 5300000.000, 700000.000, 6000000.000, StringUtils.EMPTY,
             StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY, primaryOrg("3434"), Boolean.TRUE, null, "2017-12-31",
-            "2022-12-31", 9000000.000, "12345", "COST", false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
+            "2022-12-31", 9000000.000, "12345", true, false, "COST", false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
     ANOTHER("141415", "RS", "24680", "Another Example", null, "2050-12-31", 0.0, 0.0, 0.0, StringUtils.EMPTY,
             StringUtils.EMPTY, "GRT", null, StringUtils.EMPTY, primaryOrg("2374"), Boolean.TRUE, "2022-09-30", null, null, null, 
-            StringUtils.EMPTY, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.NO_NAME_PRIMARY)),
+            StringUtils.EMPTY, null, null, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.NO_NAME_PRIMARY)),
     NULL_AMOUNTS("35656", "RS", "24680", "Award with empty totals", null, "2050-12-31", 0.0, null, null, StringUtils.EMPTY,
             StringUtils.EMPTY, "GRT", null, StringUtils.EMPTY, primaryOrg("2374"), Boolean.TRUE, "2022-09-30", null, null, null, 
-            StringUtils.EMPTY, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.jdh34_CO_PI)),
+            StringUtils.EMPTY, null, null, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.jdh34_CO_PI)),
 
     SAMPLE_PROJECT("556677", "OS", RassXmlAgencyEntryFixture.SOME, "Some University's Sample Project", "2019-01-15", "2019-12-24",
             25000.00, 5000.00, 30000.00, "H", "98765", "GRT", Boolean.FALSE, StringUtils.EMPTY,
-            primaryOrg("1500"), Boolean.TRUE, "2019-11-30", null, null, null, StringUtils.EMPTY, StringUtils.EMPTY, false,
+            primaryOrg("1500"), Boolean.TRUE, "2019-11-30", null, null, null, StringUtils.EMPTY, null, null, StringUtils.EMPTY, false,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY)),
     SAMPLE_PROJECT_MISSING_REQ_FIELD("556677", "OS", StringUtils.EMPTY, "Some University's Sample Project", "2019-01-15", "2019-12-24",
             25000.00, 5000.00, 30000.00, "H", "98765", "GRT", Boolean.FALSE, StringUtils.EMPTY,
-            primaryOrg("1500"), Boolean.TRUE, "2019-11-30", null, null, null, StringUtils.EMPTY, StringUtils.EMPTY, false,
+            primaryOrg("1500"), Boolean.TRUE, "2019-11-30", null, null, null, StringUtils.EMPTY, null, null, StringUtils.EMPTY, false,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY)),
     SOME_DEPARTMENT_PROJECT("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01", "2020-11-30",
             45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
-            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, StringUtils.EMPTY, StringUtils.EMPTY, true,
+            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, StringUtils.EMPTY, null, null, StringUtils.EMPTY, true,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI)),
     SOME_DEPARTMENT_PROJECT_V2("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01", "2020-11-30",
             45000.00, 30000.00, 75000.00, "H", "34343", "CON", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
-            primaryOrg("2211"), Boolean.FALSE, "2020-10-12", null, null, null, StringUtils.EMPTY, StringUtils.EMPTY, false,
+            primaryOrg("2211"), Boolean.FALSE, "2020-10-12", null, null, null, StringUtils.EMPTY, null, null, StringUtils.EMPTY, false,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI)),
     SOME_DEPARTMENT_PROJECT_V3_ORG_CHANGE("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01",
             "2020-11-30", 45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
             organizations(organization("2211", Boolean.FALSE), organization("2555", Boolean.TRUE)),
-            Boolean.FALSE, StringUtils.EMPTY,  null, null, null, StringUtils.EMPTY, StringUtils.EMPTY, false,
+            Boolean.FALSE, StringUtils.EMPTY,  null, null, null, StringUtils.EMPTY, null, null, StringUtils.EMPTY, false,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI)),
     SOME_DEPARTMENT_PROJECT_V4_DIRECTOR_CHANGE("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01",
             "2020-11-30", 45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
-            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, StringUtils.EMPTY, StringUtils.EMPTY, false,
+            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, StringUtils.EMPTY, null, null, StringUtils.EMPTY, false,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_CO_PI_INACTIVE, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI_INACTIVE,
                     RassXMLAwardPiCoPiEntryFixture.kan2_PRIMARY)),
     SOME_DEPARTMENT_PROJECT_V5_DIRECTOR_CHANGE2("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01",
             "2020-11-30", 45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
-            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, StringUtils.EMPTY, StringUtils.EMPTY, false,
+            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, StringUtils.EMPTY, null, null, StringUtils.EMPTY, false,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_CO_PI_INACTIVE, RassXMLAwardPiCoPiEntryFixture.mo14_PRIMARY));
 
     public final String proposalNumber;
@@ -89,8 +89,10 @@ public enum RassXmlAwardEntryFixture {
     public final DateTime budgetStartDate;
     public final DateTime budgetStopDate;
     public final KualiDecimal budgetTotalAmount;
-    public final String sponsorAwardNumber;
+    public final String primeAgreementNumber;
     public final String pricingType;
+    public final Boolean everify;
+    public final Boolean finalFinancialReportRequired;
     public final boolean existsByDefaultForSearching;
     public final List<RassXMLAwardPiCoPiEntryFixture> piFixtures;
     public final List<Pair<String, Boolean>> organizations;
@@ -100,12 +102,12 @@ public enum RassXmlAwardEntryFixture {
             Double totalAmount, String purpose, String grantNumber, String grantDescription, Boolean federalPassThrough,
             String federalPassThroughAgencyNumber, Pair<String, Boolean>[] organizations,
             Boolean costShareRequired, String finalReportDueDateString, String budgetStartDateString, String budgetStopDateString,
-            Double budgetTotalAmount, String sponsorAwardNumber, String pricingType,
+            Double budgetTotalAmount, String primeAgreementNumber, Boolean everify, Boolean finalFinancialReportRequired, String pricingType,
             boolean existsByDefaultForSearching, RassXMLAwardPiCoPiEntryFixture[] piFixtures) {
         this(proposalNumber, status, agency.number, projectTitle, startDateString, stopDateString, directCostAmount, indirectCostAmount,
                 totalAmount, purpose, grantNumber, grantDescription, federalPassThrough, federalPassThroughAgencyNumber,
                 organizations, costShareRequired, finalReportDueDateString, budgetStartDateString, budgetStopDateString,
-                budgetTotalAmount, sponsorAwardNumber, pricingType, existsByDefaultForSearching, piFixtures);
+                budgetTotalAmount, primeAgreementNumber, everify, finalFinancialReportRequired, pricingType, existsByDefaultForSearching, piFixtures);
     }
     
     private RassXmlAwardEntryFixture(String proposalNumber, String status, String agencyNumber, String projectTitle,
@@ -113,7 +115,7 @@ public enum RassXmlAwardEntryFixture {
             Double totalAmount, String purpose, String grantNumber, String grantDescription, Boolean federalPassThrough,
             String federalPassThroughAgencyNumber, Pair<String, Boolean>[] organizations,
             Boolean costShareRequired, String finalReportDueDateString, String budgetStartDateString, String budgetStopDateString,
-            Double budgetTotalAmount, String sponsorAwardNumber, String pricingType,
+            Double budgetTotalAmount, String primeAgreementNumber, Boolean everify, Boolean finalFinancialReportRequired, String pricingType,
             boolean existsByDefaultForSearching, RassXMLAwardPiCoPiEntryFixture[] piFixtures) {
         this.proposalNumber = proposalNumber;
         this.status = status;
@@ -138,8 +140,10 @@ public enum RassXmlAwardEntryFixture {
         this.budgetStartDate = parseShortDate(budgetStartDateString);
         this.budgetStopDate = parseShortDate(budgetStopDateString);
         this.budgetTotalAmount = buildKualiDecimalFromDouble(budgetTotalAmount);
-        this.sponsorAwardNumber = sponsorAwardNumber;
+        this.primeAgreementNumber = primeAgreementNumber;
         this.pricingType = pricingType;
+        this.everify = everify;
+        this.finalFinancialReportRequired = finalFinancialReportRequired;
     }
     
     private KualiDecimal buildKualiDecimalFromDouble(Double amount) {
@@ -288,7 +292,6 @@ public enum RassXmlAwardEntryFixture {
         extension.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         extension.setCostShareRequired(defaultToFalseIfNull(costShareRequired));
         extension.setFinalFiscalReportDate(getFinalReportDueDateAsSqlDate());
-        extension.setFinalFinancialReportRequired(getExpectedFinalFinancialReportRequiredIndicator());
         award.setExtension(extension);
         
         List<AwardOrganization> awardOrganizations = award.getAwardOrganizations();
