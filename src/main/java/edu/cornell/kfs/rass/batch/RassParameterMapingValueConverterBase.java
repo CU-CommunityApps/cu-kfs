@@ -19,9 +19,8 @@ public abstract class RassParameterMapingValueConverterBase extends RassValueCon
         String mappedValue = parameterService.getSubParameterValueAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT,
                 parameterName, value);
         
-        if (getLog().isInfoEnabled()) {
-            getLog().info("getMappedProposalPurposeValue, value from RASS: " + value + " paremter name: " + parameterName + " mapped value to return: " + mappedValue);
-            
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("getMappedProposalPurposeValue, value from RASS: " + value + " paremter name: " + parameterName + " mapped value to return: " + mappedValue);
         }
         
         if (mappedValue == null) {
