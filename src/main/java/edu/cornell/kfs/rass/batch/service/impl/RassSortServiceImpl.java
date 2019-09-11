@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.service.RassSortService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 
@@ -113,6 +114,11 @@ public class RassSortServiceImpl implements RassSortService {
             agencyNumberInSortedList = new ArrayList<String>();
             unsortedAgencies = new ArrayList<RassXmlAgencyEntry>();
         }
+    }
+    
+    @Override
+    public List<RassXmlFileParseResult> sortRassXmlFileParseResult(List<RassXmlFileParseResult> results) {
+        return results;
     }
 
 }

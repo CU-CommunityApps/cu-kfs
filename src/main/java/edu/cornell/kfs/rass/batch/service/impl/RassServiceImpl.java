@@ -62,9 +62,10 @@ public class RassServiceImpl implements RassService {
             return Collections.emptyList();
         }
         LOG.info("readXML, Reading " + rassInputFileNames.size() + " RASS XML files to process into KFS");
-        return rassInputFileNames.stream()
+        List<RassXmlFileParseResult> results = rassInputFileNames.stream()
                 .map(this::parseRassXml)
                 .collect(Collectors.toCollection(ArrayList::new));
+        return rassSortService.sortRassXmlFileParseResult(results);
     }
 
     protected RassXmlFileParseResult parseRassXml(String rassInputFileName) {
