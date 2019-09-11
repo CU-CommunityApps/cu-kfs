@@ -48,7 +48,7 @@ public enum RassXmlAwardEntryFixture {
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY)),
     SOME_DEPARTMENT_PROJECT("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01", "2020-11-30",
             45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
-            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, StringUtils.EMPTY, false, false, StringUtils.EMPTY, true,
+            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, null, false, false, null, true,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI)),
     SOME_DEPARTMENT_PROJECT_V2("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01", "2020-11-30",
             45000.00, 30000.00, 75000.00, "H", "34343", "CON", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
@@ -294,13 +294,18 @@ public enum RassXmlAwardEntryFixture {
         award.setGrantDescriptionCode(defaultToNullIfBlank(grantDescription));
         award.setFederalPassThroughIndicator(defaultToFalseIfNull(federalPassThrough));
         award.setFederalPassThroughAgencyNumber(defaultToNullIfBlank(federalPassThroughAgencyNumber));
-        
+        award.setInstrumentTypeCode(defaultToNullIfBlank(pricingType));
+
         AwardExtendedAttribute extension = new AwardExtendedAttribute();
         extension.setProposalNumber(defaultToNullIfBlank(proposalNumber));
         extension.setCostShareRequired(defaultToFalseIfNull(costShareRequired));
         extension.setFinalFiscalReportDate(getFinalReportDueDateAsSqlDate());
         extension.setEverify(defaultToFalseIfNull(everify));
         extension.setFinalFinancialReportRequired(defaultToFalseIfNull(finalFinancialReportRequired));
+        extension.setPrimeAgreementNumber(defaultToNullIfBlank(primeAgreementNumber));
+        extension.setBudgetBeginningDate(buildSqlDateFromDateTime(budgetStartDate));
+        extension.setBudgetEndingDate(buildSqlDateFromDateTime(budgetStopDate));
+        extension.setBudgetTotalAmount(budgetTotalAmount);
         award.setExtension(extension);
         
         List<AwardOrganization> awardOrganizations = award.getAwardOrganizations();
