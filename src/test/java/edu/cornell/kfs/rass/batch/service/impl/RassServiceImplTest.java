@@ -921,7 +921,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         
         assertEquals(a, results.get(2));
         
-        rassService.sortFileName(results);
+        rassService.sortFileNameList(results);
         
         assertEquals(a, results.get(0));
         assertEquals(b, results.get(1));
@@ -939,7 +939,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         List<String> fileNames = buildFileNameList(aug10FileName, sept10FileName, sept9FileName, sept8FileName,fullExtractFileName);
         assertEquals(aug10FileName, fileNames.get(0));
         
-        rassService.sortFileName(fileNames);
+        rassService.sortFileNameList(fileNames);
         
         assertEquals(fullExtractFileName, fileNames.get(0));
         assertEquals(aug10FileName, fileNames.get(1));
