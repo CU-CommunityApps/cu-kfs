@@ -1,5 +1,6 @@
 package edu.cornell.kfs.rass.batch;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -23,7 +24,7 @@ public abstract class RassParameterMappingValueConverterBase extends RassValueCo
             getLog().debug("getMappedValue, value from RASS: " + value + " parameter name: " + parameterName + " mapped value to return: " + mappedValue);
         }
         
-        if (mappedValue == null) {
+        if (StringUtils.isBlank(mappedValue)) {
             getLog().error("getMappedValue, there is no parameter mapping for the value " + value + " so returning original value");
             mappedValue = value;
         }
