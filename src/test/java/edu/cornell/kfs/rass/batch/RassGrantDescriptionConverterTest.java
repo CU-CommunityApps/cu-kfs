@@ -49,6 +49,7 @@ public class RassGrantDescriptionConverterTest {
        GOOD_TEST("A", "ALPHA"),
        NO_RESULTS("B", "B", null),
        EMPTY_RESULTS("C", "C", StringUtils.EMPTY),
+       NULL_TEST(null, null, StringUtils.EMPTY),
        SPACE_RESULTS("D", "D", StringUtils.SPACE);
         
         
