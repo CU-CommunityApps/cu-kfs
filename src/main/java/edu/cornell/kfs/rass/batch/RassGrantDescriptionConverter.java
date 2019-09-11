@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 
-public class RassGrantDescriptionConverter extends RassParameterMapingValueConverterBase {
+public class RassGrantDescriptionConverter extends RassParameterMappingValueConverterBase {
     private static final Logger LOG = LogManager.getLogger(RassGrantDescriptionConverter.class);
     
     @Override

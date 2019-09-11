@@ -6,25 +6,25 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
-public abstract class RassParameterMapingValueConverterBase extends RassValueConverterBase {
+public abstract class RassParameterMappingValueConverterBase extends RassValueConverterBase {
     private ParameterService parameterService;
 
     @Override
     public Object convert(Class<? extends PersistableBusinessObject> businessObjectClass, RassPropertyDefinition propertyMapping, Object propertyValue) {
-        return getMappedProposalPurposeValue((String) propertyValue);
+        return getMappedValue((String) propertyValue);
     }
 
-    protected String getMappedProposalPurposeValue(String value) {
+    protected String getMappedValue(String value) {
         String parameterName = getParameterName();
         String mappedValue = parameterService.getSubParameterValueAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT,
                 parameterName, value);
         
         if (getLog().isDebugEnabled()) {
-            getLog().debug("getMappedProposalPurposeValue, value from RASS: " + value + " paremter name: " + parameterName + " mapped value to return: " + mappedValue);
+            getLog().debug("getMappedValue, value from RASS: " + value + " parameter name: " + parameterName + " mapped value to return: " + mappedValue);
         }
         
         if (mappedValue == null) {
-            getLog().error("getMappedProposalPurposeValue, there is no oarameter mapping for the value " + value + " so returning original value");
+            getLog().error("getMappedValue, there is no parameter mapping for the value " + value + " so returning original value");
             mappedValue = value;
         }
         
