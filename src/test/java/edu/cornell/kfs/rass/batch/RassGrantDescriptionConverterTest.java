@@ -28,11 +28,9 @@ public class RassGrantDescriptionConverterTest {
     
     private ParameterService buildMockParameterService() {
         ParameterService service = Mockito.mock(ParameterService.class);
-        //public String getSubParameterValueAsString(String namespaceCode, String componentCode, String parameterName, String subParameterName) {
-        
         for (TestData data : TestData.values()) {
-            Mockito.when(service.getSubParameterValueAsString(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.eq(data.searchValue))).
-                thenReturn(data.parameterServiceResults);
+            Mockito.when(service.getSubParameterValueAsString(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.eq(data.searchValue)))
+                .thenReturn(data.parameterServiceResults);
         }
         return service;
     }
