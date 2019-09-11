@@ -71,6 +71,9 @@
                 <idref bean="rassProposalProjectDirectorConverter"/>
                 <idref bean="rassAwardProjectDirectorConverter"/>
                 <idref bean="rassPurposeCodeConverter"/>
+                <idref bean="rassAgencyTypeConverter"/>
+                <idref bean="rassProposalStatusConverter"/>
+                <idref bean="rassGrantDescriptionConverter"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="agencyDefinition-parentBean"/>
                 <idref bean="proposalDefinition"/>
