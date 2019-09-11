@@ -1,7 +1,9 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,14 +26,16 @@ import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassStep;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
-import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
+import edu.cornell.kfs.rass.batch.RassXmlFileProcessingResult;
 import edu.cornell.kfs.rass.batch.service.RassReportService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class RassReportServiceImpl implements RassReportService {
     private static final Logger LOG = LogManager.getLogger(RassReportServiceImpl.class);
 
+    protected String reportFileNamePrefixFormat;
     protected EmailService emailService;
     protected ParameterService parameterService;
     protected ReportWriterService reportWriterService;
@@ -82,55 +86,70 @@ public class RassReportServiceImpl implements RassReportService {
 
     @Override
     public void writeBatchJobReport(RassBatchJobReport rassBatchJobReport) {
-        LOG.info("writeBatchJobReport: start writing RASS batch job report");
-        reportWriterService.initialize();
+        LOG.info("writeBatchJobReport: start writing RASS batch job reports for each file");
+
         List<RassXmlFileParseResult> fileParseResults = rassBatchJobReport.getFileParseResults();
+        Map<String, RassXmlFileProcessingResult> fileProcessingResults = rassBatchJobReport.getFileProcessingResults();
 
         for (RassXmlFileParseResult fileParseResult : fileParseResults) {
+            initializeNewReportForFile(fileParseResult);
             if (RassConstants.RassParseResultCode.ERROR.equals(fileParseResult.getResultCode())) {
                 reportWriterService.writeFormattedMessageLine("RASS file: " + fileParseResult.getRassXmlFileName() + " hasn't been processed successfully");
             } else {
                 reportWriterService.writeFormattedMessageLine("RASS file: " + fileParseResult.getRassXmlFileName() + " has been processed successfully");
 
-                writeReportSummary(rassBatchJobReport);
-                writeReportDetails(rassBatchJobReport);
+                RassXmlFileProcessingResult fileResult = fileProcessingResults.get(
+                        fileParseResult.getRassXmlFileName());
+                writeReportSummary(fileResult);
+                writeReportDetails(fileResult);
             }
+            finalizeReportForCurrentFile();
         }
-        reportWriterService.destroy();
-        LOG.info("writeBatchJobReport: finished writing RASS batch job report");
+        LOG.info("writeBatchJobReport: finished writing RASS batch job reports");
     }
 
-    private void writeReportSummary(RassBatchJobReport rassBatchJobReport) {
+    private void initializeNewReportForFile(RassXmlFileParseResult fileParseResult) {
+        String bareXmlFileName = getXmlFileNameWithoutPathOrExtension(fileParseResult.getRassXmlFileName());
+        String fileNamePrefix = MessageFormat.format(reportFileNamePrefixFormat, bareXmlFileName);
+        reportWriterService.setFileNamePrefix(fileNamePrefix);
+        reportWriterService.initialize();
+    }
+
+    private String getXmlFileNameWithoutPathOrExtension(String xmlFileName) {
+        String result = StringUtils.substringAfterLast(xmlFileName, CUKFSConstants.SLASH);
+        result = StringUtils.substringAfterLast(result, CUKFSConstants.BACKSLASH);
+        result = StringUtils.substringBefore(result, KFSConstants.DELIMITER);
+        return result;
+    }
+
+    private void writeReportSummary(RassXmlFileProcessingResult fileResult) {
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** Report Summary ***");
         reportWriterService.writeNewLines(1);
-        writeAgencySummaryToReport(rassBatchJobReport);
+        writeAgencySummaryToReport(fileResult);
         reportWriterService.writeNewLines(1);
-        writeProposalSummaryToReport(rassBatchJobReport);
+        writeProposalSummaryToReport(fileResult);
         reportWriterService.writeNewLines(1);
-        writeAwardSummaryToReport(rassBatchJobReport);
+        writeAwardSummaryToReport(fileResult);
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** End of Report Summary ***");
         reportWriterService.writeNewLines(1);
     }
 
-    private void writeAgencySummaryToReport(RassBatchJobReport rassBatchJobReport) {
-        RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = processingResults.getAgencyResults();
+    private void writeAgencySummaryToReport(RassXmlFileProcessingResult fileResult) {
+        RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = fileResult.getAgencyResults();
         List<RassBusinessObjectUpdateResult<Agency>> agencyResults = agencyResultGrouping.getObjectResults();
         writeBOResultsSummaryToReport(agencyResults, Agency.class, true);
     }
 
-    private void writeProposalSummaryToReport(RassBatchJobReport rassBatchJobReport) {
-        RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = processingResults.getProposalResults();
+    private void writeProposalSummaryToReport(RassXmlFileProcessingResult fileResult) {
+        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = fileResult.getProposalResults();
         List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
         writeBOResultsSummaryToReport(proposalResults, Proposal.class, false);
     }
 
-    private void writeAwardSummaryToReport(RassBatchJobReport rassBatchJobReport) {
-        RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Award> awardResultGrouping = processingResults.getAwardResults();
+    private void writeAwardSummaryToReport(RassXmlFileProcessingResult fileResult) {
+        RassBusinessObjectUpdateResultGrouping<Award> awardResultGrouping = fileResult.getAwardResults();
         List<RassBusinessObjectUpdateResult<Award>> awardResults = awardResultGrouping.getObjectResults();
         writeBOResultsSummaryToReport(awardResults, Award.class, true);
     }
@@ -178,37 +197,34 @@ public class RassReportServiceImpl implements RassReportService {
         reportWriterService.writeFormattedMessageLine(reportMessage);
     }
 
-    private void writeReportDetails(RassBatchJobReport rassBatchJobReport) {
+    private void writeReportDetails(RassXmlFileProcessingResult fileResult) {
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** Report Details ***");
         reportWriterService.writeNewLines(1);
-        writeAgencyDetailsToReport(rassBatchJobReport);
+        writeAgencyDetailsToReport(fileResult);
         reportWriterService.writeNewLines(1);
-        writeProposalDetailsToReport(rassBatchJobReport);
+        writeProposalDetailsToReport(fileResult);
         reportWriterService.writeNewLines(1);
-        writeAwardDetailsToReport(rassBatchJobReport);
+        writeAwardDetailsToReport(fileResult);
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** End of Report Details ***");
         reportWriterService.writeNewLines(1);
     }
 
-    private void writeAgencyDetailsToReport(RassBatchJobReport rassBatchJobReport) {
-        RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = processingResults.getAgencyResults();
+    private void writeAgencyDetailsToReport(RassXmlFileProcessingResult fileResult) {
+        RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = fileResult.getAgencyResults();
         List<RassBusinessObjectUpdateResult<Agency>> agencyResults = agencyResultGrouping.getObjectResults();
         writeResultsDetailsToReport(agencyResults, Agency.class, true);
     }
 
-    private void writeProposalDetailsToReport(RassBatchJobReport rassBatchJobReport) {
-        RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = processingResults.getProposalResults();
+    private void writeProposalDetailsToReport(RassXmlFileProcessingResult fileResult) {
+        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = fileResult.getProposalResults();
         List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
         writeResultsDetailsToReport(proposalResults, Proposal.class, false);
     }
 
-    private void writeAwardDetailsToReport(RassBatchJobReport rassBatchJobReport) {
-        RassXmlProcessingResults processingResults = rassBatchJobReport.getProcessingResults();
-        RassBusinessObjectUpdateResultGrouping<Award> awardResultGrouping = processingResults.getAwardResults();
+    private void writeAwardDetailsToReport(RassXmlFileProcessingResult fileResult) {
+        RassBusinessObjectUpdateResultGrouping<Award> awardResultGrouping = fileResult.getAwardResults();
         List<RassBusinessObjectUpdateResult<Award>> awardResults = awardResultGrouping.getObjectResults();
         writeResultsDetailsToReport(awardResults, Award.class, true);
     }
@@ -296,6 +312,10 @@ public class RassReportServiceImpl implements RassReportService {
             }
         }
         return errorLines.toString();
+    }
+
+    private void finalizeReportForCurrentFile() {
+        reportWriterService.destroy();
     }
 
     public EmailService getEmailService() {
