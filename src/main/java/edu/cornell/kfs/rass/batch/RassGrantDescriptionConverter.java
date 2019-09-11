@@ -5,12 +5,12 @@ import org.apache.logging.log4j.Logger;
 
 import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 
-public class RassPurposeCodeConverter extends RassParameterMappingValueConverterBase {
-    private static final Logger LOG = LogManager.getLogger(RassPurposeCodeConverter.class);
+public class RassGrantDescriptionConverter extends RassParameterMappingValueConverterBase {
+    private static final Logger LOG = LogManager.getLogger(RassGrantDescriptionConverter.class);
     
     @Override
     public String getParameterName() {
-        return CuCGParameterConstants.PROPOSAL_PURPOSE_MAPPINGS;
+        return CuCGParameterConstants.GRANT_DESCRIPTION_MAPPINGS;
     }
 
     @Override
