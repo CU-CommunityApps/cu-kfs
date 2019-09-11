@@ -2,10 +2,12 @@ package edu.cornell.kfs.rass.batch;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 
-public class RassXmlFileParseResult {
+public class RassXmlFileParseResult implements Comparable<RassXmlFileParseResult> {
 
     private final String rassXmlFileName;
     private final RassParseResultCode resultCode;
@@ -33,6 +35,14 @@ public class RassXmlFileParseResult {
     public RassXmlDocumentWrapper getParsedDocumentWrapper() {
         return rassXmlDocumentWrapper
                 .orElseThrow(() -> new IllegalStateException("No successfully-parsed data exists for file " + rassXmlFileName));
+    }
+
+    @Override
+    public int compareTo(RassXmlFileParseResult other) {
+        if (other != null) {
+            return StringUtils.compare(this.rassXmlFileName, other.getRassXmlFileName());
+        }
+        return 1;
     }
 
 }
