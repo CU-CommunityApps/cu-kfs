@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapperMarshalTest;
@@ -135,52 +134,6 @@ public class RassSortServiceImplTest {
             failedAgencies = new ArrayList<String>();
         }
         
-    }
-    
-    @Test
-    public void testSortRassXmlFileParseResultSimpleFileNames() {
-        String a = "a";
-        String b = "b";
-        String c = "c";
-        List<RassXmlFileParseResult> results = buildRassXmlFileParseResultList(c, b, a);
-        
-        assertEquals(a, results.get(2).getRassXmlFileName());
-        
-        List<RassXmlFileParseResult> sortedResults = rassSortServiceImpl.sortRassXmlFileParseResult(results);
-        
-        assertEquals(a, sortedResults.get(0).getRassXmlFileName());
-        assertEquals(b, sortedResults.get(1).getRassXmlFileName());
-        assertEquals(c, sortedResults.get(2).getRassXmlFileName());
-    }
-    
-    @Test
-    public void testSortRassXmlFileParseResultRealLifeFileNames() {
-        String fullExtractFileName = "kfs.xml";
-        String sept8FileName = "rass_20190908044608.xml";
-        String sept9FileName = "rass_20190909044604.xml";
-        String sept10FileName = "rass_20190910044609.xml";
-        String aug10FileName = "rass_20190810044609.xml";
-        
-        List<RassXmlFileParseResult> results = buildRassXmlFileParseResultList(aug10FileName, sept10FileName, sept9FileName, sept8FileName,fullExtractFileName);
-        assertEquals(aug10FileName, results.get(0).getRassXmlFileName());
-        
-        List<RassXmlFileParseResult> sortedResults = rassSortServiceImpl.sortRassXmlFileParseResult(results);
-        
-        assertEquals(fullExtractFileName, sortedResults.get(0).getRassXmlFileName());
-        assertEquals(aug10FileName, sortedResults.get(1).getRassXmlFileName());
-        assertEquals(sept8FileName, sortedResults.get(2).getRassXmlFileName());
-        assertEquals(sept9FileName, sortedResults.get(3).getRassXmlFileName());
-        assertEquals(sept10FileName, sortedResults.get(4).getRassXmlFileName());
-        
-    }
-    
-    private List<RassXmlFileParseResult> buildRassXmlFileParseResultList(String... fileNames) {
-        List<RassXmlFileParseResult> results = new ArrayList<RassXmlFileParseResult>();
-        for (String fileName : fileNames) {
-            RassXmlFileParseResult result = new RassXmlFileParseResult(fileName, null, null);
-            results.add(result);
-        }
-        return results;
     }
 
 }

@@ -57,15 +57,19 @@ public class RassServiceImpl implements RassService {
     @Override
     public List<RassXmlFileParseResult> readXML() {
         List<String> rassInputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
+        sortFileName(rassInputFileNames);
         if (CollectionUtils.isEmpty(rassInputFileNames)) {
             LOG.info("readXML, No RASS XML files were found for processing");
             return Collections.emptyList();
         }
         LOG.info("readXML, Reading " + rassInputFileNames.size() + " RASS XML files to process into KFS");
-        List<RassXmlFileParseResult> results = rassInputFileNames.stream()
+        return rassInputFileNames.stream()
                 .map(this::parseRassXml)
                 .collect(Collectors.toCollection(ArrayList::new));
-        return rassSortService.sortRassXmlFileParseResult(results);
+    }
+    
+    protected void sortFileName(List<String> rassInputFileNames) {
+        Collections.sort(rassInputFileNames);
     }
 
     protected RassXmlFileParseResult parseRassXml(String rassInputFileName) {
