@@ -911,5 +911,47 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     private interface ObjectUpdateValidator<T, U> {
         void assertObjectWasUpdatedAsExpected(T expectedObject, U actualObject, int index);
     }
+    
+    @Test
+    public void testSortFileNames() {
+        String a = "a";
+        String b = "b";
+        String c = "c";
+        List<String> results = buildFileNameList(c, b, a);
+        
+        assertEquals(a, results.get(2));
+        
+        rassService.sortFileNameList(results);
+        
+        assertEquals(a, results.get(0));
+        assertEquals(b, results.get(1));
+        assertEquals(c, results.get(2));
+    }
+    
+    @Test
+    public void testSortFileNamesWithRealLifeFileNames() {
+        String fullExtractFileName = "kfs.xml";
+        String sept8FileName = "rass_20190908044608.xml";
+        String sept9FileName = "rass_20190909044604.xml";
+        String sept10FileName = "rass_20190910044609.xml";
+        String aug10FileName = "rass_20190810044609.xml";
+        
+        List<String> fileNames = buildFileNameList(aug10FileName, sept10FileName, sept9FileName, sept8FileName, fullExtractFileName);
+        assertEquals(aug10FileName, fileNames.get(0));
+        
+        rassService.sortFileNameList(fileNames);
+        
+        assertEquals(fullExtractFileName, fileNames.get(0));
+        assertEquals(aug10FileName, fileNames.get(1));
+        assertEquals(sept8FileName, fileNames.get(2));
+        assertEquals(sept9FileName, fileNames.get(3));
+        assertEquals(sept10FileName, fileNames.get(4));
+        
+    }
+    
+    private List<String> buildFileNameList(String... fileNames) {
+        List<String> fileNameList = Arrays.asList(fileNames);
+        return fileNameList;
+    }
 
 }
