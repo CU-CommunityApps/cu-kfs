@@ -85,6 +85,7 @@
 			
     	<bean id="rassReportService" parent="rassReportService-parentBean"/>
 	<bean id="rassReportService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassReportServiceImpl"
+			p:reportFileNamePrefixFormat="rass_report_for_{0}_"
 			p:emailService-ref="emailService"
 			p:parameterService-ref="parameterService"
 			p:reportWriterService-ref="rassReportWriterService"/>

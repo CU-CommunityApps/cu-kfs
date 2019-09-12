@@ -32,8 +32,8 @@ public class RassStep extends AbstractStep {
         List<RassXmlFileParseResult> successfulResults = findSuccessfullyParsedFileResults(parseResults);
         Map<String, RassXmlFileProcessingResult> processingResults = rassService.updateKFS(successfulResults);
         RassBatchJobReport report = new RassBatchJobReport(parseResults, processingResults);
-        rassReportService.writeBatchJobReport(report);
-        sendReport(report);
+        rassReportService.writeBatchJobReports(report);
+        //sendReport(report);
         return true;
     }
 

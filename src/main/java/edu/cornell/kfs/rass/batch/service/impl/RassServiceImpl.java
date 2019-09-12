@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -56,6 +57,11 @@ public class RassServiceImpl implements RassService {
     protected RassSortService rassSortService;
 
     protected String rassFilePath;
+    protected BiConsumer<String, Class<?>> parsedObjectTypeProcessingWatcher;
+
+    public RassServiceImpl() {
+        this.parsedObjectTypeProcessingWatcher = (xmlFileName, boClass) -> {};
+    }
 
     @Override
     public List<RassXmlFileParseResult> readXML() {
@@ -142,6 +148,8 @@ public class RassServiceImpl implements RassService {
         
         for (RassXmlFileParseResult parsedFile : parsedFiles) {
             LOG.info("updateBOs, Processing results from file " + parsedFile.getRassXmlFileName());
+            parsedObjectTypeProcessingWatcher.accept(
+                    parsedFile.getRassXmlFileName(), objectDefinition.getBusinessObjectClass());
             List<RassBusinessObjectUpdateResult<R>> objectResults = new ArrayList<>();
             RassObjectGroupingUpdateResultCode groupingResultCode = RassObjectGroupingUpdateResultCode.SUCCESS;
             
@@ -227,6 +235,10 @@ public class RassServiceImpl implements RassService {
 
     public void setRassSortService(RassSortService rassSortService) {
         this.rassSortService = rassSortService;
+    }
+
+    public void setParsedObjectTypeProcessingWatcher(BiConsumer<String, Class<?>> parsedObjectTypeProcessingWatcher) {
+        this.parsedObjectTypeProcessingWatcher = parsedObjectTypeProcessingWatcher;
     }
 
 }

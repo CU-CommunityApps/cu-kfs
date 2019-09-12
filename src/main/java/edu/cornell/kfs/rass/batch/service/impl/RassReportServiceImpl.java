@@ -1,6 +1,7 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -85,44 +86,79 @@ public class RassReportServiceImpl implements RassReportService {
     }
 
     @Override
-    public void writeBatchJobReport(RassBatchJobReport rassBatchJobReport) {
-        LOG.info("writeBatchJobReport: start writing RASS batch job reports for each file");
+    public void writeBatchJobReports(RassBatchJobReport rassBatchJobReport) {
+        LOG.info("writeBatchJobReports: start writing RASS batch job reports for each file");
 
         List<RassXmlFileParseResult> fileParseResults = rassBatchJobReport.getFileParseResults();
         Map<String, RassXmlFileProcessingResult> fileProcessingResults = rassBatchJobReport.getFileProcessingResults();
+        List<RassXmlFileParseResult> errorResults = new ArrayList<>();
 
         for (RassXmlFileParseResult fileParseResult : fileParseResults) {
-            initializeNewReportForFile(fileParseResult);
             if (RassConstants.RassParseResultCode.ERROR.equals(fileParseResult.getResultCode())) {
-                reportWriterService.writeFormattedMessageLine("RASS file: " + fileParseResult.getRassXmlFileName() + " hasn't been processed successfully");
-            } else {
-                reportWriterService.writeFormattedMessageLine("RASS file: " + fileParseResult.getRassXmlFileName() + " has been processed successfully");
-
-                RassXmlFileProcessingResult fileResult = fileProcessingResults.get(
-                        fileParseResult.getRassXmlFileName());
-                writeReportSummary(fileResult);
-                writeReportDetails(fileResult);
+                errorResults.add(fileParseResult);
+                continue;
             }
+            RassXmlFileProcessingResult fileResult = fileProcessingResults.get(fileParseResult.getRassXmlFileName());
+            initializeNewReportForFile(fileParseResult);
+            writeReportSummary(fileResult);
+            writeReportDetails(fileResult);
             finalizeReportForCurrentFile();
+            sendReportEmail();
         }
-        LOG.info("writeBatchJobReport: finished writing RASS batch job reports");
+        
+        if (!errorResults.isEmpty()) {
+            LOG.info("writeBatchJobReports: One or more RASS files failed to be parsed; writing error report file");
+            writeErrorReport(errorResults);
+            sendReportEmail();
+        }
+        
+        LOG.info("writeBatchJobReports: finished writing RASS batch job reports");
+    }
+
+    private void writeErrorReport(List<RassXmlFileParseResult> errorResults) {
+        initializeNewReport(RassConstants.RASS_PARSE_ERRORS_BASE_FILENAME);
+        reportWriterService.writeFormattedMessageLine("RASS Error Report");
+        reportWriterService.writeNewLines(1);
+        reportWriterService.writeFormattedMessageLine(
+                "Unexpected errors were encountered when attempting to read the following RASS XML files.");
+        reportWriterService.writeFormattedMessageLine(
+                "The failures were likely the result of incorrect XML formatting.");
+        reportWriterService.writeFormattedMessageLine(
+                "Specific details are available in the RASS batch job logs.");
+        reportWriterService.writeNewLines(1);
+        for (RassXmlFileParseResult errorResult : errorResults) {
+            String xmlFileName = getFileNameWithoutPath(errorResult.getRassXmlFileName());
+            reportWriterService.writeFormattedMessageLine(xmlFileName);
+        }
+        finalizeReportForCurrentFile();
     }
 
     private void initializeNewReportForFile(RassXmlFileParseResult fileParseResult) {
-        String bareXmlFileName = getXmlFileNameWithoutPathOrExtension(fileParseResult.getRassXmlFileName());
-        String fileNamePrefix = MessageFormat.format(reportFileNamePrefixFormat, bareXmlFileName);
+        String bareXmlFileName = getFileNameWithoutPathOrExtension(fileParseResult.getRassXmlFileName());
+        initializeNewReport(bareXmlFileName);
+    }
+
+    private void initializeNewReport(String baseFileName) {
+        String fileNamePrefix = MessageFormat.format(reportFileNamePrefixFormat, baseFileName);
         reportWriterService.setFileNamePrefix(fileNamePrefix);
         reportWriterService.initialize();
     }
 
-    private String getXmlFileNameWithoutPathOrExtension(String xmlFileName) {
-        String result = StringUtils.substringAfterLast(xmlFileName, CUKFSConstants.SLASH);
-        result = StringUtils.substringAfterLast(result, CUKFSConstants.BACKSLASH);
+    private String getFileNameWithoutPathOrExtension(String xmlFileName) {
+        String result = getFileNameWithoutPath(xmlFileName);
         result = StringUtils.substringBefore(result, KFSConstants.DELIMITER);
         return result;
     }
 
+    private String getFileNameWithoutPath(String xmlFileName) {
+        String result = StringUtils.substringAfterLast(xmlFileName, CUKFSConstants.SLASH);
+        result = StringUtils.substringAfterLast(result, CUKFSConstants.BACKSLASH);
+        return result;
+    }
+
     private void writeReportSummary(RassXmlFileProcessingResult fileResult) {
+        reportWriterService.writeFormattedMessageLine("Report for RASS XML File: %s",
+                getFileNameWithoutPath(fileResult.getRassXmlFileName()));
         reportWriterService.writeNewLines(1);
         reportWriterService.writeSubTitle("*** Report Summary ***");
         reportWriterService.writeNewLines(1);
@@ -316,6 +352,14 @@ public class RassReportServiceImpl implements RassReportService {
 
     private void finalizeReportForCurrentFile() {
         reportWriterService.destroy();
+    }
+
+    public String getReportFileNamePrefixFormat() {
+        return reportFileNamePrefixFormat;
+    }
+
+    public void setReportFileNamePrefixFormat(String reportFileNamePrefixFormat) {
+        this.reportFileNamePrefixFormat = reportFileNamePrefixFormat;
     }
 
     public EmailService getEmailService() {

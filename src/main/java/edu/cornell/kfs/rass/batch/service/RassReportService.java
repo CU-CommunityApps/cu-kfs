@@ -4,7 +4,7 @@ import edu.cornell.kfs.rass.batch.RassBatchJobReport;
 
 public interface RassReportService {
     
-    void writeBatchJobReport(RassBatchJobReport rassBatchJobReport);
+    void writeBatchJobReports(RassBatchJobReport rassBatchJobReport);
     
     void sendReportEmail();
     
