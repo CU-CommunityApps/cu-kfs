@@ -929,14 +929,14 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
     
     @Test
-    public void testSortFIleNamesWithRealLifeFileNames() {
+    public void testSortFileNamesWithRealLifeFileNames() {
         String fullExtractFileName = "kfs.xml";
         String sept8FileName = "rass_20190908044608.xml";
         String sept9FileName = "rass_20190909044604.xml";
         String sept10FileName = "rass_20190910044609.xml";
         String aug10FileName = "rass_20190810044609.xml";
         
-        List<String> fileNames = buildFileNameList(aug10FileName, sept10FileName, sept9FileName, sept8FileName,fullExtractFileName);
+        List<String> fileNames = buildFileNameList(aug10FileName, sept10FileName, sept9FileName, sept8FileName, fullExtractFileName);
         assertEquals(aug10FileName, fileNames.get(0));
         
         rassService.sortFileNameList(fileNames);
@@ -950,10 +950,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
     
     private List<String> buildFileNameList(String... fileNames) {
-        List<String> fileNameList = new ArrayList<String>();
-        for (String fileName : fileNames) {
-            fileNameList.add(fileName);
-        }
+        List<String> fileNameList = Arrays.asList(fileNames);
         return fileNameList;
     }
 
