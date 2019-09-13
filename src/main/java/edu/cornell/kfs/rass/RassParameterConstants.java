@@ -12,7 +12,5 @@ public final class RassParameterConstants {
     
     public static final String FROM_REPORT_EMAIL_ADDRESS = "FROM_REPORT_EMAIL_ADDRESS";
     public static final String TO_REPORT_EMAIL_ADDRESSES = "TO_REPORT_EMAIL_ADDRESSES";
-    
-    public static final String INSTRUMENT_TYPE_CODE_MAPPINGS = "INSTRUMENT_TYPE_CODE_MAPPINGS";
 
 }
