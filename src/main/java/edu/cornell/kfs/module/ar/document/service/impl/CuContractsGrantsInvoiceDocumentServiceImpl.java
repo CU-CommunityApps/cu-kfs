@@ -22,11 +22,13 @@ import org.kuali.kfs.module.ar.businessobject.Customer;
 import org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceDetailAccountObjectCode;
+import org.kuali.kfs.module.ar.businessobject.InvoiceGeneralDetail;
 import org.kuali.kfs.module.ar.businessobject.OrganizationAccountingDefault;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
 import org.kuali.kfs.module.ar.report.PdfFormattingMap;
 import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -34,6 +36,7 @@ import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 import edu.cornell.kfs.module.ar.businessobject.CustomerExtendedAttribute;
 import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
+import edu.cornell.kfs.module.cg.businessobject.AwardAccountExtendedAttribute;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -59,12 +62,62 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                     totalCostInvoiceDetail.getTotalAmountBilledToDate().add(document.getInvoiceGeneralDetail().getCostShareAmount()));
         }
         
+        Award award = (Award) document.getInvoiceGeneralDetail().getAward();
+        if (ObjectUtils.isNotNull(award)) {
+            AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
+            if (ObjectUtils.isNotNull(awardExtension)) {
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_START_DATE, 
+                        convertDateToString(awardExtension.getBudgetBeginningDate()));
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_END_DATE, 
+                        convertDateToString(awardExtension.getBudgetEndingDate()));
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_TOTAL, 
+                        awardExtension.getBudgetTotalAmount());
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PRIME_AGREEMENT_NUMBER,
+                        convertNullStringToEmptyString(awardExtension.getPrimeAgreementNumber()));
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PURCHASE_ORDER_NUMBER,
+                        convertNullStringToEmptyString(awardExtension.getPurchaseOrderNumber()));
+            }
+        }
+        
+        List<InvoiceAccountDetail> invoiceAccountDetails = document.getAccountDetails();
+        if (ObjectUtils.isNotNull(invoiceAccountDetails)) {
+            Account contractControlAccount = determineContractControlAccount(invoiceAccountDetails.get(0));
+            if (ObjectUtils.isNotNull(contractControlAccount)) {
+                Map<String, Object> primaryKeys = new HashMap<String, Object>();
+                primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, invoiceAccountDetails.get(0).getProposalNumber());
+                primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,contractControlAccount.getChartOfAccountsCode());
+                primaryKeys.put(KFSPropertyConstants.ACCOUNT_NUMBER, contractControlAccount.getAccountNumber());
+                AwardAccount awardAccount = businessObjectService.findByPrimaryKey(AwardAccount.class, primaryKeys);
+                AwardAccountExtendedAttribute awardAccountExtension = (AwardAccountExtendedAttribute) awardAccount.getExtension();
+                if (ObjectUtils.isNotNull(awardAccountExtension)) {
+                    localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_ACCOUNT_PURCHASE_ORDER_NUMBER,
+                            convertNullStringToEmptyString(awardAccountExtension.getAccountPurchaseOrderNumber()));
+                }
+            }
+        }
+        
         if (!localParameterMap.isEmpty()) {
             LOG.debug("getTemplateParameterList, there were local parameters, adding them to the returning map.");
             templateParameters.putAll(new PdfFormattingMap(localParameterMap));
         }
         
         return templateParameters;
+    }
+    
+    protected String convertDateToString(Date dateValue) {
+        String dateValueAsString = StringUtils.EMPTY;
+        if (ObjectUtils.isNotNull(dateValue)) {
+            dateValueAsString = getDateTimeService().toDateString(dateValue);
+        }
+        return dateValueAsString;
+    }
+    
+    protected String convertNullStringToEmptyString(String stringValue) {
+        String valueToReturn = StringUtils.EMPTY;
+        if (ObjectUtils.isNotNull(stringValue)) {
+            valueToReturn = stringValue;
+        }
+        return valueToReturn;
     }
     
     @Override

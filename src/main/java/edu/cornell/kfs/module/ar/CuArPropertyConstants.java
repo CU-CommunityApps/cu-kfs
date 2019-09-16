@@ -10,6 +10,12 @@ public class CuArPropertyConstants {
         public static final String FINAL_BILL = "finalBill";
         public static final String PARTIAL_BILL = "partialBill";
         public static final String TOTAL_PROGRAM_OUTLAYS_TO_DATE = "totalProgramOutlaysToDate";
+        public static final String AWARD_BUDGET_START_DATE = "awardbudgetstartdate";
+        public static final String AWARD_BUDGET_END_DATE = "awardbudgetenddate";
+        public static final String AWARD_BUDGET_TOTAL = "awardbudgettotal";
+        public static final String AWARD_PURCHASE_ORDER_NUMBER = "awardpurchaseordernumber";
+        public static final String AWARD_PRIME_AGREEMENT_NUMBER = "awardprimeagreementnumber";
+        public static final String AWARD_ACCOUNT_PURCHASE_ORDER_NUMBER = "awardaccountpurchaseordernumber";
     }
 
     public static class ContractsGrantsInvoiceAccountDetailFields {
