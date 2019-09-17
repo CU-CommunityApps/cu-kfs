@@ -79,7 +79,6 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         newAward.setAwardEntryDate(dateTimeService.getCurrentSqlDate());
         newAward.getAwardAccounts().add(createDefaultAwardAccount(xmlAward));
         addPrimaryFundManager(xmlAward, newAward);
-        updateFinalFinancialReportRequiredFlag(xmlAward, newAward);
         updateAwardLastUpdateDate(newAward);
         
         refreshReferenceObject(newAward, KFSPropertyConstants.PROPOSAL);
@@ -152,15 +151,8 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         refreshReferenceObject(newAward, CuCGPropertyConstants.AWARD_PURPOSE);
         refreshReferenceObject(newAward, CuCGPropertyConstants.GRANT_DESCRIPTION);
         refreshReferenceObject(newAward, KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY);
-        updateFinalFinancialReportRequiredFlag(xmlAward, newAward);
         addPrimaryFundManager(xmlAward, newAward);
         updateAwardLastUpdateDate(newAward);
-    }
-
-    protected void updateFinalFinancialReportRequiredFlag(RassXmlAwardEntry xmlAward, Award newAward) {
-        AwardExtendedAttribute newExtension = (AwardExtendedAttribute) newAward.getExtension();
-        boolean finalFinancialReportRequired = ObjectUtils.isNotNull(xmlAward.getFinalReportDueDate());
-        newExtension.setFinalFinancialReportRequired(finalFinancialReportRequired);
     }
 
     protected void updateAwardLastUpdateDate(Award newAward) {

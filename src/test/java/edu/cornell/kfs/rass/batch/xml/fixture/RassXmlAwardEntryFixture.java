@@ -40,7 +40,7 @@ public enum RassXmlAwardEntryFixture {
 
     SAMPLE_PROJECT("556677", "OS", RassXmlAgencyEntryFixture.SOME, "Some University's Sample Project", "2019-01-15", "2019-12-24",
             25000.00, 5000.00, 30000.00, "H", "98765", "GRT", Boolean.FALSE, StringUtils.EMPTY,
-            primaryOrg("1500"), Boolean.TRUE, "2019-11-30", null, null, null, StringUtils.EMPTY, false, false, StringUtils.EMPTY, false,
+            primaryOrg("1500"), Boolean.TRUE, "2019-11-30", "2017-12-31", "2022-12-31", 9000000.000, "12345", true, false, "COST", false,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY)),
     SAMPLE_PROJECT_MISSING_REQ_FIELD("556677", "OS", StringUtils.EMPTY, "Some University's Sample Project", "2019-01-15", "2019-12-24",
             25000.00, 5000.00, 30000.00, "H", "98765", "GRT", Boolean.FALSE, StringUtils.EMPTY,
@@ -212,6 +212,7 @@ public enum RassXmlAwardEntryFixture {
         award.setFinalFinancialReportRequired(finalFinancialReportRequired);
         award.setBudgetStartDate(buildDateFromDateTime(budgetStartDate));
         award.setBudgetStopDate(buildDateFromDateTime(budgetStopDate));
+        award.setBudgetTotalAmount(budgetTotalAmount);
         award.setPricingType(pricingType);
         award.setPrimeAgreementNumber(primeAgreementNumber);
         
@@ -384,16 +385,20 @@ public enum RassXmlAwardEntryFixture {
         return buildSqlDateFromDateTime(startDate);
     }
 
+    public java.sql.Date getBudgetEndingAsSqlDate() {
+        return buildSqlDateFromDateTime(budgetStopDate);
+    }
+    
+    public java.sql.Date getBudgetBeginningDateAsSqlDate() {
+        return buildSqlDateFromDateTime(budgetStartDate);
+    }
+
     public java.sql.Date getStopDateAsSqlDate() {
         return buildSqlDateFromDateTime(stopDate);
     }
 
     public java.sql.Date getFinalReportDueDateAsSqlDate() {
         return buildSqlDateFromDateTime(finalReportDueDate);
-    }
-
-    public boolean getExpectedFinalFinancialReportRequiredIndicator() {
-        return finalReportDueDate != null;
     }
 
     private java.sql.Date buildSqlDateFromDateTime(DateTime dateTime) {
