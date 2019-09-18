@@ -707,12 +707,12 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 expectedAward.costShareRequired, actualExtension.isCostShareRequired());
         assertEquals("Wrong final fiscal report date at index " + i,
                 expectedAward.getFinalReportDueDateAsSqlDate(), actualExtension.getFinalFiscalReportDate());
-        assertEqualsOrBothBlank("Wrong prime Agreement Number at index " + i,
+        assertEqualsOrBothBlank("Wrong Prime Agreement Number at index " + i,
                 expectedAward.primeAgreementNumber, actualExtension.getPrimeAgreementNumber());
         assertEquals("Wrong Budget Beginning Date at index " + i,
                 expectedAward.getBudgetBeginningDateAsSqlDate(), actualExtension.getBudgetBeginningDate());
         assertEquals("Wrong Budget Ending Date at index " + i,
-                expectedAward.getBudgetEndingAsSqlDate(), actualExtension.getBudgetEndingDate());
+                expectedAward.getBudgetEndingDateAsSqlDate(), actualExtension.getBudgetEndingDate());
         assertEquals("Wrong Budget Total Amount at index " + i,
                 expectedAward.budgetTotalAmount, actualExtension.getBudgetTotalAmount());
         assertEquals("Wrong Everify at index " + i,
