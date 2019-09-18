@@ -26,11 +26,11 @@ import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 
 public enum RassXmlAwardEntryFixture {
     FIRST("141414", "OS", "2345", "First Example Project", "2017-12-31", null, 5300000.000, 700000.000, 6000000.000, StringUtils.EMPTY,
-            StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY, primaryOrg("3434"), Boolean.TRUE, null, null, null, null, 
-            StringUtils.EMPTY,  false, false, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
+            StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY, primaryOrg("3434"), Boolean.TRUE, null, "2017-12-31",
+            "2022-12-31", 9000000.000, "1234S",  true, false, "COST", false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
     SECOND("141414", "OS", "2345", "First Example Project", "2017-12-31", null, 5300000.000, 700000.000, 6000000.000, StringUtils.EMPTY,
             StringUtils.EMPTY, StringUtils.EMPTY, null, StringUtils.EMPTY, primaryOrg("3434"), Boolean.TRUE, null, "2017-12-31",
-            "2022-12-31", 9000000.000, "12345", true, false, "COST", false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
+            "2022-12-31", 9000000.000, "1234S", true, false, "COST", false, piFixtures(RassXMLAwardPiCoPiEntryFixture.cah292_PRIMARY)),
     ANOTHER("141415", "RS", "24680", "Another Example", null, "2050-12-31", 0.0, 0.0, 0.0, StringUtils.EMPTY,
             StringUtils.EMPTY, "GRT", null, StringUtils.EMPTY, primaryOrg("2374"), Boolean.TRUE, "2022-09-30", null, null, null, 
             StringUtils.EMPTY, false, false, StringUtils.EMPTY, false, piFixtures(RassXMLAwardPiCoPiEntryFixture.NO_NAME_PRIMARY)),
@@ -48,7 +48,7 @@ public enum RassXmlAwardEntryFixture {
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY)),
     SOME_DEPARTMENT_PROJECT("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01", "2020-11-30",
             45000.00, 30000.00, 75000.00, "H", "34343", "GRT", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,
-            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, null, false, false, null, true,
+            primaryOrg("2211"), Boolean.FALSE, StringUtils.EMPTY, null, null, null, null, true, true, null, true,
             piFixtures(RassXMLAwardPiCoPiEntryFixture.mgw3_PRIMARY, RassXMLAwardPiCoPiEntryFixture.mo14_CO_PI)),
     SOME_DEPARTMENT_PROJECT_V2("123789", "OS", RassXmlAgencyEntryFixture.SOME, "Some Internal Department Project", "2019-03-01", "2020-11-30",
             45000.00, 30000.00, 75000.00, "H", "34343", "CON", Boolean.TRUE, RassXmlAgencyEntryFixture.TEST.number,

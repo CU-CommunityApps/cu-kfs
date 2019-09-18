@@ -285,6 +285,13 @@ public class RassXmlAwardEntry implements RassXmlObject {
                     StringUtils.equals(organizationCode, other.getOrganizationCode()) &&
                     Objects.equals(costShareRequired, other.getCostShareRequired()) &&
                     Objects.equals(finalReportDueDate, other.getFinalReportDueDate()) &&
+                    Objects.equals(budgetStartDate, other.getBudgetStartDate()) &&
+                    Objects.equals(budgetStopDate, other.getBudgetStopDate()) &&
+                    Objects.equals(budgetTotalAmount, other.getBudgetTotalAmount()) &&
+                    StringUtils.equals(primeAgreementNumber, other.getPrimeAgreementNumber()) &&
+                    StringUtils.equals(pricingType, other.getPricingType()) &&
+                    Objects.equals(everify, other.getEverify()) &&
+                    Objects.equals(finalFinancialReportRequired, other.getFinalFinancialReportRequired()) &&
                     Objects.equals(principalAndCoPrincipalInvestigators, other.getPrincipalAndCoPrincipalInvestigators());
                     
         } else {

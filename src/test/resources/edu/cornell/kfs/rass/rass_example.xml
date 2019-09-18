@@ -78,12 +78,12 @@
       <Direct_Cost_Amount>0.000</Direct_Cost_Amount>
       <Indirect_Cost_Amount>0.000</Indirect_Cost_Amount>
       <Total_Amount>0.000</Total_Amount>
-      <Budget_Start>2017-12-31</Budget_Start>
-      <Budget_Stop>2022-12-31</Budget_Stop>
-      <Budget_Total>9000000.000</Budget_Total>
-      <Prime_Agreement_Number>1234S</Prime_Agreement_Number>
-      <Pricing_Type>COST</Pricing_Type>
-      <E_Verify>Y</E_Verify>
+      <Budget_Start/>
+      <Budget_Stop/>
+      <Budget_Total/>
+      <Prime_Agreement_Number/>
+      <Pricing_Type/>
+      <E_Verify>N</E_Verify>
       <Final_Financial_Report_Required>N</Final_Financial_Report_Required>
       <Purpose/>
       <Grant_Number/>
@@ -101,7 +101,7 @@
         </PI_or_CoPI>
       </PI_and_CoPIs>
     </Award>
-     <Award>
+    <Award>
       <Proposal_Number>35656</Proposal_Number>
       <Status>RS</Status>
       <Agency_Number>24680</Agency_Number>
@@ -112,7 +112,7 @@
       <Indirect_Cost_Amount/>
       <Budget_Start/>
       <Budget_Stop/>
-      <Budget_Total>0.000</Budget_Total>
+      <Budget_Total/>
       <Prime_Agreement_Number/>
       <Pricing_Type/>
       <E_Verify>N</E_Verify>

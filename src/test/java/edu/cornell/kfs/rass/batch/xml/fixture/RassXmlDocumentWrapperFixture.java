@@ -9,7 +9,7 @@ import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
 
 public enum RassXmlDocumentWrapperFixture {
-        RASS_EXAMPLE("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.FIRST, RassXmlAwardEntryFixture.SECOND, RassXmlAwardEntryFixture.ANOTHER, RassXmlAwardEntryFixture.NULL_AMOUNTS), 
+        RASS_EXAMPLE("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.FIRST, RassXmlAwardEntryFixture.SECOND, RassXmlAwardEntryFixture.ANOTHER, RassXmlAwardEntryFixture.NULL_AMOUNTS),
                 agencyFixtures(RassXmlAgencyEntryFixture.SOME, RassXmlAgencyEntryFixture.DoS, RassXmlAgencyEntryFixture.TEST)),
         RASS_AWARDS_ONLY("2019-04-15T22:15:07.273",
                 awardFixtures(RassXmlAwardEntryFixture.FIRST, RassXmlAwardEntryFixture.ANOTHER, RassXmlAwardEntryFixture.NULL_AMOUNTS),
