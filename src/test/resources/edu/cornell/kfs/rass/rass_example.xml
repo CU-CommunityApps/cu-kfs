@@ -11,6 +11,47 @@
       <Direct_Cost_Amount>5300000.000</Direct_Cost_Amount>
       <Indirect_Cost_Amount>700000.000</Indirect_Cost_Amount>
       <Total_Amount>6000000.000</Total_Amount>
+      <Budget_Start>2017-12-31</Budget_Start>
+      <Budget_Stop>2022-12-31</Budget_Stop>
+      <Budget_Total>9000000.000</Budget_Total>
+      <Prime_Agreement_Number>1234S</Prime_Agreement_Number>
+      <Pricing_Type>COST</Pricing_Type>
+      <E_Verify>Y</E_Verify>
+      <Final_Financial_Report_Required>N</Final_Financial_Report_Required>
+      <Purpose/>
+      <Grant_Number/>
+      <Grant_Description/>
+      <Federal_Pass_Through/>
+      <Federal_Pass_Through_Agency_Number/>
+      <CFDA_Number/>
+      <Organization_Code>3434</Organization_Code>
+      <Cost_Share_Required>Y</Cost_Share_Required>
+      <Final_Fiscal_Report_Due_Date/>
+      <PI_and_CoPIs>
+        <PI_or_CoPI>
+          <Primary>Y</Primary>
+          <Project_Director_Principal_Name>cah292</Project_Director_Principal_Name>
+        </PI_or_CoPI>
+      </PI_and_CoPIs>
+    </Award>
+    <Award>
+      <Proposal_Number>141414</Proposal_Number>
+      <Status>OS</Status>
+      <Agency_Number>2345</Agency_Number>
+      <Project_Title>First Example Project</Project_Title>
+      <Start_Date>2017-12-31</Start_Date>
+      <Stop_Date/>
+      <Direct_Cost_Amount>5300000.000</Direct_Cost_Amount>
+      <Indirect_Cost_Amount>700000.000</Indirect_Cost_Amount>
+      <Total_Amount>6000000.000</Total_Amount>
+      <Budget_Start>2017-12-31</Budget_Start>
+      <Budget_Stop>2022-12-31</Budget_Stop>
+      <Budget_Total>9000000.000</Budget_Total>
+      <Prime_Agreement_Number>1234S</Prime_Agreement_Number>
+      <Pricing_Type>COST</Pricing_Type>
+      <E_Verify>Y</E_Verify>
+      <Final_Financial_Report_Required>N</Final_Financial_Report_Required>
+      <Stop_Date/>
       <Purpose/>
       <Grant_Number/>
       <Grant_Description/>
@@ -37,6 +78,13 @@
       <Direct_Cost_Amount>0.000</Direct_Cost_Amount>
       <Indirect_Cost_Amount>0.000</Indirect_Cost_Amount>
       <Total_Amount>0.000</Total_Amount>
+      <Budget_Start/>
+      <Budget_Stop/>
+      <Budget_Total/>
+      <Prime_Agreement_Number/>
+      <Pricing_Type/>
+      <E_Verify>N</E_Verify>
+      <Final_Financial_Report_Required>N</Final_Financial_Report_Required>
       <Purpose/>
       <Grant_Number/>
       <Grant_Description>GRT</Grant_Description>
@@ -53,7 +101,7 @@
         </PI_or_CoPI>
       </PI_and_CoPIs>
     </Award>
-     <Award>
+    <Award>
       <Proposal_Number>35656</Proposal_Number>
       <Status>RS</Status>
       <Agency_Number>24680</Agency_Number>
@@ -62,6 +110,13 @@
       <Stop_Date>2050-12-31</Stop_Date>
       <Direct_Cost_Amount>0.000</Direct_Cost_Amount>
       <Indirect_Cost_Amount/>
+      <Budget_Start/>
+      <Budget_Stop/>
+      <Budget_Total/>
+      <Prime_Agreement_Number/>
+      <Pricing_Type/>
+      <E_Verify>N</E_Verify>
+      <Final_Financial_Report_Required>N</Final_Financial_Report_Required>
       <Purpose/>
       <Grant_Number/>
       <Grant_Description>GRT</Grant_Description>

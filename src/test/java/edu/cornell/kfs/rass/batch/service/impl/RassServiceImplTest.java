@@ -700,14 +700,25 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 expectedAward.federalPassThrough, actualAward.getFederalPassThroughIndicator());
         assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
                 expectedAward.federalPassThroughAgencyNumber, actualAward.getFederalPassThroughAgencyNumber());
+        assertEqualsOrBothBlank("Wrong instrument type code at index " + i, expectedAward.pricingType, actualAward.getInstrumentTypeCode());
         
         AwardExtendedAttribute actualExtension = (AwardExtendedAttribute) actualAward.getExtension();
         assertEquals("Wrong cost share required indicator at index " + i,
                 expectedAward.costShareRequired, actualExtension.isCostShareRequired());
         assertEquals("Wrong final fiscal report date at index " + i,
                 expectedAward.getFinalReportDueDateAsSqlDate(), actualExtension.getFinalFiscalReportDate());
-        assertEquals("Wrong final-financial-report-required flag value at index " + i,
-                expectedAward.getExpectedFinalFinancialReportRequiredIndicator(), actualExtension.isFinalFinancialReportRequired());
+        assertEqualsOrBothBlank("Wrong Prime Agreement Number at index " + i,
+                expectedAward.primeAgreementNumber, actualExtension.getPrimeAgreementNumber());
+        assertEquals("Wrong Budget Beginning Date at index " + i,
+                expectedAward.getBudgetBeginningDateAsSqlDate(), actualExtension.getBudgetBeginningDate());
+        assertEquals("Wrong Budget Ending Date at index " + i,
+                expectedAward.getBudgetEndingDateAsSqlDate(), actualExtension.getBudgetEndingDate());
+        assertEquals("Wrong Budget Total Amount at index " + i,
+                expectedAward.budgetTotalAmount, actualExtension.getBudgetTotalAmount());
+        assertEquals("Wrong Everify at index " + i,
+                expectedAward.everify, actualExtension.isEverify());
+        assertEquals("Wrong Final Financial Report Required at index " + i,
+                expectedAward.finalFinancialReportRequired, actualExtension.isFinalFinancialReportRequired());
         
         assertAwardOrganizationsWereUpdatedAsExpected(expectedAward.organizations, actualAward.getAwardOrganizations(), i);
         assertAwardAccountWasUpdatedAsExpected(expectedAward, actualAward.getAwardAccounts(), i);
