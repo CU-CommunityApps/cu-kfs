@@ -385,7 +385,7 @@ public enum RassXmlAwardEntryFixture {
         return buildSqlDateFromDateTime(startDate);
     }
 
-    public java.sql.Date getBudgetEndingAsSqlDate() {
+    public java.sql.Date getBudgetEndingDateAsSqlDate() {
         return buildSqlDateFromDateTime(budgetStopDate);
     }
     
