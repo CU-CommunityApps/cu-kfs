@@ -62,39 +62,10 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                     totalCostInvoiceDetail.getTotalAmountBilledToDate().add(document.getInvoiceGeneralDetail().getCostShareAmount()));
         }
         
-        Award award = (Award) document.getInvoiceGeneralDetail().getAward();
-        if (ObjectUtils.isNotNull(award)) {
-            AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
-            if (ObjectUtils.isNotNull(awardExtension)) {
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_START_DATE, 
-                        convertDateToString(awardExtension.getBudgetBeginningDate()));
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_END_DATE, 
-                        convertDateToString(awardExtension.getBudgetEndingDate()));
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_TOTAL, 
-                        awardExtension.getBudgetTotalAmount());
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PRIME_AGREEMENT_NUMBER,
-                        convertNullStringToEmptyString(awardExtension.getPrimeAgreementNumber()));
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PURCHASE_ORDER,
-                        convertNullStringToEmptyString(awardExtension.getPurchaseOrderNumber()));
-            }
-        }
         
-        List<InvoiceAccountDetail> invoiceAccountDetails = document.getAccountDetails();
-        if (ObjectUtils.isNotNull(invoiceAccountDetails)) {
-            Account contractControlAccount = determineContractControlAccount(invoiceAccountDetails.get(0));
-            if (ObjectUtils.isNotNull(contractControlAccount)) {
-                Map<String, Object> primaryKeys = new HashMap<String, Object>();
-                primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, invoiceAccountDetails.get(0).getProposalNumber());
-                primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,contractControlAccount.getChartOfAccountsCode());
-                primaryKeys.put(KFSPropertyConstants.ACCOUNT_NUMBER, contractControlAccount.getAccountNumber());
-                AwardAccount awardAccount = businessObjectService.findByPrimaryKey(AwardAccount.class, primaryKeys);
-                AwardAccountExtendedAttribute awardAccountExtension = (AwardAccountExtendedAttribute) awardAccount.getExtension();
-                if (ObjectUtils.isNotNull(awardAccountExtension)) {
-                    localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_ACCOUNT_PURCHASE_ORDER,
-                            convertNullStringToEmptyString(awardAccountExtension.getAccountPurchaseOrderNumber()));
-                }
-            }
-        }
+        getInvoiceGeneralDetailsParameterList(document, localParameterMap);
+        
+        getAccountDetailsParameterList(document, localParameterMap);
         
         if (!localParameterMap.isEmpty()) {
             LOG.debug("getTemplateParameterList, there were local parameters, adding them to the returning map.");
@@ -104,20 +75,44 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return templateParameters;
     }
     
-    protected String convertDateToString(Date dateValue) {
-        String dateValueAsString = StringUtils.EMPTY;
-        if (ObjectUtils.isNotNull(dateValue)) {
-            dateValueAsString = getDateTimeService().toDateString(dateValue);
+    protected void getInvoiceGeneralDetailsParameterList(ContractsGrantsInvoiceDocument document, Map<String, Object> localParameterMap) {
+        Award award = (Award) document.getInvoiceGeneralDetail().getAward();
+        if (ObjectUtils.isNotNull(award)) {
+            AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
+            if (ObjectUtils.isNotNull(awardExtension)) {
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_START_DATE, 
+                        awardExtension.getBudgetBeginningDate());
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_END_DATE, 
+                        awardExtension.getBudgetEndingDate());
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_TOTAL, 
+                        awardExtension.getBudgetTotalAmount());
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PRIME_AGREEMENT_NUMBER,
+                        awardExtension.getPrimeAgreementNumber());
+                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PURCHASE_ORDER,
+                        awardExtension.getPurchaseOrderNumber());
+            }
         }
-        return dateValueAsString;
     }
     
-    protected String convertNullStringToEmptyString(String stringValue) {
-        String valueToReturn = StringUtils.EMPTY;
-        if (ObjectUtils.isNotNull(stringValue)) {
-            valueToReturn = stringValue;
+    protected void getAccountDetailsParameterList(ContractsGrantsInvoiceDocument document, Map<String, Object> localParameterMap) {
+        List<InvoiceAccountDetail> invoiceAccountDetails = document.getAccountDetails();
+        if (ObjectUtils.isNotNull(invoiceAccountDetails)) {
+            Account contractControlAccount = determineContractControlAccount(invoiceAccountDetails.get(0));
+            if (ObjectUtils.isNotNull(contractControlAccount)) {
+                Map<String, Object> primaryKeys = new HashMap<String, Object>();
+                primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, invoiceAccountDetails.get(0).getProposalNumber());
+                primaryKeys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,contractControlAccount.getChartOfAccountsCode());
+                primaryKeys.put(KFSPropertyConstants.ACCOUNT_NUMBER, contractControlAccount.getAccountNumber());
+                AwardAccount awardAccount = businessObjectService.findByPrimaryKey(AwardAccount.class, primaryKeys);
+                if (ObjectUtils.isNotNull(awardAccount)) {
+                    AwardAccountExtendedAttribute awardAccountExtension = (AwardAccountExtendedAttribute) awardAccount.getExtension();
+                    if (ObjectUtils.isNotNull(awardAccountExtension)) {
+                        localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_ACCOUNT_PURCHASE_ORDER,
+                                awardAccountExtension.getAccountPurchaseOrderNumber());
+                    }
+                }
+            }
         }
-        return valueToReturn;
     }
     
     @Override
