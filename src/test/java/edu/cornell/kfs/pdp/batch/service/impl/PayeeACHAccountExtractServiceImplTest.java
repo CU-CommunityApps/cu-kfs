@@ -724,5 +724,60 @@ public class PayeeACHAccountExtractServiceImplTest {
             this.validRow = false;
         }
     }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailNoClean() {
+        String bankAccountNumber = "12345";
+        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
+        detail.setBankAccountNumber(bankAccountNumber);
+        payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
+        
+        String expectedBankAccount = bankAccountNumber;
+        assertEquals(expectedBankAccount, detail.getBankAccountNumber());
+    }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailCleanDashes() {
+        String bankAccountNumber = "1-2---3-4-5----";
+        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
+        detail.setBankAccountNumber(bankAccountNumber);
+        payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
+        
+        String expectedBankAccount = "12345";
+        assertEquals(expectedBankAccount, detail.getBankAccountNumber());
+    }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailCleanDashesWithLetters() {
+        String bankAccountNumber = "A1-2---3-4-5---6-";
+        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
+        detail.setBankAccountNumber(bankAccountNumber);
+        payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
+        
+        String expectedBankAccount = "A123456";
+        assertEquals(expectedBankAccount, detail.getBankAccountNumber());
+    }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailithLetters() {
+        String bankAccountNumber = "A12345";
+        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
+        detail.setBankAccountNumber(bankAccountNumber);
+        payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
+        
+        String expectedBankAccount = bankAccountNumber;
+        assertEquals(expectedBankAccount, detail.getBankAccountNumber());
+    }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailWithNull() {
+        String bankAccountNumber = null;
+        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
+        detail.setBankAccountNumber(bankAccountNumber);
+        payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
+        
+        String expectedBankAccount = bankAccountNumber;
+        assertEquals(expectedBankAccount, detail.getBankAccountNumber());
+    }
 
 }
