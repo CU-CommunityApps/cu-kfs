@@ -213,11 +213,11 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         if (StringUtils.isNotBlank(detail.getBankAccountNumber()) && !StringUtils.isNumeric(detail.getBankAccountNumber())) {
             String logMessageStarter = "cleanPayeeACHAccountExtractDetail, the bank account for " + detail.getNetID();
             if (StringUtils.contains(detail.getBankAccountNumber(), KFSConstants.DASH)) {
-                LOG.error(logMessageStarter + " contains dashes, so removing them: ");
+                LOG.error(logMessageStarter + " contains dashes, so removing them");
                 String cleanedBankAccount = StringUtils.remove(detail.getBankAccountNumber(), KFSConstants.DASH);
                 detail.setBankAccountNumber(cleanedBankAccount);
             } else {
-                LOG.error(logMessageStarter + " is not numberic but does NOT contains dashes, no automatic cleaning available: ");
+                LOG.error(logMessageStarter + " is not numberic but does NOT contains dashes, no automatic cleaning available");
             }
         }
     }
