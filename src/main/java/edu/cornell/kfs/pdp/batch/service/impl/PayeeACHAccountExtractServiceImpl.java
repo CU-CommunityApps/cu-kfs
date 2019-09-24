@@ -217,7 +217,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 String cleanedBankAccount = StringUtils.remove(detail.getBankAccountNumber(), KFSConstants.DASH);
                 detail.setBankAccountNumber(cleanedBankAccount);
             } else {
-                LOG.error(logMessageStarter + " is not numberic but does NOT contains dashes, no automatic cleaning available");
+                LOG.error(logMessageStarter + " is not numeric but does NOT contains dashes, no automatic cleaning available");
             }
         }
     }
