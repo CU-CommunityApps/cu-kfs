@@ -199,6 +199,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         List<PayeeACHAccountExtractDetail> achDetails = (List<PayeeACHAccountExtractDetail>) parsedObject;
         
         for (PayeeACHAccountExtractDetail achDetail : achDetails) {
+            cleanPayeeACHAccountExtractDetail(achDetail);
             String error = processACHBatchDetail(achDetail);
             if (StringUtils.isNotBlank(error)) {
                 failedRowsErrors.add(error);
@@ -206,6 +207,19 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         }
         
         return failedRowsErrors;
+    }
+    
+    protected void cleanPayeeACHAccountExtractDetail(PayeeACHAccountExtractDetail detail) {
+        if (StringUtils.isNotBlank(detail.getBankAccountNumber()) && !StringUtils.isNumeric(detail.getBankAccountNumber())) {
+            String logMessageStarter = "cleanPayeeACHAccountExtractDetail, the bank account for " + detail.getNetID();
+            if (StringUtils.contains(detail.getBankAccountNumber(), KFSConstants.DASH)) {
+                LOG.error(logMessageStarter + " contains dashes, so removing them");
+                String cleanedBankAccount = StringUtils.remove(detail.getBankAccountNumber(), KFSConstants.DASH);
+                detail.setBankAccountNumber(cleanedBankAccount);
+            } else {
+                LOG.error(logMessageStarter + " is not numeric but does NOT contains dashes, no automatic cleaning available");
+            }
+        }
     }
 
     /**
