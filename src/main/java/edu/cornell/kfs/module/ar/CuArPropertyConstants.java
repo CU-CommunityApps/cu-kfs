@@ -13,9 +13,8 @@ public class CuArPropertyConstants {
         public static final String AWARD_BUDGET_START_DATE = "award.awardBudgetStartDate";
         public static final String AWARD_BUDGET_END_DATE = "award.awardBudgetEndDate";
         public static final String AWARD_BUDGET_TOTAL = "award.awardBudgetTotal";
-        public static final String AWARD_PURCHASE_ORDER = "award.awardPurchaseOrder";
         public static final String AWARD_PRIME_AGREEMENT_NUMBER = "award.awardPrimeAgreementNumber";
-        public static final String AWARD_ACCOUNT_PURCHASE_ORDER = "award.awardAccountPurchaseOrder";
+        public static final String AWARD_PURCHASE_ORDER_NBR = "award.invoicePurchaseOrderNbr";
     }
 
     public static class ContractsGrantsInvoiceAccountDetailFields {
