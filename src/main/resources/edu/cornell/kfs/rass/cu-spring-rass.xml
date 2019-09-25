@@ -111,7 +111,8 @@
 		</property>		
 	</bean>
 
-	<bean id="rassReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
+    <bean id="rassReportWriterService" parent="rassReportWriterService-parentBean"/>
+	<bean id="rassReportWriterService-parentBean" abstract="true" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
 		parent="reportWriterService">
 		<property name="filePath" value="${reports.directory}/rass" />
 		<property name="fileNamePrefix" value="rass_report_" />

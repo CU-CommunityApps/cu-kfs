@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:org/kuali/kfs/sys/spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/rass/cu-spring-rass.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys-test.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="reports.directory">test</prop>
+                <prop key="report.writer.service.new.line.characters">#{ T(org.kuali.kfs.sys.KFSConstants).NEWLINE }</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="rassReportWriterService" parent="rassReportWriterService-parentBean" p:pageLength="999"/>
+
+    <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
+
+    <bean id="emailService" factory-bean="testServiceFactory" factory-method="buildMockEmailService"/>
+
+    <bean id="parameterService" factory-bean="testServiceFactory" factory-method="buildMockParameterService"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="rassReportService"/>
+                <idref bean="rassReportService-parentBean"/>
+                <idref bean="rassReportWriterService"/>
+                <idref bean="rassReportWriterService-parentBean"/>
+                <idref bean="reportWriterService"/>
+                <idref bean="reportWriterService-parentBean"/>
+                <idref bean="dateTimeService"/>
+                <idref bean="testServiceFactory"/>
+                <idref bean="emailService"/>
+                <idref bean="parameterService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>

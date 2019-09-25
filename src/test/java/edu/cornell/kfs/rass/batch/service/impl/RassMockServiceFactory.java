@@ -26,6 +26,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
@@ -240,6 +241,10 @@ public class RassMockServiceFactory {
                 });
         
         return personService;
+    }
+
+    public EmailService buildMockEmailService() throws Exception {
+        return Mockito.mock(EmailService.class);
     }
 
 }

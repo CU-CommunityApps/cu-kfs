@@ -25,6 +25,7 @@ public final class RassTestConstants {
 
     public static final String RASS_SERVICE_BEAN_NAME = "rassService";
     public static final String RASS_UPDATE_SERVICE_BEAN_NAME = "rassUpdateService";
+    public static final String RASS_REPORT_SERVICE_BEAN_NAME = "rassReportService";
     public static final String AGENCY_SERVICE_BEAN_NAME = "agencyService";
     public static final String AWARD_SERVICE_BEAN_NAME = "awardService";
     public static final String BUSINESS_OBJECT_SERVICE_BEAN_NAME = "businessObjectService";

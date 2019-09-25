@@ -33,7 +33,6 @@ public class RassStep extends AbstractStep {
         Map<String, RassXmlFileProcessingResult> processingResults = rassService.updateKFS(successfulResults);
         RassBatchJobReport report = new RassBatchJobReport(parseResults, processingResults);
         rassReportService.writeBatchJobReports(report);
-        //sendReport(report);
         return true;
     }
 

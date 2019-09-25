@@ -151,8 +151,13 @@ public class RassReportServiceImpl implements RassReportService {
     }
 
     private String getFileNameWithoutPath(String xmlFileName) {
-        String result = StringUtils.substringAfterLast(xmlFileName, CUKFSConstants.SLASH);
-        result = StringUtils.substringAfterLast(result, CUKFSConstants.BACKSLASH);
+        String result = xmlFileName;
+        if (StringUtils.contains(result, CUKFSConstants.SLASH)) {
+            result = StringUtils.substringAfterLast(xmlFileName, CUKFSConstants.SLASH);
+        }
+        if (StringUtils.contains(result, CUKFSConstants.BACKSLASH)) {
+            result = StringUtils.substringAfterLast(result, CUKFSConstants.BACKSLASH);
+        }
         return result;
     }
 

@@ -1,0 +1,73 @@
+Report for RASS XML File: mixed-items.xml
+
+                                                      *** Report Summary ***
+
+Number of Agency objects created: 3.
+Number of Agency objects updated: 2.
+Number of Agency objects that resulted in error: 0.
+Number of Agency objects skipped: 2.
+
+Number of Proposal objects created: 2.
+Number of Proposal objects that resulted in error: 1.
+Number of Proposal objects skipped: 3.
+
+Number of Award objects created: 1.
+Number of Award objects updated: 1.
+Number of Award objects that resulted in error: 3.
+Number of Award objects skipped: 1.
+
+                                                  *** End of Report Summary ***
+
+
+                                                      *** Report Details ***
+
+
+** Agency objects successfully created:
+Agency #: 66660 created by document #: 3101
+Agency #: 88855 created by document #: 3103
+Agency #: 89898 created by document #: 3104
+
+** Agency objects successfully updated:
+Agency #: 12457 updated by document #: 3102
+Agency #: 89899 updated by document #: 3105
+
+** Agency objects that had errors:
+
+** Agency objects that were skipped:
+Agency #: 70005 skipped.
+Agency #: 70023 skipped.
+
+
+** Proposal objects successfully created:
+Proposal #: 44567 created by document #: 3106
+Proposal #: 45599 created by document #: 3108
+
+** Proposal objects that had errors:
+Proposal #: 44556 error: Invalid Purpose Code
+
+
+** Proposal objects that were skipped:
+Proposal #: 98765 skipped.
+Proposal #: 35791 skipped.
+Proposal #: 38333 skipped.
+
+
+** Award objects successfully created:
+Award #: 44567 created by document #: 3107
+
+** Award objects successfully updated:
+Award #: 38333 updated by document #: 3109
+
+** Award objects that had errors:
+Award #: 98765 error: Project Title is a required field
+
+Award #: 44556 error: Cannot proceed with processing object because an update failure was detected for Proposal with ID 44556
+
+Award #: 45599 error: Invalid Grant Description
+
+
+** Award objects that were skipped:
+Award #: 35791 skipped.
+
+                                                  *** End of Report Details ***
+
