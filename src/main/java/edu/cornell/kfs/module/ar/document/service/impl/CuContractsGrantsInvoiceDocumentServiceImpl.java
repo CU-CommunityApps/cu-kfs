@@ -105,6 +105,11 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         if (StringUtils.isBlank(purchaseOrderNumber)) {
             LOG.error("setPurchaseOrderNumberFieldInParameterMap, unable to find the purchase order number for document " + document.getDocumentNumber());
         }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("setPurchaseOrderNumberFieldInParameterMap, for document " + document.getDocumentNumber() + " with an invoice option code of "
+                    + invoiceOptionCode + " the purchase order number is " + purchaseOrderNumber);
+        }
 
         localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PURCHASE_ORDER_NBR, purchaseOrderNumber);
     }
