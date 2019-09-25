@@ -62,7 +62,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         }
         
         
-        setInvoiceGeneralDetailsParameterList(document, localParameterMap);
+        setAwardExtendedAttributeValuesInParameterMap(document, localParameterMap);
         setPurchaseOrderNumberFieldInParameterMap(document, localParameterMap);
         
         if (!localParameterMap.isEmpty()) {
@@ -73,18 +73,16 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return templateParameters;
     }
     
-    protected void setInvoiceGeneralDetailsParameterList(ContractsGrantsInvoiceDocument document, Map<String, Object> localParameterMap) {
+    protected void setAwardExtendedAttributeValuesInParameterMap(ContractsGrantsInvoiceDocument document, Map<String, Object> localParameterMap) {
         Award award = (Award) document.getInvoiceGeneralDetail().getAward();
-        if (ObjectUtils.isNotNull(award)) {
-            AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
-            if (ObjectUtils.isNotNull(awardExtension)) {
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_START_DATE,
-                        awardExtension.getBudgetBeginningDate());
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_END_DATE, awardExtension.getBudgetEndingDate());
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_TOTAL, awardExtension.getBudgetTotalAmount());
-                localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PRIME_AGREEMENT_NUMBER,
-                        awardExtension.getPrimeAgreementNumber());
-            }
+        AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
+        if (ObjectUtils.isNotNull(awardExtension)) {
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_START_DATE,
+                    awardExtension.getBudgetBeginningDate());
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_END_DATE, awardExtension.getBudgetEndingDate());
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_BUDGET_TOTAL, awardExtension.getBudgetTotalAmount());
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.AWARD_PRIME_AGREEMENT_NUMBER,
+                    awardExtension.getPrimeAgreementNumber());
         }
     }
 
