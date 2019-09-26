@@ -117,11 +117,11 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
         this.autoApproveReason = autoApproveReason;
     }
 
-    public String getpurchaseOrderNumber() {
+    public String getPurchaseOrderNumber() {
         return purchaseOrderNumber;
     }
 
-    public void setpurchaseOrderNumber(String purchaseOrderNumber) {
+    public void setPurchaseOrderNumber(String purchaseOrderNumber) {
         this.purchaseOrderNumber = purchaseOrderNumber;
     }
 
