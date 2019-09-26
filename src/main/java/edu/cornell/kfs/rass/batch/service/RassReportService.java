@@ -6,6 +6,4 @@ public interface RassReportService {
     
     void writeBatchJobReports(RassBatchJobReport rassBatchJobReport);
     
-    void sendReportEmail();
-    
 }

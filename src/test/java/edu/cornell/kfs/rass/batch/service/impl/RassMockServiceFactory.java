@@ -212,6 +212,12 @@ public class RassMockServiceFactory {
                 .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_DESCRIPTION);
         Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE))
                 .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE1))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE1);
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE2))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE2);
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE3))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE3);
         
         return configurationService;
     }

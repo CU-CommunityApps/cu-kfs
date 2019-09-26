@@ -42,10 +42,6 @@ public class RassStep extends AbstractStep {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    protected void sendReport(RassBatchJobReport report) {
-        rassReportService.sendReportEmail();
-    }
-
     public void setRassService(RassService rassService) {
         this.rassService = rassService;
     }

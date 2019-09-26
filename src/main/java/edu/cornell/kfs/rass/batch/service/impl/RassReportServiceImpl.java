@@ -18,9 +18,11 @@ import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
+import edu.cornell.kfs.rass.RassKeyConstants;
 import edu.cornell.kfs.rass.RassParameterConstants;
 import edu.cornell.kfs.rass.batch.RassBatchJobReport;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
@@ -40,9 +42,9 @@ public class RassReportServiceImpl implements RassReportService {
     protected EmailService emailService;
     protected ParameterService parameterService;
     protected ReportWriterService reportWriterService;
+    protected ConfigurationService configurationService;
 
-    @Override
-    public void sendReportEmail() {
+    protected void sendReportEmail() {
         BodyMailMessage message = new BodyMailMessage();
         String fromAddress = getFromAddress();
         Collection<String> toAddresses = getToAddresses();
@@ -119,12 +121,9 @@ public class RassReportServiceImpl implements RassReportService {
         initializeNewReport(RassConstants.RASS_PARSE_ERRORS_BASE_FILENAME);
         reportWriterService.writeFormattedMessageLine("RASS Error Report");
         reportWriterService.writeNewLines(1);
-        reportWriterService.writeFormattedMessageLine(
-                "Unexpected errors were encountered when attempting to read the following RASS XML files.");
-        reportWriterService.writeFormattedMessageLine(
-                "The failures were likely the result of incorrect XML formatting.");
-        reportWriterService.writeFormattedMessageLine(
-                "Specific details are available in the RASS batch job logs.");
+        writeFormattedMessageLineForConfigProperty(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE1);
+        writeFormattedMessageLineForConfigProperty(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE2);
+        writeFormattedMessageLineForConfigProperty(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE3);
         reportWriterService.writeNewLines(1);
         for (RassXmlFileParseResult errorResult : errorResults) {
             String xmlFileName = getFileNameWithoutPath(errorResult.getRassXmlFileName());
@@ -142,6 +141,11 @@ public class RassReportServiceImpl implements RassReportService {
         String fileNamePrefix = MessageFormat.format(reportFileNamePrefixFormat, baseFileName);
         reportWriterService.setFileNamePrefix(fileNamePrefix);
         reportWriterService.initialize();
+    }
+
+    private void writeFormattedMessageLineForConfigProperty(String configPropertyName) {
+        String message = configurationService.getPropertyValueAsString(configPropertyName);
+        reportWriterService.writeFormattedMessageLine(message);
     }
 
     private String getFileNameWithoutPathOrExtension(String xmlFileName) {
@@ -389,6 +393,14 @@ public class RassReportServiceImpl implements RassReportService {
 
     public void setReportWriterService(ReportWriterService reportWriterService) {
         this.reportWriterService = reportWriterService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

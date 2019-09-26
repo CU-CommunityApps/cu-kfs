@@ -39,6 +39,12 @@ public final class RassTestConstants {
         
         public static final String MESSAGE_RASS_DOCUMENT_DESCRIPTION = "Auto-Generated {0} of {1}";
         public static final String MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE = "Automatically created and routed";
+        public static final String MESSAGE_RASS_REPORT_ERROR_HEADER_LINE1 = "Unexpected errors were encountered "
+                + "when attempting to read the following RASS XML files.";
+        public static final String MESSAGE_RASS_REPORT_ERROR_HEADER_LINE2 = "The failures were likely the result "
+                + "of incorrect XML formatting.";
+        public static final String MESSAGE_RASS_REPORT_ERROR_HEADER_LINE3 = "Specific details are available "
+                + "in the RASS batch job logs.";
     }
 
 }

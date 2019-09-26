@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
 
@@ -80,7 +80,7 @@ public enum RassXmlDocumentWrapperFixture {
     }
     
     public String getGeneratedFileName() {
-        return name() + RassConstants.XML_FILE_EXTENSION;
+        return name() + CUKFSConstants.XML_FILE_EXTENSION;
     }
     
     private static RassXmlAgencyEntryFixture[] agencyFixtures(RassXmlAgencyEntryFixture... fixtures) {

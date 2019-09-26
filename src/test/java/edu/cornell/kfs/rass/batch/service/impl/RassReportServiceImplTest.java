@@ -37,6 +37,7 @@ import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlFileProcessingResult;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.LoadSpringFile;
 import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
 
@@ -270,7 +271,7 @@ public class RassReportServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     private String addXmlExtensionToBaseFileName(String fileName) {
-        return fileName + RassConstants.XML_FILE_EXTENSION;
+        return fileName + CUKFSConstants.XML_FILE_EXTENSION;
     }
 
     private String getContentWithoutInitialPageMarkerLines(String fileContent) {

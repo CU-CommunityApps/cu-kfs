@@ -8,7 +8,6 @@ public final class RassConstants {
 
     public static final String RASS_MAINTENANCE_NEW_ACTION_DESCRIPTION = "Creation";
     public static final String RASS_PARSE_ERRORS_BASE_FILENAME = "errors";
-    public static final String XML_FILE_EXTENSION = ".xml";
 
     public enum RassParseResultCode {
         SUCCESS,

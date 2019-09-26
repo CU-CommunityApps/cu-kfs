@@ -88,6 +88,7 @@
 			p:reportFileNamePrefixFormat="rass_report_for_{0}_"
 			p:emailService-ref="emailService"
 			p:parameterService-ref="parameterService"
+			p:configurationService-ref="configurationService"
 			p:reportWriterService-ref="rassReportWriterService"/>
 
 	<bean id="rassXmlInputFileType" parent="rassXmlInputFileType-parentBean"/>

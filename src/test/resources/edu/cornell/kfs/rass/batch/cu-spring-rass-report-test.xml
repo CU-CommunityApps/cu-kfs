@@ -27,6 +27,8 @@
 
     <bean id="parameterService" factory-bean="testServiceFactory" factory-method="buildMockParameterService"/>
 
+    <bean id="configurationService" factory-bean="testServiceFactory" factory-method="buildMockConfigurationService"/>
+
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
             <set merge="true">
@@ -40,6 +42,7 @@
                 <idref bean="testServiceFactory"/>
                 <idref bean="emailService"/>
                 <idref bean="parameterService"/>
+                <idref bean="configurationService"/>
             </set>
         </property>
     </bean>
