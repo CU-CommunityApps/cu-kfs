@@ -761,6 +761,26 @@ public class PayeeACHAccountExtractServiceImplTest {
         validateCleanPayeeACHAccountExtractDetail(StringUtils.EMPTY, StringUtils.EMPTY);
     }
     
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailWithSpaces() {
+        validateCleanPayeeACHAccountExtractDetail(" 1 23  4 5 6 ", "123456");
+    }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailWithSpacesAndDashes() {
+        validateCleanPayeeACHAccountExtractDetail(" 1 2----3  4 - 5 6-7 ", "1234567");
+    }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailWithSpacesAndDashesAndNumbers() {
+        validateCleanPayeeACHAccountExtractDetail("A 1 2----3  4 - 5 6-7 B ", "A1234567B");
+    }
+    
+    @Test
+    public void testCleanPayeeACHAccountExtractDetailWithJustSpaces() {
+        validateCleanPayeeACHAccountExtractDetail("   ", StringUtils.EMPTY);
+    }
+    
     private void validateCleanPayeeACHAccountExtractDetail(String bankAccountNumber, String expectedCleanedBankAccountNumber) {
         PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
         detail.setBankAccountNumber(bankAccountNumber);

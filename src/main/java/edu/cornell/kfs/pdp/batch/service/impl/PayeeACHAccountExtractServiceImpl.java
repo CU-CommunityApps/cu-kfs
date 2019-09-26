@@ -210,14 +210,22 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     }
     
     protected void cleanPayeeACHAccountExtractDetail(PayeeACHAccountExtractDetail detail) {
-        if (StringUtils.isNotBlank(detail.getBankAccountNumber()) && !StringUtils.isNumeric(detail.getBankAccountNumber())) {
+        if (!StringUtils.isNumeric(detail.getBankAccountNumber())) {
             String logMessageStarter = "cleanPayeeACHAccountExtractDetail, the bank account for " + detail.getNetID();
-            if (StringUtils.contains(detail.getBankAccountNumber(), KFSConstants.DASH)) {
-                LOG.error(logMessageStarter + " contains dashes, so removing them");
-                String cleanedBankAccount = StringUtils.remove(detail.getBankAccountNumber(), KFSConstants.DASH);
-                detail.setBankAccountNumber(cleanedBankAccount);
-            } else {
-                LOG.error(logMessageStarter + " is not numeric but does NOT contains dashes, no automatic cleaning available");
+            String bankAccountNumber = detail.getBankAccountNumber();
+            if (StringUtils.contains(bankAccountNumber, KFSConstants.DASH)) {
+                LOG.info(logMessageStarter + " contains dashes, so removing them");
+                bankAccountNumber = StringUtils.remove(bankAccountNumber, KFSConstants.DASH);
+            }
+            if (StringUtils.contains(bankAccountNumber, StringUtils.SPACE)) {
+                LOG.info(logMessageStarter + " contains spaces, so removing them");
+                bankAccountNumber = StringUtils.remove(bankAccountNumber,  StringUtils.SPACE);
+            }
+            
+            detail.setBankAccountNumber(bankAccountNumber);
+            
+            if (!StringUtils.isNumeric(detail.getBankAccountNumber())) {
+                LOG.error(logMessageStarter + " is not numeric after cleaning");
             }
         }
     }
