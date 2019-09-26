@@ -94,10 +94,10 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         if (StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.AWARD.getCode())) {
             purchaseOrderNumber = findPurchaseOrderNumberForInvoiceOptionAward(award);
         } else if (StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.ACCOUNT.getCode())) {
-            purchaseOrderNumber = findPurchaseOrderNumberForInvoiceOptionAccoiunt(document);
+            purchaseOrderNumber = findPurchaseOrderNumberForInvoiceOptionAccount(document);
         } else if (StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.CONTRACT_CONTROL.getCode())
                 || StringUtils.equals(invoiceOptionCode, CGIntegrationConstants.AwardInvoicingOption.Types.SCHEDULE.getCode())) {
-            purchaseOrderNumber = findPurchaseOrderNymberForInvoiceOptionContractControlAndScheduled(document);
+            purchaseOrderNumber = findPurchaseOrderNumberForInvoiceOptionContractControlAndScheduled(document);
         }
         
         if (StringUtils.isBlank(purchaseOrderNumber)) {
@@ -121,7 +121,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return purchaseOrderNumber;
     }
 
-    protected String findPurchaseOrderNumberForInvoiceOptionAccoiunt(ContractsGrantsInvoiceDocument document) {
+    protected String findPurchaseOrderNumberForInvoiceOptionAccount(ContractsGrantsInvoiceDocument document) {
         String purchaseOrderNumber = StringUtils.EMPTY;
         List<InvoiceAccountDetail> invoiceAccountDetails = document.getAccountDetails();
         if (CollectionUtils.isNotEmpty(invoiceAccountDetails)) {
@@ -144,7 +144,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return awardAccountExtension;
     }
 
-    protected String findPurchaseOrderNymberForInvoiceOptionContractControlAndScheduled(ContractsGrantsInvoiceDocument document) {
+    protected String findPurchaseOrderNumberForInvoiceOptionContractControlAndScheduled(ContractsGrantsInvoiceDocument document) {
         String purchaseOrderNumber = StringUtils.EMPTY;
         List<InvoiceAccountDetail> invoiceAccountDetails = document.getAccountDetails();
         if (CollectionUtils.isNotEmpty(invoiceAccountDetails)) {
