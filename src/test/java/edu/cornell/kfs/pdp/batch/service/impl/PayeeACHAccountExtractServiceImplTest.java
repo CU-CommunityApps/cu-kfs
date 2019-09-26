@@ -772,7 +772,7 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
     
     @Test
-    public void testCleanPayeeACHAccountExtractDetailWithSpacesAndDashesAndNumbers() {
+    public void testCleanPayeeACHAccountExtractDetailWithSpacesAndDashesAndLetters() {
         validateCleanPayeeACHAccountExtractDetail("A 1 2----3  4 - 5 6-7 B ", "A1234567B");
     }
     
