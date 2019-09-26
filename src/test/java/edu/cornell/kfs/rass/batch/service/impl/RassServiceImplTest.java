@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +52,7 @@ import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
-import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
+import edu.cornell.kfs.rass.batch.RassXmlFileProcessingResult;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXMLAwardPiCoPiEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
@@ -70,22 +71,27 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     private RassServiceImpl rassService;
     private TestRassUpdateServiceImpl rassUpdateService;
 
-    private List<Maintainable> agencyUpdates;
-    private List<Maintainable> proposalUpdates;
-    private List<Maintainable> awardUpdates;
+    private Map<String, List<Maintainable>> agencyUpdates;
+    private List<Maintainable> agencyUpdatesForCurrentFile;
+    private Map<String, List<Maintainable>> proposalUpdates;
+    private List<Maintainable> proposalUpdatesForCurrentFile;
+    private Map<String, List<Maintainable>> awardUpdates;
+    private List<Maintainable> awardUpdatesForCurrentFile;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         
-        agencyUpdates = new ArrayList<>();
-        proposalUpdates = new ArrayList<>();
-        awardUpdates = new ArrayList<>();
+        agencyUpdates = new HashMap<>();
+        proposalUpdates = new HashMap<>();
+        awardUpdates = new HashMap<>();
         mockAgencyService = springContext.getBean(RassTestConstants.AGENCY_SERVICE_BEAN_NAME, AgencyService.class);
         mockBusinessObjectService = springContext.getBean(RassTestConstants.BUSINESS_OBJECT_SERVICE_BEAN_NAME, BusinessObjectService.class);
         mockAwardService = springContext.getBean(RassTestConstants.AWARD_SERVICE_BEAN_NAME, AwardService.class);
+        
         rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, RassServiceImpl.class);
+        rassService.setParsedObjectTypeProcessingWatcher(this::handleStartOfFileProcessing);
         
         rassUpdateService = springContext.getBean(RassTestConstants.RASS_UPDATE_SERVICE_BEAN_NAME, TestRassUpdateServiceImpl.class);
         rassUpdateService.setDocumentTracker(this::processMaintenanceDocument);
@@ -104,142 +110,147 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testLoadEmptyFile() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_EMPTY_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_EMPTY_FILE,
+                        emptyAgencyResults(),
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testUpdateSingleAgency() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testCreateSingleAgency() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testCreateAndUpdateMultipleAgenciesFromSingleFile() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_CREATE_UPDATE_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_CREATE_UPDATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testUpdateAgencyWithTextFieldsExceedingMaxLength() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_LENGTH_TRUNCATE_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_LENGTH_TRUNCATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.DoS_LONG_DESC, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testUpdateAgencyWithMissingRequiredField() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testCreateAgencyWithTruncatedDocDescription() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_LONG_AGENCY_NUMBER_CREATE_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_LONG_AGENCY_NUMBER_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LONG_KEY, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testHandleSingleExistingAgencyWithNoChanges() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_EXISTING_AGENCY_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_EXISTING_AGENCY_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME, RassObjectUpdateResultCode.SKIPPED)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testUpdateAgencyAndIgnoreSubsequentDuplicateUpdate() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE_V2,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testCreateAgencyAndIgnoreSubsequentDuplicateCreate() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW),
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE_V2,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SKIPPED)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testLoadMultipleFilesWithAgencies() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_CREATE_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
-                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW),
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED),
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -248,15 +259,18 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE_V2,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SKIPPED)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -266,15 +280,18 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(        
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -284,15 +301,34 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
-                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.ERROR,
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
+                        emptyProposalResults(),
+                        emptyAwardResults()));
+    }
+
+    @Test
+    public void testTimeoutOfRouteStatusCheckForMultipleAgenciesInSingleFile() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_ENROUTE_CD,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_TIMEOUT_TEST_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -301,15 +337,18 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_EXCEPTION_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
-                expectedResults(
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -318,17 +357,24 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_EXCEPTION_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_ANOTHER_SINGLE_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
-                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR),
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_ANOTHER_SINGLE_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.ERROR,
                                 agency(RassXmlAgencyEntryFixture.UNLIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -337,17 +383,24 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_EXCEPTION_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.ERROR,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
-                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR),
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.ERROR)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -356,15 +409,18 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -374,15 +430,18 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
@@ -391,37 +450,42 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 KewApiConstants.ROUTE_HEADER_EXCEPTION_CD);
         
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
-                expectedResults(
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testHandleErrorAtObjectGroupLevel() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
+                fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_FORCE_AGENCY_GROUP_ERROR_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.ERROR,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS)));
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_FORCE_AGENCY_GROUP_ERROR_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.ERROR),
+                        emptyProposalResults(),
+                        emptyAwardResults()));
     }
 
     @Test
     public void testCreateSingleProposalAndAward() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
@@ -431,10 +495,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testUpdateSingleAward() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_UPDATE_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_UPDATE_FILE,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
@@ -444,10 +507,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testUpdateOrgCodeOnExistingAward() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_ORG_UPDATE_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_ORG_UPDATE_FILE,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
@@ -457,10 +519,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testUpdateDirectorsOnExistingAward() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
@@ -470,10 +531,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testAlternateUpdateOfDirectorsOnExistingAward() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE2),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_DIRECTOR_UPDATE_FILE2,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
@@ -483,10 +543,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testSkipUpdatesWhenLoadingUnchangedAward() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_UNCHANGED_AWARD_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_UNCHANGED_AWARD_FILE,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
@@ -496,10 +555,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testLoadNewAwardAndSkipSubsequentDuplicate() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_DUPLICATED_NEW_AWARD_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_DUPLICATED_NEW_AWARD_FILE,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
                                 proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
@@ -511,10 +569,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testLoadAwardWithMissingRequiredField() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_AWARD_CREATE_MISSING_FIELD_FILE),
-                expectedResults(
-                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_CREATE_MISSING_FIELD_FILE,
+                        emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.ERROR,
                                 proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
                         awards(RassObjectGroupingUpdateResultCode.ERROR,
@@ -524,9 +581,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Test
     public void testLoadMultipleAgenciesAndProposalsAndAwards() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
-                xmlFiles(
-                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_AND_AWARDS_FILE),
-                expectedResults(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_AND_AWARDS_FILE,
                         agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT),
                                 agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
@@ -538,54 +594,83 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
 
-    private void assertXmlContentsPerformExpectedObjectUpdates(List<RassXmlDocumentWrapperFixture> xmlContents,
-            ExpectedProcessingResults expectedProcessingResults) throws Exception {
-        List<RassXmlFileParseResult> fileResults = xmlContents.stream()
-                .map(RassXmlDocumentWrapperFixture::toRassXmlDocumentWrapper)
-                .map(this::encaseWrapperInSuccessfulFileResult)
-                .collect(Collectors.toCollection(ArrayList::new));
-        
-        RassXmlProcessingResults actualResults = rassService.updateKFS(fileResults);
-        
-        assertAgenciesWereUpdatedAndReportedAsExpected(expectedProcessingResults, actualResults);
-        assertProposalsWereUpdatedAndReportedAsExpected(expectedProcessingResults, actualResults);
-        assertAwardsWereUpdatedAndReportedAsExpected(expectedProcessingResults, actualResults);
+    private void assertXmlContentsPerformExpectedObjectUpdates(
+            FileWithExpectedResults... filesWithResults) throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(Arrays.asList(filesWithResults));
     }
 
-    private RassXmlFileParseResult encaseWrapperInSuccessfulFileResult(RassXmlDocumentWrapper documentWrapper) {
-        return new RassXmlFileParseResult(KFSConstants.EMPTY_STRING, RassParseResultCode.SUCCESS, Optional.of(documentWrapper));
+    private void assertXmlContentsPerformExpectedObjectUpdates(
+            List<FileWithExpectedResults> filesWithResults) throws Exception {
+        List<RassXmlFileParseResult> parseResults = filesWithResults.stream()
+                .map(FileWithExpectedResults::getFileFixture)
+                .map(this::buildWrapperEncasedInSuccessfulFileResult)
+                .collect(Collectors.toCollection(ArrayList::new));
+        
+        Map<String, RassXmlFileProcessingResult> actualFileResults = rassService.updateKFS(parseResults);
+        assertFilesPerformedExpectedObjectUpdates(filesWithResults, actualFileResults);
+    }
+
+    private RassXmlFileParseResult buildWrapperEncasedInSuccessfulFileResult(
+            RassXmlDocumentWrapperFixture fileFixture) {
+        RassXmlDocumentWrapper documentWrapper = fileFixture.toRassXmlDocumentWrapper();
+        return new RassXmlFileParseResult(
+                fileFixture.getGeneratedFileName(), RassParseResultCode.SUCCESS, Optional.of(documentWrapper));
+    }
+
+    private void assertFilesPerformedExpectedObjectUpdates(
+            List<FileWithExpectedResults> expectedFileResults,
+            Map<String, RassXmlFileProcessingResult> actualFileResults) {
+        assertEquals("Wrong number of file results", expectedFileResults.size(), actualFileResults.size());
+        
+        for (FileWithExpectedResults expectedFileResult : expectedFileResults) {
+            String xmlFileName = expectedFileResult.getExpectedXmlFileName();
+            RassXmlFileProcessingResult actualFileResult = actualFileResults.get(xmlFileName);
+            assertNotNull("No results were found for filename key: " + xmlFileName, actualFileResult);
+            assertEquals("Wrong filename for file result entry", xmlFileName, actualFileResult.getRassXmlFileName());
+            assertAgenciesWereUpdatedAndReportedAsExpected(expectedFileResult, actualFileResult);
+            assertProposalsWereUpdatedAndReportedAsExpected(expectedFileResult, actualFileResult);
+            assertAwardsWereUpdatedAndReportedAsExpected(expectedFileResult, actualFileResult);
+        }
     }
 
     private void assertAgenciesWereUpdatedAndReportedAsExpected(
-            ExpectedProcessingResults expectedProcessingResults, RassXmlProcessingResults actualProcessingResults) {
-        ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencyResultGrouping = expectedProcessingResults
-                .getExpectedAgencyResults();
-        RassBusinessObjectUpdateResultGrouping<Agency> actualAgencyResultGrouping = actualProcessingResults.getAgencyResults();
+            FileWithExpectedResults expectedFileResult, RassXmlFileProcessingResult actualFileResult) {
+        ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencyResultGrouping =
+                expectedFileResult.getExpectedAgencyResults();
+        RassBusinessObjectUpdateResultGrouping<Agency> actualAgencyResultGrouping =
+                actualFileResult.getAgencyResults();
+        List<Maintainable> agencyUpdatesToCheck = agencyUpdates.getOrDefault(
+                expectedFileResult.getExpectedXmlFileName(), Collections.emptyList());
         
         assertCorrectObjectResultsWereReported(expectedAgencyResultGrouping, actualAgencyResultGrouping);
-        assertObjectsWereUpdatedAsExpected(expectedAgencyResultGrouping, agencyUpdates,
+        assertObjectsWereUpdatedAsExpected(expectedAgencyResultGrouping, agencyUpdatesToCheck,
                 this::assertAgencyWasUpdatedAsExpected);
     }
 
     private void assertProposalsWereUpdatedAndReportedAsExpected(
-            ExpectedProcessingResults expectedProcessingResults, RassXmlProcessingResults actualProcessingResults) {
-        ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResultGrouping = expectedProcessingResults
-                .getExpectedProposalResults();
-        RassBusinessObjectUpdateResultGrouping<Proposal> actualProposalResultGrouping = actualProcessingResults.getProposalResults();
+            FileWithExpectedResults expectedFileResult, RassXmlFileProcessingResult actualFileResult) {
+        ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResultGrouping =
+                expectedFileResult.getExpectedProposalResults();
+        RassBusinessObjectUpdateResultGrouping<Proposal> actualProposalResultGrouping =
+                actualFileResult.getProposalResults();
+        List<Maintainable> proposalUpdatesToCheck = proposalUpdates.getOrDefault(
+                expectedFileResult.getExpectedXmlFileName(), Collections.emptyList());
         
         assertCorrectObjectResultsWereReported(expectedProposalResultGrouping, actualProposalResultGrouping);
-        assertObjectsWereUpdatedAsExpected(expectedProposalResultGrouping, proposalUpdates,
+        assertObjectsWereUpdatedAsExpected(expectedProposalResultGrouping, proposalUpdatesToCheck,
                 this::assertProposalWasUpdatedAsExpected);
     }
 
     private void assertAwardsWereUpdatedAndReportedAsExpected(
-            ExpectedProcessingResults expectedProcessingResults, RassXmlProcessingResults actualProcessingResults) {
-        ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedProposalResultGrouping = expectedProcessingResults
-                .getExpectedAwardResults();
-        RassBusinessObjectUpdateResultGrouping<Award> actualAwardResultGrouping = actualProcessingResults.getAwardResults();
+            FileWithExpectedResults expectedFileResult, RassXmlFileProcessingResult actualFileResult) {
+        ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedProposalResultGrouping =
+                expectedFileResult.getExpectedAwardResults();
+        RassBusinessObjectUpdateResultGrouping<Award> actualAwardResultGrouping = actualFileResult.getAwardResults();
+        List<Maintainable> awardUpdatesToCheck = awardUpdates.getOrDefault(
+                expectedFileResult.getExpectedXmlFileName(), Collections.emptyList());
         
         assertCorrectObjectResultsWereReported(expectedProposalResultGrouping, actualAwardResultGrouping);
-        assertObjectsWereUpdatedAsExpected(expectedProposalResultGrouping, awardUpdates,
+        assertObjectsWereUpdatedAsExpected(expectedProposalResultGrouping, awardUpdatesToCheck,
                 this::assertAwardWasUpdatedAsExpected);
     }
 
@@ -624,7 +709,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         Class<R> businessObjectClass = expectedResultGrouping.getBusinessObjectClass();
         String objectLabel = businessObjectClass.getSimpleName();
         
-        assertEquals("Wrong number of " + objectLabel + " objects created or updated", expectedResults.size(), actualResults.size());
+        assertEquals("Wrong number of " + objectLabel + " objects created or updated for file",
+                expectedResults.size(), actualResults.size());
         for (int i = 0; i < expectedResults.size(); i++) {
             ExpectedObjectUpdateResult<E> expectedResult = expectedResults.get(i);
             Maintainable actualResult = actualResults.get(i);
@@ -806,6 +892,18 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    private void handleStartOfFileProcessing(String xmlFileName, Class<?> businessObjectClass) {
+        if (Agency.class.isAssignableFrom(businessObjectClass)) {
+            agencyUpdatesForCurrentFile = agencyUpdates.computeIfAbsent(xmlFileName, key -> new ArrayList<>());
+        } else if (Proposal.class.isAssignableFrom(businessObjectClass)) {
+            proposalUpdatesForCurrentFile = proposalUpdates.computeIfAbsent(xmlFileName, key -> new ArrayList<>());
+        } else if (Award.class.isAssignableFrom(businessObjectClass)) {
+            awardUpdatesForCurrentFile = awardUpdates.computeIfAbsent(xmlFileName, key -> new ArrayList<>());
+        } else {
+            fail("Service was updating an unexpected business object type: " + businessObjectClass);
+        }
+    }
+
     private void processMaintenanceDocument(MaintenanceDocument maintenanceDocument) {
         Maintainable maintainable = maintenanceDocument.getNewMaintainableObject();
         Object businessObject = maintainable.getDataObject();
@@ -841,7 +939,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     private void recordModifiedAgencyAndUpdateAgencyService(Maintainable agencyMaintainable) {
         Agency agency = (Agency) agencyMaintainable.getDataObject();
         String agencyNumber = agency.getAgencyNumber();
-        agencyUpdates.add(agencyMaintainable);
+        agencyUpdatesForCurrentFile.add(agencyMaintainable);
         Mockito.doReturn(agency)
                 .when(mockAgencyService).getByPrimaryId(agencyNumber);
     }
@@ -850,7 +948,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         Proposal proposal = (Proposal) proposalMaintainable.getDataObject();
         Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
                 KFSPropertyConstants.PROPOSAL_NUMBER, proposal.getProposalNumber());
-        proposalUpdates.add(proposalMaintainable);
+        proposalUpdatesForCurrentFile.add(proposalMaintainable);
         Mockito.doReturn(proposal)
                 .when(mockBusinessObjectService).findByPrimaryKey(Proposal.class, proposalPrimaryKeys);
     }
@@ -858,7 +956,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     private void recordModifiedAwardAndUpdateAwardService(Maintainable awardMaintainable) {
         Award award = (Award) awardMaintainable.getDataObject();
         String proposalNumber = award.getProposalNumber();
-        awardUpdates.add(awardMaintainable);
+        awardUpdatesForCurrentFile.add(awardMaintainable);
         Mockito.doReturn(award)
                 .when(mockAwardService).getByPrimaryId(proposalNumber);
     }
@@ -877,15 +975,16 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         valuesToReturn.when(routeHeaderService).getDocumentStatus(Mockito.eq(documentNumber));
     }
 
-    private List<RassXmlDocumentWrapperFixture> xmlFiles(RassXmlDocumentWrapperFixture... xmlFileFixtures) {
-        return Arrays.asList(xmlFileFixtures);
-    }
-
-    private ExpectedProcessingResults expectedResults(
+    private FileWithExpectedResults fileWithResults(
+            RassXmlDocumentWrapperFixture fileFixture,
             ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencies,
             ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposals,
             ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedAwards) {
-        return new ExpectedProcessingResults(expectedAgencies, expectedProposals, expectedAwards);
+        return new FileWithExpectedResults(fileFixture, expectedAgencies, expectedProposals, expectedAwards);
+    }
+
+    private ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> emptyAgencyResults() {
+        return agencies(RassObjectGroupingUpdateResultCode.SUCCESS);
     }
 
     @SafeVarargs
@@ -898,6 +997,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         return new ExpectedObjectUpdateResult<>(agencyFixture, resultCode, fixture -> fixture.number);
     }
 
+    private ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> emptyProposalResults() {
+        return proposals(RassObjectGroupingUpdateResultCode.SUCCESS);
+    }
+
     @SafeVarargs
     private final ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> proposals(
             RassObjectGroupingUpdateResultCode resultCode, ExpectedObjectUpdateResult<RassXmlAwardEntryFixture>... expectedProposals) {
@@ -906,6 +1009,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
     private ExpectedObjectUpdateResult<RassXmlAwardEntryFixture> proposal(RassXmlAwardEntryFixture awardFixture, RassObjectUpdateResultCode resultCode) {
         return new ExpectedObjectUpdateResult<>(awardFixture, resultCode, fixture -> fixture.proposalNumber);
+    }
+
+    private ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> emptyAwardResults() {
+        return awards(RassObjectGroupingUpdateResultCode.SUCCESS);
     }
 
     @SafeVarargs

@@ -1,0 +1,7 @@
+RASS Error Report
+
+Unexpected errors were encountered when attempting to read the following RASS XML files.
+The failures were likely the result of incorrect XML formatting.
+Specific details are available in the RASS batch job logs.
+
+bad-file1.xml
