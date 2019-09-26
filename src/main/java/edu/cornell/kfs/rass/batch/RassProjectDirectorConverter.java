@@ -9,12 +9,14 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.CGProjectDirector;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.role.RoleService;
 
 import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 
 public class RassProjectDirectorConverter extends RassValueConverterBase {
 
 	protected PersonService personService;
+	protected RoleService roleService;
 	protected Class<? extends CGProjectDirector> projectDirectorImplementationClass;
 	protected String projectDirectorPrimaryIndicatorPropertyName;
 
