@@ -199,6 +199,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         List<PayeeACHAccountExtractDetail> achDetails = (List<PayeeACHAccountExtractDetail>) parsedObject;
         
         for (PayeeACHAccountExtractDetail achDetail : achDetails) {
+            cleanPayeeACHAccountExtractDetail(achDetail);
             String error = processACHBatchDetail(achDetail);
             if (StringUtils.isNotBlank(error)) {
                 failedRowsErrors.add(error);
@@ -206,6 +207,27 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         }
         
         return failedRowsErrors;
+    }
+    
+    protected void cleanPayeeACHAccountExtractDetail(PayeeACHAccountExtractDetail detail) {
+        if (!StringUtils.isNumeric(detail.getBankAccountNumber())) {
+            String logMessageStarter = "cleanPayeeACHAccountExtractDetail, the bank account for " + detail.getNetID();
+            String bankAccountNumber = detail.getBankAccountNumber();
+            if (StringUtils.contains(bankAccountNumber, KFSConstants.DASH)) {
+                LOG.info(logMessageStarter + " contains dashes, so removing them");
+                bankAccountNumber = StringUtils.remove(bankAccountNumber, KFSConstants.DASH);
+            }
+            if (StringUtils.contains(bankAccountNumber, StringUtils.SPACE)) {
+                LOG.info(logMessageStarter + " contains spaces, so removing them");
+                bankAccountNumber = StringUtils.remove(bankAccountNumber,  StringUtils.SPACE);
+            }
+            
+            detail.setBankAccountNumber(bankAccountNumber);
+            
+            if (!StringUtils.isNumeric(detail.getBankAccountNumber())) {
+                LOG.error(logMessageStarter + " is not numeric after cleaning");
+            }
+        }
     }
 
     /**
