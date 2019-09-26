@@ -85,8 +85,10 @@
 			
     	<bean id="rassReportService" parent="rassReportService-parentBean"/>
 	<bean id="rassReportService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassReportServiceImpl"
+			p:reportFileNamePrefixFormat="rass_report_for_{0}_"
 			p:emailService-ref="emailService"
 			p:parameterService-ref="parameterService"
+			p:configurationService-ref="configurationService"
 			p:reportWriterService-ref="rassReportWriterService"/>
 
 	<bean id="rassXmlInputFileType" parent="rassXmlInputFileType-parentBean"/>
@@ -110,7 +112,8 @@
 		</property>		
 	</bean>
 
-	<bean id="rassReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
+    <bean id="rassReportWriterService" parent="rassReportWriterService-parentBean"/>
+	<bean id="rassReportWriterService-parentBean" abstract="true" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
 		parent="reportWriterService">
 		<property name="filePath" value="${reports.directory}/rass" />
 		<property name="fileNamePrefix" value="rass_report_" />

@@ -3,6 +3,7 @@ package edu.cornell.kfs.rass.batch;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,10 +30,9 @@ public class RassStep extends AbstractStep {
             return true;
         }
         List<RassXmlFileParseResult> successfulResults = findSuccessfullyParsedFileResults(parseResults);
-        RassXmlProcessingResults processingResults = rassService.updateKFS(successfulResults);
+        Map<String, RassXmlFileProcessingResult> processingResults = rassService.updateKFS(successfulResults);
         RassBatchJobReport report = new RassBatchJobReport(parseResults, processingResults);
-        rassReportService.writeBatchJobReport(report);
-        sendReport(report);
+        rassReportService.writeBatchJobReports(report);
         return true;
     }
 
@@ -40,10 +40,6 @@ public class RassStep extends AbstractStep {
         return parseResults.stream()
                 .filter(parseResult -> RassParseResultCode.SUCCESS.equals(parseResult.getResultCode()))
                 .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    protected void sendReport(RassBatchJobReport report) {
-        rassReportService.sendReportEmail();
     }
 
     public void setRassService(RassService rassService) {

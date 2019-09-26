@@ -26,6 +26,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
@@ -211,6 +212,12 @@ public class RassMockServiceFactory {
                 .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_DESCRIPTION);
         Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE))
                 .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE1))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE1);
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE2))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE2);
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE3))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE3);
         
         return configurationService;
     }
@@ -240,6 +247,10 @@ public class RassMockServiceFactory {
                 });
         
         return personService;
+    }
+
+    public EmailService buildMockEmailService() throws Exception {
+        return Mockito.mock(EmailService.class);
     }
 
 }

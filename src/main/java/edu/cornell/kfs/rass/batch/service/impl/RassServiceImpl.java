@@ -3,8 +3,12 @@ package edu.cornell.kfs.rass.batch.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,7 +33,7 @@ import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
 import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
 import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
-import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
+import edu.cornell.kfs.rass.batch.RassXmlFileProcessingResult;
 import edu.cornell.kfs.rass.batch.service.RassService;
 import edu.cornell.kfs.rass.batch.service.RassSortService;
 import edu.cornell.kfs.rass.batch.service.RassUpdateService;
@@ -53,6 +57,11 @@ public class RassServiceImpl implements RassService {
     protected RassSortService rassSortService;
 
     protected String rassFilePath;
+    protected BiConsumer<String, Class<?>> parsedObjectTypeProcessingWatcher;
+
+    public RassServiceImpl() {
+        this.parsedObjectTypeProcessingWatcher = (xmlFileName, boClass) -> {};
+    }
 
     @Override
     public List<RassXmlFileParseResult> readXML() {
@@ -98,33 +107,53 @@ public class RassServiceImpl implements RassService {
 
     @Transactional
     @Override
-    public RassXmlProcessingResults updateKFS(List<RassXmlFileParseResult> successfullyParsedFiles) {
+    public Map<String, RassXmlFileProcessingResult> updateKFS(List<RassXmlFileParseResult> successfullyParsedFiles) {
         LOG.info("updateKFS, Processing " + successfullyParsedFiles.size() + " RASS XML files into KFS");
         
         PendingDocumentTracker documentTracker = new PendingDocumentTracker();
         
-        RassBusinessObjectUpdateResultGrouping<Agency> agencyResults = updateBOs(
+        Map<String, RassBusinessObjectUpdateResultGrouping<Agency>> agencyResults = updateBOs(
                 successfullyParsedFiles, agencyDefinition, documentTracker);
-		RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults = updateBOs(successfullyParsedFiles,
-				proposalDefinition, documentTracker);
-        RassBusinessObjectUpdateResultGrouping<Award> awardResults = updateBOs(
+        Map<String, RassBusinessObjectUpdateResultGrouping<Proposal>> proposalResults = updateBOs(
+                successfullyParsedFiles, proposalDefinition, documentTracker);
+        Map<String, RassBusinessObjectUpdateResultGrouping<Award>> awardResults = updateBOs(
                 successfullyParsedFiles, awardDefinition, documentTracker);
         LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
         
         rassUpdateService.waitForRemainingGeneratedDocumentsToFinish(documentTracker);
         
-        return new RassXmlProcessingResults(agencyResults, proposalResults, awardResults);
+        return buildProcessingResults(successfullyParsedFiles, agencyResults, proposalResults, awardResults);
     }
 
-    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResultGrouping<R> updateBOs(
+    protected Map<String, RassXmlFileProcessingResult> buildProcessingResults(
+            List<RassXmlFileParseResult> parseResults,
+            Map<String, RassBusinessObjectUpdateResultGrouping<Agency>> agencyResults,
+            Map<String, RassBusinessObjectUpdateResultGrouping<Proposal>> proposalResults,
+            Map<String, RassBusinessObjectUpdateResultGrouping<Award>> awardResults) {
+        return parseResults.stream()
+                .map(RassXmlFileParseResult::getRassXmlFileName)
+                .map(xmlFileName -> new RassXmlFileProcessingResult(
+                        xmlFileName, agencyResults.get(xmlFileName),
+                        proposalResults.get(xmlFileName), awardResults.get(xmlFileName)))
+                .collect(
+                        Collectors.toMap(RassXmlFileProcessingResult::getRassXmlFileName, Function.identity()));
+    }
+
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> Map<String, RassBusinessObjectUpdateResultGrouping<R>> updateBOs(
             List<RassXmlFileParseResult> parsedFiles, RassObjectTranslationDefinition<T, R> objectDefinition,
             PendingDocumentTracker documentTracker) {
-        List<RassBusinessObjectUpdateResult<R>> objectResults = new ArrayList<>();
-        RassObjectGroupingUpdateResultCode groupingResultCode = RassObjectGroupingUpdateResultCode.SUCCESS;
+        Map<String, RassBusinessObjectUpdateResultGrouping<R>> resultGroupings = new HashMap<>();
         
         LOG.info("updateBOs, Started processing objects of type " + objectDefinition.getObjectLabel());
-        try {
-            for (RassXmlFileParseResult parsedFile : parsedFiles) {
+        
+        for (RassXmlFileParseResult parsedFile : parsedFiles) {
+            LOG.info("updateBOs, Processing results from file " + parsedFile.getRassXmlFileName());
+            parsedObjectTypeProcessingWatcher.accept(
+                    parsedFile.getRassXmlFileName(), objectDefinition.getBusinessObjectClass());
+            List<RassBusinessObjectUpdateResult<R>> objectResults = new ArrayList<>();
+            RassObjectGroupingUpdateResultCode groupingResultCode = RassObjectGroupingUpdateResultCode.SUCCESS;
+            
+            try {
                 RassXmlDocumentWrapper documentWrapper = parsedFile.getParsedDocumentWrapper();
                 Date extractDate = documentWrapper.getExtractDate();
                 if (extractDate == null) {
@@ -155,16 +184,20 @@ public class RassServiceImpl implements RassService {
                     }
                     objectResults.add(result);
                 }
-                LOG.info("updateBOs, Finished processing " + objectDefinition.getObjectLabel() + " objects from file");
+                LOG.info("updateBOs, Finished processing " + objectDefinition.getObjectLabel() + " objects from file "
+                        + parsedFile.getRassXmlFileName());
+            } catch (RuntimeException e) {
+                LOG.error("updateBOs, Unexpected exception encountered when processing BOs of type "
+                        + objectDefinition.getObjectLabel() + " for file " + parsedFile.getRassXmlFileName(), e);
+                groupingResultCode = RassObjectGroupingUpdateResultCode.ERROR;
             }
-        } catch (RuntimeException e) {
-            LOG.error("updateBOs, Unexpected exception encountered when processing BOs of type " + objectDefinition.getObjectLabel(), e);
-            groupingResultCode = RassObjectGroupingUpdateResultCode.ERROR;
             
+            resultGroupings.put(parsedFile.getRassXmlFileName(), new RassBusinessObjectUpdateResultGrouping<>(
+                    objectDefinition.getBusinessObjectClass(), objectResults, groupingResultCode));
         }
         LOG.info("updateBOs, Finished processing objects of type " + objectDefinition.getObjectLabel());
         
-        return new RassBusinessObjectUpdateResultGrouping<R>(objectDefinition.getBusinessObjectClass(), objectResults, groupingResultCode);
+        return resultGroupings;
     }
 
     
@@ -202,6 +235,10 @@ public class RassServiceImpl implements RassService {
 
     public void setRassSortService(RassSortService rassSortService) {
         this.rassSortService = rassSortService;
+    }
+
+    public void setParsedObjectTypeProcessingWatcher(BiConsumer<String, Class<?>> parsedObjectTypeProcessingWatcher) {
+        this.parsedObjectTypeProcessingWatcher = parsedObjectTypeProcessingWatcher;
     }
 
 }
