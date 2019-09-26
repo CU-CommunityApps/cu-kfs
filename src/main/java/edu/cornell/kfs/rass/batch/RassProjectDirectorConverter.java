@@ -1,20 +1,26 @@
 package edu.cornell.kfs.rass.batch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.CGProjectDirector;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.role.Role;
 import org.kuali.rice.kim.api.role.RoleService;
 
 import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 
 public class RassProjectDirectorConverter extends RassValueConverterBase {
-
+    private static final Logger LOG = LogManager.getLogger(RassProjectDirectorConverter.class);
+    
 	protected PersonService personService;
 	protected RoleService roleService;
 	protected Class<? extends CGProjectDirector> projectDirectorImplementationClass;
@@ -34,6 +40,13 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
 				    throw new RuntimeException("Cannot find person with principal name \""
 				            + rassAwardPiCoPi.getProjectDirectorPrincipalName() + "\"");
 				}
+				
+				if (!doesPersonHaveProjectDirectRole(projectDirectorPerson)) {
+				    LOG.info("convert, " + projectDirectorPerson.getPrincipalName() + " needs to be added to the project director role");
+				    roleService.assignPrincipalToRole(projectDirectorPerson.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,  
+				            KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR, new HashMap<String, String>());
+                }
+				
 				projectDirector.setPrincipalId(projectDirectorPerson.getPrincipalId());
 				ObjectPropertyUtils.setPropertyValue(
 				        projectDirector, projectDirectorPrimaryIndicatorPropertyName, getNullSafePrimaryDirectorFlag(rassAwardPiCoPi));
@@ -56,6 +69,17 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
                     + projectDirectorImplementationClass.getName(), e);
         }
     }
+    
+    protected boolean doesPersonHaveProjectDirectRole(Person person) {
+        Role orojectDirectRole = roleService.getRoleByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.KFS, 
+                KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR);
+        if (ObjectUtils.isNull(orojectDirectRole)) {
+            throw new RuntimeException("Unable to find Contracts and Greants project director role");
+        }
+        List<String> roleIds = new ArrayList<String>();
+        roleIds.add(orojectDirectRole.getId());
+        return roleService.principalHasRole(person.getPrincipalId(), roleIds, new HashMap<String, String>());
+    }
 
     protected Boolean getNullSafePrimaryDirectorFlag(RassXMLAwardPiCoPiEntry rassAwardPiCoPi) {
         return rassAwardPiCoPi.getPrimary() != null ? rassAwardPiCoPi.getPrimary() : Boolean.FALSE;
@@ -72,5 +96,9 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
 	public void setProjectDirectorPrimaryIndicatorPropertyName(String projectDirectorPrimaryIndicatorPropertyName) {
 	    this.projectDirectorPrimaryIndicatorPropertyName = projectDirectorPrimaryIndicatorPropertyName;
 	}
+
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
 }
