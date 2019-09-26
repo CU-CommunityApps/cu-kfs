@@ -724,49 +724,5 @@ public class PayeeACHAccountExtractServiceImplTest {
             this.validRow = false;
         }
     }
-    
-    @Test
-    public void testCleanPayeeACHAccountExtractDetailNoClean() {
-        String bankAccountNumber = "12345";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, bankAccountNumber);
-    }
-    
-    @Test
-    public void testCleanPayeeACHAccountExtractDetailCleanDashes() {
-        String bankAccountNumber = "1-2---3-4-5----6-";
-        String expectedBankAccount = "123456";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, expectedBankAccount);
-    }
-    
-    @Test
-    public void testCleanPayeeACHAccountExtractDetailCleanDashesWithLetters() {
-        String bankAccountNumber = "A1-2---3-4-5---6-";
-        String expectedBankAccount = "A123456";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, expectedBankAccount);
-    }
-    
-    @Test
-    public void testCleanPayeeACHAccountExtractDetailWithLetters() {
-        String bankAccountNumber = "A12345";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, bankAccountNumber);
-    }
-    
-    @Test
-    public void testCleanPayeeACHAccountExtractDetailWithNull() {
-        validateCleanPayeeACHAccountExtractDetail(null, null);
-    }
-    
-    @Test
-    public void testCleanPayeeACHAccountExtractDetailWithEmptyString() {
-        validateCleanPayeeACHAccountExtractDetail(StringUtils.EMPTY, StringUtils.EMPTY);
-    }
-    
-    private void validateCleanPayeeACHAccountExtractDetail(String bankAccountNumber, String expectedCleanedBankAccountNumber) {
-        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
-        detail.setBankAccountNumber(bankAccountNumber);
-        payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
-        
-        assertEquals(expectedCleanedBankAccountNumber, detail.getBankAccountNumber());
-    }
 
 }
