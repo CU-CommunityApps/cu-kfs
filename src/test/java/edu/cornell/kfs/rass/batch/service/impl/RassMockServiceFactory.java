@@ -258,7 +258,6 @@ public class RassMockServiceFactory {
                 KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR)).thenReturn(RoleBo.to(projectDirectRole));
         Mockito.when(roleService.principalHasRole(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(true);
         
-        
         return roleService;
     }
 
