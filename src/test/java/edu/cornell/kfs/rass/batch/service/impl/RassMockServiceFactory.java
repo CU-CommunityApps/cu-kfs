@@ -2,10 +2,12 @@ package edu.cornell.kfs.rass.batch.service.impl;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -22,6 +24,7 @@ import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.ProposalMaintainableImpl;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.module.cg.service.AwardService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
@@ -42,6 +45,11 @@ import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
+
+import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kim.api.role.RoleContract;
+import org.kuali.rice.kim.api.role.RoleService;
+import org.kuali.rice.kim.impl.role.RoleBo;
 
 
 public class RassMockServiceFactory {
@@ -240,6 +248,26 @@ public class RassMockServiceFactory {
                 });
         
         return personService;
+    }
+    
+    public RoleService buildMockRoleService() {
+        //Role projectDirectRole = Mockito.mock(RoleContract.class);
+        //Mockito.when(projectDirectRole.getId()).thenReturn("123");
+        //Role projectDirectRole = Role.Builder.create("123", KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR, 
+          //      KFSConstants.CoreModuleNamespaces.KFS, KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR, StringUtils.EMPTY).build();
+        RoleBo projectDirectRole = new RoleBo();
+        projectDirectRole.setId("123");
+        projectDirectRole.setName(KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR);
+        projectDirectRole.setNamespaceCode(KFSConstants.CoreModuleNamespaces.KFS);
+        projectDirectRole.setKimTypeId("R");
+        
+        RoleService roleService = Mockito.mock(RoleService.class);
+        Mockito.when(roleService.getRoleByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.KFS,
+                KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR)).thenReturn(RoleBo.to(projectDirectRole));
+        Mockito.when(roleService.principalHasRole(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(true);
+        
+        
+        return roleService;
     }
 
 }
