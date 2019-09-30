@@ -33,7 +33,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
         List<CGProjectDirector> projectDirectors = new ArrayList<>();
         if (rassAwardPiCoPiEntries != null && rassAwardPiCoPiEntries.size() > 0) {
             for (RassXMLAwardPiCoPiEntry rassAwardPiCoPi : rassAwardPiCoPiEntries) {
-                CGProjectDirector projectDirector = buildProjectDirecotor(rassAwardPiCoPi);
+                CGProjectDirector projectDirector = buildProjectDirector(rassAwardPiCoPi);
                 projectDirectors.add(projectDirector);
             }
         }
@@ -41,7 +41,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
         return projectDirectors;
     }
 
-    protected CGProjectDirector buildProjectDirecotor(RassXMLAwardPiCoPiEntry rassAwardPiCoPi) {
+    protected CGProjectDirector buildProjectDirector(RassXMLAwardPiCoPiEntry rassAwardPiCoPi) {
         CGProjectDirector projectDirector = createNewProjectDirectorInstance();
         Person projectDirectorPerson = personService.getPersonByPrincipalName(rassAwardPiCoPi.getProjectDirectorPrincipalName());
         if (ObjectUtils.isNull(projectDirectorPerson)) {
@@ -49,7 +49,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
         }
 
         if (!doesPersonHaveProjectDirectorRole(projectDirectorPerson)) {
-            LOG.info("buildProjectDirecotor, " + projectDirectorPerson.getPrincipalName() + " needs to be added to the project director role");
+            LOG.info("buildProjectDirector, " + projectDirectorPerson.getPrincipalName() + " needs to be added to the project director role");
             roleService.assignPrincipalToRole(projectDirectorPerson.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                     KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR, new HashMap<String, String>());
         }
