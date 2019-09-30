@@ -33,26 +33,31 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
         List<CGProjectDirector> projectDirectors = new ArrayList<>();
         if (rassAwardPiCoPiEntries != null && rassAwardPiCoPiEntries.size() > 0) {
             for (RassXMLAwardPiCoPiEntry rassAwardPiCoPi : rassAwardPiCoPiEntries) {
-                CGProjectDirector projectDirector = createNewProjectDirectorInstance();
-                Person projectDirectorPerson = personService.getPersonByPrincipalName(rassAwardPiCoPi.getProjectDirectorPrincipalName());
-                if (ObjectUtils.isNull(projectDirectorPerson)) {
-                    throw new RuntimeException("Cannot find person with principal name \"" + rassAwardPiCoPi.getProjectDirectorPrincipalName() + "\"");
-                }
-
-                if (!doesPersonHaveProjectDirectRole(projectDirectorPerson)) {
-                    LOG.info("convert, " + projectDirectorPerson.getPrincipalName() + " needs to be added to the project director role");
-                    roleService.assignPrincipalToRole(projectDirectorPerson.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
-                            KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR, new HashMap<String, String>());
-                }
-
-                projectDirector.setPrincipalId(projectDirectorPerson.getPrincipalId());
-                ObjectPropertyUtils.setPropertyValue(projectDirector, projectDirectorPrimaryIndicatorPropertyName,
-                        getNullSafePrimaryDirectorFlag(rassAwardPiCoPi));
+                CGProjectDirector projectDirector = buildProjectDirecotor(rassAwardPiCoPi);
                 projectDirectors.add(projectDirector);
             }
         }
 
         return projectDirectors;
+    }
+
+    protected CGProjectDirector buildProjectDirecotor(RassXMLAwardPiCoPiEntry rassAwardPiCoPi) {
+        CGProjectDirector projectDirector = createNewProjectDirectorInstance();
+        Person projectDirectorPerson = personService.getPersonByPrincipalName(rassAwardPiCoPi.getProjectDirectorPrincipalName());
+        if (ObjectUtils.isNull(projectDirectorPerson)) {
+            throw new RuntimeException("Cannot find person with principal name \"" + rassAwardPiCoPi.getProjectDirectorPrincipalName() + "\"");
+        }
+
+        if (!doesPersonHaveProjectDirectorRole(projectDirectorPerson)) {
+            LOG.info("buildProjectDirecotor, " + projectDirectorPerson.getPrincipalName() + " needs to be added to the project director role");
+            roleService.assignPrincipalToRole(projectDirectorPerson.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
+                    KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR, new HashMap<String, String>());
+        }
+
+        projectDirector.setPrincipalId(projectDirectorPerson.getPrincipalId());
+        ObjectPropertyUtils.setPropertyValue(projectDirector, projectDirectorPrimaryIndicatorPropertyName,
+                getNullSafePrimaryDirectorFlag(rassAwardPiCoPi));
+        return projectDirector;
     }
 
     protected CGProjectDirector createNewProjectDirectorInstance() {
@@ -67,7 +72,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
         }
     }
 
-    protected boolean doesPersonHaveProjectDirectRole(Person person) {
+    protected boolean doesPersonHaveProjectDirectorRole(Person person) {
         Role orojectDirectRole = roleService.getRoleByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.KFS,
                 KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR);
         if (ObjectUtils.isNull(orojectDirectRole)) {
