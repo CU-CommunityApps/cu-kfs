@@ -52,6 +52,8 @@
     <bean id="awardService" factory-bean="testServiceFactory" factory-method="buildMockAwardService"/>
 
     <bean id="personService" factory-bean="testServiceFactory" factory-method="buildMockPersonService"/>
+    
+    <bean id="kimRoleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
@@ -109,6 +111,7 @@
                 <idref bean="configurationService"/>
                 <idref bean="awardService"/>
                 <idref bean="personService"/>
+                <idref bean="kimRoleService"/>
             </set>
         </property>
     </bean>

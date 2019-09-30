@@ -146,11 +146,11 @@
 			p:parameterService-ref="parameterService"/>
 			
 	<bean id="rassProposalProjectDirectorConverter" class="edu.cornell.kfs.rass.batch.RassProjectDirectorConverter"
-			p:personService-ref="personService"
+			p:personService-ref="personService" p:roleService-ref="kimRoleService"
 			p:projectDirectorImplementationClass="org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector"
 			p:projectDirectorPrimaryIndicatorPropertyName="proposalPrimaryProjectDirectorIndicator"/>
 	<bean id="rassAwardProjectDirectorConverter" class="edu.cornell.kfs.rass.batch.RassProjectDirectorConverter"
-			p:personService-ref="personService"
+			p:personService-ref="personService" p:roleService-ref="kimRoleService"
 			p:projectDirectorImplementationClass="org.kuali.kfs.module.cg.businessobject.AwardProjectDirector"
 			p:projectDirectorPrimaryIndicatorPropertyName="awardPrimaryProjectDirectorIndicator"/>
 
