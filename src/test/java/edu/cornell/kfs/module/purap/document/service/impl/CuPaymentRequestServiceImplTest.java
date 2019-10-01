@@ -438,8 +438,7 @@ public class CuPaymentRequestServiceImplTest extends KualiTestBase {
                 ((CuPaymentRequestService) paymentRequestService).purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(paymentRequestDocument));
     }
 
-    protected void changeCurrentUser(UserNameFixture sessionUser)
-            throws Exception {
+    protected void changeCurrentUser(UserNameFixture sessionUser) {
         GlobalVariables.setUserSession(new UserSession(sessionUser.toString()));
     }
 

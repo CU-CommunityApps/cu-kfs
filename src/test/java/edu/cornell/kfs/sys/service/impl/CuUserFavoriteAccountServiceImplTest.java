@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
@@ -96,7 +96,7 @@ public class CuUserFavoriteAccountServiceImplTest {
         Assert.assertTrue("should have the same PK", favoriteAccount1.getAccountLineIdentifier().equals(favoriteAccount2.getAccountLineIdentifier()));
     }
 
-    private class MockBusinessObjectServiceImpl extends BusinessObjectServiceImpl {
+    private class MockBusinessObjectServiceImpl extends BusinessObjectService {
 
         @Override
         public <T extends BusinessObject> T findByPrimaryKey(Class<T> clazz, Map<String, ?> primaryKeys) {

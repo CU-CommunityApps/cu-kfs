@@ -22,7 +22,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.coreservice.impl.parameter.ParameterServiceImpl;
-import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 
 import edu.cornell.kfs.module.cg.CuCGParameterConstants;
@@ -37,7 +37,7 @@ public class EzraCGCodeMappingParametersTest {
     @Before
     public void setUp() throws Exception {
         ezraService = new TestEzraService();
-        ezraService.setBusinessObjectService(mock(BusinessObjectServiceImpl.class));
+        ezraService.setBusinessObjectService(mock(BusinessObjectService.class));
         ezraService.setDateTimeService(mock(DateTimeServiceImpl.class));
         ezraService.setDocumentService(mock(DocumentServiceImpl.class));
         ezraService.setEzraAwardProposalDao(mock(EzraAwardProposalDaoOjb.class));
