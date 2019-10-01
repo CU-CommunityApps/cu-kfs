@@ -24,12 +24,12 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
-import org.kuali.rice.location.api.state.State;
-import org.kuali.rice.location.api.state.StateService;
+import org.kuali.kfs.sys.businessobject.State;
+import org.kuali.kfs.sys.service.LocationService;
 
 public class PostalCodeValidationServiceImpl implements PostalCodeValidationService {
-
-    protected StateService stateService;
+    
+    protected LocationService locationService;
 
     @Override
     public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode,
@@ -66,7 +66,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
 
         // verify state code exist
         if (StringUtils.isNotBlank(postalCountryCode) && StringUtils.isNotBlank(stateCode)) {
-            State state = getStateService().getState(postalCountryCode, stateCode);
+            State state = getLocationService().getState(postalCountryCode, stateCode);
             if (state == null) {
                 valid = false;
                 GlobalVariables.getMessageMap().putError(statePropertyConstant,
@@ -84,13 +84,12 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
 	protected ZipcodeValidationPattern getZipcodeValidatePattern() {
 		return new ZipcodeValidationPattern();
 	}
-	
-	public StateService getStateService() {
-		return stateService;
-	}
-	
-	public void setStateService(StateService stateService) {
-		this.stateService = stateService;
-	}
 
+    public LocationService getLocationService() {
+        return locationService;
+    }
+
+    public void setLocationService(LocationService locationService) {
+        this.locationService = locationService;
+    }
 }
