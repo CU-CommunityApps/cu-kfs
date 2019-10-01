@@ -251,9 +251,8 @@
 	    </property>
 	</bean>
 	
-	<bean id="postalCodeValidationService-parentBean" class="org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl" abstract="true">
-		<property name="locationService" ref="locationService" />    
-	</bean>
+	<bean id="postalCodeValidationService-parentBean" class="org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl" abstract="true"
+			p:locationService-ref="locationService-fin"/>
 
 
 	<bean id="webServiceCredentialService" parent="webServiceCredentialService-parentBean" />
