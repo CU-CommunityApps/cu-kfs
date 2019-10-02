@@ -87,7 +87,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
                 result = updateObject(xmlObject, existingObject, objectDefinition);
             }
             LOG.info("processObject, Successfully processed " + objectDefinition.printObjectLabelAndKeys(xmlObject));
-        } catch (Throwable  e) {
+        } catch (RuntimeException e) {
             LOG.error("processObject, Failed to process update for " + objectDefinition.printObjectLabelAndKeys(xmlObject), e);
             result = new RassBusinessObjectUpdateResult<>(objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
                     RassObjectUpdateResultCode.ERROR, e.getMessage());
@@ -108,7 +108,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
                 documentTracker.stopTrackingDocumentForObject(objectKey);
             }
             LOG.info("waitForRemainingGeneratedDocumentsToFinish, Finished waiting for maintenance documents");
-        } catch (Throwable  e) {
+        } catch (RuntimeException e) {
             LOG.error("waitForRemainingGeneratedDocumentsToFinish, Unexpected error while checking document route statuses", e);
         }
     }
@@ -141,7 +141,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     protected void waitForDocumentToFinishRoutingQuietly(String documentId) {
         try {
             waitForDocumentToFinishRouting(documentId);
-        } catch (Throwable  e) {
+        } catch (RuntimeException e) {
             LOG.error("waitForDocumentToFinishRoutingQuietly, Unexpected error encountered when waiting for document " + documentId
                     + "to finish routing; will skip waiting for this document further", e);
         }
@@ -448,7 +448,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             return errorMessages.values().stream().flatMap(List::stream).map(this::buildValidationErrorMessageForSingleError)
                     .collect(Collectors.joining(KFSConstants.NEWLINE));
-        } catch (Throwable  e) {
+        } catch (RuntimeException e) {
             LOG.error("buildValidationErrorMessage: Could not build validation error message", e);
             return CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE;
         }
