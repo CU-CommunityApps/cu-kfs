@@ -173,16 +173,20 @@ public class RassServiceImpl implements RassService {
                 LOG.info("updateBOs, Found " + xmlObjects.size()
                         + KFSConstants.BLANK_SPACE + objectDefinition.getObjectLabel() + " objects to process");
                 for (Object xmlObject : xmlObjects) {
-                    T typedXmlObject = objectDefinition.getXmlObjectClass().cast(xmlObject);
-                    RassBusinessObjectUpdateResult<R> result = rassUpdateService.processObject(
-                            typedXmlObject, objectDefinition, documentTracker);
-                    if (RassObjectUpdateResultCode.isSuccessfulResult(result.getResultCode())) {
-                        documentTracker.addDocumentIdToTrack(result);
-                    } else if (RassObjectUpdateResultCode.ERROR.equals(result.getResultCode())) {
-                        documentTracker.addObjectUpdateFailureToTrack(result);
-                        groupingResultCode = RassObjectGroupingUpdateResultCode.ERROR;
+                    try {
+                        T typedXmlObject = objectDefinition.getXmlObjectClass().cast(xmlObject);
+                        RassBusinessObjectUpdateResult<R> result = rassUpdateService.processObject(
+                                typedXmlObject, objectDefinition, documentTracker);
+                        if (RassObjectUpdateResultCode.isSuccessfulResult(result.getResultCode())) {
+                            documentTracker.addDocumentIdToTrack(result);
+                        } else if (RassObjectUpdateResultCode.ERROR.equals(result.getResultCode())) {
+                            documentTracker.addObjectUpdateFailureToTrack(result);
+                            groupingResultCode = RassObjectGroupingUpdateResultCode.ERROR;
+                        }
+                        objectResults.add(result);
+                    } catch (Throwable e) {
+                        LOG.error("updateBOs, caught an error while processing the objects", e);
                     }
-                    objectResults.add(result);
                 }
                 LOG.info("updateBOs, Finished processing " + objectDefinition.getObjectLabel() + " objects from file "
                         + parsedFile.getRassXmlFileName());
