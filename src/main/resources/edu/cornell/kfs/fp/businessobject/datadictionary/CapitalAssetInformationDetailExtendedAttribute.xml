@@ -77,7 +77,7 @@
       <ref bean="AnyCharacterValidation" />
     </property>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:includeBlankRow="true" p:valuesFinder-ref="countryNotRestrictedValuesFinder"/>
+      <bean parent="SelectControlDefinition" p:includeBlankRow="true" p:valuesFinder-ref="countryValuesFinder"/>
     </property>
     <property name="required" value="false"/>
   </bean>
@@ -114,8 +114,8 @@
     <property name="required" value="false"/>
   </bean>
   
-  <bean id="countryNotRestrictedValuesFinder"
-        class="org.kuali.kfs.kns.bo.lookup.CountryNotRestrictedValuesFinder"/>
+  <bean id="countryValuesFinder"
+        class="org.kuali.kfs.kns.bo.lookup.CountryValuesFinder"/>
   </beans>
   
   
