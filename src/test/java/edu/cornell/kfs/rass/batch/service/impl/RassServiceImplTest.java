@@ -475,7 +475,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         emptyAwardResults()),
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_FORCE_AGENCY_GROUP_ERROR_FILE,
-                        agencies(RassObjectGroupingUpdateResultCode.ERROR),
+                        agencies(RassObjectGroupingUpdateResultCode.ERROR, agency(RassXmlAgencyEntryFixture.FORCE_ERROR, RassObjectUpdateResultCode.ERROR)),
                         emptyProposalResults(),
                         emptyAwardResults()));
     }
@@ -688,7 +688,13 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             ExpectedObjectUpdateResult<E> expectedResult = expectedResults.get(i);
             RassBusinessObjectUpdateResult<R> actualResult = actualResults.get(i);
             assertEquals("Wrong business object class at index " + i, expectedBusinessObjectClass, actualResult.getBusinessObjectClass());
-            assertEquals("Wrong object primary key at index " + i, expectedResult.getPrimaryKey(), actualResult.getPrimaryKey());
+            String expectedPriamryKey =  expectedResult.getPrimaryKey();
+            
+            if (StringUtils.equalsIgnoreCase(expectedPriamryKey, RassTestConstants.ERROR_OBJECT_KEY)) {
+                expectedPriamryKey = RassTestConstants.ERROR_OBJECT_KEY_FOR_EXPECTED_RESULTS;
+            }
+            assertEquals("Wrong object primary key at index " + i, expectedPriamryKey, actualResult.getPrimaryKey());
+            
             assertEquals("Wrong result code at index " + i, expectedResult.getResultCode(), actualResult.getResultCode());
             if (RassObjectUpdateResultCode.isSuccessfulResult(expectedResult.getResultCode())) {
                 assertTrue("A document should have been created for successful result at index " + i,
