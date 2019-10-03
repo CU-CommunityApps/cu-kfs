@@ -691,7 +691,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             String expectedPriamryKey =  expectedResult.getPrimaryKey();
             
             if (StringUtils.equalsIgnoreCase(expectedPriamryKey, RassTestConstants.ERROR_OBJECT_KEY)) {
-                expectedPriamryKey = RassTestConstants.ERROR_OBJECT_KEY_FOR_EXPECTED_RESULTS;
+                expectedPriamryKey = RassTestConstants.AGENCY_EXPECTED_PRIMARY_KEY_FOR_ERROR_TEST;
             }
             assertEquals("Wrong object primary key at index " + i, expectedPriamryKey, actualResult.getPrimaryKey());
             
