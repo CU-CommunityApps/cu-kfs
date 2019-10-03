@@ -174,8 +174,7 @@ public class RassServiceImpl implements RassService {
                         + KFSConstants.BLANK_SPACE + objectDefinition.getObjectLabel() + " objects to process");
                 for (Object xmlObject : xmlObjects) {
                     T typedXmlObject = objectDefinition.getXmlObjectClass().cast(xmlObject);
-                    RassBusinessObjectUpdateResult<R> result = rassUpdateService.processObject(
-                            typedXmlObject, objectDefinition, documentTracker);
+                    RassBusinessObjectUpdateResult<R> result = processObject(objectDefinition, documentTracker, typedXmlObject);
                     if (RassObjectUpdateResultCode.isSuccessfulResult(result.getResultCode())) {
                         documentTracker.addDocumentIdToTrack(result);
                     } else if (RassObjectUpdateResultCode.ERROR.equals(result.getResultCode())) {
@@ -198,6 +197,19 @@ public class RassServiceImpl implements RassService {
         LOG.info("updateBOs, Finished processing objects of type " + objectDefinition.getObjectLabel());
         
         return resultGroupings;
+    }
+
+    private <R extends PersistableBusinessObject, T extends RassXmlObject> RassBusinessObjectUpdateResult<R> processObject(
+            RassObjectTranslationDefinition<T, R> objectDefinition, PendingDocumentTracker documentTracker, T typedXmlObject) {
+        RassBusinessObjectUpdateResult<R> result;
+        try {
+            result = rassUpdateService.processObject(typedXmlObject, objectDefinition, documentTracker);
+        } catch (Throwable e) {
+            LOG.error("updateBOs, caught an error while processing the objects", e);
+            result = new RassBusinessObjectUpdateResult<>(objectDefinition.getBusinessObjectClass(), objectDefinition.printObjectLabelAndKeys(typedXmlObject), 
+                    RassObjectUpdateResultCode.ERROR, e.getMessage());
+        }
+        return result;
     }
 
     
