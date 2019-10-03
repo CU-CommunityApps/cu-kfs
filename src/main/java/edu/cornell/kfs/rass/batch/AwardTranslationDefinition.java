@@ -173,5 +173,10 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     public Class<Award> getBusinessObjectClass() {
         return Award.class;
     }
+    
+    @Override
+    public boolean businessObjectCreateIsPermitted(RassXmlAwardEntry xmlObject) {
+       return xmlObject.getTotalAmount().isNonZero() || xmlObject.getCostShareRequired();
+    }
 
 }

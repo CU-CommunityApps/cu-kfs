@@ -49,7 +49,16 @@ public enum RassXmlDocumentWrapperFixture {
         RASS_MULTIPLE_AGENCIES_AND_AWARDS_FILE("2019-03-20T23:59:59.273",
                 awardFixtures(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2),
                 agencyFixtures(RassXmlAgencyEntryFixture.LIMITED_LTD, RassXmlAgencyEntryFixture.SOME_V2)),
-        RASS_EMPTY_FILE("2019-03-18T23:15:07.999", awardFixtures(), agencyFixtures());
+        RASS_EMPTY_FILE("2019-03-18T23:15:07.999", awardFixtures(), agencyFixtures()),
+        RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS),
+                agencyFixtures()),
+        RASS_AWARD_ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS),
+                agencyFixtures()),
+        RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST),
+                agencyFixtures()),
+        RASS_AWARD_ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST),
+                agencyFixtures());
+    
     
     public final DateTime extractDate;
     public final List<RassXmlAwardEntryFixture> awards;
