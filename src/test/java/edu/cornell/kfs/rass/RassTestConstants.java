@@ -14,6 +14,7 @@ public final class RassTestConstants {
     public static final String DEFAULT_PROPOSAL_AWARD_TYPE = "S";
     public static final Integer DEFAULT_DD_FIELD_MAX_LENGTH = Integer.valueOf(50);
     public static final String ERROR_OBJECT_KEY = "ERR";
+    public static final String AGENCY_EXPECTED_PRIMARY_KEY_FOR_ERROR_TEST = "Agency " + ERROR_OBJECT_KEY;
     public static final String LONG_OBJECT_KEY = "KEY_WITH_EXTREMELY_LONG_TEXT_LENGTH";
     public static final String DEFAULT_AWARD_CHART = RassConstants.PROPOSAL_ORG_CHART;
     public static final String DEFAULT_AWARD_ACCOUNT = "3575357";
