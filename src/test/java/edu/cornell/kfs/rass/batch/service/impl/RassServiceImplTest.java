@@ -593,7 +593,79 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW),
                                 award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
     }
+    
+    @Test
+    public void testZeroAmountAndCostShareYesProposalExistsAwardExists() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_EXISTS, 
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+    
+    @Test
+    public void testZeroAmountAndCostShareYesProposalExistsAwardNotExists() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_NOT_EXISTS, 
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_EXISTS_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW))));
+    }
 
+    @Test
+    public void testZeroAmountAndCostShareNoProposalExistsAwardExists() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS_AWARD_EXISTS, 
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_EXISTS_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+    
+    @Test
+    public void testZeroAmountAndCostShareYesProposalDoesNotExistAwardExists() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, 
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+    
+    @Test
+    public void testZeroAmountAndCostShareYesProposalDoesNotExistAwardDoesNotExist() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, 
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW))));
+    }
+
+    @Test
+    public void testZeroAmountAndCostShareNoProposalDoesNotExist() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST, 
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST, RassObjectUpdateResultCode.SKIPPED))));
+    }
+    
     private void assertXmlContentsPerformExpectedObjectUpdates(
             FileWithExpectedResults... filesWithResults) throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(Arrays.asList(filesWithResults));

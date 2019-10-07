@@ -190,6 +190,12 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResult<R> createObjectAndMaintenanceDocument(T xmlObject,
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("createObjectAndMaintenanceDocument, Creating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
+        if (!objectDefinition.businessObjectCreateIsPermitted(xmlObject)) {
+            LOG.info("createObjectAndMaintenanceDocument, Create not permitted for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
+                    + " so any changes to it will be skipped");
+            return new RassBusinessObjectUpdateResult<>(objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
+                    RassObjectUpdateResultCode.SKIPPED);
+        }
         R businessObject = createObject(xmlObject, objectDefinition);
         Pair<R, R> pairWithNewObjectOnly = Pair.of(null, businessObject);
         MaintenanceDocument maintenanceDocument = createAndRouteMaintenanceDocument(pairWithNewObjectOnly, KRADConstants.MAINTENANCE_NEW_ACTION,
@@ -212,7 +218,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("updateObject, Updating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
 
-        if (!objectDefinition.businessObjectEditIsPermitted(xmlObject, oldBusinessObject)) {
+        if (!objectDefinition.businessObjectEditIsPermitted(xmlObject)) {
             LOG.info("updateObject, Updates are not permitted for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
                     + " so any changes to it will be skipped");
             return new RassBusinessObjectUpdateResult<>(objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
