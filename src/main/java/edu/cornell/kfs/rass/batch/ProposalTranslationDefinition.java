@@ -10,11 +10,9 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
-import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.rass.RassConstants;
-import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.util.RassUtil;
 
@@ -71,9 +69,14 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 	}
 
 	@Override
-	public boolean businessObjectEditIsPermitted(RassXmlAwardEntry xmlObject, Proposal oldBusinessObject) {
+	public boolean businessObjectEditIsPermitted(RassXmlAwardEntry xmlObject) {
 		return false;
 	}
+	
+    @Override
+    public boolean businessObjectCreateIsPermitted(RassXmlAwardEntry xmlObject) {
+       return xmlObject.getTotalAmount().isNonZero() || xmlObject.getCostShareRequired();
+    }
 
 	@Override
 	public void processCustomTranslationForBusinessObjectCreate(RassXmlAwardEntry xmlObject,

@@ -167,7 +167,7 @@ public class RassMockServiceFactory {
         BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
         
         Arrays.stream(RassXmlAwardEntryFixture.values())
-                .filter(fixture -> fixture.existsByDefaultForSearching)
+                .filter(fixture -> fixture.proposalExistsByDefaultForSearching)
                 .forEach(fixture -> {
                     Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
                             KFSPropertyConstants.PROPOSAL_NUMBER, fixture.proposalNumber);
@@ -230,7 +230,7 @@ public class RassMockServiceFactory {
         AwardService awardService = Mockito.mock(AwardService.class);
         
         Arrays.stream(RassXmlAwardEntryFixture.values())
-                .filter(fixture -> fixture.existsByDefaultForSearching)
+                .filter(fixture -> fixture.awardExistsByDefaultForSearching)
                 .forEach(fixture -> {
                     Mockito.when(awardService.getByPrimaryId(fixture.proposalNumber))
                             .thenReturn(fixture.toAward());
