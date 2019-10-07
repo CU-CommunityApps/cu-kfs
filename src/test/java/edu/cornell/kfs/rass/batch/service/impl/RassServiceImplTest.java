@@ -631,15 +631,27 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
     
     @Test
-    public void testZeroAmountAndCostShareYesProposalDoesNotExist() throws Exception {
+    public void testZeroAmountAndCostShareYesProposalDoesNotExistAwardExists() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
                 fileWithResults(
-                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST, 
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, 
                         emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST, RassObjectUpdateResultCode.SUCCESS_NEW))));
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_EXISTS, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+    
+    @Test
+    public void testZeroAmountAndCostShareYesProposalDoesNotExistAwardDoesNotExist() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, 
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_YES_PROPOSAL_DOES_NOT_EXIST_AWARD_NOT_EXISTS, RassObjectUpdateResultCode.SUCCESS_NEW))));
     }
 
     @Test
