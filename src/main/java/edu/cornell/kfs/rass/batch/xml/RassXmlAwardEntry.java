@@ -201,6 +201,10 @@ public class RassXmlAwardEntry implements RassXmlObject {
         this.totalAmount = totalAmount;
     }
 
+    public KualiDecimal getNullSafeTotalAmount() {
+        return totalAmount != null ? totalAmount : KualiDecimal.ZERO;
+    }
+
     public String getGrantNumber() {
         return grantNumber;
     }
@@ -247,6 +251,10 @@ public class RassXmlAwardEntry implements RassXmlObject {
 
     public void setCostShareRequired(Boolean costShareRequired) {
         this.costShareRequired = costShareRequired;
+    }
+
+    public Boolean getNullSafeCostShareRequired() {
+        return costShareRequired != null ? costShareRequired : Boolean.FALSE;
     }
 
     public Date getFinalReportDueDate() {

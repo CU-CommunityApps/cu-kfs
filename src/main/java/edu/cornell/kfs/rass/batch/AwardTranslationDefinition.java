@@ -186,7 +186,7 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     
     @Override
     public boolean businessObjectCreateIsPermitted(RassXmlAwardEntry xmlObject) {
-       return xmlObject.getTotalAmount().isNonZero() || xmlObject.getCostShareRequired();
+       return xmlObject.getNullSafeTotalAmount().isNonZero() || xmlObject.getNullSafeCostShareRequired();
     }
 
 }
