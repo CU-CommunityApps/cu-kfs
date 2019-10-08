@@ -152,7 +152,17 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
         refreshReferenceObject(newAward, CuCGPropertyConstants.GRANT_DESCRIPTION);
         refreshReferenceObject(newAward, KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY);
         addPrimaryFundManager(xmlAward, newAward);
+        addFillerFundManagersToOldAwardIfNecessary(oldAward, newAward);
         updateAwardLastUpdateDate(newAward);
+    }
+
+    protected void addFillerFundManagersToOldAwardIfNecessary(Award oldAward, Award newAward) {
+        List<AwardFundManager> oldFundManagers = oldAward.getAwardFundManagers();
+        List<AwardFundManager> newFundManagers = newAward.getAwardFundManagers();
+        while (oldFundManagers.size() < newFundManagers.size()) {
+            AwardFundManager fillerFundManager = new AwardFundManager();
+            oldFundManagers.add(fillerFundManager);
+        }
     }
 
     protected void updateAwardLastUpdateDate(Award newAward) {
