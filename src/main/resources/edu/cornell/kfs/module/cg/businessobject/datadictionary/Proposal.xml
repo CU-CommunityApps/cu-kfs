@@ -19,4 +19,8 @@
   	    <property name="maxLength" value="255"/>
   </bean>
   
+  <bean id="Proposal-federalPassThroughAgencyNumber" parent="Proposal-federalPassThroughAgencyNumber-parentBean">
+  	    <property name="maxLength" value="6"/>
+  </bean>
+  
 </beans>
