@@ -17,15 +17,19 @@ public abstract class RassParameterMappingValueConverterBase extends RassValueCo
 
     protected String getMappedValue(String value) {
         String parameterName = getParameterName();
-        String mappedValue = parameterService.getSubParameterValueAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT,
-                parameterName, value);
+        String mappedValue = value;
+        
+        if (StringUtils.isNotBlank(value)) {
+            mappedValue = parameterService.getSubParameterValueAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, 
+                    KfsParameterConstants.BATCH_COMPONENT, parameterName, value);
+        }
         
         if (getLog().isDebugEnabled()) {
             getLog().debug("getMappedValue, value from RASS: " + value + " parameter name: " + parameterName + " mapped value to return: " + mappedValue);
         }
         
         if (StringUtils.isBlank(mappedValue)) {
-            getLog().error("getMappedValue, there is no parameter mapping for the value " + value + " so returning original value");
+            getLog().error("getMappedValue, there is no mapping for parameterName: " + parameterName + " value: " + value + " so returning original value");
             mappedValue = value;
         }
         
