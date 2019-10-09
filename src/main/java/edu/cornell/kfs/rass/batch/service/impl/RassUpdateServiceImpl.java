@@ -182,7 +182,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("createObject, Creating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         Supplier<R> businessObjectGenerator = () -> createMinimalObject(objectDefinition.getBusinessObjectClass());
-        R businessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectGenerator, objectDefinition);
+        R businessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectGenerator, objectDefinition, KRADConstants.MAINTENANCE_NEW_ACTION);
         objectDefinition.processCustomTranslationForBusinessObjectCreate(xmlObject, businessObject);
         return businessObject;
     }
@@ -226,7 +226,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         }
 
         Supplier<R> businessObjectCopier = () -> deepCopyObject(oldBusinessObject);
-        R newBusinessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectCopier, objectDefinition);
+        R newBusinessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectCopier, objectDefinition, KRADConstants.MAINTENANCE_EDIT_ACTION);
         updateOldBusinessObjectForMaintenanceDocumentCompatibility(oldBusinessObject, newBusinessObject, objectDefinition);
         objectDefinition.processCustomTranslationForBusinessObjectEdit(xmlObject, oldBusinessObject, newBusinessObject);
 
@@ -251,7 +251,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     }
 
     protected <T extends RassXmlObject, R extends PersistableBusinessObject> R buildAndPopulateBusinessObjectFromPojo(T xmlObject,
-            Supplier<R> businessObjectSupplier, RassObjectTranslationDefinition<T, R> objectDefinition) {
+            Supplier<R> businessObjectSupplier, RassObjectTranslationDefinition<T, R> objectDefinition, String maintenanceAction) {
         Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
         R businessObject = businessObjectSupplier.get();
         List<String> missingRequiredFields = new ArrayList<>();
@@ -274,7 +274,9 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject) + " is missing values for the following required fields: "
                     + missingRequiredFields.toString());
         }
-        objectDefinition.makeBusinessObjectActiveIfApplicable(xmlObject, businessObject);
+        if (StringUtils.equalsIgnoreCase(maintenanceAction, KRADConstants.MAINTENANCE_NEW_ACTION)) {
+            objectDefinition.makeBusinessObjectActiveIfApplicable(xmlObject, businessObject);
+        }
         return businessObject;
     }
 
