@@ -68,6 +68,8 @@
                 <idref bean="rassListProperty"/>
                 <idref bean="rassListPropertyWithProposalNumberMapping"/>
                 <idref bean="rassValueConverterBase"/>
+                <idref bean="rassPrimitiveValueConverter"/>
+                <idref bean="rassPrimitiveBooleanConverter"/>
                 <idref bean="rassProposalOrganizationConverter"/>
                 <idref bean="rassAwardOrganizationConverter"/>
                 <idref bean="rassProposalProjectDirectorConverter"/>

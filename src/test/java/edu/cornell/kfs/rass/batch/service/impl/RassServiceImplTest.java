@@ -665,7 +665,112 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
                                 award(RassXmlAwardEntryFixture.ZERO_AMOUNT_COST_SHARE_NO_PROPOSAL_DOES_NOT_EXIST, RassObjectUpdateResultCode.SKIPPED))));
     }
-    
+
+    @Test
+    public void testNullValueHandlingForSingleAward() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseCreateToBeSkipped() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseCreateToBeSkipped_Version2() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V2,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseCreateToBeSkipped_Version3() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V3,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseUpdateFailure() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.ERROR))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseUpdateFailure_Version2() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V2,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.ERROR))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseUpdateFailure_Version3() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V3,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.ERROR))));
+    }
+
     private void assertXmlContentsPerformExpectedObjectUpdates(
             FileWithExpectedResults... filesWithResults) throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(Arrays.asList(filesWithResults));
@@ -838,7 +943,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEqualsOrBothBlank("Wrong proposal purpose at index " + i, expectedProposal.purpose, actualProposal.getProposalPurposeCode());
         assertEqualsOrBothBlank("Wrong grant number at index " + i, expectedProposal.grantNumber, actualProposal.getGrantNumber());
         assertEquals("Wrong federal pass-through indicator at index " + i,
-                expectedProposal.federalPassThrough, actualProposal.getProposalFederalPassThroughIndicator());
+                expectedProposal.getNullSafeFederalPassThrough(), actualProposal.getProposalFederalPassThroughIndicator());
         assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
                 expectedProposal.federalPassThroughAgencyNumber, actualProposal.getFederalPassThroughAgencyNumber());
         assertEqualsOrBothBlank("Wrong organization code at index " + i,
@@ -861,14 +966,14 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEqualsOrBothBlank("Wrong award purpose at index " + i, expectedAward.purpose, actualAward.getAwardPurposeCode());
         assertEqualsOrBothBlank("Wrong grant description at index " + i, expectedAward.grantDescription, actualAward.getGrantDescriptionCode());
         assertEquals("Wrong federal pass-through indicator at index " + i,
-                expectedAward.federalPassThrough, actualAward.getFederalPassThroughIndicator());
+                expectedAward.getNullSafeFederalPassThrough(), actualAward.getFederalPassThroughIndicator());
         assertEqualsOrBothBlank("Wrong federal pass-through agency number at index " + i,
                 expectedAward.federalPassThroughAgencyNumber, actualAward.getFederalPassThroughAgencyNumber());
         assertEqualsOrBothBlank("Wrong instrument type code at index " + i, expectedAward.pricingType, actualAward.getInstrumentTypeCode());
         
         AwardExtendedAttribute actualExtension = (AwardExtendedAttribute) actualAward.getExtension();
         assertEquals("Wrong cost share required indicator at index " + i,
-                expectedAward.costShareRequired, actualExtension.isCostShareRequired());
+                expectedAward.getNullSafeCostShareRequired(), actualExtension.isCostShareRequired());
         assertEquals("Wrong final fiscal report date at index " + i,
                 expectedAward.getFinalReportDueDateAsSqlDate(), actualExtension.getFinalFiscalReportDate());
         assertEqualsOrBothBlank("Wrong Prime Agreement Number at index " + i,
@@ -880,9 +985,9 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertEquals("Wrong Budget Total Amount at index " + i,
                 expectedAward.budgetTotalAmount, actualExtension.getBudgetTotalAmount());
         assertEquals("Wrong Everify at index " + i,
-                expectedAward.everify, actualExtension.isEverify());
+                expectedAward.getNullSafeEverify(), actualExtension.isEverify());
         assertEquals("Wrong Final Financial Report Required at index " + i,
-                expectedAward.finalFinancialReportRequired, actualExtension.isFinalFinancialReportRequired());
+                expectedAward.getNullSafeFinalFinancialReportRequired(), actualExtension.isFinalFinancialReportRequired());
         
         assertAwardOrganizationsWereUpdatedAsExpected(expectedAward.organizations, actualAward.getAwardOrganizations(), i);
         assertAwardAccountWasUpdatedAsExpected(expectedAward, actualAward.getAwardAccounts(), i);
@@ -951,11 +1056,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             assertTrue("A primary director indicator should have been supported for director at index " + multiIndex,
                     actualDirector instanceof Primaryable);
             assertEquals("Wrong primary director indicator for director at index " + multiIndex,
-                    expectedDirector.primary, ((Primaryable) actualDirector).isPrimary());
+                    expectedDirector.getNullSafePrimary(), ((Primaryable) actualDirector).isPrimary());
             assertTrue("An active-object indicator should have been supported for director at index " + multiIndex,
                     actualDirector instanceof MutableInactivatable);
             assertEquals("Wrong active indicator for director at index " + multiIndex,
-                    expectedDirector.active, ((MutableInactivatable) actualDirector).isActive());
+                    expectedDirector.getNullSafeActive(), ((MutableInactivatable) actualDirector).isActive());
         }
     }
 

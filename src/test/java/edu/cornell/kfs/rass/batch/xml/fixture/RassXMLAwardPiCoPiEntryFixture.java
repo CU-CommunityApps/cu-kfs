@@ -13,6 +13,7 @@ public enum RassXMLAwardPiCoPiEntryFixture {
     mo14_PRIMARY(Boolean.TRUE, "mo14"),
     mo14_CO_PI(Boolean.FALSE, "mo14"),
     mo14_CO_PI_INACTIVE(Boolean.FALSE, "mo14", Boolean.FALSE),
+    mo14_CO_PI_WITH_NULL_FLAG(null, "mo14"),
     kan2_PRIMARY(Boolean.TRUE, "kan2");
     
     public final Boolean primary;
@@ -34,6 +35,18 @@ public enum RassXMLAwardPiCoPiEntryFixture {
         piEntry.setPrimary(primary);
         piEntry.setProjectDirectorPrincipalName(projectDirectorPrincipalName);
         return piEntry;
+    }
+
+    public Boolean getNullSafePrimary() {
+        return defaultToFalseIfNull(primary);
+    }
+
+    public Boolean getNullSafeActive() {
+        return defaultToFalseIfNull(active);
+    }
+
+    private Boolean defaultToFalseIfNull(Boolean value) {
+        return value != null ? value : Boolean.FALSE;
     }
 
 }
