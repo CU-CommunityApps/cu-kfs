@@ -42,10 +42,13 @@ public class AgencyTranslationDefinition extends RassObjectTranslationDefinition
     }
 
     @Override
-    public List<String> getKeysOfObjectUpdatesToWaitFor(RassXmlAgencyEntry xmlAgency) {
+    public String getKeyOfPrimaryObjectUpdateToWaitFor(RassXmlAgencyEntry xmlAgency) {
+        return RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAgency.getNumber());
+    }
+
+    @Override
+    public List<String> getKeysOfUpstreamObjectUpdatesToWaitFor(RassXmlAgencyEntry xmlAgency) {
         List<String> objectsToWaitFor = new ArrayList<>();
-        objectsToWaitFor.add(
-                RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAgency.getNumber()));
         if (StringUtils.isNotBlank(xmlAgency.getReportsToAgencyNumber())) {
             objectsToWaitFor.add(
                     RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAgency.getReportsToAgencyNumber()));

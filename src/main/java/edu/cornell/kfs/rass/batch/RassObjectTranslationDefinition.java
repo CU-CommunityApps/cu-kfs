@@ -67,7 +67,9 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
 
     public abstract String printPrimaryKeyValues(R businessObject);
 
-    public abstract List<String> getKeysOfObjectUpdatesToWaitFor(T xmlObject);
+    public abstract String getKeyOfPrimaryObjectUpdateToWaitFor(T xmlObject);
+
+    public abstract List<String> getKeysOfUpstreamObjectUpdatesToWaitFor(T xmlObject);
 
     public abstract R findExistingObject(T xmlObject);
 
