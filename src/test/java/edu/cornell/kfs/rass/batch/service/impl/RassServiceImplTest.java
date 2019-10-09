@@ -679,27 +679,96 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     @Test
-    public void testNullValueHandlingForAnotherSingleAward() throws Exception {
-        assertXmlContentsPerformExpectedObjectUpdates(
-                fileWithResults(
-                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS_V2,
-                        emptyAgencyResults(),
-                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST2, RassObjectUpdateResultCode.SUCCESS_NEW)),
-                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST2, RassObjectUpdateResultCode.SUCCESS_NEW))));
-    }
-
-    @Test
     public void testSingleAwardWithNullValuesThatCauseCreateToBeSkipped() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
                 fileWithResults(
                         RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS,
                         emptyAgencyResults(),
                         proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_CREATE_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED)),
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED)),
                         awards(RassObjectGroupingUpdateResultCode.SUCCESS,
-                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_CREATE_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED))));
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseCreateToBeSkipped_Version2() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V2,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseCreateToBeSkipped_Version3() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V3,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseUpdateFailure() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS, RassObjectUpdateResultCode.ERROR))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseUpdateFailure_Version2() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V2,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2, RassObjectUpdateResultCode.ERROR))));
+    }
+
+    @Test
+    public void testSingleAwardWithNullValuesThatCauseUpdateFailure_Version3() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_WITH_VARIOUS_NULL_FIELDS,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST, RassObjectUpdateResultCode.SUCCESS_NEW))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_SKIP_DUE_TO_NULLS_V3,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.ERROR))));
     }
 
     private void assertXmlContentsPerformExpectedObjectUpdates(

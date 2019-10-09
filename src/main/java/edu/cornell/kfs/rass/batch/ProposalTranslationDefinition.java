@@ -75,7 +75,8 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 	
     @Override
     public boolean businessObjectCreateIsPermitted(RassXmlAwardEntry xmlObject) {
-       return xmlObject.getNullSafeTotalAmount().isNonZero() || xmlObject.getNullSafeCostShareRequired();
+       return xmlObject.getTotalAmount() != null && xmlObject.getCostShareRequired() != null
+               && (xmlObject.getTotalAmount().isNonZero() || xmlObject.getCostShareRequired());
     }
 
 	@Override

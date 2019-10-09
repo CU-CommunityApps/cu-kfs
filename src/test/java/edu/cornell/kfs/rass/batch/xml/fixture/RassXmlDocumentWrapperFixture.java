@@ -65,11 +65,14 @@ public enum RassXmlDocumentWrapperFixture {
         RASS_AWARD_WITH_VARIOUS_NULL_FIELDS("2019-03-15T22:15:07.274",
                 awardFixtures(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST),
                 agencyFixtures()),
-        RASS_AWARD_WITH_VARIOUS_NULL_FIELDS_V2("2019-03-15T22:15:07.275",
-                awardFixtures(RassXmlAwardEntryFixture.SAMPLE_PROJECT_NULL_FIELDS_TEST2),
+        RASS_AWARD_SKIP_DUE_TO_NULLS("2019-03-15T22:15:07.275",
+                awardFixtures(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS),
                 agencyFixtures()),
-        RASS_AWARD_SKIP_DUE_TO_NULLS("2019-03-15T22:15:07.276",
-                awardFixtures(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_CREATE_DUE_TO_NULLS),
+        RASS_AWARD_SKIP_DUE_TO_NULLS_V2("2019-03-15T22:15:07.276",
+                awardFixtures(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V2),
+                agencyFixtures()),
+        RASS_AWARD_SKIP_DUE_TO_NULLS_V3("2019-03-15T22:15:07.277",
+                awardFixtures(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3),
                 agencyFixtures());
     
     
