@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -22,7 +21,6 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.module.cg.CuCGPropertyConstants;
-import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassParameterConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
@@ -186,7 +184,8 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     
     @Override
     public boolean businessObjectCreateIsPermitted(RassXmlAwardEntry xmlObject) {
-       return xmlObject.getTotalAmount().isNonZero() || xmlObject.getCostShareRequired();
+        return xmlObject.getTotalAmount() != null && xmlObject.getCostShareRequired() != null
+                && (xmlObject.getTotalAmount().isNonZero() || xmlObject.getCostShareRequired());
     }
 
 }
