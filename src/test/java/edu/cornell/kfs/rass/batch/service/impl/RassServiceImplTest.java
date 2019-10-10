@@ -24,6 +24,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
@@ -1022,7 +1023,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             
             E expectedObjectFixture = expectedResult.getBusinessObjectFixture();
             R actualObject = businessObjectClass.cast(actualResult.getDataObject());
-            if (actualObject instanceof MutableInactivatable) {
+            if ((actualObject instanceof MutableInactivatable) 
+                    && (KRADConstants.MAINTENANCE_NEW_ACTION.equalsIgnoreCase(actualResult.getMaintenanceAction()))) {
                 assertTrue(objectLabel + " at index " + i + " should have been marked as active",
                         ((MutableInactivatable) actualObject).isActive());
             }
