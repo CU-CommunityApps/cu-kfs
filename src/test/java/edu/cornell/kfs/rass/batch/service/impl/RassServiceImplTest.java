@@ -465,6 +465,126 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     @Test
+    public void testSubsequentChangeToSameAgencyProceedsIfFirstAttemptFails() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.ERROR,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()));
+    }
+
+    @Test
+    public void testSubsequentChangeToSameProposalProceedsIfFirstAttemptFails() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_CREATE_MISSING_FIELD_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.ERROR,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW))));
+    }
+
+    @Test
+    public void testSubsequentChangeToSameAwardProceedsIfFirstAttemptFails() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_UPDATE_MISSING_FIELD_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.ERROR,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR))),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_UPDATE_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_V2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+
+    @Test
+    public void testSubsequentChangeToSameObjectProceedsIfCheckForFirstDocumentTimesOut() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_ENROUTE_CD,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_FINAL_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_AFTER_CREATE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.LIMITED_LTD_UPDATE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()));
+    }
+
+    @Test
+    public void testSubsequentChangeToSameObjectProceedsIfFirstDocumentHasRoutingFailure() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_EXCEPTION_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_SUBSEQUENT_UPDATE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V3, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()));
+    }
+
+    @Test
+    public void testDownstreamObjectUpdatesProceedIfUpstreamObjectUpdateReattemptSucceeds() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE,
+                        agencies(RassObjectGroupingUpdateResultCode.ERROR,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD, RassObjectUpdateResultCode.ERROR)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_SUBSEQUENT_UPDATE,
+                        agencies(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V3, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        emptyProposalResults(),
+                        emptyAwardResults()),
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_CREATE_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SAMPLE_PROJECT, RassObjectUpdateResultCode.SUCCESS_NEW))));
+    }
+
+    @Test
     public void testHandleErrorAtObjectGroupLevel() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
                 fileWithResults(

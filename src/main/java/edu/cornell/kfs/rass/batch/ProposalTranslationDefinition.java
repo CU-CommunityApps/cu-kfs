@@ -42,10 +42,14 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 		return proposal.getProposalNumber();
 	}
 
+    @Override
+    public String getKeyOfPrimaryObjectUpdateToWaitFor(RassXmlAwardEntry xmlAward) {
+        return RassUtil.buildClassAndKeyIdentifier(Proposal.class, xmlAward.getProposalNumber());
+    }
+
 	@Override
-	public List<String> getKeysOfObjectUpdatesToWaitFor(RassXmlAwardEntry xmlAward) {
+	public List<String> getKeysOfUpstreamObjectUpdatesToWaitFor(RassXmlAwardEntry xmlAward) {
 		List<String> objectsToWaitFor = new ArrayList<>();
-		objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Proposal.class, xmlAward.getProposalNumber()));
 		objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAward.getAgencyNumber()));
 		if (StringUtils.isNotBlank(xmlAward.getFederalPassThroughAgencyNumber())) {
 		    objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAward.getFederalPassThroughAgencyNumber()));
