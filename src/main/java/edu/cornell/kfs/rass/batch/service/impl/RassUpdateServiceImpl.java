@@ -123,7 +123,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     protected <T extends RassXmlObject, R extends PersistableBusinessObject> void waitForMatchingPriorDocumentsToFinish(T xmlObject,
             RassObjectTranslationDefinition<T, R> objectDefinition, PendingDocumentTracker documentTracker) {
-        List<String> objectKeys = objectDefinition.getKeysOfObjectUpdatesToWaitFor(xmlObject);
+        List<String> objectKeys = objectDefinition.getKeysOfUpstreamObjectUpdatesToWaitFor(xmlObject);
         for (String objectKey : objectKeys) {
             if (documentTracker.didObjectFailToUpdate(objectKey)) {
                 throw new RuntimeException("Cannot proceed with processing object because an update failure was detected for "
@@ -133,6 +133,25 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             String documentId = documentTracker.getTrackedDocumentId(objectKey);
             if (StringUtils.isNotBlank(documentId)) {
                 waitForDocumentToFinishRouting(documentId);
+                documentTracker.stopTrackingDocumentForObject(objectKey);
+            }
+        }
+        waitForMatchingPrimaryObjectUpdateToFinishRoutingQuietly(xmlObject, objectDefinition, documentTracker);
+    }
+
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> void waitForMatchingPrimaryObjectUpdateToFinishRoutingQuietly(
+            T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition, PendingDocumentTracker documentTracker) {
+        String objectKey = objectDefinition.getKeyOfPrimaryObjectUpdateToWaitFor(xmlObject);
+        if (documentTracker.didObjectFailToUpdate(objectKey)) {
+            LOG.warn("waitForMatchingPrimaryObjectUpdateToFinishRoutingQuietly, An update failure was detected for "
+                    + RassUtil.getSimpleClassNameFromClassAndKeyIdentifier(objectKey) + " with ID "
+                    + RassUtil.getKeyFromClassAndKeyIdentifier(objectKey)
+                    + " but will proceed with a new update attempt anyway");
+            documentTracker.stopTrackingFailedUpdateForObject(objectKey);
+        } else {
+            String documentId = documentTracker.getTrackedDocumentId(objectKey);
+            if (StringUtils.isNotBlank(documentId)) {
+                waitForDocumentToFinishRoutingQuietly(documentId);
                 documentTracker.stopTrackingDocumentForObject(objectKey);
             }
         }

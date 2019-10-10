@@ -45,4 +45,8 @@ public class PendingDocumentTracker {
         return objectsWithFailedUpdates.contains(classAndKeyIdentifier);
     }
 
+    public void stopTrackingFailedUpdateForObject(String classAndKeyIdentifier) {
+        objectsWithFailedUpdates.remove(classAndKeyIdentifier);
+    }
+
 }

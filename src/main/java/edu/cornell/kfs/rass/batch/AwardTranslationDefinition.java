@@ -57,11 +57,15 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
     }
 
     @Override
-    public List<String> getKeysOfObjectUpdatesToWaitFor(RassXmlAwardEntry xmlAward) {
+    public String getKeyOfPrimaryObjectUpdateToWaitFor(RassXmlAwardEntry xmlAward) {
+        return RassUtil.buildClassAndKeyIdentifier(Award.class, xmlAward.getProposalNumber());
+    }
+
+    @Override
+    public List<String> getKeysOfUpstreamObjectUpdatesToWaitFor(RassXmlAwardEntry xmlAward) {
         List<String> objectsToWaitFor = new ArrayList<>();
         objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAward.getAgencyNumber()));
         objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Proposal.class, xmlAward.getProposalNumber()));
-        objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Award.class, xmlAward.getProposalNumber()));
         if (StringUtils.isNotBlank(xmlAward.getFederalPassThroughAgencyNumber())) {
             objectsToWaitFor.add(RassUtil.buildClassAndKeyIdentifier(Agency.class, xmlAward.getFederalPassThroughAgencyNumber()));
         }
