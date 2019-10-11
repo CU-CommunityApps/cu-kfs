@@ -8,11 +8,10 @@
   
   <import resource="classpath:edu/cornell/kfs/sys/cu-sys-lookup-beans.xml"/>
                   
-  <bean id="DisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean">
+  <bean id="DisbursementVoucherDocument" parent="DisbursementVoucherDocument-parentBean" p:attachmentTypesValuesFinder-ref="cuConfidentialAttachmentTypeValuesFinder">
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
   	<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController"/>
   	<property name="promptBeforeValidationClass" value="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"/>
-    <property name="attachmentTypesValuesFinder" value="cuConfidentialAttachmentTypeValuesFinder"/>
   </bean>
 
   
