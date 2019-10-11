@@ -33,11 +33,14 @@ import java.util.Map;
  * Purap Accounting Line Base Business Object.
  */
 public abstract class PurApAccountingLineBase extends SourceAccountingLine implements PurApAccountingLine, Comparable {
+
     protected Integer accountIdentifier;
     private Integer itemIdentifier;
     private BigDecimal accountLinePercent;
-    private String postingPeriodCode; //stored in DB only for PREQ and CM Account History
-    private KualiDecimal alternateAmountForGLEntryCreation; // not stored in DB; needed for disencumbrances and such
+    //stored in DB only for PREQ and CM Account History
+    private String postingPeriodCode;
+    // not stored in DB; needed for disencumbrances and such
+    private KualiDecimal alternateAmountForGLEntryCreation;
     public Integer purApSequenceNumber;
 
     private PurApItem purapItem;
@@ -90,11 +93,14 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
 
     @Override
     public boolean isEmpty() {
-        return !(StringUtils.isNotEmpty(getAccountNumber()) || StringUtils.isNotEmpty(getChartOfAccountsCode())
+        return !(StringUtils.isNotEmpty(getAccountNumber())
+                || StringUtils.isNotEmpty(getChartOfAccountsCode())
                 || StringUtils.isNotEmpty(getFinancialObjectCode())
                 || StringUtils.isNotEmpty(getFinancialSubObjectCode())
-                || StringUtils.isNotEmpty(getOrganizationReferenceId()) || StringUtils.isNotEmpty(getProjectCode())
-                || StringUtils.isNotEmpty(getSubAccountNumber()) || ObjectUtils.isNotNull(getAccountLinePercent()));
+                || StringUtils.isNotEmpty(getOrganizationReferenceId())
+                || StringUtils.isNotEmpty(getProjectCode())
+                || StringUtils.isNotEmpty(getSubAccountNumber())
+                || ObjectUtils.isNotNull(getAccountLinePercent()));
     }
 
     @Override
@@ -103,7 +109,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         newAccount.setSequenceNumber(0);
         newAccount.setAccountLinePercent(null);
         newAccount.setAmount(null);
-
         return newAccount;
     }
 
@@ -183,9 +188,11 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
             PurApAccountingLine purapOther = (PurApAccountingLine) other;
 
             // Need to fix accountIdentifier and sequenceNumber since they are crossed in the getter in purap
-            // i.e. getSequenceNumber() actually returns accountIdentifier, while getPurApSequenceNumber() returns the original sequenceNumber.
-            // Without this fix, this.sequenceNumber will be set as other.AccountIdentifier, while this.accountIdentifier will remain unpopulated or it was;
-            // this is not what we want; and if this method were used during comparison, such as being called by isLike(), then error will occur.
+            // i.e. getSequenceNumber() actually returns accountIdentifier, while getPurApSequenceNumber() returns
+            // the original sequenceNumber. Without this fix, this.sequenceNumber will be set as
+            // other.AccountIdentifier, while this.accountIdentifier will remain unpopulated or it was; this is not
+            // what we want; and if this method were used during comparison, such as being called by isLike(), then
+            // error will occur.
             setAccountIdentifier(purapOther.getAccountIdentifier());
             setSequenceNumber(purapOther.getPurApSequenceNumber());
 
@@ -200,8 +207,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         //hold onto item reference if there without itemId
         PurApItem item = null;
         PurApItem tempItem = getPurapItem();
-        if (tempItem != null &&
-            tempItem.getItemIdentifier() != null) {
+        if (tempItem != null && tempItem.getItemIdentifier() != null) {
             item = tempItem;
         }
         super.refreshNonUpdateableReferences();

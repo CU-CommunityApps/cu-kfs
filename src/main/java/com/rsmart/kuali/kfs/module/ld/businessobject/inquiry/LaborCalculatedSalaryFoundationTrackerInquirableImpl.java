@@ -19,9 +19,6 @@ import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
 public class LaborCalculatedSalaryFoundationTrackerInquirableImpl extends org.kuali.kfs.module.ld.businessobject.inquiry.LaborCalculatedSalaryFoundationTrackerInquirableImpl {
 
-    /**
-     * @see org.kuali.kfs.gl.businessobject.inquiry.AbstractGeneralLedgerInquirableImpl#getBaseUrl()
-     */
     protected String getBaseUrl() {
         return LdConstants.LD_MODIFIED_INQUIRY_ACTION;
     }

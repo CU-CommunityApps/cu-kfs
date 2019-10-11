@@ -38,14 +38,16 @@ public class EmployeeFundingLookupableHelperServiceImpl extends org.kuali.kfs.mo
     public HtmlData getInquiryUrl(BusinessObject bo, String propertyName) {
         if (KFSPropertyConstants.POSITION_NUMBER.equals(propertyName)) {
             EmployeeFunding employeeFunding = (EmployeeFunding) bo;
-            AbstractPositionDataDetailsInquirableImpl positionDataDetailsInquirable = new PositionDataDetailsInquirableImpl();
+            AbstractPositionDataDetailsInquirableImpl positionDataDetailsInquirable =
+                    new PositionDataDetailsInquirableImpl();
 
-            Map<String, String> fieldValues = new HashMap<String, String>();
+            Map<String, String> fieldValues = new HashMap<>();
             fieldValues.put(propertyName, employeeFunding.getPositionNumber());
 
             BusinessObject positionData = positionDataDetailsInquirable.getBusinessObject(fieldValues);
 
-            return positionData == null ? new AnchorHtmlData(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING) : positionDataDetailsInquirable.getInquiryUrl(positionData, propertyName);
+            return positionData == null ? new AnchorHtmlData(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING) :
+                positionDataDetailsInquirable.getInquiryUrl(positionData, propertyName);
         }
 
         return (new EmployeeFundingInquirableImpl()).getInquiryUrl(bo, propertyName);

@@ -44,7 +44,8 @@ public class LaborCalculatedSalaryFoundationTrackerLookupableHelperServiceImpl e
     public HtmlData getInquiryUrl(BusinessObject bo, String propertyName) {
         if (KFSPropertyConstants.POSITION_NUMBER.equals(propertyName)) {
             LaborCalculatedSalaryFoundationTracker CSFTracker = (LaborCalculatedSalaryFoundationTracker) bo;
-            AbstractPositionDataDetailsInquirableImpl positionDataDetailsInquirable = new PositionDataDetailsInquirableImpl();
+            AbstractPositionDataDetailsInquirableImpl positionDataDetailsInquirable =
+                    new PositionDataDetailsInquirableImpl();
             
             //KUALI-1321  Gets the Person object via the employee ID and populates the name property.
             Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(CSFTracker.getEmplid());
@@ -52,12 +53,13 @@ public class LaborCalculatedSalaryFoundationTrackerLookupableHelperServiceImpl e
                 //CSFTracker.setName(person.getLastName() + ", " + person.getFirstName());
             }
             
-            Map<String, String> fieldValues = new HashMap<String, String>();
+            Map<String, String> fieldValues = new HashMap<>();
             fieldValues.put(propertyName, CSFTracker.getPositionNumber());
 
             BusinessObject positionData = positionDataDetailsInquirable.getBusinessObject(fieldValues);
 
-            return positionData == null ? new AnchorHtmlData(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING) : positionDataDetailsInquirable.getInquiryUrl(positionData, propertyName);
+            return positionData == null ? new AnchorHtmlData(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING) :
+                positionDataDetailsInquirable.getInquiryUrl(positionData, propertyName);
         }
         return (new LaborCalculatedSalaryFoundationTrackerInquirableImpl()).getInquiryUrl(bo, propertyName);
     }

@@ -38,16 +38,17 @@ public final class LaborAccountingLineOverride {
      */
     private LaborAccountingLineOverride() {
     }
-    
+
     /**
-     * On the given AccountingLine, converts override input checkboxes from a Struts Form into a persistable override code.
+     * On the given AccountingLine, converts override input checkboxes from a Struts Form into a persistable override
+     * code.
      *
      * @param line
      */
     public static void populateFromInput(AccountingLine line) {
-        // todo: this logic won't work if a single account checkbox might also stands for NON_FRINGE_ACCOUNT_USED; needs thought
+        // todo: this logic won't work if a single account checkbox might also stands for NON_FRINGE_ACCOUNT_USED
 
-        Set<Integer> overrideInputComponents = new HashSet<Integer>();
+        Set<Integer> overrideInputComponents = new HashSet<>();
         if (line.getAccountExpiredOverride()) {
             overrideInputComponents.add(COMPONENT.EXPIRED_ACCOUNT);
         }
@@ -63,18 +64,17 @@ public final class LaborAccountingLineOverride {
     }
 
     /**
-     * Prepares the given AccountingLine in a Struts Action for display by a JSP. This means converting the override code to
-     * checkboxes for display and input, as well as analyzing the accounting line and determining which override checkboxes are
-     * needed.
+     * Prepares the given AccountingLine in a Struts Action for display by a JSP. This means converting the override
+     * code to checkboxes for display and input, as well as analyzing the accounting line and determining which
+     * override checkboxes are needed.
      *
      * @param line
      */
     public static void processForOutput(AccountingDocument document, AccountingLine line) {
         AccountingLineOverride fromCurrentCode = AccountingLineOverride.valueOf(line.getOverrideCode());
         AccountingLineOverride needed = determineNeededOverrides(document, line);
-        // KFSMI-9133 : updating system to automatically check expired account boxes on the source side
-        // of the transaction, since those are read only.  Otherwise, amounts in expired accounts
-        // could never be transferred
+        // KFSMI-9133 : updating system to automatically check expired account boxes on the source side of the
+        // transaction, since those are read only.  Otherwise, amounts in expired accounts could never be transferred
         line.setAccountExpiredOverrideNeeded(needed.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
         if ( line.getAccountExpiredOverrideNeeded() ) {
         	line.setAccountExpiredOverride(fromCurrentCode.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
@@ -86,15 +86,14 @@ public final class LaborAccountingLineOverride {
     }
 
     /**
-     * @deprecated use {@link processForOutput(AccountingDocument document, AccountingLine line)} instead.
+     * @deprecated use {@link #processForOutput(AccountingDocument, AccountingLine)} instead.
      */
     @Deprecated
     public static void processForOutput(AccountingLine line) {
         AccountingLineOverride fromCurrentCode = AccountingLineOverride.valueOf(line.getOverrideCode());
         AccountingLineOverride needed = determineNeededOverrides(line);
-        // KFSMI-9133 : updating system to automatically check expired account boxes on the source side
-        // of the transaction, since those are read only.  Otherwise, amounts in expired accounts
-        // could never be transferred
+        // KFSMI-9133 : updating system to automatically check expired account boxes on the source side of the
+        // transaction, since those are read only.  Otherwise, amounts in expired accounts could never be transferred
         line.setAccountExpiredOverrideNeeded(needed.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
         if ( line.getAccountExpiredOverrideNeeded() ) {
         	line.setAccountExpiredOverride(fromCurrentCode.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
@@ -117,7 +116,7 @@ public final class LaborAccountingLineOverride {
     }
 
     /**
-     * @deprecated use {@link AccountingLineOverride determineNeededOverrides(AccountingDocument document, AccountingLine line)} instead.
+     * @deprecated use {@link #determineNeededOverrides(AccountingDocument document, AccountingLine line)} instead.
      */
     @Deprecated
     public static AccountingLineOverride determineNeededOverrides(AccountingLine line) {

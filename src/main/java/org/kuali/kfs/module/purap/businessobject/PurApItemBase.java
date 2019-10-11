@@ -32,9 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Purap Item Base Business Object.
- */
 public abstract class PurApItemBase extends PersistableBusinessObjectBase implements PurApItem {
 
     private Integer itemIdentifier;
@@ -48,7 +45,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     private String externalOrganizationB2bProductReferenceNumber;
     private String externalOrganizationB2bProductTypeName;
     private boolean itemAssignedToTradeInIndicator;
-    private KualiDecimal extendedPrice; // not currently in DB
+    // not currently in DB
+    private KualiDecimal extendedPrice;
     private KualiDecimal itemSalesTaxAmount;
 
     private List<PurApItemUseTax> useTaxItems;
@@ -64,20 +62,17 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     public PurApItemBase() {
         itemTypeCode = PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE;
-        sourceAccountingLines = new ArrayList();
-        baselineSourceAccountingLines = new ArrayList();
-        useTaxItems = new ArrayList();
+        sourceAccountingLines = new ArrayList<>();
+        baselineSourceAccountingLines = new ArrayList<>();
+        useTaxItems = new ArrayList<>();
         resetAccount();
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.businessobject.PurApItem#getItemIdentifierString()
-     */
     @Override
     public String getItemIdentifierString() {
         String itemLineNumberString = (getItemLineNumber() != null ? getItemLineNumber().toString() : "");
-        String identifierString = (getItemType().isLineItemIndicator() ? "Item " + itemLineNumberString : getItemType().getItemTypeDescription());
-        return identifierString;
+        return getItemType().isLineItemIndicator() ? "Item " + itemLineNumberString :
+                getItemType().getItemTypeDescription();
     }
 
     @Override
@@ -107,7 +102,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     public void setItemUnitOfMeasureCode(String itemUnitOfMeasureCode) {
-        this.itemUnitOfMeasureCode = (StringUtils.isNotBlank(itemUnitOfMeasureCode) ? itemUnitOfMeasureCode.toUpperCase() : itemUnitOfMeasureCode);
+        this.itemUnitOfMeasureCode = (StringUtils.isNotBlank(itemUnitOfMeasureCode) ?
+                itemUnitOfMeasureCode.toUpperCase() : itemUnitOfMeasureCode);
     }
 
     @Override
@@ -135,10 +131,11 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         // Setting scale on retrieval of unit price
         if (itemUnitPrice != null) {
             if (itemUnitPrice.scale() < PurapConstants.DOLLAR_AMOUNT_MIN_SCALE) {
-                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.DOLLAR_AMOUNT_MIN_SCALE, KualiDecimal.ROUND_BEHAVIOR);
-            }
-            else if (itemUnitPrice.scale() > PurapConstants.UNIT_PRICE_MAX_SCALE) {
-                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.UNIT_PRICE_MAX_SCALE, KualiDecimal.ROUND_BEHAVIOR);
+                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.DOLLAR_AMOUNT_MIN_SCALE,
+                        KualiDecimal.ROUND_BEHAVIOR);
+            } else if (itemUnitPrice.scale() > PurapConstants.UNIT_PRICE_MAX_SCALE) {
+                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.UNIT_PRICE_MAX_SCALE,
+                        KualiDecimal.ROUND_BEHAVIOR);
             }
         }
 
@@ -149,10 +146,11 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     public void setItemUnitPrice(BigDecimal itemUnitPrice) {
         if (itemUnitPrice != null) {
             if (itemUnitPrice.scale() < PurapConstants.DOLLAR_AMOUNT_MIN_SCALE) {
-                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.DOLLAR_AMOUNT_MIN_SCALE, KualiDecimal.ROUND_BEHAVIOR);
-            }
-            else if (itemUnitPrice.scale() > PurapConstants.UNIT_PRICE_MAX_SCALE) {
-                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.UNIT_PRICE_MAX_SCALE, KualiDecimal.ROUND_BEHAVIOR);
+                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.DOLLAR_AMOUNT_MIN_SCALE,
+                        KualiDecimal.ROUND_BEHAVIOR);
+            } else if (itemUnitPrice.scale() > PurapConstants.UNIT_PRICE_MAX_SCALE) {
+                itemUnitPrice = itemUnitPrice.setScale(PurapConstants.UNIT_PRICE_MAX_SCALE,
+                        KualiDecimal.ROUND_BEHAVIOR);
             }
         }
         this.itemUnitPrice = itemUnitPrice;
@@ -216,12 +214,6 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         return itemType;
     }
 
-    /**
-     * Sets the itemType attribute.
-     *
-     * @param itemType The itemType to set.
-     * @deprecated
-     */
     @Override
     @Deprecated
     public void setItemType(ItemType itemType) {
@@ -238,8 +230,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
         if (!purapDocument.isUseTaxIndicator()) {
             taxAmount = this.itemSalesTaxAmount;
-        }
-        else {
+        } else {
             // sum use tax item tax amounts
             for (PurApItemUseTax useTaxItem : this.getUseTaxItems()) {
                 taxAmount = taxAmount.add(useTaxItem.getTaxAmount());
@@ -304,11 +295,11 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
             if (this.itemType.isAmountBasedGeneralLedgerIndicator()) {
                 // SERVICE ITEM: return unit price as extended price
                 extendedPrice = new KualiDecimal(this.itemUnitPrice.toString());
-            }
-            else if (ObjectUtils.isNotNull(this.getItemQuantity())) {
+            } else if (ObjectUtils.isNotNull(this.getItemQuantity())) {
                 BigDecimal calcExtendedPrice = this.itemUnitPrice.multiply(this.itemQuantity.bigDecimalValue());
                 // ITEM TYPE (qty driven): return (unitPrice x qty)
-                extendedPrice = new KualiDecimal(calcExtendedPrice.setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR));
+                extendedPrice = new KualiDecimal(calcExtendedPrice.setScale(KualiDecimal.SCALE,
+                        KualiDecimal.ROUND_BEHAVIOR));
             }
         }
         return extendedPrice;
@@ -339,13 +330,12 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * This implementation is coupled tightly with some underlying issues that the Struts PojoProcessor plugin has with how objects
-     * get instantiated within lists. The first three lines are required otherwise when the PojoProcessor tries to automatically
-     * inject values into the list, it will get an index out of bounds error if the instance at an index is being called and prior
-     * instances at indices before that one are not being instantiated. So changing the code below will cause adding lines to break
-     * if you add more than one item to the list.
-     *
-     * @see org.kuali.kfs.krad.document.FinancialDocument#getTargetAccountingLine(int)
+     * This implementation is coupled tightly with some underlying issues that the Struts PojoProcessor plugin has
+     * with how objects get instantiated within lists. The first three lines are required otherwise when the
+     * PojoProcessor tries to automatically inject values into the list, it will get an index out of bounds error if
+     * the instance at an index is being called and prior instances at indices before that one are not being
+     * instantiated. So changing the code below will cause adding lines to break if you add more than one item to the
+     * list.
      */
     public PurApAccountingLine getSourceAccountingLine(int index) {
         while (getSourceAccountingLines().size() <= index) {
@@ -356,13 +346,12 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     /**
-     * This implementation is coupled tightly with some underlying issues that the Struts PojoProcessor plugin has with how objects
-     * get instantiated within lists. The first three lines are required otherwise when the PojoProcessor tries to automatically
-     * inject values into the list, it will get an index out of bounds error if the instance at an index is being called and prior
-     * instances at indices before that one are not being instantiated. So changing the code below will cause adding lines to break
-     * if you add more than one item to the list.
-     *
-     * @see org.kuali.kfs.krad.document.FinancialDocument#getTargetAccountingLine(int)
+     * This implementation is coupled tightly with some underlying issues that the Struts PojoProcessor plugin has
+     * with how objects get instantiated within lists. The first three lines are required otherwise when the
+     * PojoProcessor tries to automatically inject values into the list, it will get an index out of bounds error if
+     * the instance at an index is being called and prior instances at indices before that one are not being
+     * instantiated. So changing the code below will cause adding lines to break if you add more than one item to the
+     * list.
      */
     public PurApAccountingLine getBaselineSourceAccountingLine(int index) {
         while (getBaselineSourceAccountingLines().size() <= index) {
@@ -373,19 +362,16 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     private PurApAccountingLine getNewAccount() throws RuntimeException {
-
-        PurApAccountingLine newAccount = null;
-        try {
-            newAccount = (PurApAccountingLine) getAccountingLineClass().newInstance();
-        }
-        catch (InstantiationException e) {
-            throw new RuntimeException("Unable to get class");
-        }
-        catch (IllegalAccessException e) {
-            throw new RuntimeException("Unable to get class");
-        }
-        catch (NullPointerException e) {
+        Class accountingLineClass = getAccountingLineClass();
+        if (accountingLineClass == null) {
             throw new RuntimeException("Can't instantiate Purchasing Account from base");
+        }
+
+        PurApAccountingLine newAccount;
+        try {
+            newAccount = (PurApAccountingLine) accountingLineClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Unable to get class");
         }
         return newAccount;
     }
@@ -407,16 +393,10 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         setNewSourceLine(purApAccountingLine);
     }
 
-    /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#buildListOfDeletionAwareLists()
-     */
-
     @Override
     public List buildListOfDeletionAwareLists() {
         List managedLists = new ArrayList();
-
         managedLists.add(getSourceAccountingLines());
-
         return managedLists;
     }
 
@@ -475,7 +455,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     @Override
     public PurApSummaryItem getSummaryItem() {
         PurApSummaryItem summaryItem = new PurApSummaryItem();
-        ObjectPopulationUtils.populateFromBaseClass(PurApItemBase.class, this, summaryItem, new HashMap());
+        ObjectPopulationUtils.populateFromBaseClass(PurApItemBase.class, this, summaryItem, new HashMap<>());
         summaryItem.getItemType().setItemTypeDescription(this.itemType.getItemTypeDescription());
         return summaryItem;
     }
@@ -490,11 +470,6 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         this.purapDocument = purapDoc;
     }
 
-    /**
-     * fixes item references on accounts
-     *
-     * @see org.kuali.kfs.module.purap.businessobject.PurApItem#fixAccountReferences()
-     */
     @Override
     public void fixAccountReferences() {
         if (ObjectUtils.isNull(this.getItemIdentifier())) {
@@ -531,10 +506,10 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     public String toString() {
-        return "Line "+(itemLineNumber==null?"(null)":itemLineNumber.toString())+": ["+itemTypeCode+"] " +
-                "Unit:"+(itemUnitPrice==null?"(null)":itemUnitPrice.toString())+" " +
-                "Tax:"+(itemSalesTaxAmount==null?"(null)":itemSalesTaxAmount.toString())+" " +
-                "*"+itemDescription+"*";
+        return "Line " + (itemLineNumber == null ? "(null)" : itemLineNumber.toString()) + ": [" + itemTypeCode +
+                "] " + "Unit:" + (itemUnitPrice == null ? "(null)" : itemUnitPrice.toString()) + " " + "Tax:" +
+                (itemSalesTaxAmount == null ? "(null)" : itemSalesTaxAmount.toString()) + " " + "*" +
+                itemDescription + "*";
     }
 
     // KFSUPGRADE-485
