@@ -13,6 +13,8 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.module.ld.util.CuLaborPendingEntryGenerator;
@@ -20,6 +22,7 @@ import edu.cornell.kfs.module.ld.util.CuLaborPendingEntryGenerator;
 @NAMESPACE(namespace = KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION)
 @COMPONENT(component = "SalaryExpenseTransfer")
 public class CuSalaryExpenseTransferDocument extends SalaryExpenseTransferDocument {
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final long serialVersionUID = 1L;
 
