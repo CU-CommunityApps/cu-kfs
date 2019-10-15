@@ -810,17 +810,18 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * Validates that the accounting lines while a distribute accounts action is being taken.
      *
      * @param document
-     * @param distributionsourceAccountingLines
+     * @param distributionSourceAccountingLines
      * @return
      */
-    protected boolean validateDistributeAccounts(Document document, List<PurApAccountingLine> distributionsourceAccountingLines) {
+    protected boolean validateDistributeAccounts(Document document,
+            List<PurApAccountingLine> distributionSourceAccountingLines) {
         boolean rulePassed = true;
-        String errorPrefix = null;
         int i = 0;
 
-        for (PurApAccountingLine accountingLine : distributionsourceAccountingLines) {
-            errorPrefix = "accountDistributionsourceAccountingLine" + "[" + Integer.toString(i) + "]";
-            rulePassed &= SpringContext.getBean(KualiRuleService.class).applyRules(new AddAccountingLineEvent(errorPrefix, document, accountingLine));
+        for (PurApAccountingLine accountingLine : distributionSourceAccountingLines) {
+            String errorPrefix = "distributionSourceAccountingLines" + "[" + Integer.toString(i) + "]";
+            rulePassed &= SpringContext.getBean(KualiRuleService.class)
+                    .applyRules(new AddAccountingLineEvent(errorPrefix, document, accountingLine));
             i++;
         }
 
@@ -828,20 +829,21 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     }
 
     /**
-     * Distribute accounting line(s) to the item(s). Does not distribute the accounting line(s) to an item if there are already
-     * accounting lines associated with that item, if the item is a below-the-line item and has no unit cost, or if the item is
-     * inactive. Distribute commodity code to the item(s). Does not distribute the commodity code to an item if the item is not
-     * above the line item, is inactive or if the commodity code fails the validation (i.e. inactive commodity code or non existence
-     * commodity code).
+     * Distribute accounting line(s) to the item(s). Does not distribute the accounting line(s) to an item if there
+     * are already accounting lines associated with that item, if the item is a below-the-line item and has no unit
+     * cost, or if the item is inactive. Distribute commodity code to the item(s). Does not distribute the commodity
+     * code to an item if the item is not above the line item, is inactive or if the commodity code fails the
+     * validation (i.e. inactive commodity code or non existence commodity code).
      *
-     * @param mapping An ActionMapping
-     * @param form An ActionForm
-     * @param request The HttpServletRequest
+     * @param mapping  An ActionMapping
+     * @param form     An ActionForm
+     * @param request  The HttpServletRequest
      * @param response The HttpServletResponse
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward doDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward doDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         boolean needToDistributeCommodityCode = false;
 
@@ -851,31 +853,39 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
 
         boolean needToDistributeAccount = false;
-        List<PurApAccountingLine> distributionsourceAccountingLines = purchasingForm.getAccountDistributionsourceAccountingLines();
+        List<PurApAccountingLine> distributionsourceAccountingLines =
+                purchasingForm.getAccountDistributionsourceAccountingLines();
         if (distributionsourceAccountingLines.size() > 0) {
             needToDistributeAccount = true;
         }
         if (needToDistributeAccount || needToDistributeCommodityCode) {
-            PurchasingAccountsPayableDocumentBase purApDocument = (PurchasingAccountsPayableDocumentBase) purchasingForm.getDocument();
+            PurchasingAccountsPayableDocumentBase purApDocument =
+                    (PurchasingAccountsPayableDocumentBase) purchasingForm.getDocument();
 
-            boolean institutionNeedsDistributeAccountValidation = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.VALIDATE_ACCOUNT_DISTRIBUTION_IND);
+            boolean institutionNeedsDistributeAccountValidation = SpringContext.getBean(ParameterService.class)
+                    .getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                            PurapParameterConstants.VALIDATE_ACCOUNT_DISTRIBUTION_IND);
             boolean foundAccountDistributionError = false;
             boolean foundCommodityCodeDistributionError = false;
             boolean performedAccountDistribution = false;
             boolean performedCommodityCodeDistribution = false;
 
             // do check for account percents only if distribution method not equal to "P"
-            if (!PurapConstants.AccountDistributionMethodCodes.PROPORTIONAL_CODE.equalsIgnoreCase(purApDocument.getAccountDistributionMethod())) {
-                // If the institution's validate account distribution indicator is true and
-                // the total percentage in the distribute account list does not equal 100 % then we should display error
-                if (institutionNeedsDistributeAccountValidation && needToDistributeAccount && purchasingForm.getTotalPercentageOfAccountDistributionsourceAccountingLines().compareTo(new BigDecimal(100)) != 0) {
-                    GlobalVariables.getMessageMap().putError(PurapConstants.ACCOUNT_DISTRIBUTION_ERROR_KEY, PurapKeyConstants.ERROR_DISTRIBUTE_ACCOUNTS_NOT_100_PERCENT);
+            if (!PurapConstants.AccountDistributionMethodCodes.PROPORTIONAL_CODE.equalsIgnoreCase(
+                    purApDocument.getAccountDistributionMethod())) {
+                // If the institution's validate account distribution indicator is true and the total percentage in
+                // the distribute account list does not equal 100 % then we should display error
+                if (institutionNeedsDistributeAccountValidation && needToDistributeAccount
+                        && purchasingForm.getTotalPercentageOfAccountDistributionsourceAccountingLines()
+                            .compareTo(new BigDecimal(100)) != 0) {
+                    GlobalVariables.getMessageMap().putError(PurapConstants.ACCOUNT_DISTRIBUTION_ERROR_KEY,
+                            PurapKeyConstants.ERROR_DISTRIBUTE_ACCOUNTS_NOT_100_PERCENT);
                     foundAccountDistributionError = true;
                 }
             }
 
-            // if the institution's validate account distribution indicator is true and
-            // there is a validation error in the accounts to distribute then we should display an error
+            // if the institution's validate account distribution indicator is true and there is a validation error
+            // in the accounts to distribute then we should display an error
             if (institutionNeedsDistributeAccountValidation && needToDistributeAccount
                     && !validateDistributeAccounts(purchasingForm.getDocument(), distributionsourceAccountingLines)) {
                 foundAccountDistributionError = true;
@@ -889,20 +899,25 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 }
                 if (needToDistributeCommodityCode) {
                     // only the above the line items need the commodity code.
-                    if (item.getItemType().isLineItemIndicator() && StringUtils.isBlank(((PurchasingItemBase) item).getPurchasingCommodityCode()) && itemIsActive) {
-                        // Ideally we should invoke rules to check whether the commodity code is valid (active, not restricted,
-                        // not missing, etc), probably somewhere here or invoke the rule class from here.
-
-                        boolean rulePassed = SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedCommodityCodesForDistributionEvent("", purchasingForm.getDocument(), purchasingForm.getDistributePurchasingCommodityCode()));
+                    if (item.getItemType().isLineItemIndicator()
+                            && StringUtils.isBlank(((PurchasingItemBase) item).getPurchasingCommodityCode())
+                            && itemIsActive) {
+                        // Ideally we should invoke rules to check whether the commodity code is valid (active, not
+                        // restricted, not missing, etc), probably somewhere here or invoke the rule class from here.
+                        boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
+                                .applyRules(new AttributedCommodityCodesForDistributionEvent("",
+                                        purchasingForm.getDocument(),
+                                        purchasingForm.getDistributePurchasingCommodityCode()));
                         if (rulePassed) {
-                            ((PurchasingItemBase) item).setPurchasingCommodityCode(purchasingForm.getDistributePurchasingCommodityCode());
+                            ((PurchasingItemBase) item).setPurchasingCommodityCode(
+                                    purchasingForm.getDistributePurchasingCommodityCode());
                             performedCommodityCodeDistribution = true;
-                        }
-                        else {
+                        } else {
                             foundCommodityCodeDistributionError = true;
                         }
-                    }
-                    else if (item.getItemType().isLineItemIndicator() && !StringUtils.isBlank(((PurchasingItemBase) item).getPurchasingCommodityCode()) && itemIsActive) {
+                    } else if (item.getItemType().isLineItemIndicator()
+                            && !StringUtils.isBlank(((PurchasingItemBase) item).getPurchasingCommodityCode())
+                            && itemIsActive) {
                         // could not apply to line, as it wasn't blank
                         foundCommodityCodeDistributionError = true;
                     }
@@ -911,14 +926,21 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                     BigDecimal zero = new BigDecimal(0);
                     // We should be distributing accounting lines to above the line items all the time;
                     // but only to the below the line items when there is a unit cost.
-                    boolean unitCostNotZeroForBelowLineItems = item.getItemType().isLineItemIndicator() ? true : item.getItemUnitPrice() != null && zero.compareTo(item.getItemUnitPrice()) < 0;
+                    boolean unitCostNotZeroForBelowLineItems = item.getItemType().isLineItemIndicator()
+                            || item.getItemUnitPrice() != null && zero.compareTo(item.getItemUnitPrice()) < 0;
                     Document document = ((PurchasingFormBase) form).getDocument();
-                    Class clazz = document instanceof PurchaseOrderAmendmentDocument ? PurchaseOrderDocument.class : document.getClass();
-                    List<String> typesNotAllowingEdit = new ArrayList<String>(SpringContext.getBean(ParameterService.class).getParameterValuesAsString(clazz, PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
-                    boolean itemOnExcludeList = (typesNotAllowingEdit == null) ? false : typesNotAllowingEdit.contains(item.getItemTypeCode());
-                    if (item.getSourceAccountingLines().size() == 0 && unitCostNotZeroForBelowLineItems && !itemOnExcludeList && itemIsActive) {
+                    Class clazz = document instanceof PurchaseOrderAmendmentDocument ? PurchaseOrderDocument.class :
+                            document.getClass();
+                    List<String> typesNotAllowingEdit = new ArrayList<>(SpringContext.getBean(ParameterService.class)
+                            .getParameterValuesAsString(clazz,
+                                    PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
+                    boolean itemOnExcludeList = typesNotAllowingEdit != null
+                            && typesNotAllowingEdit.contains(item.getItemTypeCode());
+                    if (item.getSourceAccountingLines().size() == 0 && unitCostNotZeroForBelowLineItems
+                            && !itemOnExcludeList && itemIsActive) {
                         for (PurApAccountingLine purApAccountingLine : distributionsourceAccountingLines) {
-                            item.getSourceAccountingLines().add((PurApAccountingLine) ObjectUtils.deepCopy(purApAccountingLine));
+                            item.getSourceAccountingLines()
+                                    .add((PurApAccountingLine) ObjectUtils.deepCopy(purApAccountingLine));
                         }
 
                         performedAccountDistribution = true;
@@ -926,8 +948,11 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 }
             }
 
-            if ((needToDistributeCommodityCode && performedCommodityCodeDistribution && !foundCommodityCodeDistributionError) || (needToDistributeAccount && performedAccountDistribution && !foundAccountDistributionError)) {
-                if (needToDistributeCommodityCode && !foundCommodityCodeDistributionError && performedCommodityCodeDistribution) {
+            if ((needToDistributeCommodityCode && performedCommodityCodeDistribution
+                    && !foundCommodityCodeDistributionError)
+                    || (needToDistributeAccount && performedAccountDistribution && !foundAccountDistributionError)) {
+                if (needToDistributeCommodityCode && !foundCommodityCodeDistributionError
+                        && performedCommodityCodeDistribution) {
                     KNSGlobalVariables.getMessageList().add(PurapKeyConstants.PUR_COMMODITY_CODE_DISTRIBUTED);
                     purchasingForm.setDistributePurchasingCommodityCode(null);
                 }
@@ -939,14 +964,18 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             }
 
             if ((needToDistributeAccount && !performedAccountDistribution && foundAccountDistributionError)) {
-                GlobalVariables.getMessageMap().putError(PurapConstants.ACCOUNT_DISTRIBUTION_ERROR_KEY, PurapKeyConstants.PURAP_GENERAL_NO_ITEMS_TO_DISTRIBUTE_TO, "account numbers");
+                GlobalVariables.getMessageMap().putError(PurapConstants.ACCOUNT_DISTRIBUTION_ERROR_KEY,
+                        PurapKeyConstants.PURAP_GENERAL_NO_ITEMS_TO_DISTRIBUTE_TO, "account numbers");
             }
-            if (needToDistributeCommodityCode && !performedCommodityCodeDistribution && foundCommodityCodeDistributionError) {
-                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_PURCHASING_COMMODITY_CODE, PurapKeyConstants.PURAP_GENERAL_NO_ITEMS_TO_DISTRIBUTE_TO, "commodity codes");
+            if (needToDistributeCommodityCode && !performedCommodityCodeDistribution
+                    && foundCommodityCodeDistributionError) {
+                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_PURCHASING_COMMODITY_CODE,
+                        PurapKeyConstants.PURAP_GENERAL_NO_ITEMS_TO_DISTRIBUTE_TO, "commodity codes");
             }
         }
         else {
-            GlobalVariables.getMessageMap().putError(PurapConstants.ACCOUNT_DISTRIBUTION_ERROR_KEY, PurapKeyConstants.PURAP_GENERAL_NO_ACCOUNTS_TO_DISTRIBUTE);
+            GlobalVariables.getMessageMap().putError(PurapConstants.ACCOUNT_DISTRIBUTION_ERROR_KEY,
+                    PurapKeyConstants.PURAP_GENERAL_NO_ACCOUNTS_TO_DISTRIBUTE);
         }
 
 
@@ -963,7 +992,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward cancelAccountDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward cancelAccountDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         purchasingForm.setHideDistributeAccounts(true);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -973,15 +1003,16 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @see org.kuali.kfs.module.purap.document.web.struts.PurchasingAccountsPayableActionBase#processCustomInsertAccountingLine(PurchasingAccountsPayableFormBase, HttpServletRequest)
      */
     @Override
-    public boolean processCustomInsertAccountingLine(PurchasingAccountsPayableFormBase purapForm, HttpServletRequest request) {
+    public boolean processCustomInsertAccountingLine(PurchasingAccountsPayableFormBase purapForm,
+            HttpServletRequest request) {
         boolean success = false;
         PurchasingFormBase purchasingForm = (PurchasingFormBase) purapForm;
 
-        // index of item selected
         int itemIndex = getSelectedLine(request);
-        PurApItem item = null;
 
-        boolean institutionNeedsDistributeAccountValidation = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.VALIDATE_ACCOUNT_DISTRIBUTION_IND);
+        boolean institutionNeedsDistributeAccountValidation = SpringContext.getBean(ParameterService.class)
+                .getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                        PurapParameterConstants.VALIDATE_ACCOUNT_DISTRIBUTION_IND);
 
         if (itemIndex == -2 && !institutionNeedsDistributeAccountValidation) {
             PurApAccountingLine line = purchasingForm.getAccountDistributionnewSourceLine();
@@ -992,12 +1023,9 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         return success;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#deleteSourceLine(org.apache.struts.action.ActionMapping,
-     *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
-    public ActionForward deleteSourceLine(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward deleteSourceLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
 
         String[] indexes = getSelectedLineForAccounts(request);
