@@ -39,7 +39,7 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.rice.location.framework.country.CountryEbo;
+import org.kuali.kfs.sys.businessobject.Country;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -1376,7 +1376,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
 
     @Override
-    public CountryEbo getVendorCountry() {
+    public Country getVendorCountry() {
         return null;
     }
 

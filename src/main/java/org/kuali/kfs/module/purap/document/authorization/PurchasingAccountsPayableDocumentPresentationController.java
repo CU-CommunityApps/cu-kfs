@@ -38,8 +38,6 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
 
     /**
      * None of the PURAP documents allowing editing by adhoc requests
-     *
-     * @see org.kuali.kfs.krad.document.authorization.DocumentPresentationControllerBase#canEdit(org.kuali.kfs.krad.document.Document)
      */
     @Override
     public boolean canEdit(Document document) {

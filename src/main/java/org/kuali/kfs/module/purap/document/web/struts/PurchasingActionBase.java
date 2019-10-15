@@ -124,8 +124,6 @@ import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
-
-
 /**
  * Struts Action for Purchasing documents.
  */
@@ -146,22 +144,30 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
 
         // Format phone numbers
-        document.setInstitutionContactPhoneNumber(phoneNumberService.formatNumberIfPossible(document.getInstitutionContactPhoneNumber()));
-        document.setRequestorPersonPhoneNumber(phoneNumberService.formatNumberIfPossible(document.getRequestorPersonPhoneNumber()));
-        document.setDeliveryToPhoneNumber(phoneNumberService.formatNumberIfPossible(document.getDeliveryToPhoneNumber()));
-
-        // names in KIM are longer than what we store these names at; truncate them to match our data dictionary maxlengths
+        document.setInstitutionContactPhoneNumber(phoneNumberService.formatNumberIfPossible(
+                document.getInstitutionContactPhoneNumber()));
+        document.setRequestorPersonPhoneNumber(phoneNumberService.formatNumberIfPossible(
+                document.getRequestorPersonPhoneNumber()));
+        document.setDeliveryToPhoneNumber(phoneNumberService.formatNumberIfPossible(
+                document.getDeliveryToPhoneNumber()));
+        
+        // names in KIM are longer than what we store these names at; truncate them to match our data dictionary
+        // max lengths
         if (StringUtils.equals(refreshCaller, "kimPersonLookupable")) {
-            Integer deliveryToNameMaxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(document.getClass(), PurapPropertyConstants.DELIVERY_TO_NAME);
+            Integer deliveryToNameMaxLength = SpringContext.getBean(DataDictionaryService.class)
+                    .getAttributeMaxLength(document.getClass(), PurapPropertyConstants.DELIVERY_TO_NAME);
             // KFSPTS-518/KFSUPGRADE-351
             if (deliveryToNameMaxLength == null && document instanceof PurchaseOrderAmendmentDocument) {
             	deliveryToNameMaxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(PurchaseOrderDocument.class, PurapPropertyConstants.DELIVERY_TO_NAME);
             }
-            if (StringUtils.isNotEmpty(document.getDeliveryToName()) && ObjectUtils.isNotNull(deliveryToNameMaxLength) && document.getDeliveryToName().length() > deliveryToNameMaxLength.intValue()) {
+            if (StringUtils.isNotEmpty(document.getDeliveryToName())
+                    && ObjectUtils.isNotNull(deliveryToNameMaxLength)
+                    && document.getDeliveryToName().length() > deliveryToNameMaxLength) {
                 document.setDeliveryToName(document.getDeliveryToName().substring(0, deliveryToNameMaxLength));
                 GlobalVariables.getMessageMap().clearErrorPath();
                 GlobalVariables.getMessageMap().addToErrorPath(PurapConstants.DELIVERY_TAB_ERRORS);
-                GlobalVariables.getMessageMap().putWarning(PurapPropertyConstants.DELIVERY_TO_NAME, PurapKeyConstants.WARNING_DELIVERY_TO_NAME_TRUNCATED);
+                GlobalVariables.getMessageMap().putWarning(PurapPropertyConstants.DELIVERY_TO_NAME,
+                        PurapKeyConstants.WARNING_DELIVERY_TO_NAME_TRUNCATED);
                 GlobalVariables.getMessageMap().removeFromErrorPath(PurapConstants.DELIVERY_TAB_ERRORS);
             }
 
@@ -170,18 +176,22 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             if (requestorNameMaxLength == null && document instanceof PurchaseOrderAmendmentDocument) {
             	requestorNameMaxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(PurchaseOrderDocument.class, PurapPropertyConstants.REQUESTOR_PERSON_NAME);
             }
-            if (StringUtils.isNotEmpty(document.getRequestorPersonName()) && ObjectUtils.isNotNull(requestorNameMaxLength) && document.getRequestorPersonName().length() > requestorNameMaxLength.intValue()) {
+            if (StringUtils.isNotEmpty(document.getRequestorPersonName())
+                    && ObjectUtils.isNotNull(requestorNameMaxLength)
+                    && document.getRequestorPersonName().length() > requestorNameMaxLength) {
                 document.setRequestorPersonName(document.getRequestorPersonName().substring(0, requestorNameMaxLength));
                 GlobalVariables.getMessageMap().clearErrorPath();
                 GlobalVariables.getMessageMap().addToErrorPath(PurapConstants.ADDITIONAL_TAB_ERRORS);
-                GlobalVariables.getMessageMap().putWarning(PurapPropertyConstants.REQUESTOR_PERSON_NAME, PurapKeyConstants.WARNING_REQUESTOR_NAME_TRUNCATED);
+                GlobalVariables.getMessageMap().putWarning(PurapPropertyConstants.REQUESTOR_PERSON_NAME,
+                        PurapKeyConstants.WARNING_REQUESTOR_NAME_TRUNCATED);
                 GlobalVariables.getMessageMap().removeFromErrorPath(PurapConstants.ADDITIONAL_TAB_ERRORS);
             }
         }
 
         // Refreshing the fields after returning from a vendor lookup in the vendor tab
-        if (StringUtils.equals(refreshCaller, VendorConstants.VENDOR_LOOKUPABLE_IMPL) && document
-                .getVendorDetailAssignedIdentifier() != null && document.getVendorHeaderGeneratedIdentifier() != null) {
+        if (StringUtils.equals(refreshCaller, VendorConstants.VENDOR_LOOKUPABLE_IMPL)
+                && document.getVendorDetailAssignedIdentifier() != null
+                && document.getVendorHeaderGeneratedIdentifier() != null) {
             document.setVendorContractGeneratedIdentifier(null);
             document.refreshReferenceObject("vendorContract");
 
@@ -205,7 +215,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                             .getVendorAddressTypeCode(), document.getDeliveryCampusCode());
             
             if(defaultAddress==null){
-                GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS, PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
+                GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS,
+                        PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);  
             }
             document.templateVendorAddress(defaultAddress);
             // CU enhancement KFSUPGRDE-348
@@ -214,10 +225,12 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
         // Refreshing the fields after returning from a contract lookup in the vendor tab
         if (StringUtils.equals(refreshCaller, VendorConstants.VENDOR_CONTRACT_LOOKUPABLE_IMPL)) {
-            if (StringUtils.isNotEmpty(request.getParameter(KFSPropertyConstants.DOCUMENT + "." + PurapPropertyConstants.VENDOR_CONTRACT_ID))) {
+            if (StringUtils.isNotEmpty(request.getParameter(KFSPropertyConstants.DOCUMENT + "." +
+                    PurapPropertyConstants.VENDOR_CONTRACT_ID))) {
                 // retrieve Contract based on selection from contract lookup
                 VendorContract refreshVendorContract = new VendorContract();
-                refreshVendorContract.setVendorContractGeneratedIdentifier(document.getVendorContractGeneratedIdentifier());
+                refreshVendorContract.setVendorContractGeneratedIdentifier(
+                        document.getVendorContractGeneratedIdentifier());
                 refreshVendorContract = (VendorContract) businessObjectService.retrieve(refreshVendorContract);
 
                 // retrieve Vendor based on selected contract
@@ -234,15 +247,17 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                         document.getVendorDetail().getVendorAddresses(),
                         document.getVendorDetail().getVendorHeader().getVendorType().getAddressType()
                                 .getVendorAddressTypeCode(), "");
-                if(defaultAddress==null){
-                    GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS, PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
+                if (defaultAddress == null) {
+                    GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS,
+                            PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
                 }
                 document.templateVendorAddress(defaultAddress);
 
                 // update internal dollar limit for PO since the contract might affect this value
                 if (document instanceof PurchaseOrderDocument) {
                     PurchaseOrderDocument poDoc = (PurchaseOrderDocument) document;
-                    KualiDecimal limit = SpringContext.getBean(PurchaseOrderService.class).getInternalPurchasingDollarLimit(poDoc);
+                    KualiDecimal limit = SpringContext.getBean(PurchaseOrderService.class)
+                            .getInternalPurchasingDollarLimit(poDoc);
                     poDoc.setInternalPurchasingLimit(limit);
                 }
             }
@@ -250,7 +265,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
         // Refreshing the fields after returning from an address lookup in the vendor tab
         if (StringUtils.equals(refreshCaller, VendorConstants.VENDOR_ADDRESS_LOOKUPABLE_IMPL)) {
-            if (StringUtils.isNotEmpty(request.getParameter(KFSPropertyConstants.DOCUMENT + "." + PurapPropertyConstants.VENDOR_ADDRESS_ID))) {
+            if (StringUtils.isNotEmpty(request.getParameter(KFSPropertyConstants.DOCUMENT + "." +
+                    PurapPropertyConstants.VENDOR_ADDRESS_ID))) {
                 // retrieve address based on selection from address lookup
                 VendorAddress refreshVendorAddress = new VendorAddress();
                 refreshVendorAddress.setVendorAddressGeneratedIdentifier(document.getVendorAddressGeneratedIdentifier());
@@ -266,7 +282,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 BillingAddress billingAddress = new BillingAddress();
                 billingAddress.setBillingCampusCode(document.getDeliveryCampusCode());
                 Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(billingAddress);
-                billingAddress = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(BillingAddress.class, keys);
+                billingAddress = SpringContext.getBean(BusinessObjectService.class)
+                        .findByPrimaryKey(BillingAddress.class, keys);
                 document.templateBillingAddress(billingAddress);
 
                 if (request.getParameter("document.deliveryBuildingName") == null) {
@@ -296,14 +313,16 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         return super.refresh(mapping, form, request, response);
     }
     
-    protected void updateAssetBuildingLocations(PurchasingFormBase purchasingForm, HttpServletRequest request, PurchasingDocument document) {
+    protected void updateAssetBuildingLocations(PurchasingFormBase purchasingForm, HttpServletRequest request,
+            PurchasingDocument document) {
         List<String> buildingCodeParams = findAllBuildingCodesFromCapitalAssetBuildingLookup(request);
         for (String buildingCodeParam : buildingCodeParams) {
             updateCapitalAssetLocation(request, purchasingForm, document, buildingCodeParam);
         }
     }
 
-    protected void updateCapitalAssetLocation(HttpServletRequest request, PurchasingFormBase purchasingForm, PurchasingDocument document, String buildingCodeParam) {
+    protected void updateCapitalAssetLocation(HttpServletRequest request, PurchasingFormBase purchasingForm,
+            PurchasingDocument document, String buildingCodeParam) {
         String buildingCode = request.getParameterValues(buildingCodeParam)[0];
         String campusCodeParam = buildingCodeParam.replace("buildingCode", "campusCode");
         String campusCode = request.getParameterValues(campusCodeParam)[0];
@@ -313,29 +332,39 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         CapitalAssetLocation location = null;
         boolean isNewLine = StringUtils.containsIgnoreCase(buildingCodeParam, "newPurchasingCapitalAssetLocationLine");
         if (isNewLine) {
-            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode()
+                    .equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
                 String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
-                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
-                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getNewPurchasingCapitalAssetLocationLine();
+                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
+                        .get(Integer.parseInt(locationCapitalAssetItemNumber));
+                location = capitalAssetItem.getPurchasingCapitalAssetSystem()
+                        .getNewPurchasingCapitalAssetLocationLine();
             } else {
                 location = purchasingForm.getNewPurchasingCapitalAssetLocationLine();
             }
         } else if (StringUtils.containsIgnoreCase(buildingCodeParam, "purchasingCapitalAssetLocationLine")) {
             String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
-            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode()
+                    .equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
                 String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
-                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
-                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
+                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
+                        .get(Integer.parseInt(locationCapitalAssetItemNumber));
+                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations()
+                        .get(Integer.parseInt(locationCapitalAssetLocationNumber));
             }
         } else if (StringUtils.containsIgnoreCase(buildingCodeParam, "purchasingCapitalAssetSystem")) {
             String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
-            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode()
+                    .equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
                 String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
-                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
-                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
+                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
+                        .get(Integer.parseInt(locationCapitalAssetItemNumber));
+                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations()
+                        .get(Integer.parseInt(locationCapitalAssetLocationNumber));
             } else {
                 CapitalAssetSystem capitalAssetSystem = document.getPurchasingCapitalAssetSystems().get(0);
-                location = capitalAssetSystem.getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
+                location = capitalAssetSystem.getCapitalAssetLocations()
+                        .get(Integer.parseInt(locationCapitalAssetLocationNumber));
             }
         }
 
@@ -378,7 +407,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             document.setDeliveryCountryCode(deliveryBuilding.getBuildingAddressCountryCode());
         } else {
             clearDeliveryBuildingInfo(document, false);
-            GlobalVariables.getMessageMap().putError("document.deliveryBuildingCode", PurapKeyConstants.ERROR_DELIVERY_BUILDING_CODE_INVALID);
+            GlobalVariables.getMessageMap().putError("document.deliveryBuildingCode",
+                    PurapKeyConstants.ERROR_DELIVERY_BUILDING_CODE_INVALID);
         }
     }
 
@@ -421,7 +451,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward useOtherDeliveryBuilding(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward useOtherDeliveryBuilding(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase baseForm = (PurchasingFormBase) form;
         PurchasingDocument document = (PurchasingDocument) baseForm.getDocument();
 
@@ -431,13 +462,16 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward useOffCampusAssetLocationBuildingByDocument(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward useOffCampusAssetLocationBuildingByDocument(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase baseForm = (PurchasingFormBase) form;
         PurchasingDocument document = (PurchasingDocument) baseForm.getDocument();
 
         String fullParameter = (String) request.getAttribute(KFSConstants.METHOD_TO_CALL_ATTRIBUTE);
-        String systemIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM1_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM1_RIGHT_DEL);
-        String assetLocationIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM2_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM2_RIGHT_DEL);
+        String systemIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM1_LEFT_DEL,
+                KFSConstants.METHOD_TO_CALL_PARM1_RIGHT_DEL);
+        String assetLocationIndex = StringUtils.substringBetween(fullParameter,
+                KFSConstants.METHOD_TO_CALL_PARM2_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM2_RIGHT_DEL);
 
         CapitalAssetSystem system = document.getPurchasingCapitalAssetSystems().get(Integer.parseInt(systemIndex));
 
@@ -451,22 +485,27 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward useOffCampusAssetLocationBuildingByItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward useOffCampusAssetLocationBuildingByItem(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase baseForm = (PurchasingFormBase) form;
         PurchasingDocument document = (PurchasingDocument) baseForm.getDocument();
 
         String fullParameter = (String) request.getAttribute(KFSConstants.METHOD_TO_CALL_ATTRIBUTE);
-        String assetItemIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM1_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM1_RIGHT_DEL);
-        String assetLocationIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM2_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM2_RIGHT_DEL);
+        String assetItemIndex = StringUtils.substringBetween(fullParameter,
+                KFSConstants.METHOD_TO_CALL_PARM1_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM1_RIGHT_DEL);
+        String assetLocationIndex = StringUtils.substringBetween(fullParameter,
+                KFSConstants.METHOD_TO_CALL_PARM2_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM2_RIGHT_DEL);
 
-        PurchasingCapitalAssetItem assetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(assetItemIndex));
+        PurchasingCapitalAssetItem assetItem = document.getPurchasingCapitalAssetItems()
+                .get(Integer.parseInt(assetItemIndex));
         CapitalAssetSystem system = assetItem.getPurchasingCapitalAssetSystem();
 
         if ("new".equals(assetLocationIndex)) {
             useOffCampusAssetLocationBuilding(system.getNewPurchasingCapitalAssetLocationLine());
         }
         else {
-            useOffCampusAssetLocationBuilding(system.getCapitalAssetLocations().get(Integer.parseInt(assetLocationIndex)));
+            useOffCampusAssetLocationBuilding(system.getCapitalAssetLocations()
+                    .get(Integer.parseInt(assetLocationIndex)));
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -496,11 +535,13 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
-        boolean rulePassed = SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedAddPurchasingAccountsPayableItemEvent("", purDocument, item));
+        boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
+                .applyRules(new AttributedAddPurchasingAccountsPayableItemEvent("", purDocument, item));
 
         if (rulePassed) {
             item = purchasingForm.getAndResetNewPurchasingItemLine();
@@ -524,7 +565,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward importItems(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward importItems(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         LOG.info("Importing item lines");
 
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
@@ -532,24 +574,25 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         String documentNumber = purDocument.getDocumentNumber();
         FormFile itemFile = purchasingForm.getItemImportFile();
         Class itemClass = purDocument.getItemClass();
-        List<PurApItem> importedItems = null;
         String errorPath = PurapConstants.ITEM_TAB_ERRORS;
         ItemParser itemParser = purDocument.getItemParser();
-        int itemLinePosition = purDocument.getItemLinePosition(); // starting position of the imported items, equals the # of
-        // existing above-the-line items.
+        // starting position of the imported items, equals the # of existing above-the-line items.
+        int itemLinePosition = purDocument.getItemLinePosition();
 
         try {
-            importedItems = itemParser.importItems(itemFile, itemClass, documentNumber);
+            List<PurApItem> importedItems = itemParser.importItems(itemFile, itemClass, documentNumber);
             // validate imported items
             boolean allPassed = true;
             int itemLineNumber = 0;
             for (PurApItem item : importedItems) {
-                // Before the validation, set the item line number to the same as the line number in the import file (starting from
-                // 1)
-                // so that the error message will use the correct line number if there're errors for the current item line.
+                // Before the validation, set the item line number to the same as the line number in the import file
+                // (starting from 1) so that the error message will use the correct line number if there're errors
+                // for the current item line.
                 item.setItemLineNumber(++itemLineNumber);
-                allPassed &= SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedImportPurchasingAccountsPayableItemEvent("", purDocument, item));
-                // After the validation, set the item line number to the correct value as if it's added to the item list.
+                allPassed &= SpringContext.getBean(KualiRuleService.class)
+                        .applyRules(new AttributedImportPurchasingAccountsPayableItemEvent("", purDocument, item));
+                // After the validation, set the item line number to the correct value as if it's added to the item
+                // list.
                 item.setItemLineNumber(itemLineNumber + itemLinePosition);
             }
             if (allPassed) {
@@ -574,8 +617,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         // update reference from Item to Document and from Account to Item.
         for (PurApItem item : importedItems) {
             item.setPurapDocument(purDocument);
-            // set the PurapDocumentIdentifier so in the future, item acquire the object again by calling refreshReferenceObject for
-            // purApDocument.
+            // set the PurapDocumentIdentifier so in the future, item acquire the object again by calling
+            // refreshReferenceObject for purApDocument.
             if (purDocument.getPurapDocumentIdentifier() != null) {
                 item.setPurapDocumentIdentifier(purDocument.getPurapDocumentIdentifier());
             }
@@ -598,20 +641,23 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward deleteItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward deleteItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
 
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
 
         if (!purDocument.getPurchasingCapitalAssetItems().isEmpty()) {
-            purDocument.setPurchasingCapitalAssetItems(new PurApArrayList(purDocument.getPurchasingCapitalAssetItemClass()));
+            purDocument.setPurchasingCapitalAssetItems(new PurApArrayList(
+                    purDocument.getPurchasingCapitalAssetItemClass()));
             SpringContext.getBean(PurapService.class).saveDocumentNoValidation(purDocument);
         }
 
         purDocument.deleteItem(getSelectedLine(request));
 
         if (StringUtils.isNotBlank(purDocument.getCapitalAssetSystemTypeCode())) {
-            boolean rulePassed = SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedUpdateCamsViewPurapEvent(purDocument));
+            boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
+                    .applyRules(new AttributedUpdateCamsViewPurapEvent(purDocument));
             if (rulePassed) {
                 SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(purDocument);
             }
@@ -630,7 +676,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward upItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward upItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
         int line = getSelectedLine(request);
@@ -640,17 +687,18 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     }
 
     /**
-     * Moves the selected item down one position (These two methods up/down could easily be consolidated. For now, it seems more
-     * straightforward to keep them separate.)
+     * Moves the selected item down one position (These two methods up/down could easily be consolidated. For now, it
+     * seems more straightforward to keep them separate.)
      *
-     * @param mapping An ActionMapping
-     * @param form An ActionForm
-     * @param request The HttpServletRequest
+     * @param mapping  An ActionMapping
+     * @param form     An ActionForm
+     * @param request  The HttpServletRequest
      * @param response The HttpServletResponse
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward downItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward downItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
         int line = getSelectedLine(request);
@@ -670,8 +718,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public ActionForward setupAccountDistribution(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward setupAccountDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurchasingDocumentBase document = (PurchasingDocumentBase) purchasingForm.getDocument();
 
@@ -695,16 +743,19 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward removeAccounts(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward removeAccounts(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
 
         Object question = request.getParameter(PurapConstants.QUESTION_INDEX);
         Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
 
         if (question == null) {
-            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(PurapConstants.QUESTION_REMOVE_ACCOUNTS);
-
-            return this.performQuestionWithoutInput(mapping, form, request, response, PurapConstants.REMOVE_ACCOUNTS_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, KFSConstants.ROUTE_METHOD, "0");
+            String questionText = SpringContext.getBean(ConfigurationService.class)
+                    .getPropertyValueAsString(PurapConstants.QUESTION_REMOVE_ACCOUNTS);
+            return this.performQuestionWithoutInput(mapping, form, request, response,
+                    PurapConstants.REMOVE_ACCOUNTS_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION,
+                    KFSConstants.ROUTE_METHOD, "0");
         }
         else if (ConfirmationQuestion.YES.equals(buttonClicked)) {
             for (PurApItem item : ((PurchasingAccountsPayableDocument) purchasingForm.getDocument()).getItems()) {
@@ -727,16 +778,20 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward clearItemsCommodityCodes(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward clearItemsCommodityCodes(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
 
         Object question = request.getParameter(PurapConstants.QUESTION_INDEX);
         Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
 
         if (question == null) {
-            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(PurapConstants.QUESTION_CLEAR_ALL_COMMODITY_CODES);
+            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+                    PurapConstants.QUESTION_CLEAR_ALL_COMMODITY_CODES);
 
-            return this.performQuestionWithoutInput(mapping, form, request, response, PurapConstants.CLEAR_COMMODITY_CODES_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, KFSConstants.ROUTE_METHOD, "0");
+            return this.performQuestionWithoutInput(mapping, form, request, response,
+                    PurapConstants.CLEAR_COMMODITY_CODES_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION,
+                    KFSConstants.ROUTE_METHOD, "0");
         }
         else if (ConfirmationQuestion.YES.equals(buttonClicked)) {
             for (PurApItem item : ((PurchasingAccountsPayableDocument) purchasingForm.getDocument()).getItems()) {

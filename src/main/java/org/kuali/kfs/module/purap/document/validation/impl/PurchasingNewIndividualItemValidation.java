@@ -42,8 +42,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     public static final String UNORDERED_ITEM_DEFAULT_COMMODITY_CODE = "UNORDERED_ITEM_DEFAULT_COMMODITY_CODE";
     
     public boolean validate(AttributedDocumentEvent event) {
-        boolean valid = true;
-        valid &= super.validate(event);
+        boolean valid = super.validate(event);
         PurchasingDocument purDoc = (PurchasingDocument)event.getDocument();
         String recurringPaymentTypeCode = purDoc.getRecurringPaymentTypeCode();
         //Capital asset validations are only done on line items (not additional charge items).
@@ -53,14 +52,14 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         }
         unitOfMeasureValidation.setItemForValidation(getItemForValidation());
         valid &= unitOfMeasureValidation.validate(event);
-        
+
         if (getItemForValidation().getItemType().isLineItemIndicator()) {
             itemUnitPriceValidation.setItemForValidation(getItemForValidation());
-            valid &= itemUnitPriceValidation.validate(event);  
-            
+            valid &= itemUnitPriceValidation.validate(event);
+
             itemDescriptionValidation.setItemForValidation(getItemForValidation());
             valid &= itemDescriptionValidation.validate(event);
-                        
+
             itemQuantityValidation.setItemForValidation(getItemForValidation());
             valid &= itemQuantityValidation.validate(event);
             
@@ -79,31 +78,31 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     
     /**
      * Validates that the document contains at least one item.
-     * 
+     *
      * @param purDocument the purchasing document to be validated
      * @return boolean false if the document does not contain at least one item.
      */
     public boolean validateContainsAtLeastOneItem(PurchasingDocument purDocument) {
         for (PurApItem item : purDocument.getItems()) {
             if (!((PurchasingItemBase) item).isEmpty() && item.getItemType().isLineItemIndicator()) {
-
                 return true;
             }
         }
-        String documentType = getDocumentTypeLabel(purDocument.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
+        String documentType = getDocumentTypeLabel(purDocument.getDocumentHeader().getWorkflowDocument()
+                .getDocumentTypeName());
 
         GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
                 PurapKeyConstants.ERROR_ITEM_REQUIRED, documentType);
 
         return false;
     }
-        
+
     /**
-     * Validates whether the commodity code existed on the item, and if existed, whether the
-     * commodity code on the item existed in the database, and if so, whether the commodity 
-     * code is active. Display error if any of these 3 conditions are not met.
-     * 
-     * @param item  The PurApItem containing the commodity code to be validated.
+     * Validates whether the commodity code existed on the item, and if existed, whether the commodity code on the
+     * item existed in the database, and if so, whether the commodity code is active. Display error if any of these 3
+     * conditions are not met.
+     *
+     * @param item The PurApItem containing the commodity code to be validated.
      * @return boolean false if the validation fails and true otherwise.
      */
     
@@ -120,7 +119,8 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return capitalAssetManagementModuleService;
     }
 
-    public void setCapitalAssetManagementModuleService(CapitalAssetManagementModuleService capitalAssetManagementModuleService) {
+    public void setCapitalAssetManagementModuleService(
+            CapitalAssetManagementModuleService capitalAssetManagementModuleService) {
         this.capitalAssetManagementModuleService = capitalAssetManagementModuleService;
     }
 
@@ -160,7 +160,8 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return belowTheLineItemNoUnitCostValidation;
     }
 
-    public void setBelowTheLineItemNoUnitCostValidation(PurchasingBelowTheLineItemNoUnitCostValidation belowTheLineItemNoUnitCostValidation) {
+    public void setBelowTheLineItemNoUnitCostValidation(
+            PurchasingBelowTheLineItemNoUnitCostValidation belowTheLineItemNoUnitCostValidation) {
         this.belowTheLineItemNoUnitCostValidation = belowTheLineItemNoUnitCostValidation;
     }
     
