@@ -137,10 +137,9 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     /**
-     * This method calls the workflow helper to allow for customization method to quickly grab status
-     * without any fetching of extraneous information which causes problems for large numbers
-     * of related documents
-     * an api call will be added to core Rice to support this in the next release
+     * This method calls the workflow helper to allow for customization method to quickly grab status without any
+     * fetching of extraneous information which causes problems for large numbers of related documents an api call
+     * will be added to core Rice to support this in the next release
      */
     public String getApplicationDocumentStatus() {
         return documentHeader.getApplicationDocumentStatus();

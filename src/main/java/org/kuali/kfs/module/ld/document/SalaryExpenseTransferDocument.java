@@ -87,9 +87,10 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         boolean isSuccessful = true;
         ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
 
-        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator.generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
+        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator
+                .generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (expensePendingEntries != null && !expensePendingEntries.isEmpty()) {
-            isSuccessful &= this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
+            isSuccessful = this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
         }
 
         List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator

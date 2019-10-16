@@ -32,9 +32,6 @@ import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.PositionFundingInqu
 
 public class PositionFundingLookupableHelperServiceImpl extends org.kuali.kfs.module.ld.businessobject.lookup.PositionFundingLookupableHelperServiceImpl {
 
-    /**
-     * @see org.kuali.kfs.kns.lookup.Lookupable#getInquiryUrl(org.kuali.kfs.kns.bo.BusinessObject, java.lang.String)
-     */
     @Override
     public HtmlData getInquiryUrl(BusinessObject businessObject, String propertyName) {
         if (KFSPropertyConstants.POSITION_NUMBER.equals(propertyName)) {

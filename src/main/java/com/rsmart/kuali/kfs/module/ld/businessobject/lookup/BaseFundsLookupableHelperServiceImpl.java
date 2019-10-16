@@ -25,9 +25,6 @@ import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.BaseFundsInquirable
 
 public class BaseFundsLookupableHelperServiceImpl extends org.kuali.kfs.module.ld.businessobject.lookup.BaseFundsLookupableHelperServiceImpl {
 
-    /**
-     * @see org.kuali.kfs.kns.lookup.Lookupable#getInquiryUrl(org.kuali.kfs.kns.bo.BusinessObject, java.lang.String)
-     */
     @Override
     public HtmlData getInquiryUrl(BusinessObject bo, String propertyName) {
         return (new BaseFundsInquirableImpl()).getInquiryUrl(bo, propertyName);

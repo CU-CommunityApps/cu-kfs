@@ -34,8 +34,9 @@ import org.kuali.rice.kim.api.identity.Person;
 import java.util.List;
 
 
-public class PurchasingAccountsPayableDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
-
+public class PurchasingAccountsPayableDocumentPresentationController extends 
+        FinancialSystemTransactionalDocumentPresentationControllerBase {
+    
     /**
      * None of the PURAP documents allowing editing by adhoc requests
      */
@@ -47,7 +48,10 @@ public class PurchasingAccountsPayableDocumentPresentationController extends Fin
         if (kwf.getInitiatorPrincipalId().equals(currentUser.getPrincipalId()) && (kwf.isInitiated() || kwf.isSaved()) ) {
             return true;
         }
-        if (!document.getDocumentHeader().getWorkflowDocument().isCompletionRequested() && SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(document.getDocumentHeader().getWorkflowDocument(), GlobalVariables.getUserSession().getPrincipalId())) {
+        if (!document.getDocumentHeader().getWorkflowDocument().isCompletionRequested()
+                && SpringContext.getBean(FinancialSystemWorkflowHelperService.class)
+                    .isAdhocApprovalRequestedForPrincipal(document.getDocumentHeader().getWorkflowDocument(),
+                            GlobalVariables.getUserSession().getPrincipalId())) {
             return false;
         }
         return super.canEdit(document);
