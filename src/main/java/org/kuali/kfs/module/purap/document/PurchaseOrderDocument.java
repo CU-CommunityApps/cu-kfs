@@ -807,15 +807,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * @see org.kuali.rice.krad.document.DocumentBase#doActionTaken(ActionTakenEvent)
-     */
-    @Override
-    public void doActionTaken(ActionTakenEvent event) {
-        super.doActionTaken(event);
-        // additional processing
-    }
-
-    /**
      * Gets the active items in this Purchase Order.
      *
      * @return the list of all active items in this Purchase Order.

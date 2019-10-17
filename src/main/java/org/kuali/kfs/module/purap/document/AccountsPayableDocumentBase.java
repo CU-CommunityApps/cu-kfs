@@ -334,8 +334,6 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     @Override
     public void setPurchaseOrderDocument(PurchaseOrderDocument purchaseOrderDocument) {
         if (ObjectUtils.isNull(purchaseOrderDocument)) {
-            // KUALI-PURAP 1185 PO Id not being set to null, instead throwing error on main screen that value is invalid.
-            // setPurchaseOrderIdentifier(null);
             this.purchaseOrderDocument = null;
         } else {
             if (ObjectUtils.isNotNull(purchaseOrderDocument.getPurapDocumentIdentifier())) {
