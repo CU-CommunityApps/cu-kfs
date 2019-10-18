@@ -74,7 +74,7 @@
 
         <gl:generalLedgerPendingEntries/>
 
-        <kul:notes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}"
+        <kul:notes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinder}"
                    defaultOpen="${KualiForm.document.openAttachmentTab}"/>
 
         <kul:adHocRecipients/>

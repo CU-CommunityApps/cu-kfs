@@ -102,7 +102,7 @@
     </c:if>
     
 	
-	<kul:notes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}" />
+	<kul:notes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinder}" />
 	<kul:adHocRecipients />
 
 	<kul:routeLog />

@@ -780,6 +780,11 @@
 			<foreignkey field-ref="invoiceTypeCode" />
 		</reference-descriptor>
 		
+	    <reference-descriptor name="accountPhysicalCampus" class-ref="org.kuali.kfs.sys.businessobject.Campus"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountPhysicalCampusCode" target-field-ref="code"/>
+        </reference-descriptor>
+		
 		<collection-descriptor name="indirectCostRecoveryAccounts"
 			element-class-ref="edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange"
 			collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"

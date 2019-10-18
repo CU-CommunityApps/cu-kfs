@@ -18,7 +18,7 @@
 <%@ attribute name="notesBo" required="false" type="java.util.List" %>
 <%@ attribute name="noteType" required="false" type="java.lang.Enum" %>
 <%@ attribute name="displayTopicFieldInNotes" required="false" %>
-<%@ attribute name="attachmentTypesValuesFinderClass" required="false" %>
+<%@ attribute name="attachmentTypesValuesFinder" required="false" %>
 <%@ attribute name="transparentBackground" required="false" %>
 <%@ attribute name="defaultOpen" required="false" %>
 
@@ -48,7 +48,7 @@
     <jsp:doBody/>
         <table class="datatable items standard" summary="view/add notes">
             <tbody>
-                <c:if test="${ ((not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)) || kfunc:canAddNoteAttachment(KualiForm.document)}" >
+                <c:if test="${ ((not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)) || kfunc:canAddNoteAttachment(KualiForm.document)}" >
                     <tr>
                         <td class="infoline">&nbsp;</td>
                         <td class="infoline">&nbsp;</td>
@@ -78,8 +78,8 @@
                             </td>
                         </c:if>
 
-                        <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
-                            <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinderClass,'.','|')}"/>
+                        <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
+                            <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinder,'.','|')}"/>
                             <td class="infoline">
                                 Attachment Type
                                 <br/>
@@ -132,7 +132,7 @@
                             <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.attachment}" labelFor="attachmentFile" scope="col" align="left"/>
                         </c:if>
 
-                        <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                        <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                             <kul:htmlAttributeHeaderCell literalLabel="Attachment Type" scope="col" align="left"/>
                             <kul:htmlAttributeHeaderCell literalLabel="Send to Vendor?" scope="col" align="left"/>
                         </c:if>

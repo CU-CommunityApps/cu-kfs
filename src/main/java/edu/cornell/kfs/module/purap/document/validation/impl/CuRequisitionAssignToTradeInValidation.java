@@ -16,8 +16,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToTradeInValidation {
 
-    private DataDictionaryService dataDictionaryService;
-
     public boolean validate(AttributedDocumentEvent event) {
         
         boolean foundTradeIn = false;
@@ -77,9 +75,4 @@ public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToT
         }
         return lineIndex;
     }
-
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-    }
-
 }

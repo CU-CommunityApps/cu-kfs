@@ -325,7 +325,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private String convertFipsUsStateNameToFipsUsStateCode(String fipsStateName) {
-        Map<String, Object> fieldValues = new HashMap();
+        Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put("active", true);
         fieldValues.put("countryCode", KFSConstants.COUNTRY_CODE_UNITED_STATES);
 
@@ -340,7 +340,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             return matchingStates.get(0).getCode();
         }
         else {
-            LOG.info("convertFipsUsStateNameToFipsUsStateCode: fipsStateName being returned, could not find stateCode in Rice table = " + fipsStateName);
+            LOG.info("convertFipsUsStateNameToFipsUsStateCode: fipsStateName being returned, could not find stateCode = " + fipsStateName);
             return fipsStateName;
         }
     }
