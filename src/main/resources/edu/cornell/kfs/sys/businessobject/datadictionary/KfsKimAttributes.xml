@@ -231,6 +231,5 @@
     <bean id="KfsKimAttributes-campusCode-parentBean" abstract="true" parent="Campus-code" p:name="campusCode"/>
 
     <bean id="achTransactionTypeCodeValuesFinder"
-          class="org.kuali.kfs.pdp.businessobject.options.AchTransactionTypeCodeValuesFinder"
-          p:keyValuesService-ref="keyValuesService"/>
+          class="org.kuali.kfs.pdp.businessobject.options.AchTransactionTypeCodeValuesFinder"/>
 </beans>
