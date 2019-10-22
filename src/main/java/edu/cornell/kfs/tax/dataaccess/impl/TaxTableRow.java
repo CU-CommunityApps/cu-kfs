@@ -508,6 +508,7 @@ abstract class TaxTableRow {
         final TaxTableField vendorForeignLine2Address;
         final TaxTableField vendorForeignCityName;
         final TaxTableField vendorForeignZipCode;
+        final TaxTableField vendorForeignProvinceName;
         final TaxTableField vendorForeignCountryCode;
         final TaxTableField nraPaymentIndicator;
         final TaxTableField paymentDate;
@@ -563,6 +564,7 @@ abstract class TaxTableRow {
             this.vendorForeignLine2Address = getAliasedField(TransactionDetailFieldNames.VENDOR_FOREIGN_LINE2_ADDRESS);
             this.vendorForeignCityName = getAliasedField(TransactionDetailFieldNames.VENDOR_FOREIGN_CITY_NAME);
             this.vendorForeignZipCode = getAliasedField(TransactionDetailFieldNames.VENDOR_FOREIGN_ZIP_CODE);
+            this.vendorForeignProvinceName = getAliasedField(TransactionDetailFieldNames.VENDOR_FOREIGN_PROVINCE_NAME);
             this.vendorForeignCountryCode = getAliasedField(TransactionDetailFieldNames.VENDOR_FOREIGN_COUNTRY_CODE);
             this.nraPaymentIndicator = getAliasedField(TransactionDetailFieldNames.NRA_PAYMENT_INDICATOR);
             this.paymentDate = getAliasedField(TransactionDetailFieldNames.PAYMENT_DATE);
@@ -600,6 +602,7 @@ abstract class TaxTableRow {
         final TaxTableField vendorForeignAddressLine2;
         final TaxTableField vendorForeignCityName;
         final TaxTableField vendorForeignZipCode;
+        final TaxTableField vendorForeignProvinceName;
         final TaxTableField vendorForeignCountryCode;
         final TaxTableField vendorAnyAddressLine1;
         final TaxTableField vendorZipCodeNumOnly;
@@ -652,6 +655,7 @@ abstract class TaxTableRow {
             this.vendorForeignAddressLine2 = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_ADDRESS_LINE_2);
             this.vendorForeignCityName = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_CITY_NAME);
             this.vendorForeignZipCode = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_ZIP_CODE);
+            this.vendorForeignProvinceName = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_PROVINCE_NAME);
             this.vendorForeignCountryCode = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_COUNTRY_CODE);
             this.vendorAnyAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_ANY_ADDRESS_LINE_1);
             this.vendorZipCodeNumOnly = getAliasedField(DerivedFieldNames.VENDOR_ZIP_CODE_NUM_ONLY);

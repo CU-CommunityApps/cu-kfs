@@ -51,10 +51,10 @@
         <field name="B19" length="40" type="DERIVED" value="vendorForeignAddressLine1" /><!-- B19 :: Non US Address (Line 1) -->
         <field name="B20" length="40" type="DERIVED" value="vendorForeignAddressLine2" /><!-- B20 :: Non US Address (Line 2) -->
         <field name="B21" length="40" type="BLANK" /><!-- B21 :: Non US Address (Line 3) -->
-        <field name="B22" length="10" type="DERIVED" value="vendorForeignZipCode" /><!-- B22 :: Non US City Postal Code -->
+        <field name="B22" length="10" type="BLANK" /><!-- B22 :: Non US City Postal Code -->
         <field name="B23" length="40" type="DERIVED" value="vendorForeignCityName" /><!-- B23 :: Non US City -->
-        <field name="B24" length="10" type="BLANK" /><!-- B24 :: Non US Region Postal Code -->
-        <field name="B25" length="30" type="BLANK" /><!-- B25 :: Non US Region -->
+        <field name="B24" length="10" type="DERIVED" value="vendorForeignZipCode" /><!-- B24 :: Non US Region Postal Code -->
+        <field name="B25" length="30" type="DERIVED" value="vendorForeignProvinceName" /><!-- B25 :: Non US Region -->
         <field name="B26" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B26 :: Non US Country Code -->
         <field name="B27" length="25" type="BLANK" /><!-- B27 :: Non US Country Name (NOTE: Should be non-blank if B26 is blank or invalid) -->
         <field name="B28" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B28 :: Citizenship Country Code -->

@@ -261,6 +261,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      *   <li>vendorForeignLine2Address</li>
      *   <li>vendorForeignCityName</li>
      *   <li>vendorForeignZipCode</li>
+     *   <li>vendorForeignProvinceName</li>
      *   <li>vendorForeignCountryCode</li>
      *   <li>initiatorNetId</li>
      * </ul>
@@ -285,6 +286,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
         insertStatement.setString(detailRow.vendorForeignLine2Address.index - offset, null);
         insertStatement.setString(detailRow.vendorForeignCityName.index - offset, null);
         insertStatement.setString(detailRow.vendorForeignZipCode.index - offset, null);
+        insertStatement.setString(detailRow.vendorForeignProvinceName.index - offset, null);
         insertStatement.setString(detailRow.vendorForeignCountryCode.index - offset, null);
         insertStatement.setString(detailRow.initiatorNetId.index - offset, null);
     }

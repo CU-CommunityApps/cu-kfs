@@ -55,6 +55,7 @@
         <field-descriptor name="vendorForeignLine2Address" column="VNDR_FRGN_LN2_ADDR" jdbc-type="VARCHAR" />
         <field-descriptor name="vendorForeignCityName" column="VNDR_FRGN_CTY_NM" jdbc-type="VARCHAR" />
         <field-descriptor name="vendorForeignZipCode" column="VNDR_FRGN_ZIP_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="vendorForeignProvinceName" column="VNDR_FRGN_PROV_NM" jdbc-type="VARCHAR" />
         <field-descriptor name="vendorForeignCountryCode" column="VNDR_FRGN_CNTRY_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="nraPaymentIndicator" column="NRA_PAYMENT_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
         <field-descriptor name="paymentDate" column="PMT_DT" jdbc-type="DATE" />

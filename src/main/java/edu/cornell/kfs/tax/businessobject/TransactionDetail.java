@@ -43,6 +43,7 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private String vendorForeignLine2Address;
     private String vendorForeignCityName;
     private String vendorForeignZipCode;
+    private String vendorForeignProvinceName;
     private String vendorForeignCountryCode;
     private Boolean nraPaymentIndicator;
     private java.sql.Date paymentDate;
@@ -309,6 +310,14 @@ public class TransactionDetail extends TransientBusinessObjectBase {
 
     public void setVendorForeignZipCode(String vendorForeignZipCode) {
         this.vendorForeignZipCode = vendorForeignZipCode;
+    }
+
+    public String getVendorForeignProvinceName() {
+        return vendorForeignProvinceName;
+    }
+
+    public void setVendorForeignProvinceName(String vendorForeignProvinceName) {
+        this.vendorForeignProvinceName = vendorForeignProvinceName;
     }
 
     public String getVendorForeignCountryCode() {
