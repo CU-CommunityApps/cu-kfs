@@ -18,21 +18,20 @@
  */
 package org.kuali.kfs.sys.batch;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.sys.KFSConstants;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.batch.service.BatchFileAdminService;
-
 public class BatchFile extends TransientBusinessObjectBase {
+    private static final Logger LOG = LogManager.getLogger();
     public static final String CACHE_NAME = KFSConstants.APPLICATION_NAMESPACE_CODE + "/" + "BatchFile";
-    private static final Log LOG = LogFactory.getLog(BatchFileAdminService.class);
 
     private File file;
     

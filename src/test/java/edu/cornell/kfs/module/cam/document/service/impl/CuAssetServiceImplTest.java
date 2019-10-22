@@ -17,7 +17,6 @@ import org.kuali.kfs.module.cam.document.service.impl.AssetServiceImpl;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
 import org.kuali.kfs.coreservice.api.parameter.Parameter;
 import org.kuali.kfs.coreservice.api.parameter.ParameterType;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -104,7 +103,7 @@ public class CuAssetServiceImplTest {
     }
     
     protected BusinessObjectService createMockBusinessObjectService(String tagNumber, List<Asset> result) {
-        BusinessObjectService businessObjectService = mock(BusinessObjectServiceImpl.class);
+        BusinessObjectService businessObjectService = mock(BusinessObjectService.class);
         Map<String, String> params = new HashMap<String, String>();
         params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, tagNumber);
         when(businessObjectService.findMatching(Asset.class, params)).thenReturn(result);

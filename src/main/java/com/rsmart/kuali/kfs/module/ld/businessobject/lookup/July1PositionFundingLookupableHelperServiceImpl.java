@@ -32,21 +32,20 @@ import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.July1PositionFundin
 
 public class July1PositionFundingLookupableHelperServiceImpl extends org.kuali.kfs.module.ld.businessobject.lookup.July1PositionFundingLookupableHelperServiceImpl {
 
-    /**
-     * @see org.kuali.kfs.kns.lookup.Lookupable#getInquiryUrl(org.kuali.kfs.kns.bo.BusinessObject, java.lang.String)
-     */
     @Override
     public HtmlData getInquiryUrl(BusinessObject bo, String propertyName) {
         if (KFSPropertyConstants.POSITION_NUMBER.equals(propertyName)) {
             LedgerBalance balance = (LedgerBalance) bo;
-            AbstractPositionDataDetailsInquirableImpl positionDataDetailsInquirable = new PositionDataDetailsInquirableImpl();
+            AbstractPositionDataDetailsInquirableImpl positionDataDetailsInquirable =
+                    new PositionDataDetailsInquirableImpl();
 
-            Map<String, String> fieldValues = new HashMap<String, String>();
+            Map<String, String> fieldValues = new HashMap<>();
             fieldValues.put(propertyName, balance.getPositionNumber());
 
             BusinessObject positionData = positionDataDetailsInquirable.getBusinessObject(fieldValues);
 
-            return positionData == null ? new AnchorHtmlData(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING) : positionDataDetailsInquirable.getInquiryUrl(positionData, propertyName);
+            return positionData == null ? new AnchorHtmlData(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING) :
+                positionDataDetailsInquirable.getInquiryUrl(positionData, propertyName);
         }
         return (new July1PositionFundingInquirableImpl()).getInquiryUrl(bo, propertyName);
     }

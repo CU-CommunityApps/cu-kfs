@@ -45,7 +45,6 @@ public class PaymentRequestView extends AbstractRelatedView {
     private Timestamp paymentExtractedTimestamp;
     private Timestamp paymentPaidTimestamp;
 
-    // GETTERS & SETTERS
     public Object getTotalAmount() {
         return (new CurrencyFormatter()).format(documentHeader.getFinancialDocumentTotalAmount());
     }
@@ -130,8 +129,8 @@ public class PaymentRequestView extends AbstractRelatedView {
     }
 
     /**
-     * The next three methods are overridden but shouldnt be! If they arent overridden, they dont show up in the tag, not sure why
-     * at this point! (AAP)
+     * The next three methods are overridden but shouldn't be! If they aren't overridden, they don't show up in the
+     * tag, not sure why at this point! (AAP)
      */
     @Override
     public Integer getPurapDocumentIdentifier() {
@@ -144,14 +143,12 @@ public class PaymentRequestView extends AbstractRelatedView {
     }
 
     /**
-     * @see org.kuali.kfs.module.purap.businessobject.AbstractRelatedView#getNotes()j
-     * This is overriden to prevent duplicate fetching of the object id needed to fetch notes
-     * which becomes a problem when you have a lot of associated payment requests with a
-     * given purchase order
+     * This is overridden to prevent duplicate fetching of the object id needed to fetch notes which becomes a
+     * problem when you have a lot of associated payment requests with a given purchase order.
      */
     @Override
     public List<Note> getNotes() {
-        List<Note> notes = new ArrayList<Note>();
+        List<Note> notes = new ArrayList<>();
         //reverse the order of notes only when anything exists in it..
         NoteService noteService = SpringContext.getBean(NoteService.class);
         // ==== CU Customization: Use a CU-specific PREQ service method to get the note target object ID, instead of always using the doc header one. ====
@@ -166,17 +163,11 @@ public class PaymentRequestView extends AbstractRelatedView {
         return notes;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.businessobject.AbstractRelatedView#getUrl()
-     */
     @Override
     public String getUrl() {
         return super.getUrl();
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.businessobject.AbstractRelatedView#getDocumentTypeName()
-     */
     @Override
     public String getDocumentTypeName() {
         return KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST;

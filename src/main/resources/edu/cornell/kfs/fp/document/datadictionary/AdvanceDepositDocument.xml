@@ -5,12 +5,13 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+                
+    <import resource="classpath:edu/cornell/kfs/sys/cu-sys-lookup-beans.xml"/>
     
-	<bean id="AdvanceDepositDocument" parent="AdvanceDepositDocument-parentBean">
+	<bean id="AdvanceDepositDocument" parent="AdvanceDepositDocument-parentBean" p:attachmentTypesValuesFinder-ref="cuConfidentialAttachmentTypeValuesFinder">
 		<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentPresentationController"/>
 		<property name="documentAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentAuthorizer"/>
 		<property name="allowsErrorCorrection" value="false"/>
-		<property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
 	</bean>
 	
 	<bean id="AdvanceDepositDocument-sourceAccountingLineGroup" parent="AdvanceDepositDocument-sourceAccountingLineGroup-parentBean">

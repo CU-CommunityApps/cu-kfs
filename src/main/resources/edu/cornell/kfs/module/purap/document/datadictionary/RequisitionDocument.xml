@@ -6,10 +6,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-  <bean id="RequisitionDocument" parent="RequisitionDocument-parentBean">
+  <import resource="classpath:edu/cornell/kfs/module/purap/cu-purap-lookup-beans.xml"/>
+
+  <bean id="RequisitionDocument" parent="RequisitionDocument-parentBean" p:attachmentTypesValuesFinder-ref="requisitionAttachmentTypeValuesFinder">
   <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
   <property name="baseDocumentClass" value="org.kuali.kfs.module.purap.document.RequisitionDocument"/>
-  <property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.module.purap.businessobject.options.RequisitionAttachmentTypeValuesFinder"/>
   <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuRequisitionDocumentPresentationController"/>  
    <property name="attributes">
    <list merge="true">

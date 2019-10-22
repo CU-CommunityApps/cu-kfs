@@ -19,9 +19,6 @@ import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
 public class CurrentFundsInquirableImpl extends org.kuali.kfs.module.ld.businessobject.inquiry.CurrentFundsInquirableImpl {
 
-    /**
-     * @see org.kuali.kfs.gl.businessobject.inquiry.AbstractGeneralLedgerInquirableImpl#getBaseUrl()
-     */
     protected String getBaseUrl() {
         return LdConstants.LD_BALANCE_INQUIRY_ACTION;
     }

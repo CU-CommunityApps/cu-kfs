@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -293,7 +292,7 @@ public class StaleCheckExtractServiceImplTest {
     }
 
     private static BusinessObjectService createMockBusinessObjectService() {
-        BusinessObjectService businessObjectService = mock(BusinessObjectServiceImpl.class);
+        BusinessObjectService businessObjectService = mock(BusinessObjectService.class);
         when(businessObjectService.save(any(CheckReconciliation.class))).then(AdditionalAnswers.returnsFirstArg());
         return businessObjectService;
     }

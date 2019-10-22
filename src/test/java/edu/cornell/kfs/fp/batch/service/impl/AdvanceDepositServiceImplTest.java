@@ -575,7 +575,7 @@ public class AdvanceDepositServiceImplTest {
 
     }
 
-    private class MockBusinessObjectService implements BusinessObjectService {
+    private class MockBusinessObjectService extends BusinessObjectService {
 
         @Override
         public <T extends PersistableBusinessObject> T save(T bo) {
@@ -588,13 +588,7 @@ public class AdvanceDepositServiceImplTest {
         }
 
         @Override
-        public PersistableBusinessObject linkAndSave(PersistableBusinessObject bo) {
-            return null;
-        }
-
-        @Override
-        public List<? extends PersistableBusinessObject> linkAndSave(List<? extends PersistableBusinessObject> businessObjects) {
-            return null;
+        public void linkAndSave(PersistableBusinessObject bo) throws IllegalArgumentException {
         }
 
         @Override
@@ -638,7 +632,8 @@ public class AdvanceDepositServiceImplTest {
         }
 
         @Override
-        public <T extends BusinessObject> Collection<T> findMatching(Class<T> aClass, Map<String, ?> map, int i, int i1, Instant instant, Instant instant1, String[] strings) {
+        public <T extends BusinessObject> Collection<T> findMatchingOrderBy(Class<T> clazz, Map<String, ?> fieldValues,
+                String sortField, boolean sortAscending) {
             return null;
         }
 
@@ -648,18 +643,8 @@ public class AdvanceDepositServiceImplTest {
         }
 
         @Override
-        public int countMatching(Class aClass, Map<String, ?> map, Instant instant, Instant instant1) {
-            return 0;
-        }
-
-        @Override
         public int countMatching(Class clazz, Map<String, ?> positiveFieldValues, Map<String, ?> negativeFieldValues) {
             return 0;
-        }
-
-        @Override
-        public <T extends BusinessObject> Collection<T> findMatchingOrderBy(Class<T> clazz, Map<String, ?> fieldValues, String sortField, boolean sortAscending) {
-            return null;
         }
 
         @Override
@@ -690,11 +675,6 @@ public class AdvanceDepositServiceImplTest {
         @Override
         public void linkUserFields(List<PersistableBusinessObject> bos) {
 
-        }
-
-        @Override
-        public PersistableBusinessObject manageReadOnly(PersistableBusinessObject bo) {
-            return null;
         }
     }
 

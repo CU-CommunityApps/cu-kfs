@@ -4,7 +4,6 @@ import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAt
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
-import org.kuali.kfs.fp.document.CapitalAssetEditable;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -18,10 +17,10 @@ import org.kuali.kfs.module.cam.service.impl.CapitalAssetManagementModuleService
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Building;
+import org.kuali.kfs.sys.businessobject.Campus;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.kuali.rice.location.api.campus.Campus;
 
 import java.util.HashMap;
 import java.util.List;
@@ -178,7 +177,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
             businessObjectDictionaryService.performForceUppercase(dtl);
             String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "[" + capitalAssetIndex + "]." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
             if (StringUtils.isNotBlank(dtl.getCampusCode())) {
-                Campus campus = campusService.getCampus(dtl.getCampusCode());
+                Campus campus = businessObjectService.findBySinglePrimaryKey(Campus.class, dtl.getCampusCode());
                 if (ObjectUtils.isNull(campus)) {
                     valid = false;
                     String label = this.getDataDictionaryService().getAttributeLabel(Campus.class, KFSPropertyConstants.CODE);

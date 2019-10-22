@@ -37,14 +37,13 @@ import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.Campus;
+import org.kuali.kfs.sys.businessobject.PostalCode;
+import org.kuali.kfs.sys.businessobject.State;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.location.api.LocationConstants;
-import org.kuali.rice.location.framework.campus.CampusEbo;
-import org.kuali.rice.location.framework.postalcode.PostalCodeEbo;
-import org.kuali.rice.location.framework.state.StateEbo;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ import java.util.Map;
 
 public class Account extends PersistableBusinessObjectBase implements AccountIntf, MutableInactivatable {
 
-	private static final Logger LOG = LogManager.getLogger(Account.class);
+    private static final Logger LOG = LogManager.getLogger(Account.class);
 
     public static final String CACHE_NAME = KFSConstants.APPLICATION_NAMESPACE_CODE + "/" + "Account";
 
@@ -69,7 +68,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected String accountStateCode;
     protected String accountStreetAddress;
     protected String accountZipCode;
-    protected String accountCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
+    protected String accountCountryCode;
     protected Date accountCreateDate;
     protected Date accountEffectiveDate;
     protected Date accountExpirationDate;
@@ -114,8 +113,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected Chart endowmentIncomeChartOfAccounts;
     protected Organization organization;
     protected AccountType accountType;
-    protected CampusEbo accountPhysicalCampus;
-    protected StateEbo accountState;
+    protected Campus accountPhysicalCampus;
+    protected State accountState;
     protected SubFundGroup subFundGroup;
     protected HigherEducationFunction financialHigherEdFunction;
     protected RestrictedStatus accountRestrictedStatus;
@@ -128,7 +127,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected Person accountFiscalOfficerUser;
     protected Person accountSupervisoryUser;
     protected Person accountManagerUser;
-    protected PostalCodeEbo postalZipCode;
+    protected PostalCode postalZipCode;
     protected BudgetRecordingLevel budgetRecordingLevel;
     protected SufficientFundsCode sufficientFundsCode;
     protected ContractsAndGrantsCfda cfda;
@@ -164,6 +163,10 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     public Account() {
         active = true; // assume active is true until set otherwise
         indirectCostRecoveryAccounts = new ArrayList<>();
+        // we need country code to have a value for OJB foreign keys to other location types but it isn't exposed on
+        // docs so it never gets set. setting a default value on the column in the db did not do what we want b/c
+        // the ojb insert explicitly specifies every column it knows about. this will work for now.
+        accountCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
     }
 
     /**
@@ -363,7 +366,6 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     @Override
     public boolean isExpired(Date testDate) {
-
         // dont even bother trying to test if the accountExpirationDate is null
         if (accountExpirationDate == null) {
             return false;
@@ -599,57 +601,24 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public CampusEbo getAccountPhysicalCampus() {
-        if (StringUtils.isBlank(accountPhysicalCampusCode)) {
-            accountPhysicalCampus = null;
-        } else {
-            if (accountPhysicalCampus == null
-                    || !StringUtils.equals(accountPhysicalCampus.getCode(), accountPhysicalCampusCode)) {
-                ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(CampusEbo.class);
-                if (moduleService != null) {
-                    Map<String, Object> keys = new HashMap<>(1);
-                    keys.put(LocationConstants.PrimaryKeyConstants.CODE, accountPhysicalCampusCode);
-                    accountPhysicalCampus = moduleService.getExternalizableBusinessObject(CampusEbo.class, keys);
-                } else {
-                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  " +
-                            "Unable to proceed.");
-                }
-            }
-        }
+    public Campus getAccountPhysicalCampus() {
         return accountPhysicalCampus;
     }
 
     @Deprecated
     @Override
-    public void setAccountPhysicalCampus(CampusEbo accountPhysicalCampus) {
+    public void setAccountPhysicalCampus(Campus accountPhysicalCampus) {
         this.accountPhysicalCampus = accountPhysicalCampus;
     }
 
     @Override
-    public StateEbo getAccountState() {
-        if (StringUtils.isBlank(accountStateCode) || StringUtils.isBlank(accountCountryCode)) {
-            accountState = null;
-        } else {
-            if (accountState == null || !StringUtils.equals(accountState.getCode(), accountStateCode)
-                    || !StringUtils.equals(accountState.getCountryCode(), accountCountryCode)) {
-                ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(StateEbo.class);
-                if (moduleService != null) {
-                    Map<String, Object> keys = new HashMap<>(2);
-                    keys.put(LocationConstants.PrimaryKeyConstants.COUNTRY_CODE, accountCountryCode);
-                    keys.put(LocationConstants.PrimaryKeyConstants.CODE, accountStateCode);
-                    accountState = moduleService.getExternalizableBusinessObject(StateEbo.class, keys);
-                } else {
-                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  " +
-                            "Unable to proceed.");
-                }
-            }
-        }
+    public State getAccountState() {
         return accountState;
     }
 
     @Deprecated
     @Override
-    public void setAccountState(StateEbo state) {
+    public void setAccountState(State state) {
         this.accountState = state;
     }
 
@@ -1036,28 +1005,12 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public PostalCodeEbo getPostalZipCode() {
-        if (StringUtils.isBlank(accountZipCode) || StringUtils.isBlank(accountCountryCode)) {
-            postalZipCode = null;
-        } else {
-            if (postalZipCode == null || !StringUtils.equals(postalZipCode.getCode(), accountZipCode)
-                || !StringUtils.equals(postalZipCode.getCountryCode(), accountCountryCode)) {
-                ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(PostalCodeEbo.class);
-                if (moduleService != null) {
-                    Map<String, Object> keys = new HashMap<>(2);
-                    keys.put(LocationConstants.PrimaryKeyConstants.COUNTRY_CODE, accountCountryCode);
-                    keys.put(LocationConstants.PrimaryKeyConstants.CODE, accountZipCode);
-                    postalZipCode = moduleService.getExternalizableBusinessObject(PostalCodeEbo.class, keys);
-                } else {
-                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed.");
-                }
-            }
-        }
+    public PostalCode getPostalZipCode() {
         return postalZipCode;
     }
 
     @Override
-    public void setPostalZipCode(PostalCodeEbo postalZipCode) {
+    public void setPostalZipCode(PostalCode postalZipCode) {
         this.postalZipCode = postalZipCode;
     }
 
@@ -1246,7 +1199,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      *         otherwise false
      */
     public boolean isAwardedByFederalAgency(Collection<String> federalAgencyTypeCodes) {
-        return SpringContext.getBean(ContractsAndGrantsModuleService.class).isAwardedByFederalAgency(getChartOfAccountsCode(), getAccountNumber(), federalAgencyTypeCodes);
+        return SpringContext.getBean(ContractsAndGrantsModuleService.class).isAwardedByFederalAgency(
+                getChartOfAccountsCode(), getAccountNumber(), federalAgencyTypeCodes);
     }
 
     public Integer getContractsAndGrantsAccountResponsibilityId() {

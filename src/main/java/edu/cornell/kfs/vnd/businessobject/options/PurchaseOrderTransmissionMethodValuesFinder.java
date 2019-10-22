@@ -8,6 +8,7 @@ import java.util.List;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
+import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.krad.service.KeyValuesService;
 
@@ -19,18 +20,14 @@ public class PurchaseOrderTransmissionMethodValuesFinder extends KeyValuesBase {
 
 	private static final long serialVersionUID = 1L;
 
-	/*
-     * @see org.kuali.keyvalues.KeyValuesFinder#getKeyValues()
-     */
-    public List getKeyValues() {
-
+    public List<KeyValue> getKeyValues() {
         KeyValuesService boService = SpringContext.getBean(KeyValuesService.class);
-        Collection codes = boService.findAll(PurchaseOrderTransmissionMethod.class);
-        List labels = new ArrayList();
+        Collection<PurchaseOrderTransmissionMethod> methods = boService.findAll(PurchaseOrderTransmissionMethod.class);
+        List<KeyValue> labels = new ArrayList<>();
         labels.add(new ConcreteKeyValue("", ""));
-        for (Iterator iter = codes.iterator(); iter.hasNext();) {
-        	PurchaseOrderTransmissionMethod poTransmissionMethod = (PurchaseOrderTransmissionMethod) iter.next();
-            labels.add(new ConcreteKeyValue(poTransmissionMethod.getPurchaseOrderTransmissionMethodCode(), poTransmissionMethod.getPurchaseOrderTransmissionMethodDescription()));
+        for (PurchaseOrderTransmissionMethod method : methods) {
+            labels.add(new ConcreteKeyValue(method.getPurchaseOrderTransmissionMethodCode(),
+                    method.getPurchaseOrderTransmissionMethodDescription()));
         }        
         return labels;
     }

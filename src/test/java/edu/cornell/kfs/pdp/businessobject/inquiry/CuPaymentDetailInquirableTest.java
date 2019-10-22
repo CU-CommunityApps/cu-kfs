@@ -16,7 +16,8 @@ import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.kns.web.ui.Section;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.service.LocationService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.location.api.country.CountryService;
 import org.kuali.rice.location.impl.country.CountryBo;
@@ -44,7 +45,6 @@ public class CuPaymentDetailInquirableTest {
     @Before
     public void setUp() throws Exception {
         paymentDetailInquirable = new CuPaymentDetailInquirable();
-        paymentDetailInquirable.setCountryService(buildCountryService());
     }
 
     @Test
@@ -126,13 +126,6 @@ public class CuPaymentDetailInquirableTest {
                 .collect(Collectors.toMap(Field::getPropertyName, Field::getPropertyValue));
         
         assertEquals("Wrong property value mappings from inquiry section", expectedPropertyValues, actualPropertyValues);
-    }
-
-    private CountryService buildCountryService() {
-        CountryServiceImpl countryService = new CountryServiceImpl();
-        countryService.setParameterService(buildMockRiceParameterServiceExpectingNoCalls());
-        countryService.setDataObjectService(buildMockDataObjectService());
-        return countryService;
     }
 
     private ParameterService buildMockRiceParameterServiceExpectingNoCalls() {

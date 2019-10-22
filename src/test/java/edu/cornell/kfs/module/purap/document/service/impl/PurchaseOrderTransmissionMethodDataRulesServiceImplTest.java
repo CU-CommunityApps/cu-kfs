@@ -15,8 +15,8 @@ import org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.kfs.vnd.service.impl.PhoneNumberServiceImpl;
 import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
-import org.kuali.rice.location.api.state.State;
-import org.kuali.rice.location.api.state.StateService;
+import org.kuali.kfs.sys.businessobject.State;
+import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.rice.location.impl.state.StateBo;
 import org.springframework.util.StringUtils;
 
@@ -41,9 +41,9 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImplTest {
 		poTransMethodSataRulesService = new PurchaseOrderTransmissionMethodDataRulesServiceImpl();
 
 		PostalCodeValidationService postalCodeValidationSerivce = new testablePostalCodeValidationServiceImpl();
-		StateService mockStateService = mock(StateService.class);
-		when(mockStateService.getState(COUNTRY, STATE)).thenReturn(makeState());
-		((PostalCodeValidationServiceImpl)postalCodeValidationSerivce).setStateService(mockStateService);
+		LocationService mockLocationService = mock(LocationService.class);
+		when(mockLocationService.getState(COUNTRY, STATE)).thenReturn(makeState());
+		((PostalCodeValidationServiceImpl)postalCodeValidationSerivce).setLocationService(mockLocationService);
 		((PurchaseOrderTransmissionMethodDataRulesServiceImpl)this.poTransMethodSataRulesService).setPostalCodeValidationService(postalCodeValidationSerivce);
 		
 		PhoneNumberService phoneNumberService = new testablePhoneNumberServiceImpl();
@@ -152,11 +152,11 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImplTest {
 	}
 	
 	private State makeState() {
-		StateBo bo = new StateBo();
+		State bo = new State();
 		bo.setCode(STATE);
 		bo.setName("New York");
 		bo.setCountryCode(COUNTRY);
-		return StateBo.to(bo);
+		return bo;
 	}
 	
 	private class testablePhoneNumberServiceImpl extends PhoneNumberServiceImpl{

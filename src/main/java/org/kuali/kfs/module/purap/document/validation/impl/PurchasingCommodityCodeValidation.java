@@ -175,11 +175,11 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         }
         return true;
 	}
+	
     /**
-     * Predicate to do a parameter lookup and tell us whether a commodity code is required.
-     * Override in child classes. 
-     * 
-     * @return      True if a commodity code is required.
+     * Predicate to do a parameter lookup and tell us whether a commodity code is required. Override in child classes.
+     *
+     * @return True if a commodity code is required.
      */
     protected boolean commodityCodeIsRequired() {
         return false;

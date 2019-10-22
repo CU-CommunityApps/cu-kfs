@@ -53,6 +53,7 @@ import org.kuali.kfs.module.purap.util.PurapAccountingLineComparator;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.AdHocPaymentIndicator;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
+import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
@@ -69,8 +70,6 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.location.api.LocationConstants;
-import org.kuali.rice.location.framework.country.CountryEbo;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -85,7 +84,8 @@ import java.util.Set;
 /**
  * Base class for Purchasing-Accounts Payable Documents.
  */
-public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDocumentBase implements PurchasingAccountsPayableDocument, AmountTotaling {
+public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDocumentBase implements
+        PurchasingAccountsPayableDocument, AmountTotaling {
 
     private static final Logger LOG = LogManager.getLogger(PurchasingAccountsPayableDocumentBase.class);
 
@@ -105,7 +105,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     protected Integer accountsPayablePurchasingDocumentLinkIdentifier;
     protected boolean useTaxIndicator;
     protected String vendorAttentionName;
-    protected String accountDistributionMethod; //code for account distribution method
+    //code for account distribution method
+    protected String accountDistributionMethod;
 
     // NOT PERSISTED IN DB
     protected String vendorNumber;
@@ -118,11 +119,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     // COLLECTIONS
     protected List<PurApItem> items;
-    protected List<SourceAccountingLine> accountsForRouting; // don't use me for anything else!!
+    // don't use me for anything else!!
+    protected List<SourceAccountingLine> accountsForRouting;
 
     // REFERENCE OBJECTS
     protected VendorDetail vendorDetail;
-    protected CountryEbo vendorCountry;
+    protected Country vendorCountry;
 
     // STATIC
     public transient String[] belowTheLineTypes;
@@ -137,7 +139,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * Default constructor to be overridden.
      */
     public PurchasingAccountsPayableDocumentBase() {
-        items = new ArrayList();
+        items = new ArrayList<>();
     }
 
     protected GeneralLedgerPendingEntry getFirstPendingGLEntry() {
@@ -180,8 +182,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     protected void populateAccountsForRouting() {
         SpringContext.getBean(PurapAccountingService.class).updateAccountAmounts(this);
         setAccountsForRouting(SpringContext.getBean(PurapAccountingService.class).generateSummary(getItems()));
-        // need to refresh to get the references for the searchable attributes (ie status) and for invoking route levels (ie account
-        // objects) -hjs
+        // need to refresh to get the references for the searchable attributes (ie status) and for invoking route
+        // levels (ie account objects) -hjs
         refreshNonUpdateableReferences();
         for (SourceAccountingLine sourceLine : getAccountsForRouting()) {
             sourceLine.refreshNonUpdateableReferences();
@@ -189,42 +191,28 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     public boolean isSensitive() {
-        List<SensitiveData> sensitiveData = SpringContext.getBean(SensitiveDataService.class).getSensitiveDatasAssignedByRelatedDocId(getAccountsPayablePurchasingDocumentLinkIdentifier());
-        if (ObjectUtils.isNotNull(sensitiveData) && !sensitiveData.isEmpty()) {
-            return true;
-        }
-        return false;
+        List<SensitiveData> sensitiveData = SpringContext.getBean(SensitiveDataService.class)
+                .getSensitiveDatasAssignedByRelatedDocId(getAccountsPayablePurchasingDocumentLinkIdentifier());
+        return ObjectUtils.isNotNull(sensitiveData) && !sensitiveData.isEmpty();
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#isInquiryRendered()
-     */
     @Override
     public boolean isInquiryRendered() {
         return isPostingYearPrior();
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#isPostingYearNext()
-     */
     @Override
     public boolean isPostingYearNext() {
         Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
         return (getPostingYear().compareTo(currentFY) > 0);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#isPostingYearPrior()
-     */
     @Override
     public boolean isPostingYearPrior() {
         Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
         return (getPostingYear().compareTo(currentFY) < 0);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getPostingYearNextOrCurrent()
-     */
     @Override
     public Integer getPostingYearNextOrCurrent() {
         if (isPostingYearNext()) {
@@ -235,9 +223,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getItemClass()
-     */
     @Override
     @SuppressWarnings("rawtypes")
     public abstract Class getItemClass();
@@ -245,21 +230,11 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @SuppressWarnings("rawtypes")
     public abstract Class getItemUseTaxClass();
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getPurApSourceDocumentIfPossible()
-     */
     @Override
     public abstract PurchasingAccountsPayableDocument getPurApSourceDocumentIfPossible();
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getPurApSourceDocumentLabelIfPossible()
-     */
     @Override
     public abstract String getPurApSourceDocumentLabelIfPossible();
-
-    /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#prepareForSave()
-     */
 
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
@@ -269,11 +244,9 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
-     * PURAP documents are all overriding this method to return false because sufficient funds checking should not be performed on
-     * route of any PURAP documents. Only the Purchase Order performs a sufficient funds check and it is manually forced during
-     * routing.
-     *
-     * @see org.kuali.kfs.sys.document.GeneralLedgerPostingDocumentBase#documentPerformsSufficientFundsCheck()
+     * PURAP documents are all overriding this method to return false because sufficient funds checking should not be
+     * performed on route of any PURAP documents. Only the Purchase Order performs a sufficient funds check and it is
+     * manually forced during routing.
      */
     @Override
     public boolean documentPerformsSufficientFundsCheck() {
@@ -323,9 +296,9 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
-     * Allows child PO classes to customize the prepareForSave method. Most of the subclasses need to call the super's method to get
-     * the GL entry creation, but they each need to do different things to prepare for those entries to be created. This is only for
-     * PO since it has children classes that need different prep work for GL creation.
+     * Allows child PO classes to customize the prepareForSave method. Most of the subclasses need to call the super's
+     * method to get the GL entry creation, but they each need to do different things to prepare for those entries to
+     * be created. This is only for PO since it has children classes that need different prep work for GL creation.
      *
      * @param event the event involved in this action.
      */
@@ -341,9 +314,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         }
     }
 
-    /**
-     * @see org.kuali.kfs.sys.document.AccountingDocumentBase#buildListOfDeletionAwareLists()
-     */
     @SuppressWarnings("rawtypes")
     @Override
     public List buildListOfDeletionAwareLists() {
@@ -367,12 +337,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @SuppressWarnings("rawtypes")
     protected List getDeletionAwareAccountingLines() {
-        List<PurApAccountingLine> deletionAwareAccountingLines = new ArrayList<PurApAccountingLine>();
+        List<PurApAccountingLine> deletionAwareAccountingLines = new ArrayList<>();
         for (Object itemAsObject : this.getItems()) {
             final PurApItem item = (PurApItem) itemAsObject;
-            for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
-                deletionAwareAccountingLines.add(accountingLine);
-            }
+            deletionAwareAccountingLines.addAll(item.getSourceAccountingLines());
         }
         return deletionAwareAccountingLines;
     }
@@ -384,7 +352,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @SuppressWarnings("rawtypes")
     protected List getDeletionAwareUseTaxItems() {
-        List<PurApItemUseTax> deletionAwareUseTaxItems = new ArrayList<PurApItemUseTax>();
+        List<PurApItemUseTax> deletionAwareUseTaxItems = new ArrayList<>();
 
         List<PurApItemBase> subManageList = this.getItems();
         for (PurApItemBase subManage : subManageList) {
@@ -395,39 +363,33 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
+     * @Override public List buildListOfDeletionAwareLists() {
+     * List managedLists = new ArrayList();
+     * if (allowDeleteAwareCollection) {
+     * List<PurApAccountingLine> purapAccountsList = new ArrayList<PurApAccountingLine>();
+     * for (Object itemAsObject : this.getItems()) {
+     * final PurApItem item = (PurApItem)itemAsObject;
+     * purapAccountsList.addAll(item.getSourceAccountingLines());
+     * }
+     * managedLists.add(purapAccountsList);
+     * managedLists.add(this.getItems());
+     * }
+     * return managedLists;
+     * }
      * @see org.kuali.kfs.sys.document.AccountingDocumentBase#buildListOfDeletionAwareLists()
-     *
-    @Override
-    public List buildListOfDeletionAwareLists() {
-        List managedLists = new ArrayList();
-        if (allowDeleteAwareCollection) {
-            List<PurApAccountingLine> purapAccountsList = new ArrayList<PurApAccountingLine>();
-            for (Object itemAsObject : this.getItems()) {
-                final PurApItem item = (PurApItem)itemAsObject;
-                purapAccountsList.addAll(item.getSourceAccountingLines());
-            }
-            managedLists.add(purapAccountsList);
-            managedLists.add(this.getItems());
-        }
-        return managedLists;
-    }
-    */
-
+     */
     @Override
     public void processAfterRetrieve() {
         super.processAfterRetrieve();
-
         refreshNonUpdateableReferences();
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#addItem(PurApItem item)
-     */
     @Override
     public void addItem(PurApItem item) {
         int itemLinePosition = getItemLinePosition();
-        if (ObjectUtils.isNotNull(item.getItemLineNumber()) && (item.getItemLineNumber() > 0) && (item.getItemLineNumber() <= itemLinePosition)) {
-            itemLinePosition = item.getItemLineNumber().intValue() - 1;
+        if (ObjectUtils.isNotNull(item.getItemLineNumber()) && item.getItemLineNumber() > 0
+                && item.getItemLineNumber() <= itemLinePosition) {
+            itemLinePosition = item.getItemLineNumber() - 1;
         }
 
         item.setPurapDocumentIdentifier(this.purapDocumentIdentifier);
@@ -437,18 +399,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         renumberItems(itemLinePosition);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#deleteItem(int lineNum)
-     */
     @Override
     public void deleteItem(int lineNum) {
-        items.remove(lineNum); // throw error here
+        items.remove(lineNum);
         renumberItems(lineNum);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#renumberItems(int start)
-     */
     @Override
     public void renumberItems(int start) {
         for (int i = start; i < items.size(); i++) {
@@ -459,15 +415,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             if (item.getItemType().isLineItemIndicator()) {
                 // KFSPTS-1719/KFSUPGRADE-485 :  skip this for non-qty order
                 if (!(item instanceof PaymentRequestItem && ((PaymentRequestItem) item).getPurchaseOrderItem() != null && ((PaymentRequestItem) item).getPurchaseOrderItem().isNoQtyItem())) {
-                	item.setItemLineNumber(new Integer(i + 1));
+                	    item.setItemLineNumber(i + 1);
                 }
             }
         }
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#itemSwap(int positionFrom, int positionTo)
-     */
     @Override
     public void itemSwap(int positionFrom, int positionTo) {
         // if out of range do nothing
@@ -485,9 +438,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         items.add(positionTo, item1);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getItemLinePosition()
-     */
     @Override
     public int getItemLinePosition() {
         int belowTheLineCount = 0;
@@ -500,26 +450,22 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return items.size() - belowTheLineCount;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getItem(int pos)
-     */
     @Override
     public PurApItem getItem(int pos) {
         return items.get(pos);
     }
 
     /**
-     * Iterates through the items of the document and returns the item with the line number equal to the number given, or null if a
-     * match is not found.
+     * Iterates through the items of the document and returns the item with the line number equal to the number given,
+     * or null if a match is not found.
      *
      * @param lineNumber line number to match on.
      * @return the PurchasingAp Item if a match is found, else null.
      */
     @SuppressWarnings("rawtypes")
     public PurApItem getItemByLineNumber(int lineNumber) {
-        for (Iterator iter = items.iterator(); iter.hasNext(); ) {
-            PurApItem item = (PurApItem) iter.next();
-            if (item.getItemLineNumber().intValue() == lineNumber) {
+        for (PurApItem item : items) {
+            if (item.getItemLineNumber() == lineNumber) {
                 return item;
             }
         }
@@ -534,8 +480,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @SuppressWarnings("rawtypes")
     public PurApItem getItemByStringIdentifier(String itemStrID) {
-        for (Iterator iter = items.iterator(); iter.hasNext(); ) {
-            PurApItem item = (PurApItem) iter.next();
+        for (PurApItem item : items) {
             if (StringUtils.equalsIgnoreCase(item.getItemIdentifierString(), itemStrID)) {
                 return item;
             }
@@ -551,8 +496,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @SuppressWarnings("rawtypes")
     public PurApItem getItemByItemIdentifier(Integer itemID) {
-        for (Iterator iter = items.iterator(); iter.hasNext(); ) {
-            PurApItem item = (PurApItem) iter.next();
+        for (PurApItem item : items) {
             if (item.getItemIdentifier() == itemID) {
                 return item;
             }
@@ -561,43 +505,30 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
-     * Overriding the parent method so that we can just set the posting year without the other stuff that the parent does to the
-     * accounting period. We only store the posting year on the doc and don't want the other stuff.
-     *
-     * @see org.kuali.kfs.sys.document.LedgerPostingDocumentBase#setPostingYear(java.lang.Integer)
+     * Overriding the parent method so that we can just set the posting year without the other stuff that the parent
+     * does to the accounting period. We only store the posting year on the doc and don't want the other stuff.
      */
     @Override
     public void setPostingYear(Integer postingYear) {
         this.postingYear = postingYear;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getTotalDollarAmount()
-     */
     @Override
     public KualiDecimal getTotalDollarAmount() {
         return getTotalDollarAmountAllItems(null);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#setTotalDollarAmount(KualiDecimal amount)
-     */
     @Override
     public void setTotalDollarAmount(KualiDecimal amount) {
         // do nothing, this is so that the jsp won't complain about totalDollarAmount have no setter method.
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getTotalDollarAmountAllItems(String[] excludedTypes)
-     */
     @Override
     public KualiDecimal getTotalDollarAmountAllItems(String[] excludedTypes) {
         return getTotalDollarAmountWithExclusions(excludedTypes, true);
     }
 
     /**
-     * Computes the total dollar amount of all above the line items.
-     *
      * @return the total dollar amount of all above the line items.
      */
     @Override
@@ -606,8 +537,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
-     * Computes the total dollar amount of all above the line items with the specified item types excluded.
-     *
      * @param excludedTypes the types of items to be excluded.
      * @return the total dollar amount of all above the line items with the specified item types excluded..
      */
@@ -616,8 +545,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
-     * Computes the total dollar amount with the specified item types and possibly below the line items excluded.
-     *
      * @param excludedTypes       the types of items to be excluded.
      * @param includeBelowTheLine indicates whether below the line items shall be included.
      * @return the total dollar amount with the specified item types excluded.
@@ -634,7 +561,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param itemsForTotal
      * @return
      */
-    protected KualiDecimal getTotalDollarAmountWithExclusionsSubsetItems(String[] excludedTypes, boolean includeBelowTheLine, List<PurApItem> itemsForTotal) {
+    protected KualiDecimal getTotalDollarAmountWithExclusionsSubsetItems(String[] excludedTypes,
+            boolean includeBelowTheLine, List<PurApItem> itemsForTotal) {
         if (excludedTypes == null) {
             excludedTypes = new String[]{};
         }
@@ -643,7 +571,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         for (PurApItem item : itemsForTotal) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
             ItemType it = item.getItemType();
-            if ((includeBelowTheLine || it.isLineItemIndicator()) && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
+            if ((includeBelowTheLine || it.isLineItemIndicator())
+                    && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
                 KualiDecimal totalAmount = item.getTotalAmount();
                 KualiDecimal itemTotal = (totalAmount != null) ? totalAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
@@ -660,7 +589,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     @Override
     public List<PurApItem> getTradeInItems() {
-        List<PurApItem> tradeInItems = new ArrayList<PurApItem>();
+        List<PurApItem> tradeInItems = new ArrayList<>();
         for (PurApItem purApItem : (List<PurApItem>) getItems()) {
             if (purApItem.getItemAssignedToTradeInIndicator()) {
                 tradeInItems.add(purApItem);
@@ -669,33 +598,22 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return tradeInItems;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getTotalPreTaxDollarAmount()
-     */
     @Override
     public KualiDecimal getTotalPreTaxDollarAmount() {
         return getTotalPreTaxDollarAmountAllItems(null);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#setTotalPreTaxDollarAmount(org.kuali.rice.core.api.util.type.KualiDecimal)
-     */
     @Override
     public void setTotalPreTaxDollarAmount(KualiDecimal amount) {
         // do nothing, this is so that the jsp won't complain about totalDollarAmount have no setter method.
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getTotalPreTaxDollarAmountAllItems(java.lang.String[])
-     */
     @Override
     public KualiDecimal getTotalPreTaxDollarAmountAllItems(String[] excludedTypes) {
         return getTotalPreTaxDollarAmountWithExclusions(excludedTypes, true);
     }
 
     /**
-     * Computes the total dollar amount of all above the line items.
-     *
      * @return the total dollar amount of all above the line items.
      */
     public KualiDecimal getTotalPreTaxDollarAmountAboveLineItems() {
@@ -728,7 +646,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         for (PurApItem item : (List<PurApItem>) getItems()) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
             ItemType it = item.getItemType();
-            if ((includeBelowTheLine || it.isLineItemIndicator()) && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
+            if ((includeBelowTheLine || it.isLineItemIndicator())
+                    && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
                 KualiDecimal extendedPrice = item.getExtendedPrice();
                 KualiDecimal itemTotal = (extendedPrice != null) ? extendedPrice : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
@@ -772,7 +691,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         for (PurApItem item : (List<PurApItem>) getItems()) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
             ItemType it = item.getItemType();
-            if ((includeBelowTheLine || it.isLineItemIndicator()) && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
+            if ((includeBelowTheLine || it.isLineItemIndicator())
+                    && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
                 KualiDecimal taxAmount = item.getItemTaxAmount();
                 KualiDecimal itemTotal = (taxAmount != null) ? taxAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
@@ -791,9 +711,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         this.useTaxIndicator = useTaxIndicator;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#templateVendorAddress(VendorAddress)
-     */
     @Override
     public void templateVendorAddress(VendorAddress vendorAddress) {
         if (vendorAddress == null) {
@@ -810,10 +727,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
   }
 
     /**
-     * Returns the vendor number for this document.
-     *
      * @return the vendor number for this document.
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#getVendorNumber()
      */
     @Override
     public String getVendorNumber() {
@@ -996,7 +910,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setAccountsPayablePurchasingDocumentLinkIdentifier(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+    public void setAccountsPayablePurchasingDocumentLinkIdentifier(
+            Integer accountsPayablePurchasingDocumentLinkIdentifier) {
         this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
     }
 
@@ -1009,21 +924,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public CountryEbo getVendorCountry() {
-        if (StringUtils.isBlank(vendorCountryCode)) {
-            vendorCountry = null;
-        } else {
-            if (vendorCountry == null || !StringUtils.equals(vendorCountry.getCode(), vendorCountryCode)) {
-                ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(CountryEbo.class);
-                if (moduleService != null) {
-                    Map<String, Object> keys = new HashMap<String, Object>(1);
-                    keys.put(LocationConstants.PrimaryKeyConstants.CODE, vendorCountryCode);
-                    vendorCountry = moduleService.getExternalizableBusinessObject(CountryEbo.class, keys);
-                } else {
-                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed.");
-                }
-            }
-        }
+    public Country getVendorCountry() {
         return vendorCountry;
     }
 
@@ -1033,7 +934,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @deprecated
      */
     @Deprecated
-    public void setVendorCountry(CountryEbo vendorCountry) {
+    public void setVendorCountry(Country vendorCountry) {
         this.vendorCountry = vendorCountry;
     }
 
@@ -1045,21 +946,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         this.vendorAttentionName = vendorAttentionName;
     }
 
-    /**
-     * Gets the accountDistributionMethod attribute.
-     *
-     * @return Returns the accountDistributionMethod
-     */
-
     public String getAccountDistributionMethod() {
         return accountDistributionMethod;
     }
 
-    /**
-     * Sets the accountDistributionMethod attribute.
-     *
-     * @param accountDistributionMethod The accountDistributionMethod to set.
-     */
     public void setAccountDistributionMethod(String accountDistributionMethod) {
         this.accountDistributionMethod = accountDistributionMethod;
     }
@@ -1067,11 +957,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     /**
      * Determines whether the account is debit. It always returns false.
      *
-     * @param financialDocument The document containing the account to be validated.
-     * @param accountingLine    The account to be validated.
+     * @param postable
      * @return boolean false.
-     * @see org.kuali.kfs.sys.document.validation.AccountingLineRule#isDebit(org.kuali.kfs.sys.document.AccountingDocument,
-     * org.kuali.kfs.sys.businessobject.AccountingLine)
      */
     @Override
     public boolean isDebit(GeneralLedgerPendingEntrySourceDetail postable) {
@@ -1080,7 +967,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     public PurApRelatedViews getRelatedViews() {
         if (relatedViews == null) {
-            relatedViews = new PurApRelatedViews(this.documentNumber, this.accountsPayablePurchasingDocumentLinkIdentifier);
+            relatedViews = new PurApRelatedViews(this.documentNumber,
+                    this.accountsPayablePurchasingDocumentLinkIdentifier);
         }
         return relatedViews;
     }
@@ -1118,9 +1006,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
-     * Returns the trade in item of the document.
-     *
-     * @return
+     * @return the trade in item of the document.
      */
     @Override
     public PurApItem getTradeInItem() {
@@ -1132,68 +1018,37 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return null;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument.getIsATypeOfPurAPRecDoc().
-     */
     @Override
     public boolean getIsATypeOfPurAPRecDoc() {
         return true;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument.getIsATypeOfPurDoc().
-     */
     @Override
     public boolean getIsATypeOfPurDoc() {
-        if (this instanceof PurchasingDocumentBase) {
-            return true;
-        } else {
-            return false;
-        }
+        return this instanceof PurchasingDocumentBase;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument.getIsATypeOfPODoc().
-     */
     @Override
     public boolean getIsATypeOfPODoc() {
-        if (this instanceof PurchaseOrderDocument) {
-            return true;
-        } else {
-            return false;
-        }
+        return this instanceof PurchaseOrderDocument;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument.getIsPODoc().
-     */
     @Override
     public boolean getIsPODoc() {
-        if ((this instanceof PurchaseOrderDocument) &&
-            !(this instanceof PurchaseOrderAmendmentDocument) &&
-            !(this instanceof PurchaseOrderCloseDocument) &&
-            !(this instanceof PurchaseOrderPaymentHoldDocument) &&
-            !(this instanceof PurchaseOrderRemoveHoldDocument) &&
-            !(this instanceof PurchaseOrderReopenDocument) &&
-            !(this instanceof PurchaseOrderRetransmitDocument) &&
-            !(this instanceof PurchaseOrderSplitDocument) &&
-            !(this instanceof PurchaseOrderVoidDocument)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (this instanceof PurchaseOrderDocument)
+                && !(this instanceof PurchaseOrderAmendmentDocument)
+                && !(this instanceof PurchaseOrderCloseDocument)
+                && !(this instanceof PurchaseOrderPaymentHoldDocument)
+                && !(this instanceof PurchaseOrderRemoveHoldDocument)
+                && !(this instanceof PurchaseOrderReopenDocument)
+                && !(this instanceof PurchaseOrderRetransmitDocument)
+                && !(this instanceof PurchaseOrderSplitDocument)
+                && !(this instanceof PurchaseOrderVoidDocument);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument.getIsATypeOfREQSDoc().
-     */
     @Override
     public boolean getIsReqsDoc() {
-        if (this instanceof RequisitionDocument) {
-            return true;
-        } else {
-            return false;
-        }
+        return this instanceof RequisitionDocument;
     }
 
     /**
@@ -1230,8 +1085,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Overridden to return the source lines of all of the items
-     *
-     * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getSourceAccountingLines()
      */
     @SuppressWarnings("rawtypes")
     @Override
@@ -1240,7 +1093,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             // do nothing because acct lines have already been set
             return sourceAccountingLines;
         } else {
-            List<AccountingLine> sourceAccountingLines = new ArrayList<AccountingLine>();
+            List<AccountingLine> sourceAccountingLines = new ArrayList<>();
             for (Object itemAsObject : this.getItems()) {
                 final PurApItem item = (PurApItem) itemAsObject;
                 for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
@@ -1262,7 +1115,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param accountingLine
      * @return true if it is a duplicate else return false.
      */
-    protected boolean isDuplicateAccountingLine(List<AccountingLine> sourceAccountingLines, PurApAccountingLine accountingLine) {
+    protected boolean isDuplicateAccountingLine(List<AccountingLine> sourceAccountingLines,
+            PurApAccountingLine accountingLine) {
         for (AccountingLine sourceLine : sourceAccountingLines) {
             PurApAccountingLine purapAccountLine = (PurApAccountingLine) sourceLine;
 
@@ -1297,8 +1151,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     /**
-     * Checks whether the related purchase order views need a warning to be displayed,
-     * i.e. if at least one of the purchase orders has never been opened.
+     * Checks whether the related purchase order views need a warning to be displayed, i.e. if at least one of the
+     * purchase orders has never been opened.
      *
      * @return true if at least one related purchase order needs a warning; false otherwise
      */
@@ -1314,16 +1168,16 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Accounting lines that are read-only should skip validation
-     *
-     * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getPersistedSourceAccountingLinesForComparison()
      */
     @SuppressWarnings("rawtypes")
     @Override
     protected List getPersistedSourceAccountingLinesForComparison() {
         LOG.info("Checking persisted source accounting lines for read-only fields");
-        List<String> restrictedItemTypesList = new ArrayList<String>();
+        List<String> restrictedItemTypesList = new ArrayList<>();
         try {
-            restrictedItemTypesList = new ArrayList<String>(SpringContext.getBean(ParameterService.class).getParameterValuesAsString(this.getClass(), PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
+            restrictedItemTypesList = new ArrayList<>(SpringContext.getBean(ParameterService.class)
+                    .getParameterValuesAsString(this.getClass(),
+                            PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
         } catch (IllegalArgumentException iae) {
             // do nothing, not a problem if no restricted types are defined
         }
@@ -1335,7 +1189,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             // only check items that already have been persisted since last save
             if (ObjectUtils.isNotNull(item.getItemIdentifier())) {
                 // Disable validation if the item is read-only
-                final boolean isNotReadOnly = !((restrictedItemTypesList != null) && restrictedItemTypesList.contains(item.getItemTypeCode()));
+                final boolean isNotReadOnly = !((restrictedItemTypesList != null)
+                        && restrictedItemTypesList.contains(item.getItemTypeCode()));
                 if (isNotReadOnly) {
                     persistedSourceLines.addAll(purApAccountingService.getAccountsFromItem(item));
                 }
@@ -1346,16 +1201,16 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Accounting lines that are read-only should skip validation
-     *
-     * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getSourceAccountingLinesForComparison()
      */
     @SuppressWarnings("rawtypes")
     @Override
     protected List getSourceAccountingLinesForComparison() {
         LOG.info("Checking source accounting lines for read-only fields");
-        List<String> restrictedItemTypesList = new ArrayList<String>();
+        List<String> restrictedItemTypesList = new ArrayList<>();
         try {
-            restrictedItemTypesList = new ArrayList<String>(SpringContext.getBean(ParameterService.class).getParameterValuesAsString(this.getClass(), PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
+            restrictedItemTypesList = new ArrayList<>(SpringContext.getBean(ParameterService.class)
+                    .getParameterValuesAsString(this.getClass(),
+                            PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
         } catch (IllegalArgumentException iae) {
             // do nothing, not a problem if no restricted types are defined
         }
@@ -1363,7 +1218,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         List currentSourceLines = new ArrayList();
         for (PurApItem item : (List<PurApItem>) this.getItems()) {
             // Disable validation if the item is read-only
-            final boolean isNotReadOnly = !((restrictedItemTypesList != null) && restrictedItemTypesList.contains(item.getItemTypeCode()));
+            final boolean isNotReadOnly = !(restrictedItemTypesList != null
+                    && restrictedItemTypesList.contains(item.getItemTypeCode()));
             if (isNotReadOnly) {
                 currentSourceLines.addAll(item.getSourceAccountingLines());
             }

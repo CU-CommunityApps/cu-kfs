@@ -246,6 +246,7 @@
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountStateCode" column="ACCT_STATE_CD"
 			jdbc-type="VARCHAR" />
+		<field-descriptor name="accountCountryCode" column="ACCT_CNTRY_CD" jdbc-type="VARCHAR"/>
 		<field-descriptor name="accountStreetAddress" column="ACCT_STREET_ADDR"
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountZipCode" column="ACCT_ZIP_CD"
@@ -458,6 +459,24 @@
 			<foreignkey field-ref="accountNumber" />
 
 		</reference-descriptor>
+		
+		<reference-descriptor name="accountPhysicalCampus" class-ref="org.kuali.kfs.sys.businessobject.Campus"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountPhysicalCampusCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="accountState" class-ref="org.kuali.kfs.sys.businessobject.State"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountStateCode" target-field-ref="code"/>
+        </reference-descriptor>
+       
+        <reference-descriptor name="postalZipCode" class-ref="org.kuali.kfs.sys.businessobject.PostalCode"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountZipCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
 		<!-- removed and substituted with EBO relationship <reference-descriptor 
 			name="laborBenefitRateCategory" class-ref="org.kuali.kfs.integration.ld.LaborBenefitRateCategory" 
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" > 
@@ -515,6 +534,7 @@
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountStateCode" column="ACCT_STATE_CD"
 			jdbc-type="VARCHAR" />
+		<field-descriptor name="accountCountryCode" column="ACCT_CNTRY_CD" jdbc-type="VARCHAR"/>
 		<field-descriptor name="accountStreetAddress" column="ACCT_STREET_ADDR"
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountZipCode" column="ACCT_ZIP_CD"
@@ -779,6 +799,23 @@
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="invoiceTypeCode" />
 		</reference-descriptor>
+		
+	    <reference-descriptor name="accountPhysicalCampus" class-ref="org.kuali.kfs.sys.businessobject.Campus"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountPhysicalCampusCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="accountState" class-ref="org.kuali.kfs.sys.businessobject.State"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountStateCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="postalZipCode" class-ref="org.kuali.kfs.sys.businessobject.PostalCode"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountZipCode" target-field-ref="code"/>
+        </reference-descriptor>
 		
 		<collection-descriptor name="indirectCostRecoveryAccounts"
 			element-class-ref="edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange"
@@ -1434,6 +1471,24 @@
 			<foreignkey field-ref="accountNumber" />
 
 		</reference-descriptor>
+		
+	    <reference-descriptor name="accountPhysicalCampus" class-ref="org.kuali.kfs.sys.businessobject.Campus"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountPhysicalCampusCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
+		<reference-descriptor name="accountState" class-ref="org.kuali.kfs.sys.businessobject.State"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountStateCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="postalZipCode" class-ref="org.kuali.kfs.sys.businessobject.PostalCode"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountZipCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
 		<!-- removed and substituted with EBO relationship <reference-descriptor 
 			name="laborBenefitRateCategory" class-ref="org.kuali.kfs.integration.ld.LaborBenefitRateCategory" 
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" > 
@@ -1554,6 +1609,7 @@
 	    <field-descriptor name="accountRestrictedStatusDate" column="ACCT_RSTRC_STAT_DT" jdbc-type="DATE" />
 	    <field-descriptor name="accountCityName" column="ACCT_CITY_NM" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountStateCode" column="ACCT_STATE_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="accountCountryCode" column="ACCT_CNTRY_CD" jdbc-type="VARCHAR"/>
 	    <field-descriptor name="accountStreetAddress" column="ACCT_STREET_ADDR" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountZipCode" column="ACCT_ZIP_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="reportsToChartOfAccountsCode" column="RPTS_TO_FIN_COA_CD" jdbc-type="VARCHAR" />
@@ -1654,7 +1710,23 @@
 	        <foreignkey field-ref="chartOfAccountsCode" />
 	        <foreignkey field-ref="accountNumber" />
 	    </reference-descriptor>
-	
+	    
+	    <reference-descriptor name="accountPhysicalCampus" class-ref="org.kuali.kfs.sys.businessobject.Campus"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountPhysicalCampusCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="accountState" class-ref="org.kuali.kfs.sys.businessobject.State"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountStateCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="postalZipCode" class-ref="org.kuali.kfs.sys.businessobject.PostalCode"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
+            <foreignkey field-ref="accountZipCode" target-field-ref="code"/>
+        </reference-descriptor>
 	
 	    <collection-descriptor name="subAccounts" element-class-ref="org.kuali.kfs.coa.businessobject.SubAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
 	        <orderby name="subAccountNumber" sort="ASC" />

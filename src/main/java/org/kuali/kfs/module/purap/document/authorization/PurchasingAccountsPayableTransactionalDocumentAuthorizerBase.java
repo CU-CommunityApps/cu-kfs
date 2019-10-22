@@ -41,7 +41,9 @@ public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extend
         attributes.put(PurapKimAttributes.DOCUMENT_SENSITIVE, "false");
         PurchasingAccountsPayableDocument purapDoc = (PurchasingAccountsPayableDocument) businessObject;
         if (purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier() != null) {
-            List<SensitiveData> sensitiveDataList = SpringContext.getBean(SensitiveDataService.class).getSensitiveDatasAssignedByRelatedDocId(purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
+            List<SensitiveData> sensitiveDataList = SpringContext.getBean(SensitiveDataService.class)
+                    .getSensitiveDatasAssignedByRelatedDocId(
+                            purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
             if (ObjectUtils.isNotNull(sensitiveDataList) && !sensitiveDataList.isEmpty()) {
                 StringBuffer sensitiveDataCodes = new StringBuffer();
                 for (SensitiveData sensitiveData : sensitiveDataList) {
@@ -51,8 +53,10 @@ public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extend
                 }
                 if (sensitiveDataCodes.length() > 0) {
                     attributes.put(PurapKimAttributes.DOCUMENT_SENSITIVE, "true");
-                    attributes.put(PurapKimAttributes.SENSITIVE_DATA_CODE, sensitiveDataCodes.toString().substring(0, sensitiveDataCodes.length() - 1));
-                    attributes.put(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER, purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier().toString());
+                    attributes.put(PurapKimAttributes.SENSITIVE_DATA_CODE, sensitiveDataCodes.toString().substring(0,
+                            sensitiveDataCodes.length() - 1));
+                    attributes.put(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER,
+                            purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier().toString());
                 }
                 // KFSUPGRADE-346
             } else if (purapDoc.isSensitive()) {

@@ -21,10 +21,10 @@ import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.businessobject.Campus;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.location.framework.campus.CampusEbo;
 
 import edu.cornell.kfs.coa.service.GlobalObjectWithIndirectCostRecoveryAccountsService;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
@@ -71,7 +71,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     protected boolean removeIncomeStreamChartAndAccount;  
     
     protected MajorReportingCategory majorReportingCategory;
-    protected CampusEbo accountPhysicalCampus;  
+    protected Campus accountPhysicalCampus;  
     protected Account contractControlAccount;
     protected Chart contractControlChartOfAccounts;
     protected IndirectCostRecoveryType acctIndirectCostRcvyType;
@@ -449,11 +449,11 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         this.accountPhysicalCampusCode = accountPhysicalCampusCode;
     }
 
-    public CampusEbo getAccountPhysicalCampus() {
+    public Campus getAccountPhysicalCampus() {
         return accountPhysicalCampus;
     }
 
-    public void setAccountPhysicalCampus(CampusEbo accountPhysicalCampus) {
+    public void setAccountPhysicalCampus(Campus accountPhysicalCampus) {
         this.accountPhysicalCampus = accountPhysicalCampus;
     }
 

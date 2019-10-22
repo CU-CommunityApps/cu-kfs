@@ -98,6 +98,21 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
             return getEndDate();
         }
     }
+    
+    @Override
+    protected Date determineStartDate() {
+        if (lastBilledDate == null) {
+            if (awardStartDate.after(currentDate)) {
+                AccountingPeriod previousAccountingPeriod = findPreviousAccountingPeriod(currentDate);
+                AccountingPeriod beforePreviousAccountingPeriod = findPreviousAccountingPeriod(
+                        previousAccountingPeriod.getUniversityFiscalPeriodEndDate());
+                return calculateNextDay(beforePreviousAccountingPeriod.getUniversityFiscalPeriodEndDate());
+            } else {
+                return awardStartDate;
+            }
+        }
+        return determineStartDateByFrequency();
+    }
 
     protected AccountingPeriod findPreviousAccountingPeriod(final Date date) {
         final AccountingPeriod currentAccountingPeriod = findAccountingPeriodBy(date);

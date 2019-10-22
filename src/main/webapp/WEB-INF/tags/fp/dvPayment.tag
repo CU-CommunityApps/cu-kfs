@@ -163,7 +163,7 @@
                                           property="document.dvPayeeDetail.disbVchrPayeeStateCode"
                                           readOnly="${!fullEntryMode && !payeeEntryMode}"/>
                 <c:if test="${fullEntryMode || payeeEntryMode}">
-              		<kul:lookup boClassName="org.kuali.rice.location.framework.state.StateEbo"
+              		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.State"
                                 fieldConversions="countryCode:document.dvPayeeDetail.disbVchrPayeeCountryCode,code:document.dvPayeeDetail.disbVchrPayeeStateCode"
               		            lookupParameters="document.dvPayeeDetail.disbVchrPayeeCountryCode:countryCode" />
               	</c:if>
@@ -188,7 +188,7 @@
                                           property="document.dvPayeeDetail.disbVchrPayeeZipCode"
                                           readOnly="${!fullEntryMode && !payeeEntryMode}"/>
                 <c:if test="${fullEntryMode || payeeEntryMode}">
-              		<kul:lookup boClassName="org.kuali.rice.location.framework.postalcode.PostalCodeEbo"
+              		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.PostalCode"
                                 fieldConversions="code:document.dvPayeeDetail.disbVchrPayeeZipCode,countryCode:document.dvPayeeDetail.disbVchrPayeeCountryCode,stateCode:document.dvPayeeDetail.disbVchrPayeeStateCode,cityName:document.dvPayeeDetail.disbVchrPayeeCityName"
               		            lookupParameters="document.dvPayeeDetail.disbVchrPayeeCountryCode:countryCode,document.dvPayeeDetail.disbVchrPayeeZipCode:code,document.dvPayeeDetail.disbVchrPayeeStateCode:stateCode,document.dvPayeeDetail.disbVchrPayeeCityName:cityName" />
               	</c:if>

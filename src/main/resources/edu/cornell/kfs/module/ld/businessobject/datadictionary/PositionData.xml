@@ -19,7 +19,6 @@
     xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
    
   <bean id="PositionData" parent="PositionData-parentBean">
-  	<property name="businessObjectAdminService" ref="noActionsBoAdminService"/>
     <property name="attributes">
       <list merge="true">
         <ref bean="PositionData-extension-orgCode"/>
