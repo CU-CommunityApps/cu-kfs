@@ -1584,6 +1584,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         vendorForeignAddressLine2P = null;
         vendorForeignCityNameP = null;
         vendorForeignZipCodeP = null;
+        vendorForeignProvinceNameP = null;
         vendorForeignCountryCodeP = null;
         formattedSSNValueP = null;
         formattedITINValueP = null;
