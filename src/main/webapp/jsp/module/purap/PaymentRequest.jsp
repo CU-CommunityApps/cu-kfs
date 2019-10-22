@@ -103,7 +103,7 @@
         <gl:generalLedgerPendingEntries/>
 
         <kul:notes
-                attachmentTypesValuesFinderClass="${DataDictionary.PaymentRequestDocument.attachmentTypesValuesFinder}"
+                attachmentTypesValuesFinder="${DataDictionary.PaymentRequestDocument.attachmentTypesValuesFinder}"
                 defaultOpen="${KualiForm.document.openAttachmentTab}"/>
 
         <kul:adHocRecipients/>

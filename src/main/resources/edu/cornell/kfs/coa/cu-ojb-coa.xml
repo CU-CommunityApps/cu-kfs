@@ -534,6 +534,7 @@
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountStateCode" column="ACCT_STATE_CD"
 			jdbc-type="VARCHAR" />
+		<field-descriptor name="accountCountryCode" column="ACCT_CNTRY_CD" jdbc-type="VARCHAR"/>
 		<field-descriptor name="accountStreetAddress" column="ACCT_STREET_ADDR"
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountZipCode" column="ACCT_ZIP_CD"
@@ -1608,6 +1609,7 @@
 	    <field-descriptor name="accountRestrictedStatusDate" column="ACCT_RSTRC_STAT_DT" jdbc-type="DATE" />
 	    <field-descriptor name="accountCityName" column="ACCT_CITY_NM" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountStateCode" column="ACCT_STATE_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="accountCountryCode" column="ACCT_CNTRY_CD" jdbc-type="VARCHAR"/>
 	    <field-descriptor name="accountStreetAddress" column="ACCT_STREET_ADDR" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountZipCode" column="ACCT_ZIP_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="reportsToChartOfAccountsCode" column="RPTS_TO_FIN_COA_CD" jdbc-type="VARCHAR" />
