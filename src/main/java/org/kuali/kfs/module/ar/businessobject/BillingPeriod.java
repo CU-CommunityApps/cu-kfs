@@ -91,10 +91,6 @@ public abstract class BillingPeriod {
     }
 
     protected boolean canThisBeBilled() {
-        if (awardStartDate.after(currentDate)) {
-            LOG.info("canThisBeBilled: NO -- award startDate after currentDate.");
-            return false; // do not bill future awards!
-        }
 
         if (lastBilledDate == null) {
             LOG.info("canThisBeBilled: YES -- lastBilledDate is NULL");

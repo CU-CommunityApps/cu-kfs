@@ -106,7 +106,7 @@
         <property name="configurationService" ref="configurationService"/>
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="stateService" ref="stateService" />
+        <property name="businessObjectService" ref="businessObjectService" />
     </bean>
 
     <bean id="paymentWorksWebServiceCallsService" parent="paymentWorksWebServiceCallsService-parentBean" />

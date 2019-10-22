@@ -112,6 +112,10 @@
     <reference-descriptor name="chapter4Status" class-ref="org.kuali.kfs.vnd.businessobject.Chapter4Status" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="vendorChapter4StatusCode" />
     </reference-descriptor>
+    <reference-descriptor name="vendorCountry" class-ref="org.kuali.kfs.sys.businessobject.Country"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="vendorCorpCitizenCode" target-field-ref="code"/>
+    </reference-descriptor>
     
     <collection-descriptor name="vendorSupplierDiversities" proxy="true" element-class-ref="org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none">
         <inverse-foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
@@ -376,6 +380,15 @@
     </reference-descriptor>
     <reference-descriptor name="vendorAddressType" class-ref="org.kuali.kfs.vnd.businessobject.AddressType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="vendorAddressTypeCode" />
+    </reference-descriptor>
+    <reference-descriptor name="vendorCountry" class-ref="org.kuali.kfs.sys.businessobject.Country"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="vendorCountryCode" target-field-ref="code"/>
+    </reference-descriptor>
+    <reference-descriptor name="vendorState" class-ref="org.kuali.kfs.sys.businessobject.State"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="vendorCountryCode" target-field-ref="countryCode"/>
+        <foreignkey field-ref="vendorStateCode" target-field-ref="code"/>
     </reference-descriptor>
     <collection-descriptor name="vendorDefaultAddresses" proxy="true" element-class-ref="org.kuali.kfs.vnd.businessobject.VendorDefaultAddress" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         <orderby name="vendorDefaultAddressGeneratedIdentifier" sort="ASC" />

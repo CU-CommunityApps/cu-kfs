@@ -54,14 +54,14 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     //create date from the workflow document header...
     private DateTime createDate;
 
-    // REFERENCE OBJECTS
     protected FinancialSystemDocumentHeader documentHeader;
 
     public Integer getAccountsPayablePurchasingDocumentLinkIdentifier() {
         return accountsPayablePurchasingDocumentLinkIdentifier;
     }
 
-    public void setAccountsPayablePurchasingDocumentLinkIdentifier(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+    public void setAccountsPayablePurchasingDocumentLinkIdentifier(
+            Integer accountsPayablePurchasingDocumentLinkIdentifier) {
         this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
     }
 
@@ -82,7 +82,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     public List<Note> getNotes() {
-        List<Note> notes = new ArrayList<Note>();
+        List<Note> notes = new ArrayList<>();
         //reverse the order of notes only when anything exists in it..
         NoteService noteService = SpringContext.getBean(NoteService.class);
         // ==== CU Customization: Use the note target property, rather than always assuming that the doc header is the target. ====
@@ -103,7 +103,10 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         int endSubString = docHandlerUrl.lastIndexOf("/");
         String serverName = docHandlerUrl.substring(0, endSubString);
         String handler = docHandlerUrl.substring(endSubString + 1, docHandlerUrl.lastIndexOf("?"));
-        return serverName + "/" + handler + "?channelTitle=" + docType.getName() + "&" + KRADConstants.DISPATCH_REQUEST_PARAMETER + "=" + KRADConstants.DOC_HANDLER_METHOD +"&" + KRADConstants.PARAMETER_DOC_ID + "=" + this.getDocumentNumber() + "&" + KRADConstants.PARAMETER_COMMAND + "=" + KewApiConstants.DOCSEARCH_COMMAND;
+        return serverName + "/" + handler + "?channelTitle=" + docType.getName() + "&" +
+                KRADConstants.DISPATCH_REQUEST_PARAMETER + "=" + KRADConstants.DOC_HANDLER_METHOD + "&" +
+                KRADConstants.PARAMETER_DOC_ID + "=" + this.getDocumentNumber() + "&" +
+                KRADConstants.PARAMETER_COMMAND + "=" + KewApiConstants.DOCSEARCH_COMMAND;
     }
 
     public String getDocumentIdentifierString() {
@@ -114,10 +117,9 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         }
     }
 
+
     /**
-     * Returns the document label according to the label specified in the data dictionary.
-     *
-     * @return
+     * @return the document label according to the label specified in the data dictionary.
      * @throws WorkflowException
      */
     public String getDocumentLabel() throws WorkflowException{
@@ -126,30 +128,18 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     
     public abstract String getDocumentTypeName();
 
-    /**
-     * Gets the poNumberMasked attribute.
-     *
-     * @return Returns the poNumberMasked
-     */
-
     public String getPoNumberMasked() {
         return poNumberMasked;
     }
 
-    /**
-     * Sets the poNumberMasked attribute.
-     *
-     * @param poNumberMasked The poNumberMasked to set.
-     */
     public void setPoNumberMasked(String poNumberMasked) {
         this.poNumberMasked = poNumberMasked;
     }
 
     /**
-     * This method calls the workflow helper to allow for customization method to quickly grab status
-     * without any fetching of extraneous information which causes problems for large numbers
-     * of related documents
-     * an api call will be added to core Rice to support this in the next release
+     * This method calls the workflow helper to allow for customization method to quickly grab status without any
+     * fetching of extraneous information which causes problems for large numbers of related documents an api call
+     * will be added to core Rice to support this in the next release
      */
     public String getApplicationDocumentStatus() {
         return documentHeader.getApplicationDocumentStatus();
@@ -160,8 +150,6 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     /**
-     * This method finds the document for the given document header id
-     *
      * @param documentHeaderId
      * @return document The document in the workflow that matches the document header id.
      */
@@ -170,21 +158,13 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        } catch (WorkflowException ex) {
-            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
-        } catch (UnknownDocumentTypeException ex) {
-            // don't blow up just because a document type is not installed (but don't return it either)
+        } catch (WorkflowException | UnknownDocumentTypeException ex) {
             LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
         }
 
         return document;
     }
 
-    /**
-     * Gets the createDate attribute.
-     *
-     * @return Returns the createDate
-     */
     public DateTime getCreateDate() {
         org.kuali.rice.kew.api.document.Document document = findWorkflowDocument(this.getDocumentNumber());
         return document.getDateCreated();

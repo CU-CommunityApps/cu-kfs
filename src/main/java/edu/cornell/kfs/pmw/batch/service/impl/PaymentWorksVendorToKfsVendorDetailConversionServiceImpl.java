@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.State;
+import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -23,7 +28,6 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.location.api.state.StateService;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
@@ -43,7 +47,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
-    protected StateService stateService;
+    protected BusinessObjectService businessObjectService;
             
     @Override
     public KfsVendorDataWrapper createKfsVendorDetailFromPmwVendor(PaymentWorksVendor pmwVendor,
@@ -321,9 +325,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private String convertFipsUsStateNameToFipsUsStateCode(String fipsStateName) {
-        List<org.kuali.rice.location.api.state.State> allStatesForUsFipsCountryCode =  new ArrayList<org.kuali.rice.location.api.state.State>();
-        allStatesForUsFipsCountryCode = getStateService().findAllStatesInCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
-        List<org.kuali.rice.location.api.state.State> matchingStates = allStatesForUsFipsCountryCode.stream()
+        Map<String, Object> fieldValues = new HashMap<>();
+        fieldValues.put("active", true);
+        fieldValues.put("countryCode", KFSConstants.COUNTRY_CODE_UNITED_STATES);
+
+        Collection<State>  allStatesForUsFipsCountryCode = businessObjectService.findMatching(State.class, fieldValues);
+        List<State> matchingStates = allStatesForUsFipsCountryCode.stream()
                                                                .filter(stateItem -> stateItem.getName().equalsIgnoreCase(fipsStateName))
                                                                .filter(stateItem -> stateItem.isActive())
                                                                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
@@ -333,7 +340,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             return matchingStates.get(0).getCode();
         }
         else {
-            LOG.info("convertFipsUsStateNameToFipsUsStateCode: fipsStateName being returned, could not find stateCode in Rice table = " + fipsStateName);
+            LOG.info("convertFipsUsStateNameToFipsUsStateCode: fipsStateName being returned, could not find stateCode = " + fipsStateName);
             return fipsStateName;
         }
     }
@@ -851,11 +858,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         this.configurationService = configurationService;
     }
 
-    public StateService getStateService() {
-        return stateService;
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
     }
 
-    public void setStateService(StateService stateService) {
-        this.stateService = stateService;
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
+
 }

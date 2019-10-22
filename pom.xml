@@ -22,7 +22,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2019-06-20</kfs.version>
+        <kfs.version>2019-07-18</kfs.version>
         <rice.version>2.6.3</rice.version>
         <cynergy.version>2.6.3</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
@@ -43,7 +43,6 @@
         <plexus-utils.version>3.0.24</plexus-utils.version>
         <mockito.version>2.8.9</mockito.version>
         <powermock.version>1.7.3</powermock.version>
-        <spring.security.version>4.2.13.RELEASE</spring.security.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
     </properties>
@@ -406,33 +405,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.kuali.rice</groupId>
-            <artifactId>rice-location-api</artifactId>
-            <version>${rice.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xapool</groupId>
-                    <artifactId>xapool</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.kuali.rice</groupId>
-            <artifactId>rice-location-framework</artifactId>
-            <version>${rice.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xapool</groupId>
-                    <artifactId>xapool</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.kuali.rice</groupId>
-                    <artifactId>rice-krad-app-framework</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>edu.cornell.cynergy</groupId>
             <artifactId>cynergy-customizations</artifactId>
             <version>${cynergy.version}-${cynergy.version.suffix}</version>
@@ -717,17 +689,6 @@
             </exclusions>
             <scope>test</scope>
             <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${spring.security.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-expression</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>

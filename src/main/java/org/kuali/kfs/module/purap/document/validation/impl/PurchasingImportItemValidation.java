@@ -49,13 +49,11 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
     
     @Override
     public boolean validate(AttributedDocumentEvent event) {
-        boolean valid = true;  
-        
         PurApItem refreshedItem = getItemForValidation();
         refreshedItem.refreshReferenceObject("itemType");
         super.setItemForValidation(refreshedItem);
         
-        valid &= super.validate(event);
+        boolean valid = super.validate(event);
         GlobalVariables.getMessageMap().addToErrorPath(PurapConstants.ITEM_TAB_ERROR_PROPERTY);
         
         if (getItemForValidation().getItemType().isLineItemIndicator()) {

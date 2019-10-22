@@ -165,7 +165,7 @@
                 <purap:ponotesSciquest
                         notesBo="${KualiForm.document.notes}"
                         noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
-                        attachmentTypesValuesFinderClass="${DataDictionary.PurchaseOrderDocument.attachmentTypesValuesFinderClass}">
+                        attachmentTypesValuesFinder="${DataDictionary.PurchaseOrderDocument.attachmentTypesValuesFinder}">
                     <html:messages id="warnings" property="noteWarning" message="true">
                         &nbsp;&nbsp;&nbsp;<bean:write name="warnings"/><br><br>
                     </html:messages>

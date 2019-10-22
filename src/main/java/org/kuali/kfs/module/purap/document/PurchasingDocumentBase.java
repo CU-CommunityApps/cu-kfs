@@ -57,7 +57,9 @@ import org.kuali.kfs.module.purap.document.service.ReceivingAddressService;
 import org.kuali.kfs.module.purap.util.ItemParser;
 import org.kuali.kfs.module.purap.util.ItemParserBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.CampusParameter;
@@ -69,8 +71,6 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.location.api.country.Country;
-import org.kuali.rice.location.api.country.CountryService;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -82,7 +82,9 @@ import java.util.Map;
 /**
  * Base class for Purchasing Documents.
  */
-public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDocumentBase implements PurchasingDocument {
+public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDocumentBase implements
+        PurchasingDocument {
+
     // SHARED FIELDS BETWEEN REQUISITION AND PURCHASE ORDER
     protected String documentFundingSourceCode;
     protected String requisitionSourceCode;
@@ -142,7 +144,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     protected String receivingStateCode;
     protected String receivingPostalCode;
     protected String receivingCountryCode;
-    protected boolean addressToVendorIndicator; // if true, use receiving address
+    // if true, use receiving address
+    protected boolean addressToVendorIndicator;
     protected String externalOrganizationB2bSupplierIdentifier;
     protected boolean purchaseOrderAutomaticIndicator;
     protected String vendorPaymentTermsCode;
@@ -186,8 +189,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public PurchasingDocumentBase() {
         super();
 
-        purchasingCapitalAssetItems = new ArrayList();
-        purchasingCapitalAssetSystems = new ArrayList();
+        purchasingCapitalAssetItems = new ArrayList<>();
+        purchasingCapitalAssetSystems = new ArrayList<>();
     }
 
     @Override
@@ -295,9 +298,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
      * @return the PurchasingCapitalAssetItem if a match is found, else null.
      */
     public PurchasingCapitalAssetItem getPurchasingCapitalAssetItemByItemIdentifier(int itemIdentifier) {
-        for (Iterator iter = purchasingCapitalAssetItems.iterator(); iter.hasNext(); ) {
-            PurchasingCapitalAssetItem camsItem = (PurchasingCapitalAssetItem) iter.next();
-            if (camsItem.getItemIdentifier().intValue() == itemIdentifier) {
+        for (PurchasingCapitalAssetItem camsItem : purchasingCapitalAssetItems) {
+            if (camsItem.getItemIdentifier() == itemIdentifier) {
                 return camsItem;
             }
         }
@@ -317,7 +319,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         if (ObjectUtils.isNotNull(item) && item.getItemIdentifier() != null) {
             PurchasingCapitalAssetItem purchasingCapitalAssetItem =
                     getPurchasingCapitalAssetItemByItemIdentifier(item.getItemIdentifier());
-            
+
             if (ObjectUtils.isNotNull(purchasingCapitalAssetItem)) {
                 getPurchasingCapitalAssetItems().remove(purchasingCapitalAssetItem);
             }
@@ -520,7 +522,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public String getBillingCountryName() {
         if (StringUtils.isNotBlank(getBillingCountryCode())) {
-            Country country = SpringContext.getBean(CountryService.class).getCountry(getBillingCountryCode());
+            Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
+                    .getCountry(getBillingCountryCode());
             if (country != null) {
                 return country.getName();
             }
@@ -619,7 +622,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public String getReceivingCountryName() {
         if (StringUtils.isNotBlank(getReceivingCountryCode())) {
-            Country country = SpringContext.getBean(CountryService.class).getCountry(getReceivingCountryCode());
+            Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
+                    .getCountry(getReceivingCountryCode());
             if (country != null) {
                 return country.getName();
             }
@@ -785,7 +789,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public String getDeliveryCountryName() {
         if (StringUtils.isNotBlank(getDeliveryCountryCode())) {
-            Country country = SpringContext.getBean(CountryService.class).getCountry(getDeliveryCountryCode());
+            Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
+                    .getCountry(getDeliveryCountryCode());
             if (country != null) {
                 return country.getName();
             }
@@ -1355,8 +1360,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public void setReceivingDocumentRequiredIndicator(boolean receivingDocumentRequiredIndicator) {
         // if receivingDocumentRequiredIndicator functionality is disabled, always set it to false, overriding the
         // passed-in value
-    		if (!isEnableReceivingDocumentRequiredIndicator()) {
-            receivingDocumentRequiredIndicator = false;
+        if (!isEnableReceivingDocumentRequiredIndicator()) {
+            this.receivingDocumentRequiredIndicator = false;
         } else {
             this.receivingDocumentRequiredIndicator = receivingDocumentRequiredIndicator;
         }
@@ -1372,7 +1377,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         // if paymentRequestPositiveApprovalIndicator functionality is disabled, always set it to false, overriding the
         // passed-in value
         if (!isEnablePaymentRequestPositiveApprovalIndicator()) {
-            paymentRequestPositiveApprovalIndicator = false;
+            this.paymentRequestPositiveApprovalIndicator = false;
         } else {
             this.paymentRequestPositiveApprovalIndicator = paymentRequestPositiveApprovalIndicator;
         }
@@ -1487,7 +1492,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     @Override
     public PurchasingCapitalAssetItem getPurchasingCapitalAssetItem(Integer itemIdentifier) {
-
         if (ObjectUtils.isNull(itemIdentifier)) {
             return null;
         }
@@ -1511,7 +1515,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         managedLists.add(getDeletionAwareUseTaxItems());
         if (allowDeleteAwareCollection) {
             List assetLists = new ArrayList<>();
-            if (StringUtils.equals(getCapitalAssetSystemTypeCode(), PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+            if (StringUtils.equals(getCapitalAssetSystemTypeCode(),
+                    PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
                 for (PurchasingCapitalAssetItem capitalAssetItem : getPurchasingCapitalAssetItems()) {
                     CapitalAssetSystem system = capitalAssetItem.getPurchasingCapitalAssetSystem();
                     if (ObjectUtils.isNotNull(system)) {
@@ -1543,7 +1548,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         if (StringUtils.isNotBlank(this.getCapitalAssetSystemTypeCode())) {
             if (this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM)
                     || this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.MULTIPLE)) {
-                //If the system state is ONE or MULT, we have to remove all the systems on the items because it's not applicable.
+                // If the system state is ONE or MULT, we have to remove all the systems on the items because it's not
+                // applicable.
                 for (PurchasingCapitalAssetItem camsItem : this.getPurchasingCapitalAssetItems()) {
                     camsItem.setPurchasingCapitalAssetSystem(null);
                 }
@@ -1553,7 +1559,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
             boolean defaultUseTaxIndicatorValue = SpringContext.getBean(PurchasingService.class)
                     .getDefaultUseTaxIndicatorValue(this);
-            SpringContext.getBean(PurapService.class).updateUseTaxIndicator(this, defaultUseTaxIndicatorValue);
+            SpringContext.getBean(PurapService.class).updateUseTaxIndicator(this,
+                    defaultUseTaxIndicatorValue);
         }
         // KFSUPGRADE-583
         checkForFederalAccount();
@@ -1637,7 +1644,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
             String campusCode = GlobalVariables.getUserSession().getPerson().getCampusCode();
             VendorDetail vendorDetail = getVendorDetail();
             if (vendorDetail == null || StringUtils.isEmpty(campusCode)) {
-                return false; // this should never happen
+                // this should never happen
+                return false;
             }
             return SpringContext.getBean(VendorService.class).getVendorB2BContract(vendorDetail, campusCode) != null;
         }

@@ -117,6 +117,11 @@
 		<reference-descriptor name="inventoryStatus" class-ref="org.kuali.kfs.module.cam.businessobject.AssetStatus" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="inventoryStatusCode" />
 		</reference-descriptor>
+		<reference-descriptor name="campus" class-ref="org.kuali.kfs.sys.businessobject.Campus"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="campusCode" target-field-ref="code"/>
+        </reference-descriptor>
+        
 	 	<collection-descriptor name="assetPayments" element-class-ref="org.kuali.kfs.module.cam.businessobject.AssetPayment" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
 	 		<orderby name="financialDocumentPostingDate" sort="ASC" />
 	 		<orderby name="paymentSequenceNumber" sort="ASC" />

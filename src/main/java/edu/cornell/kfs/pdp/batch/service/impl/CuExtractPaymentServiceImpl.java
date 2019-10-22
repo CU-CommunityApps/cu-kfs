@@ -40,7 +40,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.rice.location.api.country.Country;
+import org.kuali.kfs.sys.businessobject.Country;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
@@ -728,7 +728,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             Country country = null;
                             
 							if (StringUtils.isNotBlank(pg.getCountry())) {
-								country = countryService.getCountry(pg.getCountry());
+							    country = locationService.getCountry(pg.getCountry());
 							}
                             
                             if (country != null)
@@ -1607,7 +1607,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             
                             // KFSUPGRADE-859 check if the country name is not blank, otherwise country service will throw exception
                             if(StringUtils.isNotBlank(pg.getCountry())){
-                            	country = this.getCountryService().getCountry(pg.getCountry());
+                                country = locationService.getCountry(pg.getCountry());
                             }
                             
                             if (country != null) {

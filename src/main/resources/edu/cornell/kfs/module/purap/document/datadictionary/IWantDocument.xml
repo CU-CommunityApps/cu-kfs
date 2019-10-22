@@ -14,17 +14,17 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
+  <import resource="classpath:edu/cornell/kfs/sys/cu-sys-lookup-beans.xml"/>
+  
   <bean id="IWantDocument" parent="IWantDocument-parentBean"/>
 
-  <bean id="IWantDocument-parentBean" abstract="true" parent="FinancialSystemTransactionalDocumentEntry">
+  <bean id="IWantDocument-parentBean" abstract="true" parent="FinancialSystemTransactionalDocumentEntry" p:attachmentTypesValuesFinder-ref="cuConfidentialAttachmentTypeValuesFinder">
     <property name="documentTypeName" value="IWNT"/>
     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.module.purap.document.validation.impl.IWantDocumentRule"/>
     <property name="documentAuthorizerClass" value="edu.cornell.kfs.module.purap.document.authorization.IWantDocumentAuthorizer"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.IWantDocumentPresentationController"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.IWantDocumentPreRules"/>
-    <property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
     <property name="allowsCopy" value="true"/>
     <property name="allowsNoteFYI" value="false"/>    
     <property name="sessionDocument" value="true"/>

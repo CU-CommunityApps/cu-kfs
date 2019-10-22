@@ -29,5 +29,7 @@
           
     <bean id="bankAccountTypeValuesFinder"
           class="org.kuali.kfs.fp.businessobject.options.BankAccountTypeValuesFinder"/>
-
+    
+    <bean id="requisitionAttachmentTypeValuesFinder"
+          class="edu.cornell.kfs.module.purap.businessobject.options.RequisitionAttachmentTypeValuesFinder"/>
 </beans>

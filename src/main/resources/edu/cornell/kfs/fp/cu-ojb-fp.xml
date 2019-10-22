@@ -83,6 +83,20 @@
     <reference-descriptor name="disbVchrPaymentReason" class-ref="org.kuali.kfs.fp.businessobject.PaymentReasonCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         <foreignkey field-ref="disbVchrPaymentReasonCode" />
     </reference-descriptor>
+    <reference-descriptor name="disbVchrPayeeCountry" class-ref="org.kuali.kfs.sys.businessobject.Country"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="disbVchrPayeeCountryCode" target-field-ref="code"/>
+    </reference-descriptor>
+    <reference-descriptor name="disbVchrPayeeState" class-ref="org.kuali.kfs.sys.businessobject.State"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="disbVchrPayeeCountryCode" target-field-ref="countryCode"/>
+        <foreignkey field-ref="disbVchrPayeeStateCode" target-field-ref="code"/>
+    </reference-descriptor>
+    <reference-descriptor name="disbVchrPayeePostalZipCode" class-ref="org.kuali.kfs.sys.businessobject.PostalCode"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="disbVchrPayeeCountryCode" target-field-ref="countryCode"/>
+        <foreignkey field-ref="disbVchrPayeeZipCode" target-field-ref="code"/>
+    </reference-descriptor>    
     <reference-descriptor name="extension" class-ref="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
@@ -390,6 +404,10 @@
     	<foreignkey field-ref="campusCode"/>
     	<foreignkey field-ref="buildingCode"/>
     	<foreignkey field-ref="buildingRoomNumber"/>
+    </reference-descriptor>
+    <reference-descriptor name="campus" class-ref="org.kuali.kfs.sys.businessobject.Campus"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="campusCode" target-field-ref="code"/>
     </reference-descriptor>
     
     <reference-descriptor name="capitalAssetInformation" class-ref="org.kuali.kfs.fp.businessobject.CapitalAssetInformation" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">

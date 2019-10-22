@@ -19,11 +19,11 @@
 package org.kuali.kfs.module.purap.document;
 
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.location.framework.country.CountryEbo;
 
 import java.sql.Date;
 import java.util.List;
@@ -52,9 +52,6 @@ public interface PurchasingAccountsPayableDocument extends AccountingDocument, P
      */
     Integer getPostingYearNextOrCurrent();
 
-    /**
-     * @return the Item Class.
-     */
     @Override
     Class getItemClass();
 
@@ -176,7 +173,7 @@ public interface PurchasingAccountsPayableDocument extends AccountingDocument, P
      */
     void templateVendorAddress(VendorAddress vendorAddress);
 
-    CountryEbo getVendorCountry();
+    Country getVendorCountry();
 
     VendorDetail getVendorDetail();
 

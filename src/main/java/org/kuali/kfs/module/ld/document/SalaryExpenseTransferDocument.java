@@ -18,12 +18,14 @@
  */
 package org.kuali.kfs.module.ld.document;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.module.ld.LaborConstants;
-import org.kuali.kfs.module.ld.businessobject.LateAdjustment;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
+import org.kuali.kfs.module.ld.businessobject.LateAdjustment;
 import org.kuali.kfs.module.ld.util.LaborPendingEntryGenerator;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -39,76 +41,60 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Labor Document Class for the Salary Expense Transfer Document.
  */
 public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentBase implements LateAdjustable {
-    protected static final org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(SalaryExpenseTransferDocument.class);
+
+    private static final Logger LOG = LogManager.getLogger();
 
     protected Map<String, KualiDecimal> approvalObjectCodeBalances;
     protected LateAdjustment lateAdjustment;
 
     public SalaryExpenseTransferDocument() {
         super();
-        approvalObjectCodeBalances = new HashMap<String, KualiDecimal>();
+        approvalObjectCodeBalances = new HashMap<>();
     }
 
-    /**
-     * Gets the approvalObjectCodeBalances attribute.
-     *
-     * @return Returns the approvalObjectCodeBalances.
-     */
     public Map<String, KualiDecimal> getApprovalObjectCodeBalances() {
         return approvalObjectCodeBalances;
     }
 
-    /**
-     * Sets the approvalObjectCodeBalances attribute value.
-     *
-     * @param approvalObjectCodeBalances The approvalObjectCodeBalances to set.
-     */
     public void setApprovalObjectCodeBalances(Map<String, KualiDecimal> approvalObjectCodeBalances) {
         this.approvalObjectCodeBalances = approvalObjectCodeBalances;
     }
 
-    /**
-     * Gets the lateAdjustment attribute.
-     *
-     * @return Returns the lateAdjustment.
-     */
     @Override
     public LateAdjustment getLateAdjustment() {
         return lateAdjustment;
     }
 
-    /**
-     * Sets the lateAdjustment attribute value.
-     *
-     * @param lateAdjustment The lateAdjustment to set.
-     */
     @Override
     public void setLateAdjustment(LateAdjustment lateAdjustment) {
         this.lateAdjustment = lateAdjustment;
     }
 
     /**
-     * @see org.kuali.kfs.module.ld.document.LaborExpenseTransferDocumentBase#generateLaborLedgerPendingEntries(org.kuali.kfs.sys.businessobject.AccountingLine,
+     * @see org.kuali.kfs.module.ld.document.LaborExpenseTransferDocumentBase#generateLaborLedgerPendingEntries(
+     * org.kuali.kfs.sys.businessobject.AccountingLine,
      * org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper)
      */
     @Override
-    public boolean generateLaborLedgerPendingEntries(AccountingLine accountingLine, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public boolean generateLaborLedgerPendingEntries(AccountingLine accountingLine,
+            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerPendingEntries()");
 
         boolean isSuccessful = true;
         ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
 
-        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator.generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
+        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator
+                .generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (expensePendingEntries != null && !expensePendingEntries.isEmpty()) {
-            isSuccessful &= this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
+            isSuccessful = this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
         }
 
-        List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator.generateBenefitPendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
+        List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator
+                .generateBenefitPendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (benefitPendingEntries != null && !benefitPendingEntries.isEmpty()) {
             isSuccessful &= this.getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
         }
@@ -116,17 +102,21 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         return isSuccessful;
     }
 
-    /**
-     * @see org.kuali.kfs.module.ld.document.LaborExpenseTransferDocumentBase#generateLaborLedgerBenefitClearingPendingEntries(org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper)
-     */
     @Override
-    public boolean generateLaborLedgerBenefitClearingPendingEntries(GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public boolean generateLaborLedgerBenefitClearingPendingEntries(
+            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerBenefitClearingPendingEntries()");
 
-        String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_CHART_PARM_NM);
-        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_ACCOUNT_PARM_NM);
+        String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
+                SalaryExpenseTransferDocument.class,
+                LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_CHART_PARM_NM);
+        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
+                SalaryExpenseTransferDocument.class,
+                LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_ACCOUNT_PARM_NM);
 
-        List<LaborLedgerPendingEntry> benefitClearingPendingEntries = LaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber, chartOfAccountsCode);
+        List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
+                LaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber,
+                        chartOfAccountsCode);
 
         if (benefitClearingPendingEntries != null && !benefitClearingPendingEntries.isEmpty()) {
             return this.getLaborLedgerPendingEntries().addAll(benefitClearingPendingEntries);
@@ -151,7 +141,9 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
      * @return boolean
      */
     protected boolean checkOjbectCodeForWorkstudy() {
-        Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class, KFSConstants.WORKSTUDY_ROUTE_OBJECT_CODES_PARM_NM);
+        Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class)
+                .getParameterValuesAsString(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
+                        KFSConstants.WORKSTUDY_ROUTE_OBJECT_CODES_PARM_NM);
 
         List<SourceAccountingLine> sourceAccountingLines = getSourceAccountingLines();
         List<TargetAccountingLine> targetAccountingLines = getTargetAccountingLines();
@@ -172,10 +164,9 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     }
 
     /**
-     * KFSMI-4606 Set GLPE descriptions to persons name. Take care that this needs to overwrite prepareForSave so that it
-     * catches pending entries generated by generateLaborLedgerPendingEntries and generateLaborLedgerBenefitClearingPendingEntries.
-     *
-     * @see org.kuali.kfs.module.ld.document.LaborLedgerPostingDocumentBase#prepareForSave(org.kuali.rice.kns.rule.event.KualiDocumentEvent)
+     * KFSMI-4606 Set GLPE descriptions to persons name. Take care that this needs to overwrite prepareForSave so that
+     * it catches pending entries generated by generateLaborLedgerPendingEntries and
+     * generateLaborLedgerBenefitClearingPendingEntries.
      */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {

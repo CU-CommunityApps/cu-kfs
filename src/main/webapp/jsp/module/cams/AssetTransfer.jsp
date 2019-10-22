@@ -200,7 +200,7 @@
                                                   readOnly="${readOnly}"/>
                         <c:if test="${not readOnly}">
                             &nbsp;
-                            <kul:lookup boClassName="org.kuali.rice.location.framework.campus.CampusEbo"
+                            <kul:lookup boClassName="org.kuali.kfs.sys.businessobject.Campus"
                                         fieldConversions="code:document.campusCode"
                                         lookupParameters="document.campusCode:code"/>
                         </c:if>
@@ -282,7 +282,7 @@
                                                   readOnly="${readOnly}"/>
                         <c:if test="${not readOnly}">
                             &nbsp;
-                            <kul:lookup boClassName="org.kuali.rice.location.framework.state.StateEbo"
+                            <kul:lookup boClassName="org.kuali.kfs.sys.businessobject.State"
                                         fieldConversions="code:document.offCampusStateCode"
                                         lookupParameters="document.offCampusCountryCode:postalCountryCode,document.offCampusStateCode:code,document.offCampusZipCode:postalCode"/>
                         </c:if>
@@ -299,7 +299,7 @@
                                                   readOnly="${readOnly}"/>
                         <c:if test="${not readOnly}">
                             &nbsp;
-                            <kul:lookup boClassName="org.kuali.rice.location.framework.postalcode.PostalCodeEbo"
+                            <kul:lookup boClassName="org.kuali.kfs.sys.businessobject.PostalCode"
                                         fieldConversions="code:document.offCampusZipCode"
                                         lookupParameters="document.offCampusCountryCode:countryCode,document.offCampusZipCode:code,document.offCampusStateCode:stateCode"/>
                         </c:if>
@@ -316,7 +316,7 @@
                                                   readOnly="${readOnly}"/>
                         <c:if test="${not readOnly}">
                             &nbsp;
-                            <kul:lookup boClassName="org.kuali.rice.location.framework.country.CountryEbo"
+                            <kul:lookup boClassName="org.kuali.kfs.sys.businessobject.Country"
                                         fieldConversions="code:document.offCampusCountryCode"
                                         lookupParameters="document.offCampusCountryCode:code"/>
                         </c:if>
