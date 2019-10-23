@@ -28,7 +28,7 @@
   <c:set var="notesBo" value="${KualiForm.document.notes}" />
 </c:if>
 
-<c:set var="sendToVendorValuesFinderClass" value="edu.cornell.kfs.module.purap.businessobject.options.RequisitionAttachmentTypeValuesFinder" />
+<c:set var="sendToVendorValuesFinder" value="edu.cornell.kfs.module.purap.businessobject.options.RequisitionAttachmentTypeValuesFinder" />
 <c:set var="documentTypeName" value="${KualiForm.docTypeName}" />
 <c:set var="documentEntry" value="${DataDictionary[documentTypeName]}" />
 <c:set var="allowsNoteAttachments" value="${documentEntry.allowsNoteAttachments}" />
@@ -87,7 +87,7 @@
                                     <html:optionsCollection property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}" label="value" value="key"/>
                                 </html:select>
                             </td>
-                            <c:set var="finderClass1" value="${fn:replace(sendToVendorValuesFinderClass,'.','|')}"/>
+                            <c:set var="finderClass1" value="${fn:replace(sendToVendorValuesFinder,'.','|')}"/>
                             <td class="infoline">
                                 Send to Vendor?
                                 <br/>
@@ -195,7 +195,7 @@
                                         </c:if>
                                     </td>
 
-                                    <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                                         <td class="datacell">
                                             &nbsp;
 									        <c:set var="mapKey" value = "getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}" />
@@ -212,7 +212,7 @@
                                                     <c:if test="${empty note.noteTopicText}">No</c:if>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <c:set var="finderClass1" value="${fn:replace(sendToVendorValuesFinderClass,'.','|')}"/>
+                                                    <c:set var="finderClass1" value="${fn:replace(sendToVendorValuesFinder,'.','|')}"/>
                                                     <html:select property="document.notes[${status.index}].noteTopicText">
                                                         <html:optionsCollection
                                                                 property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass1}"
@@ -225,7 +225,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <td class="datacell">&nbsp;</td>
-                                    <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                                         <td class="datacell">&nbsp;</td>
                                         <td class="datacell">
                                             <c:if test="${'sendToVendor' eq note.noteTopicText}">Yes</c:if>

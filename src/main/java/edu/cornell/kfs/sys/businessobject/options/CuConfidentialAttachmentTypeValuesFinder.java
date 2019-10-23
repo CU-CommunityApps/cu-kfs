@@ -13,7 +13,7 @@ import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
 /**
  * Values finder for denoting attachments as confidential.
  */
-public class CUConfidentialAttachmentTypeValuesFinder extends KeyValuesBase {
+public class CuConfidentialAttachmentTypeValuesFinder extends KeyValuesBase {
 
     private static final long serialVersionUID = 1441269817871470558L;
 

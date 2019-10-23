@@ -58,7 +58,7 @@
 
     <gl:generalLedgerPendingEntries/>
     <!-- Cornell customization to support confidential attachments -->
-    <kul:notes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}" />
+    <kul:notes attachmentTypesValuesFinder="${documentEntry.attachmentTypesValuesFinder}" />
     <kul:adHocRecipients/>
     <kul:routeLog/>
     <kul:superUserActions/>

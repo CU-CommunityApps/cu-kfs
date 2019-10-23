@@ -20,7 +20,7 @@
 <%@ attribute name="displayTopicFieldInNotes" required="false" %>
 <%@ attribute name="allowsNoteDelete" required="false" %>
 <%@ attribute name="allowsNoteAttachments" required="false" %>
-<%@ attribute name="attachmentTypesValuesFinderClass" required="false" %>
+<%@ attribute name="attachmentTypesValuesFinder" required="false" %>
 <%@ attribute name="transparentBackground" required="false" %>
 <%@ attribute name="defaultOpen" required="false" %>
 <%@ attribute name="allowsNoteFYI" required="false"
@@ -56,7 +56,7 @@
         <jsp:doBody/>
         <table class="datatable items standard" summary="view/add notes">
             <tbody>
-                <c:if test="${ ((not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)) || kfunc:canAddNoteAttachment(KualiForm.document)}">
+                <c:if test="${ ((not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)) || kfunc:canAddNoteAttachment(KualiForm.document)}">
                     <tr class="new-note">
                         <td class="infoline">&nbsp;</td>
                         <td class="infoline">&nbsp;</td>
@@ -82,11 +82,11 @@
                                 <html:submit property="methodToCall.cancelBOAttachment" title="Cancel Attachment" alt="Remove Attachment" styleClass="tinybutton btn btn-default small" value="Remove Attachment"/>
                             </td>
                         </c:if>
-                        <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                        <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                             <td class="infoline">
                                 Send to Vendor?
                                 <br/>
-                                <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinderClass,'.','|')}"/>
+                                <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinder,'.','|')}"/>
                                 <c:choose>
                                     <c:when test="${KualiForm.docFinal  or KualiForm.docCanceledOrDisapproved}">
                                         No
@@ -142,7 +142,7 @@
                             <kul:htmlAttributeHeaderCell attributeEntry="${notesAttributes.attachment}" labelFor="attachmentFile" scope="col" align="left"/>
                         </c:if>
 
-                        <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                        <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                             <kul:htmlAttributeHeaderCell literalLabel="Send to Vendor?" scope="col" align="left"/>
                         </c:if>
 
@@ -207,8 +207,8 @@
                                         </c:if>
                                     </td>
 
-                                    <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
-                                        <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinderClass,'.','|')}"/>
+                                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
+                                        <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinder,'.','|')}"/>
                                         <td class="datacell">
                                             <c:choose>
                                                 <c:when test="${KualiForm.docFinal or KualiForm.docCanceledOrDisapproved}">
@@ -229,7 +229,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <td class="datacell">&nbsp;</td>
-                                    <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                                         <td class="datacell">
                                             <c:if test="${'sendToVendor' eq note.noteTopicText}">Yes</c:if>
                                             <c:if test="${'dontSendToVendor' eq note.noteTopicText}">No</c:if>

@@ -84,7 +84,7 @@
                           noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
                           allowsNoteFYI="true"
                           defaultOpen="true"
-                          attachmentTypesValuesFinderClass="${DataDictionary.RequisitionDocument.attachmentTypesValuesFinderClass}"/>
+                          attachmentTypesValuesFinder="${DataDictionary.RequisitionDocument.attachmentTypesValuesFinder}"/>
 
     <kul:adHocRecipients/>
 
