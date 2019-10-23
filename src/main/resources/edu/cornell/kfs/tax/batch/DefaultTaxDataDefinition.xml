@@ -281,6 +281,7 @@
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignLine2Address" alias="vendorForeignLine2Address" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignCityName" alias="vendorForeignCityName" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignZipCode" alias="vendorForeignZipCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignProvinceName" alias="vendorForeignProvinceName" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::vendorForeignCountryCode" alias="vendorForeignCountryCode" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::nraPaymentIndicator" alias="nraPaymentIndicator" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentDate" alias="paymentDate" />
@@ -316,6 +317,7 @@
         <field name="vendorForeignAddressLine2" type="VARCHAR" />
         <field name="vendorForeignCityName" type="VARCHAR" />
         <field name="vendorForeignZipCode" type="VARCHAR" />
+        <field name="vendorForeignProvinceName" type="VARCHAR" />
         <field name="vendorForeignCountryCode" type="VARCHAR" />
         <field name="vendorAnyAddressLine1" type="VARCHAR" />
         <field name="vendorZipCodeNumOnly" type="VARCHAR" />

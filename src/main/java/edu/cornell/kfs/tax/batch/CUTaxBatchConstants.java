@@ -323,6 +323,7 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_FOREIGN_LINE2_ADDRESS = "vendorForeignLine2Address";
         public static final String VENDOR_FOREIGN_CITY_NAME = "vendorForeignCityName";
         public static final String VENDOR_FOREIGN_ZIP_CODE = "vendorForeignZipCode";
+        public static final String VENDOR_FOREIGN_PROVINCE_NAME = "vendorForeignProvinceName";
         public static final String VENDOR_FOREIGN_COUNTRY_CODE = "vendorForeignCountryCode";
         public static final String NRA_PAYMENT_INDICATOR = "nraPaymentIndicator";
         public static final String PAYMENT_DATE = "paymentDate";
@@ -364,6 +365,7 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_FOREIGN_ADDRESS_LINE_2 = "vendorForeignAddressLine2";
         public static final String VENDOR_FOREIGN_CITY_NAME = "vendorForeignCityName";
         public static final String VENDOR_FOREIGN_ZIP_CODE = "vendorForeignZipCode";
+        public static final String VENDOR_FOREIGN_PROVINCE_NAME = "vendorForeignProvinceName";
         public static final String VENDOR_FOREIGN_COUNTRY_CODE = "vendorForeignCountryCode";
         public static final String VENDOR_ANY_ADDRESS_LINE_1 = "vendorAnyAddressLine1";
         public static final String VENDOR_ZIP_CODE_NUM_ONLY = "vendorZipCodeNumOnly";
