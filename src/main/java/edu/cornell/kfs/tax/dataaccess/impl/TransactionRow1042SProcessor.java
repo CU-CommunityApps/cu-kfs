@@ -62,6 +62,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
  *   <li>vendorForeignAddressLine2</li>
  *   <li>vendorForeignCityName</li>
  *   <li>vendorForeignZipCode</li>
+ *   <li>vendorForeignProvinceName</li>
  *   <li>vendorForeignCountryCode</li>
  *   <li>ssn</li>
  *   <li>itin</li>
@@ -152,6 +153,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
     private RecordPiece1042SString vendorForeignAddressLine2P;
     private RecordPiece1042SString vendorForeignCityNameP;
     private RecordPiece1042SString vendorForeignZipCodeP;
+    private RecordPiece1042SString vendorForeignProvinceNameP;
     private RecordPiece1042SString vendorForeignCountryCodeP;
     private RecordPiece1042SString formattedSSNValueP;
     private RecordPiece1042SString formattedITINValueP;
@@ -415,6 +417,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
                         derivedValues.vendorForeignAddressLine2,
                         derivedValues.vendorForeignCityName,
                         derivedValues.vendorForeignZipCode,
+                        derivedValues.vendorForeignProvinceName,
                         derivedValues.vendorForeignCountryCode,
                         derivedValues.ssn,
                         derivedValues.itin,
@@ -514,6 +517,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         vendorForeignAddressLine2P = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignAddressLine2.propertyName);
         vendorForeignCityNameP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignCityName.propertyName);
         vendorForeignZipCodeP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignZipCode.propertyName);
+        vendorForeignProvinceNameP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignProvinceName.propertyName);
         vendorForeignCountryCodeP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignCountryCode.propertyName);
         formattedSSNValueP = (RecordPiece1042SString) complexPieces.get(derivedValues.ssn.propertyName);
         formattedITINValueP = (RecordPiece1042SString) complexPieces.get(derivedValues.itin.propertyName);
@@ -716,6 +720,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
             rs.updateString(detailRow.vendorForeignLine2Address.index, vendorForeignAddressLine2P.value);
             rs.updateString(detailRow.vendorForeignCityName.index, vendorForeignCityNameP.value);
             rs.updateString(detailRow.vendorForeignZipCode.index, vendorForeignZipCodeP.value);
+            rs.updateString(detailRow.vendorForeignProvinceName.index, vendorForeignProvinceNameP.value);
             rs.updateString(detailRow.vendorForeignCountryCode.index, vendorForeignCountryCodeP.value);
             
             // Store any changes made to the current transaction detail row.
@@ -946,6 +951,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         vendorForeignAddressLine2P.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorLine2Address.index);
         vendorForeignCityNameP.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorCityName.index);
         vendorForeignZipCodeP.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorZipCode.index);
+        vendorForeignProvinceNameP.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorAddressInternationalProvinceName.index);
         vendorForeignCountryCodeP.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorCountryCode.index);
         
         
@@ -1578,6 +1584,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         vendorForeignAddressLine2P = null;
         vendorForeignCityNameP = null;
         vendorForeignZipCodeP = null;
+        vendorForeignProvinceNameP = null;
         vendorForeignCountryCodeP = null;
         formattedSSNValueP = null;
         formattedITINValueP = null;
