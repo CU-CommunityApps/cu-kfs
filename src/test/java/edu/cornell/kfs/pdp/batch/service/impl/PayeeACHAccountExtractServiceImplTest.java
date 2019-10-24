@@ -71,7 +71,7 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.invocation.InvocationOnMock;
 
-import edu.cornell.kfs.coa.businessobject.options.CUCheckingSavingsValuesFinder;
+import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
@@ -451,7 +451,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         AttributeDefinition payeeIdTypeAttribute = createAttributeDefinitionWithValuesFinder(
                 new TestPayeeAchIdTypeValuesFinder(), false);
         AttributeDefinition bankAccountTypeAttribute = createAttributeDefinitionWithValuesFinder(
-                new CUCheckingSavingsValuesFinder(), true);
+                new CuCheckingSavingsValuesFinder(), true);
         
         when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE))
                 .thenReturn(payeeIdTypeAttribute);
