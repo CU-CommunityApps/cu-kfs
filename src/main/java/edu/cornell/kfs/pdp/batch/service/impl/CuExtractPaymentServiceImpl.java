@@ -413,14 +413,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
 
     private String createFormattedRemittanceIdTextBasedOnPresenceOfInvoiceDataForDv(String invoiceNumber, Date invoiceDate, String customerPaymentDocumentNumber) {
-        StringBuffer formattedRemittanceIdText = new StringBuffer("");
+        StringBuilder formattedRemittanceIdText = new StringBuilder("");
 
         if (StringUtils.isNotBlank(invoiceNumber) && ObjectUtils.isNotNull(invoiceDate)) {
             formattedRemittanceIdText.append(invoiceNumber);
-            formattedRemittanceIdText.append(" Doc No:");
+            formattedRemittanceIdText.append(" Doc:");
             formattedRemittanceIdText.append(customerPaymentDocumentNumber);
         } else if (StringUtils.isNotBlank(customerPaymentDocumentNumber)) {
-            formattedRemittanceIdText.append("Doc No:");
+            formattedRemittanceIdText.append("Doc:");
             formattedRemittanceIdText.append(customerPaymentDocumentNumber);
         }
         return formattedRemittanceIdText.toString();
