@@ -26,7 +26,7 @@ import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 * This class returns list containing 22 = Checking or 32 = Savings
  */
 @SuppressWarnings("serial")
-public class CUCheckingSavingsValuesFinder extends KeyValuesBase {
+public class CuCheckingSavingsValuesFinder extends KeyValuesBase {
 	
 	public static final class BankAccountTypes {
 		public static final String PERSONAL_CHECKING = "22PPD";

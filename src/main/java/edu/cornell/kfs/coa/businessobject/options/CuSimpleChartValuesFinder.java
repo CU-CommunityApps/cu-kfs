@@ -20,7 +20,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 @SuppressWarnings("serial")
-public class CUSimpleChartValuesFinder extends KeyValuesBase {
+public class CuSimpleChartValuesFinder extends KeyValuesBase {
 
 	 protected ParameterService parameterService;
 	

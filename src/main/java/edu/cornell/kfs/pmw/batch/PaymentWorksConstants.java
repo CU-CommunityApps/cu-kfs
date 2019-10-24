@@ -3,7 +3,7 @@ package edu.cornell.kfs.pmw.batch;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import edu.cornell.kfs.coa.businessobject.options.CUCheckingSavingsValuesFinder;
+import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -266,10 +266,10 @@ public class PaymentWorksConstants {
     }
     
     public enum PaymentWorksBankAccountType {
-        COMPANY_CHECKING("0", "Company Checking", CUCheckingSavingsValuesFinder.BankAccountTypes.CORPORATE_CHECKING, "Corporate Checking"),
-        COMPANY_SAVINGS("1", "Company Savings", CUCheckingSavingsValuesFinder.BankAccountTypes.CORPORATE_SAVINGS, "Corporate Savings"),
-        PERSONAL_CHECKING("2", "Personal Checking", CUCheckingSavingsValuesFinder.BankAccountTypes.PERSONAL_CHECKING, "Personal Checking"),
-        PERSONAL_SAVINGS("3", "Personal Savings", CUCheckingSavingsValuesFinder.BankAccountTypes.PERSONAL_SAVINGS, "Personal Savings");
+        COMPANY_CHECKING("0", "Company Checking", CuCheckingSavingsValuesFinder.BankAccountTypes.CORPORATE_CHECKING, "Corporate Checking"),
+        COMPANY_SAVINGS("1", "Company Savings", CuCheckingSavingsValuesFinder.BankAccountTypes.CORPORATE_SAVINGS, "Corporate Savings"),
+        PERSONAL_CHECKING("2", "Personal Checking", CuCheckingSavingsValuesFinder.BankAccountTypes.PERSONAL_CHECKING, "Personal Checking"),
+        PERSONAL_SAVINGS("3", "Personal Savings", CuCheckingSavingsValuesFinder.BankAccountTypes.PERSONAL_SAVINGS, "Personal Savings");
         
         public final String pmwCode;
         public final String pmwName;

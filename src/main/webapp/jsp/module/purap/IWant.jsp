@@ -81,7 +81,7 @@
             <purap:iWantRelatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
         </c:if>
 
-        <purap:iWantNotes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}"
+        <purap:iWantNotes attachmentTypesValuesFinder="${documentEntry.attachmentTypesValuesFinder}"
                           defaultOpen="true"/>
         
         <c:if test="${!isRegularStep}">

@@ -17,7 +17,7 @@
 
 <%@ attribute name="displayTopicFieldInNotes" required="false"
               description="Whether to display the note topic column in the table of notes." %>
-<%@ attribute name="attachmentTypesValuesFinderClass" required="false"
+<%@ attribute name="attachmentTypesValuesFinder" required="false"
               description="A finder class to give options for the types of attachments allowed as as note attachments on this document." %>
 <%@ attribute name="transparentBackground" required="false"
               description="Whether the tab should render as having the background transparent around the corners of the tab." %>
@@ -46,7 +46,7 @@
     <c:set var="tabTitle" value="Notes"/>
 </c:if>
 
-<c:if test="${not empty attachmentTypesValuesFinderClass}">
+<c:if test="${not empty attachmentTypesValuesFinder}">
     <c:set var="noteColSpan" value="${noteColSpan + 1}"/>
 </c:if>
 
@@ -100,7 +100,7 @@
                 </td>
             </tr>
 
-            <c:if test="${ ((not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)) || kfunc:canAddNoteAttachment(KualiForm.document)}">
+            <c:if test="${ ((not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)) || kfunc:canAddNoteAttachment(KualiForm.document)}">
                 <tr class="new-note">
                     <td class="infoline">&nbsp;</td>
                     <td class="infoline">&nbsp;</td>
@@ -136,8 +136,8 @@
                                          value="Remove Attachment"/>
                         </td>
                     </c:if>
-                    <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
-                        <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinderClass,'.','|')}"/>
+                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
+                        <c:set var="finderClass" value="${fn:replace(attachmentTypesValuesFinder,'.','|')}"/>
                         <td class="infoline">
                             Attachment Type
                             <br/>
@@ -181,7 +181,7 @@
                                                      labelFor="attachmentFile" scope="col" align="left"/>
                     </c:if>
 
-                    <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                         <kul:htmlAttributeHeaderCell literalLabel="Attachment Type" scope="col" align="left"/>
                     </c:if>
 
@@ -260,7 +260,7 @@
                                     </c:if>
                                 </td>
 
-                                <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                                <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                                     <td class="datacell">
                                         &nbsp;
                                         <c:set var="mapKey"
@@ -275,7 +275,7 @@
                             </c:when>
                             <c:otherwise>
                                 <td class="datacell">&nbsp;</td>
-                                <c:if test="${(not empty attachmentTypesValuesFinderClass) and (allowsNoteAttachments eq true)}">
+                                <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
                                     <td class="datacell">&nbsp;</td>
                                 </c:if>
                             </c:otherwise>
