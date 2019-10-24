@@ -98,6 +98,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         setBankPhonePrefixNumber(getField(fileData, 142, 3));
         setBankPhoneSuffixNumber(getField(fileData, 145, 4));
         setBankInstitutionStatusCode(getField(fileData, 149, 1));
+        setBankDataViewCode(getField(fileData, 150, 1));
         setActive(true);
         setBankCountryCode(KFSConstants.COUNTRY_CODE_UNITED_STATES);
     }
