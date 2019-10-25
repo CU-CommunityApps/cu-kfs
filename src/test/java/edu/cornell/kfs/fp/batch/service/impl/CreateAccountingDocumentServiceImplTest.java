@@ -1122,8 +1122,6 @@ public class CreateAccountingDocumentServiceImplTest {
     }
     
     private static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {
-        private static final Logger LOG = LogManager.getLogger(TestAccountingXmlDocumentDownloadAttachmentService.class);
-                
         private Client mockClient;
 
         @Override
@@ -1136,7 +1134,6 @@ public class CreateAccountingDocumentServiceImplTest {
         }
         
         protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds) throws URISyntaxException {
-            LOG.info("buildClientRequest, entering with a URL of " + url);
             if (StringUtils.equals(url, 
                     "https://www.cornell.edu/v1_0/invoice?year=2019&month=09Sep&filename=J%20Aron%20&%20Company%20B34367.pdf")) {
                 URI uri = new URI(url);

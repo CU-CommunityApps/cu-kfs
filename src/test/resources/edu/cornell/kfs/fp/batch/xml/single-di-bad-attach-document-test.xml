@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DocumentWrapper>
-    <CreateDate>09/28/2017</CreateDate>
+    <CreateDate>10/25/2019</CreateDate>
     <ReportEmail>abc123@cornell.edu</ReportEmail>
     <Overview>Example XML file</Overview>
     <DocumentList>
@@ -22,17 +22,6 @@
                     <line_description></line_description>
                     <amount>100.00</amount>
                 </Accounting>
-                <Accounting>
-                    <coa_cd>IT</coa_cd>
-                    <account_nbr>1000718</account_nbr>
-                    <sub_account_nbr></sub_account_nbr>
-                    <object_cd>4000</object_cd>
-                    <sub_object_cd></sub_object_cd>
-                    <project></project>
-                    <org_ref_id></org_ref_id>
-                    <line_description></line_description>
-                    <amount>50</amount>
-                </Accounting>
             </SourceAccountingLineList>
             <TargetAccountingLineList>
                 <Accounting>
@@ -46,51 +35,8 @@
                     <line_description></line_description>
                     <amount>100.00</amount>
                 </Accounting>
-                <Accounting>
-                    <coa_cd>IT</coa_cd>
-                    <account_nbr>1000710</account_nbr>
-                    <sub_account_nbr></sub_account_nbr>
-                    <object_cd>4000</object_cd>
-                    <sub_object_cd></sub_object_cd>
-                    <project></project>
-                    <org_ref_id></org_ref_id>
-                    <line_description></line_description>
-                    <amount>50</amount>
-                </Accounting>
             </TargetAccountingLineList>
-            <NoteList>
-                <Note>
-                    <Description>A fun testing note</Description>
-                </Note>
-                <Note>
-                    <Description>Another note</Description>
-                </Note>
-            </NoteList>
-            <AdhocRecipientList>
-                <Recipient>
-                    <Netid>jdh34</Netid>
-                    <ActionRequested>Approve</ActionRequested>
-                </Recipient>
-                <Recipient>
-                    <Netid>se12</Netid>
-                    <ActionRequested>FYI</ActionRequested>
-                </Recipient>
-                <Recipient>
-                    <Netid>ccs1</Netid>
-                    <ActionRequested>Complete</ActionRequested>
-                </Recipient>
-                <Recipient>
-                    <Netid>nkk4</Netid>
-                    <ActionRequested>Acknowledge</ActionRequested>
-                </Recipient>
-            </AdhocRecipientList>
             <BackupDocumentLinks>
-                <BackupLink>
-                    <Link>http://www.cornell.edu/index.html</Link>
-                    <Description>Cornell index page</Description>
-                    <FileName>index.html</FileName>
-                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
-                </BackupLink>
                 <BackupLink>
                 	<Link>https://www.cornell.edu/v1_0/invoice?year=2019&amp;month=09Sep&amp;filename=J%20Aron%20&amp;%20Company%20B34367.pdf</Link>
                     <Description>DFA index page</Description>
