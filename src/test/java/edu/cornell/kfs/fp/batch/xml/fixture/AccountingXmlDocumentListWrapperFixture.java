@@ -48,6 +48,10 @@ public enum AccountingXmlDocumentListWrapperFixture {
             BASE_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_DI_DOCUMENT_TEST_DOC1)),
+    SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     DI_FULL_ACCOUNT_LINE_TEST(
             BASE_WRAPPER,
             documents(

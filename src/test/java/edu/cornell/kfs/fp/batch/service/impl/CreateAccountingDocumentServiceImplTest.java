@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -35,11 +36,15 @@ import java.util.stream.Stream;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -103,6 +108,7 @@ import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
@@ -426,6 +432,12 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
         boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertFalse("When there is a problem calling services, the job should fail", results);
+    }
+    
+    @Test
+    public void testLoadSingleFileWithSingleDIDocumentWithBadAttachment() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-di-bad-attach-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -1110,7 +1122,8 @@ public class CreateAccountingDocumentServiceImplTest {
     }
     
     private static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {
-
+        private static final Logger LOG = LogManager.getLogger(TestAccountingXmlDocumentDownloadAttachmentService.class);
+                
         private Client mockClient;
 
         @Override
@@ -1120,6 +1133,18 @@ public class CreateAccountingDocumentServiceImplTest {
 
         public void setClient(Client client) {
             this.mockClient = client;
+        }
+        
+        protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds) throws URISyntaxException {
+            LOG.info("buildClientRequest, entering with a URL of " + url);
+            if (StringUtils.equals(url, 
+                    "https://www.cornell.edu/v1_0/invoice?year=2019&month=09Sep&filename=J%20Aron%20&%20Company%20B34367.pdf")) {
+                URI uri = new URI(url);
+                Builder builder = super.getClient().target(uri).request();
+                return builder.buildGet();
+            } else {
+                return super.buildClientRequest(url, creds);
+            }
         }
         
     }
