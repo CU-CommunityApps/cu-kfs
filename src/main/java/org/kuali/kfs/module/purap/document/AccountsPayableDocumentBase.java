@@ -485,12 +485,15 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return null;
     }
 
+    /*
+     * KFSUPGRADE-1124 / KFSPTS-16954: Fixed an issue that prevented extended prices from being calculated properly.
+     */
     public void updateExtendedPriceOnItems() {
         for (AccountsPayableItem item : (List<AccountsPayableItem>) getItems()) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
 
             if (ObjectUtils.isNotNull(item.getItemType())) {
-                if (item.getItemType().isQuantityBasedGeneralLedgerIndicator() && item.getExtendedPrice() == null) {
+                if (item.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
                     KualiDecimal newExtendedPrice = item.calculateExtendedPrice();
                     item.setExtendedPrice(newExtendedPrice);
                 }
