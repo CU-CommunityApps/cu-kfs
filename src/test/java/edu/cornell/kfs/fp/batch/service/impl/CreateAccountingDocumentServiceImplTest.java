@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.stream.Stream;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
@@ -426,6 +428,15 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
         boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertFalse("When there is a problem calling services, the job should fail", results);
+    }
+    
+    @Test
+    public void testLoadSingleFileWithSingleDIDocumentWithBadAttachmentUrl() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-di-bad-attach-document-test");
+        TestAccountingXmlDocumentDownloadAttachmentService attachService = (TestAccountingXmlDocumentDownloadAttachmentService) 
+                createAccountingDocumentService.downloadAttachmentService;
+        attachService.setForceUseOfRealClientToTestAttachmentUrls(true);
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -1110,8 +1121,8 @@ public class CreateAccountingDocumentServiceImplTest {
     }
     
     private static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {
-
         private Client mockClient;
+        private boolean forceUseOfRealClientToTestAttachmentUrls;
 
         @Override
         protected Client getClient() {
@@ -1120,6 +1131,25 @@ public class CreateAccountingDocumentServiceImplTest {
 
         public void setClient(Client client) {
             this.mockClient = client;
+        }
+        
+        @Override
+        protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds) throws URISyntaxException {
+            if (forceUseOfRealClientToTestAttachmentUrls) {
+                return buildClienRequesttWithRealClientObject(url);
+            } else {
+                return super.buildClientRequest(url, creds);
+            }
+        }
+
+        private Invocation buildClienRequesttWithRealClientObject(String url) throws URISyntaxException {
+            URI uri = new URI(url);
+            Builder builder = super.getClient().target(uri).request();
+            return builder.buildGet();
+        }
+
+        public void setForceUseOfRealClientToTestAttachmentUrls(boolean forceUseOfRealClientToTestAttachmentUrls) {
+            this.forceUseOfRealClientToTestAttachmentUrls = forceUseOfRealClientToTestAttachmentUrls;
         }
         
     }

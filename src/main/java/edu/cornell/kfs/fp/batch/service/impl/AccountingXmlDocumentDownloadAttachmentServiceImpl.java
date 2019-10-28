@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilderException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -103,7 +104,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 throw new ValidationException("The group code: " + accountingXmlDocumentBackupLink.getCredentialGroupCode()
                                 + " isn't valid for the link URL: " + accountingXmlDocumentBackupLink.getLinkUrl());
             }
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | UriBuilderException e) {
             LOG.error("downloadByteArray, the URL has an incorrect syntax", e);
             throw new ValidationException("The URL has an incorrect syntax: " + accountingXmlDocumentBackupLink.getLinkUrl());
         }
