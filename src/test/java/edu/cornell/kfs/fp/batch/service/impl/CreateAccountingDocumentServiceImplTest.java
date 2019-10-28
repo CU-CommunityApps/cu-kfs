@@ -431,7 +431,7 @@ public class CreateAccountingDocumentServiceImplTest {
     }
     
     @Test
-    public void testLoadSingleFileWithSingleDIDocumentWithBadAttachment() throws Exception {
+    public void testLoadSingleFileWithSingleDIDocumentWithBadAttachmentUrl() throws Exception {
         copyTestFilesAndCreateDoneFiles("single-di-bad-attach-document-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST);
     }
