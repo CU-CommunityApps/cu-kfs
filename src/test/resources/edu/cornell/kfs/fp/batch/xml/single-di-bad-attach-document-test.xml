@@ -38,8 +38,7 @@
 			</TargetAccountingLineList>
 			<BackupDocumentLinks>
 				<BackupLink>
-					<Link>https://www.cornell.edu/v1_0/invoice?year=2019&amp;month=09Sep&amp;filename=J%20Aron%20&amp;%20Company%20B34367.pdf
-					</Link>
+					<Link>https://www.cornell.edu/v1_0/invoice?year=2019&amp;month=09Sep&amp;filename=J%20Aron%20&amp;%20Company%20B34367.pdf</Link>
 					<Description>DFA index page</Description>
 					<FileName>index.cfm</FileName>
 					<CredentialGroupCode>TESTGRP</CredentialGroupCode>
