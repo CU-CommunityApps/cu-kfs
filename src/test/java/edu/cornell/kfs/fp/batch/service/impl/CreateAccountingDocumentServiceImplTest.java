@@ -1129,15 +1129,20 @@ public class CreateAccountingDocumentServiceImplTest {
             this.mockClient = client;
         }
         
+        @Override
         protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds) throws URISyntaxException {
             if (StringUtils.equals(url, 
                     "https://www.cornell.edu/v1_0/invoice?year=2019&month=09Sep&filename=J%20Aron%20&%20Company%20B34367.pdf")) {
-                URI uri = new URI(url);
-                Builder builder = super.getClient().target(uri).request();
-                return builder.buildGet();
+                return allowClientToFailWithPoorlyFormatedUrl(url);
             } else {
                 return super.buildClientRequest(url, creds);
             }
+        }
+
+        private Invocation allowClientToFailWithPoorlyFormatedUrl(String url) throws URISyntaxException {
+            URI uri = new URI(url);
+            Builder builder = super.getClient().target(uri).request();
+            return builder.buildGet();
         }
         
     }
