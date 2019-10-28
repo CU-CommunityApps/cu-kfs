@@ -1136,13 +1136,13 @@ public class CreateAccountingDocumentServiceImplTest {
         @Override
         protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds) throws URISyntaxException {
             if (forceUseOfRealClientToTestAttachmentUrls) {
-                return buildClientWithRealClientObject(url);
+                return buildClienRequesttWithRealClientObject(url);
             } else {
                 return super.buildClientRequest(url, creds);
             }
         }
 
-        private Invocation buildClientWithRealClientObject(String url) throws URISyntaxException {
+        private Invocation buildClienRequesttWithRealClientObject(String url) throws URISyntaxException {
             URI uri = new URI(url);
             Builder builder = super.getClient().target(uri).request();
             return builder.buildGet();
