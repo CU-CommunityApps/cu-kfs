@@ -433,6 +433,9 @@ public class CreateAccountingDocumentServiceImplTest {
     @Test
     public void testLoadSingleFileWithSingleDIDocumentWithBadAttachmentUrl() throws Exception {
         copyTestFilesAndCreateDoneFiles("single-di-bad-attach-document-test");
+        TestAccountingXmlDocumentDownloadAttachmentService attachService = (TestAccountingXmlDocumentDownloadAttachmentService) 
+                createAccountingDocumentService.downloadAttachmentService;
+        attachService.setForceUseOfRealClientToTestAttachmentUrls(true);
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST);
     }
 
@@ -1119,6 +1122,7 @@ public class CreateAccountingDocumentServiceImplTest {
     
     private static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {
         private Client mockClient;
+        private boolean forceUseOfRealClientToTestAttachmentUrls;
 
         @Override
         protected Client getClient() {
@@ -1131,18 +1135,21 @@ public class CreateAccountingDocumentServiceImplTest {
         
         @Override
         protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds) throws URISyntaxException {
-            if (StringUtils.equals(url, 
-                    "https://www.cornell.edu/v1_0/invoice?year=2019&month=09Sep&filename=J%20Aron%20&%20Company%20B34367.pdf")) {
-                return allowClientToFailWithPoorlyFormatedUrl(url);
+            if (forceUseOfRealClientToTestAttachmentUrls) {
+                return buildClientWithRealClientObject(url);
             } else {
                 return super.buildClientRequest(url, creds);
             }
         }
 
-        private Invocation allowClientToFailWithPoorlyFormatedUrl(String url) throws URISyntaxException {
+        private Invocation buildClientWithRealClientObject(String url) throws URISyntaxException {
             URI uri = new URI(url);
             Builder builder = super.getClient().target(uri).request();
             return builder.buildGet();
+        }
+
+        public void setForceUseOfRealClientToTestAttachmentUrls(boolean forceUseOfRealClientToTestAttachmentUrls) {
+            this.forceUseOfRealClientToTestAttachmentUrls = forceUseOfRealClientToTestAttachmentUrls;
         }
         
     }
