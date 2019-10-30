@@ -119,7 +119,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         try {
             fileContents = new FileInputStream(incomingFileName);
         } catch (FileNotFoundException e1) {
-            LOG.error("file to load not found " + incomingFileName, e1);
+            LOG.error("parsePaymentFile: file to load not found " + incomingFileName, e1);
             throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
         }
 
@@ -129,14 +129,19 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
             byte[] fileByteContent = IOUtils.toByteArray(fileContents);
             paymentFile = (PaymentFileLoad) batchInputFileService.parse(paymentInputFileType, fileByteContent);
         } catch (IOException e) {
-            LOG.error("error while getting file bytes:  " + e.getMessage(), e);
+            LOG.error("parsePaymentFile: error while getting file bytes:  " + e.getMessage(), e);
+            sendErrorEmailForGenericException(e, incomingFileName, paymentFile);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
         } catch (ParseException e1) {
-            LOG.error("Error parsing xml " + e1.getMessage());
+            LOG.error("parsePaymentFile: Error parsing xml " + e1.getMessage());
             errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
                     e1.getMessage());
             // Get customer object from unparsable file so error email can be sent.
             paymentFile = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
+        } catch (RuntimeException e2) {
+            LOG.error("parsePaymentFile: Error reading XML: " + e2.getMessage());
+            sendErrorEmailForGenericException(e2, incomingFileName, paymentFile);
+            throw e2;
         }
 
         return paymentFile;
@@ -157,6 +162,25 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         } else {
             pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
         }
+    }
+    
+    /**
+     * This method sends error emails in a manner similar to that from PaymentInputFileType.parse(),
+     * except that our code will also attempt to send an email to the customer if possible.
+     */
+    private void sendErrorEmailForGenericException(
+            Exception genericException, String incomingFileName, PaymentFileLoad paymentFile) {
+        PaymentFileLoad paymentFileForEmail;
+        try {
+            paymentFileForEmail = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
+        } catch (RuntimeException e) {
+            paymentFileForEmail = paymentFile;
+        }
+        
+        MessageMap errorMap = new MessageMap();
+        errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
+                "Error reading XML file: " + genericException.getMessage());
+        paymentFileEmailService.sendErrorEmail(paymentFileForEmail, errorMap);
     }
     
     /**
