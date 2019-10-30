@@ -18,6 +18,9 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PostalCode;
@@ -25,6 +28,7 @@ import org.kuali.kfs.sys.businessobject.State;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 public class ACHBank extends PersistableBusinessObjectBase implements MutableInactivatable {
+    private static final Logger LOG = LogManager.getLogger(ACHBank.class);
 
     protected String bankRoutingNumber;
     protected String bankOfficeCode;
@@ -251,5 +255,15 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
 
     public void setBankCountryCode(String bankCountryCode) {
         this.bankCountryCode = bankCountryCode;
+    }
+
+    public void setBankState(State bankState) {
+        LOG.info("setBankState, setting bank state to: " + ToStringBuilder.reflectionToString(bankState));
+        this.bankState = bankState;
+    }
+
+    public void setPostalCode(PostalCode postalCode) {
+        LOG.info("setPostalCode, setting postal code to: " + ToStringBuilder.reflectionToString(postalCode));
+        this.postalCode = postalCode;
     }
 }
