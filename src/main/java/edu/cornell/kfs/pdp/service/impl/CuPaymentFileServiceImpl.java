@@ -164,16 +164,13 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         }
     }
     
-    /**
-     * This method sends error emails in a manner similar to that from PaymentInputFileType.parse(),
-     * except that our code will also attempt to send an email to the customer if possible.
-     */
     private void sendErrorEmailForGenericException(
             Exception genericException, String incomingFileName, PaymentFileLoad paymentFile) {
         PaymentFileLoad paymentFileForEmail;
         try {
             paymentFileForEmail = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
         } catch (RuntimeException e) {
+            LOG.error("sendErrorEmailForGenericException: Could not read file contents as plain text", e);
             paymentFileForEmail = paymentFile;
         }
         
