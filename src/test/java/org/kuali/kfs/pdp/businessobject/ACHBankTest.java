@@ -2,6 +2,8 @@ package org.kuali.kfs.pdp.businessobject;
 
 import static org.junit.Assert.*;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +18,8 @@ public class ACHBankTest {
 
     @Before
     public void setUp() throws Exception {
+        Configurator.setLevel(ACHBank.class.getName(), Level.DEBUG);
+        
         bank = new ACHBank();
         state = new State();
         state.setCode("NY");

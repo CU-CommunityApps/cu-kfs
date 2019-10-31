@@ -18,7 +18,8 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -258,12 +259,24 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
     }
 
     public void setBankState(State bankState) {
-        LOG.info("setBankState, setting bank state to: " + ToStringBuilder.reflectionToString(bankState));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("setBankState, setting bank state to: " + buildToStringBuilderString(bankState));
+        }
         this.bankState = bankState;
     }
 
     public void setPostalCode(PostalCode postalCode) {
-        LOG.info("setPostalCode, setting postal code to: " + ToStringBuilder.reflectionToString(postalCode));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("setPostalCode, setting postal code to: " + buildToStringBuilderString(postalCode));
+        }
         this.postalCode = postalCode;
+    }
+    
+    private String buildToStringBuilderString(PersistableBusinessObjectBase object) {
+        if (ObjectUtils.anyNotNull(object)) {
+            return ToStringBuilder.reflectionToString(object);
+        } else {
+            return "<null>";
+        }
     }
 }
