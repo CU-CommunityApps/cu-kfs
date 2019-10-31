@@ -41,7 +41,7 @@ public class ACHBankTest {
     }
     
     @Test
-    public void testSetBankMull() {
+    public void testSetBankNull() {
         bank.setBankState(null);
         assertEquals(null, bank.getBankState());
     }
