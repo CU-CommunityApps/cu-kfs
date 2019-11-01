@@ -58,7 +58,6 @@ public final class BatchStepRunner {
             /*
              * CU Customization to initialize PojoPropertyUtilsBean for batch processing 
              */
-            LOG.info("main, CU Customization to initialize PojoPropertyUtilsBean");
             PojoPlugin.initBeanUtils();
             
             String[] stepNames;
