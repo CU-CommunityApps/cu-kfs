@@ -286,7 +286,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			final String fiscalOfficerName = fiscalOfficer != null ? fiscalOfficer.getName() : newAccountGlobal.getAccountFiscalOfficerSystemIdentifier();
 			super.putFieldError(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] {fiscalOfficerName, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER.namespace, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER.name});
 			success = false;
-		} else if ((ObjectUtils.isNotNull(fiscalOfficer) && StringUtils.isNotBlank(fiscalOfficer.getPrincipalName()) && ObjectUtils.isNull(fiscalOfficer.getPrincipalId()))) {
+        } else if (ObjectUtils.isNotNull(fiscalOfficer) && !StringUtils.isBlank(fiscalOfficer.getPrincipalName())
+                && ObjectUtils.isNull(fiscalOfficer.getPrincipalId())) {
 			super.putFieldError(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCPAL_NAME_FISCAL_OFFICER_SUPER_INVALID);
 			success = false;
 		}

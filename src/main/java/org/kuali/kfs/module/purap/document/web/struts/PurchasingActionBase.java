@@ -795,7 +795,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
         else if (ConfirmationQuestion.YES.equals(buttonClicked)) {
             for (PurApItem item : ((PurchasingAccountsPayableDocument) purchasingForm.getDocument()).getItems()) {
-                PurchasingItemBase purItem = ((PurchasingItemBase) item);
+                PurchasingItemBase purItem = (PurchasingItemBase) item;
                 purItem.setPurchasingCommodityCode(null);
                 purItem.setCommodityCode(null);
             }
@@ -963,7 +963,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 purchasingForm.setHideDistributeAccounts(true);
             }
 
-            if ((needToDistributeAccount && !performedAccountDistribution && foundAccountDistributionError)) {
+            if (needToDistributeAccount && !performedAccountDistribution && foundAccountDistributionError) {
                 GlobalVariables.getMessageMap().putError(PurapConstants.ACCOUNT_DISTRIBUTION_ERROR_KEY,
                         PurapKeyConstants.PURAP_GENERAL_NO_ITEMS_TO_DISTRIBUTE_TO, "account numbers");
             }
@@ -1035,7 +1035,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             purchasingForm.getAccountDistributionsourceAccountingLines().remove(accountIndex);
         }
         else {
-            PurApItem item = ((PurchasingAccountsPayableDocument) purchasingForm.getDocument()).getItem((itemIndex));
+            PurApItem item = ((PurchasingAccountsPayableDocument) purchasingForm.getDocument()).getItem(itemIndex);
             item.getSourceAccountingLines().remove(accountIndex);
         }
 

@@ -121,7 +121,6 @@ public class AssetSeparatePaymentDistributor {
         createOffsetPayments();
     }
 
-
     /**
      * Split the amount to be assigned from the source payments
      */
@@ -323,7 +322,7 @@ public class AssetSeparatePaymentDistributor {
                     KualiDecimal amount = (KualiDecimal) readMethod.invoke(assetPayment);
                     Method writeMethod = propertyDescriptor.getWriteMethod();
                     if (writeMethod != null && amount != null) {
-                        writeMethod.invoke(assetPayment, (amount.negated()));
+                        writeMethod.invoke(assetPayment, amount.negated());
                     }
 
                 }

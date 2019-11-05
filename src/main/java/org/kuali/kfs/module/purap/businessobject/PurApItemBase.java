@@ -70,7 +70,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     public String getItemIdentifierString() {
-        String itemLineNumberString = (getItemLineNumber() != null ? getItemLineNumber().toString() : "");
+        String itemLineNumberString = getItemLineNumber() != null ? getItemLineNumber().toString() : "";
         return getItemType().isLineItemIndicator() ? "Item " + itemLineNumberString :
                 getItemType().getItemTypeDescription();
     }
@@ -102,8 +102,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     public void setItemUnitOfMeasureCode(String itemUnitOfMeasureCode) {
-        this.itemUnitOfMeasureCode = (StringUtils.isNotBlank(itemUnitOfMeasureCode) ?
-                itemUnitOfMeasureCode.toUpperCase() : itemUnitOfMeasureCode);
+        this.itemUnitOfMeasureCode = StringUtils.isNotBlank(itemUnitOfMeasureCode) ?
+                itemUnitOfMeasureCode.toUpperCase() : itemUnitOfMeasureCode;
     }
 
     @Override

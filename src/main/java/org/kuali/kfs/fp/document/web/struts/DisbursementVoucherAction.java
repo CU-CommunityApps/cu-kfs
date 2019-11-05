@@ -229,7 +229,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         String fileName = document.getDocumentNumber() + "_cover_sheet.pdf";
         WebUtils.saveMimeOutputStreamAsFile(response, "application/pdf", baos, fileName);
 
-        return (null);
+        return null;
     }
 
 
