@@ -224,7 +224,6 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         }
     }
 
-
     /**
      * This method will remove a TargetAccountingLine from a FinancialDocument. This assumes that the user presses
      * the delete button for a specific accounting line on the document and that the document is represented by a

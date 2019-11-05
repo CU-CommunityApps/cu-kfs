@@ -300,8 +300,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     public boolean isVendorDebarred() {
-        return (ObjectUtils.isNotNull(getVendorHeader().getVendorDebarredIndicator()) && getVendorHeader()
-                .getVendorDebarredIndicator());
+        return ObjectUtils.isNotNull(getVendorHeader().getVendorDebarredIndicator())
+                && getVendorHeader().getVendorDebarredIndicator();
     }
 
     public boolean isActiveIndicator() {

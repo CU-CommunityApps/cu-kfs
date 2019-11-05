@@ -213,8 +213,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @return the name of the accounting line group to get the authorizer from
      */
     protected String getGroupName() {
-        return (accountingLineForValidation.isSourceAccountingLine() ? KFSConstants.SOURCE_ACCOUNTING_LINES_GROUP_NAME :
-            KFSConstants.TARGET_ACCOUNTING_LINES_GROUP_NAME);
+        return accountingLineForValidation.isSourceAccountingLine() ? KFSConstants.SOURCE_ACCOUNTING_LINES_GROUP_NAME :
+            KFSConstants.TARGET_ACCOUNTING_LINES_GROUP_NAME;
     }
 
     /**
