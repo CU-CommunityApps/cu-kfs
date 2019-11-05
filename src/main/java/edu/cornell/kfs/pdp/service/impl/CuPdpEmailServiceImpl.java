@@ -332,6 +332,10 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         if (adviceIsForDV){
         //DV payment detail gets put in message body, format for that
         	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_SOURCE_DOCUMENT_NUMBER, sourceDocNbr));
+        	if (StringUtils.isNotBlank(invoiceNbr) && StringUtils.isNotBlank(invoiceDate)) {
+        	    formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_INVOICE_NUMBER, invoiceNbr));
+        	    formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_INVOICE_DATE, invoiceDate));
+        	}
         	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_NET_PAYMENT_AMOUNT, netPayAmount));
         	formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_ORIGINAL_INVOICE_AMOUNT, originalInvoiceAmount));
         	
