@@ -412,6 +412,20 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
     }
 
+    private String createFormattedRemittanceIdTextBasedOnPresenceOfInvoiceDataForDv(String invoiceNumber, Date invoiceDate, String customerPaymentDocumentNumber) {
+        StringBuilder formattedRemittanceIdText = new StringBuilder("");
+
+        if (StringUtils.isNotBlank(invoiceNumber) && ObjectUtils.isNotNull(invoiceDate)) {
+            formattedRemittanceIdText.append(invoiceNumber);
+            formattedRemittanceIdText.append(" Doc:");
+            formattedRemittanceIdText.append(customerPaymentDocumentNumber);
+        } else if (StringUtils.isNotBlank(customerPaymentDocumentNumber)) {
+            formattedRemittanceIdText.append("Doc:");
+            formattedRemittanceIdText.append(customerPaymentDocumentNumber);
+        }
+        return formattedRemittanceIdText.toString();
+    }
+    
     // This method is called by the method that generates the XML file for checks to be printed by BNY Mellon
     protected void writeExtractCheckFileMellonBankFastTrack(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId, List<String> notificationEmailAddresses) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
@@ -955,7 +969,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         //   Here we will NOT have an invoice number but we will have an eDoc number and NO PO number
                         if (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) {
                             remittanceIdCode = "TN";
-                            remittanceIdText = "Doc No:" + pd.getCustPaymentDocNbr();   // Here, we are guaranteed to have a pd.getCustPaymentDocNbr
+                            remittanceIdText = createFormattedRemittanceIdTextBasedOnPresenceOfInvoiceDataForDv(pd.getInvoiceNbr(), pd.getInvoiceDate(), pd.getCustPaymentDocNbr());
                             // Assign RefDesc1
                             RefDesc1 = "";
                         }
@@ -1823,7 +1837,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         // Set up remittanceIdCode and remittanceIdText based on whether its a DV or something else.
                         String remittanceIdCode = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
                         String remittanceIdText = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
-                                ObjectUtils.isNotNull(pd.getCustPaymentDocNbr()) ? "Doc No:" + pd.getCustPaymentDocNbr() : "" : 
+                                createFormattedRemittanceIdTextBasedOnPresenceOfInvoiceDataForDv(pd.getInvoiceNbr(), pd.getInvoiceDate(), pd.getCustPaymentDocNbr()) :
                                     ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? pd.getInvoiceNbr() : "";
                         
                         //All of these are limited to 18 bytes in Fast Track.
