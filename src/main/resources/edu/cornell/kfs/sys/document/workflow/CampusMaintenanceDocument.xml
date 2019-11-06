@@ -1,0 +1,55 @@
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2019 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    CU Customization:
+    Renamed this file from the original "FINP-5331.xml" financials file.
+    
+    The original XML file in financials had the "CAMP" and "CMPT" doc types together in the same file.
+    We've separated the two out into their own dedicated files for easier tracking.
+    
+    We also fixed a minor typo in the "CAMP" doc type's help definition URL.
+-->
+<data xmlns="ns:workflow" xsi:schemaLocation="ns:workflow resource:WorkflowData"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <documentTypes xmlns="ns:workflow/DocumentType"
+                   xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>
+                CAMP
+            </name>
+            <parent>
+                FSSM
+            </parent>
+            <label>
+                Campus
+            </label>
+            <helpDefinitionURL>
+                default.htm?turl=WordDocuments%2Fcampus.htm
+            </helpDefinitionURL>
+            <active>
+                true
+            </active>
+            <routingVersion>
+                2
+            </routingVersion>
+        </documentType>
+    </documentTypes>
+</data>
