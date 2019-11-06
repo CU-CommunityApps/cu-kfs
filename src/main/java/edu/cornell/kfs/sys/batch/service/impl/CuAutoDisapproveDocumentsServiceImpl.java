@@ -77,7 +77,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
                        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
                    } catch (Exception e) {
                        LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
-                       String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);
+                       String message = "Exception encountered trying to auto disapprove the document: ".concat(documentHeaderId);
                        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
                    }
                }
@@ -109,8 +109,8 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 	    }
 	    catch (ParseException pe) {
 	        LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE can not be determined.");
-	        String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE " +
-	                "is invalid.  The auto disapproval job will not use this value.");
+	        String message = "ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE " +
+	                "is invalid.  The auto disapproval job will not use this value.";
 	        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);                         
 	        return false;
 	    }
