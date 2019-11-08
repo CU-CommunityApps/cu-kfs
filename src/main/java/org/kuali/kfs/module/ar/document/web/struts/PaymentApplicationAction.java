@@ -261,10 +261,8 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     protected List<InvoicePaidApplied> applyToIndividualCustomerInvoiceDetails(
             PaymentApplicationForm paymentApplicationForm) {
         PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
-        String applicationDocNbr = paymentApplicationDocument.getDocumentNumber();
 
         // Handle amounts applied at the invoice detail level
-        int paidAppliedsGenerated = 1;
         int simpleInvoiceDetailApplicationCounter = 0;
 
         // calculate paid applieds for all invoices
@@ -275,14 +273,16 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                 // selectedInvoiceDetailApplications[${ctr}].amountApplied
                 String fieldName = "selectedInvoiceDetailApplications[" + simpleInvoiceDetailApplicationCounter +
                         "].amountApplied";
-                simpleInvoiceDetailApplicationCounter++; // needs to be incremented even if we skip this line
+                // needs to be incremented even if we skip this line
+                simpleInvoiceDetailApplicationCounter++;
 
                 // handle the user clicking full apply
                 if (detailApplication.isFullApply()) {
                     detailApplication.setAmountApplied(detailApplication.getAmountOpen());
                 } else {
                     // handle the user manually entering an amount
-                    if (detailApplication.isFullApplyChanged()) { // means it went from true to false
+                    if (detailApplication.isFullApplyChanged()) {
+                        // means it went from true to false
                         detailApplication.setAmountApplied(KualiDecimal.ZERO);
                     }
                 }
@@ -308,7 +308,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                 GlobalVariables.getMessageMap().removeFromErrorPath(
                         KFSConstants.PaymentApplicationTabErrorCodes.APPLY_TO_INVOICE_DETAIL_TAB);
                 invoicePaidApplieds.add(invoicePaidApplied);
-                paidAppliedsGenerated++;
             }
         }
 
@@ -317,15 +316,9 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
     protected List<InvoicePaidApplied> filterTempInvoicePaidApplieds(PaymentApplicationForm paymentApplicationForm) {
         PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
-        List<InvoicePaidApplied> filteredInvoicePaidApplieds = new ArrayList<InvoicePaidApplied>();
 
-        List<InvoicePaidApplied> invoicePaidApplieds = paymentApplicationDocument.getInvoicePaidApplieds(); // jira fix
-        // add only entries that do not have the loaded customer number
-        String currentCustomerNumber = findCustomerNumber(paymentApplicationForm);
-        for (InvoicePaidApplied invoicePaidApplied : invoicePaidApplieds) {
-            filteredInvoicePaidApplieds.add(invoicePaidApplied);
-        }
-        return filteredInvoicePaidApplieds;
+        List<InvoicePaidApplied> invoicePaidApplieds = paymentApplicationDocument.getInvoicePaidApplieds();
+        return new ArrayList<>(invoicePaidApplieds);
     }
 
     /**
@@ -355,9 +348,9 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     protected boolean isValidInvoice(PaymentApplicationForm paymentApplicationForm) {
         boolean validInvoice = true;
         if (StringUtils.isNotBlank(paymentApplicationForm.getEnteredInvoiceDocumentNumber())) {
-            Map<String, String> pkMap = new HashMap<String, String>();
-            if (!SpringContext.getBean(CustomerInvoiceDocumentService.class).checkIfInvoiceNumberIsFinal(paymentApplicationForm.getEnteredInvoiceDocumentNumber())) {
-                validInvoice &= false;
+            if (!SpringContext.getBean(CustomerInvoiceDocumentService.class)
+                    .checkIfInvoiceNumberIsFinal(paymentApplicationForm.getEnteredInvoiceDocumentNumber())) {
+                validInvoice = false;
             }
         }
         return validInvoice;
