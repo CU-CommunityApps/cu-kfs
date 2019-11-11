@@ -85,8 +85,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                 contractsGrantsInvoiceDocumentErrorLog.setAwardBeginningDate(beginningDate);
                 contractsGrantsInvoiceDocumentErrorLog.setAwardEndingDate(endingDate);
                 KualiDecimal awardTotalAmount = award.getAwardTotalAmount() == null ? KualiDecimal.ZERO : award.getAwardTotalAmount();
-                contractsGrantsInvoiceDocumentErrorLog.setAwardTotalAmount(award.getAwardTotalAmount()
-                        .bigDecimalValue());
+                contractsGrantsInvoiceDocumentErrorLog.setAwardTotalAmount(awardTotalAmount.bigDecimalValue());
                 if (ObjectUtils.isNotNull(award.getAwardPrimaryFundManager())) {
                     contractsGrantsInvoiceDocumentErrorLog.setPrimaryFundManagerPrincipalId(
                             award.getAwardPrimaryFundManager().getPrincipalId());

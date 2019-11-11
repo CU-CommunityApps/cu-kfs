@@ -53,42 +53,27 @@ import java.util.List;
 import java.util.Map;
 
 public class PaymentApplicationForm extends FinancialSystemTransactionalDocumentFormBase {
+
     protected static Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PaymentApplicationForm.class);
 
     protected String selectedInvoiceDocumentNumber;
     protected String enteredInvoiceDocumentNumber;
     protected String selectedCustomerNumber;
     protected KualiDecimal unappliedCustomerAmount;
-    protected PaymentApplicationInvoiceApply selectedInvoiceApplication;
-    protected NonInvoiced nonInvoicedAddLine;
+    protected PaymentApplicationInvoiceApply selectedInvoiceApplication = null;
+    protected NonInvoiced nonInvoicedAddLine = new NonInvoiced();
     protected Integer nextNonInvoicedLineNumber;
     protected KualiDecimal nonAppliedHoldingAmount;
     protected String nonAppliedHoldingCustomerNumber;
 
-    protected List<PaymentApplicationInvoiceApply> invoiceApplications;
-    protected List<CustomerInvoiceDocument> invoices;
+    protected List<PaymentApplicationInvoiceApply> invoiceApplications = new ArrayList<>();
+    protected List<CustomerInvoiceDocument> invoices = new ArrayList<>();
 
     // used for non-cash-control pay app docs
-    protected List<PaymentApplicationDocument> nonAppliedControlDocs;
-    protected List<NonAppliedHolding> nonAppliedControlHoldings;
-    protected Map<String, KualiDecimal> nonAppliedControlAllocations;
-    protected Map<String, KualiDecimal> distributionsFromControlDocs;
-
-    /**
-     * Constructs a PaymentApplicationForm.java.
-     */
-    @SuppressWarnings("unchecked")
-    public PaymentApplicationForm() {
-        super();
-        nonInvoicedAddLine = new NonInvoiced();
-        invoices = new ArrayList<CustomerInvoiceDocument>();
-        selectedInvoiceApplication = null;
-        invoiceApplications = new ArrayList<PaymentApplicationInvoiceApply>();
-        nonAppliedControlDocs = new ArrayList<PaymentApplicationDocument>();
-        nonAppliedControlHoldings = new ArrayList<NonAppliedHolding>();
-        nonAppliedControlAllocations = new HashMap<String, KualiDecimal>();
-        distributionsFromControlDocs = new HashMap<String, KualiDecimal>();
-    }
+    protected List<PaymentApplicationDocument> nonAppliedControlDocs = new ArrayList<>();
+    protected List<NonAppliedHolding> nonAppliedControlHoldings = new ArrayList<>();
+    protected Map<String, KualiDecimal> nonAppliedControlAllocations = new HashMap<>();
+    protected Map<String, KualiDecimal> distributionsFromControlDocs = new HashMap<>();
 
     @Override
     protected String getDefaultDocumentTypeName() {
@@ -219,7 +204,7 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         if (StringUtils.isBlank(invoiceDocNumber)) {
             throw new IllegalArgumentException("The parameter [invoiceDocNumber] passed in was blank or null.");
         }
-        if (invoiceItemNumber == null || invoiceItemNumber.intValue() < 1) {
+        if (invoiceItemNumber == null || invoiceItemNumber < 1) {
             throw new IllegalArgumentException("The parameter [invoiceItemNumber] passed in was blank, zero or negative.");
         }
         PaymentApplicationDocument payAppDoc = getPaymentApplicationDocument();
@@ -465,7 +450,7 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     }
 
     public Integer getNonInvoicedAddLineItemNumber() {
-        Integer number = new Integer(0);
+        Integer number = 0;
         if (null != getPaymentApplicationDocument()) {
             Collection<NonInvoiced> items = getPaymentApplicationDocument().getNonInvoiceds();
             for (NonInvoiced item : items) {

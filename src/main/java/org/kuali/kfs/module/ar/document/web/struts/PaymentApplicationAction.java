@@ -281,8 +281,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     detailApplication.setAmountApplied(detailApplication.getAmountOpen());
                 } else {
                     // handle the user manually entering an amount
-                    if (detailApplication.isFullApplyChanged()) {
-                        // means it went from true to false
+                    if (detailApplication.isFullApplyChanged()) { // means it went from true to false
                         detailApplication.setAmountApplied(KualiDecimal.ZERO);
                     }
                 }
@@ -960,8 +959,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         private Object holder;
 
         /**
-         * Constructs a NonAppliedHolding.EntryHolder
-         *
          * @param date   of doc
          * @param holder the entry to point to
          */
