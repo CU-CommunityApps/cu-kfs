@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.cam.batch.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -116,10 +117,11 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         Collection<PurApAccountingLineBase> purapAcctLines = findPurapAccountRevisions();
 
         // Pass the records to reconciliation service method
-        reconciliationService.reconcile(poLines, purapAcctLines);
+        //reconciliationService.reconcile(poLines, purapAcctLines);
 
         // for each valid GL entry there is a collection of valid PO Doc and Account Lines
-        Collection<GlAccountLineGroup> matchedGroups = reconciliationService.getMatchedGroups();
+        //Collection<GlAccountLineGroup> matchedGroups = reconciliationService.getMatchedGroups();
+        Collection<GlAccountLineGroup> matchedGroups = new ArrayList();
 
         // Keep track of unique item lines
         HashMap<String, PurchasingAccountsPayableItemAsset> assetItems = new HashMap<>();
@@ -320,7 +322,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 LOG.error("Could not create a valid PurchasingAccountsPayableDocument object for document number " + entry.getDocumentNumber());
             }
         }
-        updateProcessLog(processLog, reconciliationService);
+        //updateProcessLog(processLog, reconciliationService);
         return purApDocuments;
     }
     

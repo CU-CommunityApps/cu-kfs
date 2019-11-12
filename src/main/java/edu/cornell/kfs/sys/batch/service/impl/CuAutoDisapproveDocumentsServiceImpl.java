@@ -28,6 +28,7 @@ import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.doctype.DocumentType;
+import org.kuali.rice.kew.api.doctype.DocumentTypeService;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
@@ -40,6 +41,7 @@ import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
+import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,8 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
     private RouteHeaderService routeHeaderService;
     private PersonService personService;
+    protected DocumentTypeService documentTypeService;
+    protected NoteService noteService;
 
     @Override
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
@@ -436,5 +440,20 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         this.personService = personService;       
     }
 
+    public DocumentTypeService getDocumentTypeService() {
+        return documentTypeService;
+    }
+
+    public void setDocumentTypeService(DocumentTypeService documentTypeService) {
+        this.documentTypeService = documentTypeService;
+    }
+
+    public NoteService getNoteService() {
+        return noteService;
+    }
+
+    public void setNoteService(NoteService noteService) {
+        this.noteService = noteService;
+    }
 
 }
