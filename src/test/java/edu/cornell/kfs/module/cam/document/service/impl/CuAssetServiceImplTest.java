@@ -97,7 +97,7 @@ public class CuAssetServiceImplTest {
         when(parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)).thenReturn(result);
         List<String> statusCodes = new ArrayList<String>();
         statusCodes.add(RETIRED_STATUS_CD);
-        when(parameterService.getParameterValuesAsString(Asset.class, CamsConstants.Parameters.RETIRED_STATUS_CODES)).thenReturn(statusCodes);
+        when(parameterService.getParameterValuesAsString(Asset.class, CamsConstants.InventoryStatusCode.CAPITAL_ASSET_RETIRED)).thenReturn(statusCodes);
 
         return parameterService;
     }
