@@ -319,6 +319,8 @@
         <field name="vendorForeignZipCode" type="VARCHAR" />
         <field name="vendorForeignProvinceName" type="VARCHAR" />
         <field name="vendorForeignCountryCode" type="VARCHAR" />
+        <field name="vendorForeignCountryName" type="VARCHAR" />
+        <field name="vendorForeignCountryIndicator" type="VARCHAR" />
         <field name="vendorAnyAddressLine1" type="VARCHAR" />
         <field name="vendorZipCodeNumOnly" type="VARCHAR" />
         <field name="ssn" type="VARCHAR" />
@@ -345,8 +347,6 @@
         <field name="box8" type="DECIMAL" />
         <field name="box9" type="VARCHAR" />
         <field name="box10" type="DECIMAL" />
-        <field name="box11" type="DECIMAL" />
-        <field name="box12" type="DECIMAL" />
         <field name="box13" type="DECIMAL" />
         <field name="box14" type="DECIMAL" />
         <field name="box15a" type="DECIMAL" />
@@ -357,5 +357,6 @@
         <field name="box???" type="DECIMAL" />
         <field name="box????" type="DECIMAL" />
         <field name="endDate" type="DATE" />
+        <field name="taxYear" type="VARCHAR" />
     </row>
 </taxDataDefinition>
