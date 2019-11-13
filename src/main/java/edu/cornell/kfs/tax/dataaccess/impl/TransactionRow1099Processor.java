@@ -16,15 +16,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
-import org.kuali.kfs.krad.util.KRADConstants;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DerivedValuesRow;
@@ -56,6 +61,8 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  *   <li>vendorEmailAddress</li>
  *   <li>vendorAnyAddressLine1</li>
  *   <li>vendorZipCodeNumOnly</li>
+ *   <li>vendorForeignCountryName</li>
+ *   <li>vendorForeignCountryIndicator</li>
  *   <li>ssn</li>
  *   <li>tabSiteId</li>
  *   <li>box1</li>
@@ -67,14 +74,13 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  *   <li>box7</li>
  *   <li>box8</li>
  *   <li>box10</li>
- *   <li>box11</li>
- *   <li>box12</li>
  *   <li>box13</li>
  *   <li>box14</li>
  *   <li>box15a</li>
  *   <li>box15b</li>
  *   <li>box16</li>
  *   <li>box18</li>
+ *   <li>taxYear</li>
  * </ul>
  * 
  * <p>The vendor handling of this processor will also populate the following DETAIL fields:</p>
@@ -151,11 +157,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     // Variables pertaining to derived fields not related to a tax box.
     private RecordPiece1099String tabSiteIdP;
     private RecordPiece1099String outputTaxIdP;
-    //private RecordPiece1099String vendorLastNameP;
-    //private RecordPiece1099String vendorFirstNameP;
     private RecordPiece1099String vendorEmailAddressP;
     private RecordPiece1099String vendorAddressLine1P;
     private RecordPiece1099String vendorNumbersOnlyZipCodeP;
+    private RecordPiece1099String vendorForeignCountryNameP;
+    private RecordPiece1099String vendorForeignCountryIndicatorP;
+    private RecordPiece1099String taxYearP;
 
     // Variables pertaining to derived fields related to a tax box.
     private Map<TaxTableField,RecordPiece1099BigDecimal> boxesMap;
@@ -168,8 +175,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     private RecordPiece1099BigDecimal box7P;
     private RecordPiece1099BigDecimal box8P;
     private RecordPiece1099BigDecimal box10P;
-    private RecordPiece1099BigDecimal box11P;
-    private RecordPiece1099BigDecimal box12P;
     private RecordPiece1099BigDecimal box13P;
     private RecordPiece1099BigDecimal box14P;
     private RecordPiece1099BigDecimal box15aP;
@@ -246,8 +251,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
 
 	private PaymentReason1099BoxService paymentReason1099BoxService;
     private DocumentType1099BoxService documentType1099BoxService;
-
-
+    private LocationService locationService;
 
     TransactionRow1099Processor() {
         super(TAX_1099_EXTRA_RS_SIZE, TAX_1099_EXTRA_RS_SIZE, NUM_1099_CHAR_BUFFERS, NUM_1099_WRITERS);
@@ -403,6 +407,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                         derivedValues.vendorEmailAddress,
                         derivedValues.vendorAnyAddressLine1,
                         derivedValues.vendorZipCodeNumOnly,
+                        derivedValues.vendorForeignCountryName,
+                        derivedValues.vendorForeignCountryIndicator,
                         derivedValues.ssn,
                         derivedValues.tabSiteId,
                         derivedValues.box1,
@@ -414,14 +420,13 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                         derivedValues.box7,
                         derivedValues.box8,
                         derivedValues.box10,
-                        derivedValues.box11,
-                        derivedValues.box12,
                         derivedValues.box13,
                         derivedValues.box14,
                         derivedValues.box15a,
                         derivedValues.box15b,
                         derivedValues.box16,
-                        derivedValues.box18
+                        derivedValues.box18,
+                        derivedValues.taxYear
                 ));
                 break;
             
@@ -500,8 +505,11 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         vendorEmailAddressP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorEmailAddress.propertyName);
         vendorAddressLine1P = (RecordPiece1099String) complexPieces.get(derivedValues.vendorAnyAddressLine1.propertyName);
         vendorNumbersOnlyZipCodeP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorZipCodeNumOnly.propertyName);
+        vendorForeignCountryNameP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorForeignCountryName.propertyName);
+        vendorForeignCountryIndicatorP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorForeignCountryIndicator.propertyName);
         outputTaxIdP = (RecordPiece1099String) complexPieces.get(derivedValues.ssn.propertyName);
         tabSiteIdP = (RecordPiece1099String) complexPieces.get(derivedValues.tabSiteId.propertyName);
+        taxYearP = (RecordPiece1099String) complexPieces.get(derivedValues.taxYear.propertyName);
         box1P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box1.propertyName);
         box2P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box2.propertyName);
         box3P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box3.propertyName);
@@ -511,8 +519,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         box7P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box7.propertyName);
         box8P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box8.propertyName);
         box10P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box10.propertyName);
-        box11P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box11.propertyName);
-        box12P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box12.propertyName);
         box13P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box13.propertyName);
         box14P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box14.propertyName);
         box15aP = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box15a.propertyName);
@@ -531,8 +537,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         boxesMap.put(box7P.tableField, box7P);
         boxesMap.put(box8P.tableField, box8P);
         boxesMap.put(box10P.tableField, box10P);
-        boxesMap.put(box11P.tableField, box11P);
-        boxesMap.put(box12P.tableField, box12P);
         boxesMap.put(box13P.tableField, box13P);
         boxesMap.put(box14P.tableField, box14P);
         boxesMap.put(box15aP.tableField, box15aP);
@@ -597,6 +601,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         
         // Setup values that are not expected to change between each iteration.
         tabSiteIdP.value = summary.tabSiteId;
+        taxYearP.value = String.valueOf(summary.reportYear);
         rsDummy = new DummyResultSet();
         vendorRow = summary.vendorRow;
         vendorAddressRow = summary.vendorAddressRow;
@@ -760,8 +765,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         box7P.value = summary.zeroAmount;
         box8P.value = summary.zeroAmount;
         box10P.value = summary.zeroAmount;
-        box11P.value = summary.zeroAmount;
-        box12P.value = summary.zeroAmount;
         box13P.value = summary.zeroAmount;
         box14P.value = summary.zeroAmount;
         box15aP.value = summary.zeroAmount;
@@ -885,9 +888,19 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 vendorHeaderId, currentVendorDetailId);
         
         if (rsVendorAnyAddress.next()) {
+            String vendorCountryCode = rsVendorAnyAddress.getString(vendorAddressRow.vendorCountryCode.index);
             vendorAddressLine1P.value = rsVendorAnyAddress.getString(vendorAddressRow.vendorLine1Address.index);
+            if (isForeignCountry(vendorCountryCode)) {
+                vendorForeignCountryNameP.value = getCountryName(vendorCountryCode);
+                vendorForeignCountryIndicatorP.value = CUKFSConstants.CAPITAL_X;
+            } else {
+                vendorForeignCountryNameP.value = null;
+                vendorForeignCountryIndicatorP.value = null;
+            }
         } else {
             vendorAddressLine1P.value = CUTaxConstants.NO_ANY_VENDOR_ADDRESS;
+            vendorForeignCountryNameP.value = null;
+            vendorForeignCountryIndicatorP.value = null;
             numNoVendorAddress++;
             /*
              * Update the ResultSet to the "dummy" one. The superclass will still
@@ -909,7 +922,19 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         }
     }
 
+    private boolean isForeignCountry(String countryCode) {
+        return StringUtils.isNotBlank(countryCode) && !StringUtils.equals(
+                KFSConstants.COUNTRY_CODE_UNITED_STATES, countryCode);
+    }
 
+    private String getCountryName(String countryCode) {
+        Country country = getLocationService().getCountry(countryCode);
+        if (ObjectUtils.isNotNull(country) && StringUtils.isNotBlank(country.getName())) {
+            return country.getName();
+        } else {
+            return CUTaxConstants.UNKNOWN_COUNTRY;
+        }
+    }
 
     /*
      * Helper method for determining whether any explicit inclusions/exclusions apply to the current transaction detail row, and for determining box type.
@@ -1334,8 +1359,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         fieldsWithStats.put(Integer.valueOf(derivedValues.box7.index), derivedValues.box7.propertyName);
         fieldsWithStats.put(Integer.valueOf(derivedValues.box8.index), derivedValues.box8.propertyName);
         fieldsWithStats.put(Integer.valueOf(derivedValues.box10.index), derivedValues.box10.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box11.index), derivedValues.box11.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box12.index), derivedValues.box12.propertyName);
         fieldsWithStats.put(Integer.valueOf(derivedValues.box13.index), derivedValues.box13.propertyName);
         fieldsWithStats.put(Integer.valueOf(derivedValues.box14.index), derivedValues.box14.propertyName);
         fieldsWithStats.put(Integer.valueOf(derivedValues.box15a.index), derivedValues.box15a.propertyName);
@@ -1396,6 +1419,9 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         vendorEmailAddressP = null;
         vendorAddressLine1P = null;
         vendorNumbersOnlyZipCodeP = null;
+        vendorForeignCountryNameP = null;
+        vendorForeignCountryIndicatorP = null;
+        taxYearP = null;
         box1P = null;
         box2P = null;
         box3P = null;
@@ -1405,8 +1431,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         box7P = null;
         box8P = null;
         box10P = null;
-        box11P = null;
-        box12P = null;
         box13P = null;
         box14P = null;
         box15aP = null;
@@ -1504,6 +1528,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 LOG.warn("Found tax row whose parent vendor name had to be truncated! Key: " + rowKey);
             } else if (this == vendorAddressLine1P) {
                 LOG.warn("Found tax row whose vendor address had to be truncated! Key: " + rowKey);
+            } else if (this == vendorForeignCountryNameP) {
+                LOG.warn("Found tax row whose foreign country name had to be truncated! Key: " + rowKey);
             }
         }
     }
@@ -1618,4 +1644,16 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     public void setDocumentType1099BoxService(DocumentType1099BoxService documentType1099BoxService) {
         this.documentType1099BoxService = documentType1099BoxService;
     }
+
+    public LocationService getLocationService() {
+        if (locationService == null) {
+            locationService = SpringContext.getBean(LocationService.class, CUKFSConstants.LOCATION_SERVICE_BEAN_NAME);
+        }
+        return locationService;
+    }
+
+    public void setLocationService(LocationService locationService) {
+        this.locationService = locationService;
+    }
+
 }

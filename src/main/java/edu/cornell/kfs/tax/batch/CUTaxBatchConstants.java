@@ -3,8 +3,6 @@ package edu.cornell.kfs.tax.batch;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonPdpSourceFieldNames;
-
 /**
  * Helper class containing tax-batch-related constants.
  */
@@ -367,6 +365,8 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_FOREIGN_ZIP_CODE = "vendorForeignZipCode";
         public static final String VENDOR_FOREIGN_PROVINCE_NAME = "vendorForeignProvinceName";
         public static final String VENDOR_FOREIGN_COUNTRY_CODE = "vendorForeignCountryCode";
+        public static final String VENDOR_FOREIGN_COUNTRY_NAME = "vendorForeignCountryName";
+        public static final String VENDOR_FOREIGN_COUNTRY_INDICATOR = "vendorForeignCountryIndicator";
         public static final String VENDOR_ANY_ADDRESS_LINE_1 = "vendorAnyAddressLine1";
         public static final String VENDOR_ZIP_CODE_NUM_ONLY = "vendorZipCodeNumOnly";
         public static final String SSN = "ssn";
@@ -393,8 +393,6 @@ public final class CUTaxBatchConstants {
         public static final String BOX8 = "box8";
         public static final String BOX9 = "box9";
         public static final String BOX10 = "box10";
-        public static final String BOX11 = "box11";
-        public static final String BOX12 = "box12";
         public static final String BOX13 = "box13";
         public static final String BOX14 = "box14";
         public static final String BOX15A = "box15a";
@@ -405,6 +403,7 @@ public final class CUTaxBatchConstants {
         public static final String BOX_UNKNOWN_1099 = "box???";
         public static final String BOX_UNKNOWN_1042S = "box????";
         public static final String END_DATE = "endDate";
+        public static final String TAX_YEAR = "taxYear";
         
         private DerivedFieldNames() {
             throw new UnsupportedOperationException("do not call DerivedFieldNames constructor");
