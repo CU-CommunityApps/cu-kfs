@@ -604,6 +604,8 @@ abstract class TaxTableRow {
         final TaxTableField vendorForeignZipCode;
         final TaxTableField vendorForeignProvinceName;
         final TaxTableField vendorForeignCountryCode;
+        final TaxTableField vendorForeignCountryName;
+        final TaxTableField vendorForeignCountryIndicator;
         final TaxTableField vendorAnyAddressLine1;
         final TaxTableField vendorZipCodeNumOnly;
         final TaxTableField ssn;
@@ -630,8 +632,6 @@ abstract class TaxTableRow {
         final TaxTableField box8;
         final TaxTableField box9;
         final TaxTableField box10;
-        final TaxTableField box11;
-        final TaxTableField box12;
         final TaxTableField box13;
         final TaxTableField box14;
         final TaxTableField box15a;
@@ -643,6 +643,7 @@ abstract class TaxTableRow {
         final TaxTableField boxUnknown1099;
         final TaxTableField boxUnknown1042s;
         final TaxTableField endDate;
+        final TaxTableField taxYear;
         
         DerivedValuesRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields, Integer insertOffset) {
             super(rowId, fields, tables, aliasedFields, insertOffset);
@@ -657,6 +658,8 @@ abstract class TaxTableRow {
             this.vendorForeignZipCode = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_ZIP_CODE);
             this.vendorForeignProvinceName = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_PROVINCE_NAME);
             this.vendorForeignCountryCode = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_COUNTRY_CODE);
+            this.vendorForeignCountryName = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_COUNTRY_NAME);
+            this.vendorForeignCountryIndicator = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_COUNTRY_INDICATOR);
             this.vendorAnyAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_ANY_ADDRESS_LINE_1);
             this.vendorZipCodeNumOnly = getAliasedField(DerivedFieldNames.VENDOR_ZIP_CODE_NUM_ONLY);
             this.ssn = getAliasedField(DerivedFieldNames.SSN);
@@ -683,8 +686,6 @@ abstract class TaxTableRow {
             this.box8 = getAliasedField(DerivedFieldNames.BOX8);
             this.box9 = getAliasedField(DerivedFieldNames.BOX9);
             this.box10 = getAliasedField(DerivedFieldNames.BOX10);
-            this.box11 = getAliasedField(DerivedFieldNames.BOX11);
-            this.box12 = getAliasedField(DerivedFieldNames.BOX12);
             this.box13 = getAliasedField(DerivedFieldNames.BOX13);
             this.box14 = getAliasedField(DerivedFieldNames.BOX14);
             this.box15a = getAliasedField(DerivedFieldNames.BOX15A);
@@ -695,6 +696,7 @@ abstract class TaxTableRow {
             this.boxUnknown1099 = getAliasedField(DerivedFieldNames.BOX_UNKNOWN_1099);
             this.boxUnknown1042s = getAliasedField(DerivedFieldNames.BOX_UNKNOWN_1042S);
             this.endDate = getAliasedField(DerivedFieldNames.END_DATE);
+            this.taxYear = getAliasedField(DerivedFieldNames.TAX_YEAR);
         }
     }
 

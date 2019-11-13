@@ -9,11 +9,9 @@
         This section represents the column headers for the 1099 tab records.
         ====================================================================
      -->
-    <section length="1475" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="1516" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="HDR_SITE_ID" length="40" type="STATIC" value="SITE_ID" />
-        <field name="HDR_BOX_REC_ID_NBR" length="40" type="STATIC" value="BOX_RECIPIENT_ID_NUMBER" />
-        <field name="HDR_REC_FIRST_NAME" length="40" type="STATIC" value="RECIPIENT_CONTACT_FIRST_NAME" />
-        <field name="HDR_REC_LAST_NAME" length="40" type="STATIC" value="RECIPIENT_CONTACT_LAST_NAME" />
+        <field name="HDR_BOX_REC_ID_NBR" length="40" type="STATIC" value="RECIPIENT_ID_NUMBER" />
         <field name="HDR_REC_NAME" length="40" type="STATIC" value="RECIPIENT_NAME" />
         <field name="HDR_REC_NAME2" length="40" type="STATIC" value="RECIPIENT_NAME2" />
         <field name="HDR_REC_ADDRESS1" length="40" type="STATIC" value="RECIPIENT_ADDRESS1" />
@@ -22,20 +20,20 @@
         <field name="HDR_REC_CITY" length="40" type="STATIC" value="RECIPIENT_CITY" />
         <field name="HDR_REC_STATE" length="40" type="STATIC" value="RECIPIENT_STATE" />
         <field name="HDR_REC_ZIP" length="40" type="STATIC" value="RECIPIENT_ZIP" />
-        <field name="HDR_EMAIL" length="40" type="STATIC" value="EMAIL" />
-        <field name="HDR_ACCT_NBR" length="40" type="STATIC" value="BOX_ACCOUNT_NUMBER" />
+        <field name="HDR_FRGN_CTRY" length="40" type="STATIC" value="FOREIGN_COUNTRY" />
+        <field name="HDR_FRGN_CTRY_IND" length="40" type="STATIC" value="FOREIGN_COUNTRY_INDICATOR" />
+        <field name="HDR_EMAIL" length="40" type="STATIC" value="RECIPIENT_EMAIL" />
+        <field name="HDR_ACCT_NBR" length="40" type="STATIC" value="ACCOUNT_NUMBER" />
         <field name="HDR_BOX1" length="40" type="STATIC" value="BOX1_RENTS" />
         <field name="HDR_BOX2" length="40" type="STATIC" value="BOX2_ROYALTIES" />
         <field name="HDR_BOX3" length="40" type="STATIC" value="BOX3_OTHER_INCOME" />
         <field name="HDR_BOX4" length="40" type="STATIC" value="BOX4_FED_INCOME_TAX_WITHHELD" />
         <field name="HDR_BOX5" length="40" type="STATIC" value="BOX5_FISHING_BOAT_PROCEEDS" />
         <field name="HDR_BOX6" length="40" type="STATIC" value="BOX6_MEDICAL_HEALTHCARE_PAYMENTS" />
-        <field name="HDR_BOX7" length="40" type="STATIC" value="BOX7_NON_EMPLOYEE_COMPENSATION" />
+        <field name="HDR_BOX7" length="40" type="STATIC" value="BOX7_NONEMPLOYEE_COMPENSATION" />
         <field name="HDR_BOX8" length="40" type="STATIC" value="BOX8_SUBSTITUTE_PAYMENTS" />
-        <field name="HDR_BOX9" length="40" type="STATIC" value="BOX9_INDIRECT_SALES_IND" />
+        <field name="HDR_BOX9" length="40" type="STATIC" value="BOX9_DIRECT_SALES_IND" />
         <field name="HDR_BOX10" length="40" type="STATIC" value="BOX10_CROP_INSURANCE_PROCEEDS" />
-        <field name="HDR_BOX11" length="40" type="STATIC" value="BOX11" />
-        <field name="HDR_BOX12" length="40" type="STATIC" value="BOX12" />
         <field name="HDR_BOX13" length="40" type="STATIC" value="BOX13_GOLDEN_PARACHUTE" />
         <field name="HDR_BOX14" length="40" type="STATIC" value="BOX14_GROSS_PROCEEDS_ATTORNEY" />
         <field name="HDR_BOX15A" length="40" type="STATIC" value="BOX15A_SECTION_409A_DEFERRAL" />
@@ -46,17 +44,18 @@
         <field name="HDR_BOX17_2" length="40" type="STATIC" value="BOX17_PAYER_STATE_NUMBER2" />
         <field name="HDR_BOX18_1" length="40" type="STATIC" value="BOX18_STATE_INCOME1" />
         <field name="HDR_BOX18_2" length="40" type="STATIC" value="BOX18_STATE_INCOME2" />
+        <field name="HDR_FATCA_REQ" length="40" type="STATIC" value="FATCA_REQUIREMENT" />
+        <field name="HDR_2ND_TIN_NOT_IND" length="40" type="STATIC" value="BOX_2ND_TIN_NOT_IND" />
+        <field name="HDR_1099_YEAR" length="40" type="STATIC" value="1099_YEAR" />
     </section>
     <!--
         ==========================================
         This section represents a 1099 tab record.
         ==========================================
      -->
-    <section length="749" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="678" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="TAB_SITE_ID" length="3" type="DERIVED" value="tabSiteId" /><!-- Site Identifier -->
         <field name="TAB_BOX_REC_ID_NBR" length="11" type="DERIVED" value="ssn" /><!-- Tax ID -->
-        <field name="TAB_REC_FIRST_NAME" length="40" type="BLANK" /><!-- Contact First Name -->
-        <field name="TAB_REC_LAST_NAME" length="40" type="BLANK" /><!-- Contact Last Name -->
         <field name="TAB_REC_NAME" length="45" type="DETAIL" value="vendorName" /><!-- Name 1 -->
         <field name="TAB_REC_NAME2" length="45" type="DETAIL" value="parentVendorName" /><!-- Name 2 -->
         <field name="TAB_REC_ADDRESS1" length="40" type="DERIVED" value="vendorAnyAddressLine1" /><!-- Address (Line 1) -->
@@ -65,6 +64,8 @@
         <field name="TAB_REC_CITY" length="40" type="VENDOR_ANY_ADDRESS" value="vendorCityName" /><!-- City -->
         <field name="TAB_REC_STATE" length="2" type="VENDOR_ANY_ADDRESS" value="vendorStateCode" /><!-- State -->
         <field name="TAB_REC_ZIP" length="9" type="DERIVED" value="vendorZipCodeNumOnly" /><!-- Zip Code (Numbers Only) -->
+        <field name="TAB_FRGN_CTRY" length="25" type="DERIVED" value="vendorForeignCountryName" /><!-- Foreign Country Name -->
+        <field name="TAB_FRGN_CTRY_IND" length="1" type="DERIVED" value="vendorForeignCountryIndicator" /><!-- Foreign Country Indicator -->
         <field name="TAB_EMAIL" length="90" type="DERIVED" value="vendorEmailAddress" /><!-- Email -->
         <field name="TAB_ACCT_NBR" length="20" type="BLANK" /><!-- Account Number -->
         <field name="TAB_BOX1" length="12" type="DERIVED" value="box1" /><!-- Box 1 :: Rents -->
@@ -77,8 +78,6 @@
         <field name="TAB_BOX8" length="12" type="DERIVED" value="box8" /><!-- Box 8 :: Substitute Payments in Lieu of Dividends or Interest -->
         <field name="TAB_BOX9" length="1" type="BLANK" /><!-- Box 9 :: Payer Made Direct Sales of $5000 or More of Consumer Products to a Buyer (Recipient) for Resale -->
         <field name="TAB_BOX10" length="12" type="DERIVED" value="box10" /><!-- Box 10 :: Crop Insurance Proceeds -->
-        <field name="TAB_BOX11" length="12" type="DERIVED" value="box11" /><!-- Box 11 :: Blank -->
-        <field name="TAB_BOX12" length="12" type="DERIVED" value="box12" /><!-- Box 12 :: Blank -->
         <field name="TAB_BOX13" length="12" type="DERIVED" value="box13" /><!-- Box 13 :: Excess Golden Parachute Payments -->
         <field name="TAB_BOX14" length="12" type="DERIVED" value="box14" /><!-- Box 14 :: Gross Proceeds Paid to an Attorney -->
         <field name="TAB_BOX15A" length="12" type="DERIVED" value="box15a" /><!-- Box 15A :: Section 409A Deferrals -->
@@ -89,5 +88,8 @@
         <field name="TAB_BOX17_2" length="10" type="BLANK" /><!-- Box 17 :: State/Payer's State No. 2 -->
         <field name="TAB_BOX18_1" length="12" type="DERIVED" value="box18" /><!-- Box 18 :: State Income 1 -->
         <field name="TAB_BOX18_2" length="12" type="DERIVED" value="box18" /><!-- Box 18 :: State Income 2 -->
+        <field name="TAB_FATCA_REQ" length="1" type="BLANK" /><!-- FATCA Requirement -->
+        <field name="TAB_2ND_TIN_NOT_IND" length="1" type="BLANK" /><!-- 2nd TIN Not Indicator -->
+        <field name="TAB_1099_YEAR" length="4" type="DERIVED" value="taxYear" /><!-- 1099 Tax Year -->
     </section>
 </taxOutputDefinition>
