@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.document.authorization;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -9,7 +7,6 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.kew.api.WorkflowDocument;
 
 public class CuPreEncumbranceAccountingLineAuthorizer extends FinancialProcessingAccountingLineAuthorizer {
-    private static Log LOG = LogFactory.getLog(CuPreEncumbranceAccountingLineAuthorizer.class);
     @Override
     public boolean determineEditPermissionOnField(AccountingDocument accountingDocument, AccountingLine accountingLine,
         String accountingLineCollectionProperty, String fieldName, boolean editablePage) {
