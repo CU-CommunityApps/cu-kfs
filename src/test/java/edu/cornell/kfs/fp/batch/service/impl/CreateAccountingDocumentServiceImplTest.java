@@ -35,8 +35,8 @@ import java.util.stream.Stream;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
@@ -100,13 +100,12 @@ import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
-import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListener;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingPeriodFixture;
@@ -161,7 +160,8 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
         createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
         createAccountingDocumentService.setParameterService(parameterService);
-        createAccountingDocumentService.setCreateAccountingDocumentValidationService(new TestCreateAccountingDocumentValidationService());
+        createAccountingDocumentService.setCreateAccountingDocumentValidationService(
+                buildCreateAccountingDocumentValidationService(configurationService));
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         createTargetTestDirectory();
@@ -216,6 +216,13 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-attachments-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_ATTACHMENTS_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileForDIDocumentWithBadAmount() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-di-bad-amount-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_AMOUNT_TEST);
     }
 
     @Test
@@ -342,6 +349,13 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("multi-sb-plus-bad-rules-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleSBDocumentsPlusDocumentWithBadDateValues() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-sb-plus-bad-date-values-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_WITH_BAD_DATE_VALUES_DOCUMENT_TEST);
     }
 
     @Test
@@ -728,6 +742,7 @@ public class CreateAccountingDocumentServiceImplTest {
         inputFileType.setTitleKey("accountingXmlDocument");
         inputFileType.setFileExtension(StringUtils.substringAfter(CuFPConstants.XML_FILE_EXTENSION, KFSConstants.DELIMITER));
         inputFileType.setDirectoryPath(TARGET_TEST_FILE_PATH);
+        inputFileType.setListenerClass(AccountingXmlDocumentListener.class);
         return inputFileType;
     }
 
@@ -768,6 +783,12 @@ public class CreateAccountingDocumentServiceImplTest {
             .thenReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
         Mockito.when(configurationService.getPropertyValueAsString(Mockito.startsWith(CuFPTestConstants.AV_VALIDATION_MESSAGE_KEY_PREFIX)))
             .then(this::buildAuxiliaryVoucherErrorMessage);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR))
+                .thenReturn(CuFPTestConstants.GENERIC_ERROR_MESSAGE);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR))
+                .thenReturn(CuFPTestConstants.GENERIC_NUMERIC_ERROR_MESSAGE);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR))
+                .thenReturn(CuFPTestConstants.XML_ADAPTER_ERROR_MESSAGE);
         return configurationService;
     }
 
@@ -813,6 +834,13 @@ public class CreateAccountingDocumentServiceImplTest {
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
         return parameterService;
+    }
+
+    private CreateAccountingDocumentValidationService buildCreateAccountingDocumentValidationService(
+            ConfigurationService configurationService) {
+        CreateAccountingDocumentValidationServiceImpl validationService = new CreateAccountingDocumentValidationServiceImpl();
+        validationService.setConfigurationService(configurationService);
+        return validationService;
     }
 
     private boolean documentPassesBusinessRules(Document document) {
@@ -1166,17 +1194,4 @@ public class CreateAccountingDocumentServiceImplTest {
         
     }
     
-    private class TestCreateAccountingDocumentValidationService implements CreateAccountingDocumentValidationService {
-        
-        @Override
-        public boolean isValidXmlFileHeaderData(AccountingXmlDocumentListWrapper accountingXmlDocuments, CreateAccountingDocumentReportItem reportItem) {
-            return true;
-        }
-        
-        @Override
-        public boolean isAllRequiredDataValid(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItemDetail reportItemDetail) {
-            return true;
-        }
-    }
-
 }

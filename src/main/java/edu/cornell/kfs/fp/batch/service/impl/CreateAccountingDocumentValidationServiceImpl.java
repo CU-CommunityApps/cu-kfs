@@ -1,9 +1,15 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import java.text.MessageFormat;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventLocator;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +28,11 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 public class CreateAccountingDocumentValidationServiceImpl implements CreateAccountingDocumentValidationService {
     private static final Logger LOG = LogManager.getLogger(CreateAccountingDocumentValidationServiceImpl.class);
     
+    private static final Pattern EXCEPTION_MESSAGE_PATTERN = Pattern.compile(
+            "^(?<exceptionClassname>([\\w$]+\\.)+[\\w$]+(Exception|Error|Throwable))((: ?)(?<detailMessage>.+))?$");
+    private static final String EXCEPTION_CLASSNAME_GROUP = "exceptionClassname";
+    private static final String DETAIL_MESSAGE_GROUP = "detailMessage";
+    
     protected ConfigurationService configurationService;
     
     @Override
@@ -37,6 +48,7 @@ public class CreateAccountingDocumentValidationServiceImpl implements CreateAcco
         allValidationChecksPassed &= isDocumentTypeCodeValid(accountingXmlDocument.getDocumentTypeCode(), reportItemDetail);
         allValidationChecksPassed &= isDescriptionValid(accountingXmlDocument.getDescription(), reportItemDetail);
         allValidationChecksPassed &= isExplanationValid(accountingXmlDocument.getExplanation(), reportItemDetail);
+        allValidationChecksPassed &= documentWasParsedWithoutErrors(accountingXmlDocument, reportItemDetail);
         return allValidationChecksPassed;
     }
     
@@ -126,6 +138,78 @@ public class CreateAccountingDocumentValidationServiceImpl implements CreateAcco
         return explanationIsValid;
     }
     
+    private boolean documentWasParsedWithoutErrors(AccountingXmlDocumentEntry accountingXmlDocument,
+            CreateAccountingDocumentReportItemDetail reportItemDetail) {
+        if (CollectionUtils.isNotEmpty(accountingXmlDocument.getValidationErrors())) {
+            for (ValidationEvent validationError : accountingXmlDocument.getValidationErrors()) {
+                reportItemDetail.appendErrorMessageToExistingErrorMessage(
+                        buildValidationErrorMessageForUser(validationError));
+            }
+            LOG.info("documentWasParsedWithoutErrors: Detected one or more parsing validation errors.");
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    private String buildValidationErrorMessageForUser(ValidationEvent validationError) {
+        String subMessage = getErrorSubMessage(validationError);
+        int lineNumber = getErrorLineNumber(validationError);
+        if (lineNumber != -1) {
+            return formatMessageFromProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR,
+                    lineNumber, subMessage);
+        } else {
+            return subMessage;
+        }
+    }
+    
+    private String getErrorSubMessage(ValidationEvent validationError) {
+        String eventMessage = getErrorEventMessage(validationError);
+        LOG.warn("getErrorSubMessage: Detected validation error when parsing XML document: "
+                + eventMessage);
+        Matcher matcher = EXCEPTION_MESSAGE_PATTERN.matcher(eventMessage);
+        if (!matcher.matches()) {
+            return eventMessage;
+        }
+        
+        String exceptionClassname = matcher.group(EXCEPTION_CLASSNAME_GROUP);
+        if (StringUtils.isBlank(exceptionClassname)) {
+            throw new IllegalStateException(
+                    "Pattern matched message but it does not contain exception classname; this should NEVER happen!");
+        }
+        
+        String subMessage;
+        String detailMessage = matcher.group(DETAIL_MESSAGE_GROUP);
+        if (StringUtils.isNotBlank(detailMessage)) {
+            subMessage = detailMessage;
+        } else if (StringUtils.equals(NumberFormatException.class.getName(), exceptionClassname)) {
+            subMessage = getStringProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR);
+        } else {
+            subMessage = getStringProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR);
+        }
+        
+        return subMessage;
+    }
+    
+    private String getErrorEventMessage(ValidationEvent event) {
+        String errorMessage = event.getMessage();
+        if (StringUtils.isBlank(errorMessage)) {
+            Throwable linkedException = event.getLinkedException();
+            if (linkedException != null) {
+                errorMessage = linkedException.getMessage();
+            }
+            if (StringUtils.isBlank(errorMessage)) {
+                errorMessage = getStringProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR);
+            }
+        }
+        return errorMessage;
+    }
+    
+    private int getErrorLineNumber(ValidationEvent event) {
+        ValidationEventLocator locator = event.getLocator();
+        return locator != null ? locator.getLineNumber() : -1;
+    }
+    
     private void appendValidationErrorToExistingReportItemMessage(CreateAccountingDocumentReportItem reportItem, String additionalReportItemMessageContent) {
         String newErrorMessage;
         if (StringUtils.isBlank(org.apache.commons.lang3.ObjectUtils.defaultIfNull(reportItem.getValidationErrorMessage(), KFSConstants.EMPTY_STRING))) {
@@ -134,6 +218,15 @@ public class CreateAccountingDocumentValidationServiceImpl implements CreateAcco
             newErrorMessage = reportItem.getValidationErrorMessage() + KFSConstants.NEWLINE + KFSConstants.NEWLINE + additionalReportItemMessageContent;
         }
         reportItem.setValidationErrorMessage(newErrorMessage);
+    }
+
+    private String formatMessageFromProperty(String propertyKey, Object... arguments) {
+        String patternText = getStringProperty(propertyKey);
+        return MessageFormat.format(patternText, arguments);
+    }
+
+    private String getStringProperty(String propertyKey) {
+        return configurationService.getPropertyValueAsString(propertyKey);
     }
 
     public ConfigurationService getConfigurationService() {

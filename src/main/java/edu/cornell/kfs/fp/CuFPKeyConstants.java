@@ -81,4 +81,7 @@ public class CuFPKeyConstants {
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_TYPE = "error.create.accounting.document.av.invalid.type";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_RECODE_TYPE = "error.create.accounting.document.av.invalid.recode.type";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_REVERSAL_FOR_TYPE = "error.create.accounting.document.av.invalid.reversal.for.type";
+    public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR = "error.create.accounting.document.generic.error";
+    public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR = "error.create.accounting.document.generic.numeric.error";
+    public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR = "error.create.accounting.document.xml.adapter.error";
 }

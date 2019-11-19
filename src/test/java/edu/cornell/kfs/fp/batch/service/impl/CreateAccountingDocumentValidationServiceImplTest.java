@@ -20,7 +20,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryPojoFixtur
 public class CreateAccountingDocumentValidationServiceImplTest {
 
     private TestCreateAccountingDocumentValidationServiceImpl createAccountingDocumentValidationService;
-    private static String LABEL_FOR_TESTING_RESULTS = "Expected results should equal actual results: ";
+    private static final String LABEL_FOR_TESTING_RESULTS = "Expected results should equal actual results: ";
 
     @Before
     public void setUp() throws Exception {
@@ -182,6 +182,81 @@ public class CreateAccountingDocumentValidationServiceImplTest {
         assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_DESCRIPTION_EXPLANATION_TEST.expectedResults, actualResults);
     }
 
+    @Test
+    public void testDocumentIsInvalidDueToXmlAdapterErrorOnNumericField() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_NUMERIC_ERROR_TEST,
+                "\n\nError at line 25: Invalid number");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToDescriptiveXmlAdapterErrorOnNumericField() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_DESCRIPTIVE_NUMERIC_ERROR_TEST,
+                "\n\nError at line 25: Commas are not allowed in numbers");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToXmlAdapterErrorOnDateField() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_DATE_ERROR_TEST,
+                "\n\nError at line 66: Cannot parse \"02/31/2018\": Value 31 for dayOfMonth must be in the range [1,28]");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToXmlAdapterErrorWithoutDescriptiveMessage() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_GENERIC_ERROR_TEST,
+                "\n\nError at line 4: Unexpected XML processing error");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToXmlAdapterErrorWithoutClassnameInMessage() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_ERROR_MESSAGE_WITHOUT_CLASSNAME_TEST,
+                "\n\nError at line 103: Account number does not reference an actual KFS account");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToXmlAdapterErrorWithoutLineNumberReference() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_ERROR_WITHOUT_LINE_NUMBER_TEST,
+                "\n\nCommas are not allowed in numbers");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToXmlAdapterErrorWithoutLineNumberOrMessage() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_ERROR_WITHOUT_LINE_OR_MESSAGE_TEST,
+                "\n\nUnexpected XML processing error");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToMultipleXmlAdapterErrors() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_MULTIPLE_ADAPTER_ERRORS_TEST,
+                "\n\nError at line 25: Invalid number"
+                        + "\n\nError at line 66: Cannot parse \"02/31/2018\": Value 31 for dayOfMonth must be in the range [1,28]");
+    }
+
+    @Test
+    public void testDocumentIsInvalidDueToXmlAdapterErrorAndRequiredDataError() {
+        assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+                AccountingXmlDocumentEntryPojoFixture.BAD_XML_ADAPTER_AND_REQUIRED_DATA_ERRORS_TEST,
+                "\n\nDetected null or blank data for element: Explanation"
+                        + "\n\nError at line 25: Commas are not allowed in numbers");
+    }
+
+    private void assertResultAndMessageAreCorrectForDocumentWithXmlAdapterValidationErrors(
+            AccountingXmlDocumentEntryPojoFixture fixture, String expectedMessage) {
+        AccountingXmlDocumentEntry documentEntry = fixture.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(
+                documentEntry, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, fixture.expectedResults, actualResults);
+        assertEquals("Wrong error message for result", expectedMessage, reportItemDetail.getErrorMessage());
+    }
+
     private static class TestCreateAccountingDocumentValidationServiceImpl extends CreateAccountingDocumentValidationServiceImpl {
         public TestCreateAccountingDocumentValidationServiceImpl() {
             this.configurationService = buildMockConfigurationService();
@@ -193,6 +268,12 @@ public class CreateAccountingDocumentValidationServiceImplTest {
                 .thenReturn(CuFPTestConstants.TEST_CREATE_ACCOUNT_DOCUMENT_INVALID_DATA);
             Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_NULL_BLANK_DATA_ELEMENT))
                 .thenReturn(CuFPTestConstants.TEST_CREATE_ACCOUNT_DOCUMENT_NULL_BLANK_DATA);
+            Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR))
+                    .thenReturn(CuFPTestConstants.GENERIC_ERROR_MESSAGE);
+            Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR))
+                    .thenReturn(CuFPTestConstants.GENERIC_NUMERIC_ERROR_MESSAGE);
+            Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR))
+                    .thenReturn(CuFPTestConstants.XML_ADAPTER_ERROR_MESSAGE);
             return configurationService;
         }
     }
