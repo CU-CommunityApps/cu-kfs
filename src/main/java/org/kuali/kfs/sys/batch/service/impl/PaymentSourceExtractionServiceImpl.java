@@ -66,6 +66,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     protected PaymentSourceToExtractService<PaymentSource> paymentSourceToExtractService;
     protected DocumentService documentService;
     protected Set<String> checkAchFsloDocTypes;
+    private FinancialSystemDocumentService financialSystemDocumentService;
 
     // This should only be set to true when testing this system. Setting this to true will run the code but
     // won't set the doc status to extracted
@@ -376,6 +377,14 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
+    }
+
+    public FinancialSystemDocumentService getFinancialSystemDocumentService() {
+        return financialSystemDocumentService;
+    }
+
+    public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
+        this.financialSystemDocumentService = financialSystemDocumentService;
     }
 
 }
