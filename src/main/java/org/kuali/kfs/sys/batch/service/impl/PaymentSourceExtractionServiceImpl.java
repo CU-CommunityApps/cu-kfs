@@ -65,7 +65,6 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     protected PdpEmailService paymentFileEmailService;
     protected PaymentSourceToExtractService<PaymentSource> paymentSourceToExtractService;
     protected DocumentService documentService;
-    private FinancialSystemDocumentService financialSystemDocumentService;
     protected Set<String> checkAchFsloDocTypes;
 
     // This should only be set to true when testing this system. Setting this to true will run the code but
@@ -377,14 +376,6 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
-    }
-
-    public FinancialSystemDocumentService getFinancialSystemDocumentService() {
-        return financialSystemDocumentService;
-    }
-
-    public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
-        this.financialSystemDocumentService = financialSystemDocumentService;
     }
 
 }

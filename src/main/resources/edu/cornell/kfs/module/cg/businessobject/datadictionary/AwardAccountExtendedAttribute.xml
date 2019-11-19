@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:dd="http://rice.kuali.org/dd"
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
 
 	<bean id="AwardAccountExtendedAttribute" parent="AwardAccountExtendedAttribute-parentBean" />
@@ -18,9 +19,9 @@
 		</property>
 	</bean>
 
-	<bean id="AwardAccountExtendedAttribute-proposalNumber" parent="Award-proposalNumber" />
-	<bean id="AwardAccountExtendedAttribute-chartOfAccountsCode" parent="AwardAccount-chartOfAccountsCode" />
-	<bean id="AwardAccountExtendedAttribute-accountNumber" parent="AwardAccount-accountNumber" />
+	<dd:boAttributeRef id="AwardAccountExtendedAttribute-proposalNumber" parent="Award-proposalNumber" />
+	<dd:boAttributeRef id="AwardAccountExtendedAttribute-chartOfAccountsCode" parent="AwardAccount-chartOfAccountsCode" />
+	<dd:boAttributeRef id="AwardAccountExtendedAttribute-accountNumber" parent="AwardAccount-accountNumber" />
 
 	<bean id="AwardAccountExtendedAttribute-accountPurchaseOrderNumber" parent="AwardAccountExtendedAttribute-accountPurchaseOrderNumber-parentBean" />
 	<bean id="AwardAccountExtendedAttribute-accountPurchaseOrderNumber-parentBean" abstract="true" parent="Proposal-grantNumber"
