@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 <!--
  Copyright 2007-2009 The Kuali Foundation
  
@@ -25,9 +25,13 @@
     </property>
  		<property name="relationships">
       		<list merge="true">
-       			<dd:relationship objectAttribute="extension"> 
-  					<dd:primitiveAttribute source="vendorHeaderGeneratedIdentifier" target="vendorHeaderGeneratedIdentifier" /> 					
-        		</dd:relationship>
+      			<bean parent="RelationshipDefinition" p:objectAttributeName="extension">
+		      		<property name="primitiveAttributes">
+			      		<list>
+			      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="vendorHeaderGeneratedIdentifier" p:targetName="vendorHeaderGeneratedIdentifier"/>
+			      		</list>
+		      		</property>
+		      	</bean>
       		</list>
         </property>
   </bean>

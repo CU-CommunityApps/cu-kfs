@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 <bean id="AppropriationAccount" parent="AppropriationAccount-parentBean"/>
 <bean id="AppropriationAccount-parentBean" abstract="true" parent="BusinessObjectEntry">
@@ -25,9 +25,13 @@
 	</property>
 	<property name="relationships">
 		<list>
-			<dd:relationship objectAttribute="subFundGroup" targetClass="org.kuali.kfs.coa.businessobject.SubFundGroup">
-    	        <dd:primitiveAttribute source="subFundGroupCode" target="subFundGroupCode"/>
-        	</dd:relationship>
+			<bean parent="RelationshipDefinition" p:objectAttributeName="subFundGroup">
+	      		<property name="supportAttributes">
+		      		<list>
+		      			<bean parent="SupportAttributeDefinition" p:sourceName="subFundGroupCode" p:targetName="subFundGroupCode"/>
+		      		</list>
+	      		</property>
+	      	</bean>
         </list>
     </property>
 </bean>

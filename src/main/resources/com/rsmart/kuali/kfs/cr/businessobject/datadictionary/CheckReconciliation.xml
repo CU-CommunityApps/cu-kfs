@@ -1,10 +1,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:dd="http://rice.kuali.org/dd"
     xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
   <bean id="CheckReconciliation" parent="CheckReconciliation-parentBean" />
 
@@ -268,12 +266,12 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
     </property>
     <property name="lookupFields" >
       <list>
-        <dd:field attributeName="bankCode"  />
-        <dd:field attributeName="checkNumber"  />
-        <dd:field attributeName="checkDate"  />
-        <dd:field attributeName="statusChangeDate"  />
-        <dd:field attributeName="status"  />
-        <dd:field attributeName="sourceCode" />
+      	<bean parent="FieldDefinition" p:attributeName="bankCode"/>
+      	<bean parent="FieldDefinition" p:attributeName="checkNumber"/>
+      	<bean parent="FieldDefinition" p:attributeName="checkDate"/>
+      	<bean parent="FieldDefinition" p:attributeName="statusChangeDate"/>
+      	<bean parent="FieldDefinition" p:attributeName="status"/>
+      	<bean parent="FieldDefinition" p:attributeName="sourceCode"/>
       </list>
     </property>
     <property name="resultFields" >

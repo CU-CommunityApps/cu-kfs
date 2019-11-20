@@ -15,8 +15,7 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:dd="http://rice.kuali.org/dd"
-    xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+    xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
     
   <bean id="Account" parent="Account-parentBean">
   <property name="boNotesEnabled" value="true" />
@@ -39,34 +38,69 @@
 	</property>
     <property name="relationships">
       <list merge = "true">
-        <dd:relationship objectAttribute="extension.subFundProgram">
-            <dd:primitiveAttribute source="extension.programCode" target="programCode"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
-        </dd:relationship>
-        <dd:relationship objectAttribute="extension">
-            <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
-            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
-            <dd:primitiveAttribute source="extension.majorReportingCategoryCode" target="majorReportingCategory.majorReportingCategoryCode"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode"/>
-            <dd:supportAttribute source="extension.programCode" target="subFundProgram.programCode"/>
-            <dd:supportAttribute source="extension.appropriationAccount.appropriationAccountNumber" target="appropriationAccount.appropriationAccountNumber"/>
-            <dd:supportAttribute source="extension.majorReportingCategory.majorReportingCategoryCode" target="majorReportingCategory.majorReportingCategoryCode"/>
-            <dd:supportAttribute source="extension.invoiceFrequencyCode" target="invoiceFrequency.invoiceFrequencyCode"/>
-            <dd:supportAttribute source="extension.invoiceTypeCode" target="invoiceType.invoiceTypeCode"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="extension.invoiceFrequency">
-            <dd:primitiveAttribute source="extension.invoiceFrequencyCode" target="invoiceFrequencyCode"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="extension.invoiceType">
-            <dd:primitiveAttribute source="extension.invoiceTypeCode" target="invoiceTypeCode"/>
-        </dd:relationship>
-        <dd:relationship objectAttribute="extension.appropriationAccount">
-            <dd:primitiveAttribute source="extension.appropriationAccountNumber" target="appropriationAccountNumber"/>
-            <dd:supportAttribute source="subFundGroupCode" target="subFundGroupCode" />
-        </dd:relationship>
-         <dd:relationship objectAttribute="extension.majorReportingCategory">
-            <dd:primitiveAttribute source="extension.majorReportingCategoryCode" target="majorReportingCategoryCode"/>
-        </dd:relationship>
+      	<bean parent="RelationshipDefinition" p:objectAttributeName="extension.subFundProgram">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="extension.programCode" p:targetName="programCode"/>
+	      		</list>
+      		</property>
+      		<property name="supportAttributes">
+	      		<list>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="subFundGroupCode" p:targetName="subFundGroupCode"/>
+	      		</list>
+      		</property>
+      	</bean>
+      	<bean parent="RelationshipDefinition" p:objectAttributeName="extension">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="chartOfAccountsCode" p:targetName="chartOfAccountsCode"/>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="extension.appropriationAccountNumber" p:targetName="appropriationAccount.appropriationAccountNumber"/>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="extension.majorReportingCategoryCode" p:targetName="majorReportingCategory.majorReportingCategoryCode"/>
+	      		</list>
+      		</property>
+      		<property name="supportAttributes">
+	      		<list>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="subFundGroupCode" p:targetName="subFundProgram.programCode"/>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="extension.appropriationAccount.appropriationAccountNumber" p:targetName="appropriationAccount.appropriationAccountNumber"/>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="extension.majorReportingCategory.majorReportingCategoryCode" p:targetName="majorReportingCategory.majorReportingCategoryCode"/>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="extension.invoiceFrequencyCode" p:targetName="invoiceFrequency.invoiceFrequencyCode"/>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="extension.invoiceTypeCode" p:targetName="invoiceType.invoiceTypeCode"/>
+	      		</list>
+      		</property>
+      	</bean>
+      	<bean parent="RelationshipDefinition" p:objectAttributeName="extension.invoiceFrequency">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="extension.invoiceFrequencyCode" p:targetName="invoiceFrequencyCode"/>
+	      		</list>
+      		</property>
+      	</bean>
+      	<bean parent="RelationshipDefinition" p:objectAttributeName="extension.invoiceType">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="extension.invoiceTypeCode" p:targetName="invoiceTypeCode"/>
+	      		</list>
+      		</property>
+      	</bean>
+      	<bean parent="RelationshipDefinition" p:objectAttributeName="extension.appropriationAccount">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="extension.appropriationAccountNumber" p:targetName="appropriationAccountNumber"/>
+	      		</list>
+      		</property>
+      		<property name="supportAttributes">
+	      		<list>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="subFundGroupCode" p:targetName="subFundGroupCode"/>
+	      		</list>
+      		</property>
+      	</bean>
+      	<bean parent="RelationshipDefinition" p:objectAttributeName="extension.majorReportingCategory">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="extension.majorReportingCategoryCode" p:targetName="majorReportingCategoryCode"/>
+	      		</list>
+      		</property>
+      	</bean>
       </list>
     </property>
     <property name="inactivationBlockingDefinitions">

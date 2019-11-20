@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 <!--
  Copyright 2006-2009 The Kuali Foundation
  
@@ -75,16 +75,27 @@
             </list>
           </property> 
          </bean> 
-        <dd:relationship objectAttribute="profileUser">
-            <dd:primitiveAttribute source="principalId" target="principalId"/>
-            <dd:supportAttribute source="profileUser.principalName" target="principalName" identifier="true"/>
-            <dd:supportAttribute source="profileUser.name" target="name"/>           
-        </dd:relationship>
-         <dd:relationship objectAttribute="favoriteAccounts.objectCode">
-       <!-- 	<dd:primitiveAttribute source="favoriteAccounts.currentYear" target="universityFiscalYear"/> -->
-            <dd:primitiveAttribute source="favoriteAccounts.chartOfAccountsCode" target="chartOfAccountsCode"/>
-            <dd:primitiveAttribute source="favoriteAccounts.financialObjectCode" target="financialObjectCode"/>
-        </dd:relationship> 
+         <bean parent="RelationshipDefinition" p:objectAttributeName="profileUser">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="principalId" p:targetName="principalId"/>
+	      		</list>
+      		</property>
+      		<property name="supportAttributes">
+	      		<list>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="profileUser.principalName" p:targetName="principalName"/>
+	      			<bean parent="SupportAttributeDefinition" p:sourceName="profileUser.name" p:targetName="principalName"/>
+	      		</list>
+      		</property>
+      	</bean>
+      	<bean parent="RelationshipDefinition" p:objectAttributeName="favoriteAccounts.objectCode">
+      		<property name="primitiveAttributes">
+	      		<list>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="favoriteAccounts.chartOfAccountsCode" p:targetName="chartOfAccountsCode"/>
+	      			<bean parent="PrimitiveAttributeDefinition" p:sourceName="favoriteAccounts.financialObjectCode" p:targetName="financialObjectCode"/>
+	      		</list>
+      		</property>
+      	</bean>
     </list>
     </property>
    </bean>
@@ -150,18 +161,17 @@
   </bean>
   
         <bean id="UserProcurementProfile-profileUser.principalName" parent="UserProcurementProfile-profileUser.principalName-parentBean"/>
-
-  <dd:boAttributeRef id="UserProcurementProfile-profileUser.principalName-parentBean" parent="PersonImpl-principalName" abstract="true" 
-  attributeName="profileUser.principalName" label="User Principal Name" shortLabel="Principal Name" required="false">
-    <dd:user universalIdAttribute="principalId" userObjectAttribute="profileUser"/>
-  </dd:boAttributeRef>
+        <bean id="UserProcurementProfile-profileUser.principalName-parentBean" abstract="true" 
+        	parent="PersonImpl-principalName" p:name="profileUser.principalName">
+        	<!-- <dd:user universalIdAttribute="principalId" userObjectAttribute="profileUser"/> -->
+        </bean>
     
     <bean id="UserProcurementProfile-profileUser.name" parent="UserProcurementProfile-profileUser.name-parentBean"/>
+    <bean id="UserProcurementProfile-profileUser.name-parentBean" abstract="true" 
+        	parent="PersonImpl-name" p:name="profileUser.name">
+        	<!-- <dd:user universalIdAttribute="principalId" userObjectAttribute="profileUser"/> -->
+        </bean>
 
-  <dd:boAttributeRef id="UserProcurementProfile-profileUser.name-parentBean" parent="PersonImpl-name" abstract="true" 
-  attributeName="profileUser.name" label="Person Name" shortLabel="Person Name" required="false">
-    <dd:user universalIdAttribute="principalId" userObjectAttribute="profileUser"/>
-  </dd:boAttributeRef>
   
   <bean id="UserProcurementProfile-active" parent="UserProcurementProfile-active-parentBean"/>
   <bean id="UserProcurementProfile-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
