@@ -25,6 +25,7 @@ public class CreateAccountingDocumentValidationServiceImplTest {
     @Before
     public void setUp() throws Exception {
         createAccountingDocumentValidationService = new TestCreateAccountingDocumentValidationServiceImpl();
+        createAccountingDocumentValidationService.afterPropertiesSet();
     }
 
     @After
@@ -274,6 +275,8 @@ public class CreateAccountingDocumentValidationServiceImplTest {
                     .thenReturn(CuFPTestConstants.GENERIC_NUMERIC_ERROR_MESSAGE);
             Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR))
                     .thenReturn(CuFPTestConstants.XML_ADAPTER_ERROR_MESSAGE);
+            Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.VALIDATION_CREATE_ACCOUNTING_DOCUMENT_EXCEPTION_MESSAGE_REGEX))
+                    .thenReturn(CuFPTestConstants.EXCEPTION_MESSAGE_REGEX);
             return configurationService;
         }
     }

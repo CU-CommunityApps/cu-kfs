@@ -8,6 +8,8 @@ public class CuFPTestConstants {
     public static final String GENERIC_ERROR_MESSAGE = "Unexpected XML processing error";
     public static final String GENERIC_NUMERIC_ERROR_MESSAGE = "Invalid number";
     public static final String XML_ADAPTER_ERROR_MESSAGE = "Error at line {0}: {1}";
+    public static final String EXCEPTION_MESSAGE_REGEX
+            = "^(?<exceptionClassname>([\\w$]+\\.)+[\\w$]+(Exception|Error|Throwable))((: ?)(?<detailMessage>.+))?$";
     public static final String TEST_CREDENTIAL_GROUP_CODE = "TESTGRP";
     public static final String AWS_CREDENTIAL_GROUP_CODE = "AWS-Bill";
     public static final String BUDGET_ADJUSTMENT_DOC_TYPE = "BA";

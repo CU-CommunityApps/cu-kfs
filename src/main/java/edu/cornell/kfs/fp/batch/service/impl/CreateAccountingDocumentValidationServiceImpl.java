@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.springframework.beans.factory.InitializingBean;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -25,16 +26,28 @@ import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationServic
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 
-public class CreateAccountingDocumentValidationServiceImpl implements CreateAccountingDocumentValidationService {
+public class CreateAccountingDocumentValidationServiceImpl implements CreateAccountingDocumentValidationService,
+        InitializingBean {
     private static final Logger LOG = LogManager.getLogger(CreateAccountingDocumentValidationServiceImpl.class);
     
-    private static final Pattern EXCEPTION_MESSAGE_PATTERN = Pattern.compile(
-            "^(?<exceptionClassname>([\\w$]+\\.)+[\\w$]+(Exception|Error|Throwable))((: ?)(?<detailMessage>.+))?$");
     private static final String EXCEPTION_CLASSNAME_GROUP = "exceptionClassname";
     private static final String DETAIL_MESSAGE_GROUP = "detailMessage";
     
     protected ConfigurationService configurationService;
-    
+    protected Pattern exceptionMessagePattern;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (configurationService == null) {
+            throw new IllegalStateException("configurationService was not set");
+        }
+        String regex = getStringProperty(CuFPKeyConstants.VALIDATION_CREATE_ACCOUNTING_DOCUMENT_EXCEPTION_MESSAGE_REGEX);
+        if (StringUtils.isBlank(regex)) {
+            throw new IllegalStateException("Exception message regex has not been defined or is blank");
+        }
+        exceptionMessagePattern = Pattern.compile(regex);
+    }
+
     @Override
     public boolean isValidXmlFileHeaderData(AccountingXmlDocumentListWrapper accountingXmlDocument, CreateAccountingDocumentReportItem reportItem) {
         boolean allValidationChecksPassed = isReportEmailAddressValid(accountingXmlDocument.getReportEmail(), reportItem);
@@ -167,28 +180,27 @@ public class CreateAccountingDocumentValidationServiceImpl implements CreateAcco
         String eventMessage = getErrorEventMessage(validationError);
         LOG.warn("getErrorSubMessage: Detected validation error when parsing XML document: "
                 + eventMessage);
-        Matcher matcher = EXCEPTION_MESSAGE_PATTERN.matcher(eventMessage);
+        Matcher matcher = exceptionMessagePattern.matcher(eventMessage);
         if (!matcher.matches()) {
             return eventMessage;
         }
         
+        String detailMessage = matcher.group(DETAIL_MESSAGE_GROUP);
         String exceptionClassname = matcher.group(EXCEPTION_CLASSNAME_GROUP);
         if (StringUtils.isBlank(exceptionClassname)) {
-            throw new IllegalStateException(
-                    "Pattern matched message but it does not contain exception classname; this should NEVER happen!");
+            LOG.warn("getErrorSubMessage: Pattern matched message but it does not contain exception classname");
         }
-        
-        String subMessage;
-        String detailMessage = matcher.group(DETAIL_MESSAGE_GROUP);
+        return getUserFriendlySubMessage(detailMessage, exceptionClassname);
+    }
+    
+    private String getUserFriendlySubMessage(String detailMessage, String exceptionClassname) {
         if (StringUtils.isNotBlank(detailMessage)) {
-            subMessage = detailMessage;
+            return detailMessage;
         } else if (StringUtils.equals(NumberFormatException.class.getName(), exceptionClassname)) {
-            subMessage = getStringProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR);
+            return getStringProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR);
         } else {
-            subMessage = getStringProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR);
+            return getStringProperty(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR);
         }
-        
-        return subMessage;
     }
     
     private String getErrorEventMessage(ValidationEvent event) {
@@ -236,5 +248,5 @@ public class CreateAccountingDocumentValidationServiceImpl implements CreateAcco
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
-   
+
 }

@@ -4,7 +4,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
-public class AccountingXmlDocumentListener extends Unmarshaller.Listener implements ValidationEventHandler {
+public class AccountingXmlDocumentUnmarshalListener extends Unmarshaller.Listener implements ValidationEventHandler {
 
     private AccountingXmlDocumentEntry currentEntry;
 

@@ -105,7 +105,7 @@ import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentS
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListener;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentUnmarshalListener;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingPeriodFixture;
@@ -742,7 +742,7 @@ public class CreateAccountingDocumentServiceImplTest {
         inputFileType.setTitleKey("accountingXmlDocument");
         inputFileType.setFileExtension(StringUtils.substringAfter(CuFPConstants.XML_FILE_EXTENSION, KFSConstants.DELIMITER));
         inputFileType.setDirectoryPath(TARGET_TEST_FILE_PATH);
-        inputFileType.setListenerClass(AccountingXmlDocumentListener.class);
+        inputFileType.setListenerClass(AccountingXmlDocumentUnmarshalListener.class);
         return inputFileType;
     }
 
@@ -789,6 +789,8 @@ public class CreateAccountingDocumentServiceImplTest {
                 .thenReturn(CuFPTestConstants.GENERIC_NUMERIC_ERROR_MESSAGE);
         Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR))
                 .thenReturn(CuFPTestConstants.XML_ADAPTER_ERROR_MESSAGE);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.VALIDATION_CREATE_ACCOUNTING_DOCUMENT_EXCEPTION_MESSAGE_REGEX))
+                .thenReturn(CuFPTestConstants.EXCEPTION_MESSAGE_REGEX);
         return configurationService;
     }
 
@@ -837,9 +839,10 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private CreateAccountingDocumentValidationService buildCreateAccountingDocumentValidationService(
-            ConfigurationService configurationService) {
+            ConfigurationService configurationService) throws Exception {
         CreateAccountingDocumentValidationServiceImpl validationService = new CreateAccountingDocumentValidationServiceImpl();
         validationService.setConfigurationService(configurationService);
+        validationService.afterPropertiesSet();
         return validationService;
     }
 
