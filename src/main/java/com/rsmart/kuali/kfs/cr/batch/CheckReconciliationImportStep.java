@@ -356,7 +356,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         for(Integer i : col) {
             CheckReconciliation cr = businessObjectService.findBySinglePrimaryKey(CheckReconciliation.class, i);
             
-            cr.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
             cr.setStatus(CRConstants.CANCELLED);
             cr.setGlTransIndicator(Boolean.TRUE);
             
@@ -879,8 +878,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                 CheckReconciliation existingRecord = getCheckReconciliation(cr.getCheckNumber(),cr.getBankAccountNumber());
                 
                 if( existingRecord == null ) {                    
-                    // Update update ts
-                    cr.setLastUpdate(ts);
                     // Set Status to Exception
                     cr.setStatus(CRConstants.EXCP);
                     // Set GL Trans False
@@ -906,7 +903,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                                 cr.setStatus(checkStatus);
                                 existingRecord.setStatus(checkStatus);
                                 existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
-                                existingRecord.setLastUpdate(ts);
                                 businessObjectService.save(existingRecord);
                                 LOG.info("Updated Check Recon Record : " + existingRecord.getId());
                             } else {
@@ -937,7 +933,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                                 cr.setStatus(checkStatus);
                                 existingRecord.setStatus(checkStatus);
                                 existingRecord.setStatusChangeDate(cr.getStatusChangeDate());
-                                existingRecord.setLastUpdate(ts);
                                 businessObjectService.save(existingRecord);
                                 LOG.info("Updated Check Recon Record : " + existingRecord.getId());
                             } else {
