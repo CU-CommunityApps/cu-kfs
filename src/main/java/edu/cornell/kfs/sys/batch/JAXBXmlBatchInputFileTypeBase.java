@@ -31,6 +31,7 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
     protected String titleKey;
     protected String fileNamePrefix;
     protected Class<?> pojoClass;
+    protected Class<?> listenerClass;
 
     @Override
     public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) {
@@ -60,7 +61,12 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
     public Object parse(byte[] fileByteContent) throws ParseException {
         try {
             String fileStringContent = new String(fileByteContent, StandardCharsets.UTF_8);
-            return cuMarshalService.unmarshalString(fileStringContent, pojoClass);
+            if (listenerClass != null)  {
+                Object listener = createListenerInstance();
+                return cuMarshalService.unmarshalString(fileStringContent, pojoClass, listener);
+            } else {
+                return cuMarshalService.unmarshalString(fileStringContent, pojoClass);
+            }
         } catch (JAXBException e) {
             throw new ParseException("Error attempting to unmarshal POJO from XML", e);
         }
@@ -86,6 +92,14 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
         return titleKey;
     }
 
+    protected Object createListenerInstance() {
+        try {
+            return listenerClass.newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
@@ -108,6 +122,10 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
 
     public void setPojoClass(Class<?> pojoClass) {
         this.pojoClass = pojoClass;
+    }
+
+    public void setListenerClass(Class<?> listenerClass) {
+        this.listenerClass = listenerClass;
     }
 
 }

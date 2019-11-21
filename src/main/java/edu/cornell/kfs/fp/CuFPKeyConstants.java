@@ -72,6 +72,8 @@ public class CuFPKeyConstants {
     public static final String CREATE_ACCOUNTING_DOCUMENT_VENDOR_ID_BAD = "create.accounting.document.vendor.id.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_PAYEE_TYPE_CODE_BAD = "create.accounting.document.payee.type.code.bad";
 
+    public static final String VALIDATION_CREATE_ACCOUNTING_DOCUMENT_EXCEPTION_MESSAGE_REGEX
+            = "validation.create.accounting.document.exception.message.regex";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_AMOUNT_REQUIRED = "error.create.accounting.document.av.amount.required";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_AMOUNT_TYPE = "error.create.accounting.document.av.invalid.amount.type";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_DEBIT_AND_CREDIT_AMOUNT = "error.create.accounting.document.av.debit.and.credit.amount";
@@ -81,4 +83,7 @@ public class CuFPKeyConstants {
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_TYPE = "error.create.accounting.document.av.invalid.type";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_RECODE_TYPE = "error.create.accounting.document.av.invalid.recode.type";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_AV_INVALID_REVERSAL_FOR_TYPE = "error.create.accounting.document.av.invalid.reversal.for.type";
+    public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR = "error.create.accounting.document.generic.error";
+    public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR = "error.create.accounting.document.generic.numeric.error";
+    public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR = "error.create.accounting.document.xml.adapter.error";
 }

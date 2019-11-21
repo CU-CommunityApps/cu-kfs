@@ -15,4 +15,8 @@ public interface CUMarshalService {
     
     <T> T unmarshalString(String xmlString, Class<T> clazz) throws JAXBException;
 
+    <T> T unmarshalFile(File xmlFile, Class<T> clazz, Object listener) throws JAXBException;
+
+    <T> T unmarshalString(String xmlString, Class<T> clazz, Object listener) throws JAXBException;
+
 }

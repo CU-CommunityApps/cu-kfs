@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -81,6 +83,9 @@ public class AccountingXmlDocumentEntry {
     @XmlElement(name = "dv_detail", namespace = StringUtils.EMPTY, required = false)
     protected DisbursementVoucherDetailXml disbursementVoucherDetail;
 
+    @XmlTransient
+    protected List<ValidationEvent> validationErrors;
+
     public AccountingXmlDocumentEntry() {
         this.sourceAccountingLines = new ArrayList<>();
         this.targetAccountingLines = new ArrayList<>();
@@ -88,6 +93,7 @@ public class AccountingXmlDocumentEntry {
         this.notes = new ArrayList<>();
         this.adHocRecipients = new ArrayList<>();
         this.backupLinks = new ArrayList<>();
+        this.validationErrors = new ArrayList<>();
     }
 
     public Long getIndex() {
@@ -216,6 +222,18 @@ public class AccountingXmlDocumentEntry {
 
     public void setDisbursementVoucherDetail(DisbursementVoucherDetailXml disbursementVoucherDetail) {
         this.disbursementVoucherDetail = disbursementVoucherDetail;
+    }
+
+    public List<ValidationEvent> getValidationErrors() {
+        return validationErrors;
+    }
+
+    public void setValidationErrors(List<ValidationEvent> validationErrors) {
+        this.validationErrors = validationErrors;
+    }
+
+    public void addValidationError(ValidationEvent validationError) {
+        validationErrors.add(validationError);
     }
 
     @Override

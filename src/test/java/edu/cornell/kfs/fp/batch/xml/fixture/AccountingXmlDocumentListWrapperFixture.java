@@ -52,6 +52,10 @@ public enum AccountingXmlDocumentListWrapperFixture {
             BASE_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
+    SINGLE_DI_DOCUMENT_WITH_BAD_AMOUNT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER)),
     DI_FULL_ACCOUNT_LINE_TEST(
             BASE_WRAPPER,
             documents(
@@ -147,6 +151,12 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
+    MULTI_SB_DOCUMENT_WITH_BAD_DATE_VALUES_DOCUMENT_TEST(
+            BASE_SB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_DATE_VALUES_TEST_DOC3)),
     SINGLE_AV_DOCUMENT_TEST(
             BASE_AV_WRAPPER,
             documents(
