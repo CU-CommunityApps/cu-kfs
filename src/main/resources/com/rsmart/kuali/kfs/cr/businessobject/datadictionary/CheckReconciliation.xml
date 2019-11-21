@@ -28,7 +28,7 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
         <ref bean="CheckReconciliation-sourceCode" />
         <ref bean="CheckReconciliation-bankCode" />
         <ref bean="CheckReconciliation-bank.bankName" />
-        <ref bean="CheckReconciliation-lastUpdate" />
+        <ref bean="CheckReconciliation-lastUpdatedTimestamp" />
         <ref bean="CheckReconciliation-versionNumber" />
         <ref bean="CheckReconciliation-glTransIndicator" />
       </list>
@@ -229,14 +229,11 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
     </property>
   </bean>
   
-  <bean id="CheckReconciliation-lastUpdate" parent="CheckReconciliation-lastUpdate-parentBean" />
+  <bean id="CheckReconciliation-lastUpdatedTimestamp" parent="CheckReconciliation-lastUpdatedTimestamp-parentBean" />
  
-  <bean id="CheckReconciliation-lastUpdate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp">
-     <property name="name" value="lastUpdate" />
-     <property name="label" value="Last Update" />
-     <property name="required" value="false" />
-  </bean> 
-	
+  <bean id="CheckReconciliation-lastUpdatedTimestamp-parentBean" abstract="true" parent="LastUpdatedTimestampAttribute"
+          p:required="false" />
+
   <bean id="CheckReconciliation-glTransIndicator" parent="CheckReconciliation-glTransIndicator-parentBean" />
   <bean id="CheckReconciliation-glTransIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
       <property name="name" value="glTransIndicator" />
