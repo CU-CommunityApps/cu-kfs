@@ -851,6 +851,7 @@
         <property name="titleKey" value="message.batchUpload.title.accountingXmlDocument"/>
         <property name="fileNamePrefix" value="accountingXmlDocument_"/>
         <property name="pojoClass" value="edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper"/>
+        <property name="listenerClass" value="edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentUnmarshalListener"/>
     </bean>
     
     <bean id="accountingXmlDocumentDownloadAttachmentService" class="edu.cornell.kfs.fp.batch.service.impl.AccountingXmlDocumentDownloadAttachmentServiceImpl">

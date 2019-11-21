@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEventHandler;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -49,17 +52,43 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     
     @Override
     public <T> T unmarshalFile(File xmlFile, Class<T> clazz) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(clazz);
-        T object = (T) jc.createUnmarshaller().unmarshal(xmlFile);
-        return object;
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.empty());
+        return (T) unmarshaller.unmarshal(xmlFile);
     }
     
     @Override
     public <T> T unmarshalString(String xmlString, Class<T> clazz) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(clazz);
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.empty());
         StringReader reader = new StringReader(xmlString);
-        T object = (T) jc.createUnmarshaller().unmarshal(reader);
-        return object;
+        return (T) unmarshaller.unmarshal(reader);
+    }
+
+    @Override
+    public <T> T unmarshalFile(File xmlFile, Class<T> clazz, Object listener) throws JAXBException {
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.of(listener));
+        return (T) unmarshaller.unmarshal(xmlFile);
+    }
+
+    @Override
+    public <T> T unmarshalString(String xmlString, Class<T> clazz, Object listener) throws JAXBException {
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.of(listener));
+        StringReader reader = new StringReader(xmlString);
+        return (T) unmarshaller.unmarshal(reader);
+    }
+
+    protected <T> Unmarshaller createUnmarshaller(Class<T> clazz, Optional<Object> listener) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        if (listener.isPresent()) {
+            Object listenerObject = listener.get();
+            if (listenerObject instanceof Unmarshaller.Listener) {
+                unmarshaller.setListener((Unmarshaller.Listener) listenerObject);
+            }
+            if (listenerObject instanceof ValidationEventHandler) {
+                unmarshaller.setEventHandler((ValidationEventHandler) listenerObject);
+            }
+        }
+        return unmarshaller;
     }
 
 }
