@@ -140,8 +140,6 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
                 cr.setSourceCode(CRConstants.PDP_SRC);
                 cr.setBankCode(bnkCd);
                 
-                cr.setLastUpdate( new Timestamp( new java.util.Date().getTime()) );
-                
                 data.add(cr);
             }
             

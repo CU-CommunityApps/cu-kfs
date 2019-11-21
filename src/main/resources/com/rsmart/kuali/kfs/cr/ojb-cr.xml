@@ -27,7 +27,7 @@
     	<field-descriptor name="amount" column="AMOUNT" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" jdbc-type="DECIMAL" />
     	<field-descriptor name="status" column="STATUS" jdbc-type="VARCHAR" />
     	<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
-    	<field-descriptor name="lastUpdate" column="LST_UPDT_TS" jdbc-type="TIMESTAMP"/>
+    	<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
     	<field-descriptor name="glTransIndicator" column="GL_TRANS_IND" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" jdbc-type="VARCHAR" />
     	<field-descriptor name="sourceCode" column="SRC_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="bankCode" column="BNK_CD" jdbc-type="VARCHAR" />

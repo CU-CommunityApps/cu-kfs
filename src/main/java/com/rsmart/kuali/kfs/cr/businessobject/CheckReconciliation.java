@@ -17,13 +17,12 @@ package com.rsmart.kuali.kfs.cr.businessobject;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 /**
  * Check Reconciliation BO
@@ -43,8 +42,6 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
 
     private String status; // STATUS
 
-    private Timestamp lastUpdate; // LST_UPDT_TS
-    
     private String bankAccountNumber; // BANK_ACCOUNT_NBR
     
     private Boolean glTransIndicator = Boolean.FALSE;  // GL_TRANS_IND
@@ -117,15 +114,6 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    
-    public Timestamp getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Timestamp lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public Boolean getGlTransIndicator() {
