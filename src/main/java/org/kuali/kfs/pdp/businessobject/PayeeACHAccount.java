@@ -81,7 +81,6 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         this.achAccountGeneratedIdentifier = achAccountGeneratedIdentifier;
     }
 
-
     /**
      * Gets the bankRoutingNumber attribute.
      *
@@ -99,7 +98,6 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     public void setBankRoutingNumber(String bankRoutingNumber) {
         this.bankRoutingNumber = bankRoutingNumber;
     }
-
 
     /**
      * Gets the bankAccountNumber attribute.
@@ -405,7 +403,6 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         this.bankRouting = bankRouting;
     }
 
-
     /**
      * Gets the payeeIdNumber attribute.
      *
@@ -423,7 +420,6 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     public void setPayeeIdNumber(String payeeIdNumber) {
         this.payeeIdNumber = payeeIdNumber;
     }
-
 
     /**
      * Gets the achPayee attribute.
@@ -463,8 +459,8 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
 
                 DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
                 AttributeSecurity attributeSecurity = dataDictionaryService.getAttributeSecurity(PayeeACHAccount.class.getName(), field.getName());
-                if ((ObjectUtils.isNotNull(attributeSecurity)
-                    && (attributeSecurity.isHide() || attributeSecurity.isMask() || attributeSecurity.isPartialMask()))) {
+                if (ObjectUtils.isNotNull(attributeSecurity)
+                    && (attributeSecurity.isHide() || attributeSecurity.isMask() || attributeSecurity.isPartialMask())) {
                     return false;
                 }
 

@@ -636,9 +636,12 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
                                 KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE : KFSConstants.TARGET_ACCT_LINE_TYPE_CODE)
                     && groupAccountLine.getChartOfAccountsCode().equals(capitalAccountingLine.getChartOfAccountsCode())
                     && groupAccountLine.getAccountNumber().equals(capitalAccountingLine.getAccountNumber())
-                    && groupAccountLine.getFinancialObjectCode().equals(capitalAccountingLine.getFinancialObjectCode())) {
-                return (capitalAccountingLine.getAmount().bigDecimalValue().divide(totalCapitalAccountsAmount.bigDecimalValue(),
-                        KFSConstants.CapitalAssets.CAPITAL_ACCOUNT_LINE_PERCENT_SCALE, KFSConstants.CapitalAssets.PERCENT_SCALE));
+                    && groupAccountLine.getFinancialObjectCode()
+                            .equals(capitalAccountingLine.getFinancialObjectCode())) {
+                return capitalAccountingLine.getAmount().bigDecimalValue()
+                            .divide(totalCapitalAccountsAmount.bigDecimalValue(),
+                        KFSConstants.CapitalAssets.CAPITAL_ACCOUNT_LINE_PERCENT_SCALE,
+                                KFSConstants.CapitalAssets.PERCENT_SCALE);
             }
         }
 
@@ -1439,8 +1442,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
         return null;
     }
-
-
+    
     /**
      * @param kualiAccountingDocumentFormBase
      * @return
@@ -2192,6 +2194,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             totalAmountDistributed = totalAmountDistributed.add(groupAccountLine.getAmount());
         }
 
-        return (capitalAssetAmount.compareTo(totalAmountDistributed) == 0);
+        return capitalAssetAmount.compareTo(totalAmountDistributed) == 0;
     }
 }

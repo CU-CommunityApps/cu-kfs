@@ -116,7 +116,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         int days = Integer.valueOf(daysStr);
 
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, (days * -1));
+        c.add(Calendar.DATE, days * -1);
         c.set(Calendar.HOUR, 12);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
@@ -134,7 +134,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         Timestamp disbursementDate = new Timestamp(c2.getTimeInMillis());
 
         // date is equal to or after lastActionDate Allowed
-        return ((disbursementDate.compareTo(lastDisbursementActionDate)) >= 0);
+        return disbursementDate.compareTo(lastDisbursementActionDate) >= 0;
     }
 
     /**
@@ -481,7 +481,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      */
     public int getNbrOfPaymentsInDisbursement() {
         int nbrOfPaymentsInDisbursement = 0;
-        if (ObjectUtils.isNotNull((paymentGroup.getDisbursementNbr()))) {
+        if (ObjectUtils.isNotNull(paymentGroup.getDisbursementNbr())) {
             List<PaymentGroup> paymentGroupList = SpringContext.getBean(PaymentGroupService.class)
                     .getByDisbursementNumber(paymentGroup.getDisbursementNbr().intValue());
             for (PaymentGroup paymentGroup : paymentGroupList) {

@@ -325,7 +325,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      */
     protected String getGroupInfix() {
         Class accountingLineClass = accountingLineGroupDefinition.getAccountingLineClass();
-        return (accountingLineClass.isAssignableFrom(SourceAccountingLine.class) ? "source" : "target");
+        return accountingLineClass.isAssignableFrom(SourceAccountingLine.class) ? "source" : "target";
     }
 
     /**
@@ -502,7 +502,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @return true if upload can proceed for the accounting line group, false otherwise.
      */
     protected boolean canUpload() {
-        return (canEdit && accountingDocument.getAccountingLineParser() != null && shouldUpload);
+        return canEdit && accountingDocument.getAccountingLineParser() != null && shouldUpload;
     }
 
     /**

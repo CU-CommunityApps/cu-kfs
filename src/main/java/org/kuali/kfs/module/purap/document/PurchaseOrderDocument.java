@@ -1253,7 +1253,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * @return true if a vendor has been awarded for this Purchase Order.
      */
     public boolean isPurchaseOrderAwarded() {
-        return (getAwardedVendorQuote() != null);
+        return getAwardedVendorQuote() != null;
     }
 
     /**
@@ -1547,8 +1547,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected boolean isContractManagementReviewRequired() {
         KualiDecimal internalPurchasingLimit = SpringContext.getBean(PurchaseOrderService.class)
                 .getInternalPurchasingDollarLimit(this);
-        return (ObjectUtils.isNull(internalPurchasingLimit)
-                || internalPurchasingLimit.compareTo(this.getTotalDollarAmount()) < 0);
+        return ObjectUtils.isNull(internalPurchasingLimit)
+                || internalPurchasingLimit.compareTo(this.getTotalDollarAmount()) < 0;
 
     }
 

@@ -474,7 +474,6 @@ public class GlLineServiceImpl implements GlLineService {
         entry.getGeneralLedgerEntryAssets().add(entryAsset);
     }
 
-
     /**
      * Creates asset global
      *

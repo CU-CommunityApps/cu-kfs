@@ -614,7 +614,6 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return valid;
     }
 
-
     /**
      * Validates that the minimum order amount is less than the maximum allowed amount.
      *

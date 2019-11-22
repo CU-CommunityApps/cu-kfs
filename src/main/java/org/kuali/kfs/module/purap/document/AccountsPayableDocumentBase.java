@@ -444,7 +444,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
 
     @Override
     public boolean isExtracted() {
-        return (ObjectUtils.isNotNull(getExtractedTimestamp()));
+        return ObjectUtils.isNotNull(getExtractedTimestamp());
     }
 
     @Override

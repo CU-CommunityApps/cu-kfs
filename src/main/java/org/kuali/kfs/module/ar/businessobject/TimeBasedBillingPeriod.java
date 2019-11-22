@@ -61,14 +61,15 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
                 && accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear() >= accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear()) {
             LOG.info("canThisBeBilledByBillingFrequency: NO -- billingFrequency = " + billingFrequency + " AND lastBilledDate FY >= currentDate FY");
             return false;
-        } else if (StringUtils.equals(findPreviousAccountingPeriod(currentDate).getUniversityFiscalPeriodCode(), findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode()) &&
-            accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear().equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear())) {
-            LOG.info("canThisBeBilledByBillingFrequency: NO -- billingFrequency = " + billingFrequency 
-                    + " with previous accounting period fiscal period codes matching for currentDate and lastBilledDate AND lastBilledDate FY = currentDate FY");
-            return false;
+        } else {
+            boolean canThisBeBilledByBillingFrequency = !StringUtils.equals(findPreviousAccountingPeriod(currentDate).getUniversityFiscalPeriodCode(),
+                    findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode())
+                || !accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear()
+                    .equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear());
+            LOG.info("canThisBeBilledByBillingFrequency: " + (canThisBeBilledByBillingFrequency ? "YES": "NO") +" -- lastBilledDate = " + lastBilledDate);
+            return canThisBeBilledByBillingFrequency;
         }
-        LOG.info("canThisBeBilledByBillingFrequency: YES -- billingFrequency = " + billingFrequency);
-        return true;
+           
     }
     
     /*

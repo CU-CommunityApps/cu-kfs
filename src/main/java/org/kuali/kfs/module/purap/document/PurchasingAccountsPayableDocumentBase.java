@@ -204,13 +204,13 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @Override
     public boolean isPostingYearNext() {
         Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
-        return (getPostingYear().compareTo(currentFY) > 0);
+        return getPostingYear().compareTo(currentFY) > 0;
     }
 
     @Override
     public boolean isPostingYearPrior() {
         Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
-        return (getPostingYear().compareTo(currentFY) < 0);
+        return getPostingYear().compareTo(currentFY) < 0;
     }
 
     @Override

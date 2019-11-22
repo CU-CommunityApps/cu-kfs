@@ -68,10 +68,13 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
      * award.getAwardTotalAmount().bigDecimalValue() causes the NullPointerException if the total amount returned null.
      */
     @Override
-    protected void storeValidationErrors(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup, Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs, String creationProcessTypeCode) {
+    protected void storeValidationErrors(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
+            Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs,
+            String creationProcessTypeCode) {
         for (ContractsAndGrantsBillingAward award : invalidGroup.keySet()) {
             KualiDecimal cumulativeExpenses = KualiDecimal.ZERO;
-            ContractsGrantsInvoiceDocumentErrorLog contractsGrantsInvoiceDocumentErrorLog = new ContractsGrantsInvoiceDocumentErrorLog();
+            ContractsGrantsInvoiceDocumentErrorLog contractsGrantsInvoiceDocumentErrorLog =
+                    new ContractsGrantsInvoiceDocumentErrorLog();
 
             if (ObjectUtils.isNotNull(award)) {
                 Date beginningDate = award.getAwardBeginningDate();
@@ -84,34 +87,45 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                 KualiDecimal awardTotalAmount = award.getAwardTotalAmount() == null ? KualiDecimal.ZERO : award.getAwardTotalAmount();
                 contractsGrantsInvoiceDocumentErrorLog.setAwardTotalAmount(awardTotalAmount.bigDecimalValue());
                 if (ObjectUtils.isNotNull(award.getAwardPrimaryFundManager())) {
-                    contractsGrantsInvoiceDocumentErrorLog.setPrimaryFundManagerPrincipalId(award.getAwardPrimaryFundManager().getPrincipalId());
+                    contractsGrantsInvoiceDocumentErrorLog.setPrimaryFundManagerPrincipalId(
+                            award.getAwardPrimaryFundManager().getPrincipalId());
                 }
                 if (!CollectionUtils.isEmpty(award.getActiveAwardAccounts())) {
                     boolean firstLineFlag = true;
 
                     for (ContractsAndGrantsBillingAwardAccount awardAccount : award.getActiveAwardAccounts()) {
 
-                        cumulativeExpenses = cumulativeExpenses.add(contractsGrantsInvoiceDocumentService.getBudgetAndActualsForAwardAccount(awardAccount, systemOptions.getActualFinancialBalanceTypeCd()));
+                        cumulativeExpenses = cumulativeExpenses.add(contractsGrantsInvoiceDocumentService
+                                .getBudgetAndActualsForAwardAccount(awardAccount,
+                                        systemOptions.getActualFinancialBalanceTypeCd()));
                         if (firstLineFlag) {
                             firstLineFlag = false;
                             contractsGrantsInvoiceDocumentErrorLog.setAccounts(awardAccount.getAccountNumber());
                         } else {
-                            contractsGrantsInvoiceDocumentErrorLog.setAccounts(contractsGrantsInvoiceDocumentErrorLog.getAccounts() + ";" + awardAccount.getAccountNumber());
+                            contractsGrantsInvoiceDocumentErrorLog.setAccounts(
+                                    contractsGrantsInvoiceDocumentErrorLog.getAccounts() + ";" +
+                                            awardAccount.getAccountNumber());
                         }
                     }
                 }
-                contractsGrantsInvoiceDocumentErrorLog.setCumulativeExpensesAmount(cumulativeExpenses.bigDecimalValue());
+                contractsGrantsInvoiceDocumentErrorLog.setCumulativeExpensesAmount(
+                        cumulativeExpenses.bigDecimalValue());
             }
 
             for (String vCat : invalidGroup.get(award)) {
-                ContractsGrantsInvoiceDocumentErrorMessage contractsGrantsInvoiceDocumentErrorCategory = new ContractsGrantsInvoiceDocumentErrorMessage();
+                ContractsGrantsInvoiceDocumentErrorMessage contractsGrantsInvoiceDocumentErrorCategory =
+                        new ContractsGrantsInvoiceDocumentErrorMessage();
                 contractsGrantsInvoiceDocumentErrorCategory.setErrorMessageText(vCat);
-                contractsGrantsInvoiceDocumentErrorLog.getErrorMessages().add(contractsGrantsInvoiceDocumentErrorCategory);
+                contractsGrantsInvoiceDocumentErrorLog.getErrorMessages()
+                        .add(contractsGrantsInvoiceDocumentErrorCategory);
             }
 
-            int errorAccountsMax = dataDictionaryService.getAttributeMaxLength(ContractsGrantsInvoiceDocumentErrorLog.class, ContractsGrantsInvoiceDocumentErrorLogLookupFields.ACCOUNTS);
-            contractsGrantsInvoiceDocumentErrorLog.setAccounts(StringUtils.left(contractsGrantsInvoiceDocumentErrorLog.getAccounts(), errorAccountsMax));
-
+            int errorAccountsMax = dataDictionaryService.getAttributeMaxLength(
+                    ContractsGrantsInvoiceDocumentErrorLog.class,
+                    ContractsGrantsInvoiceDocumentErrorLogLookupFields.ACCOUNTS);
+            contractsGrantsInvoiceDocumentErrorLog.setAccounts(
+                    StringUtils.left(contractsGrantsInvoiceDocumentErrorLog.getAccounts(), errorAccountsMax));
+            
             contractsGrantsInvoiceDocumentErrorLog.setErrorDate(dateTimeService.getCurrentTimestamp());
             contractsGrantsInvoiceDocumentErrorLog.setCreationProcessTypeCode(creationProcessTypeCode);
             businessObjectService.save(contractsGrantsInvoiceDocumentErrorLog);
@@ -153,9 +167,11 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     protected List<ContractsAndGrantsBillingAwardAccount> getValidAwardAccounts(
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award) {
         LOG.info("getValidAwardAccounts: CU Customization invoked with creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()));
-        if (!ArConstants.BillingFrequencyValues.isMilestone(award) && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
+        if (!ArConstants.BillingFrequencyValues.isMilestone(award)
+                && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts = new ArrayList<>();
-            Set<Account> invalidAccounts = harvestAccountsFromContractsGrantsInvoices(getInProgressInvoicesForAward(award));
+            Set<Account> invalidAccounts = harvestAccountsFromContractsGrantsInvoices(
+                    getInProgressInvoicesForAward(award));
 
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
@@ -473,10 +489,10 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                     + " isMilstone = " + ArConstants.BillingFrequencyValues.isMilestone(awd) 
                     + " isPredeterminedBilling = " + ArConstants.BillingFrequencyValues.isPredeterminedBilling(awd));
 
-            if (cgInvoiceDocument.getTotalInvoiceAmount().isPositive() ||
-                ArConstants.BillingFrequencyValues.isMilestone(awd) ||
-                ArConstants.BillingFrequencyValues.isPredeterminedBilling(awd) ||
-                ( (StringUtils.isNotBlank(awd.getCgInvoiceDocumentCreationProcessTypeCode())
+            if (cgInvoiceDocument.getTotalInvoiceAmount().isPositive() 
+                    || ArConstants.BillingFrequencyValues.isMilestone(awd) 
+                    || ArConstants.BillingFrequencyValues.isPredeterminedBilling(awd) 
+                    || ( (StringUtils.isNotBlank(awd.getCgInvoiceDocumentCreationProcessTypeCode())
                         && (StringUtils.equalsIgnoreCase(ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.getCode(),
                                                          awd.getCgInvoiceDocumentCreationProcessTypeCode()))) )) {
                 // Saving the document
@@ -548,26 +564,34 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             List<String> errorList = new ArrayList<>();
 
             if (award.isExcludedFromInvoicing()) {
-                errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_EXCLUDED_FROM_INVOICING));
+                errorList.add(configurationService.getPropertyValueAsString(
+                        ArKeyConstants.CGINVOICE_CREATION_AWARD_EXCLUDED_FROM_INVOICING));
             } else {
                 if (awardsWithDuplicateAccounts.contains(award)) {
-                    errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
+                        errorList.add(configurationService.getPropertyValueAsString(
+                                ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
                 }
                 if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award)) {
-                    errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_LOCB_BILLING_FREQUENCY));
+                    errorList.add(configurationService.getPropertyValueAsString(
+                            ArKeyConstants.CGINVOICE_CREATION_AWARD_LOCB_BILLING_FREQUENCY));
                 } else {
                     if (award.getAwardBeginningDate() != null) {
-                        if (award.getBillingFrequencyCode() != null && getContractsGrantsBillingAwardVerificationService().isValueOfBillingFrequencyValid(award)) {
+                        if (award.getBillingFrequencyCode() != null
+                                && getContractsGrantsBillingAwardVerificationService()
+                                .isValueOfBillingFrequencyValid(award)) {
                             if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award)) {
                                 validateAward(errorList, award);
                             } else {
-                                errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_INVALID_BILLING_PERIOD));
+                                errorList.add(configurationService.getPropertyValueAsString(
+                                        ArKeyConstants.CGINVOICE_CREATION_AWARD_INVALID_BILLING_PERIOD));
                             }
                         } else {
-                            errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_BILLING_FREQUENCY_MISSING_ERROR));
+                            errorList.add(configurationService.getPropertyValueAsString(
+                                    ArKeyConstants.CGINVOICE_CREATION_BILLING_FREQUENCY_MISSING_ERROR));
                         }
                     } else {
-                        errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_AWARD_START_DATE_MISSING_ERROR));
+                        errorList.add(configurationService.getPropertyValueAsString(
+                                ArKeyConstants.CGINVOICE_CREATION_AWARD_START_DATE_MISSING_ERROR));
                     }
                 }
             }
