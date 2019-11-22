@@ -16,7 +16,7 @@ public class CuElectronicInvoiceRejectItem extends ElectronicInvoiceRejectItem {
         super();
         // KFSUPGRADE-478 : change unitprice compare to "!=-1"
        // setup the sub total amount so that the reject prints to the files correctly
-        if (((eii.getSubTotalAmount() == null) || ("".equals(eii.getSubTotalAmount())))) {
+        if (eii.getSubTotalAmount() == null || "".equals(eii.getSubTotalAmount())) {
             // the sub total amount of this electronic invoice item was not given
             if (((getInvoiceItemQuantity() != null) && ((BigDecimal.ZERO.compareTo(getInvoiceItemQuantity())) != 0)) && ((getInvoiceItemUnitPrice() != null) && ((BigDecimal.ZERO.compareTo(getInvoiceItemUnitPrice())) != -1))) {
                 // unit price and quantity are valid... calculate subtotal

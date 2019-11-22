@@ -254,7 +254,6 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return null;
     }
 
-
     //CAMS LOCATION
     //Must be overridden
     public CapitalAssetLocation setupNewPurchasingCapitalAssetLocationLine() {

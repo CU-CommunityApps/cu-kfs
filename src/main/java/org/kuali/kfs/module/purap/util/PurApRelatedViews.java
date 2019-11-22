@@ -417,7 +417,7 @@ public class PurApRelatedViews {
         }
 
         public boolean getIsLineItemViewCurrentDocument() {
-            return (lineItemView != null && documentNumber.equals(lineItemView.getDocumentNumber()));
+            return lineItemView != null && documentNumber.equals(lineItemView.getDocumentNumber());
         }
     }
 

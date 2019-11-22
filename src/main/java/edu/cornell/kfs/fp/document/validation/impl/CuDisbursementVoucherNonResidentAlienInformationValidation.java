@@ -253,7 +253,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 // Federal tax rate cannot be zero
                 // NOTE: Also, state tax not allowed to be zero for income classes "R" and "I", however, this rule is
                 // already checked in the tax rate section, so no need to re-check
-                if ((nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO))) {
+                if (nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO)) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
                             KFSKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_FEDERAL_TAX_CANNOT_BE_ZERO,
                             "Gross Up Payment");
@@ -349,7 +349,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 }
                 // USAID Per Diem should not be checked (mutual exclusive checking on USAID Per Diem here is optional
                 // since this is also ensured by validation on Special W-4 Amount above
-                if ((nonResidentAlienTax.isTaxUSAIDPerDiemIndicator())) {
+                if (nonResidentAlienTax.isTaxUSAIDPerDiemIndicator()) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
                             KFSKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_CANNOT_BE_SELECTED,
                             "Special W-4 Amount", "USAID Per Diem");
@@ -362,8 +362,8 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
 
         if (!"GENERATE".equals(validationType)) {
             // verify tax lines have been generated
-            if ((nonResidentAlienTax.getFederalIncomeTaxPercent().isNonZero()
-                    || nonResidentAlienTax.getStateIncomeTaxPercent().isNonZero())) {
+            if (nonResidentAlienTax.getFederalIncomeTaxPercent().isNonZero()
+                    || nonResidentAlienTax.getStateIncomeTaxPercent().isNonZero()) {
                 if (StringUtils.isBlank(nonResidentAlienTax.getFinancialDocumentAccountingLineText())) {
                     errors.putErrorWithoutFullErrorPath(KFSConstants.GENERAL_NRATAX_TAB_ERRORS,
                             KFSKeyConstants.ERROR_DV_NRA_NO_TAXLINES_GENERATED);

@@ -30,7 +30,8 @@ public class LetterOfCreditBillingPeriod extends BillingPeriod {
     
     private static final Logger LOG = LogManager.getLogger(LetterOfCreditBillingPeriod.class);
     
-    public LetterOfCreditBillingPeriod(ArConstants.BillingFrequencyValues billingFrequency, Date awardStartDate, Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService) {
+    public LetterOfCreditBillingPeriod(ArConstants.BillingFrequencyValues billingFrequency, Date awardStartDate,
+            Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService) {
         super(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
     }
 
