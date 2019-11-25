@@ -1,67 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    The Kuali Financial System, a comprehensive financial management system for higher education.
-
-    Copyright 2005-2019 Kuali, Inc.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-  <bean id="PayeeACHAccount" parent="PayeeACHAccount-parentBean"/>
-
-  <bean id="PayeeACHAccount-parentBean" abstract="true" parent="BusinessObjectEntry">
-    <property name="businessObjectClass" value="org.kuali.kfs.pdp.businessobject.PayeeACHAccount"/>
-    <property name="inquiryDefinition">
-      <ref bean="PayeeACHAccount-inquiryDefinition"/>
-    </property>
-    <property name="lookupDefinition">
-      <ref bean="PayeeACHAccount-lookupDefinition"/>
-    </property>
-    <property name="titleAttribute" value="payeeIdentifierTypeCode"/>
-    <property name="objectLabel" value="Payee Account Clearing House Account"/>
+  <bean id="PayeeACHAccount" parent="PayeeACHAccount-parentBean">
     <property name="attributes">
-      <list>
-        <ref bean="PayeeACHAccount-achAccountGeneratedIdentifier"/>
-        <ref bean="PayeeACHAccount-bankAccountNumber"/>
-        <ref bean="PayeeACHAccount-bankAccountTypeCode"/>
-        <ref bean="PayeeACHAccount-payeeIdNumber"/>
-        <ref bean="PayeeACHAccount-payeeName"/>
-        <ref bean="PayeeACHAccount-payeeEmailAddress"/>
-        <ref bean="PayeeACHAccount-payeeIdentifierTypeCode"/>
-        <ref bean="PayeeACHAccount-payeePrincipalName"/><!-- CU Customization: Added principal name. -->
-        <ref bean="PayeeACHAccount-achTransactionType"/>
-        <ref bean="PayeeACHAccount-bankRoutingNumber"/>
-        <ref bean="PayeeACHAccount-active"/>
-        <ref bean="PayeeACHAccount-autoInactivationIndicator"/>
-        <ref bean="PayeeACHAccount-lastUpdatedTimestamp"/>
-        <ref bean="PayeeACHAccount-bankRouting.bankName"/>
+      <list merge="true">
+        <ref bean="PayeeACHAccount-payeePrincipalName" />
       </list>
     </property>
-    <property name="inactivationBlockingDefinitions">
-      <list>
-        <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="bankRouting"/>
-      </list>
-    </property>
-	<property name="relationships">
-      <list>
+    <property name="relationships">
+      <list merge="true">
         <bean parent="RelationshipDefinition">
           <property name="objectAttributeName" value="achPayee"/>
           <property name="targetClass" value="edu.cornell.kfs.pdp.businessobject.CuACHPayee" /><!-- CU Customization: Changed target class. -->
@@ -79,7 +29,6 @@
             </list>
           </property>      
         </bean>
-        <!-- CU Customization: Added person relationship definition. -->
         <bean parent="RelationshipDefinition">
           <property name="objectAttributeName" value="payeePerson"/>
           <property name="primitiveAttributes">
@@ -89,254 +38,93 @@
           </property>
         </bean>
       </list>
-    </property>        
-  </bean>
-
-<!-- Attribute Definitions -->
-
-
-  <bean id="PayeeACHAccount-achAccountGeneratedIdentifier" parent="PayeeACHAccount-achAccountGeneratedIdentifier-parentBean"/>
-
-  <bean id="PayeeACHAccount-achAccountGeneratedIdentifier-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="achAccountGeneratedIdentifier"/>
-    <property name="forceUppercase" value="true"/>
-    <property name="label" value="ACH Account Generated Identifier"/>
-    <property name="shortLabel" value="ACH Account ID"/>
-    <property name="maxLength" value="10"/>
-    <property name="validationPattern">
-      <ref bean="NumericValidation" />
-    </property>
-    <property name="required" value="true"/>
-    <property name="formatterClass" value="org.kuali.kfs.pdp.businessobject.DisbursementNumberFormatter"/>
-    <property name="control">
-      <ref bean="HiddenControl" />
     </property>
   </bean>
-  <bean id="PayeeACHAccount-bankAccountNumber" parent="PayeeACHAccount-bankAccountNumber-parentBean"/>
-
-  <bean id="PayeeACHAccount-bankAccountNumber-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="bankAccountNumber"/>
-    <property name="label" value="Bank Account Number"/>
-    <property name="shortLabel" value="Bank Account Number"/>
-    <property name="maxLength" value="17"/>
-    <property name="validationPattern">
-      <ref bean="AlphaNumericValidation" />
-    </property>
-    <property name="required" value="true"/>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="17"/>
-    </property>
-    <property name="attributeSecurity">
-		<bean parent="AttributeSecurity">
-  			<property name="mask" value="true" /> 
-			<property name="maskFormatter">
-  			<bean parent="MaskFormatterLiteral" p:literal="*****************"/>
-  			</property>
-  			<property name="partialMask" value="true"/> 
-  			<property name="partialMaskFormatter">
-  			<bean parent="MaskFormatterSubString" p:maskLength="5"/> 
-  			</property>
-  		</bean>
-  	</property>
+  
+  <bean id="PayeeACHAccount-payeePrincipalName" parent="PayeeACHAccount-payeePrincipalName-parentBean"/>
+  <bean id="PayeeACHAccount-payeePrincipalName-parentBean" abstract="true" parent="ACHPayee-principalName">
+    <property name="name" value="payeePrincipalName"/>
+    <property name="required" value="false" />
   </bean>
-  <bean id="PayeeACHAccount-bankAccountTypeCode" parent="PayeeACHAccount-bankAccountTypeCode-parentBean"/>
-
-  <bean id="PayeeACHAccount-bankAccountTypeCode-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="bankAccountTypeCode"/>
-    <property name="label" value="Account Type"/>
-    <property name="shortLabel" value="Account Type"/>
+  
+  <bean id="PayeeACHAccount-bankAccountNumber" parent="PayeeACHAccount-bankAccountNumber-parentBean">
+    <property name="forceUppercase" value="false" />
+  </bean>
+  
+  <bean id="PayeeACHAccount-bankAccountTypeCode" parent="PayeeACHAccount-bankAccountTypeCode-parentBean">
     <property name="maxLength" value="5"/>
     <property name="validationPattern">
       <bean parent="CharsetValidationPattern" p:validChars="23CDPTX"/>
     </property>
-    <property name="required" value="true"/>
     <property name="control">
         <bean parent="SelectControlDefinition" p:valuesFinder-ref="cuCheckingSavingsValuesFinder"
               p:includeKeyInLabel="false"/>
     </property>
   </bean>
   
-  <bean id="PayeeACHAccount-payeeIdNumber" parent="PayeeACHAccount-payeeIdNumber-parentBean"/>
-  <bean id="PayeeACHAccount-payeeIdNumber-parentBean" abstract="true" parent="DisbursementPayee-payeeIdNumber">
-    <property name="name" value="payeeIdNumber"/>
-    <property name="label" value="Payee Number"/>
-  </bean>
-  
-  <bean id="PayeeACHAccount-payeeName" parent="PayeeACHAccount-payeeName-parentBean"/>
-  <bean id="PayeeACHAccount-payeeName-parentBean" abstract="true" parent="DisbursementPayee-payeeName">
-    <property name="name" value="payeeName"/>
-    <property name="label" value="Payee Name"/>
-    <property name="shortLabel" value="Payee Name"/>
-  </bean>  
-  
-
-  <bean id="PayeeACHAccount-payeeEmailAddress" parent="PayeeACHAccount-payeeEmailAddress-parentBean"/>
-  <bean id="PayeeACHAccount-payeeEmailAddress-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="payeeEmailAddress"/>
-    <property name="label" value="Email Address"/>
-    <property name="shortLabel" value="Email Address"/>
+  <bean id="PayeeACHAccount-payeeEmailAddress" parent="PayeeACHAccount-payeeEmailAddress-parentBean">
     <property name="maxLength" value="43"/>
-    <property name="validationPattern">
-      <bean parent="EmailAddressValidationPattern"/>
-    </property>
-    <property name="required" value="true"/>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="43"/>
-    </property>
   </bean>
   
-  <bean id="PayeeACHAccount-payeeIdentifierTypeCode" parent="PayeeACHAccount-payeeIdentifierTypeCode-parentBean"/>
-  <bean id="PayeeACHAccount-payeeIdentifierTypeCode-parentBean" abstract="true" parent="ACHPayee-payeeTypeCode">
-    <property name="name" value="payeeIdentifierTypeCode"/>
-    <property name="required" value="true"/>
-  </bean>
-
-  <!-- CU Customization: Added principal name. -->
-  <bean id="PayeeACHAccount-payeePrincipalName" parent="PayeeACHAccount-payeePrincipalName-parentBean"/>
-  <bean id="PayeeACHAccount-payeePrincipalName-parentBean" abstract="true" parent="ACHPayee-principalName">
-    <property name="name" value="payeePrincipalName"/>
-    <property name="required" value="false" />
-  </bean>
-
-  <bean id="PayeeACHAccount-achTransactionType" parent="PayeeACHAccount-achTransactionType-parentBean"/>
-
-  <bean id="PayeeACHAccount-achTransactionType-parentBean" abstract="true" parent="ACHTransactionType-code">
-    <property name="name" value="achTransactionType"/>
-  </bean>
-  
-  <bean id="PayeeACHAccount-bankRoutingNumber" parent="PayeeACHAccount-bankRoutingNumber-parentBean"/>
-
-    <bean id="PayeeACHAccount-bankRoutingNumber-parentBean" abstract="true" parent="Common-bankRoutingNumber">
-        <property name="forceUppercase" value="false"/>
-        <property name="shortLabel" value="Bank Routing Number"/>
-        <property name="validationPattern">
-            <ref bean="NumericValidation"/>
-        </property>
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="9"/>
-        </property>
-    </bean>
-  
-  <bean id="PayeeACHAccount-active" parent="PayeeACHAccount-active-parentBean"/>
-
-  <bean id="PayeeACHAccount-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
-    <property name="name" value="active"/>
-    <property name="required" value="true"/>
-  </bean>
-  
-  <bean id="PayeeACHAccount-autoInactivationIndicator" parent="PayeeACHAccount-autoInactivationIndicator-parentBean"/>
-
-  <bean id="PayeeACHAccount-autoInactivationIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
-    <property name="name" value="autoInactivationIndicator"/>
-    <property name="label" value="Auto-Inactivation Indicator"/>
-    <property name="shortLabel" value="Auto-Inactivation"/>
-  </bean>
-  
-  <bean id="PayeeACHAccount-lastUpdatedTimestamp" parent="PayeeACHAccount-lastUpdatedTimestamp-parentBean"/>
-
-  <bean id="PayeeACHAccount-lastUpdatedTimestamp-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp">
-	  <property name="name" value="lastUpdatedTimestamp"/>
-	  <property name="label" value="Last Update Time"/>
-	  <property name="shortLabel" value="Last Update"/>
-	  <property name="formatterClass" value="org.kuali.rice.core.web.format.DateViewTimestampObjectFormatter"/>
-  </bean>
-  
-  <bean id="PayeeACHAccount-bankRouting.bankName" parent="PayeeACHAccount-bankRouting.bankName-parentBean"/>
-
-  <bean id="PayeeACHAccount-bankRouting.bankName-parentBean" abstract="true" parent="ACHBank-bankName">
-    <property name="name" value="bankRouting.bankName"/>
-    <property name="required" value="false"/>
-    <property name="attributeSecurity">
-		<bean parent="AttributeSecurity">
-  			<property name="mask" value="true"/> 
-			<property name="maskFormatter">
-  			<bean parent="MaskFormatterLiteral" p:literal="*****************"/> 
-  			</property>
-  		</bean>
-  	</property>
-  </bean>
-
-<!-- Business Object Inquiry Definition -->
-
-
-  <bean id="PayeeACHAccount-inquiryDefinition" parent="PayeeACHAccount-inquiryDefinition-parentBean"/>
-
-  <bean id="PayeeACHAccount-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-    <property name="title" value="Payee ACH Account"/>
-    <property name="inquirySections">
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="PayeeACHAccount-inquirySectionDefinition" />
+    <property name="fieldOverrides">
       <list>
-        <bean parent="InquirySectionDefinition">
-          <property name="title" value=""/>
-          <property name="numberOfColumns" value="1"/>
-          <property name="inquiryFields">
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="inquiryFields" />
+          <property name="propertyNameForElementCompare" value="attributeName" />
+          <property name="element">
+            <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress" />
+          </property>
+          <property name="insertAfter">
             <list>
-              <bean parent="FieldDefinition" p:attributeName="achAccountGeneratedIdentifier"/>
-              <bean parent="FieldDefinition" p:attributeName="bankRoutingNumber"/>
-              <bean parent="FieldDefinition" p:attributeName="bankAccountNumber"/>
-              <bean parent="FieldDefinition" p:attributeName="payeeIdNumber"/>                    
-              <bean parent="FieldDefinition" p:attributeName="payeeName"/>
-              <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress"/>
-              <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
-              <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
-              <bean parent="FieldDefinition" p:attributeName="active"/>
-              <bean parent="FieldDefinition" p:attributeName="autoInactivationIndicator"/>
-              <bean parent="FieldDefinition" p:attributeName="lastUpdatedTimestamp"/>
-              <bean parent="FieldDefinition" p:attributeName="bankAccountTypeCode"/>
+              <bean parent="FieldDefinition" p:attributeName="payeePrincipalName" />
             </list>
           </property>
         </bean>
       </list>
     </property>
-    <property name="inquirableClass" value="org.kuali.kfs.pdp.businessobject.inquiry.PayeeAchAccountInquirable"/>    
+  </bean> 
+  
+  <bean id="PayeeACHAccount-inquirySectionDefinition" parent="PayeeACHAccount-inquirySectionDefinition-parentBean">
+  	<property name="numberOfColumns" value="1"/>
   </bean>
-
-<!-- Business Object Lookup Definition -->
-
-
-  <bean id="PayeeACHAccount-lookupDefinition" parent="PayeeACHAccount-lookupDefinition-parentBean"/>
-
-  <bean id="PayeeACHAccount-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-    <property name="title" value="Payee ACH Account Lookup"/>
-    <property name="lookupableID" value="payeeACHAccountLookupable" />    
-    
-    <property name="defaultSort">
-      <bean parent="SortDefinition">
-        <property name="attributeNames">
-          <list>
-            <value>achAccountGeneratedIdentifier</value>
-          </list>
-        </property>
-      </bean>
-    </property>
-    <property name="lookupFields">
+  
+  <bean parent="DataDictionaryBeanOverride">
+    <property name="beanName" value="PayeeACHAccount-lookupDefinition" />
+    <property name="fieldOverrides">
       <list>
-        <bean parent="FieldDefinition" p:attributeName="payeeIdentifierTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="payeeIdNumber"/>              
-        <bean parent="FieldDefinition" p:attributeName="bankRoutingNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="bankAccountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="bankAccountTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress"/>
-        <bean parent="FieldDefinition" p:attributeName="payeeName"/>
-        <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
-        <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
-      </list>
-    </property>
-    <property name="resultFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="payeeName"/>
-        <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress"/>
-        <bean parent="FieldDefinition" p:attributeName="payeeIdentifierTypeCode"/>
-        <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
-        <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="lookupFields" />
+          <property name="propertyNameForElementCompare" value="attributeName" />
+          <property name="element">
+            <bean parent="FieldDefinition" p:attributeName="bankAccountTypeCode" />
+          </property>
+          <property name="insertAfter">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="payeeEmailAddress" />
+              <bean parent="FieldDefinition" p:attributeName="payeeName" />
+              <bean parent="FieldDefinition" p:attributeName="payeePrincipalName" />
+            </list>
+          </property>
+        </bean>
+        <bean parent="FieldOverrideForListElementInsert">
+          <property name="propertyName" value="resultFields" />
+          <property name="propertyNameForElementCompare" value="attributeName" />
+          <property name="element">
+            <bean parent="FieldDefinition" p:attributeName="payeeIdentifierTypeCode" />
+          </property>
+          <property name="insertAfter">
+            <list>
+              <bean parent="FieldDefinition" p:attributeName="payeePrincipalName" />
+            </list>
+          </property>
+        </bean>
       </list>
     </property>
   </bean>
   
-  <bean id="achTransactionCodeValuesFinder"
-        class="org.kuali.kfs.pdp.businessobject.options.AchTransactionCodeValuesFinder"/>
-
   <bean id="cuCheckingSavingsValuesFinder"
         class="edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder"/>
+
 </beans>
