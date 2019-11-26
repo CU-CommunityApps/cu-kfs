@@ -1262,6 +1262,8 @@
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountStateCode" column="ACCT_STATE_CD"
 			jdbc-type="VARCHAR" />
+		<field-descriptor name="accountCountryCode" column="ACCT_CNTRY_CD" 
+	    		jdbc-type="VARCHAR"/>
 		<field-descriptor name="accountStreetAddress" column="ACCT_STREET_ADDR"
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="accountZipCode" column="ACCT_ZIP_CD"
