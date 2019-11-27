@@ -892,9 +892,9 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         setLine1Address(addr.getVendorLine1Address());
         setLine2Address(addr.getVendorLine2Address());
         setCity(addr.getVendorCityName());
-        setState(addr.getVendorState()!=null?addr.getVendorState().getCode():"");
+        setState(ObjectUtils.isNotNull(addr.getVendorState()) ? addr.getVendorState().getCode() : "");
         setZipCd(addr.getVendorZipCode());
-        setCountry(addr.getVendorCountry()!=null?addr.getVendorCountry().getName():"");
+        setCountry(ObjectUtils.isNotNull(addr.getVendorCountry()) ? addr.getVendorCountry().getName() : "");
     }
     
     /**
