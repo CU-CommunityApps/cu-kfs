@@ -21,10 +21,8 @@ import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
 import net.sf.jasperreports.engine.JRParameter;
 
-//import org.apache.log4j.Level;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
