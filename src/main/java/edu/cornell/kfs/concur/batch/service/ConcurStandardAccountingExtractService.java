@@ -24,5 +24,4 @@ public interface ConcurStandardAccountingExtractService {
     void removeDoneFileForPdpFileQuietly(String pdpFileName);
 
     void createDoneFileForCollectorFile(String collectorFileName) throws IOException;
-
 }

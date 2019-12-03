@@ -149,7 +149,7 @@ public class ConcurDetailLineGroupForCollectorHelper {
     }
 
     public boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-        return concurStandardAccountingExtractCashAdvanceService.isCashAdvanceToBeAppliedToReimbursement(detailLine);
+        return concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(detailLine);
     }
 
     public boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {

@@ -56,7 +56,6 @@
 	<bean id="concurStandardAccountingExtractToPdpAndCollectorBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
 			<list>
-                <ref bean="concurSaeCreateRequestedCashAdvancePdpFeedStep" />
 				<ref bean="concurStandardAccountingExtractToPdpAndCollectorStep" />
 			</list>
 		</property>
@@ -175,8 +174,6 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="6" p:propertyName="employeeFirstName"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="7" p:propertyName="employeeMiddleInitial"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="8" p:propertyName="employeeGroupId"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="9" p:propertyName="employeeChart"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="10" p:propertyName="employeeAccountNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="18" p:propertyName="reportId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="32" p:propertyName="policy"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="34" p:propertyName="reportChartOfAccountsCode"/>
@@ -201,10 +198,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
                                     	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmountString"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="176" p:propertyName="cashAdvanceAmount"
-                                        p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="183" p:propertyName="cashAdvancePaymentCodeName"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="184" p:propertyName="cashAdvanceTransactionType"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="186" p:propertyName="cashAdvanceKey"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="190" p:propertyName="chartOfAccountsCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="accountNumber"/>
@@ -212,7 +206,6 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="193" p:propertyName="subObjectCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="194" p:propertyName="projectCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="195" p:propertyName="orgRefId"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="258" p:propertyName="cashAdvanceName"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="324" p:propertyName="reportEndDate"
                                             p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
                                             p:dateFormat="yyyy-MM-dd"/>
@@ -349,44 +342,6 @@
         <property name="fileStorageService" ref="fileStorageService"/>
         <property name="cuMarshalService" ref="cuMarshalService"/>
         <property name="parameterService" ref="parameterService"/>
-    </bean>
-    
-    <bean id="concurSaeCreateRequestedCashAdvancePdpFeedStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurSaeCreateRequestedCashAdvancePdpFeedStep">
-        <property name="concurSaeCreateRequestedCashAdvancePdpFeedService" ref="concurSaeCreateRequestedCashAdvancePdpFeedService" />
-    </bean>
-    
-    <bean id="concurSaeCreateRequestedCashAdvancePdpFeedService" parent="concurSaeCreateRequestedCashAdvancePdpFeedService-parentBean" />
-    <bean id="concurSaeCreateRequestedCashAdvancePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurSaeCreateRequestedCashAdvancePdpFeedServiceImpl" abstract="true">
-        <property name="concurSaeCreateRequestedCashAdvanceFileService" ref="concurSaeCreateRequestedCashAdvanceFileService" />
-        <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-        <property name="concurSaeCreateRequestedCashAdvanceReportService" ref="concurSaeCreateRequestedCashAdvanceReportService"/>
-    </bean>
-    
-    <bean id="concurSaeCreateRequestedCashAdvanceFileService" parent="concurSaeCreateRequestedCashAdvanceFileService-parentBean" />
-    <bean id="concurSaeCreateRequestedCashAdvanceFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurSaeCreateRequestedCashAdvanceFileServiceImpl" abstract="true">
-        <property name="concurSaeCreateRequestedCashAdvanceFileValidationService" ref="concurSaeCreateRequestedCashAdvanceFileValidationService" />
-        <property name="concurCreateCashAdvancePdpFeedFileService" ref="concurCreateCashAdvancePdpFeedFileService" />
-        <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-        <property name="batchInputFileService" ref="batchInputFileService" />
-        <property name="batchInputFileType" ref="standardAccountExtractFileType" />
-        <property name="concurSaeCreateRequestedCashAdvanceReportService" ref="concurSaeCreateRequestedCashAdvanceReportService" />
-    </bean>
-    
-    <bean id="concurSaeCreateRequestedCashAdvanceFileValidationService" parent="concurSaeCreateRequestedCashAdvanceFileValidationService-parentBean" />
-    <bean id="concurSaeCreateRequestedCashAdvanceFileValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl" abstract="true">
-        <property name="concurRequestedCashAdvanceService" ref="concurRequestedCashAdvanceService" />
-        <property name="concurAccountValidationService" ref="concurAccountValidationService" />
-        <property name="concurEmployeeInfoValidationService" ref="concurEmployeeInfoValidationService"/>
-        <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-        <property name="configurationService" ref="configurationService"/>
-        <property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
-    </bean>
-    
-    <bean id="concurCreateCashAdvancePdpFeedFileService" parent="concurCreateCashAdvancePdpFeedFileService-parentBean" />
-    <bean id="concurCreateCashAdvancePdpFeedFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurCreateCashAdvancePdpFeedFileServiceImpl" abstract="true">
-        <property name="concurRequestedCashAdvanceService" ref="concurRequestedCashAdvanceService"/>
-        <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-        <property name="paymentImportDirectory" value="${staging.directory}/pdp/paymentImport/"/>
     </bean>
 
 	<!-- Request Extract File Conversion to  PDP Import File Job -->
@@ -587,7 +542,6 @@
         <property name="expensesPaidOnCorporateCardLabel" value="Expenses Paid on Corporate Card :"/>
         <property name="transactionsBypassedLabel" value="Bypassed Expense Type XXXX Transactions :"/>
         <property name="pdpRecordsProcessedLabel" value="PDP Records Processed :"/>
-        <property name="cashAdvanceRequestsBypassedLabel" value="Bypassed Cash Advance Requests :"/>
         <property name="reportValidationErrorsSubTitle" value="Concur Standard Accounting Extract Records With Validation Errors"/>
         <property name="reportValidationErrorsSubTitleXXXXNote" value="XXXX Represent Cash Advance. This is information only and does not represent errors."/>
         <property name="reportMissingObjectCodesSubTitle" value="Concur Standard Accounting Extract Records With Missing Object Codes"/>
@@ -616,27 +570,6 @@
         <property name="cashAdvancesNotProcessedValidationErrorsLabel" value="Cash Advance Requests With Validation Errors :"/>
         <property name="totalsForFileLabel" value="Total of All Records Listed Above:"/>
         <property name="reportValidationErrorsSubTitle" value="Concur Request Extract Records With Validation Errors"/>
-    </bean>
-    
-    <bean id="concurSaeCreateRequestedCashAdvanceReportService" parent="concurSaeCreateRequestedCashAdvanceReportService-parentBean" />
-    <bean id="concurSaeCreateRequestedCashAdvanceReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurSaeCreateRequestedCashAdvanceReportServiceImpl" abstract="true">
-        <property name="reportWriterService" ref="concurReportWriterService" />
-        <property name="concurReportEmailService" ref="concurReportEmailService"/>
-        <property name="configurationService" ref="configurationService"/>
-        <property name="fileNamePrefixFirstPart" value="sae-cash-advance-report-for--"/>
-        <property name="fileNamePrefixSecondPart" value="--"/>
-        <property name="reportTitle" value="Report for Concur SAE File Creating Requested Cash Advances KFS PDP File"/>
-        <property name="reportConcurFileNameLabel" value="Report is for Concur SAE File : "/>
-        <property name="summarySubTitle" value="Summary of Record Counts and Dollar Amounts"/>
-        <property name="cashAdvancesProcessedInPdpLabel" value="Cash Advances Processed in PDP :"/>
-        <property name="recordsNotSentToPdpSubLabel" value="Records Not Sent to PDP"/>
-        <property name="cashAdvancesBypassedRelatedToExpenseReportLabel" value="Bypassed Cash Advances Related to Expense Report :"/>
-        <property name="recordsBypassedNotCashAdvanceLabel" value="Records Bypassed Record Not Cash Advance :"/>
-        <property name="duplicateCashAdvanceRequestsLabel" value="Duplicate Cash Advance Request :"/>
-        <property name="clonedCashAdvanceRequestsLabel" value="Cloned Cash Advance Request :"/>
-        <property name="cashAdvancesNotProcessedValidationErrorsLabel" value="Cash Advance Requests With Validation Errors :"/>
-        <property name="totalsForFileLabel" value="Total of All Records Listed Above:"/>
-        <property name="reportValidationErrorsSubTitle" value="Concur SAE Creating Cash Advance Records With Validation Errors"/>
     </bean>
     
     <bean id="concurReportEmailService" parent="concurReportEmailService-parentBean" />
