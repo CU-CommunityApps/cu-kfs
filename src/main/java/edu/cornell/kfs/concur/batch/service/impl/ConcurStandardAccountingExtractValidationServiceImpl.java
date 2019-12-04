@@ -202,7 +202,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
     
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceToBeAppliedToReimbursement(line)) {
+        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
             ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line);
             ValidationResult validationResults = buildValidationResult(accountingInformation, false);
             if (validationResults.isNotValid()) {
@@ -217,7 +217,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     private boolean validateAccountingLineWithObjectCodeOverrides(ConcurStandardAccountingExtractDetailLine line, 
             ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode) {
-        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceToBeAppliedToReimbursement(line)) {
+        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
             logErrorsWithOriginalAccountingDetails(line);
     
             ValidationResult overriddenValidationResults = buildValidationResult(

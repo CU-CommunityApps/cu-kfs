@@ -27,7 +27,7 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
         Map<String, String> fieldValues = new HashMap<String, String>();
         
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.EMPLID, concurRequestedCashAdvance.getEmployeeId());
-        fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.CASH_ADV_KEY, concurRequestedCashAdvance.getCashAdvanceKey());
+        fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.REQUEST_ID, concurRequestedCashAdvance.getRequestId());
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.PAYMENT_AMOUNT, concurRequestedCashAdvance.getPaymentAmount().toString());
 
         concurRequestedCashAdvances = businessObjectService.findMatching(ConcurRequestedCashAdvance.class, fieldValues);

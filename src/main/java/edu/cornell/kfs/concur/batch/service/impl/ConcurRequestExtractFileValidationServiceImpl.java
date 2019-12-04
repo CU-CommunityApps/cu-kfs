@@ -50,16 +50,9 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         if (requestDetailFileLineIsCashAdvance(detailFileLine)) {
             boolean lineValidationPassed = true;
             lineValidationPassed =  requestedCashAdvanceHasNotBeenClonedInFile(detailFileLine, uniqueRequestIdsInFile);
-            LOG.info("requestedCashAdvanceHasNotBeenClonedInFile = " + lineValidationPassed);
-            
             lineValidationPassed &= requestedCashAdvanceHasNotBeenUsedInExpenseReport(detailFileLine);
-            LOG.info("requestedCashAdvanceHasNotBeenUsedInExpenseReport = " + lineValidationPassed);
-            
             lineValidationPassed &= requestedCashAdvanceIsNotBeingDuplicated(detailFileLine);
-            LOG.info("requestedCashAdvanceIsNotBeingDuplicated = " + lineValidationPassed);
-            
             lineValidationPassed &= requestedCashAdvanceAccountingInformationIsValid(detailFileLine);
-            LOG.info("requestedCashAdvanceAccountingInformationIsValid = " + lineValidationPassed);
 
             detailFileLine.getValidationResult().setValidCashAdvanceLine(lineValidationPassed);
             LOG.info("performRequestDetailLineValidation: Detail File Line validation : " + ((lineValidationPassed) ? "PASSED" : ("FAILED" + KFSConstants.NEWLINE + detailFileLine.toString())));
@@ -143,7 +136,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
      */
     private boolean requestedCashAdvanceIsNotBeingDuplicated(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
         boolean haveDataForLookup = true;
-        haveDataForLookup &= cashAdvanceKeyIsValid(detailFileLine);
+        haveDataForLookup &= requestIdIsValid(detailFileLine);
         haveDataForLookup &= employeeIdIsValid(detailFileLine);
         haveDataForLookup &= validateAddressIfCheckPayment(detailFileLine);
         haveDataForLookup &= payeeIdTypeIsValid(detailFileLine);
@@ -152,7 +145,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         if (haveDataForLookup) {
             ConcurRequestedCashAdvance cashAdvanceSearchKeys = new ConcurRequestedCashAdvance();
             cashAdvanceSearchKeys.setEmployeeId(detailFileLine.getEmployeeId());
-            cashAdvanceSearchKeys.setCashAdvanceKey(detailFileLine.getCashAdvanceKey());
+            cashAdvanceSearchKeys.setRequestId(detailFileLine.getRequestId());
             cashAdvanceSearchKeys.setPaymentAmount(detailFileLine.getRequestAmount());
 
             if (getConcurRequestedCashAdvanceService().isDuplicateConcurRequestCashAdvance(cashAdvanceSearchKeys)) {
@@ -173,9 +166,9 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         }
     }
 
-    private boolean cashAdvanceKeyIsValid(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
-        if (StringUtils.isEmpty(detailFileLine.getCashAdvanceKey())) {
-            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER));
+    private boolean requestIdIsValid(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        if (StringUtils.isEmpty(detailFileLine.getRequestId())) {
+            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_REQUEST_ID_INVALID));
             return false;
         }
         else {

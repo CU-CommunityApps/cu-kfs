@@ -42,7 +42,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         boolean pdpFileSuccessfullyCreated = false;
         PdpFeedFileBaseEntry pdpFeedFileDataObject = buildPdpFeedBaseEntry(requestExtractFile, reportData);
         if (pdpFeedFileDataObject.getTrailer().getDetailCount().intValue() != 0) {
-            String fullyQualifiedPdpFileName = getConcurBatchUtilityService().buildFullyQualifiedPdpCashAdvanceOutputFileName(getPaymentImportDirectory(), requestExtractFile.getFileName());
+            String fullyQualifiedPdpFileName = getConcurBatchUtilityService().buildFullyQualifiedPdpOutputFileName(getPaymentImportDirectory(), requestExtractFile.getFileName());
             pdpFileSuccessfullyCreated = getConcurBatchUtilityService().createPdpFeedFile(pdpFeedFileDataObject, fullyQualifiedPdpFileName);
             if (pdpFileSuccessfullyCreated) {
                 LOG.info("createPdpFeedFileForValidatedDetailFileLines: fullyQualifiedPdpFileName [" + fullyQualifiedPdpFileName + "]  was created for requestExtractFile [" + requestExtractFile.getFileName() + "]");

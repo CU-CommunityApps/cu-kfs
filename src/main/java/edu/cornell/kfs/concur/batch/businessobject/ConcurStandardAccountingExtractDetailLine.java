@@ -4,10 +4,6 @@ import java.sql.Date;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.concur.ConcurConstants;
-
-import org.kuali.kfs.sys.KFSConstants;
-
 public class ConcurStandardAccountingExtractDetailLine {
     
     private String batchID; 
@@ -47,17 +43,6 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String journalPayerPaymentTypeName;
     private String journalPayeePaymentTypeName;
     private String cashAdvancePaymentCodeName;
-    private KualiDecimal cashAdvanceAmount;
-    private String cashAdvanceTransactionType;
-    private String employeeChart;
-    private String employeeAccountNumber;
-    private String cashAdvanceName;
-    private String kfsAssembledRequestId;
-    private ConcurSaeRequestedCashAdvanceDetailLineValidationResult validationResult;
-    
-    public ConcurStandardAccountingExtractDetailLine() {
-        this.validationResult = new ConcurSaeRequestedCashAdvanceDetailLineValidationResult();
-    }
     
     public String getBatchID() {
         return batchID;
@@ -265,19 +250,6 @@ public class ConcurStandardAccountingExtractDetailLine {
 
     public void setCashAdvanceKey(String cashAdvanceKey) {
         this.cashAdvanceKey = cashAdvanceKey;
-        setKfsAssembledRequestId(cashAdvanceKey);
-    }
-    
-    public String getKfsAssembledRequestId() {
-        return kfsAssembledRequestId;
-    }
-
-    /**
-     * Setter visibility purposely made private to ensure value is properly constructed by this business object.
-     * @param kfsAssembledRequestId
-     */
-    private void setKfsAssembledRequestId(String kfsAssembledRequestId) {
-        this.kfsAssembledRequestId = new String(ConcurConstants.SAE_REQUEST_ID_PREFIX + kfsAssembledRequestId);
     }
 
     public String getReportEntryId() {
@@ -368,54 +340,6 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.cashAdvancePaymentCodeName = cashAdvancePaymentCodeName;
     }
 
-    public KualiDecimal getCashAdvanceAmount() {
-        return cashAdvanceAmount;
-    }
-
-    public void setCashAdvanceAmount(KualiDecimal cashAdvanceAmount) {
-        this.cashAdvanceAmount = cashAdvanceAmount;
-    }
-
-    public String getCashAdvanceTransactionType() {
-        return cashAdvanceTransactionType;
-    }
-
-    public void setCashAdvanceTransactionType(String cashAdvanceTransactionType) {
-        this.cashAdvanceTransactionType = cashAdvanceTransactionType;
-    }
-
-    public ConcurSaeRequestedCashAdvanceDetailLineValidationResult getValidationResult() {
-        return validationResult;
-    }
-
-    public void setValidationResult(ConcurSaeRequestedCashAdvanceDetailLineValidationResult validationResult) {
-        this.validationResult = validationResult;
-    }
-
-    public String getEmployeeChart() {
-        return employeeChart;
-    }
-
-    public void setEmployeeChart(String employeeChart) {
-        this.employeeChart = employeeChart;
-    }
-
-    public String getEmployeeAccountNumber() {
-        return employeeAccountNumber;
-    }
-
-    public void setEmployeeAccountNumber(String employeeAccountNumber) {
-        this.employeeAccountNumber = employeeAccountNumber;
-    }
-
-    public String getCashAdvanceName() {
-        return cashAdvanceName;
-    }
-
-    public void setCashAdvanceName(String cashAdvanceName) {
-        this.cashAdvanceName = cashAdvanceName;
-    }
-
     public String toString() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
@@ -437,18 +361,6 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" cashAdvanceKey: ").append(cashAdvanceKey).append(" cashAdvancePaymentCodeName: ").append(cashAdvancePaymentCodeName);
         sb.append(" journalPayerPaymentTypeName: ").append(journalPayerPaymentTypeName);
         sb.append(" journalPayeePaymentTypeName: ").append(journalPayeePaymentTypeName);
-        sb.append(" cashAdvanceTransactionType: ").append(cashAdvanceTransactionType);
-        sb.append(" cashAdvanceAmount: ").append(cashAdvanceAmount);
-        sb.append(" employeeChart: ").append(employeeChart);
-        sb.append(" employeeAccountNumber: ").append(employeeAccountNumber);
-        sb.append(" cashAdvanceName: ").append(cashAdvanceName);
-        sb.append(" kfsAssembledRequestId: ").append(kfsAssembledRequestId);
-        sb.append(" cashAdvanceLine: ").append(validationResult.isCashAdvanceLine());
-        sb.append(" cashAdvanceAdministratorApprovedCashAdvance: ").append(validationResult.isCashAdvanceAdministratorApprovedCashAdvance());
-        sb.append(" cashAdvanceUsedInExpenseReport: ").append(validationResult.isCashAdvanceUsedInExpenseReport());
-        sb.append(" validCashAdvanceLine: ").append(validationResult.isValidCashAdvanceLine()).append(KFSConstants.NEWLINE);
-        sb.append(" validationFailureMessages: ").append(KFSConstants.NEWLINE);
-        sb.append(validationResult.getErrorMessagesAsOneFormattedString());
         return sb.toString();
     }
 

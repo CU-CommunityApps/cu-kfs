@@ -34,7 +34,7 @@ public enum ConcurSAEDetailLineFixture {
             KRADConstants.NO_INDICATOR_VALUE, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.DEFAULT_REPORT_ACCOUNT, null, null, null, null,
             ConcurConstants.UNIVERSITY_PAYMENT_TYPE, ConcurConstants.USER_PAYMENT_TYPE,
-            ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME, null, null),
+            ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME, null),
     DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00,
             buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.USER_PAYMENT_TYPE),
             buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
@@ -42,8 +42,7 @@ public enum ConcurSAEDetailLineFixture {
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY),
             buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY),
             buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_1),
-            buildOverride(LineField.CASH_ADVANCE_PAYMENT_CODE_NAME, ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_CASH),
-            buildOverride(LineField.CASH_ADVANCE_TRANSACTION_TYPE, ConcurConstants.SAE_CASH_ADVANCE_BEING_APPLIED_TO_TRIP_REIMBURSEMENT)),
+            buildOverride(LineField.CASH_ADVANCE_PAYMENT_CODE_NAME, ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_CASH)),
     DEFAULT_CORP_CARD_DEBIT(DEFAULT_DEBIT, null,
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID),
             buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE)),
@@ -382,12 +381,9 @@ public enum ConcurSAEDetailLineFixture {
     PDP_EXAMPLE_PERSONAL_RETURN_DEBIT(DEFAULT_PERSONAL_RETURN_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE),
     PDP_EXAMPLE_PERSONAL_RETURN_CREDIT(DEFAULT_PERSONAL_RETURN_CREDIT, ConcurSAEFileFixture.PDP_EXAMPLE),
 
-    PDP_TEST_CASH_ADVANCE_500(DEFAULT_CREDIT, ConcurSAEFileFixture.PDP_TEST, -500, 
-            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.PDP_LINE_FIXTURE_CASH_ADVANCE_KEY),
+    PDP_TEST_CASH_ADVANCE_500(DEFAULT_CREDIT, ConcurSAEFileFixture.PDP_TEST, -500, buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.PDP_LINE_FIXTURE_CASH_ADVANCE_KEY),
             buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID), 
-            buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), 
-            buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY),
-            buildOverride(LineField.CASH_ADVANCE_TRANSACTION_TYPE, ConcurConstants.SAE_CASH_ADVANCE_BEING_APPLIED_TO_TRIP_REIMBURSEMENT)),
+            buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY)),
     PDP_TEST_DEBIT_1_50(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 50, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID)),
     PDP_TEST_DEBIT_2_500(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 500, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID)),
     PDP_TEST_DEBIT_3_500_NO_ACCOUNT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 500, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID + "-2"),
@@ -420,7 +416,6 @@ public enum ConcurSAEDetailLineFixture {
     public final String journalPayeePaymentTypeName;
     public final String expenseType;
     public final String cashAdvancePaymentCodeName;
-    public final String cashAdvanceTransactionType;
 
     @SafeVarargs
     private ConcurSAEDetailLineFixture(ConcurSAEDetailLineFixture baseFixture, ConcurSAEFileFixture extractFile,
@@ -485,8 +480,7 @@ public enum ConcurSAEDetailLineFixture {
                 overrideMap.getOrDefault(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, baseFixture.journalPayerPaymentTypeName),
                 overrideMap.getOrDefault(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, baseFixture.journalPayeePaymentTypeName),
                 overrideMap.getOrDefault(LineField.EXPENSE_TYPE, baseFixture.expenseType),
-                overrideMap.getOrDefault(LineField.CASH_ADVANCE_PAYMENT_CODE_NAME, baseFixture.cashAdvancePaymentCodeName),
-                overrideMap.getOrDefault(LineField.CASH_ADVANCE_TRANSACTION_TYPE, baseFixture.cashAdvanceTransactionType));
+                overrideMap.getOrDefault(LineField.CASH_ADVANCE_PAYMENT_CODE_NAME, baseFixture.cashAdvancePaymentCodeName));
     }
 
     private ConcurSAEDetailLineFixture(ConcurSAEFileFixture extractFile, ConcurEmployeeFixture employee,
@@ -497,7 +491,7 @@ public enum ConcurSAEDetailLineFixture {
             String reportChartOfAccountsCode, String reportAccountNumber, String reportSubAccountNumber,
             String reportSubObjectCode, String reportProjectCode, String reportOrgRefId,
             String journalPayerPaymentTypeName, String journalPayeePaymentTypeName,
-            String expenseType, String cashAdvancePaymentCodeName, String cashAdvanceTransactionType) {
+            String expenseType, String cashAdvancePaymentCodeName) {
         this.extractFile = extractFile;
         this.employee = employee;
         this.reportId = reportId;
@@ -525,7 +519,6 @@ public enum ConcurSAEDetailLineFixture {
         this.journalPayeePaymentTypeName = journalPayeePaymentTypeName;
         this.expenseType = expenseType;
         this.cashAdvancePaymentCodeName = cashAdvancePaymentCodeName;
-        this.cashAdvanceTransactionType = cashAdvanceTransactionType;
     }
 
     public ConcurStandardAccountingExtractDetailLine toDetailLine() {
@@ -570,7 +563,6 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setJournalPayerPaymentTypeName(journalPayerPaymentTypeName);
         detailLine.setJournalPayeePaymentTypeName(journalPayeePaymentTypeName);
         detailLine.setCashAdvancePaymentCodeName(cashAdvancePaymentCodeName);
-        detailLine.setCashAdvanceTransactionType(cashAdvanceTransactionType);
         return detailLine;
     }
 
@@ -625,8 +617,7 @@ public enum ConcurSAEDetailLineFixture {
         JOURNAL_PAYER_PAYMENT_TYPE_NAME,
         JOURNAL_PAYEE_PAYMENT_TYPE_NAME,
         EXPENSE_TYPE,
-        CASH_ADVANCE_PAYMENT_CODE_NAME,
-        CASH_ADVANCE_TRANSACTION_TYPE;
+        CASH_ADVANCE_PAYMENT_CODE_NAME;
     }
 
 }
