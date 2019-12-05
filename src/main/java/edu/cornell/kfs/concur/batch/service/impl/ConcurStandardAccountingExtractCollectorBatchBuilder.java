@@ -223,7 +223,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected void groupLines(List<ConcurStandardAccountingExtractDetailLine> saeLines) {
         for (ConcurStandardAccountingExtractDetailLine saeLine : saeLines) {
-            if (concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(saeLine)) {
+            if (concurStandardAccountingExtractCashAdvanceService.isCashAdvanceToBeAppliedToReimbursement(saeLine)) {
                 reportCashAdvance(saeLine);
             }
             if (shouldProcessLine(saeLine)
@@ -346,6 +346,10 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                     reportUnprocessedLine(saeLine, "The line has the Pseudo (XXXX) payment code");
                     return false;
                 }
+            case StringUtils.EMPTY :
+                reportBypassOfCashAdvanceRequestLine(saeLine);
+                reportUnprocessedLine(saeLine, "The line detected as cash advance request. Should have been processed by first batch job step.");
+                return false;
             default :
                 reportUnprocessedLine(saeLine, "The line has an unrecognized payment code");
                 return false;
@@ -375,6 +379,10 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected void reportBypassOfLineWithPseudoPaymentCode(ConcurStandardAccountingExtractDetailLine saeLine) {
         updateStatisticFromLineData(ConcurStandardAccountingExtractBatchReportData::getTransactionsBypassed, saeLine);
+    }
+    
+    protected void reportBypassOfCashAdvanceRequestLine(ConcurStandardAccountingExtractDetailLine saeLine) {
+        updateStatisticFromLineData(ConcurStandardAccountingExtractBatchReportData::getCashAdvanceRequestsBypassed, saeLine);
     }
 
     protected void updateStatisticFromLineData(
