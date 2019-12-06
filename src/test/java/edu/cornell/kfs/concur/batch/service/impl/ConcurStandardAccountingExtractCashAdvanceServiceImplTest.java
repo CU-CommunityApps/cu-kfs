@@ -35,14 +35,15 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImplTest {
     @Test
     public void validateIsCashAdvanceTrue() {
         ConcurStandardAccountingExtractDetailLine line = ConcurSAEDetailLineFixture.PDP_TEST_CASH_ADVANCE_500.toDetailLine();
+        line.setCashAdvanceTransactionType("2");
         line.setCashAdvanceKey("1242");
-        assertTrue("Should be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(line));
+        assertTrue("Should be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceToBeAppliedToReimbursement(line));
     }
     
     @Test
     public void validateIsCashAdvanceFalse() {
         ConcurStandardAccountingExtractDetailLine line = ConcurSAEDetailLineFixture.PDP_TEST_DEBIT_1_50.toDetailLine();
-        assertFalse("Should NOT be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(line));
+        assertFalse("Should NOT be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceToBeAppliedToReimbursement(line));
     }
     
     @Test

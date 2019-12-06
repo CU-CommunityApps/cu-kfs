@@ -34,7 +34,7 @@ import edu.cornell.kfs.sys.util.LoadFileUtils;
 import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService {
-	private static final Logger LOG = LogManager.getLogger(ConcurBatchUtilityServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(ConcurBatchUtilityServiceImpl.class);
     protected BatchInputFileService batchInputFileService;
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;
@@ -92,8 +92,8 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     }
     
     @Override
-    public String buildFullyQualifiedPdpOutputFileName(String paymentImportDirectory, String pdpInputfileName) {
-        String fullyQualifiedPdpOutputFileName = new String(paymentImportDirectory + ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + pdpInputfileName);
+    public String buildFullyQualifiedPdpCashAdvanceOutputFileName(String paymentImportDirectory, String pdpInputfileName) {
+        String fullyQualifiedPdpOutputFileName = new String(paymentImportDirectory + ConcurConstants.PDP_CONCUR_CASH_ADVANCE_OUTPUT_FILE_NAME_PREFIX + pdpInputfileName);
         return StringUtils.replace(fullyQualifiedPdpOutputFileName, CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     
@@ -158,6 +158,11 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         String[] validStatuses = StringUtils.split(validStatusesString, CUKFSConstants.SEMICOLON);
         return Arrays.stream(validStatuses)
                 .anyMatch((validStatusValue) -> StringUtils.equalsIgnoreCase(validStatusValue, status));
+    }
+    
+    @Override
+    public boolean shouldProcessRequestedCashAdvancesFromSaeData() {
+        return (StringUtils.equalsIgnoreCase(getConcurParameterValue(ConcurParameterConstants.CONCUR_PROCESS_CASH_ADVANCES_FROM_SAE_DATA_IND), KFSConstants.ParameterValues.YES));
     }
 
     public DateTimeService getDateTimeService() {
