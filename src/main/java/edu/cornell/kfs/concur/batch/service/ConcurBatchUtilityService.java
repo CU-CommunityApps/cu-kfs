@@ -11,14 +11,14 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 public interface ConcurBatchUtilityService {
     
     /**
-     * Builds the fully qualified name of the Concur PDP XML data file that will
+     * Builds the fully qualified name of the Concur Cash Advance PDP XML data file that will
      * be imported during normal KFS PDP import processing.
      *
      * @param paymentImportDirectory File system location where standard PDP processing expects to find its XML files to load.
      * @param pdpInputfileName Name and extension of the data file received from Concur.
-     * @return fullyQualifiedPdpOutputFileName
+     * @return fullyQualifiedPdpCashAdvanceOutputFileName
      */
-    String buildFullyQualifiedPdpOutputFileName(String paymentImportDirectory, String pdpInputfileName);
+    String buildFullyQualifiedPdpCashAdvanceOutputFileName(String paymentImportDirectory, String pdpInputfileName);
 
     /**
      * Uses the fullyQualifiedFileName parameter to create a corresponding
@@ -144,4 +144,12 @@ public interface ConcurBatchUtilityService {
      * @return True if the status value is a recognized one for KFS PDP employee payment processing, false otherwise.
      */
     boolean isValidTravelerStatusForProcessingAsPDPEmployeeType(String status);
+
+    /**
+     * Returns true when KFS System parameter CONCUR_PROCESS_CASH_ADVANCES_FROM_SAE_DATA_IND is set to Y;
+     * otherwise returns false.
+     * @return
+     */
+    boolean shouldProcessRequestedCashAdvancesFromSaeData();
+
 }

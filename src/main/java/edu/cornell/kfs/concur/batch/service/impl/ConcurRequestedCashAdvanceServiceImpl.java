@@ -1,6 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
         Map<String, String> fieldValues = new HashMap<String, String>();
         
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.EMPLID, concurRequestedCashAdvance.getEmployeeId());
-        fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.REQUEST_ID, concurRequestedCashAdvance.getRequestId());
+        fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.CASH_ADV_KEY, concurRequestedCashAdvance.getCashAdvanceKey());
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.PAYMENT_AMOUNT, concurRequestedCashAdvance.getPaymentAmount().toString());
 
         concurRequestedCashAdvances = businessObjectService.findMatching(ConcurRequestedCashAdvance.class, fieldValues);

@@ -14,13 +14,13 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
-import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.report.ConcurSaeRequestedCashAdvanceBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurReportEmailService;
-import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
+import edu.cornell.kfs.concur.batch.service.ConcurSaeCreateRequestedCashAdvanceReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
-public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtractReportService {
-	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractReportServiceImpl.class);
+public class ConcurSaeCreateRequestedCashAdvanceReportServiceImpl implements ConcurSaeCreateRequestedCashAdvanceReportService {
+    private static final Logger LOG = LogManager.getLogger(ConcurSaeCreateRequestedCashAdvanceReportServiceImpl.class);
 
     protected ReportWriterService reportWriterService;
     protected ConfigurationService configurationService;
@@ -33,7 +33,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     protected String summarySubTitle;
     protected String cashAdvancesProcessedInPdpLabel;
     protected String cashAdvancesBypassedRelatedToExpenseReportLabel;
-    protected String recordsBypassedTravelRequestOnlyLabel;
+    protected String recordsBypassedNotCashAdvanceLabel;
     protected String duplicateCashAdvanceRequestsLabel;
     protected String clonedCashAdvanceRequestsLabel;
     protected String cashAdvancesNotProcessedValidationErrorsLabel;
@@ -50,7 +50,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     }
     
     @Override
-    public File generateReport(ConcurRequestExtractBatchReportData reportData) {
+    public File generateReport(ConcurSaeRequestedCashAdvanceBatchReportData reportData) {
         LOG.debug("generateReport: entered");
         initializeReportTitleAndFileName(reportData);
         if (!writeHeaderValidationErrors(reportData)) {
@@ -63,17 +63,17 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     
     @Override
     public void sendEmailThatNoFileWasProcesed() {
-        String body = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_BODY);
-        String subject = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_SUBJECT);
+        String body = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCES_NO_REPORT_EMAIL_BODY);
+        String subject = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCES_NO_REPORT_EMAIL_SUBJECT);
         getConcurReportEmailService().sendEmail(subject, body);
     }
     
     @Override
-    public void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile) {
+    public void sendResultsEmail(ConcurSaeRequestedCashAdvanceBatchReportData reportData, File reportFile) {
         getConcurReportEmailService().sendResultsEmail(reportData, reportFile);
     }
     
-    protected void initializeReportTitleAndFileName(ConcurRequestExtractBatchReportData  reportData) {
+    protected void initializeReportTitleAndFileName(ConcurSaeRequestedCashAdvanceBatchReportData  reportData) {
         LOG.debug("initializeReportTitleAndFileName, entered for Concur data file name:" + reportData.getConcurFileName());
         String concurFileName = convertConcurFileNameToDefaultWhenNotProvided(reportData.getConcurFileName());
         getReportWriterService().setFileNamePrefix(buildConcurReportFileNamePrefix(concurFileName, getFileNamePrefixFirstPart(), getFileNamePrefixSecondPart()));
@@ -84,7 +84,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         getReportWriterService().writeNewLines(2);
     }
 
-    protected boolean writeHeaderValidationErrors(ConcurRequestExtractBatchReportData reportData) {
+    protected boolean writeHeaderValidationErrors(ConcurSaeRequestedCashAdvanceBatchReportData reportData) {
         boolean headerValidationFailed = false;
         if (CollectionUtils.isNotEmpty(reportData.getHeaderValidationErrors())) {
             LOG.debug("writeHeaderValidationErrors, detected header validation errors");
@@ -103,7 +103,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         return headerValidationFailed;
     }
 
-    protected void writeSummarySubReport(ConcurRequestExtractBatchReportData reportData) {
+    protected void writeSummarySubReport(ConcurSaeRequestedCashAdvanceBatchReportData reportData) {
         LOG.debug("writeSummarySubReport, entered");
         ensureSummaryLabelsHaveValues(reportData);
         getReportWriterService().writeSubTitle(getSummarySubTitle());
@@ -125,7 +125,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, getRecordsNotSentToPdpSubLabel(), KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING);
         getReportWriterService().writeNewLines(1);
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel(), reportData.getCashAdvancesBypassedRelatedToExpenseReport().getRecordCount(), reportData.getCashAdvancesBypassedRelatedToExpenseReport().getDollarAmount().toString());
-        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsBypassedTravelRequestOnly().getItemLabel(), reportData.getRecordsBypassedTravelRequestOnly().getRecordCount(), reportData.getRecordsBypassedTravelRequestOnly().getDollarAmount().toString());
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsBypassedNotCashAdvances().getItemLabel(), reportData.getRecordsBypassedNotCashAdvances().getRecordCount(), reportData.getRecordsBypassedNotCashAdvances().getDollarAmount().toString());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getDuplicateCashAdvanceRequests().getItemLabel(), reportData.getDuplicateCashAdvanceRequests().getRecordCount(), reportData.getDuplicateCashAdvanceRequests().getDollarAmount().toString());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getClonedCashAdvanceRequests().getItemLabel(), reportData.getClonedCashAdvanceRequests().getRecordCount(), reportData.getClonedCashAdvanceRequests().getDollarAmount().toString());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getCashAdvancesNotProcessedValidationErrors().getItemLabel(), reportData.getCashAdvancesNotProcessedValidationErrors().getRecordCount(), reportData.getCashAdvancesNotProcessedValidationErrors().getDollarAmount().toString());
@@ -134,18 +134,18 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         getReportWriterService().writeNewLines(4);
     }
 
-    protected void writeValidationErrorSubReport(ConcurRequestExtractBatchReportData reportData) {
+    protected void writeValidationErrorSubReport(ConcurSaeRequestedCashAdvanceBatchReportData reportData) {
         LOG.debug("writeValidationErrorSubReport, entered");
         String rowFormat = "%-24s %-24s %-36s %-36s %-14s";
         String hdrRowFormat = "%-24s %-24s %-36s %-36s %-14s";
-        Object[] headerArgs = { "Report ID", "Employee ID", "Last Name", "First Name", "Middle Initial" };
-        Object[] headerBreak = { "---------", "-----------", "---------", "----------", "--------------" };
+        Object[] headerArgs = { "Cash Advance Key", "Employee ID", "Last Name", "First Name", "Middle Initial" };
+        Object[] headerBreak = { "----------------", "-----------", "---------", "----------", "--------------" };
 
         if (CollectionUtils.isEmpty(reportData.getValidationErrorFileLines())) {
             getReportWriterService().setNewPage(false);
             getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
             getReportWriterService().writeNewLines(1);
-            getReportWriterService().writeFormattedMessageLine(ConcurConstants.RequestExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
+            getReportWriterService().writeFormattedMessageLine(ConcurConstants.SaeRequestedCashAdvancesExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
         }
         else {
             getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
@@ -166,7 +166,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     protected void finalizeReport() {
         LOG.debug("finalizeReport, entered");
         getReportWriterService().writeNewLines(3);
-        getReportWriterService().writeFormattedMessageLine(ConcurConstants.RequestExtractReport.END_OF_REPORT_MESSAGE);
+        getReportWriterService().writeFormattedMessageLine(ConcurConstants.SaeRequestedCashAdvancesExtractReport.END_OF_REPORT_MESSAGE);
         getReportWriterService().destroy();
     }
     
@@ -176,7 +176,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
 
     private String convertConcurFileNameToDefaultWhenNotProvided(String concurFileName) {
         if (StringUtils.isEmpty(concurFileName)) {
-            return ConcurConstants.RequestExtractReport.UNKNOWN_REQUEST_EXTRACT_FILENAME;
+            return ConcurConstants.SaeRequestedCashAdvancesExtractReport.UNKNOWN_SAE_FILENAME;
         }
         else {
             return concurFileName;
@@ -186,7 +186,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     private void writeErrorItemMessages(List<String> errorMessages) {
         LOG.debug("writeErrorItemMessages, entered");
         if (CollectionUtils.isEmpty(errorMessages)) {
-            getReportWriterService().writeFormattedMessageLine(ConcurConstants.RequestExtractReport.NO_VALIDATION_ERROR_MESSAGES_TO_OUTPUT);
+            getReportWriterService().writeFormattedMessageLine(ConcurConstants.SaeRequestedCashAdvancesExtractReport.NO_VALIDATION_ERROR_MESSAGES_TO_OUTPUT);
         }
         else {
             for (String errorMessage : errorMessages) {
@@ -195,15 +195,15 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         }
     }
 
-    private void ensureSummaryLabelsHaveValues (ConcurRequestExtractBatchReportData reportData) {
+    private void ensureSummaryLabelsHaveValues (ConcurSaeRequestedCashAdvanceBatchReportData reportData) {
         if (StringUtils.isEmpty(reportData.getCashAdvancesProcessedInPdp().getItemLabel())) {
             reportData.getCashAdvancesProcessedInPdp().setItemLabel(getCashAdvancesProcessedInPdpLabel());
         }
         if (StringUtils.isEmpty(reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel())) {
             reportData.getCashAdvancesBypassedRelatedToExpenseReport().setItemLabel(getCashAdvancesBypassedRelatedToExpenseReportLabel());
         }
-        if (StringUtils.isEmpty(reportData.getRecordsBypassedTravelRequestOnly().getItemLabel())) {
-            reportData.getRecordsBypassedTravelRequestOnly().setItemLabel(getRecordsBypassedTravelRequestOnlyLabel());
+        if (StringUtils.isEmpty(reportData.getRecordsBypassedNotCashAdvances().getItemLabel())) {
+            reportData.getRecordsBypassedNotCashAdvances().setItemLabel(this.getRecordsBypassedNotCashAdvanceLabel());
         }
         if (StringUtils.isEmpty(reportData.getDuplicateCashAdvanceRequests().getItemLabel())) {
             reportData.getDuplicateCashAdvanceRequests().setItemLabel(getDuplicateCashAdvanceRequestsLabel());
@@ -271,16 +271,16 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         return cashAdvancesBypassedRelatedToExpenseReportLabel;
     }
 
+    public String getRecordsBypassedNotCashAdvanceLabel() {
+        return recordsBypassedNotCashAdvanceLabel;
+    }
+
+    public void setRecordsBypassedNotCashAdvanceLabel(String recordsBypassedNotCashAdvanceLabel) {
+        this.recordsBypassedNotCashAdvanceLabel = recordsBypassedNotCashAdvanceLabel;
+    }
+
     public void setCashAdvancesBypassedRelatedToExpenseReportLabel(String cashAdvancesBypassedRelatedToExpenseReportLabel) {
         this.cashAdvancesBypassedRelatedToExpenseReportLabel = cashAdvancesBypassedRelatedToExpenseReportLabel;
-    }
-
-    public String getRecordsBypassedTravelRequestOnlyLabel() {
-        return recordsBypassedTravelRequestOnlyLabel;
-    }
-
-    public void setRecordsBypassedTravelRequestOnlyLabel(String recordsBypassedTravelRequestOnlyLabel) {
-        this.recordsBypassedTravelRequestOnlyLabel = recordsBypassedTravelRequestOnlyLabel;
     }
 
     public String getDuplicateCashAdvanceRequestsLabel() {

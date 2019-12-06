@@ -32,4 +32,21 @@ public class ConcurKeyConstants {
     public static final String ERROR_CONCUR_TOKEN_REVOKE_NO_TOKEN = "error.concur.token.revoke.no.token";
     public static final String MESSAGE_CONCUR_TOKEN_RESET_SUCCESS = "message.concur.token.reset.success";
     public static final String ERROR_CONCUR_TOKEN_RESET_IN_PRODUCTION = "error.concur.token.retet.production"; 
+
+    public static final String CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER = "validation.error.concur.request.extract.cash.advance.invalid.unique.identifier";
+    public static final String CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE = "validation.error.concur.sae.not.requested.cash.advance";
+    public static final String CONCUR_SAE_NOT_APPROVED_REQUESTED_CASH_ADVANCE_DATA_LINE = "validation.error.concur.sae.not.cash.admin.approved";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_USED_IN_EXPENSE_REPORT = "validation.error.concur.sae.requested.cash.advance.in.expense.report";
+    public static final String CONCUR_SAE_REQUESTED_DUPLICATE_CASH_ADVANCE_DETECTED = "validation.error.concur.duplicate.sae.requested.cash.advance";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_KEYS_FOR_DUPLICATE_CHECK = "validation.error.concur.sae.invalid.keys.duplicate.check";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER = "validation.error.concur.sae.requested.cash.advance.invalid.unique.identifier";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_EMPLOYEE_ID_NULL_OR_BLANK = "validation.error.concur.sae.requested.cash.advance.invalid.employee.id";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_AMOUNT_INVALID = "validation.error.concur.sae.requested.cash.advance.invalid.request.amount";
+    public static final String CONCUR_SAE_HEADER_ROW_COUNT_FAILED = "validation.error.concur.sae.requested.cash.advance.header.row.count.failed";
+    public static final String CONCUR_SAE_HAS_NO_REQUEST_DETAIL_LINES = "validation.error.concur.sae.requested.cash.advance.no.request.detail.lines";
+    public static final String CONCUR_SAE_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP = "validation.error.concur.sae.requested.cash.advance.contains.bad.customer.profile.group";
+    public static final String CONCUR_SAE_HEADER_JOURNAL_AMOUNT_FILE_AMOUNT_MISMATCH = "validation.error.concur.sae.requested.cash.advance.header.amount.file.amount.mismatch";
+    public static final String CONCUR_SAE_DETAIL_JOURNAL_AMOUNT_NULL_DETECTED = "validation.error.concur.sae.detail.journal.amount.null.detected";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCES_NO_REPORT_EMAIL_SUBJECT = "message.concur.sae.requested.cash.advance.no.report.email.subject";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCES_NO_REPORT_EMAIL_BODY = "message.concur.sae.requested.cash.advance.no.report.email.body";
 }
