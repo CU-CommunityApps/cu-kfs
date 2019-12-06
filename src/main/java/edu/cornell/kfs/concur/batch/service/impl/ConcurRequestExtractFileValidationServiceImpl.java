@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -50,16 +50,16 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         if (requestDetailFileLineIsCashAdvance(detailFileLine)) {
             boolean lineValidationPassed = true;
             lineValidationPassed =  requestedCashAdvanceHasNotBeenClonedInFile(detailFileLine, uniqueRequestIdsInFile);
-            LOG.info("requestedCashAdvanceHasNotBeenClonedInFile = " + lineValidationPassed);
+            LOG.info("performRequestDetailLineValidation: requestedCashAdvanceHasNotBeenClonedInFile = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceHasNotBeenUsedInExpenseReport(detailFileLine);
-            LOG.info("requestedCashAdvanceHasNotBeenUsedInExpenseReport = " + lineValidationPassed);
+            LOG.info("performRequestDetailLineValidation: requestedCashAdvanceHasNotBeenUsedInExpenseReport = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceIsNotBeingDuplicated(detailFileLine);
-            LOG.info("requestedCashAdvanceIsNotBeingDuplicated = " + lineValidationPassed);
+            LOG.info("performRequestDetailLineValidation: requestedCashAdvanceIsNotBeingDuplicated = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceAccountingInformationIsValid(detailFileLine);
-            LOG.info("requestedCashAdvanceAccountingInformationIsValid = " + lineValidationPassed);
+            LOG.info("performRequestDetailLineValidation: requestedCashAdvanceAccountingInformationIsValid = " + lineValidationPassed);
 
             detailFileLine.getValidationResult().setValidCashAdvanceLine(lineValidationPassed);
             LOG.info("performRequestDetailLineValidation: Detail File Line validation : " + ((lineValidationPassed) ? "PASSED" : ("FAILED" + KFSConstants.NEWLINE + detailFileLine.toString())));

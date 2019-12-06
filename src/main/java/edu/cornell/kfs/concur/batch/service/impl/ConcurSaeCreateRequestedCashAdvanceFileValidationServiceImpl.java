@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -54,22 +54,22 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
         if (requestDetailFileLineIsCashAdvance(detailFileLine)) {
             boolean lineValidationPassed = true;
             lineValidationPassed =  requestedCashAdvanceApprovedByConcurAdministrator(detailFileLine);
-            LOG.info("requestedCashAdvanceApprovedByConcurAdministrator = " + lineValidationPassed);
+            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceApprovedByConcurAdministrator = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceHasNotBeenClonedInFile(detailFileLine, uniqueRequestedCashAdvanceKeysInFile);
-            LOG.info("requestedCashAdvanceHasNotBeenClonedInFile = " + lineValidationPassed);
+            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceHasNotBeenClonedInFile = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceHasNotBeenUsedInExpenseReport(detailFileLine);
-            LOG.info("requestedCashAdvanceHasNotBeenUsedInExpenseReport = " + lineValidationPassed);
+            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceHasNotBeenUsedInExpenseReport = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceIsNotBeingDuplicated(detailFileLine);
-            LOG.info("requestedCashAdvanceIsNotBeingDuplicated = " + lineValidationPassed);
+            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceIsNotBeingDuplicated = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceHasValidAddressWhenPaymentIsByCheck(detailFileLine);
-            LOG.info("requestedCashAdvanceHasValidAddressWhenPaymentIsByCheck = " + lineValidationPassed);
+            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceHasValidAddressWhenPaymentIsByCheck = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceAccountingInformationIsValid(detailFileLine);
-            LOG.info("requestedCashAdvanceAccountingInformationIsValid = " + lineValidationPassed);
+            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceAccountingInformationIsValid = " + lineValidationPassed);
 
             detailFileLine.getValidationResult().setValidCashAdvanceLine(lineValidationPassed);
             LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: Detail File Line validation : " + ((lineValidationPassed) ? "PASSED" : ("FAILED" + KFSConstants.NEWLINE + detailFileLine.toString())));

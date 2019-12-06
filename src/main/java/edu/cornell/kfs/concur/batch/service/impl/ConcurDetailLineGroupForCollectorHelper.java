@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.function.Function;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
