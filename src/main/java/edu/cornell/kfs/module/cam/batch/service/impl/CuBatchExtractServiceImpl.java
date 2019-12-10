@@ -116,10 +116,10 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         Collection<PurApAccountingLineBase> purapAcctLines = findPurapAccountRevisions();
 
         // Pass the records to reconciliation service method
-        reconciliationService.reconcile(poLines, purapAcctLines);
+        getReconciliationService().reconcile(poLines, purapAcctLines);
 
         // for each valid GL entry there is a collection of valid PO Doc and Account Lines
-        Collection<GlAccountLineGroup> matchedGroups = reconciliationService.getMatchedGroups();
+        Collection<GlAccountLineGroup> matchedGroups = getReconciliationService().getMatchedGroups();
 
         // Keep track of unique item lines
         HashMap<String, PurchasingAccountsPayableItemAsset> assetItems = new HashMap<>();
@@ -320,7 +320,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 LOG.error("Could not create a valid PurchasingAccountsPayableDocument object for document number " + entry.getDocumentNumber());
             }
         }
-        updateProcessLog(processLog, reconciliationService);
+        updateProcessLog(processLog, getReconciliationService());
         return purApDocuments;
     }
     
