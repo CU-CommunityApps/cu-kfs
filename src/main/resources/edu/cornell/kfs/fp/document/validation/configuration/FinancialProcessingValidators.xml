@@ -41,11 +41,4 @@
 
 	<bean id="NonCheckDisbursement-documentAmountValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuNonCheckDisbursementDocumentAmountValidation" abstract="true" />
 	
-	
-	<bean id="DisbursementVoucher-paymentReasonValidation" class="org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherPaymentReasonValidation" abstract="true" >
-		<property name="parameterService" ref="parameterService" />
-		<property name="disbursementVoucherPayeeService" ref="disbursementVoucherPayeeService" />
-		<property name="disbursementVoucherPaymentReasonService" ref="disbursementVoucherPaymentReasonService" />
-	</bean>
-	
 </beans>
