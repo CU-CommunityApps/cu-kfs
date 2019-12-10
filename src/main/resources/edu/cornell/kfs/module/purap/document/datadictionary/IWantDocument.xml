@@ -810,9 +810,7 @@
     <bean id="attachmentDescriptionValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.AttachmentDescriptionValuesFinder"/>
     <bean id="favoriteAccountValuesFinder"
-          class="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder"/>
-          
-          
-          
+          class="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder" 
+          p:businessObjectService-ref="businessObjectService"/>
           
 </beans>
