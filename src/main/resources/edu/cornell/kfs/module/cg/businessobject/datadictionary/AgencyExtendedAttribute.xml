@@ -54,6 +54,7 @@
         </property>
     </bean>
 
-    <bean id="agencyOriginValuesFinder" class="edu.cornell.kfs.module.cg.businessobject.options.AgencyOriginValuesFinder"/>
+    <bean id="agencyOriginValuesFinder" class="edu.cornell.kfs.module.cg.businessobject.options.AgencyOriginValuesFinder"
+    	p:keyValuesService-ref="keyValuesService"/>
 
 </beans>
