@@ -240,7 +240,8 @@
 	</bean>
 	
  	<bean id="invoiceFrequencyValuesFinder"
-          class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder"/>
+          class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder"
+          p:keyValuesService-ref="keyValuesService"/>
     <bean id="invoiceTypeValuesFinder"
           class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder"/>
       
