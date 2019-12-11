@@ -804,11 +804,7 @@
     	<bean id="yesNoValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.YesNoValuesFinder"/>
     <bean id="collegeLevelOrganizationValuesFinder"
-          class="edu.cornell.kfs.module.purap.businessobject.options.CollegeLevelOrganizationValuesFinder">
-		<property name="iWantDocumentService">
-			<ref bean="iWantDocumentService" />
-		</property>
-    </bean>
+          class="edu.cornell.kfs.module.purap.businessobject.options.CollegeLevelOrganizationValuesFinder"/>
     <bean id="departmentLevelOrganizationValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.DepartmentLevelOrganizationValuesFinder"/>
     <bean id="attachmentDescriptionValuesFinder"

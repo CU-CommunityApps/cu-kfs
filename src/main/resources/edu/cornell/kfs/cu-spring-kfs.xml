@@ -17,7 +17,6 @@
 	<import resource="sec/cu-spring-sec.xml"/>
 	<import resource="vnd/cu-spring-vnd.xml" />
 	<import resource="module/purap/cu-spring-purap.xml" />
-	<import resource="module/purap/cu-spring-xpurap-iwant.xml" />
 	<import resource="module/ld/cu-spring-ld.xml" />
 	<import resource="module/ar/cu-spring-ar.xml" />
 	 
