@@ -19,17 +19,13 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
-@SuppressWarnings("serial")
 public class CuSimpleChartValuesFinder extends KeyValuesBase {
-
-	 protected ParameterService parameterService;
+    private static final long serialVersionUID = -7244709433023641702L;
+    protected ParameterService parameterService;
+    protected KeyValuesService keyValuesService;
+    protected FinancialSystemUserService financialSystemUserService;
 	
-	/**
-	 * Creates a list of {@link org.kuali.kfs.coa.businessobject.Chart}s using their
-	 * code as their key, and their code as the display value
-	 */
     public List<KeyValue> getKeyValues() {
-        parameterService = SpringContext.getBean(ParameterService.class);
         String defaultChartCode = "";
         String defaultChartCodeMethod = "";
         
@@ -39,8 +35,7 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
         } catch (Exception e) {
         	//Do nothing
         }
-        KeyValuesService boService = SpringContext.getBean(KeyValuesService.class);
-        Collection<Chart> chartCodes = boService.findAll(Chart.class);
+        Collection<Chart> chartCodes = keyValuesService.findAll(Chart.class);
         List<KeyValue> chartKeyLabels = new ArrayList<>();
 
         //If the DEFAULT_CHART_CODE_METHOD parameter DNE or has no value assigned to it, no default
@@ -66,11 +61,11 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
         //populate with chart code of the user's primary department
         if (defaultChartCodeMethod.equals("2")) {
         	Person currentUser = GlobalVariables.getUserSession().getPerson();
-        	String primaryDepartmentChartCode = SpringContext.getBean(FinancialSystemUserService.class).getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
+        	String primaryDepartmentChartCode = getFinancialSystemUserService().getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
         	chartKeyLabels.add(new ConcreteKeyValue(primaryDepartmentChartCode, primaryDepartmentChartCode));
 	        for (Iterator<Chart> iter = chartCodes.iterator(); iter.hasNext();) {
 	            Chart element = (Chart) iter.next();
-	            if (element.isActive() && !element.getChartOfAccountsCode().equals(primaryDepartmentChartCode)) { // only show active charts
+	            if (element.isActive() && !element.getChartOfAccountsCode().equals(primaryDepartmentChartCode)) {
 	                chartKeyLabels.add(new ConcreteKeyValue(element.getChartOfAccountsCode(), element.getChartOfAccountsCode()));
 	            }
 	        }
@@ -78,7 +73,7 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
         //populate with the default chart unless user's primary department has been defined
         if (defaultChartCodeMethod.equals("3")) {
         	Person currentUser = GlobalVariables.getUserSession().getPerson();
-        	String primaryDepartmentChartCode = SpringContext.getBean(FinancialSystemUserService.class).getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
+        	String primaryDepartmentChartCode = getFinancialSystemUserService().getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
         	String chartUsed = null;
         	if (primaryDepartmentChartCode!= null && !primaryDepartmentChartCode.equals("")) {
             	chartUsed = primaryDepartmentChartCode;        		
@@ -88,13 +83,32 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
 	        chartKeyLabels.add(new ConcreteKeyValue(chartUsed, chartUsed));
 	        for (Iterator<Chart> iter = chartCodes.iterator(); iter.hasNext();) {
 	            Chart element = (Chart) iter.next();
-	            if (element.isActive() && !element.getChartOfAccountsCode().equals(chartUsed)) { // only show active charts
+	            if (element.isActive() && !element.getChartOfAccountsCode().equals(chartUsed)) {
 	                chartKeyLabels.add(new ConcreteKeyValue(element.getChartOfAccountsCode(), element.getChartOfAccountsCode()));
 	            }
 	        }
         }
         
         return chartKeyLabels;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    public void setKeyValuesService(KeyValuesService keyValuesService) {
+        this.keyValuesService = keyValuesService;
+    }
+
+    public FinancialSystemUserService getFinancialSystemUserService() {
+        if (financialSystemUserService == null) {
+            financialSystemUserService = SpringContext.getBean(FinancialSystemUserService.class);
+        }
+        return financialSystemUserService;
+    }
+
+    public void setFinancialSystemUserService(FinancialSystemUserService financialSystemUserService) {
+        this.financialSystemUserService = financialSystemUserService;
     }
 
 	
