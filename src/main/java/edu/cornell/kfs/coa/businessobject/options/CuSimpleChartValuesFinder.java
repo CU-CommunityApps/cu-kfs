@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
@@ -61,7 +60,7 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
         //populate with chart code of the user's primary department
         if (defaultChartCodeMethod.equals("2")) {
         	Person currentUser = GlobalVariables.getUserSession().getPerson();
-        	String primaryDepartmentChartCode = getFinancialSystemUserService().getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
+        	String primaryDepartmentChartCode = financialSystemUserService.getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
         	chartKeyLabels.add(new ConcreteKeyValue(primaryDepartmentChartCode, primaryDepartmentChartCode));
 	        for (Iterator<Chart> iter = chartCodes.iterator(); iter.hasNext();) {
 	            Chart element = (Chart) iter.next();
@@ -73,7 +72,7 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
         //populate with the default chart unless user's primary department has been defined
         if (defaultChartCodeMethod.equals("3")) {
         	Person currentUser = GlobalVariables.getUserSession().getPerson();
-        	String primaryDepartmentChartCode = getFinancialSystemUserService().getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
+        	String primaryDepartmentChartCode = financialSystemUserService.getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
         	String chartUsed = null;
         	if (primaryDepartmentChartCode!= null && !primaryDepartmentChartCode.equals("")) {
             	chartUsed = primaryDepartmentChartCode;        		
@@ -98,13 +97,6 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
 
     public void setKeyValuesService(KeyValuesService keyValuesService) {
         this.keyValuesService = keyValuesService;
-    }
-
-    public FinancialSystemUserService getFinancialSystemUserService() {
-        if (financialSystemUserService == null) {
-            financialSystemUserService = SpringContext.getBean(FinancialSystemUserService.class);
-        }
-        return financialSystemUserService;
     }
 
     public void setFinancialSystemUserService(FinancialSystemUserService financialSystemUserService) {
