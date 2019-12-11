@@ -43,7 +43,7 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
         }
         
         String employeeId = payeeDetail.getDisbVchrPayeeIdNumber();
-        Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(employeeId);
+        Person employee = personService.getPersonByEmployeeId(employeeId);
         
         MessageMap errors = GlobalVariables.getMessageMap();
         errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
@@ -58,8 +58,8 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
                     !CUKFSConstants.EMPLOYEE_RETIRED_STATUS.equals(employee.getEmployeeStatusCode())) {
                 // If employee is found, then check that employee is active or retired if the doc has not already been routed.
                 if(stateIsInitiated) {
-                    String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(
-                            DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
+                    String label = dataDictionaryService.getAttributeLabel(DisbursementVoucherPayeeDetail.class,
+                            KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
                     errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_INACTIVE, label);
                     isValid = false;
                 }

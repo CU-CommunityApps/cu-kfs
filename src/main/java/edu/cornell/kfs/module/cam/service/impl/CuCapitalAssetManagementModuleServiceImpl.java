@@ -33,14 +33,19 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
         boolean valid = true;
 
         if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetTypeCode())) {
-            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class, KFSPropertyConstants.CAPITAL_ASSET_TYPE_CODE);
-            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_TYPE_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
+            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+                    KFSPropertyConstants.CAPITAL_ASSET_TYPE_CODE);
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_TYPE_CODE,
+                    KFSKeyConstants.ERROR_REQUIRED, label);
             valid = false;
         }
 
-        if (capitalAssetInformation.getCapitalAssetQuantity() == null || capitalAssetInformation.getCapitalAssetQuantity() <= 0) {
-            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class, KFSPropertyConstants.CAPITAL_ASSET_QUANTITY);
-            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_QUANTITY, KFSKeyConstants.ERROR_REQUIRED, label);
+        if (capitalAssetInformation.getCapitalAssetQuantity() == null
+                || capitalAssetInformation.getCapitalAssetQuantity() <= 0) {
+            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+                    KFSPropertyConstants.CAPITAL_ASSET_QUANTITY);
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_QUANTITY,
+                    KFSKeyConstants.ERROR_REQUIRED, label);
             valid = false;
         }
 
@@ -67,22 +72,28 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
 
         if ("Y".equalsIgnoreCase(manufacturerNameRequired)) {
             if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetManufacturerName())) {
-                String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class, KFSPropertyConstants.CAPITAL_ASSET_MANUFACTURE_NAME);
-                GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_MANUFACTURE_NAME, KFSKeyConstants.ERROR_REQUIRED, label);
+                String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+                        KFSPropertyConstants.CAPITAL_ASSET_MANUFACTURE_NAME);
+                GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_MANUFACTURE_NAME,
+                        KFSKeyConstants.ERROR_REQUIRED, label);
                 valid = false;
             }
         }
 
         if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetDescription())) {
-            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class, CamsPropertyConstants.Asset.CAPITAL_ASSET_DESCRIPTION);
-            GlobalVariables.getMessageMap().putError(CamsPropertyConstants.Asset.CAPITAL_ASSET_DESCRIPTION, KFSKeyConstants.ERROR_REQUIRED, label);
+            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+                    CamsPropertyConstants.Asset.CAPITAL_ASSET_DESCRIPTION);
+            GlobalVariables.getMessageMap().putError(CamsPropertyConstants.Asset.CAPITAL_ASSET_DESCRIPTION,
+                    KFSKeyConstants.ERROR_REQUIRED, label);
             valid = false;
         }
 
         int index = 0;
         List<CapitalAssetInformationDetail> capitalAssetInformationDetails = capitalAssetInformation.getCapitalAssetInformationDetails();
         for (CapitalAssetInformationDetail dtl : capitalAssetInformationDetails) {
-            String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "["+ caLineIndex+"]." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
+            String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." +
+                    KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "[" + caLineIndex + "]." +
+                    KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
             CapitalAssetInformationDetailExtendedAttribute capDetailExt = (CapitalAssetInformationDetailExtendedAttribute) dtl.getExtension();
 
             String buildingCd = dtl.getBuildingCode();

@@ -14,6 +14,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.batch.ExtractProcessLog;
+import org.kuali.kfs.module.cam.batch.service.ReconciliationService;
 import org.kuali.kfs.module.cam.batch.service.impl.BatchExtractServiceImpl;
 import org.kuali.kfs.module.cam.businessobject.GeneralLedgerEntry;
 import org.kuali.kfs.module.cam.businessobject.GlAccountLineGroup;
@@ -27,6 +28,7 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,11 +117,13 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         // PurAp Account Line history comes from PURAP module
         Collection<PurApAccountingLineBase> purapAcctLines = findPurapAccountRevisions();
 
+        ReconciliationService reconciliationService = getReconciliationService();
+        
         // Pass the records to reconciliation service method
-        getReconciliationService().reconcile(poLines, purapAcctLines);
+        reconciliationService.reconcile(poLines, purapAcctLines);
 
         // for each valid GL entry there is a collection of valid PO Doc and Account Lines
-        Collection<GlAccountLineGroup> matchedGroups = getReconciliationService().getMatchedGroups();
+        Collection<GlAccountLineGroup> matchedGroups = reconciliationService.getMatchedGroups();
 
         // Keep track of unique item lines
         HashMap<String, PurchasingAccountsPayableItemAsset> assetItems = new HashMap<>();
@@ -144,7 +148,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
             KualiDecimal transactionLedgerEntryAmount = generalLedgerEntry.getTransactionLedgerEntryAmount();
             List<PurApAccountingLineBase> matchedPurApAcctLines = group.getMatchedPurApAcctLines();
             boolean hasPositiveAndNegative = hasPositiveAndNegative(matchedPurApAcctLines);
-            boolean nonZero = ObjectUtils.isNotNull(transactionLedgerEntryAmount) && transactionLedgerEntryAmount.isNonZero();
+            boolean nonZero = ObjectUtils.isNotNull(transactionLedgerEntryAmount) 
+                    && transactionLedgerEntryAmount.isNonZero();
 
             // generally for non-zero transaction ledger amount we should create a single GL entry with that amount,
             if (nonZero && !hasPositiveAndNegative) {
@@ -212,7 +217,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                     // trade-in and discount items on PREQ usually have negative amount (unless it's a revision)
                     boolean usuallyNegative = isItemTypeUsuallyOfNegativeAmount(purapItem.getItemTypeCode());
 
-                    // decide if current accounting line should be consolidated into debit or credit entry based on the above criteria
+                    // decide if current accounting line should be consolidated into debit or credit entry based 
+                    // on the above criteria
                     boolean isDebitEntry = hasRevisionWithMixedLines ?
                             (usuallyNegative ? !isPositive : isPositive) : // case 2.2
                             (isPREQ ? isPositive : !isPositive); // case 1.1/1.2/2.1
@@ -265,7 +271,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                         
                         if (ObjectUtils.isNotNull(assetAccount)) {
                             // if account line key matches within same GL Entry, combine the amount
-                            assetAccount.setItemAccountTotalAmount(assetAccount.getItemAccountTotalAmount().add(purApAccountingLine.getAmount()));
+                            assetAccount.setItemAccountTotalAmount(assetAccount.getItemAccountTotalAmount()
+                                    .add(purApAccountingLine.getAmount()));
                         }
                         else{
                         	assetAccount = createPurchasingAccountsPayableLineAssetAccount(currentEntry, cabPurapDoc, purApAccountingLine, itemAsset);
@@ -286,7 +293,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                     businessObjectService.save(cabPurapDoc);
 
                     // Add to the asset lock table if purap has asset number information
-                    addAssetLocks(assetLockMap, cabPurapDoc, purapItem, itemAsset.getAccountsPayableLineItemIdentifier(), poDocMap);
+                    addAssetLocks(assetLockMap, cabPurapDoc, purapItem, 
+                            itemAsset.getAccountsPayableLineItemIdentifier(), poDocMap);
                 }
 
                 // Update and save the debit/credit entry if needed;
@@ -383,13 +391,13 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
      * @return
      */
     private boolean hasPositiveAndNegative(List<PurApAccountingLineBase> matchedPurApAcctLines) {
-        boolean hasPostive = false;
+        boolean hasPositive = false;
         boolean hasNegative = false;
 
         for (PurApAccountingLineBase line : matchedPurApAcctLines) {
-            hasPostive = hasPostive || line.getAmount().isPositive();
+            hasPositive = hasPositive || line.getAmount().isPositive();
             hasNegative = hasNegative || line.getAmount().isNegative();
-            if (hasPostive && hasNegative) {
+            if (hasPositive && hasNegative) {
                 return true;
             }
         }
@@ -399,6 +407,17 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+    }
+    
+    /**
+     * The ReconciliationService bean is marked as a prototype because it has class variables that maintain state.
+     * This is the easiest way to ensure that a new instance is obtained every time we need one. Ultimately, the
+     * ReconsiliationService should probably be rewritten.
+     *
+     * @return a new instance of the ReconciliationService
+     */
+    private ReconciliationService getReconciliationService() {
+        return SpringContext.getBean(ReconciliationService.class);
     }
 
 }
