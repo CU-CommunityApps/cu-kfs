@@ -131,6 +131,7 @@
 	</bean>
 
     <bean id="recurringDisbursementVoucherPaymentMethodValuesFinder"
-          class="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"/>
+          class="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"
+          p:businessObjectService-ref="businessObjectService" p:parameterService-ref="parameterService"/>
 
 </beans>
