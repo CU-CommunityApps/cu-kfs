@@ -162,16 +162,22 @@
     
   </bean>
   
-        <bean id="UserProcurementProfile-profileUser.principalName" parent="UserProcurementProfile-profileUser.principalName-parentBean"/>
+  <bean id="UserProcurementProfile-profileUser.principalName" parent="UserProcurementProfile-profileUser.principalName-parentBean"/>
 
-  <bean id="UserProcurementProfile-profileUser.principalName-parentBean" parent="PersonImpl-principalName" abstract="true" 
-  name="profileUser.principalName" label="User Principal Name" shortLabel="Principal Name" required="false">
+  <bean id="UserProcurementProfile-profileUser.principalName-parentBean" parent="PersonImpl-principalName" abstract="true">
+  	<property name="name" value="profileUser.principalName"/>
+  	<property name="label" value="User Principal Name"/>
+  	<property name="shortLabel" value="Principal Name"/>
+  	<property name="required" value="false"/>
   </bean>
     
-    <bean id="UserProcurementProfile-profileUser.name" parent="UserProcurementProfile-profileUser.name-parentBean"/>
+  <bean id="UserProcurementProfile-profileUser.name" parent="UserProcurementProfile-profileUser.name-parentBean"/>
 
-  <bean id="UserProcurementProfile-profileUser.name-parentBean" parent="PersonImpl-name" abstract="true" 
-  name="profileUser.name" label="Person Name" shortLabel="Person Name" required="false">
+  <bean id="UserProcurementProfile-profileUser.name-parentBean" parent="PersonImpl-name" abstract="true"> 
+  	<property name="name" value="profileUser.name"/>
+    <property name="label" value="Person Name"/>
+    <property name="shortLabel" value="Person Name"/>
+    <property name="required" value="false"/>
   </bean>
   
   <bean id="UserProcurementProfile-active" parent="UserProcurementProfile-active-parentBean"/>
