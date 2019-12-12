@@ -56,7 +56,8 @@
   </bean>
                                                                            
   <bean id="purchaseOrderTransmissionMethodValuesFinder"
-        class="edu.cornell.kfs.vnd.businessobject.options.PurchaseOrderTransmissionMethodValuesFinder"/>
+        class="edu.cornell.kfs.vnd.businessobject.options.PurchaseOrderTransmissionMethodValuesFinder"
+        p:keyValuesService-ref="keyValuesService"/>
 
 
 </beans>

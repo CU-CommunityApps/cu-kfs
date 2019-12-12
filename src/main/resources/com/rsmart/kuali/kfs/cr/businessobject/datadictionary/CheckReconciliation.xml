@@ -299,8 +299,9 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
     </property>
   </bean>
   
-  <bean id="checkReconSrcValuesFinder"
-        class="com.rsmart.kuali.kfs.cr.businessobject.options.CheckReconSrcValuesFinder"/>
+  <bean id="checkReconSrcValuesFinder" class="com.rsmart.kuali.kfs.cr.businessobject.options.CheckReconSrcValuesFinder"
+        p:keyValuesService-ref="keyValuesService"/>
+        
   <bean id="checkReconStatusValuesFinder"
         class="com.rsmart.kuali.kfs.cr.businessobject.options.StatusValuesFinder"/>
   
