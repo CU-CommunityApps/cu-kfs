@@ -330,13 +330,5 @@
     <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype"/>
     <bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
           p:lookupableHelperService-ref="batchFileLookupableHelperService"/>
-          
-	<bean id="simpleChartValuesFinder" class="edu.cornell.kfs.coa.businessobject.options.CuSimpleChartValuesFinder"
-		p:parameterService-ref="parameterService"
-		p:keyValuesService-ref="keyValuesService"
-		p:financialSystemUserService-ref="financialSystemUserService"/>
-	
-	<!-- Temporary alias to allow legacy Struts pages to work properly, due to class change in bean override above. -->
-	<alias name="simpleChartValuesFinder" alias="cuSimpleChartValuesFinder"/>
 
 </beans>
