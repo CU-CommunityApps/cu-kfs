@@ -19,10 +19,10 @@
 	   <property name="title" value="Contracts And Grants"/>
 	   <property name="maintainableItems">
 	     <list merge = "true">
-	       <dd:maintField attributeName="extension.invoiceFrequencyCode"/>
-	       <dd:maintField attributeName="extension.invoiceTypeCode"/>
-	       <dd:maintField attributeName="extension.everify"/>
-	       <dd:maintField attributeName="extension.costShareForProjectNumber"/>
+	       <bean parent="MaintainableFieldDefinition" p:name="extension.invoiceFrequencyCode"/>
+	       <bean parent="MaintainableFieldDefinition" p:name="extension.invoiceTypeCode"/>
+	       <bean parent="MaintainableFieldDefinition" p:name="extension.everify"/>
+	       <bean parent="MaintainableFieldDefinition" p:name="extension.costShareForProjectNumber"/>
 	     </list>
 	   </property>
 	</bean>

@@ -32,6 +32,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.service.PaymentSourceHelperService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
@@ -48,7 +49,7 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherExtractionHelper
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 
 
-public class CuDisbursementVoucherExtractionHelperServiceImpl extends DisbursementVoucherExtractionHelperServiceImpl {
+public class CuDisbursementVoucherExtractionHelperServiceImpl extends DisbursementVoucherExtractionHelperServiceImpl implements CuDisbursementVoucherExtractionHelperService{
     private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherExtractionHelperServiceImpl.class);
     
     protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
@@ -453,5 +454,9 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                isRecurringDV = true;
            }
 	       return isRecurringDV;
+	   }
+	   
+	   public PaymentSourceHelperService getPaymentSourceHelperService() {
+	             return paymentSourceHelperService;
 	   }
 }
