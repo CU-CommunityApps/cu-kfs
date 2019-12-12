@@ -96,8 +96,18 @@
     </bean>
 
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl">
-    	<property name="personService" ref="personService" />
-    	<property name="cuPdpEmployeeService" ref="cuPdpEmployeeService" />
+        <property name="personService" ref="personService" />
+        <property name="cuPdpEmployeeService" ref="cuPdpEmployeeService" />
+        <property name="paymentDetailPropertiesToCheckMaxLength">
+            <list>
+                <value>custPaymentDocNbr</value>
+                <value>invoiceNbr</value>
+                <value>organizationDocNbr</value>
+                <value>purchaseOrderNbr</value>
+                <value>requisitionNbr</value>
+                <value>customerInstitutionNumber</value>
+            </list>
+        </property>
     </bean>
     
     <bean id="cuPdpEmployeeService" parent="cuPdpEmployeeService-parentBean" />

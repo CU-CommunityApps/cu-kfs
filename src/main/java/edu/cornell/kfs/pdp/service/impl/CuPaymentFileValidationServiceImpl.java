@@ -1,10 +1,14 @@
 package edu.cornell.kfs.pdp.service.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeType;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -15,23 +19,21 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.springframework.util.AutoPopulatingList;
-import org.kuali.kfs.krad.util.ErrorMessage;
-import org.kuali.kfs.krad.util.MessageMap;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
 	private static final Logger LOG = LogManager.getLogger(CuPaymentFileValidationServiceImpl.class);
-    
+
     protected PersonService personService;
     protected CuPdpEmployeeService cuPdpEmployeeService;
+    protected List<String> paymentDetailPropertiesToCheckMaxLength;
     
     @Override
     protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
@@ -102,6 +104,9 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             KualiDecimal groupTotal = KualiDecimal.ZERO;
             for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
                 detailCount++;
+
+                // CU Customization: Check max lengths on Payment Detail properties.
+                checkPaymentDetailPropertyMaxLength(paymentDetail, errorMap);
 
                 noteLineCount++; // Add a line to print the invoice number
                 noteLineCount = noteLineCount + paymentDetail.getNotes().size();
@@ -216,11 +221,34 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
 
+    // This is an altered copy of checkPaymentGroupPropertyMaxLength() that operates on Payment Details instead.
+    protected void checkPaymentDetailPropertyMaxLength(PaymentDetail paymentDetail, MessageMap errorMap) {
+        for (String propertyName : paymentDetailPropertiesToCheckMaxLength) {
+            String propertyValue = (String) ObjectUtils.getPropertyValue(paymentDetail, propertyName);
+            if (StringUtils.isNotEmpty(propertyValue)) {
+                Integer maxLength = dataDictionaryService.getAttributeMaxLength(PaymentDetail.class, propertyName);
+                if ((maxLength != null) && (maxLength < propertyValue.length())) {
+                    String errorLabel = dataDictionaryService.getAttributeErrorLabel(PaymentDetail.class, propertyName);
+                    errorLabel += " with the value '" + propertyValue + "'";
+                    errorMap.putError(KFSConstants.GLOBAL_ERRORS, RiceKeyConstants.ERROR_MAX_LENGTH,
+                            errorLabel, maxLength.toString());
+                }
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After checkPaymentDetailPropertyMaxLength: " + printErrorMap(errorMap));
+        }
+    }
+
     public void setPersonService(PersonService personService) {
         this.personService = personService;
     }
 
     public void setCuPdpEmployeeService(CuPdpEmployeeService cuPdpEmployeeService) {
         this.cuPdpEmployeeService = cuPdpEmployeeService;
+    }
+    
+    public void setPaymentDetailPropertiesToCheckMaxLength(List<String> paymentDetailPropertiesToCheckMaxLength) {
+        this.paymentDetailPropertiesToCheckMaxLength = paymentDetailPropertiesToCheckMaxLength;
     }
 }
