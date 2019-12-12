@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
@@ -27,20 +26,12 @@ import org.kuali.kfs.krad.service.KeyValuesService;
 
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;
 
-/**
- * This class creates a new finder for our forms view (creates a drop-down of {@link OrganizationReversionCategory}s)
- */
 public class ReversionCategoryValuesFinder extends KeyValuesBase {
+    private static final long serialVersionUID = 3002801606279198020L;
+    protected KeyValuesService keyValuesService;
 
-    /**
-     * Creates a list of {@link MandatoryTransferEliminationCode}s using their code as their key, and their name as the display
-     * value
-     * 
-     * @see org.kuali.kfs.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
-     */
     public List getKeyValues() {
-
-        Collection<ReversionCategory> codes = SpringContext.getBean(KeyValuesService.class).findAll(ReversionCategory.class);
+        Collection<ReversionCategory> codes = keyValuesService.findAll(ReversionCategory.class);
         List<KeyValue> labels = new ArrayList<KeyValue>();
         labels.add(new ConcreteKeyValue("", ""));
         for (ReversionCategory reversionCategory : codes) {
@@ -50,6 +41,10 @@ public class ReversionCategoryValuesFinder extends KeyValuesBase {
         }
 
         return labels;
+    }
+
+    public void setKeyValuesService(KeyValuesService keyValuesService) {
+        this.keyValuesService = keyValuesService;
     }
 
 }

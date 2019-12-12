@@ -5,12 +5,17 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+                
+	<bean id="financialSystemUserService" p:serviceName="financialSystemUserService" parent="grlBeanImporter"/>
+	
+	<bean id="simpleChartValuesFinder" class="edu.cornell.kfs.coa.businessobject.options.CuSimpleChartValuesFinder"
+		p:parameterService-ref="parameterService"
+		p:keyValuesService-ref="keyValuesService"
+		p:financialSystemUserService-ref="financialSystemUserService"/>
+	
+	<!-- Temporary alias to allow legacy Struts pages to work properly, due to class change in bean override above. -->
+	<alias name="simpleChartValuesFinder" alias="cuSimpleChartValuesFinder"/>
  
-    <bean id="simpleChartValuesFinder" class="edu.cornell.kfs.coa.businessobject.options.CuSimpleChartValuesFinder"/>
-
-    <!-- Temporary alias to allow legacy Struts pages to work properly, due to class change in bean override above. -->
-    <alias name="simpleChartValuesFinder" alias="cuSimpleChartValuesFinder"/>
-
     <bean id="AccountAttribute" abstract="true" parent="AttributeDefinition">
         <property name="name" value="accountNumber"/>
         <property name="label" value="Account Number"/>

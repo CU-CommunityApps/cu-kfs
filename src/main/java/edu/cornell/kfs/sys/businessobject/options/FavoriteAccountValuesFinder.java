@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
@@ -22,6 +21,8 @@ import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 
 
 public class FavoriteAccountValuesFinder extends KeyValuesBase {
+    private static final long serialVersionUID = 5514852567213028935L;
+    protected BusinessObjectService businessObjectService;
 
     public List<KeyValue> getKeyValues() {
 
@@ -88,18 +89,22 @@ public class FavoriteAccountValuesFinder extends KeyValuesBase {
     private List<FavoriteAccount> getUserFavoriteAccounts() {
     	Map<String, Object> fieldValues = new HashMap<String, Object>();
     	fieldValues.put("principalId", GlobalVariables.getUserSession().getPrincipalId());
-    	List<UserProcurementProfile> userProfiles = (List<UserProcurementProfile>)SpringContext.getBean(BusinessObjectService.class).findMatching(UserProcurementProfile.class, fieldValues);
+    	List<UserProcurementProfile> userProfiles = (List<UserProcurementProfile>) businessObjectService.findMatching(UserProcurementProfile.class, fieldValues);
 
     	if (CollectionUtils.isNotEmpty(userProfiles)) {
     		UserProcurementProfile userProfile = userProfiles.get(0);
     		fieldValues = new HashMap<String, Object>();
         	fieldValues.put("userProfileId", userProfile.getUserProfileId());
         	// retrieve from db for sorting purpose.
-        	return (List<FavoriteAccount>)SpringContext.getBean(BusinessObjectService.class).findMatchingOrderBy(FavoriteAccount.class, fieldValues, "primaryInd", false);
+        	return (List<FavoriteAccount>) businessObjectService.findMatchingOrderBy(FavoriteAccount.class, fieldValues, "primaryInd", false);
 
     	}
     	return null;
 
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
 }

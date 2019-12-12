@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
@@ -29,22 +27,21 @@ import org.kuali.kfs.krad.service.KeyValuesService;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconSource;
 
 public class CheckReconSrcValuesFinder extends KeyValuesBase {
+    private static final long serialVersionUID = 4683657441172386943L;
+    private KeyValuesService keyValuesService;
 
-    /**
-     * Get Key Values
-     * 
-     * @return List of KeyLabelPair
-     * 
-     * @see org.kuali.core.lookup.keyvalues.KeyValuesFinder#getKeyValues()
-     */
     public List<KeyValue> getKeyValues() {
-        Collection<CheckReconSource> sources = SpringContext.getBean(KeyValuesService.class).findAll(CheckReconSource.class);
+        Collection<CheckReconSource> sources = keyValuesService.findAll(CheckReconSource.class);
         List<KeyValue> srcKeyLabels = new ArrayList<KeyValue>();
         srcKeyLabels.add(new ConcreteKeyValue("", ""));
         for (CheckReconSource src : sources) {
-           srcKeyLabels.add( new ConcreteKeyValue(src.getSourceCode(), src.getSourceName()) );
+           srcKeyLabels.add(new ConcreteKeyValue(src.getSourceCode(), src.getSourceName()));
         }
 
         return srcKeyLabels;
+    }
+
+    public void setKeyValuesService(KeyValuesService keyValuesService) {
+        this.keyValuesService = keyValuesService;
     }
 }
