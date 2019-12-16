@@ -4,10 +4,12 @@
 <bean id="SubFundProgram-parentBean" abstract="true" parent="BusinessObjectEntry">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubFundProgram"/>
     <property name="objectLabel" value="Sub-Fund Program"/>
+    <property name="name" value="SubFundProgram"/>
+    <property name="businessObjectAdminService" ref="defaultBoAdminService"/>
 
-	<property name="titleAttribute" value="programCode"/>
+    <property name="titleAttribute" value="programCode"/>
 
-	 <property name="inquiryDefinition">
+    <property name="inquiryDefinition">
       <ref bean="SubFundProgram-inquiryDefinition"/>
     </property>
     <property name="lookupDefinition">
@@ -136,6 +138,7 @@
 
   <bean id="SubFundProgram-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="Sub-Fund Program Lookup"/>
+    <property name="lookupSearchService" ref="defaultLookupSearchService"/>
     
     <property name="defaultSort">
       <bean parent="SortDefinition">
@@ -146,6 +149,35 @@
         </property>
         <property name="sortAscending" value="false"/>
       </bean>
+    </property>
+    <property name="lookupAttributeDefinitions">
+      <list>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="SubFundProgram-programCode"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="SubFundProgram-programName"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="SubFundProgram-subFundGroupCode"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="SubFundProgram-programDescription"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                parent="SubFundProgram-active" p:defaultValue="Y"
+                p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"/>
+      </list>
+    </property>
+    <property name="lookupResultAttributeDefinitions">
+      <list>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="SubFundProgram-programCode"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="SubFundProgram-programName"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="SubFundProgram-subFundGroupCode"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="SubFundProgram-programDescription"/>
+        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                parent="SubFundProgram-active"/>
+      </list>
     </property>
     <property name="lookupFields">
       <list>
