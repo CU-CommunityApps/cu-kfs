@@ -9,7 +9,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 
 import org.kuali.rice.kew.api.WorkflowDocument;
@@ -52,7 +51,7 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
         boolean stateIsInitiated = workflowDocument.isInitiated() || workflowDocument.isSaved();
 
         if (ObjectUtils.isNull(employee)) {
-            employee = SpringContext.getBean(PersonService.class).getPerson(employeeId);
+            employee = personService.getPerson(employeeId);
         } else  {
             if (!KFSConstants.EMPLOYEE_ACTIVE_STATUS.equals(employee.getEmployeeStatusCode()) &&
                     !CUKFSConstants.EMPLOYEE_RETIRED_STATUS.equals(employee.getEmployeeStatusCode())) {
@@ -68,7 +67,7 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
         
      // check existence of employee
         if (employee == null) { // If employee is not found, report existence error
-            String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(
+            String label = dataDictionaryService.getAttributeLabel(
                     DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
             errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_EXISTENCE, label);
             isValid = false;

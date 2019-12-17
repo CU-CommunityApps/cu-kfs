@@ -42,6 +42,7 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
             KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER;
 
     protected AccountingDocument accountingDocumentForValidation;
+    // KFSPTS-17250 customize to increase service variables visibility
     protected DataDictionaryService dataDictionaryService;
     protected PersonService personService;
 

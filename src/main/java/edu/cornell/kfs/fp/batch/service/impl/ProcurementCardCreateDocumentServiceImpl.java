@@ -41,8 +41,6 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     private static int VENDOR_NAME_MAX_LENGTH = 19;
     private static final int CC_LAST_FOUR = 4;
     private static final int MAX_DOC_DESC_LENGTH = 40;
-    
-    private DataDictionaryService dataDictionaryService;
 
     /**
      * Creates a ProcurementCardDocument from the List of transactions given.
@@ -54,8 +52,6 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     @Override
     public ProcurementCardDocument createProcurementCardDocument(List transactions) {
         ProcurementCardDocument pcardDocument = null;
-
-        dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
         
         try {
             // get new document from doc service
@@ -167,7 +163,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     }
 
     protected ProcurementCardDocument buildNewProcurementCardDocument() throws WorkflowException {
-        return (ProcurementCardDocument) SpringContext.getBean(DocumentService.class)
+        return (ProcurementCardDocument) documentService
                 .getNewDocument(KFSConstants.FinancialDocumentTypeCodes.PROCUREMENT_CARD);
     }
     

@@ -31,13 +31,10 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.PaymentSourceHelperService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 
@@ -71,7 +68,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         if (KFSConstants.PaymentPayeeTypes.CUSTOMER.equals(document.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode())) {
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.CUSTOMER);
             pg.setTaxablePayment(Boolean.FALSE);
-        } else if ((pd.isVendor() && SpringContext.getBean(VendorService.class).isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger()))
+        } else if ((pd.isVendor() && vendorService.isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger()))
                     || document.getDvPayeeDetail().isEmployee()) {
         		// If the payee is an employee, set these flags accordingly
             pg.setEmployeeIndicator(Boolean.TRUE);
@@ -92,7 +89,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
             // All payments are taxable except research participant, rental & royalties
             pg.setTaxablePayment(
-                    !SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(CuDisbursementVoucherDocument.class,
+                    !parameterEvaluatorService.getParameterEvaluator(CuDisbursementVoucherDocument.class,
                             DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
                         && !CuDisbursementVoucherConstants.PaymentReasonCodes.RENTAL_PAYMENT.equals(rc)
                         && !CuDisbursementVoucherConstants.PaymentReasonCodes.ROYALTIES.equals(rc));
