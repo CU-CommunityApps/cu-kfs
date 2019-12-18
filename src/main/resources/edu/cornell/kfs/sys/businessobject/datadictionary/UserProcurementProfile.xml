@@ -169,7 +169,7 @@
         p:name="profileUser.principalName" p:label="User Principal Name"
         p:shortLabel="Principal Name" p:required="false">
       <property name="control">
-          <bean parent="KualiUserControlDefinition" p:personNameAttributeName="profileUser.principalName"
+          <bean parent="KualiUserControlDefinition" p:personNameAttributeName="profileUser.name"
                 p:universalIdAttributeName="principalId"
                 p:userIdAttributeName="profileUser.principalName"/>
       </property>
@@ -184,7 +184,7 @@
       <property name="control">
           <bean parent="KualiUserControlDefinition" p:personNameAttributeName="profileUser.name"
                 p:universalIdAttributeName="principalId"
-                p:userIdAttributeName="profileUser.name"/>
+                p:userIdAttributeName="profileUser.principalName"/>
       </property>
   </bean>
   
