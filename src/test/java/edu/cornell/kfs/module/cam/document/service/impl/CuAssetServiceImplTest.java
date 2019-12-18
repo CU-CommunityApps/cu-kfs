@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.module.cam.CamsConstants;
+import org.kuali.kfs.module.cam.CamsParameterConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail;
@@ -97,7 +98,7 @@ public class CuAssetServiceImplTest {
         when(parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)).thenReturn(result);
         List<String> statusCodes = new ArrayList<String>();
         statusCodes.add(RETIRED_STATUS_CD);
-        when(parameterService.getParameterValuesAsString(Asset.class, CamsConstants.Parameters.RETIRED_STATUS_CODES)).thenReturn(statusCodes);
+        when(parameterService.getParameterValuesAsString(Asset.class, CamsParameterConstants.RETIRED_STATUS_CODES)).thenReturn(statusCodes);
 
         return parameterService;
     }

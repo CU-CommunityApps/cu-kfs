@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 <!--
  Copyright 2007-2009 The Kuali Foundation
  
@@ -39,12 +39,18 @@
     </property>
     <property name="relationships">
     	<list>
-        <dd:relationship objectAttribute="objectCode">
-        	<dd:primitiveAttribute source="currentYear" target="universityFiscalYear"/>
-            <dd:primitiveAttribute source="chartOfAccountsCode" target="chartOfAccountsCode"/>
-            <dd:primitiveAttribute source="financialObjectCode" target="financialObjectCode"/>
-        </dd:relationship>
-    		
+   	       <bean parent="RelationshipDefinition" p:objectAttributeName="objectCode">
+                   <property name="primitiveAttributes">
+                       <list>
+                           <bean parent="PrimitiveAttributeDefinition" p:sourceName="currentYear"
+                                 p:targetName="universityFiscalYear"/>
+                           <bean parent="PrimitiveAttributeDefinition" p:sourceName="chartOfAccountsCode"
+                                 p:targetName="chartOfAccountsCode"/>
+                           <bean parent="PrimitiveAttributeDefinition" p:sourceName="financialObjectCode"
+                                 p:targetName="financialObjectCode"/>
+                       </list>
+                   </property>
+               </bean>   		
     	</list>
     </property>
   </bean>

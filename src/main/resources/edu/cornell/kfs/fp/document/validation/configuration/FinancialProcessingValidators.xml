@@ -22,16 +22,14 @@
 
 	<bean id="BudgetAdjustment-documentBalancedValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuBudgetAdjustmentDocumentBalancedValidation" abstract="true" />
 	<bean id="YearEndBudgetAdjustment-documentBalancedValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuBudgetAdjustmentDocumentBalancedValidation" abstract="true" />
-	<bean id="DisbursementVoucher-employeeInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherEmployeeInformationValidation" abstract="true" />
-	<bean id="DisbursementVoucher-payeeInitiatorValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeInitiatorValidation" abstract="true" />
+	<bean id="DisbursementVoucher-employeeInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherEmployeeInformationValidation" abstract="true" p:dataDictionaryService-ref="dataDictionaryService" p:personService-ref="personService"/>
+	<bean id="DisbursementVoucher-payeeInitiatorValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeInitiatorValidation" abstract="true" p:personService-ref="personService" p:vendorService-ref="vendorService"/>
     <bean id="DisbursementVoucher-initiatorPrimaryDepartmentValidation" class="edu.cornell.kfs.fp.document.validation.impl.DisbursementVoucherInitiatorPrimaryDepartmentValidation" abstract="true" />
-	<bean id="DisbursementVoucher-accountingLineTotalsValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" abstract="true" />
-	<bean id="DisbursementVoucher-nonResidentAlienInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation" abstract="true">
-		<property name="businessObjectService" ref="businessObjectService"/>
-		<property name="disbursementVoucherValidationService" ref="disbursementVoucherValidationService"/>
-		<property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>
-		<property name="parameterService" ref="parameterService"/>
-	</bean>
+	<bean id="DisbursementVoucher-accountingLineTotalsValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" abstract="true" p:documentHelperService-ref="documentHelperService"/>
+	<bean id="DisbursementVoucher-nonResidentAlienInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation" abstract="true"
+		  p:businessObjectService-ref="businessObjectService"
+          p:disbursementVoucherValidationService-ref="disbursementVoucherValidationService"
+          p:parameterEvaluatorService-ref="parameterEvaluatorService" p:parameterService-ref="parameterService"/>
 	<bean id="DisbursementVoucher-bankCodeValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherBankCodeValidation" abstract="true" />
 	<bean id="DisbursementVoucher-payeeStateAndCountryValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeStateAndCountryValidation" abstract="true">
 		<property name="cuDisbursementVoucherTaxService" ref="disbursementVoucherTaxService" />
@@ -40,12 +38,5 @@
 	<bean id="YearEndJournalVoucher-accountingLinesBalanceValidation" class="edu.cornell.kfs.fp.document.validation.impl.YearEndJournalVoucherAccountingLinesBalanceValidation" abstract="true" />
 
 	<bean id="NonCheckDisbursement-documentAmountValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuNonCheckDisbursementDocumentAmountValidation" abstract="true" />
-	
-	
-	<bean id="DisbursementVoucher-paymentReasonValidation" class="org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherPaymentReasonValidation" abstract="true" >
-		<property name="parameterService" ref="parameterService" />
-		<property name="disbursementVoucherPayeeService" ref="disbursementVoucherPayeeService" />
-		<property name="disbursementVoucherPaymentReasonService" ref="disbursementVoucherPaymentReasonService" />
-	</bean>
 	
 </beans>
