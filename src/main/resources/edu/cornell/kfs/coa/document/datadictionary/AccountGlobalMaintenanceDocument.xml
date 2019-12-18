@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 <!--
  Copyright 2007-2009 The Kuali Foundation
  
@@ -268,15 +268,15 @@
             <property name="summaryTitle" value="Indirect Cost Recovery Account"/>
             <property name="summaryFields">
             <list>
-              <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
-              <dd:maintField attributeName="indirectCostRecoveryAccountNumber"/>
-              <dd:maintField attributeName="accountLinePercent"/>
+            	<bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryFinCoaCode"/>
+            	<bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountNumber"/>
+            	<bean parent="MaintainableFieldDefinition" p:name="accountLinePercent"/>
             </list>
             </property>
             <property name="maintainableFields">
               <list>
                 <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
-                <dd:maintField attributeName="indirectCostRecoveryFinCoaCode"/>
+                <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryFinCoaCode"/>
                 <bean parent="MaintainableFieldDefinition" p:name="indirectCostRecoveryAccountNumber" p:webUILeaveFieldFunction="onblur_accountNumber_newAccount">
                   <property name="webUILeaveFieldFunctionParameters">
                     <list>
@@ -284,7 +284,7 @@
                     </list>
                   </property> 
                 </bean>      
-                <dd:maintField attributeName="accountLinePercent" />
+                <bean parent="MaintainableFieldDefinition" p:name="accountLinePercent"/>
                 <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
               </list>
