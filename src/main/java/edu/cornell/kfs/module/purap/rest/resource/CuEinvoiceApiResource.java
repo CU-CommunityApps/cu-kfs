@@ -29,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.dao.LookupDao;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -57,7 +59,7 @@ import edu.cornell.kfs.module.purap.dataaccess.impl.CuEinvoiceDaoOjb;
 @Produces(MediaType.APPLICATION_JSON)
 public class CuEinvoiceApiResource {
 
-    private static final Log LOG = LogFactory.getLog(CuEinvoiceApiResource.class);
+    private static final Logger LOG = LogManager.getLogger(CuEinvoiceApiResource.class);
 
     private LookupDao lookupDao;
     private CuEinvoiceDao cuEinvoiceDao;
