@@ -31,7 +31,7 @@ public class DisbursementVoucherInitiatorPrimaryDepartmentValidation extends Gen
         DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) accountingDocumentForValidation;
         String initiatorPrincipalId = dvDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
 
-        ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(initiatorPrincipalId, KFSConstants.ParameterNamespaces.FINANCIAL);
+        ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(initiatorPrincipalId, KFSConstants.CoreModuleNamespaces.FINANCIAL);
 
         if (ObjectUtils.isNull(chartOrg) || ObjectUtils.isNull(chartOrg.getOrganization())) {
 

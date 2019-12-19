@@ -529,7 +529,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             // was entered by the user or not.
             DocumentAuthorizer docAuth = getDocumentHelperService().getDocumentAuthorizer(this);
             if ( !docAuth.isAuthorizedByTemplate(this,
-                    KFSConstants.ParameterNamespaces.KFS,
+                    KFSConstants.CoreModuleNamespaces.KFS,
                     KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name,
                     GlobalVariables.getUserSession().getPrincipalId()  ) ) {
                 synchronizeBankCodeWithPaymentMethod();
@@ -716,7 +716,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
 
         setDisbVchrContactEmailId(currentUser.getEmailAddress());
-        ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.ParameterNamespaces.FINANCIAL);
+        ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.CoreModuleNamespaces.FINANCIAL);
 
         // Does a valid campus code exist for this person?  If so, simply grab
         // the campus code via the business object service.

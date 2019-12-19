@@ -59,7 +59,7 @@ public class CuVendorCreditMemoAction extends VendorCreditMemoAction {
             // was entered by the user or not.
             DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(creditMemoDocument);
             if ( !docAuth.isAuthorizedByTemplate(creditMemoDocument, 
-                    KFSConstants.ParameterNamespaces.KFS, 
+                    KFSConstants.CoreModuleNamespaces.KFS, 
                     KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 
                     GlobalVariables.getUserSession().getPrincipalId()  ) ) {
             	creditMemoDocument.synchronizeBankCodeWithPaymentMethod();        

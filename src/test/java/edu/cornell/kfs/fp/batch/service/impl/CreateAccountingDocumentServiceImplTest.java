@@ -832,7 +832,7 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private ParameterService buildParameterService() {
         ParameterService parameterService = Mockito.mock(ParameterService.class);
-        Mockito.when(parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
+        Mockito.when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
         return parameterService;
