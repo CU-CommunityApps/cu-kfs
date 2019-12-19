@@ -21,6 +21,15 @@
     	</property>
   </bean>
   
+  <bean id="PaymentDetail-invoiceNbr" parent="PaymentDetail-invoiceNbr-parentBean" p:maxLength="25"/>
+  
+  <bean id="PaymentDetail-purchaseOrderNbr" parent="PaymentDetail-purchaseOrderNbr-parentBean" p:maxLength="9"/>
+  
+  <bean id="PaymentDetail-requisitionNbr" parent="PaymentDetail-requisitionNbr-parentBean" p:maxLength="8"/>
+  
+  <bean id="PaymentDetail-customerInstitutionNumber" parent="PaymentDetail-customerInstitutionNumber-parentBean"
+          p:maxLength="30"/>
+  
   <bean id="PaymentDetail-inquiryDefinition" parent="PaymentDetail-inquiryDefinition-parentBean">
       <property name="inquirableClass" value="edu.cornell.kfs.pdp.businessobject.inquiry.CuPaymentDetailInquirable"/>
   </bean>
