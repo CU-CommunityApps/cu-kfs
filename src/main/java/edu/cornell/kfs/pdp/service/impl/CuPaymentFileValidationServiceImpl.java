@@ -221,13 +221,15 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
 
-    // This is an altered copy of checkPaymentGroupPropertyMaxLength() that operates on Payment Details instead.
     protected void checkPaymentDetailPropertyMaxLength(PaymentDetail paymentDetail, MessageMap errorMap) {
         for (String propertyName : paymentDetailPropertiesToCheckMaxLength) {
             String propertyValue = (String) ObjectUtils.getPropertyValue(paymentDetail, propertyName);
             if (StringUtils.isNotEmpty(propertyValue)) {
                 Integer maxLength = dataDictionaryService.getAttributeMaxLength(PaymentDetail.class, propertyName);
-                if ((maxLength != null) && (maxLength < propertyValue.length())) {
+                if (maxLength == null) {
+                    LOG.warn("checkPaymentDetailPropertyMaxLength, PaymentDetail field '" + propertyName
+                            + "' does not have a max length specified in the data dictionary");
+                } else if (maxLength < propertyValue.length()) {
                     String errorLabel = dataDictionaryService.getAttributeErrorLabel(PaymentDetail.class, propertyName);
                     errorLabel += " with the value '" + propertyValue + "'";
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, RiceKeyConstants.ERROR_MAX_LENGTH,
