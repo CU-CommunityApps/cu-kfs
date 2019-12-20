@@ -1365,7 +1365,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                         VendorKeyConstants.ERROR_VENDOR_CONTRACT_ORG_EXCLUDED_WITH_APO_LIMIT);
                 valid = false;
             }
-        } else { // isExcluded = false
+        } else {
             if (ObjectUtils.isNull(organization.getVendorContractPurchaseOrderLimitAmount())) {
                 // Rule #1 in the above java doc has been violated.
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION_APO_LIMIT,

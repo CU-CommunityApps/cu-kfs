@@ -229,7 +229,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         
         if (groups.isEmpty())
          {
-            return new AccountingLineAuthorizerBase(); // no groups? just use the default...
+            // no groups? just use the default...
+            return new AccountingLineAuthorizerBase();
         }
         if (groups.containsKey(groupName))
          {

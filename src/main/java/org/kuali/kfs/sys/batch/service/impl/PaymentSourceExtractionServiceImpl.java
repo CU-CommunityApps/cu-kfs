@@ -32,7 +32,6 @@ import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.batch.service.PaymentSourceToExtractService;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.PaymentSource;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -51,9 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * This is the default implementation of the PaymentSourceExtractionService interface.
- */
 @Transactional
 public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtractionService {
 
@@ -65,6 +61,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     protected PdpEmailService paymentFileEmailService;
     protected PaymentSourceToExtractService<PaymentSource> paymentSourceToExtractService;
     protected DocumentService documentService;
+    private FinancialSystemDocumentService financialSystemDocumentService;
     protected Set<String> checkAchFsloDocTypes;
 
     // This should only be set to true when testing this system. Setting this to true will run the code but
@@ -292,8 +289,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         Collection<DisbursementVoucherDocument> list = new ArrayList<>();
 
         try {
-            Collection<DisbursementVoucherDocument> docs = SpringContext.getBean(FinancialSystemDocumentService.class)
-                    .findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
+            Collection<DisbursementVoucherDocument> docs = financialSystemDocumentService.findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
             for (DisbursementVoucherDocument element : docs) {
                 String dvdCampusCode = element.getCampusCode();
 
@@ -376,6 +372,10 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
+    }
+
+    public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
+        this.financialSystemDocumentService = financialSystemDocumentService;
     }
 
 }

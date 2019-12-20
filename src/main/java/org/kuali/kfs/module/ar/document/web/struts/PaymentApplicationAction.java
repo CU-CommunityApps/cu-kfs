@@ -617,10 +617,9 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     // get the parent list of payapp documents that they come from
                     List<String> controlDocNumbers = new ArrayList<>();
                     for (NonAppliedHolding nonAppliedHolding : nonAppliedControlHoldings) {
-                        if (nonAppliedHolding.getAvailableUnappliedAmount().isPositive()) {
-                            if (!controlDocNumbers.contains(nonAppliedHolding.getReferenceFinancialDocumentNumber())) {
-                                controlDocNumbers.add(nonAppliedHolding.getReferenceFinancialDocumentNumber());
-                            }
+                        if (nonAppliedHolding.getAvailableUnappliedAmount().isPositive()
+                                && !controlDocNumbers.contains(nonAppliedHolding.getReferenceFinancialDocumentNumber())) {
+                            controlDocNumbers.add(nonAppliedHolding.getReferenceFinancialDocumentNumber());
                         }
                     }
                     // only try to retrieve docs if we have any to retrieve

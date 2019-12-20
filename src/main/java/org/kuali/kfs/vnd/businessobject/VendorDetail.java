@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.vnd.businessobject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -52,12 +53,16 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
 
     private Integer vendorHeaderGeneratedIdentifier;
     private Integer vendorDetailAssignedIdentifier;
-    private String vendorNumber; // not persisted in the db
+    // not persisted in the db
+    private String vendorNumber;
     private boolean vendorParentIndicator;
     private String vendorName;
-    private String vendorFirstName; // not persisted in the db
-    private String vendorLastName; // not persisted in the db
-    private String vendorStateForLookup; // not persisted in the db
+    // not persisted in the db
+    private String vendorFirstName;
+    // not persisted in the db
+    private String vendorLastName;
+    // not persisted in the db
+    private String vendorStateForLookup;
 
     private boolean activeIndicator;
     private String vendorInactiveReasonCode;
@@ -75,7 +80,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     private String vendorRestrictedReasonText;
     private Date vendorRestrictedDate;
     private String vendorRestrictedPersonIdentifier;
-    private String vendorSoldToNumber; // not persisted in the db
+    // not persisted in the db
+    private String vendorSoldToNumber;
     private Integer vendorSoldToGeneratedIdentifier;
     private Integer vendorSoldToAssignedIdentifier;
     private String vendorSoldToName;
@@ -98,16 +104,26 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     private ShippingPaymentTerms vendorShippingPaymentTerms;
     private VendorDetail soldToVendorDetail;
     private Person vendorRestrictedPerson;
-
-    private String vendorParentName; // not persisted in the db
-    private String defaultAddressLine1; // not persisted in the db
-    private String defaultAddressLine2; // not persisted in the db
-    private String defaultAddressCity; // not persisted in the db
-    private String defaultAddressStateCode; // not persisted in the db
-    private String defaultAddressInternationalProvince; // not persisted in the db
-    private String defaultAddressPostalCode; // not persisted in the db
-    private String defaultAddressCountryCode; // not persisted in the db
-    private String defaultFaxNumber; // not persisted in the db
+    
+    // not persisted in the db
+    private String vendorParentName;
+    // not persisted in the db
+    private String defaultAddressLine1;
+    // not persisted in the db
+    private String defaultAddressLine2; 
+    // not persisted in the db
+    private String defaultAddressCity; 
+    // not persisted in the db
+    private String defaultAddressStateCode; 
+    // not persisted in the db
+    private String defaultAddressInternationalProvince; 
+    // not persisted in the db
+    private String defaultAddressPostalCode; 
+    // not persisted in the db
+    private String defaultAddressCountryCode; 
+    // not persisted in the db
+    private String defaultFaxNumber;
+    
     private List boNotes;
 
     public VendorDetail() {
@@ -746,7 +762,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         }
         return false;
     }
-
+    
+    @JsonIgnore
     public VendorDetail getVendorParent() {
         Map<String, String> tmpValues = new HashMap<>();
         tmpValues.put(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID,
