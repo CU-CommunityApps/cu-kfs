@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 
 import edu.cornell.kfs.coa.dataaccess.AccountReversionImportDao;
+import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
 
 public class AccountReversionImportDaoJdbc extends PlatformAwareDaoBaseJdbc implements AccountReversionImportDao {
 

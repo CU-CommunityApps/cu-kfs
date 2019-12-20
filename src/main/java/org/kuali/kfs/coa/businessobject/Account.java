@@ -161,8 +161,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected LaborBenefitRateCategory laborBenefitRateCategory;
 
     public Account() {
-        // assume active is true until set otherwise
-        active = true; 
+        active = true; // assume active is true until set otherwise
         indirectCostRecoveryAccounts = new ArrayList<>();
         // we need country code to have a value for OJB foreign keys to other location types but it isn't exposed on
         // docs so it never gets set. setting a default value on the column in the db did not do what we want b/c

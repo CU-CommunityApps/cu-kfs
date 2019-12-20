@@ -68,8 +68,7 @@ public class DisbursementVoucherEmployeeInformationValidation extends GenericVal
         errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
 
         // check existence of employee
-        if (employee == null) {
-            // If employee is not found, report existence error
+        if (employee == null) { // If employee is not found, report existence error
             String label = dataDictionaryService.getAttributeLabel(DisbursementVoucherPayeeDetail.class,
                     KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
             errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_EXISTENCE, label);
