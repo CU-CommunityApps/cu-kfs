@@ -120,7 +120,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	public void setupConvenienceObjects() {
 		newAccountGlobal = (CuAccountGlobal) super.getNewBo();
 		today = getDateTimeService().getCurrentTimestamp();
-		today.setTime(DateUtils.truncate(today, Calendar.DAY_OF_MONTH).getTime()); // remove any time components
+		// remove any time components
+		today.setTime(DateUtils.truncate(today, Calendar.DAY_OF_MONTH).getTime());
 	}
 
     /**
@@ -575,76 +576,76 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	}
 
 	/**
-	 * This method checks to see if any expiration date field rules were violated in relation to the given detail record
-	 *
-	 * @param maintenanceDocument
-	 * @param detail              the account detail we are investigating
-	 * @return false on rules violation
-	 */
-	protected boolean checkExpirationDate(MaintenanceDocument maintenanceDocument, AccountGlobalDetail detail) {
-		boolean success = true;
-		Date newExpDate = newAccountGlobal.getAccountExpirationDate();
+     * This method checks to see if any expiration date field rules were violated in relation to the given detail record
+     *
+     * @param maintenanceDocument
+     * @param detail              the account detail we are investigating
+     * @return false on rules violation
+     */
+    protected boolean checkExpirationDate(MaintenanceDocument maintenanceDocument, AccountGlobalDetail detail) {
+        boolean success = true;
+        Date newExpDate = newAccountGlobal.getAccountExpirationDate();
 
-		Date prevExpDate = null;
+        Date prevExpDate = null;
 
-		// get previous expiration date for possible check later
-		if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
-			try {
-				MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+        // get previous expiration date for possible check later
+        if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
+            try {
+                MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
                         .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
-				AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
-				if (ObjectUtils.isNotNull(oldAccountGlobal)) {
-					prevExpDate = oldAccountGlobal.getAccountExpirationDate();
-				}
-			}
-			catch (WorkflowException ex) {
-				LOG.warn( "Error retrieving maintenance doc for doc #" + maintenanceDocument.getDocumentNumber()+ ". This shouldn't happen.", ex );
-			}
-		}
+                AccountGlobal oldAccountGlobal = (AccountGlobal) oldMaintDoc.getDocumentBusinessObject();
+                if (ObjectUtils.isNotNull(oldAccountGlobal)) {
+                    prevExpDate = oldAccountGlobal.getAccountExpirationDate();
+                }
+            } catch (WorkflowException ex) {
+                LOG.warn("Error retrieving maintenance doc for doc #" + maintenanceDocument.getDocumentNumber() +
+                        ". This shouldn't happen.", ex);
+            }
+        }
 
+        // load the object by keys
+        Account account = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class,
+                detail.getPrimaryKeys());
+        if (ObjectUtils.isNotNull(account)) {
+            // When updating an account expiration date, the date must be today or later
+            // (except for C&G accounts). Only run this test if this maint doc is an edit doc
+            if (isUpdatedExpirationDateInvalid(account, newAccountGlobal)) {
+                // if the date was valid upon submission, and this is an approval,
+                // we're not interested unless the approver changed the value
+                if (ObjectUtils.isNull(prevExpDate) || !prevExpDate.equals(newExpDate)) {
+                    putFieldError("accountExpirationDate",
+                            KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
+                    success = false;
+                }
+            }
 
-		// load the object by keys
-		Account account = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class, detail.getPrimaryKeys());
-		if (ObjectUtils.isNotNull(account)) {
-			Date oldExpDate = account.getAccountExpirationDate();
+            // If creating a new account if acct_expiration_dt is set and the fund_group is not "CG" then
+            // the acct_expiration_dt must be changed to a date that is today or later unless the date was valid upon
+            // submission, this is an approval action and the approver hasn't changed the value
+            if (maintenanceDocument.isNew() && ObjectUtils.isNotNull(newExpDate)) {
+                if ((ObjectUtils.isNull(prevExpDate) || !prevExpDate.equals(newExpDate))
+                        && ObjectUtils.isNotNull(newExpDate)
+                        && ObjectUtils.isNull(newAccountGlobal.getSubFundGroup())
+                        && ObjectUtils.isNotNull(account.getSubFundGroup())
+                        && !account.isForContractsAndGrants() && !newExpDate.after(today)
+                        && !newExpDate.equals(today)) {
+                    putGlobalError(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
+                    success = false;
+                }
+            }
 
-			// When updating an account expiration date, the date must be today or later
-			// (except for C&G accounts). Only run this test if this maint doc is an edit doc
-			if (isUpdatedExpirationDateInvalid(account, newAccountGlobal)) {
-				// if the date was valid upon submission, and this is an approval,
-				// we're not interested unless the approver changed the value
-				if (ObjectUtils.isNull(prevExpDate) || !prevExpDate.equals(newExpDate)) {
-					if(newAccountGlobal.getClosed() !=null && newAccountGlobal.getClosed()){
-						/*If the Account is being closed and the date is before today's date, the EXP date can only be today*/
-						putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
-					}
-					else{
-						/*If the Account is not being closed and the date is before today's date, the EXP date can only be today or at a later date*/
-						putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
-					}
-					success = false;
-				}
+            // acct_expiration_dt can not be before acct_effect_dt
+            Date effectiveDate = account.getAccountEffectiveDate();
+            if (ObjectUtils.isNotNull(effectiveDate) && ObjectUtils.isNotNull(newExpDate)) {
+                if (newExpDate.before(effectiveDate)) {
+                    putGlobalError(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE);
+                    success = false;
+                }
+            }
+        }
 
-			}
-
-			// acct_expiration_dt can not be before acct_effect_dt
-			Date effectiveDate = null;
-			if (ObjectUtils.isNotNull(newAccountGlobal.getAccountEffectiveDate())) {
-				effectiveDate = newAccountGlobal.getAccountEffectiveDate();
-			} else {
-				effectiveDate = account.getAccountEffectiveDate();
-			}
-
-			if (ObjectUtils.isNotNull(effectiveDate) && ObjectUtils.isNotNull(newExpDate)) {
-				if (newExpDate.before(effectiveDate)) {
-					putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE, new String[] { detail.getAccountNumber() });
-					success = false;
-				}
-			}
-		}
-
-		return success;
-	}
+        return success;
+    }
 
 	/**
 	 * This method checks to see if the updated expiration is not a valid one Only gets checked for specific {@link SubFundGroup}s
