@@ -54,36 +54,31 @@ public class CuRequisitionAction extends RequisitionAction {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
         RequisitionItem requisitionItem = (RequisitionItem) item;
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
-        
-        if (StringUtils.isBlank(requisitionItem.getPurchasingCommodityCode())) {
-            boolean commCodeParam = SpringContext.getBean(ParameterService.class)
-                    .getParameterValueAsBoolean(CuRequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
-            if (commCodeParam) {
-                if (purchasingForm instanceof RequisitionForm) {
-                    CuRequisitionDocument reqs = (CuRequisitionDocument) purchasingForm.getDocument();
-                    VendorDetail dtl = reqs.getVendorDetail();
-                    if (ObjectUtils.isNotNull(dtl)) {
-                        List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
-                        String defaultCommodityCode = "";
-                        Iterator<VendorCommodityCode> it = vcc.iterator();
-                        while (it.hasNext()) {
-                            VendorCommodityCode commodity = it.next();
-                            if (commodity.isCommodityDefaultIndicator()) {
-                                defaultCommodityCode = commodity.getPurchasingCommodityCode();
-                                requisitionItem.setPurchasingCommodityCode(defaultCommodityCode);
-                            }
+        if (StringUtils.isBlank(requisitionItem.getPurchasingCommodityCode())) {
+            boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+                    RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
+
+            if (commCodeParam && purchasingForm instanceof RequisitionForm) {
+                RequisitionDocument reqs = (RequisitionDocument) purchasingForm.getDocument();
+                VendorDetail dtl = reqs.getVendorDetail();
+                if (ObjectUtils.isNotNull(dtl)) {
+                    List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
+                    for (VendorCommodityCode commodity : vcc) {
+                        if (commodity.isCommodityDefaultIndicator()) {
+                            requisitionItem.setPurchasingCommodityCode(commodity.getPurchasingCommodityCode());
                         }
                     }
                 }
             }
         }
-        
+
         boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
                 .applyRules(new AttributedAddPurchasingAccountsPayableItemEvent("", purDocument, item));
 
