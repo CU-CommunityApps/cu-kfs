@@ -712,6 +712,13 @@
                 <replacement/>
             </pattern>
         </pattern>
+        <pattern>
+            <class>com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation</class>
+            <pattern>
+                <match>lastUpdate</match>
+                <replacement>lastUpdatedTimestamp</replacement>
+            </pattern>
+        </pattern>
         <!-- ==== End CU Customization ==== -->
     </rule>
 
