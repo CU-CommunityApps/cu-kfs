@@ -132,7 +132,8 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
         ObjectCode oc = objectCodeService.getByPrimaryId(e.getUniversityFiscalYear(), e.getChartOfAccountsCode(), e.getFinancialObjectCode());
         if (oc == null) {
             LOG.warn(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND_FOR) + e.getUniversityFiscalYear() + "," + e.getChartOfAccountsCode() + "," + e.getFinancialObjectCode());
-            e.setFinancialObjectCode(icrRateDetail.getFinancialObjectCode()); // this will be written out the ICR file. Then, when that file attempts to post, the transaction won't validate and will end up in the icr error file
+            // this will be written out the ICR file. Then, when that file attempts to post, the transaction won't validate and will end up in the icr error file
+            e.setFinancialObjectCode(icrRateDetail.getFinancialObjectCode()); 
         } else {
             e.setFinancialObjectTypeCode(oc.getFinancialObjectTypeCode());
         }

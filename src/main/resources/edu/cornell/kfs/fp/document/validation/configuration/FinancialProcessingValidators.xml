@@ -25,7 +25,10 @@
 	<bean id="DisbursementVoucher-employeeInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherEmployeeInformationValidation" abstract="true" p:dataDictionaryService-ref="dataDictionaryService" p:personService-ref="personService"/>
 	<bean id="DisbursementVoucher-payeeInitiatorValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeInitiatorValidation" abstract="true" p:personService-ref="personService" p:vendorService-ref="vendorService"/>
     <bean id="DisbursementVoucher-initiatorPrimaryDepartmentValidation" class="edu.cornell.kfs.fp.document.validation.impl.DisbursementVoucherInitiatorPrimaryDepartmentValidation" abstract="true" />
-	<bean id="DisbursementVoucher-accountingLineTotalsValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" abstract="true" p:documentHelperService-ref="documentHelperService"/>
+	<bean id="DisbursementVoucher-accountingLineTotalsValidation" 
+		class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" 
+		abstract="true" parent="AccountingDocument-accountingLineGroupTotalsUnchangedValidation" 
+		p:documentHelperService-ref="documentHelperService"/>
 	<bean id="DisbursementVoucher-nonResidentAlienInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation" abstract="true"
 		  p:businessObjectService-ref="businessObjectService"
           p:disbursementVoucherValidationService-ref="disbursementVoucherValidationService"
