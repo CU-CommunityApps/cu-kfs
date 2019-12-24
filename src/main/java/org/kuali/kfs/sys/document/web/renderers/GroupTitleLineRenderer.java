@@ -18,21 +18,12 @@
  */
 package org.kuali.kfs.sys.document.web.renderers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
+import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.taglib.html.HiddenTag;
 import org.kuali.kfs.kns.web.taglib.html.KNSFileTag;
 import org.kuali.kfs.kns.web.taglib.html.KNSSubmitTag;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
@@ -50,7 +41,13 @@ import org.kuali.kfs.sys.document.web.AccountingLineViewAction;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.KeyValue;
 
-import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.Tag;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Renders the standard group header/import line.
@@ -76,7 +73,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     private boolean hideDetails;
     // KFSPTS-985
     private String riceImageBase;
-    private BusinessObjectService businessObjectService;
 
     /**
      * Constructs a ImportLineRenderer, setting defaults on the tags that will always exist.
@@ -147,7 +143,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
             // setdistribution does not have accountPrefix
             String accountPrefix = (String)pageContext.getAttribute("accountPrefix");
             FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
-            accounts.setBusinessObjectService(getBusinessObjectService());
             if (canEdit && isDocumentIntegratedFavoriteAccount() && CollectionUtils.isNotEmpty(accounts.getKeyValues()) && accounts.getKeyValues().size() > 1) {
                 pageContext.getOut().write(buildFavoriteAccounts(accountPrefix));
             }
@@ -659,7 +654,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         favoriteAccountLine.append("<td colspan=\"7\" class=\"infoline\">");
         favoriteAccountLine.append("<select name=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" id=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" title=\"* Favorite Account\">");
         FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
-        accounts.setBusinessObjectService(getBusinessObjectService());
         for (KeyValue keyValue : (List<KeyValue>)accounts.getKeyValues()) {
             favoriteAccountLine.append("<option value=\"").append(keyValue.getKey());
             if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {
@@ -728,13 +722,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
             // set distribution.
             return -2;
         }
-    }
-    
-    private BusinessObjectService getBusinessObjectService() {
-        if (businessObjectService == null) {
-            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-        }
-        return businessObjectService;
     }
     // End KFSPTS-985, KFSUPGRADE-75 customization
 
