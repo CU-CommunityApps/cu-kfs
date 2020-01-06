@@ -72,7 +72,7 @@ public class LaborClosedAccount {
     }
     
     public String toCsvString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
         StringBuilder sb = new StringBuilder();
         sb.append(chart).append(KFSConstants.COMMA);
         sb.append(accountNumber).append(KFSConstants.COMMA);

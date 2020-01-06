@@ -39,7 +39,7 @@
 		<property name="jobNames">
 			<list>
 				<value>accountReversionImportJob</value>
-                <value>createClosedLaborAccountsCsvByPreviousDaysJob</value>
+                <value>createClosedLaborAccountsCsvJob</value>
 			</list>
 		</property>
 	</bean>
@@ -206,20 +206,20 @@
         </property>
     </bean>
     
-    <bean id="createClosedLaborAccountsCsvByPreviousDaysJob" parent="unscheduledJobDescriptor">
+    <bean id="createClosedLaborAccountsCsvJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
-                <ref bean="createClosedLaborAccountsCsvByPreviousDaysStep" />
+                <ref bean="createClosedLaborAccountsCsvStep" />
             </list>
         </property>
     </bean>
     
-    <bean id="createClosedLaborAccountsCsvByPreviousDaysStep" parent="step" class="edu.cornell.kfs.coa.batch.CreateClosedLaborAccountsCsvByPreviousDaysStep">
-        <property name="createClosedLaborAccountsCsvByPreviousDaysService" ref="createClosedLaborAccountsCsvByPreviousDaysService" />
+    <bean id="createClosedLaborAccountsCsvStep" parent="step" class="edu.cornell.kfs.coa.batch.CreateClosedLaborAccountsCsvStep">
+        <property name="createClosedLaborAccountsCsvService" ref="createClosedLaborAccountsCsvService" />
     </bean>
     
-    <bean id="createClosedLaborAccountsCsvByPreviousDaysService" parent="createClosedLaborAccountsCsvByPreviousDaysService-parentBean" />
-    <bean id="createClosedLaborAccountsCsvByPreviousDaysService-parentBean" class="edu.cornell.kfs.coa.batch.service.impl.CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl" abstract="true">
+    <bean id="createClosedLaborAccountsCsvService" parent="createClosedLaborAccountsCsvService-parentBean" />
+    <bean id="createClosedLaborAccountsCsvService-parentBean" class="edu.cornell.kfs.coa.batch.service.impl.CreateClosedLaborAccountsCsvServiceImpl" abstract="true">
         <property name="csvLaborClosedAccountsExportDirectory">
             <value>${staging.directory}/coa/closed-accounts-outbound/</value>
         </property>

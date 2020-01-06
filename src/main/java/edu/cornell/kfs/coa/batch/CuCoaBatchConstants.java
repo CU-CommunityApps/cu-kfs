@@ -1,17 +1,12 @@
 package edu.cornell.kfs.coa.batch;
 
-import java.sql.Date;
-
 public class CuCoaBatchConstants {
-    
-    public static final String CSV_FILE_EXTENSION = ".csv";
     
     public static class ClosedLaborAccountsFileCreationConstants {
     
+        public static final int PARAMETER_LABOR_CLOSED_ACCOUNTS_SEED_FILE_DEFAULT_FROM_DATE_NOT_SET = -2;
         public static final int PARAMETER_LABOR_ACCOUNTS_CLOSED_OVER_PAST_DAYS_NOT_SET = -1;
         public static final int PARAMETER_SET_TO_CREATE_FULL_SEED_FILE = 0;
-        
-        public static final Date SEED_FILE_DEFAULT_FROM_DATE = Date.valueOf("2013-03-01");
                 
         public static final String FROM_DATE = "FROM_DATE";
         public static final String TO_DATE = "TO_DATE";

@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.RowMapper;
 import edu.cornell.kfs.coa.batch.CuCoaBatchConstants;
 import edu.cornell.kfs.coa.batch.businessobject.LaborClosedAccount;
 import edu.cornell.kfs.coa.batch.dataaccess.ClosedLaborAccountsByDateRangeDao;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 
 public class ClosedLaborAccountsByDateRangeDaoJdbc extends PlatformAwareDaoBaseJdbc implements ClosedLaborAccountsByDateRangeDao {
@@ -58,7 +59,7 @@ public class ClosedLaborAccountsByDateRangeDaoJdbc extends PlatformAwareDaoBaseJ
     }
 
     private String buildClosedLaborAccountsForDateRangeSQL(Map<String, Date> dateRange) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yy", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_dd_MMM_yy, Locale.US);
         StringBuilder sqlBuilder = new StringBuilder("SELECT A.FIN_COA_CD AS ACCT_FIN_COA_CD, A.ACCOUNT_NBR AS ACCT_ACCOUNT_NBR, ");
         sqlBuilder.append("S.SUB_ACCT_NBR AS SUB_SUB_ACCT_NBR, A.ACCT_CLOSED_IND AS ACCT_ACCT_CLOSED_IND, X.ACCT_CLOSED_DT AS ACCTX_ACCT_CLOSED_DT ");
         sqlBuilder.append("FROM KFS.CA_ACCOUNT_T A ");

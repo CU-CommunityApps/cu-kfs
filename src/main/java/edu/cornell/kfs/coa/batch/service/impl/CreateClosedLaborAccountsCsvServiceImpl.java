@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
@@ -32,30 +33,31 @@ import edu.cornell.kfs.coa.batch.CuCoaBatchConstants;
 import edu.cornell.kfs.coa.batch.CuCoaBatchParameterConstants;
 import edu.cornell.kfs.coa.batch.businessobject.LaborClosedAccount;
 import edu.cornell.kfs.coa.batch.dataaccess.ClosedLaborAccountsByDateRangeDao;
-import edu.cornell.kfs.coa.batch.service.CreateClosedLaborAccountsCsvByPreviousDaysService;
+import edu.cornell.kfs.coa.batch.service.CreateClosedLaborAccountsCsvService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
-public class CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl implements CreateClosedLaborAccountsCsvByPreviousDaysService {
-    private static final Logger LOG = LogManager.getLogger(CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl.class);
+public class CreateClosedLaborAccountsCsvServiceImpl implements CreateClosedLaborAccountsCsvService {
+    private static final Logger LOG = LogManager.getLogger(CreateClosedLaborAccountsCsvServiceImpl.class);
     protected ClosedLaborAccountsByDateRangeDao closedLaborAccountsByDateRangeDao;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
     protected String csvLaborClosedAccountsExportDirectory;
+    protected Date seedFileFromDate;
     
     @Override
     public void createClosedLaborAccountCsvByParameterPastDays() {
-        Map<String, Integer> typeOfClosedAccountFileToCreate = parameterValueForTypeOfClosedAccountFileToCreate();
+        Map<String, Integer> typeOfClosedAccountFileToCreate = getParameterValueForTypeOfClosedAccountFileToCreate();
         
-        if (parameterValueForTypeOfClosedAccountFileToCreateIsSet(typeOfClosedAccountFileToCreate)) {
+        if (parameterValueForTypeOfClosedAccountFileToCreateIsSet(typeOfClosedAccountFileToCreate) && laborClosedAccountsSeedFileDefaultFromDateParameterIsValid()) {
             Map<String, Date> fileDataRangeSpecified = getClosedLaborAccountsDateRange(typeOfClosedAccountFileToCreate);
             writeClosedLaborAccountsToCsvFormattedFile(fileDataRangeSpecified);
         } else {
-            LOG.error("createClosedLaborAccountCsvByParameterPastDays: NO FILE CREATED. REQUIRED PARAMETER IS NOT SET.");
+            LOG.error("createClosedLaborAccountCsvByParameterPastDays: NO FILE CREATED. REQUIRED PARAMETERS ARE NOT SET.");
         }
     }
     
-    private Map<String, Integer> parameterValueForTypeOfClosedAccountFileToCreate() {
+    private Map<String, Integer> getParameterValueForTypeOfClosedAccountFileToCreate() {
         Map<String, Integer> fileDataContentType = new HashMap<String, Integer>();
         Integer numberOfDaysPrevious = getLaborAccoutsClosedPastDaysParameter();
         
@@ -66,11 +68,10 @@ public class CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl implements Cr
         } else if (numberOfDaysPrevious.intValue() == CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.PARAMETER_SET_TO_CREATE_FULL_SEED_FILE) {
             fileDataContentType.put(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPE_IS, CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPES.SEED);
             LOG.info("parameterValueForTypeOfClosedAccountFileToCreate: Full seed file will be created.");
-            
         } else {
             fileDataContentType.put(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPE_IS, CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPES.RANGE);
             fileDataContentType.put(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FROM_DATE, numberOfDaysPrevious.intValue());
-            LOG.info("parameterValueForTypeOfClosedAccountFileToCreate: File will contain data foe the previous " + numberOfDaysPrevious.intValue() +  " days.");
+            LOG.info("parameterValueForTypeOfClosedAccountFileToCreate: File will contain data for the previous " + numberOfDaysPrevious.intValue() +  " days.");
         }
         
         return fileDataContentType;
@@ -84,10 +85,28 @@ public class CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl implements Cr
         try {
             daysPreviousInt = Integer.parseInt(daysPreviousParameterValue);
         } catch (NumberFormatException ne) {
-            LOG.error("getLaborAccoutsClosedPastDaysParameter: Namespace KFS-COA system parameter LABOR_ACCOUNTS_CLOSED_OVER_PAST_DAYS is either not set or could not be converted to a number.");
+            LOG.error("getLaborAccoutsClosedPastDaysParameter: Namespace KFS-COA system parameter LABOR_ACCOUNTS_CLOSED_OVER_PAST_DAYS obtained was " 
+                    + daysPreviousParameterValue + " so it was either not set or could not be converted to a number.");
             daysPreviousInt = CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.PARAMETER_LABOR_ACCOUNTS_CLOSED_OVER_PAST_DAYS_NOT_SET;
         }
         return new Integer(daysPreviousInt);
+    }
+    
+    private boolean laborClosedAccountsSeedFileDefaultFromDateParameterIsValid() {
+        String defaultFromDateParameterValue = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.CHART, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, CuCoaBatchParameterConstants.LABOR_CLOSED_ACCOUNTS_SEED_FILE_DEFAULT_FROM_DATE);
+        
+        Date defaultFromDate;
+        try {
+            defaultFromDate = Date.valueOf(defaultFromDateParameterValue);
+        } catch (IllegalArgumentException ie) {
+            LOG.error("getLaborClosedAccountsSeedFileDefaultFromDateParameter: Namespace KFS-COA system parameter LABOR_CLOSED_ACCOUNTS_SEED_FILE_DEFAULT_FROM_DATE was "
+                    + defaultFromDateParameterValue + " so it was either not set or could not be converted to a SQL Date.");
+            setSeedFileFromDate(null);
+            return false;
+        }
+        setSeedFileFromDate(defaultFromDate);
+        return true;
     }
     
     private boolean parameterValueForTypeOfClosedAccountFileToCreateIsSet(Map<String, Integer> typeOfClosedAccountFileToCreate) {
@@ -103,7 +122,7 @@ public class CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl implements Cr
         Map<String, Date> fromToRange = new HashMap<String, Date>();
         
         if (typeOfClosedAccountFileToCreate.containsValue(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPES.SEED)) {
-            fromToRange.put(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FROM_DATE, CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.SEED_FILE_DEFAULT_FROM_DATE);
+            fromToRange.put(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FROM_DATE, getSeedFileFromDate());
             fromToRange.put(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.TO_DATE, getDateTimeService().getCurrentSqlDate());
             LOG.info("getClosedLaborAccountsDateRange: Seed file will have FROM_DATE = " + fromToRange.get(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.FROM_DATE) 
                 + " and a TO_DATE = " + fromToRange.get(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.TO_DATE)); 
@@ -187,7 +206,7 @@ public class CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl implements Cr
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
         StringBuilder filename = new StringBuilder(getCsvLaborClosedAccountsExportDirectory());
         filename.append(CuCoaBatchConstants.ClosedLaborAccountsFileCreationConstants.OUTPUT_FILE_NAME).append("_");
-        filename.append(sdf.format(getDateTimeService().getCurrentDate())).append(CuCoaBatchConstants.CSV_FILE_EXTENSION);
+        filename.append(sdf.format(getDateTimeService().getCurrentDate())).append(CUKFSConstants.FILE_EXTENSIONS.CSV_FILE_EXTENSION);
         return filename.toString();
     }
     
@@ -222,5 +241,13 @@ public class CreateClosedLaborAccountsCsvByPreviousDaysServiceImpl implements Cr
     public void setCsvLaborClosedAccountsExportDirectory(String csvLaborClosedAccountsExportDirectory) {
         this.csvLaborClosedAccountsExportDirectory = csvLaborClosedAccountsExportDirectory;
     }
-    
+
+    public Date getSeedFileFromDate() {
+        return seedFileFromDate;
+    }
+
+    public void setSeedFileFromDate(Date seedFileFromDate) {
+        this.seedFileFromDate = seedFileFromDate;
+    }
+
 }

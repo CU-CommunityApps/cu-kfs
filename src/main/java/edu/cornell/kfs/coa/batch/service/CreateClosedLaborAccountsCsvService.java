@@ -1,6 +1,6 @@
 package edu.cornell.kfs.coa.batch.service;
 
-public interface CreateClosedLaborAccountsCsvByPreviousDaysService {
+public interface CreateClosedLaborAccountsCsvService {
     
     void createClosedLaborAccountCsvByParameterPastDays(); 
     
