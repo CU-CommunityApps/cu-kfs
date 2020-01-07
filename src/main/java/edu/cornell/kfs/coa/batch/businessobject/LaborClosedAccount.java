@@ -23,14 +23,6 @@ public class LaborClosedAccount {
         this.accountClosedDate = null;
     }
     
-    public LaborClosedAccount(String chart, String  accountNumber, String subAccountNumber, String accountClosedIndicator, Date accountClosedDate) {
-        this.chart = chart;
-        this.accountNumber = accountNumber;
-        this.subAccountNumber = subAccountNumber;
-        this.accountClosedIndicator = accountClosedIndicator;
-        this.accountClosedDate = accountClosedDate;
-    }
-    
     public String getChart() {
         return chart;
     }

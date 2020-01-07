@@ -1,5 +1,6 @@
 package edu.cornell.kfs.coa.batch;
 
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +15,12 @@ public class CreateClosedLaborAccountsCsvStep extends AbstractStep {
     
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        createClosedLaborAccountsCsvService.createClosedLaborAccountCsvByParameterPastDays();
+        try {
+            createClosedLaborAccountsCsvService.createClosedLaborAccountCsvByParameterPastDays();
+        } catch (IOException e) {
+            LOG.info("CreateClosedLaborAccountsCsvStep.execute: Caught IOException. Failing batch job.");
+            return false;
+        }
         return true;
     }
 

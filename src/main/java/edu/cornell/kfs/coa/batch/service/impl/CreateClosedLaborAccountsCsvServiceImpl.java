@@ -46,7 +46,7 @@ public class CreateClosedLaborAccountsCsvServiceImpl implements CreateClosedLabo
     protected Date seedFileFromDate;
     
     @Override
-    public void createClosedLaborAccountCsvByParameterPastDays() {
+    public void createClosedLaborAccountCsvByParameterPastDays() throws IOException {
         Map<String, Integer> typeOfClosedAccountFileToCreate = getParameterValueForTypeOfClosedAccountFileToCreate();
         
         if (parameterValueForTypeOfClosedAccountFileToCreateIsSet(typeOfClosedAccountFileToCreate) && laborClosedAccountsSeedFileDefaultFromDateParameterIsValid()) {
@@ -164,10 +164,7 @@ public class CreateClosedLaborAccountsCsvServiceImpl implements CreateClosedLabo
         return datePreviousAsDateTime.toLocalDate();
     }
     
-    private void writeClosedLaborAccountsToCsvFormattedFile(Map<String, Date> fileDataRangeSpecified) {
-        LOG.info("writeClosedLaborAccountsToCsvFormattedFile: Prior to ensuring directory to hold outbound file exists.");
-        ensureOutbundDirectoryExists();
-        
+    private void writeClosedLaborAccountsToCsvFormattedFile(Map<String, Date> fileDataRangeSpecified) throws IOException {
         LOG.info("writeClosedLaborAccountsToCsvFormattedFile: Prior to obtaining data with SQL query for date range. This may take a while.");
         List<LaborClosedAccount> laborClosedAccountsData = getClosedLaborAccountsByDateRangeDao().obtainLaborClosedAccountsDataFor(fileDataRangeSpecified);
         
@@ -175,16 +172,7 @@ public class CreateClosedLaborAccountsCsvServiceImpl implements CreateClosedLabo
         writeClosedAccountsToCsvFile(laborClosedAccountsData);
     }
     
-    private void ensureOutbundDirectoryExists() {
-        try {
-            FileUtils.forceMkdir(new File(getCsvLaborClosedAccountsExportDirectory()));
-        } catch (IOException e) {
-            LOG.info("ensureOutbundDirectoryExists: Could not create file destination directory. Throwing RuntimeException to force batch job failure.");
-            throw new RuntimeException(e);
-        }
-    }
-    
-    private void writeClosedAccountsToCsvFile(List<LaborClosedAccount> laborClosedAccountsDataList) {
+    private void writeClosedAccountsToCsvFile(List<LaborClosedAccount> laborClosedAccountsDataList) throws IOException {
         String fullyQualifiedOutputFileName = generateFullyQualifiedOutputFileName();
         LOG.info("writeClosedAccountsToCsvFile: fullyQualifiedOutputFile = " + fullyQualifiedOutputFileName);
         File outputFile = new File(fullyQualifiedOutputFileName);
@@ -197,8 +185,8 @@ public class CreateClosedLaborAccountsCsvServiceImpl implements CreateClosedLabo
             }
             outputFileWriter.close();
         } catch (IOException io) {
-            LOG.error("writeClosedAccountsToCsvFile: Caught IOException = " + io.getMessage());
-            io.getStackTrace();
+            LOG.error("writeClosedAccountsToCsvFile: Caught IOException = " + io.getStackTrace().toString());
+            throw io;
         }
     }
     
