@@ -4,9 +4,11 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -36,18 +38,22 @@ public class ConcurEventNotificationListDTOTest {
 
     @Test
     public void marshalEventNoticationListFile() throws JAXBException {
-        ConcurEventNotificationListDTO dto = cuMarshalService.unmarshalFile(xmlFile, ConcurEventNotificationListDTO.class);
-        validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(0), "1");
-        validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(1), "2");
+        ConcurEventNotificationListDTO concurEventNotificationList = cuMarshalService.unmarshalFile(xmlFile, ConcurEventNotificationListDTO.class);
+        List<ConcurEventNotificationDTO> concurEventNotificationDTOs = concurEventNotificationList.getConcurEventNotificationDTOs();
+        assertFalse(CollectionUtils.isEmpty(concurEventNotificationDTOs));
+        validateConcurEventNotificationDTO(concurEventNotificationDTOs.get(0), "1");
+        validateConcurEventNotificationDTO(concurEventNotificationDTOs.get(1), "2");
         
     }
     
     @Test
     public void marshalEventNoticationListString() throws JAXBException, IOException {
         String xmlString = FileUtils.readFileToString(xmlFile);
-        ConcurEventNotificationListDTO dto = cuMarshalService.unmarshalString(xmlString, ConcurEventNotificationListDTO.class);
-        validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(0), "1");
-        validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(1), "2");
+        ConcurEventNotificationListDTO concurEventNotificationList = cuMarshalService.unmarshalString(xmlString, ConcurEventNotificationListDTO.class);
+        List<ConcurEventNotificationDTO> concurEventNotificationDTOs = concurEventNotificationList.getConcurEventNotificationDTOs();
+        assertFalse(CollectionUtils.isEmpty(concurEventNotificationDTOs));
+        validateConcurEventNotificationDTO(concurEventNotificationDTOs.get(0), "1");
+        validateConcurEventNotificationDTO(concurEventNotificationDTOs.get(1), "2");
         
     }
     
