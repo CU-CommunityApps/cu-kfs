@@ -168,8 +168,13 @@ public class CreateClosedLaborAccountsCsvServiceImpl implements CreateClosedLabo
         LOG.info("writeClosedLaborAccountsToCsvFormattedFile: Prior to obtaining data with SQL query for date range. This may take a while.");
         List<LaborClosedAccount> laborClosedAccountsData = getClosedLaborAccountsByDateRangeDao().obtainLaborClosedAccountsDataFor(fileDataRangeSpecified);
         
-        LOG.info("writeClosedLaborAccountsToCsvFormattedFile: Have the data. Will now write it out.");
-        writeClosedAccountsToCsvFile(laborClosedAccountsData);
+        if (ObjectUtils.isNotNull(laborClosedAccountsData) && laborClosedAccountsData.size() > 0) {
+            LOG.info("writeClosedLaborAccountsToCsvFormattedFile: Have the data. Will now write out " + laborClosedAccountsData.size() + " closed accounts to CSV file.");
+            writeClosedAccountsToCsvFile(laborClosedAccountsData);
+        } else {
+            LOG.info("writeClosedLaborAccountsToCsvFormattedFile: NO CSV file being created. " 
+                    + (ObjectUtils.isNotNull(laborClosedAccountsData) ? (laborClosedAccountsData.size() + " accounts being written to file.") : ("null returned for requested account data.") ));
+        }
     }
     
     private void writeClosedAccountsToCsvFile(List<LaborClosedAccount> laborClosedAccountsDataList) throws IOException {
@@ -185,7 +190,7 @@ public class CreateClosedLaborAccountsCsvServiceImpl implements CreateClosedLabo
             }
             outputFileWriter.close();
         } catch (IOException io) {
-            LOG.error("writeClosedAccountsToCsvFile: Caught IOException = " + io.getStackTrace().toString());
+            LOG.error("writeClosedAccountsToCsvFile: Caught IOException => ", io);
             throw io;
         }
     }
