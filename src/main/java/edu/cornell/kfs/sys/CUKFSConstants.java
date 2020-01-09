@@ -21,7 +21,6 @@ public class CUKFSConstants {
     public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
     public static final String DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am = "MM/dd/yyyy hh:mm:ss a";
     public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-    public static final String DATE_FORMAT_dd_MMM_yy = "dd-MMM-yy";
     
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
@@ -181,9 +180,5 @@ public class CUKFSConstants {
     public static final String XML_FILE_EXTENSION = ".xml";
 
     public static final String LOCATION_SERVICE_BEAN_NAME = "locationService-fin";
-    
-    public static final class FILE_EXTENSIONS {
-        public static final String CSV_FILE_EXTENSION = ".csv";
-    }
 
 }
