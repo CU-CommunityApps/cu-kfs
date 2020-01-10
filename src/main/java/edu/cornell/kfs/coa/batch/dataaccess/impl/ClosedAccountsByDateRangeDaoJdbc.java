@@ -42,13 +42,13 @@ public class ClosedAccountsByDateRangeDaoJdbc extends PlatformAwareDaoBaseJdbc i
         try {
             RowMapper<ClosedAccount> mapRow = new RowMapper<ClosedAccount>() {
                 public ClosedAccount mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
-                    ClosedAccount laborClosedAccountDataRow = new ClosedAccount();
-                    laborClosedAccountDataRow.setChart(resultSet.getString(ACCT_FIN_COA_CD));
-                    laborClosedAccountDataRow.setAccountNumber(resultSet.getString(ACCT_ACCOUNT_NBR));
-                    laborClosedAccountDataRow.setSubAccountNumber(resultSet.getString(SUB_SUB_ACCT_NBR));
-                    laborClosedAccountDataRow.setAccountClosedIndicator(resultSet.getString(ACCT_ACCT_CLOSED_IND));
-                    laborClosedAccountDataRow.setAccountClosedDate(resultSet.getDate(ACCTX_ACCT_CLOSED_DT));
-                    return laborClosedAccountDataRow;
+                    ClosedAccount closedAccountDataRow = new ClosedAccount();
+                    closedAccountDataRow.setChart(resultSet.getString(ACCT_FIN_COA_CD));
+                    closedAccountDataRow.setAccountNumber(resultSet.getString(ACCT_ACCOUNT_NBR));
+                    closedAccountDataRow.setSubAccountNumber(resultSet.getString(SUB_SUB_ACCT_NBR));
+                    closedAccountDataRow.setAccountClosedIndicator(resultSet.getString(ACCT_ACCT_CLOSED_IND));
+                    closedAccountDataRow.setAccountClosedDate(resultSet.getDate(ACCTX_ACCT_CLOSED_DT));
+                    return closedAccountDataRow;
                 }
             };
             return this.getJdbcTemplate().query(buildClosedAccountsForItChartDateRangeSql(dateRange), mapRow);

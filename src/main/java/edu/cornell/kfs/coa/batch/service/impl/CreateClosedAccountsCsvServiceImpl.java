@@ -222,7 +222,7 @@ public class CreateClosedAccountsCsvServiceImpl implements CreateClosedAccountsC
             String fullyQualifiedExportDirectoryFileName = fullyQualifyFileNameToExportDirectory(csvFileName);
             LOG.info("writeClosedAccountsToCsvFile: Moving data file from creation directory to fullyQualifiedExportDirectoryFileName = " + fullyQualifiedExportDirectoryFileName);
             moveCreatedFileToExportDirectory(outputFile, fullyQualifiedExportDirectoryFileName);
-            LOG.info("writeClosedAccountsToCsvFile: File was successfully moved to export diectory.");
+            LOG.info("writeClosedAccountsToCsvFile: File was successfully moved to export directory.");
         } catch (IOException io2) {
             LOG.error("writeClosedAccountsToCsvFile: Caught IOException attempting to move CSV file of closed accounts to export directory => ", io2);
             throw io2;
