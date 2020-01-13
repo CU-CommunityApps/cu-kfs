@@ -465,7 +465,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @SuppressWarnings("rawtypes")
     public PurApItem getItemByLineNumber(int lineNumber) {
         for (PurApItem item : items) {
-            if (item.getItemLineNumber() == lineNumber) {
+            // CU Customization (KFSPTS-17401): Perform a null check on the item's line number before using it.
+            if (item.getItemLineNumber() != null && item.getItemLineNumber() == lineNumber) {
                 return item;
             }
         }
