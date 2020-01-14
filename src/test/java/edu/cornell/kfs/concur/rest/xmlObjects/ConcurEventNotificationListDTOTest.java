@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +16,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.cornell.kfs.concur.batch.xmlObjects.test.NotificationList;
+import edu.cornell.kfs.concur.batch.xmlObjects.test.NotificationList.Notification;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
@@ -64,5 +68,27 @@ public class ConcurEventNotificationListDTOTest {
         String notificationUri = "noticationUri" + indexNumber;
         assertEquals(EQUAL_ASSERT_STATEMENT, notificationUri, dto.getNotificationURI());
     }
-
+    
+    @Test
+    public void foo() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(ConcurEventNotificationListDTO.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        unmarshaller.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
+        ConcurEventNotificationListDTO concurEventNotificationList = (ConcurEventNotificationListDTO) unmarshaller.unmarshal(xmlFile);
+        List<ConcurEventNotificationDTO> concurEventNotificationDTOs = concurEventNotificationList.getConcurEventNotificationDTOs();
+        assertFalse(CollectionUtils.isEmpty(concurEventNotificationDTOs));
+        validateConcurEventNotificationDTO(concurEventNotificationDTOs.get(0), "1");
+        validateConcurEventNotificationDTO(concurEventNotificationDTOs.get(1), "2");
+    }
+    
+    @Test
+    public void foo2() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(NotificationList.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        unmarshaller.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
+        NotificationList notificationList = (NotificationList) unmarshaller.unmarshal(xmlFile);
+        List<Notification> notifications = notificationList.getNotification();
+        assertFalse(CollectionUtils.isEmpty(notifications));
+        
+    }
 }
