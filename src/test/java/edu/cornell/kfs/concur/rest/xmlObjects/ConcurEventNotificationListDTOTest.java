@@ -89,6 +89,16 @@ public class ConcurEventNotificationListDTOTest {
         NotificationList notificationList = (NotificationList) unmarshaller.unmarshal(xmlFile);
         List<Notification> notifications = notificationList.getNotification();
         assertFalse(CollectionUtils.isEmpty(notifications));
+        validateNotification(notifications.get(0), "1");
+        validateNotification(notifications.get(1), "2");
         
+    }
+    
+    private void validateNotification(Notification dto, String indexNumber) {
+        String expectedEventType = "eventType" + indexNumber;
+        assertEquals(EQUAL_ASSERT_STATEMENT, expectedEventType, dto.getEventType());
+        
+        String notificationUri = "noticationUri" + indexNumber;
+        assertEquals(EQUAL_ASSERT_STATEMENT, notificationUri, dto.getNotificationURI());
     }
 }
