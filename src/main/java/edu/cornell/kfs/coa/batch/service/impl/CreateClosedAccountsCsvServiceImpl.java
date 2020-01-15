@@ -66,7 +66,7 @@ public class CreateClosedAccountsCsvServiceImpl implements CreateClosedAccountsC
         Integer numberOfDaysPrevious = getAccountsClosedPastDaysParameter();
         
         if (numberOfDaysPrevious.intValue() == CuCoaBatchConstants.ClosedAccountsFileCreationConstants.PARAMETER_ACCOUNTS_CLOSED_OVER_PAST_DAYS_NOT_SET) {
-            fileDataContentType.put(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPE_IS, CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPES.NO_PARMETER_FOUND);
+            fileDataContentType.put(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPE_IS, CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPES.NO_PARAMETER_FOUND);
             LOG.info("getParameterValueForTypeOfClosedAccountFileToCreate: Detected parameter ACCOUNTS_CLOSED_OVER_PAST_DAYS required for batch job execution is not set.");
             
         } else if (numberOfDaysPrevious.intValue() == CuCoaBatchConstants.ClosedAccountsFileCreationConstants.PARAMETER_SET_TO_CREATE_FULL_SEED_FILE) {
@@ -114,12 +114,8 @@ public class CreateClosedAccountsCsvServiceImpl implements CreateClosedAccountsC
     }
     
     private boolean parameterValueForTypeOfClosedAccountFileToCreateIsSet(Map<String, Integer> typeOfClosedAccountFileToCreate) {
-        if (typeOfClosedAccountFileToCreate.isEmpty() ||
-                typeOfClosedAccountFileToCreate.containsValue(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPES.NO_PARMETER_FOUND)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(typeOfClosedAccountFileToCreate.isEmpty() ||
+                 typeOfClosedAccountFileToCreate.containsValue(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FILE_DATA_CONTENT_TYPES.NO_PARAMETER_FOUND));
     }
     
     private Map<String, Date> getClosedAccountsDateRange(Map<String, Integer> typeOfClosedAccountFileToCreate) {
@@ -205,18 +201,19 @@ public class CreateClosedAccountsCsvServiceImpl implements CreateClosedAccountsC
         LOG.info("writeClosedAccountsToCsvFile: fullyQualifiedOutputFile = " + fullyQualifiedCreationDirectoryFileName);
         File outputFile = new File(fullyQualifiedCreationDirectoryFileName);
         FileWriter outputFileWriter;
+        outputFileWriter = new FileWriter(outputFile);
         try {
-            outputFileWriter = new FileWriter(outputFile);
             for (ClosedAccount closedAccount : closedAccountsDataList) {
                 outputFileWriter.write(closedAccount.toCsvString());
                 outputFileWriter.write(KFSConstants.NEWLINE);
             }
-            outputFileWriter.flush();
-            outputFileWriter.close();
-            LOG.info("writeClosedAccountsToCsvFile: CSV file in being-written directory has all the data and file has been closed.");
         } catch (IOException io) {
             LOG.error("writeClosedAccountsToCsvFile: Caught IOException attempting to create CSV file of closded accounts => ", io);
             throw io;
+        } finally {
+            outputFileWriter.flush();
+            outputFileWriter.close();
+            LOG.info("writeClosedAccountsToCsvFile: CSV file in being-written directory has all the data and file has been closed.");
         }
         try {
             String fullyQualifiedExportDirectoryFileName = fullyQualifyFileNameToExportDirectory(csvFileName);

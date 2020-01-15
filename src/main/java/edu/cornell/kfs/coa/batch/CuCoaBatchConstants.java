@@ -14,7 +14,7 @@ public class CuCoaBatchConstants {
         public static final String FILE_DATA_CONTENT_TYPE_IS = "FILE_DATA_CONTENT_TYPE_IS";
         
         public static class FILE_DATA_CONTENT_TYPES {
-            public static final int NO_PARMETER_FOUND = PARAMETER_ACCOUNTS_CLOSED_OVER_PAST_DAYS_NOT_SET;
+            public static final int NO_PARAMETER_FOUND = PARAMETER_ACCOUNTS_CLOSED_OVER_PAST_DAYS_NOT_SET;
             public static final int SEED = PARAMETER_SET_TO_CREATE_FULL_SEED_FILE;
             public static final int RANGE = 1;
         }

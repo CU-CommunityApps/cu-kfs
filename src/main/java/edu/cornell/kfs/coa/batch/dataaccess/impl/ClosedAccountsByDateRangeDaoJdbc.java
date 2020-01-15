@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -51,25 +52,30 @@ public class ClosedAccountsByDateRangeDaoJdbc extends PlatformAwareDaoBaseJdbc i
                     return closedAccountDataRow;
                 }
             };
-            return this.getJdbcTemplate().query(buildClosedAccountsForItChartDateRangeSql(dateRange), mapRow);
+            return this.getJdbcTemplate().query(buildClosedAccountsForItChartDateRangeSql(), buildClosedAccountsForItChartArgumentList(dateRange), mapRow);
         } catch (Exception e) {
             LOG.info("findAllClosedAccountsFor Exception: " + e.getMessage());
             return null;
         }
     }
-
-    private String buildClosedAccountsForItChartDateRangeSql(Map<String, Date> dateRange) {
+    
+    private Object[] buildClosedAccountsForItChartArgumentList(Map<String, Date> dateRange) {
+        List<Object> argumentList = new ArrayList<>();
         SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_dd_MMM_yy, Locale.US);
+        argumentList.add(formatter.format(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FROM_DATE)));
+        argumentList.add(formatter.format(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.TO_DATE)));
+        return argumentList.toArray();
+    }
+
+    private String buildClosedAccountsForItChartDateRangeSql() {
         StringBuilder sqlBuilder = new StringBuilder("SELECT A.FIN_COA_CD AS ACCT_FIN_COA_CD, A.ACCOUNT_NBR AS ACCT_ACCOUNT_NBR, ");
         sqlBuilder.append("S.SUB_ACCT_NBR AS SUB_SUB_ACCT_NBR, A.ACCT_CLOSED_IND AS ACCT_ACCT_CLOSED_IND, X.ACCT_CLOSED_DT AS ACCTX_ACCT_CLOSED_DT ");
         sqlBuilder.append("FROM KFS.CA_ACCOUNT_T A ");
         sqlBuilder.append("LEFT JOIN KFS.CA_ACCOUNT_TX X ON A.FIN_COA_CD = X.FIN_COA_CD AND A.ACCOUNT_NBR = X.ACCOUNT_NBR ");
         sqlBuilder.append("LEFT JOIN KFS.CA_SUB_ACCT_T S ON A.FIN_COA_CD = S.FIN_COA_CD AND A.ACCOUNT_NBR = S.ACCOUNT_NBR ");
         sqlBuilder.append("WHERE A.FIN_COA_CD = X.FIN_COA_CD AND A.ACCOUNT_NBR = X.ACCOUNT_NBR AND A.FIN_COA_CD = 'IT' AND A.ACCT_CLOSED_IND = 'Y' ");
-        sqlBuilder.append("AND X.ACCT_CLOSED_DT >= '").append(formatter.format(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FROM_DATE))).append("' ");
-        sqlBuilder.append("AND X.ACCT_CLOSED_DT < '").append(formatter.format(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.TO_DATE))).append("' ");
+        sqlBuilder.append("AND X.ACCT_CLOSED_DT >= ? AND X.ACCT_CLOSED_DT < ? ");
         LOG.info("buildClosedAccountsForItChartDateRangeSql: SQL to be executed = " + sqlBuilder.toString());
         return sqlBuilder.toString();
     }
-
 }

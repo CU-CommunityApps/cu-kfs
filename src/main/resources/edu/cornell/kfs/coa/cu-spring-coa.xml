@@ -43,7 +43,7 @@
 			</list>
 		</property>
         <property name="batchFileDirectories">
-            <list>
+            <list merge="true">
                  <value>${staging.directory}/coa</value>
                  <value>${staging.directory}/coa/closed-accounts-outbound</value>
                  <value>${staging.directory}/coa/closed-accounts-outbound/being-written</value>
