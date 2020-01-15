@@ -61,9 +61,8 @@ public class ClosedAccountsByDateRangeDaoJdbc extends PlatformAwareDaoBaseJdbc i
     
     private Object[] buildClosedAccountsForItChartArgumentList(Map<String, Date> dateRange) {
         List<Object> argumentList = new ArrayList<>();
-        SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_dd_MMM_yy, Locale.US);
-        argumentList.add(formatter.format(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FROM_DATE)));
-        argumentList.add(formatter.format(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.TO_DATE)));
+        argumentList.add(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.FROM_DATE));
+        argumentList.add(dateRange.get(CuCoaBatchConstants.ClosedAccountsFileCreationConstants.TO_DATE));
         return argumentList.toArray();
     }
 

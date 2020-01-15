@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -207,13 +208,13 @@ public class CreateClosedAccountsCsvServiceImpl implements CreateClosedAccountsC
                 outputFileWriter.write(closedAccount.toCsvString());
                 outputFileWriter.write(KFSConstants.NEWLINE);
             }
+            outputFileWriter.flush();
+            LOG.info("writeClosedAccountsToCsvFile: CSV file in being-written directory has all the data, was flushed, and file will attempt to now be closed.");
         } catch (IOException io) {
             LOG.error("writeClosedAccountsToCsvFile: Caught IOException attempting to create CSV file of closded accounts => ", io);
             throw io;
         } finally {
-            outputFileWriter.flush();
-            outputFileWriter.close();
-            LOG.info("writeClosedAccountsToCsvFile: CSV file in being-written directory has all the data and file has been closed.");
+            IOUtils.closeQuietly(outputFileWriter);
         }
         try {
             String fullyQualifiedExportDirectoryFileName = fullyQualifyFileNameToExportDirectory(csvFileName);
