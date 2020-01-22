@@ -18,8 +18,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -28,6 +26,8 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +97,8 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Override
     public void refreshAccessToken() {
         if (shouldRefreshAccessToken()) {
-            AccessTokenDTO refreshedToken = callConcurEndpoint(this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
+            AccessTokenDTO refreshedToken = callConcurEndpoint(
+                    this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
             webServiceCredentialService.updateWebServiceCredentialValue(
                     ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,
                     ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE,
@@ -107,9 +108,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
     
     private boolean shouldRefreshAccessToken() {
-        String refreshConcurToken = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REFRESH_ACCESS_TOKEN);
-        boolean shouldRefresh = StringUtils.equalsIgnoreCase(refreshConcurToken, KFSConstants.ParameterValues.YES);
-        LOG.info("shouldRefreshAccessToken, refreshConcurToken: " + refreshConcurToken);
+        String refreshConcurToken = concurBatchUtilityService.getConcurParameterValue(
+                ConcurParameterConstants.CONCUR_REFRESH_ACCESS_TOKEN);
+        boolean shouldRefresh = StringUtils.equalsIgnoreCase(
+                refreshConcurToken, KFSConstants.ParameterValues.YES);
+        LOG.info("shouldRefreshAccessToken, shouldRefresh: " + shouldRefresh);
         return shouldRefresh;
     }
 
@@ -318,10 +321,6 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
         this.webServiceCredentialService = webServiceCredentialService;
-    }
-
-    public ConcurBatchUtilityService getConcurBatchUtilityService() {
-        return concurBatchUtilityService;
     }
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
