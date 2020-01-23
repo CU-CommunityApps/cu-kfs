@@ -105,23 +105,15 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     private VendorDetail soldToVendorDetail;
     private Person vendorRestrictedPerson;
     
-    // not persisted in the db
+    // these nine are not persisted in the db
     private String vendorParentName;
-    // not persisted in the db
     private String defaultAddressLine1;
-    // not persisted in the db
     private String defaultAddressLine2; 
-    // not persisted in the db
     private String defaultAddressCity; 
-    // not persisted in the db
     private String defaultAddressStateCode; 
-    // not persisted in the db
     private String defaultAddressInternationalProvince; 
-    // not persisted in the db
     private String defaultAddressPostalCode; 
-    // not persisted in the db
     private String defaultAddressCountryCode; 
-    // not persisted in the db
     private String defaultFaxNumber;
     
     private List boNotes;
