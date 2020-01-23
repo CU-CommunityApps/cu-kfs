@@ -339,6 +339,7 @@
 		<property name="concurRefreshAccessTokenURL" value="${concur.refresh.access.token.url}"/>
 		<property name="concurRevokeAccessTokenURL" value="${concur.revoke.access.token.url}"/>
 		<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	</bean>
 
     <bean id="concurBatchUtilityService" parent="concurBatchUtilityService-parentBean" />
