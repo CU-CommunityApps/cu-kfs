@@ -18,10 +18,9 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
     private ConcurBatchReportSummaryItem expensesPaidOnCorporateCard;
     private ConcurBatchReportSummaryItem transactionsBypassed;
     private ConcurBatchReportSummaryItem pdpRecordsProcessed;
-    private ConcurBatchReportSummaryItem cashAdvanceRequestsBypassed;
     private List<ConcurBatchReportLineValidationErrorItem> validationErrorFileLines;
     private List<ConcurBatchReportMissingObjectCodeItem> pendingClientObjectCodeLines; 
-
+    
     public ConcurStandardAccountingExtractBatchReportData() {
         this.concurFileName = KFSConstants.EMPTY_STRING;
         this.headerValidationErrors = new ArrayList<String>();
@@ -30,7 +29,6 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
         this.expensesPaidOnCorporateCard = new ConcurBatchReportSummaryItem();
         this.transactionsBypassed = new ConcurBatchReportSummaryItem();
         this.pdpRecordsProcessed = new ConcurBatchReportSummaryItem();
-        this.cashAdvanceRequestsBypassed = new ConcurBatchReportSummaryItem();
         this.validationErrorFileLines = new ArrayList<ConcurBatchReportLineValidationErrorItem>();
         this.pendingClientObjectCodeLines = new ArrayList<ConcurBatchReportMissingObjectCodeItem>();
     }
@@ -42,7 +40,6 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
             ConcurBatchReportSummaryItem expensesPaidOnCorporateCard,
             ConcurBatchReportSummaryItem transactionsBypassed,
             ConcurBatchReportSummaryItem pdpRecordsProcessed,
-            ConcurBatchReportSummaryItem cashAdvanceRequestsBypassed,
             List<ConcurBatchReportLineValidationErrorItem> validationErrorFileLines,
             List<ConcurBatchReportMissingObjectCodeItem> pendingClientObjectCodeLines) {
         this.headerValidationErrors = headerValidationErrors;
@@ -52,7 +49,6 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
         this.expensesPaidOnCorporateCard = expensesPaidOnCorporateCard;
         this.transactionsBypassed = transactionsBypassed;
         this.pdpRecordsProcessed = pdpRecordsProcessed;
-        this.cashAdvanceRequestsBypassed = cashAdvanceRequestsBypassed;
         this.validationErrorFileLines = validationErrorFileLines;
         this.pendingClientObjectCodeLines = pendingClientObjectCodeLines;
     }
@@ -121,15 +117,7 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
     public void setPdpRecordsProcessed(ConcurBatchReportSummaryItem pdpRecordsProcessed) {
         this.pdpRecordsProcessed = pdpRecordsProcessed;
     }
-
-    public ConcurBatchReportSummaryItem getCashAdvanceRequestsBypassed() {
-        return cashAdvanceRequestsBypassed;
-    }
-
-    public void setCashAdvanceRequestsBypassed(ConcurBatchReportSummaryItem cashAdvanceRequestsBypassed) {
-        this.cashAdvanceRequestsBypassed = cashAdvanceRequestsBypassed;
-    }
-
+    
     @Override
     public List<ConcurBatchReportLineValidationErrorItem> getValidationErrorFileLines() {
         return this.validationErrorFileLines;
@@ -163,7 +151,7 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
     
     @Override
     public String getReportTypeName() {
-        return "standard accounting extract trip reimbursement";
+        return "standard accounting extract";
     }
 
 }

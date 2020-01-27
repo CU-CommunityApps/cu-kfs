@@ -1,12 +1,15 @@
 package edu.cornell.kfs.concur.batch.service.impl;
+import org.apache.commons.collections.CollectionUtils;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +42,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         boolean pdpFileSuccessfullyCreated = false;
         PdpFeedFileBaseEntry pdpFeedFileDataObject = buildPdpFeedBaseEntry(requestExtractFile, reportData);
         if (pdpFeedFileDataObject.getTrailer().getDetailCount().intValue() != 0) {
-            String fullyQualifiedPdpFileName = getConcurBatchUtilityService().buildFullyQualifiedPdpCashAdvanceOutputFileName(getPaymentImportDirectory(), requestExtractFile.getFileName());
+            String fullyQualifiedPdpFileName = getConcurBatchUtilityService().buildFullyQualifiedPdpOutputFileName(getPaymentImportDirectory(), requestExtractFile.getFileName());
             pdpFileSuccessfullyCreated = getConcurBatchUtilityService().createPdpFeedFile(pdpFeedFileDataObject, fullyQualifiedPdpFileName);
             if (pdpFileSuccessfullyCreated) {
                 LOG.info("createPdpFeedFileForValidatedDetailFileLines: fullyQualifiedPdpFileName [" + fullyQualifiedPdpFileName + "]  was created for requestExtractFile [" + requestExtractFile.getFileName() + "]");

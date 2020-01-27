@@ -2,6 +2,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -15,7 +16,6 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.service.LookupSearchService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
@@ -23,6 +23,7 @@ import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
@@ -75,20 +76,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
             LOG.error("buildCollectorFile(): There was a problem preparing the data for the Collector file;"
                     + " will not create a file. See earlier logs for details.");
             return StringUtils.EMPTY;
-        } else if (collectorDataRowsDoNotExistToOutput(collectorBatch)) {
-            LOG.info("buildCollectorFile(): No SAE data rows found to process as collector input data. Collector .data and .done files NOT being created.");
-            return StringUtils.EMPTY;
         }
-
         return writeToCollectorFile(saeFileContents.getOriginalFileName(), collectorBatch);
-    }
-    
-    protected boolean collectorDataRowsDoNotExistToOutput(CollectorBatch collectorBatch) {
-        if (ObjectUtils.isNotNull(collectorBatch.getTotalRecords()) && collectorBatch.getTotalRecords().intValue() == 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     protected CollectorBatch buildCollectorBatch(ConcurStandardAccountingExtractFile saeFileContents,

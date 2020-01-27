@@ -32,7 +32,7 @@ public class ConcurStandardAccountingExtractServiceImplTest {
     @Test
     public void buildPdpOutputFileName() {
         String originalFileName = "extract_CES_SAE_v3_20170316093817.txt";
-        String expectedResults = "pdp_cncr_reimb_extract_CES_SAE_v3_20170316093817.xml";
+        String expectedResults = "pdp_concur_extract_CES_SAE_v3_20170316093817.xml";
         assertEquals("The file name should be the orinal file name with a XML as the extension", expectedResults, 
                 concurStandardAccountingExtractServiceImpl.buildPdpOutputFileName(originalFileName));
     }
