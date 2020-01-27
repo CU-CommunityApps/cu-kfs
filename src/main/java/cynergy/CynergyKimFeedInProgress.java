@@ -4,9 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -23,17 +21,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import edu.cornell.kfs.sys.batch.dataaccess.KimFeedConstants;
-//import edu.cornell.kfs.sys.CUKFSConstants.KimFeedConstants;
-import edu.cornell.kfs.sys.batch.dataaccess.KimFeedDestinationJdbcTemplate;
-import edu.cornell.kfs.sys.batch.dataaccess.impl.KimFeedDestinationSchemaJdbc;
-import edu.cornell.kfs.sys.batch.dataaccess.impl.KrimEntityAddressTableJdbc;
 import util.SimpleCommandLineParser;
 
-public class CynergyKimFeed {
+public class CynergyKimFeedInProgress {
 
-    private static final Logger LOG = LogManager.getLogger(CynergyKimFeed.class);
-
+//    private static final Logger LOG = LogManager.getLogger(CynergyKimFeedInProgress.class);
+//
 //	// Helper constant for inserting blank address rows.
 //	private static final String BLANK_ADDRESS_LINE = " ";
 //
@@ -98,87 +91,43 @@ public class CynergyKimFeed {
 //	private static final String STUDENT_AFFIL_CONST = "STDNT";
 //
 //	// Constants related to frequently-used SELECT SQL.
-//	private static final String SELECT_ENTITY_COUNT_SQL = "SELECT COUNT(*) FROM KRIM_ENTITY_T WHERE ENTITY_ID = ?";
-//	private static final String SELECT_MATCHING_PRINCIPAL_COUNT_SQL = "SELECT COUNT(*) FROM KRIM_PRNCPL_T WHERE PRNCPL_NM = ? AND ENTITY_ID = ?";
-//	private static final String SELECT_CONFLICTING_PRINCIPAL_COUNT_SQL = "SELECT COUNT(*) FROM KRIM_PRNCPL_T WHERE PRNCPL_NM = ? AND ENTITY_ID <> ?";
-//	private static final String SELECT_AFFIL_TYPE_SQL = "SELECT AFLTN_TYP_CD FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID = ?";
-//	private static final String SELECT_EMAIL_COUNT_SQL = "SELECT COUNT(*) FROM KRIM_ENTITY_EMAIL_T WHERE ENTITY_ID = ?";
+//
+//	
+//	
+//	
+//	
 //
 //	// Constants related to frequently-used non-affiliation UPDATE SQL.
-//	private static final String UPDATE_PRINCIPAL_SQL = "UPDATE KRIM_PRNCPL_T SET PRNCPL_NM = ?, LAST_UPDT_DT = SYSDATE WHERE ENTITY_ID = ?";
-//	private static final String UPDATE_HOME_ADDRESS_SQL = "UPDATE KRIM_ENTITY_ADDR_T SET ADDR_LINE_1 = ?, ADDR_LINE_2 = ?," +
-//			"ADDR_LINE_3 = ?, CITY = ?, STATE_PVC_CD = SubStr(?,1,2), POSTAL_CD = ? WHERE ENTITY_ID = ? AND ADDR_TYP_CD = 'HM'";
-//	private static final String UPDATE_CAMPUS_ADDRESS_SQL = "UPDATE KRIM_ENTITY_ADDR_T SET ADDR_LINE_1 = ?, ADDR_LINE_2 = ?, ADDR_LINE_3 = ?, CITY = ?" +
-//			", STATE_PVC_CD = SubStr(?,1,2), POSTAL_CD = ? WHERE ENTITY_ID = ? AND ADDR_TYP_CD = 'CMP'";
-//	private static final String UPDATE_CAMPUS_PHONE_SQL =
-//			"UPDATE KRIM_ENTITY_PHONE_T SET PHONE_NBR = SubStr(?,1,20), LAST_UPDT_DT = SYSDATE WHERE ENTITY_ID = ? AND PHONE_TYP_CD = 'CMP'";
-//	private static final String UPDATE_EMPLID_SQL = "UPDATE KRIM_ENTITY_EXT_ID_T SET EXT_ID = ?, LAST_UPDT_DT = SYSDATE WHERE ENTITY_ID = ?";
-//	private static final String UPDATE_NAME_SQL = "UPDATE KRIM_ENTITY_NM_T SET FIRST_NM = ?, MIDDLE_NM = ?, LAST_NM = ?, SUFFIX_NM = ?, LAST_UPDT_DT = SYSDATE WHERE ENTITY_ID = ?";
-//	private static final String UPDATE_EMAIL_SQL = "UPDATE KRIM_ENTITY_EMAIL_T SET EMAIL_ADDR = ?, LAST_UPDT_DT = SYSDATE WHERE ENTITY_ID = ?";
-//	private static final String UPDATE_PRIV_PREF_SQL = "UPDATE KRIM_ENTITY_PRIV_PREF_T SET SUPPRESS_NM_IND = 'Y', SUPPRESS_EMAIL_IND = 'Y', SUPPRESS_ADDR_IND = 'Y'," +
-//			"SUPPRESS_PHONE_IND = 'Y', SUPPRESS_PRSNL_IND = 'Y', LAST_UPDT_DT = sysdate WHERE ENTITY_ID = ?";
+//	
 //
 //
 //
 //	// Constants related to frequently-used non-affiliation INSERT SQL.
 //
-//	private static final String INSERT_ENTITY_SQL = "INSERT INTO KRIM_ENTITY_T (ENTITY_ID, OBJ_ID, VER_NBR, ACTV_IND,LAST_UPDT_DT) VALUES (?, SYS_GUID(), 1, ?, SYSDATE)";
+//	
 //
-//	private static final String INSERT_PRINCIPAL_SQL = "Insert Into KRIM_PRNCPL_T (PRNCPL_ID, OBJ_ID, VER_NBR, PRNCPL_NM, ENTITY_ID, " +
-//			"PRNCPL_PSWD, ACTV_IND, LAST_UPDT_DT) Values (?, SYS_GUID(), 1, ?, ?, null, ?, SYSDATE)";
 //
-//	private static final String INSERT_ENTITY_TYPE_SQL = "Insert Into KRIM_ENTITY_ENT_TYP_T (ENT_TYP_CD, ENTITY_ID, OBJ_ID, VER_NBR, ACTV_IND, LAST_UPDT_DT)" +
-//			" Values ('PERSON', ?, SYS_GUID(), 1, ?, SYSDATE)";
 //
-//	private static final String INSERT_HOME_ADDRESS_SQL = "Insert Into KRIM_ENTITY_ADDR_T ( ENTITY_ADDR_ID, OBJ_ID, VER_NBR, ENTITY_ID, ENT_TYP_CD, " +
-//			"ADDR_TYP_CD, ADDR_LINE_1, ADDR_LINE_2, ADDR_LINE_3, CITY, STATE_PVC_CD, POSTAL_CD, " +
-//			"POSTAL_CNTRY_CD, DFLT_IND, ACTV_IND, LAST_UPDT_DT) Values ( To_Char(KRIM_ENTITY_ADDR_ID_S.NEXTVAL)," +
-//			"SYS_GUID(), 1, ?, 'PERSON', 'HM', ?, ?, ?, ?, SubStr(?,1,2), ?, ' ', 'Y', ?, SYSDATE)";
 //
-//	private static final String INSERT_CAMPUS_ADDRESS_SQL = "Insert Into KRIM_ENTITY_ADDR_T (ENTITY_ADDR_ID, OBJ_ID, VER_NBR, ENTITY_ID, ENT_TYP_CD, ADDR_TYP_CD, " +
-//			"ADDR_LINE_1, ADDR_LINE_2, ADDR_LINE_3, CITY, STATE_PVC_CD, POSTAL_CD, POSTAL_CNTRY_CD, DFLT_IND, " +
-//			"ACTV_IND, LAST_UPDT_DT) Values (To_Char( KRIM_ENTITY_ADDR_ID_S.NEXTVAL), SYS_GUID(), 1, ?, " +
-//			"'PERSON', 'CMP', ?, ?, ?, ?, SubStr(?,1,2), ?, ' ', 'N', ?, SYSDATE)";
 //
-//	private static final String INSERT_EMAIL_ADDRESS_SQL = "Insert Into KRIM_ENTITY_EMAIL_T (ENTITY_EMAIL_ID, OBJ_ID, VER_NBR, ENTITY_ID, ENT_TYP_CD, EMAIL_TYP_CD, " +
-//			"EMAIL_ADDR, DFLT_IND, ACTV_IND, LAST_UPDT_DT) Values (To_Char(KRIM_ENTITY_EMAIL_ID_S.NEXTVAL), SYS_GUID(), " +
-//			"1, ?, 'PERSON', 'WRK', ?, 'Y', ?, SYSDATE)";
 //
-//	private static final String INSERT_CAMPUS_PHONE_SQL = "Insert Into KRIM_ENTITY_PHONE_T (ENTITY_PHONE_ID, OBJ_ID, VER_NBR, ENTITY_ID, ENT_TYP_CD, PHONE_TYP_CD, PHONE_NBR, " +
-//			"PHONE_EXTN_NBR, POSTAL_CNTRY_CD, DFLT_IND, ACTV_IND, LAST_UPDT_DT) Values (To_Char(KRIM_ENTITY_PHONE_ID_S.NEXTVAL), " +
-//			"SYS_GUID(), 1, ?, 'PERSON', 'CMP', SubStr(?,1,20), ' ', ' ', 'Y', ?, SYSDATE)";
 //
-//	private static final String INSERT_PRIV_PREF_ON_SQL = "Insert Into KRIM_ENTITY_PRIV_PREF_T (ENTITY_ID, OBJ_ID, VER_NBR, SUPPRESS_NM_IND, SUPPRESS_EMAIL_IND, SUPPRESS_ADDR_IND," +
-//			"SUPPRESS_PHONE_IND, SUPPRESS_PRSNL_IND, LAST_UPDT_DT) Values (?, SYS_GUID(), 1, 'Y', 'Y', 'Y', 'Y', 'Y', SYSDATE)";
 //
-//	private static final String INSERT_PRIV_PREF_OFF_SQL = "Insert Into KRIM_ENTITY_PRIV_PREF_T (ENTITY_ID, OBJ_ID, VER_NBR, SUPPRESS_NM_IND, SUPPRESS_EMAIL_IND, SUPPRESS_ADDR_IND," +
-//			"SUPPRESS_PHONE_IND, SUPPRESS_PRSNL_IND, LAST_UPDT_DT) Values (?, SYS_GUID(), 1, 'N', 'N', 'Y', 'N', 'N', SYSDATE)";
 //
-//	private static final String INSERT_EMPLID_SQL = "Insert Into KRIM_ENTITY_EXT_ID_T (ENTITY_EXT_ID_ID, OBJ_ID, VER_NBR, ENTITY_ID, EXT_ID_TYP_CD, EXT_ID, LAST_UPDT_DT) " +
-//			"Values (To_Char(KRIM_ENTITY_EXT_ID_ID_S.NEXTVAL), SYS_GUID(), 1, ?, 'EMPLID', ?, SYSDATE)";
 //
-//	private static final String INSERT_TAXID_SQL = "Insert Into KRIM_ENTITY_EXT_ID_T (ENTITY_EXT_ID_ID, OBJ_ID, VER_NBR, ENTITY_ID, EXT_ID_TYP_CD, EXT_ID, LAST_UPDT_DT) " +
-//			"Values (To_Char(KRIM_ENTITY_EXT_ID_ID_S.NEXTVAL), SYS_GUID(), 1, ?, 'TAX', 'kvcHXZFmZ0zDIqZUo3sGug==', SYSDATE)";
 //
-//	private static final String INSERT_NAME_SQL = "Insert Into KRIM_ENTITY_NM_T (ENTITY_NM_ID, OBJ_ID, VER_NBR, ENTITY_ID, NM_TYP_CD, FIRST_NM, MIDDLE_NM, LAST_NM, SUFFIX_NM, " +
-//			"TITLE_NM, DFLT_IND, ACTV_IND, LAST_UPDT_DT) Values (To_Char(KRIM_ENTITY_NM_ID_S.NEXTVAL), SYS_GUID(), 1, ?, 'PRFR', ?, ?, ?, ?, null, 'Y', ?, SYSDATE)";
+//
+//
 //
 //
 //
 //	// Constants related to frequently-used affiliation and employee info SQL.
-//	private static final String INSERT_AFFIL_SQL = "Insert Into KRIM_ENTITY_AFLTN_T (ENTITY_AFLTN_ID, OBJ_ID, VER_NBR, ENTITY_ID, AFLTN_TYP_CD, CAMPUS_CD," +
-//			" DFLT_IND, ACTV_IND, LAST_UPDT_DT) Values (To_Char(KRIM_ENTITY_AFLTN_ID_S.NEXTVAL), SYS_GUID(), 1, ?, ?, 'IT', ?, 'Y', SYSDATE)";
-//	private static final String INSERT_EMP_INFO_SQL = "Insert Into KRIM_ENTITY_EMP_INFO_T (ENTITY_EMP_ID, OBJ_ID, VER_NBR, ENTITY_ID, ENTITY_AFLTN_ID," +
-//			" EMP_STAT_CD, EMP_TYP_CD, BASE_SLRY_AMT, PRMRY_IND, ACTV_IND, LAST_UPDT_DT, PRMRY_DEPT_CD, EMP_ID, EMP_REC_ID) Values (To_Char(KRIM_ENTITY_EMP_ID_S.NEXTVAL)," +
-//					" SYS_GUID(), 1, ?, To_Char(KRIM_ENTITY_AFLTN_ID_S.CURRVAL), ?, 'P', 5, ?, 'Y', SYSDATE, ?, ?, ?)";
-//	private static final String UPDATE_AFFIL_SQL = "update KRIM_ENTITY_AFLTN_T SET ACTV_IND = 'Y', DFLT_IND = ? WHERE ENTITY_ID = ? AND AFLTN_TYP_CD = ?";
-//	private static final String UPDATE_EMP_INFO_SQL = "update KRIM_ENTITY_EMP_INFO_T SET ACTV_IND = 'Y', EMP_STAT_CD = ?, PRMRY_IND = ?, EMP_REC_ID = ?" +
-//			" WHERE ENTITY_AFLTN_ID = (SELECT ENTITY_AFLTN_ID FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID = ? AND AFLTN_TYP_CD = ?)";
-//	private static final String DELETE_EMP_INFO_SQL = "DELETE FROM KRIM_ENTITY_EMP_INFO_T WHERE ENTITY_AFLTN_ID = " +
-//			"(SELECT ENTITY_AFLTN_ID FROM KRIM_ENTITY_AFLTN_T WHERE ENTITY_ID = ? AND AFLTN_TYP_CD = ?)";
-//	private static final String UPDATE_EMP_INFO_CD_AND_ID_SQL = "UPDATE KRIM_ENTITY_EMP_INFO_T SET PRMRY_DEPT_CD = ?, EMP_ID = ? WHERE ENTITY_ID = ?";
+//
+//
+//
+//
 //	
-//	private static final String DATABASE_TEST_SQL = "SELECT 1 FROM DUAL";
+//	
 //
 //	// Constants related to reading in config data for this utility from a .properties file, and for accessing the info for the server DB.
 //	private static final String SERVER_DB_URL_PROP = "db-url0";
@@ -197,7 +146,7 @@ public class CynergyKimFeed {
 //
 //	// Constants related to setting up the datasources.
 //	private static final String DB_DRIVER_NAME = "oracle.jdbc.OracleDriver";
-//	private static final String DB_VALIDATION_SQL = "select 1 from dual";
+//	
 //
 //	// Passed to indicate properties should be read from System properties instead of a file
 //	private static final String SYSTEM_PROPERTIES_FILE_INDICATOR = "-";
@@ -293,13 +242,13 @@ public class CynergyKimFeed {
 //	private final Object[] twoArgArray = new Object[2];
 //	private final Object[] threeArgArray = new Object[3];
 //	private final Object[] fourArgArray = new Object[4];
-
+//
 //	/**
 //	 * Constructs a new instance of this utility using properties from the given file (or system properties if the filename is given as "-").
 //	 * 
 //	 * @param dbPropFileName
 //	 */
-//	public CynergyKimFeed(Properties props) {
+//	public CynergyKimFeedInProgress(Properties props) {
 //		dbProps = props;		
 //        String serverDBUrl = dbProps.getProperty(SERVER_DB_URL_PROP);
 //        serverTemplate = new JdbcTemplate(createDataSource(serverDBUrl, dbProps.getProperty(SERVER_DB_USERNAME_PROP), dbProps.getProperty(SERVER_DB_PASSWORD_PROP)));
@@ -412,42 +361,42 @@ public class CynergyKimFeed {
 //	private void truncateTables(JdbcTemplate destTemplate) {
 //		//Disable Constraints
 //		LOG.info("truncateTables: disabling constraints");
-//		destTemplate.update("call disable_constraint()");
+//		
 //		
 //		// Truncate tables
 //		LOG.info("truncateTables: truncating tables...");
 //		
-//		destTemplate.update("truncate table KRIM_ENTITY_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_T");   
-//		destTemplate.update("Truncate Table KRIM_PRNCPL_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_PRNCPL_T");
-//		destTemplate.update("Truncate Table KRIM_ENTITY_ADDR_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_ADDR_T");
-//		destTemplate.update("Truncate Table KRIM_ENTITY_EMAIL_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_EMAIL_T");
-//		destTemplate.update("Truncate Table KRIM_ENTITY_PHONE_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_PHONE_T");
-//		destTemplate.update("Truncate Table KRIM_ENTITY_PRIV_PREF_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_PRIV_PREF_T");
 //		
-//		destTemplate.update("Truncate Table KRIM_ENTITY_EMP_INFO_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_EMP_INFO_T");
-//		destTemplate.update("truncate table KRIM_ENTITY_AFLTN_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_AFLTN_T");
 //		   
-//		destTemplate.update("Truncate Table KRIM_ENTITY_EXT_ID_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_EXT_ID_T");
-//		destTemplate.update("Truncate Table KRIM_ENTITY_NM_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_NM_T");
 //		   
-//		destTemplate.update("Truncate Table KRIM_ENTITY_ENT_TYP_T Drop Storage");
+//		
 //		LOG.info("truncateTables: truncated KRIM_ENTITY_ENT_TYP_T");
 //		
-//		LOG.info("truncateTables: tables truncated!");
+//		LOG.info("truncateTables: tables truncated!");-
 //		
 //		//enable constraints
 //		LOG.info("truncateTables: enabling constraints");
-//		destTemplate.update("call enable_constraint()");
+//		
 //	}
 //
 //	/**
@@ -456,18 +405,8 @@ public class CynergyKimFeed {
 //	private void addSystemUsers(JdbcTemplate destTemplate) {
 //		
 //	    LOG.info("addSystemUsers: Adding System Users");
-//		destTemplate.update("Insert into krim_entity_t (ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) values ('1','7ECD903B6A9F48C0E04400144F00411E',1,'Y',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//		destTemplate.update("Insert into krim_entity_t (ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) values ('2','7ECD903B6AA048C0E04400144F00411E',1,'Y',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//		destTemplate.update("Insert into krim_entity_t (ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) values ('3','7ECD903B6AA148C0E04400144F00411E',1,'Y',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//
-//		destTemplate.update("Insert into krim_prncpl_t (PRNCPL_ID,OBJ_ID,VER_NBR,PRNCPL_NM,ENTITY_ID,PRNCPL_PSWD,ACTV_IND,LAST_UPDT_DT) values ('1','7ECD903B6A9C48C0E04400144F00411E',175,'kr','1',null,'N',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//		destTemplate.update("Insert into krim_prncpl_t (PRNCPL_ID,OBJ_ID,VER_NBR,PRNCPL_NM,ENTITY_ID,PRNCPL_PSWD,ACTV_IND,LAST_UPDT_DT) values ('2','7ECD903B6A9D48C0E04400144F00411E',5,'kfs','2',null,'N',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//		destTemplate.update("Insert into krim_prncpl_t (PRNCPL_ID,OBJ_ID,VER_NBR,PRNCPL_NM,ENTITY_ID,PRNCPL_PSWD,ACTV_IND,LAST_UPDT_DT) values ('3','7ECD903B6A9E48C0E04400144F00411E',271,'admin','3',null,'N',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//
-//		destTemplate.update("Insert into krim_entity_ent_typ_t (ENT_TYP_CD,ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) values ('SYSTEM','1','7ECD903B6AA248C0E04400144F00411E',1,'Y',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//		destTemplate.update("Insert into krim_entity_ent_typ_t (ENT_TYP_CD,ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) values ('SYSTEM','2','7ECD903B6AA348C0E04400144F00411E',1,'Y',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
-//		destTemplate.update("Insert into krim_entity_ent_typ_t (ENT_TYP_CD,ENTITY_ID,OBJ_ID,VER_NBR,ACTV_IND,LAST_UPDT_DT) values ('PERSON','3','7ECD903B6AA448C0E04400144F00411E',1,'Y',to_timestamp('04-FEB-10','DD-MON-RR HH.MI.SSXFF AM'))");
 //	
+//	    
 //	}
 //
 //	/**
@@ -966,8 +905,7 @@ public class CynergyKimFeed {
 //			
 //			if (deleteIDs.length() > 0 ) {
 //				deleteIDs = deleteIDs.substring(0, deleteIDs.length() -1);
-//				destTemplate.execute("UPDATE KRIM_PRNCPL_T SET PRNCPL_NM = 'DIS-' || PRNCPL_NM WHERE PRNCPL_ID IN (" + deleteIDs + ") " +
-//										"		AND PRNCPL_NM NOT LIKE 'DIS-%'");	
+//				
 //				LOG.info("refresh: The following users were marked as deleted/discontinued: " + deleteIDs);
 //			} else {
 //			    LOG.info("refresh: No users were marked as deleted/discontinued.");
@@ -1062,138 +1000,23 @@ public class CynergyKimFeed {
 //    private String getDeltaLoadDate() {
 //        return dbProps.getProperty(LOAD_DELTA_WITH_DATE_PROP);
 //    }
-//    
-//    /**
-//     * @param args
-//     */
-//    public static void runKimFeed(Properties props, String type) {
-//        String[] args = new String[0];
-//        SimpleCommandLineParser parser = new SimpleCommandLineParser(args);
-//        String configfile = parser.getValue("filename", "file", "f");
-//        //String type = parser.getValue("type", "t");
-//        
-//        if (configfile == null) {
-//            LOG.debug("runKimFeed: No config file ...");
-//            configfile = "-";
-//        }
-//        
-//        CynergyKimFeed kimfeed = new CynergyKimFeed(props); 
-//        
-//        if (type != null && type.equals("full")) {
-//            LOG.info("runKimFeed: Running full refresh");
-//            kimfeed.FullRefresh();
-//        } else {
-//            LOG.info("runKimFeed: Running delta....");
-//            kimfeed.Delta();
-//        }
-//        LOG.info("runKimFeed: All done!");
-//    }
-
-    //possibly move to a constants package or source schema class or destination schema class depending on why constant exists
-    public static final String SKIP_DELTA_FLAG_UPDATES_PROP = "skip-delta-flag-updates";
-    public static final String LOAD_LATEST_DELTA_ONLY_PROP = "load-latest-delta-only";
-    public static final String LOAD_DELTA_WITH_DATE_PROP = "load-delta-with-date";
-    private static final String DEST_DB_URL_PROP = "db-url1";
-    private static final String DEST_DB_USERNAME_PROP = "db-username1";
-    private static final String DEST_DB_PASSWORD_PROP = "db-password1";
-    private static final String DB_DRIVER_NAME = "oracle.jdbc.OracleDriver";
-    
-    //needs getters amd setters
-    private Properties dbProps;
-    
-    
-    private KimFeedDestinationSchemaJdbc kimFeedDestinationSchemaJdbc;
-    private KrimEntityAddressTableJdbc krimEntityAddressTableJdbc;
-    private KimFeedDestinationJdbcTemplate destinationJdbcTemplate;
-    
-    public CynergyKimFeed(Properties props) {
-        LOG.info("CynergyKimFeed: Entering class creation.");
-        dbProps = props;
-        String destinationDBUserName = dbProps.getProperty(DEST_DB_USERNAME_PROP);
-        
-        //all of these need to be in a method called to create all the schemas and tables in the destination schema
-        setKimFeedDestinationSchemaJdbc(new KimFeedDestinationSchemaJdbc(destinationDBUserName));
-        LOG.info("CynergyKimFeed: KimFeedDestinationSchemaJdbc initialized.");
-        setKrimEntityAddressTableJdbc(new KrimEntityAddressTableJdbc(destinationDBUserName));
-        LOG.info("CynergyKimFeed: KrimEntityAddressTableJdbc initialized.");
-        
-        String destinationDBUrl = dbProps.getProperty(DEST_DB_URL_PROP);
-        setDestinationJdbcTemplate(new KimFeedDestinationJdbcTemplate(createDataSource(destinationDBUrl, destinationDBUserName, 
-                dbProps.getProperty(DEST_DB_PASSWORD_PROP), getKimFeedDestinationSchemaJdbc().getDatabaseValidationSql())));
-        
-        LOG.info("CynergyKimFeed: KrimEntityAddressTableJdbc initialized.");
-
-        testJDBCConnection(getDestinationJdbcTemplate(), destinationDBUrl, getKimFeedDestinationSchemaJdbc().getDatabaseTestSql());
-        
-        prototypeTestDestinationUpdate(getDestinationJdbcTemplate());
-        
-        LOG.info("CynergyKimFeed: Leaving class creation.");
-    }
-    
-    /**
-     * Creates a new DataSource using the given URL, username, and password. The returned DataSource is configured for use with an Oracle DB.
-     */
-    private static DataSource createDataSource(String url, String username, String password, String validationSql) {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(DB_DRIVER_NAME);
-        dataSource.setUrl(url);
-        dataSource.setMaxActive(50);
-        dataSource.setMinIdle(7);
-        dataSource.setInitialSize(7);
-        dataSource.setValidationQuery(validationSql);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        dataSource.setAccessToUnderlyingConnectionAllowed(true);
-        return dataSource;
-    }
-     
-    private void testJDBCConnection(KimFeedDestinationJdbcTemplate template, String connectionUrl, String testSQL) {
-        try {
-           template.execute(testSQL);
-           LOG.info("testJDBCConnection, successfully tested " + connectionUrl);
-        } catch (Exception e) {
-           LOG.error("testJDBCConnection, unable to test query " + connectionUrl, e);
-           throw new RuntimeException(e);
-        }
-    }
-    private void prototypeTestDestinationUpdate(KimFeedDestinationJdbcTemplate destinationJdbcTemplate) {
-        LOG.info("prototypeTestDestinationUpdate: Entered.");
-        //This map data setup would be done when the EDW data changes are read in and 
-        //would represent a single line of data so the processing would remain the same.
-        Map<String, Object> kimDataChangesMap = new HashMap<String, Object>();
-        kimDataChangesMap.put(KimFeedConstants.HOME_ADDRESS1_KEY, "Bogus Address line 1 ");
-        kimDataChangesMap.put(KimFeedConstants.HOME_ADDRESS2_KEY, "Line2 addressing testing");
-        kimDataChangesMap.put(KimFeedConstants.HOME_ADDRESS3_KEY, "Address line 3 junk for testing");
-        kimDataChangesMap.put(KimFeedConstants.HOME_CITY_KEY, "Kill Devil Hills");
-        kimDataChangesMap.put(KimFeedConstants.HOME_STATE_KEY, "NC");
-        kimDataChangesMap.put(KimFeedConstants.HOME_POSTAL_KEY, "14850");
-        kimDataChangesMap.put(KimFeedConstants.CU_PERSON_SID_KEY, "1015635");
-        
-        LOG.info("prototypeTestDestinationUpdate: Argument map configured for home address type update test.");
-        
-        getDestinationJdbcTemplate().update(getKrimEntityAddressTableJdbc().getUpdateAddressSql(), getKrimEntityAddressTableJdbc().configureUpdateHomeAddressArguments(kimDataChangesMap));
-
-        LOG.info("prototypeTestDestinationUpdate: Home address update test has completed..");
-    }
-    
-	/**
-	 * @param args
-	 */
-	public static void runKimFeed(Properties props, String type) {
-	    String[] args = new String[0];
-		SimpleCommandLineParser parser = new SimpleCommandLineParser(args);
-		String configfile = parser.getValue("filename", "file", "f");
-		
-		if (configfile == null) {
-			LOG.info("runKimFeed: No config file ...");
-			configfile = "-";
-		}
-		
-		LOG.info("runKimFeed: Prior to CynergyKimFeed class creation.");
-		CynergyKimFeed kimfeed = new CynergyKimFeed(props); 
-		LOG.info("runKimFeed: CynergyKimFeed was created.");
-		
-		
+//
+//	/**
+//	 * @param args
+//	 */
+//	public static void runKimFeed(Properties props, String type) {
+//	    String[] args = new String[0];
+//		SimpleCommandLineParser parser = new SimpleCommandLineParser(args);
+//		String configfile = parser.getValue("filename", "file", "f");
+//		//String type = parser.getValue("type", "t");
+//		
+//		if (configfile == null) {
+//			LOG.debug("runKimFeed: No config file ...");
+//			configfile = "-";
+//		}
+//		
+//		CynergyKimFeedInProgress kimfeed = new CynergyKimFeedInProgress(props); 
+//		
 //		if (type != null && type.equals("full")) {
 //			LOG.info("runKimFeed: Running full refresh");
 //			kimfeed.FullRefresh();
@@ -1202,30 +1025,6 @@ public class CynergyKimFeed {
 //			kimfeed.Delta();
 //		}
 //		LOG.info("runKimFeed: All done!");
-	}
-
-    public KimFeedDestinationSchemaJdbc getKimFeedDestinationSchemaJdbc() {
-        return kimFeedDestinationSchemaJdbc;
-    }
-
-    public void setKimFeedDestinationSchemaJdbc(KimFeedDestinationSchemaJdbc kimFeedDestinationSchemaJdbc) {
-        this.kimFeedDestinationSchemaJdbc = kimFeedDestinationSchemaJdbc;
-    }
-
-    public KrimEntityAddressTableJdbc getKrimEntityAddressTableJdbc() {
-        return krimEntityAddressTableJdbc;
-    }
-
-    public void setKrimEntityAddressTableJdbc(KrimEntityAddressTableJdbc krimEntityAddressTableJdbc) {
-        this.krimEntityAddressTableJdbc = krimEntityAddressTableJdbc;
-    }
-
-    public KimFeedDestinationJdbcTemplate getDestinationJdbcTemplate() {
-        return destinationJdbcTemplate;
-    }
-
-    public void setDestinationJdbcTemplate(KimFeedDestinationJdbcTemplate destinationJdbcTemplate) {
-        this.destinationJdbcTemplate = destinationJdbcTemplate;
-    }
+//	}
 
 }
