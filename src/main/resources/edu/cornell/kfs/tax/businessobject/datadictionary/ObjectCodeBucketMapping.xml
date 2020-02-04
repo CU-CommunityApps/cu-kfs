@@ -125,6 +125,7 @@
   </bean>
 
   <bean id="taxFpPaymentReasonValuesFinder"
-        class="edu.cornell.kfs.tax.businessobject.options.TaxFpPaymentReasonValuesFinder"/>
+        class="edu.cornell.kfs.tax.businessobject.options.TaxFpPaymentReasonValuesFinder"
+        p:keyValuesService-ref="keyValuesService"/>
 
 </beans>
