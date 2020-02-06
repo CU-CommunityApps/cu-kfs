@@ -129,7 +129,7 @@ public class CuEinvoiceApiResource {
     public Response getUnitOfMeasureCodes(@Context HttpHeaders headers) {
         try {
             Map<String, String> criteria = Collections.singletonMap(
-                    KRADPropertyConstants.ACTIVE_INDICATOR, CuFPConstants.YES);
+                    KRADPropertyConstants.ACTIVE, CuFPConstants.YES);
             Pair<Collection<UnitOfMeasure>, Integer> results = getLookupDao().findObjects(
                     UnitOfMeasure.class, criteria, 0, -1, KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, true);
             String responseBody = serializeUnitOfMeasureCodesToJson(results.getLeft());
