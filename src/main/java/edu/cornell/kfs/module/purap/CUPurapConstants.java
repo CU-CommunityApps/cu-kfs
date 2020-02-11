@@ -239,6 +239,7 @@ public class CUPurapConstants {
         public static final String COUNTRY_NAME = "country_name";
         public static final String ADDRESS_TYPE_CODE = "address_type_code";
         public static final String UNIT_OF_MEASURE = "unit_of_measure";
+        public static final String UNITS_OF_MEASURE = "units_of_measure";
         public static final String DESCRIPTION = "description";
         public static final String UNIT_PRICE = "unit_price";
         public static final String LINE_NUMBER = "line_number";

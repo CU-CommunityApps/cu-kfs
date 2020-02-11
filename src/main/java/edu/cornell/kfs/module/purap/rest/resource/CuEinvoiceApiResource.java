@@ -1,27 +1,15 @@
 package edu.cornell.kfs.module.purap.rest.resource;
 
-import com.google.gson.Gson;
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.dataaccess.CuEinvoiceDao;
-import edu.cornell.kfs.module.purap.dataaccess.impl.CuEinvoiceDaoOjb;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.kuali.kfs.krad.dao.LookupDao;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.purap.PurapPropertyConstants;
-import org.kuali.kfs.module.purap.businessobject.ItemType;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.vnd.VendorConstants;
-import org.kuali.kfs.vnd.businessobject.VendorAddress;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,13 +23,34 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.kuali.kfs.krad.dao.LookupDao;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.businessobject.ItemType;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import com.google.gson.Gson;
+
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.dataaccess.CuEinvoiceDao;
+import edu.cornell.kfs.module.purap.dataaccess.impl.CuEinvoiceDaoOjb;
 
 @Path("api")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -111,6 +120,22 @@ public class CuEinvoiceApiResource {
             return Response.ok(responseBody).build();
         } catch (Exception ex) {
             LOG.error("getPurchaseOrder", ex);
+            return respondInternalServerError(ex);
+        }
+    }
+
+    @GET
+    @Path("uom/active")
+    public Response getUnitOfMeasureCodes(@Context HttpHeaders headers) {
+        try {
+            Map<String, String> criteria = Collections.singletonMap(
+                    KRADPropertyConstants.ACTIVE, CuFPConstants.YES);
+            Pair<Collection<UnitOfMeasure>, Integer> results = getLookupDao().findObjects(
+                    UnitOfMeasure.class, criteria, 0, -1, KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, true);
+            String responseBody = serializeUnitOfMeasureCodesToJson(results.getLeft());
+            return Response.ok(responseBody).build();
+        } catch (Exception ex) {
+            LOG.error("getUnitOfMeasureCodes", ex);
             return respondInternalServerError(ex);
         }
     }
@@ -190,6 +215,22 @@ public class CuEinvoiceApiResource {
             }
         }
         poProperties.put(CUPurapConstants.Einvoice.ITEMS, poLines.toArray());
+    }
+
+    private String serializeUnitOfMeasureCodesToJson(Collection<UnitOfMeasure> unitsOfMeasure) {
+        Properties uomWrapper = new Properties();
+        Properties[] uomProperties = unitsOfMeasure.stream()
+                .map(this::convertUnitOfMeasureToProperties)
+                .toArray(Properties[]::new);
+        uomWrapper.put(CUPurapConstants.Einvoice.UNITS_OF_MEASURE, uomProperties);
+        return gson.toJson(uomWrapper);
+    }
+
+    private Properties convertUnitOfMeasureToProperties(UnitOfMeasure unitOfMeasure) {
+        Properties unitProps = new Properties();
+        safelyAddProperty(unitProps, CUPurapConstants.Einvoice.UNIT_OF_MEASURE, unitOfMeasure.getItemUnitOfMeasureCode());
+        safelyAddProperty(unitProps, CUPurapConstants.Einvoice.DESCRIPTION, unitOfMeasure.getItemUnitOfMeasureDescription());
+        return unitProps;
     }
 
     private void safelyAddProperty(Properties properties, String key, String value) {
