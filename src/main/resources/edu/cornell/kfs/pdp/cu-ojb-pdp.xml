@@ -72,8 +72,7 @@
     <field-descriptor name="balanceAccount" column="BAL_ACCT" jdbc-type="VARCHAR"/>
     <field-descriptor name="bankName" column="BNK_NM" jdbc-type="VARCHAR"/>
     <field-descriptor name="bankRoutingNumber" column="BNK_RTNG_NBR" jdbc-type="VARCHAR"/>
-    <field-descriptor name="bankAccountNumber" column="BNK_ACCT_NBR" jdbc-type="VARCHAR"
-    				  conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="bankAccountNumber" column="BNK_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="bankAccountType" column="BNK_ACCT_TYP_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="retryCount" column="RETRY_CNT" jdbc-type="INTEGER"/>
     <field-descriptor name="status" column="STATUS" jdbc-type="VARCHAR"/>

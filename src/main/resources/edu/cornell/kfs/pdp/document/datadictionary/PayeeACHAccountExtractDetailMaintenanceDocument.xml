@@ -52,36 +52,21 @@
           parent="MaintainableSectionDefinition" p:id="Edit Payee ACH Account Extract Detail" p:title="Edit Payee ACH Account Extract Detail">
         <property name="maintainableItems">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="id"
-                      p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="createDate"
-                	  p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="id" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="createDate" p:unconditionallyReadOnly="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="status"/>
-                <bean parent="MaintainableFieldDefinition" p:name="retryCount"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="employeeID"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="netID"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="lastName"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="firstName"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="paymentType"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="balanceAccount"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="completedDate"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="bankName"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="bankRoutingNumber"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="bankAccountNumber"
-                	  p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="bankAccountType"
-                	  p:unconditionallyReadOnly="true"/>
-
+                <bean parent="MaintainableFieldDefinition" p:name="retryCount" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="employeeID" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="netID" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="lastName" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="firstName" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="paymentType" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="balanceAccount" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="completedDate" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankName" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankRoutingNumber" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankAccountNumber" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankAccountType" p:unconditionallyReadOnly="true"/>
             </list>
         </property>
     </bean>
