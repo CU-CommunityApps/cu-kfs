@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2020 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PayeeACHAccountExtractDetail" parent="PayeeACHAccountExtractDetail-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="PayeeACHAccountExtractDetail-inquiryDefinition"
+          p:lookupDefinition-ref="PayeeACHAccountExtractDetail-lookupDefinition"
+          p:objectLabel="Payee ACH Account Extract Detail">
+        <property name="attributes">
+            <list>
+                <ref bean="PayeeACHAccountExtractDetail-id"/>
+                <ref bean="PayeeACHAccountExtractDetail-createDate"/>
+                <ref bean="PayeeACHAccountExtractDetail-status"/>
+                <ref bean="PayeeACHAccountExtractDetail-retryCount"/>
+                <ref bean="PayeeACHAccountExtractDetail-employeeID"/>
+                <ref bean="PayeeACHAccountExtractDetail-netID"/>
+                <ref bean="PayeeACHAccountExtractDetail-lastName"/>
+                <ref bean="PayeeACHAccountExtractDetail-firstName"/>
+                <ref bean="PayeeACHAccountExtractDetail-paymentType"/>
+                <ref bean="PayeeACHAccountExtractDetail-balanceAccount"/>
+                <ref bean="PayeeACHAccountExtractDetail-completedDate"/>
+                <ref bean="PayeeACHAccountExtractDetail-bankName"/>
+                <ref bean="PayeeACHAccountExtractDetail-bankRoutingNumber"/>
+                <ref bean="PayeeACHAccountExtractDetail-bankAccountNumber"/>
+                <ref bean="PayeeACHAccountExtractDetail-bankAccountType"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="PayeeACHAccountExtractDetail-id"
+          parent="PayeeACHAccountExtractDetail-id-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-id-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="id" p:forceUppercase="true" p:label="ACH Account Extract Detail Generated Identifier"
+          p:shortLabel="ACH Account Extract Detail ID" p:maxLength="10" p:validationPattern-ref="NumericValidation"
+          p:required="true" p:formatterClass="org.kuali.kfs.sys.businessobject.NoCommaCurrencyFormatter"
+          p:control-ref="HiddenControl"/>
+          
+    <bean id="PayeeACHAccountExtractDetail-createDate" parent="PayeeACHAccountExtractDetail-createDate-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-createDate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp"
+          p:name="createDate" p:label="Create Date" p:shortLabel="Crt Dt" p:required="false"/>
+          
+    <bean id="PayeeACHAccountExtractDetail-status"
+          parent="PayeeACHAccountExtractDetail-status-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-status-parentBean" abstract="true"
+          parent="AttributeDefinition" p:name="status"
+          p:label="Status" p:shortLabel="Status">
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="achAccountExtractStatusValuesFinder"
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean> 
+    
+    <bean id="PayeeACHAccountExtractDetail-retryCount" parent="PayeeACHAccountExtractDetail-retryCount-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-retryCount-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="retryCount" p:label="Retry Count" p:shortLabel="Retry Cnt" p:maxLength="10"
+          p:validationPattern-ref="NumericValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean>
+    
+    <bean id="PayeeACHAccountExtractDetail-employeeID" parent="PayeeACHAccountExtractDetail-employeeID-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-employeeID-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="employeeID" p:label="Employee ID" p:shortLabel="Empl ID" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean> 
+    
+    <bean id="PayeeACHAccountExtractDetail-netID" parent="PayeeACHAccountExtractDetail-netID-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-netID-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="netID" p:label="Net ID" p:shortLabel="Netid" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean>
+    
+    <bean id="PayeeACHAccountExtractDetail-lastName" parent="PayeeACHAccountExtractDetail-lastName-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-lastName-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="lastName" p:label="Last Name" p:shortLabel="Last Name" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean> 
+    
+    <bean id="PayeeACHAccountExtractDetail-firstName" parent="PayeeACHAccountExtractDetail-firstName-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-firstName-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="firstName" p:label="First Name" p:shortLabel="First Name" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean>
+     
+    <bean id="PayeeACHAccountExtractDetail-paymentType" parent="PayeeACHAccountExtractDetail-paymentType-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-paymentType-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="paymentType" p:label="Payment Type" p:shortLabel="Pmt Type" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean>
+    
+    <bean id="PayeeACHAccountExtractDetail-balanceAccount" parent="PayeeACHAccountExtractDetail-balanceAccount-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-balanceAccount-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="balanceAccount" p:label="Balance Account" p:shortLabel="Bal Acct" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean>
+    
+    <bean id="PayeeACHAccountExtractDetail-completedDate" parent="PayeeACHAccountExtractDetail-completedDate-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-completedDate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp"
+          p:name="completedDate" p:label="Completed Date" p:shortLabel="Cmpltd Dt" p:required="false"/>
+          
+    <bean id="PayeeACHAccountExtractDetail-bankName" parent="PayeeACHAccountExtractDetail-bankName-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-bankName-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="bankName" p:label="Bank Name" p:shortLabel="Bank Name" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean>
+    
+    <bean id="PayeeACHAccountExtractDetail-bankRoutingNumber" parent="PayeeACHAccountExtractDetail-bankRoutingNumber-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-bankRoutingNumber-parentBean" abstract="true" parent="Common-bankRoutingNumber"
+          p:forceUppercase="false" p:shortLabel="Bank Routing Number" p:validationPattern-ref="NumericValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="9"/>
+        </property>
+    </bean>
+    
+    <bean id="PayeeACHAccountExtractDetail-bankAccountNumber" parent="PayeeACHAccountExtractDetail-bankAccountNumber-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-bankAccountNumber-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="bankAccountNumber" p:label="Bank Account Number" p:shortLabel="Bank Account Number"
+          p:forceUppercase="true" p:maxLength="17" p:validationPattern-ref="AlphaNumericValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="17"/>
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity" p:mask="true" p:partialMask="true">
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*****************"/>
+                </property>
+                <property name="partialMaskFormatter">
+                    <bean parent="MaskFormatterSubString" p:maskLength="5"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="PayeeACHAccountExtractDetail-bankAccountType" parent="PayeeACHAccountExtractDetail-bankAccountType-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-bankAccountType-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="bankAccountType" p:label="Account Type" p:shortLabel="Account Type" p:maxLength="2"
+          p:required="true">
+        <property name="validationPattern">
+            <bean parent="CharsetValidationPattern" p:validChars="23"/>
+        </property>
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="achTransactionCodeValuesFinder"
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean> 
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="PayeeACHAccountExtractDetail-inquiryDefinition" parent="PayeeACHAccountExtractDetail-inquiryDefinition-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Payee ACH Account Extract Detail">
+        <property name="inquirySections">
+            <list>
+                <ref bean="PayeeACHAccountExtractDetail-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="PayeeACHAccountExtractDetail-inquirySectionDefinition" parent="PayeeACHAccountExtractDetail-inquirySectionDefinition-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="id"/>
+                <bean parent="FieldDefinition" p:attributeName="createDate"/>
+                <bean parent="FieldDefinition" p:attributeName="status"/>
+                <bean parent="FieldDefinition" p:attributeName="retryCount"/>
+                <bean parent="FieldDefinition" p:attributeName="employeeID"/>
+                <bean parent="FieldDefinition" p:attributeName="netID"/>
+                <bean parent="FieldDefinition" p:attributeName="lastName"/>
+                <bean parent="FieldDefinition" p:attributeName="firstName"/>
+                <bean parent="FieldDefinition" p:attributeName="paymentType"/>
+                <bean parent="FieldDefinition" p:attributeName="balanceAccount"/>
+                <bean parent="FieldDefinition" p:attributeName="completedDate"/>
+                <bean parent="FieldDefinition" p:attributeName="bankName"/>
+                <bean parent="FieldDefinition" p:attributeName="bankRoutingNumber"/>
+                <bean parent="FieldDefinition" p:attributeName="bankAccountNumber"/>
+                <bean parent="FieldDefinition" p:attributeName="bankAccountType"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="PayeeACHAccountExtractDetail-lookupDefinition" parent="PayeeACHAccountExtractDetail-lookupDefinition-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetail-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Payee ACH Account Extract Detail Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>id</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                	  parent="PayeeACHAccountExtractDetail-status"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                	  parent="PayeeACHAccountExtractDetail-createDate"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                	  parent="PayeeACHAccountExtractDetail-employeeID"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                	  parent="PayeeACHAccountExtractDetail-netID"/>
+            </list>
+        </property>
+        <property name="lookupResultAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-status"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-createDate"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-retryCount"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-employeeID"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-netID"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-lastName"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-firstName"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-paymentType"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-balanceAccount"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-completedDate"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-bankName"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-bankRoutingNumber"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-bankAccountNumber"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                      parent="PayeeACHAccountExtractDetail-bankAccountType"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="achAccountExtractStatusValuesFinder"
+          class="edu.cornell.kfs.pdp.businessobject.options.PayeeAchAccountExtractStatusValuesFinder"/>
+</beans>

@@ -1,14 +1,21 @@
 package edu.cornell.kfs.pdp.businessobject;
 
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+import java.util.Date;
+
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.rice.core.api.util.type.KualiInteger;
 
 /**
  * Transient BO representing the a parsed line from a Payee ACH Account Extract .csv file.
  */
-public class PayeeACHAccountExtractDetail extends TransientBusinessObjectBase {
+public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase {
     private static final long serialVersionUID = -2028073232803324343L;
     private static final String DATA_DELIMITER = ";";
 
+    private KualiInteger id;
+    private Date createDate;
+    private String status;
+    private Integer retryCount;
     private String employeeID;
     private String netID;
     private String lastName;
@@ -21,6 +28,10 @@ public class PayeeACHAccountExtractDetail extends TransientBusinessObjectBase {
     private String bankAccountNumber;
     private String bankAccountType;
 
+    public PayeeACHAccountExtractDetail() {
+
+    }
+    
     public String getEmployeeID() {
         return employeeID;
     }
@@ -115,6 +126,38 @@ public class PayeeACHAccountExtractDetail extends TransientBusinessObjectBase {
         .append(getFirstName()).append(DATA_DELIMITER)
         .append(getLastName());
         return sb.toString();
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(Integer retryCount) {
+        this.retryCount = retryCount;
+    }
+
+    public KualiInteger getId() {
+        return id;
+    }
+
+    public void setId(KualiInteger id) {
+        this.id = id;
     }
 
 }
