@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pdp.businessobject;
 
-import java.util.Date;
+import java.sql.Date;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.core.api.util.type.KualiInteger;

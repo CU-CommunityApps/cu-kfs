@@ -60,12 +60,11 @@
     <bean id="PayeeACHAccountExtractDetail-id-parentBean" abstract="true" parent="AttributeDefinition"
           p:name="id" p:forceUppercase="true" p:label="ACH Account Extract Detail Generated Identifier"
           p:shortLabel="ACH Account Extract Detail ID" p:maxLength="10" p:validationPattern-ref="NumericValidation"
-          p:required="true" p:formatterClass="org.kuali.kfs.sys.businessobject.NoCommaCurrencyFormatter"
-          p:control-ref="HiddenControl"/>
+          p:required="true" p:control-ref="HiddenControl"/>
           
     <bean id="PayeeACHAccountExtractDetail-createDate" parent="PayeeACHAccountExtractDetail-createDate-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-createDate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp"
-          p:name="createDate" p:label="Create Date" p:shortLabel="Crt Dt" p:required="false"/>
+          p:name="createDate" p:label="Create Date" p:shortLabel="Crt Dt"/>
           
     <bean id="PayeeACHAccountExtractDetail-status"
           parent="PayeeACHAccountExtractDetail-status-parentBean"/>
@@ -81,7 +80,7 @@
     <bean id="PayeeACHAccountExtractDetail-retryCount" parent="PayeeACHAccountExtractDetail-retryCount-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-retryCount-parentBean" abstract="true" parent="AttributeDefinition"
           p:name="retryCount" p:label="Retry Count" p:shortLabel="Retry Cnt" p:maxLength="10"
-          p:validationPattern-ref="NumericValidation" p:required="true">
+          p:validationPattern-ref="NumericValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="10"/>
         </property>
@@ -89,8 +88,8 @@
     
     <bean id="PayeeACHAccountExtractDetail-employeeID" parent="PayeeACHAccountExtractDetail-employeeID-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-employeeID-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="employeeID" p:label="Employee ID" p:shortLabel="Empl ID" p:maxLength="10"
-          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+          p:name="employeeID" p:label="Employee ID" p:shortLabel="Empl ID" p:maxLength="40"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="10"/>
         </property>
@@ -98,8 +97,8 @@
     
     <bean id="PayeeACHAccountExtractDetail-netID" parent="PayeeACHAccountExtractDetail-netID-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-netID-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="netID" p:label="Net ID" p:shortLabel="Netid" p:maxLength="10"
-          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+          p:name="netID" p:label="Net ID" p:shortLabel="Netid" p:maxLength="40"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="10"/>
         </property>
@@ -107,8 +106,8 @@
     
     <bean id="PayeeACHAccountExtractDetail-lastName" parent="PayeeACHAccountExtractDetail-lastName-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-lastName-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="lastName" p:label="Last Name" p:shortLabel="Last Name" p:maxLength="10"
-          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+          p:name="lastName" p:label="Last Name" p:shortLabel="Last Name" p:maxLength="80"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="10"/>
         </property>
@@ -116,8 +115,8 @@
     
     <bean id="PayeeACHAccountExtractDetail-firstName" parent="PayeeACHAccountExtractDetail-firstName-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-firstName-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="firstName" p:label="First Name" p:shortLabel="First Name" p:maxLength="10"
-          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+          p:name="firstName" p:label="First Name" p:shortLabel="First Name" p:maxLength="40"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="10"/>
         </property>
@@ -125,8 +124,8 @@
      
     <bean id="PayeeACHAccountExtractDetail-paymentType" parent="PayeeACHAccountExtractDetail-paymentType-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-paymentType-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="paymentType" p:label="Payment Type" p:shortLabel="Pmt Type" p:maxLength="10"
-          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+          p:name="paymentType" p:label="Payment Type" p:shortLabel="Pmt Type" p:maxLength="100"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="10"/>
         </property>
@@ -134,21 +133,26 @@
     
     <bean id="PayeeACHAccountExtractDetail-balanceAccount" parent="PayeeACHAccountExtractDetail-balanceAccount-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-balanceAccount-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="balanceAccount" p:label="Balance Account" p:shortLabel="Bal Acct" p:maxLength="10"
-          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+          p:name="balanceAccount" p:label="Balance Account" p:shortLabel="Bal Acct" p:maxLength="1"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
-            <bean parent="TextControlDefinition" p:size="10"/>
+            <bean parent="TextControlDefinition" p:size="2"/>
         </property>
     </bean>
     
     <bean id="PayeeACHAccountExtractDetail-completedDate" parent="PayeeACHAccountExtractDetail-completedDate-parentBean"/>
-    <bean id="PayeeACHAccountExtractDetail-completedDate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp"
-          p:name="completedDate" p:label="Completed Date" p:shortLabel="Cmpltd Dt" p:required="false"/>
-          
+    <bean id="PayeeACHAccountExtractDetail-completedDate-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="completedDate" p:label="Completed Date" p:shortLabel="Cmpltd Dt" p:maxLength="40"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="10"/>
+        </property>
+    </bean>
+            
     <bean id="PayeeACHAccountExtractDetail-bankName" parent="PayeeACHAccountExtractDetail-bankName-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-bankName-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="bankName" p:label="Bank Name" p:shortLabel="Bank Name" p:maxLength="10"
-          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+          p:name="bankName" p:label="Bank Name" p:shortLabel="Bank Name" p:maxLength="40"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="10"/>
         </property>
@@ -165,7 +169,7 @@
     <bean id="PayeeACHAccountExtractDetail-bankAccountNumber" parent="PayeeACHAccountExtractDetail-bankAccountNumber-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-bankAccountNumber-parentBean" abstract="true" parent="AttributeDefinition"
           p:name="bankAccountNumber" p:label="Bank Account Number" p:shortLabel="Bank Account Number"
-          p:forceUppercase="true" p:maxLength="17" p:validationPattern-ref="AlphaNumericValidation" p:required="true">
+          p:forceUppercase="true" p:maxLength="255" p:validationPattern-ref="AlphaNumericValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="17"/>
         </property>
@@ -183,8 +187,7 @@
     
     <bean id="PayeeACHAccountExtractDetail-bankAccountType" parent="PayeeACHAccountExtractDetail-bankAccountType-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-bankAccountType-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="bankAccountType" p:label="Account Type" p:shortLabel="Account Type" p:maxLength="2"
-          p:required="true">
+          p:name="bankAccountType" p:label="Account Type" p:shortLabel="Account Type" p:maxLength="5">
         <property name="validationPattern">
             <bean parent="CharsetValidationPattern" p:validChars="23"/>
         </property>
