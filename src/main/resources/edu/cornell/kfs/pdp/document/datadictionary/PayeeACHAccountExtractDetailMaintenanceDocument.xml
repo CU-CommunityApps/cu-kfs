@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2020 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PayeeACHAccountExtractDetailMaintenanceDocument" parent="PayeeACHAccountExtractDetailMaintenanceDocument-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetailMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail"
+          p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable" p:documentTypeName="PAXT"
+          p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
+          p:allowsNewOrCopy="false"
+          p:encryptDocumentDataInPersistentSessionStorage="true">
+        <property name="maintainableSections">
+            <list>
+                <ref bean="PayeeACHAccountExtractDetailMaintenanceDocument-EditPayeeACHAccountExtractDetail"/>
+            </list>
+        </property>
+        <property name="lockingKeys">
+            <list>
+                <value>id</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Maintenance Section Definitions -->
+
+    <bean id="PayeeACHAccountExtractDetailMaintenanceDocument-EditPayeeACHAccountExtractDetail"
+          parent="PayeeACHAccountExtractDetailMaintenanceDocument-EditPayeeACHAccountExtractDetail-parentBean"/>
+    <bean id="PayeeACHAccountExtractDetailMaintenanceDocument-EditPayeeACHAccountExtractDetail-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="Edit Payee ACH Account Extract Detail" p:title="Edit Payee ACH Account Extract Detail">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="id" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="createDate" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="status"/>
+                <bean parent="MaintainableFieldDefinition" p:name="retryCount" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="employeeID" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="netID" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="lastName" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="firstName" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="paymentType" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="balanceAccount" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="completedDate" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankName" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankRoutingNumber" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankAccountNumber" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankAccountType" p:unconditionallyReadOnly="true"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Exported Workflow Properties -->
+
+</beans>

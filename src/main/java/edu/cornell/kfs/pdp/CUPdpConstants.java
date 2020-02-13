@@ -49,4 +49,10 @@ public class CUPdpConstants {
 
     public static final String FDOC_TYP_CD_STOP_CHECK = "CHKS";
     public static final String FDOC_TYP_CD_STALE_CHECK = "CHKL";
+    
+    public static class PayeeAchAccountExtractStatuses {
+        public static final String OPEN = "Open";
+        public static final String CANCELED = "Canceled";
+        public static final String PROCESSED = "Processed";
+    }
 }
