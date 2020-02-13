@@ -11,7 +11,9 @@ public class CuSecurityModelMaintainableImpl extends SecurityModelMaintainableIm
     @Override
     protected String buildModelRoleId(SecurityModel securityModel) {
         String roleId = String.valueOf(securityModel.getId());
-        LOG.info("buildModelRoleId, returning roleId: " + roleId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildModelRoleId, returning roleId: " + roleId);
+        }
         return roleId;
     }
 
