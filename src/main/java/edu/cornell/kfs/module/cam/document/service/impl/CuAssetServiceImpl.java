@@ -28,7 +28,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl {
         if (tagMatches != null && !tagMatches.isEmpty()) {
             for (Asset asset : tagMatches) {
                 // if found matching, check if status is not retired
-                if (!isAssetRetired(asset) || parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE))  {
+                if (!isAssetRetired(asset) || parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)) {
                     activeMatches.add(asset);
                 }
             }
