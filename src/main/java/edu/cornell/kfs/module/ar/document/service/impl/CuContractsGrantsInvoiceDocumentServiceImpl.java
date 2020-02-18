@@ -171,8 +171,9 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             totalCost = totalCost.add(invD.getInvoiceAmount());
         }
         
+        // Total Billed so far
         KualiDecimal billedTotalCost = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail()
-                .getTotalPreviouslyBilled(); // Total Billed so far
+                .getTotalPreviouslyBilled();
 
         // CU Customization, use award budget total, and not the award total
         // KualiDecimal accountAwardTotal = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAwardTotal();

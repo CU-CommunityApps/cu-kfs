@@ -2,7 +2,6 @@ package edu.cornell.kfs.sys.batch.service.impl;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,8 +10,13 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import org.joda.time.DateTime;
+import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
@@ -20,11 +24,8 @@ import org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.doctype.DocumentType;
@@ -33,18 +34,8 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.datadictionary.exception.UnknownDocumentTypeException;
-import org.kuali.kfs.krad.UserSessionUtils;
-import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
-
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 @Transactional
 public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocumentsServiceImpl {
@@ -52,7 +43,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     private static final String TAB = "\t";
 
     private RouteHeaderService routeHeaderService;
-    private PersonService personService;
 
     @Override
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
@@ -221,7 +211,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 			AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE);
 
 		for (String documentTypeCode : documentTypeCodes) {
-			DocumentType parentDocumentType = (DocumentType) getDocumentTypeService().getDocumentTypeByName(documentTypeCode);
+			DocumentType parentDocumentType = (DocumentType) documentTypeService.getDocumentTypeByName(documentTypeCode);
 
 			if (ObjectUtils.isNotNull(parentDocumentType)) {
 				parentDocumentTypes.add(parentDocumentType);
@@ -245,7 +235,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
         
         for (DocumentType parentDocumentType : parentDocumentTypes) {   
-            if (ObjectUtils.isNull(getDocumentTypeService().getDocumentTypeByName(parentDocumentType.getName()))) {
+            if (ObjectUtils.isNull(documentTypeService.getDocumentTypeByName(parentDocumentType.getName()))) {
             	LOG.warn("Invalid Document Type: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE " +
             	        "is invalid. The auto disapproval job cannot use this value.");
             	getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
@@ -300,7 +290,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         Collection<String> documentTypes = getParameterService().getParameterValuesAsString(AutoDisapproveDocumentsStep.class,
                 KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES);
         for (String dT : documentTypes) {
-        	if (ObjectUtils.isNull(getDocumentTypeService().getDocumentTypeByName(dT))) {        		
+        	if (ObjectUtils.isNull(documentTypeService.getDocumentTypeByName(dT))) {        		
                 LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter contains invalid value: \"" + dT +
                         "\" The job can not continue with invalid values in this parameter.");
                 getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
@@ -316,14 +306,14 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
             String annotationForAutoDisapprovalDocument)  throws Exception {
         Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
         
-        Note approveNote = getNoteService().createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
+        Note approveNote = noteService.createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
         approveNote.setNoteText(annotationForAutoDisapprovalDocument);
 
         approveNote.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
         
         approveNote.setNotePostedTimestampToCurrent();
         
-        getNoteService().save(approveNote);
+        noteService.save(approveNote);
         
         document.addNote(approveNote);
         
@@ -342,7 +332,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         
         List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
         String documentTypeName = documentHeader.getWorkflowDocument().getDocumentTypeName();
-        DocumentType childDocumentType = getDocumentTypeService().getDocumentTypeByName(documentTypeName);
+        DocumentType childDocumentType = documentTypeService.getDocumentTypeByName(documentTypeName);
         
         for (DocumentType parentDocumentType : parentDocumentTypes) {
             documentEligible = childDocumentType.getParentId().equals(parentDocumentType.getId());
@@ -430,11 +420,5 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
         this.routeHeaderService = routeHeaderService;
     } 
-
-    public void setPersonService(PersonService personService) {
-        super.setPersonService(personService);
-        this.personService = personService;       
-    }
-
 
 }

@@ -99,7 +99,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
             // was entered by the user or not.
             DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
             if ( !docAuth.isAuthorizedByTemplate(this, 
-                    KFSConstants.ParameterNamespaces.KFS, 
+                    KFSConstants.CoreModuleNamespaces.KFS, 
                     KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 
                     GlobalVariables.getUserSession().getPrincipalId()  ) ) {
                 synchronizeBankCodeWithPaymentMethod();        

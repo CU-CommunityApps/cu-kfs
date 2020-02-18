@@ -19,6 +19,8 @@
 package org.kuali.kfs.gl.web.struts;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -70,8 +72,7 @@ import java.util.Properties;
  * @see org.kuali.kfs.module.ld.document.web.struts.SalaryExpenseTransferForm;
  */
 public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
-    private static final org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(
-            BalanceInquiryLookupAction.class);
+    private static final Logger LOG = LogManager.getLogger(BalanceInquiryLookupAction.class);
 
     private static final String TOTALS_TABLE_KEY = "totalsTable";
 

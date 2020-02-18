@@ -119,7 +119,8 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
                     }
                     returnValue = returnValue.add(toAddAmount);
                 }
-            }else{ //else take the total, which should be the summary tax total
+            } else { 
+                //else take the total, which should be the summary tax total
                 returnValue = returnValue.add(this.invoiceItemTaxAmount);
             }
 

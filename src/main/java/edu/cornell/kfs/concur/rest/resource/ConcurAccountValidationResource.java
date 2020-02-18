@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
-import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationDTO;
+import edu.cornell.kfs.concur.eventnotification.rest.xmlObjects.ConcurEventNotificationDTO;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationConversionService;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 

@@ -509,7 +509,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
 
     /**
-     * PMW does not return the value for the yes/no radio button “For tax purposes are you an individual, sole proprietor or single-member LLC?”.
+     * PMW does not return the value for the yes/no radio button "For tax purposes are you an individual, sole proprietor or single-member LLC?".
      * This radio button yes/no value must be interpreted from the tax classification construct sent back in the requesting company construct on the vendor.
      *    Yes ==> Tax Classification will be 0="individual, sole proprietor or single-member LLC",
      *    No ==> Tax Classification is any other value.

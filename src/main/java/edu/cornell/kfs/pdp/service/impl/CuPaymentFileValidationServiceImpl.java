@@ -108,7 +108,9 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 // CU Customization: Check max lengths on Payment Detail properties.
                 checkPaymentDetailPropertyMaxLength(paymentDetail, errorMap);
 
-                noteLineCount++; // Add a line to print the invoice number
+                // Add a line to print the invoice number
+                noteLineCount++;
+                
                 noteLineCount = noteLineCount + paymentDetail.getNotes().size();
 
                 if ((paymentDetail.getNetPaymentAmount() == null) && (!paymentDetail.isDetailAmountProvided())) {

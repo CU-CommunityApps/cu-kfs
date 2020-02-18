@@ -48,7 +48,7 @@ public class CuAdvanceDepositDocumentAuthorizer extends FinancialSystemTransacti
         organizationService = SpringContext.getBean(OrganizationService.class);
 
         Person currentUser = GlobalVariables.getUserSession().getPerson();
-        String roleId = getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.ParameterNamespaces.FINANCIAL, CUKFSConstants.SysKimApiConstants.ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME);
+        String roleId = getRoleService().getRoleIdByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.FINANCIAL, CUKFSConstants.SysKimApiConstants.ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME);
         List<String> roleIds = new ArrayList<String>();
         roleIds.add(roleId);
 

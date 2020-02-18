@@ -26,8 +26,6 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
-
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 /**

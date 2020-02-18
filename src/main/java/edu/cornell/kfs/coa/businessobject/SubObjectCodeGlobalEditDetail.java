@@ -13,8 +13,6 @@ import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
-
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.ObjectUtils;

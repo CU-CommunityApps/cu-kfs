@@ -529,7 +529,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             // was entered by the user or not.
             DocumentAuthorizer docAuth = getDocumentHelperService().getDocumentAuthorizer(this);
             if ( !docAuth.isAuthorizedByTemplate(this,
-                    KFSConstants.ParameterNamespaces.KFS,
+                    KFSConstants.CoreModuleNamespaces.KFS,
                     KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name,
                     GlobalVariables.getUserSession().getPrincipalId()  ) ) {
                 synchronizeBankCodeWithPaymentMethod();
@@ -618,28 +618,35 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         CuDisbursementVoucherPayeeDetail payeeDetail =   getDvPayeeDetail();
 
         if (payeeDetail.isVendor()) {
-            payeeDetail.setDisbVchrPayeeEmployeeCode(getVendorService().isVendorInstitutionEmployee(payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger()));
-            payeeDetail.setDvPayeeSubjectPaymentCode(getVendorService().isSubjectPaymentVendor(payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger()));
-        }
-        else if (payeeDetail.isEmployee()|| payeeDetail.isStudent() || payeeDetail.isAlumni()) {
+            payeeDetail.setDisbVchrPayeeEmployeeCode(
+                getVendorService().isVendorInstitutionEmployee(payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger()));
+            payeeDetail.setDvPayeeSubjectPaymentCode(
+                getVendorService().isSubjectPaymentVendor(payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger()));
+        } else if (payeeDetail.isEmployee() || payeeDetail.isStudent() || payeeDetail.isAlumni()) {
 
             // Determine if employee student or alumni is a research subject
-            ParameterEvaluator researchPaymentReasonCodeEvaluator = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, payeeDetail.getDisbVchrPaymentReasonCode());
-            if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
-                if (getParameterService().parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
-                    String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
-                    if (StringUtils.isNotBlank(researchPayLimit)) {
-                        KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
+            ParameterEvaluator researchPaymentReasonCodeEvaluator = /*REFACTORME*/SpringContext
+                .getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class,
+                    DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM,
+                    payeeDetail.getDisbVchrPaymentReasonCode());
+            if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()
+                    && getParameterService().parameterExists(DisbursementVoucherDocument.class,
+                            DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
+                String researchPayLimit = getParameterService()
+                        .getParameterValueAsString(DisbursementVoucherDocument.class,
+                                DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                if (StringUtils.isNotBlank(researchPayLimit)) {
+                    KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
-                        if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
-                            payeeDetail.setDvPayeeSubjectPaymentCode(true);
-                        }
+                    if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
+                        payeeDetail.setDvPayeeSubjectPaymentCode(true);
                     }
                 }
             }
         }
 
-        super.populateDocumentForRouting(); // Call last, serializes to XML
+        // Call last, serializes to XML
+        super.populateDocumentForRouting();
     }
 
     @Override
@@ -716,7 +723,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
 
         setDisbVchrContactEmailId(currentUser.getEmailAddress());
-        ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.ParameterNamespaces.FINANCIAL);
+        ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.CoreModuleNamespaces.FINANCIAL);
 
         // Does a valid campus code exist for this person?  If so, simply grab
         // the campus code via the business object service.

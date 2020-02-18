@@ -108,7 +108,7 @@ public final class PurapConstants {
     public static final String ADDITIONAL_TAB_ERRORS = "document.requestor*,document.institution*,document.purchaseOrderTransmissionMethodCode,document.purchaseOrderCostSourceCode,document.purchaseOrderTotalLimit";
     public static final String ITEM_TAB_ERRORS = "document.item*,newPurchasingItemLine*,itemQuantity,document.grandTotal,accountDistributionnewSourceLine*,distributePurchasingCommodityCode,accountNumber*,chartOfAccountsCode*";
     public static final String LINEITEM_TAB_ERRORS = "document.item*,newLineItemReceivingItemLine*";
-    public static final String ITEM_TAB_ERROR_PROPERTY = ITEM_TAB_ERRORS; // used to be "newPurchasingItemLine"
+    public static final String ITEM_TAB_ERROR_PROPERTY = ITEM_TAB_ERRORS;
     public static final String ACCOUNT_SUMMARY_TAB_ERRORS = "document.accountSummary*";
     public static final String ACCOUNT_DISTRIBUTION_ERROR_KEY = "accountDistributionnewSourceLine";
     public static final String RELATED_DOCS_TAB_ERRORS = "";
@@ -180,8 +180,9 @@ public final class PurapConstants {
 
     // CREDIT MEMO DOCUMENT
     public static final String CREDIT_MEMO_ACTION_NAME = "VendorCreditMemo";
-
-    @Deprecated // this should be removed - use the central definition in KFSConstants
+    
+    // this should be removed - use the central definition in KFSConstants
+    @Deprecated
     public static final String PURAP_ORIGIN_CODE = "01";
 
     public static final Integer PRORATION_SCALE = 6;
@@ -297,8 +298,12 @@ public final class PurapConstants {
         returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_VENDOR_NOTE_TEXT, null);
         return returnMap;
     }
-
-    @Deprecated // This information needs to be looked up from the DD
+    
+    /**
+     * @deprecated This information needs to be looked up from the DD
+     * @return map of purap doc types to classes
+    */
+    @Deprecated
     private static HashMap<String, String> getPurapParameterDetailTypeCodes() {
         HashMap<String, String> map;
         map = new HashMap<>();
@@ -747,7 +752,7 @@ public final class PurapConstants {
 
     public static class AccountsPayableSharedStatuses {
         public static final String IN_PROCESS = "INPR";
-        public static final String AWAITING_ACCOUNTS_PAYABLE_REVIEW = "APAD"; // Waiting for Accounts Payable approval
+        public static final String AWAITING_ACCOUNTS_PAYABLE_REVIEW = "APAD";
     }
 
     public static final class AccountsPayableStatuses{
@@ -761,12 +766,12 @@ public final class PurapConstants {
         public static final String APPDOC_CANCELLED_POST_AP_APPROVE = "Cancelled";
         public static final String APPDOC_DEPARTMENT_APPROVED = "Department-Approved";
         public static final String APPDOC_AUTO_APPROVED = "Auto-Approved";
-        public static final String APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW = "Awaiting AP Review"; // Waiting for Accounts Payable approval
-        public static final String APPDOC_AWAITING_RECEIVING_REVIEW = "Awaiting Receiving"; // Waiting for Receiving approval
-        public static final String APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW = "Awaiting Sub-Account Manager Approval"; // Waiting for Sub Acct Manager approval
-        public static final String APPDOC_AWAITING_FISCAL_REVIEW = "Awaiting Fiscal Officer Approval"; // Waiting for Fiscal Officer approval
-        public static final String APPDOC_AWAITING_ORG_REVIEW = "Awaiting Chart Approval"; // Waiting for Chart/Org approval
-        public static final String APPDOC_AWAITING_TAX_REVIEW = "Awaiting Tax Approval"; // Waiting for Vendor Tax approval
+        public static final String APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW = "Awaiting AP Review";
+        public static final String APPDOC_AWAITING_RECEIVING_REVIEW = "Awaiting Receiving";
+        public static final String APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW = "Awaiting Sub-Account Manager Approval";
+        public static final String APPDOC_AWAITING_FISCAL_REVIEW = "Awaiting Fiscal Officer Approval";
+        public static final String APPDOC_AWAITING_ORG_REVIEW = "Awaiting Chart Approval";
+        public static final String APPDOC_AWAITING_TAX_REVIEW = "Awaiting Tax Approval";
         public static final String APPDOC_PENDING_E_INVOICE = "Pending Route Electronic Invoice";
         public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval";
 
@@ -1012,7 +1017,7 @@ public final class PurapConstants {
         public static final String APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL = "Void";
         public static final String APPDOC_CANCELLED_POST_AP_APPROVE = "Cancelled";
         public static final String APPDOC_COMPLETE = "Complete";
-        public static final String APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW = "Awaiting AP Review"; // Waiting for Accounts Payable approval
+        public static final String APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW = "Awaiting AP Review";
         public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval";
 
         public static final String NODE_ADHOC_REVIEW = "AdHoc";
@@ -1125,7 +1130,8 @@ public final class PurapConstants {
 
     public static final Map<String, Class<?>> UNCOPYABLE_FIELDS_FOR_SPLIT_PO = uncopyableFieldsForSplitPurchaseOrder();
 
-    @Deprecated // this is mostly a duplication of an earlier subclass
+    // this is mostly a duplication of an earlier subclass
+    @Deprecated
     public static final class PurapDocTypeCodes {
         public static final String PAYMENT_REQUEST_DOCUMENT = "PREQ";
         public static final String CREDIT_MEMO_DOCUMENT = "CM";

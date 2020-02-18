@@ -120,7 +120,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	public void setupConvenienceObjects() {
 		newAccountGlobal = (CuAccountGlobal) super.getNewBo();
 		today = getDateTimeService().getCurrentTimestamp();
-		today.setTime(DateUtils.truncate(today, Calendar.DAY_OF_MONTH).getTime()); // remove any time components
+		// remove any time components
+		today.setTime(DateUtils.truncate(today, Calendar.DAY_OF_MONTH).getTime());
 	}
 
     /**

@@ -54,30 +54,25 @@ public class CuRequisitionAction extends RequisitionAction {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
         RequisitionItem requisitionItem = (RequisitionItem) item;
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
         
         if (StringUtils.isBlank(requisitionItem.getPurchasingCommodityCode())) {
-            boolean commCodeParam = SpringContext.getBean(ParameterService.class)
-                    .getParameterValueAsBoolean(CuRequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
+            boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+                    CuRequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
-            if (commCodeParam) {
-                if (purchasingForm instanceof RequisitionForm) {
-                    CuRequisitionDocument reqs = (CuRequisitionDocument) purchasingForm.getDocument();
-                    VendorDetail dtl = reqs.getVendorDetail();
-                    if (ObjectUtils.isNotNull(dtl)) {
-                        List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
-                        String defaultCommodityCode = "";
-                        Iterator<VendorCommodityCode> it = vcc.iterator();
-                        while (it.hasNext()) {
-                            VendorCommodityCode commodity = it.next();
-                            if (commodity.isCommodityDefaultIndicator()) {
-                                defaultCommodityCode = commodity.getPurchasingCommodityCode();
-                                requisitionItem.setPurchasingCommodityCode(defaultCommodityCode);
-                            }
+            if (commCodeParam && purchasingForm instanceof RequisitionForm) {
+                CuRequisitionDocument reqs = (CuRequisitionDocument) purchasingForm.getDocument();
+                VendorDetail dtl = reqs.getVendorDetail();
+                if (ObjectUtils.isNotNull(dtl)) {
+                    List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
+                    for (VendorCommodityCode commodity : vcc) {
+                        if (commodity.isCommodityDefaultIndicator()) {
+                            requisitionItem.setPurchasingCommodityCode(commodity.getPurchasingCommodityCode());
                         }
                     }
                 }
@@ -99,7 +94,8 @@ public class CuRequisitionAction extends RequisitionAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
-    public ActionForward clearVendor(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward clearVendor(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
+            HttpServletResponse response) throws Exception {
         PurchasingFormBase baseForm = (PurchasingFormBase) form;
         CuRequisitionDocument document = (CuRequisitionDocument) baseForm.getDocument();
 

@@ -14,11 +14,11 @@ import org.kuali.kfs.module.purap.PurapConstants;
  */
 public class CUPurapConstants {
     
-    public static final String SPECIAL_HANDLING_NOTE_LINE_1_NAME = "Send Check To:";  //This is how we identify the name in DV's, so to be consistent we're using the same string here
-    public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";  // This is how we identify the first address line in DV's but payment req's don't have a second address line
-    public static final String SPECIAL_HANDLING_NOTE_LINE_3_CITY_STATE_ZIP = "SH3:"; //This is set to SH3 to be consistent with how we've captured the city, state and zip in disbursement vouchers
-    public static final String PURAP_NOTES_IDENTIFIER = "::";  // We do this for DV's and for PURAP notes we need to do the same so they get picked up in ExtractPaymentServiceImpl
-    public static final String PAYMENT_METHODL_REVIEW = "PTMA"; // Waiting for Treasury Manager approval
+    public static final String SPECIAL_HANDLING_NOTE_LINE_1_NAME = "Send Check To:";
+    public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";
+    public static final String SPECIAL_HANDLING_NOTE_LINE_3_CITY_STATE_ZIP = "SH3:";
+    public static final String PURAP_NOTES_IDENTIFIER = "::";
+    public static final String PAYMENT_METHODL_REVIEW = "PTMA";
     public static final String B2B_HIGHER_LIMIT_PERMISSION = "B2B Higher APO Limit";
 
     public static class RequisitionStatuses {
@@ -42,7 +42,7 @@ public class CUPurapConstants {
         //end KFSUPGRADE-411
         // KFSUPGRADE-336.  override purapconstants
             public static final String NODE_DOCUMENT_TRANSMISSION = "JoinRequiresBudgetReview";
-            public static final String APPDOC_AWAITING_FISCAL_REVIEW = "Awaiting Fiscal Officer"; // Waiting for Fiscal Officer approval
+            public static final String APPDOC_AWAITING_FISCAL_REVIEW = "Awaiting Fiscal Officer";
     }
     
     public static class PODocumentsStrings {
@@ -202,9 +202,9 @@ public class CUPurapConstants {
     public static final String MAX_SQ_NO_ATTACHMENTS = "MAX_SQ_NO_ATTACHMENTS";
 
     // KFSPTS-1705
-    public static final String PO_FINAL_ANNOTATION_TEXT= "message.document.purap.final.annotation";
-    public static final String PO_DISAPPROVAL_ANNOTATION_TEXT= "message.document.purap.disapprove.annotation";
-    public static final String PO_CANCEL_ANNOTATION_TEXT= "message.document.purap.cancel.annotation";
+    public static final String PO_FINAL_ANNOTATION_TEXT = "message.document.purap.final.annotation";
+    public static final String PO_DISAPPROVAL_ANNOTATION_TEXT = "message.document.purap.disapprove.annotation";
+    public static final String PO_CANCEL_ANNOTATION_TEXT = "message.document.purap.cancel.annotation";
 
     public static final String RECEIVING_BUTTON_ALT_TEXT = "Receiving";
     

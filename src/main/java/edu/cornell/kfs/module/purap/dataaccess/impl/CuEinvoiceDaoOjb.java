@@ -3,8 +3,8 @@ package edu.cornell.kfs.module.purap.dataaccess.impl;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.dataaccess.CuEinvoiceDao;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvoiceDao {
 
-    private static final Log LOG = LogFactory.getLog(CuEinvoiceDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger(CuEinvoiceDaoOjb.class);
 
     public List<VendorDetail> getVendors(List<String> vendorNumbers) {
         HashMap<Integer, List<Integer>> vendorDetailToHeaderMap = buildVendorDetailMap(vendorNumbers);
