@@ -66,6 +66,7 @@ public class AutoDisapproveDocumentsServiceImpl implements AutoDisapproveDocumen
     public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "routeHeaderId";
 
     private DocumentService documentService;
+    // KFSPTS-16185 Overlay created to change the access modifier for several services to protected
     protected DocumentTypeService documentTypeService;
 
     private DateTimeService dateTimeService;
