@@ -828,7 +828,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         // first we need to check just the doctype to see if it needs the sales tax check
         // apply the rule, see if it fails
         ParameterEvaluatorService parameterEvaluatorService = SpringContext.getBean(ParameterEvaluatorService.class);
-        ParameterEvaluator docTypeSalesTaxCheckEvaluator = /*REFACTORME*/
+        ParameterEvaluator docTypeSalesTaxCheckEvaluator =
                 parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,
                         APPLICATION_PARAMETER.DOCTYPE_SALES_TAX_CHECK, docType);
         if (docTypeSalesTaxCheckEvaluator.evaluationSucceeds()) {
@@ -842,7 +842,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             String account = accountingLine.getAccountNumber();
             if (!StringUtils.isEmpty(objCd) && !StringUtils.isEmpty(account)) {
                 String compare = account + ":" + objCd;
-                ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator = /*REFACTORME*/
+                ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator =
                         parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,
                                 APPLICATION_PARAMETER.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
                 if (!salesTaxApplicableAcctAndObjectEvaluator.evaluationSucceeds()) {

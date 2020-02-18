@@ -57,58 +57,58 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
 	protected static KualiDecimal zero = KualiDecimal.ZERO;
 
-    protected KualiInteger id; // PMT_GRP_ID
-    protected String payeeName; // PMT_PAYEE_NM
-    protected String payeeId; // PAYEE_ID
-    protected String payeeIdTypeCd; // PAYEE_ID_TYP_CD
-    protected String alternatePayeeId; // ALTRNT_PAYEE_ID
-    protected String alternatePayeeIdTypeCd; // ALTRNT_PAYEE_ID_TYP_CD
-    protected String payeeOwnerCd; // PAYEE_OWNR_CD
-    protected String customerInstitutionNumber; // CUST_IU_NBR
-    protected String line1Address; // PMT_LN1_ADDR
-    protected String line2Address; // PMT_LN2_ADDR
-    protected String line3Address; // PMT_LN3_ADDR
-    protected String line4Address; // PMT_LN4_ADDR
-    protected String city; // PMT_CTY_NM
-    protected String state; // PMT_ST_NM
-    protected String country; // PMT_CNTRY_NM
-    protected String zipCd; // PMT_ZIP_CD
-    protected Boolean campusAddress; // CMP_ADDR_IND
-    protected Date paymentDate; // PMT_DT DATE
-    protected Boolean pymtAttachment; // PMT_ATTCHMNT_IND
-    protected Boolean pymtSpecialHandling; // PMT_SPCL_HANDLG_IND
-    protected Boolean taxablePayment; // PMT_TXBL_IND
-    protected Boolean nraPayment; // NRA_PMT_IND
-    protected Boolean processImmediate; // PROC_IMD_IND
-    protected Boolean combineGroups; // PMT_GRP_CMB_IND
-    protected String achBankRoutingNbr; // ACH_BNK_RTNG_NBR
-    protected String adviceEmailAddress; // ADV_EMAIL_ADDR
-    protected Boolean employeeIndicator; // EMP_IND
-    protected String creditMemoNbr; // PMT_CRDT_MEMO_NBR
-    protected KualiDecimal creditMemoAmount; // PMT_CRDT_MEMO_AMT
-    protected KualiInteger disbursementNbr; // DISB_NBR
-    protected Date disbursementDate; // DISB_TS
-    protected String physCampusProcessCd; // PHYS_CMP_PROC_CD
-    protected String sortValue; // PMT_SORT_ORD_VAL
-    protected String achAccountType; // CUST_ACCT_TYP_CD
-    protected Timestamp epicPaymentCancelledExtractedDate; // PDP_EPIC_PMT_CNCL_EXTRT_TS
-    protected Timestamp epicPaymentPaidExtractedDate; // PDP_EPIC_PMT_PD_EXTRT_TS
-    protected Timestamp adviceEmailSentDate; // ADV_EMAIL_SNT_TS
+    protected KualiInteger id;
+    protected String payeeName;
+    protected String payeeId;
+    protected String payeeIdTypeCd;
+    protected String alternatePayeeId;
+    protected String alternatePayeeIdTypeCd;
+    protected String payeeOwnerCd;
+    protected String customerInstitutionNumber;
+    protected String line1Address;
+    protected String line2Address;
+    protected String line3Address;
+    protected String line4Address;
+    protected String city;
+    protected String state;
+    protected String country;
+    protected String zipCd;
+    protected Boolean campusAddress;
+    protected Date paymentDate;
+    protected Boolean pymtAttachment;
+    protected Boolean pymtSpecialHandling;
+    protected Boolean taxablePayment;
+    protected Boolean nraPayment;
+    protected Boolean processImmediate;
+    protected Boolean combineGroups;
+    protected String achBankRoutingNbr;
+    protected String adviceEmailAddress;
+    protected Boolean employeeIndicator;
+    protected String creditMemoNbr;
+    protected KualiDecimal creditMemoAmount;
+    protected KualiInteger disbursementNbr;
+    protected Date disbursementDate;
+    protected String physCampusProcessCd;
+    protected String sortValue;
+    protected String achAccountType;
+    protected Timestamp epicPaymentCancelledExtractedDate;
+    protected Timestamp epicPaymentPaidExtractedDate;
+    protected Timestamp adviceEmailSentDate;
 
     protected KualiInteger batchId;
-    protected Batch batch; // PMT_BATCH_ID
+    protected Batch batch;
 
     protected KualiInteger processId;
-    protected PaymentProcess process; // PROC_ID
+    protected PaymentProcess process;
 
     protected String paymentStatusCode;
-    protected PaymentStatus paymentStatus; // PMT_STAT_CD
+    protected PaymentStatus paymentStatus;
 
     protected String disbursementTypeCode;
-    protected DisbursementType disbursementType; // DISB_TYP_CD
+    protected DisbursementType disbursementType;
 
     protected String bankCode;
-    protected Bank bank; // BNK_ID
+    protected Bank bank;
 
     protected AchAccountNumber achAccountNumber;
 
@@ -183,7 +183,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     public int getNoteLines() {
         int count = 0;
         for (PaymentDetail element : this.getPaymentDetails()) {
-            count++; // Add a line for the invoice #
+            // Add a line for the invoice #
+            count++;
             count = count + element.getNotes().size();
         }
         return count;

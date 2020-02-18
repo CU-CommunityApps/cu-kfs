@@ -138,7 +138,7 @@ public class PurApRelatedViews {
 
                     String principalId =  GlobalVariables.getUserSession().getPrincipalId();
 
-                    String namespaceCode = KFSConstants.ParameterNamespaces.KNS;
+                    String namespaceCode = KFSConstants.CoreModuleNamespaces.KNS;
                     String permissionTemplateName = KimConstants.PermissionTemplateNames.FULL_UNMASK_FIELD;
 
                     Map<String,String> roleQualifiers = new HashMap<String,String>();

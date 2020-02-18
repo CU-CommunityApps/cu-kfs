@@ -92,6 +92,7 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -127,6 +128,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuDistributionOfIncomeAndExpenseDocument.class, TestAdHocRoutePerson.class, TestNote.class})
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*"})
 public class CreateAccountingDocumentServiceImplTest {
 
     private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml";
@@ -832,7 +834,7 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private ParameterService buildParameterService() {
         ParameterService parameterService = Mockito.mock(ParameterService.class);
-        Mockito.when(parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
+        Mockito.when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
         return parameterService;

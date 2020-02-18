@@ -250,7 +250,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
     
     protected String getCreateAccountingDocumentReportEmailAddress() {
-        return parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
+        return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS);
     }

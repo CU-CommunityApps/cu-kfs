@@ -2,7 +2,7 @@ package edu.cornell.kfs.concur.service;
 
 import edu.cornell.kfs.concur.businessobjects.ConcurReport;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
-import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationListDTO;
+import edu.cornell.kfs.concur.eventnotification.rest.xmlObjects.ConcurEventNotificationListDTO;
 
 public interface ConcurReportsService {
     

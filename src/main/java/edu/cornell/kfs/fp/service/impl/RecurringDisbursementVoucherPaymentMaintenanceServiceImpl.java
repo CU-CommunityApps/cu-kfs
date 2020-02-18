@@ -39,7 +39,7 @@ public class RecurringDisbursementVoucherPaymentMaintenanceServiceImpl implement
     
     @Override
     public boolean hasCancelPermission(Person user) {
-        boolean cancelPerm = getPermissionService().hasPermission(user.getPrincipalId(), KFSConstants.ParameterNamespaces.FINANCIAL, 
+        boolean cancelPerm = getPermissionService().hasPermission(user.getPrincipalId(), KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_CANCEL_PAYMENTS_PERMISSION_NAME);
         if (LOG.isDebugEnabled()) {
             LOG.debug("hasCancelPermission():  User " + user.getName() + " has cancel permission: " + cancelPerm);

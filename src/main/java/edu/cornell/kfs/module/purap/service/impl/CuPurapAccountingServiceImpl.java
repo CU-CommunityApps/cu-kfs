@@ -86,15 +86,15 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
                     document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().toString());
             roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLine.getChartOfAccountsCode());
             roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
-            fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+            fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.KFS,
                     KFSConstants.SysKimApiConstants.FISCAL_OFFICER_KIM_ROLE_NAME,roleQualifier));
             if (!fiscalOfficers.contains(personId)) {
                 fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(
-                                        KFSConstants.ParameterNamespaces.KFS,KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
+                                        KFSConstants.CoreModuleNamespaces.KFS,KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
                                         roleQualifier));
             }
             if (!fiscalOfficers.contains(personId)) {
-                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.KFS,
                                         KFSConstants.SysKimApiConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
             }
             if (isExistingReqAcctline) {

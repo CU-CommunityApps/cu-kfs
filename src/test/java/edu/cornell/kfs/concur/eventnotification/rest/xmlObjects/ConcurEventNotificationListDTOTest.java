@@ -1,6 +1,6 @@
-package edu.cornell.kfs.concur.rest.xmlObjects;
+package edu.cornell.kfs.concur.eventnotification.rest.xmlObjects;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;

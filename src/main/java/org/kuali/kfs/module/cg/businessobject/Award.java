@@ -152,7 +152,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     private transient String lookupPersonUniversalIdentifier;
     private transient Person lookupPerson;
 
-    private final String userLookupRoleNamespaceCode = KFSConstants.ParameterNamespaces.KFS;
+    private final String userLookupRoleNamespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
     private final String userLookupRoleName = KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR;
 
     private transient String lookupFundMgrPersonUniversalIdentifier;

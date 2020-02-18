@@ -1,4 +1,4 @@
-package edu.cornell.kfs.concur.rest.xmlObjects;
+package edu.cornell.kfs.concur.eventnotification.rest.xmlObjects;
 
 import java.util.List;
 
