@@ -24,8 +24,6 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 public class CuDisbursementVoucherEmployeeInformationValidation extends DisbursementVoucherEmployeeInformationValidation {
 	
     private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherEmployeeInformationValidation.class);
-    private DataDictionaryService dataDictionaryService;
-    private PersonService personService;
     
     
     public boolean validate(AttributedDocumentEvent event) {
@@ -78,14 +76,6 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
         errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT); 
 
         return isValid;
-    }
-
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
     }
 
 }

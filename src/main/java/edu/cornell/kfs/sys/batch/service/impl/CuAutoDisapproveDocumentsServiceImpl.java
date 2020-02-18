@@ -10,7 +10,13 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
@@ -23,22 +29,12 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.doctype.DocumentType;
-import org.kuali.rice.kew.api.doctype.DocumentTypeService;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.datadictionary.exception.UnknownDocumentTypeException;
-import org.kuali.kfs.krad.UserSessionUtils;
-import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -47,9 +43,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     private static final String TAB = "\t";
 
     private RouteHeaderService routeHeaderService;
-    private PersonService personService;
-    private DocumentTypeService documentTypeService;
-    private NoteService noteService;
 
     @Override
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
@@ -427,18 +420,5 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
         this.routeHeaderService = routeHeaderService;
     } 
-
-    public void setPersonService(PersonService personService) {
-        super.setPersonService(personService);
-        this.personService = personService;       
-    }
-
-    public void setDocumentTypeService(DocumentTypeService documentTypeService) {
-        this.documentTypeService = documentTypeService;
-    }
-
-    public void setNoteService(NoteService noteService) {
-        this.noteService = noteService;
-    }
 
 }
