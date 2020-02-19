@@ -25,7 +25,6 @@
 <suppressions>
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]com[\\/]rsmart[\\/]kuali" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]org[\\/]kuali[\\/]kfs" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]util" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]cynergy" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]util" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]coa" />
@@ -48,6 +47,12 @@
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ld" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]purap" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]receiptProcessing" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ar" />
     <suppress checks=".*" files="src[\\/]test" />
+    <suppress checks="AvoidStaticImport" files="[\\/]src[\\/]test[\\/].*" />
+    <suppress checks="ModifiedControlVariable"
+              files="ComponentServiceImpl|LookupableImpl|MaintainableXMLConversionServiceImpl|OrgReviewRoleServiceImpl|RichTable" />
+    <suppress checks="NestedIfDepth"
+              files="BatchLookupableHelperService|DictionaryValidationServiceImpl|KualiMaintainableImpl|MaintenanceDocumentServiceImpl|PaymentDetailLookupableHelperService|PreScrubberServiceImpl|SectionBridge" />
+    <suppress checks="SuperClone"
+              files="BaseAttributeValueReader|DictionaryObjectAttributeValueReader|SingleAttributeValueReader|ViewAttributeValueReader" />
 </suppressions>

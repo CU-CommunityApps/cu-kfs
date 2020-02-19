@@ -49,32 +49,30 @@
             are often included by maven as transitive dependencies (from Rice, OJB, etc.) so it is fairly easy as a
             developer to inadvertently include them. This configuration is meant to prevent that.
 
-            aj.org.objectweb.asm                    aspectj - removed rice transitive dependency
-            com.google.common                       guava - removed from financials, rice transitive dependency
-            com.google.thirdparty                   guava - removed from financials, rice transitive dependency
+            aj.org.objectweb.asm	                aspectj - removed rice transitive dependency
+            com.google.common	                    guava - removed from financials, rice transitive dependency
+            com.google.thirdparty	                guava - removed from financials, rice transitive dependency
             com.sun.org.apache.xerces.internal      xerces / xml related - replaced by java xml handling
-            com.sun.org.apache.xml.internal         xerces / xml related - replaced by java xml handling
-            org.apache.commons.collections          commons-collections replaced by commons-collections4
-            org.apache.commons.dbcp                 commons-dbcp replaced by commons-dbcp2 - only in spring config
-            org.apache.commons.digester             commons-digester replaced by commons-digester3
-            org.apache.commons.lang                 commons-lang replaced by commons-lang3
-            org.apache.commons.pool                 commons-pool replaced by commons-pool2 - not imported
-            org.apache.commons.transaction          commons-transaction - removed from financials, ojb transitive dependency
-            org.apache.html.dom                     xerces / xml related - replaced by java xml handling
-            org.apache.taglibs.standard             org.glassfish.web:jstl-impl - removed from financials, rice transitive dependency
-            org.apache.wml.dom                      xerces / xml related - replaced by java xml handling
-            org.apache.xerces                       xerces / xml related - replaced by java xml handling
-            org.apache.xml.serialize                xerces / xml related - replaced by java xml handling
-            org.aspectj                             aspectj - removed rice transitive dependency
-            org.hsqldb                              unused in financials, ojb transitive dependency, includes ArrayUtils class
-            org.jdom                                removed from financials, rice transitive dependency
+            com.sun.org.apache.xml.internal	        xerces / xml related - replaced by java xml handling
+            org.apache.commons.collections	        commons-collections replaced by commons-collections4
+            org.apache.commons.dbcp	                commons-dbcp replaced by commons-dbcp2 - only in spring config
+            org.apache.commons.digester	            commons-digester replaced by commons-digester3
+            org.apache.commons.lang	                commons-lang replaced by commons-lang3
+            org.apache.commons.pool	                commons-pool replaced by commons-pool2 - not imported
+            org.apache.commons.transaction	        commons-transaction - removed from financials, ojb transitive dependency
+            org.apache.html.dom	                    xerces / xml related - replaced by java xml handling
+            org.apache.taglibs.standard	            org.glassfish.web:jstl-impl - removed from financials, rice transitive dependency
+            org.apache.wml.dom	                    xerces / xml related - replaced by java xml handling
+            org.apache.xerces	                    xerces / xml related - replaced by java xml handling
+            org.apache.xml.serialize	            xerces / xml related - replaced by java xml handling
+            org.aspectj	                            aspectj - removed rice transitive dependency
+            org.eclipse.persistence	                unused in financials, rice transitive dependency, includes Assert class
+            org.hsqldb	                            unused in financials, ojb transitive dependency, includes ArrayUtils class
+            org.jdom	                            removed from financials, rice transitive dependency
             org.kuali.rice.location                 replaced in financials, rice transitive dependency
-            org.objectweb.asm.signature             aspectj - removed rice transitive dependency
-            org.w3c.dom.html                        xerces / xml related - replaced by java xml handling
-            org.apache.log4j                        log4j version 1 package - replaced by version 2
-
-            org.kuali.rice.kns.service.TransactionalDocumentDictionaryService
-                                                    currently unused and we need to keep it that way for dynamic DD data
+            org.objectweb.asm.signature	            aspectj - removed rice transitive dependency
+            org.w3c.dom.html	                    xerces / xml related - replaced by java xml handling
+            org.apache.log4j	                    log4j version 1 package - replaced by version 2
         -->
         <module name="IllegalImport">
             <property name="illegalPkgs"
@@ -96,15 +94,13 @@
                         org.apache.xerces,
                         org.apache.xml.serialize,
                         org.aspectj,
+                        org.eclipse.persistence,
                         org.hsqldb,
                         org.jdom,
                         org.kuali.rice.location,
                         org.objectweb.asm.signature,
                         org.w3c.dom.html,
                         org.apache.log4j"
-            />
-            <property name="illegalClasses"
-                      value="org.kuali.rice.kns.service.TransactionalDocumentDictionaryService"
             />
         </module>
         <module name="IllegalToken">
@@ -142,7 +138,6 @@
         <module name="OneStatementPerLine"/>
         <module name="OneTopLevelClass"/>
         <module name="OuterTypeNumber"/>
-        <module name="OverloadMethodsDeclarationOrder"/>
         <module name="ParenPad"/>
         <module name="RedundantImport"/>
         <module name="RedundantModifier"/>
@@ -162,44 +157,50 @@
         <module name="UpperEll"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
-        <!-- Cornell specific checks --> 
+        <!-- Cornell specific checks -->
         <module name="AnnotationUseStyle">
-      		<property name="severity" value="error"/>
-      		<property name="elementStyle" value="ignore"/>
-      		<property name="closingParens" value="ignore"/>
-      		<!-- "never" because Sun's compiler cannot handle a trailing comma and will not compile (who broke the build?) -->
-      		<property name="trailingArrayComma" value="never"/>
-		</module>
-	    <module name="IllegalType">
-			<property name="severity" value="warning"/>
-			<property name="illegalClassNames" value="java.util.GregorianCalendar, java.util.Hashtable, java.util.Vector"/>
-		</module>
-		<module name="LocalFinalVariableName">
-			<property name="format" value="^([a-z][a-zA-Z0-9_]*|[A-Z0-9_]*)$"/>
-		</module>
-		<module name="LocalVariableName"/>
-		<module name="MemberName"/>
-		<module name="MethodName"/>
-		<module name="MethodTypeParameterName"/>
-		<module name="MissingOverride">
-      		<property name="javaFiveCompatibility" value="false"/>
-		</module>
-		<module name="NoFinalizer"/>
-		<module name="PackageName"/>
-		<module name="ParameterName"/>
-		<module name="RegexpSinglelineJava">
+            <property name="severity" value="error"/>
+            <property name="elementStyle" value="ignore"/>
+            <property name="closingParens" value="ignore"/>
+            <!-- "never" because Sun's compiler cannot handle a trailing comma and will not compile (who broke the build?) -->
+            <property name="trailingArrayComma" value="never"/>
+        </module>
+        <module name="IllegalType">
+            <property name="severity" value="error"/>
+            <property name="illegalClassNames" value="java.util.GregorianCalendar, java.util.Hashtable, java.util.Vector"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <property name="format" value="^([a-z][a-zA-Z0-9_]*|[A-Z0-9_]*)$"/>
+        </module>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+        <module name="MethodName"/>
+        <module name="MethodTypeParameterName"/>
+        <module name="MissingOverride">
+            <property name="javaFiveCompatibility" value="false"/>
+        </module>
+        <module name="NoFinalizer"/>
+        <module name="PackageName"/>
+        <module name="ParameterName"/>
+        <module name="RegexpSinglelineJava">
             <property name="format" value="System\.out*$"/>
             <property name="message" value="Use of System.out.* method"/>
             <property name="ignoreComments" value="true"/>
         </module>
+        <module name="RegexpSinglelineJava">
+        	<property name="severity" value="warning"/>
+            <property name="format" value="System\.err*$"/>
+            <property name="message" value="Use of System.err.* method"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
         <module name="RightCurly"/>
-		<module name="StaticVariableName"/>
-		<module name="TodoComment">
-			<property name="format" value="TODO:|FIXME:"/>
-		</module>
-		<module name="TrailingComment"/>
-		<module name="TypeName"/>
-		<module name="UnnecessaryParentheses"/>
+        <module name="StaticVariableName"/>
+        <module name="TodoComment">
+            <property name="format" value="TODO:|FIXME:"/>
+        </module>
+        <module name="TrailingComment"/>
+        <module name="TypeName"/>
+        <module name="UnnecessaryParentheses"/>
     </module>
     <module name="UniqueProperties">
         <property name="fileExtensions" value="properties" />
