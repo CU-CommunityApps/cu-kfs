@@ -51,37 +51,36 @@ public class CuAssetLookupableHelperServiceImpl extends AssetLookupableHelperSer
         List<Asset> resultsModified = new ArrayList<Asset>();
         int count = 0;
         LOG.info("Asset count: " + results.size());
-    	for (BusinessObject boAsset : results) {
-    		Asset asset;
-    		if (boAsset instanceof Asset) {
-    			count++;
-    			boolean remove = false;
-    			asset = (Asset) boAsset;
-    			List<AssetLocation> locs = asset.getAssetLocations();
-    			if (locs.isEmpty()) {
-    				resultsModified.add(asset);
-    			}
-    			LOG.info("Asset location counts: " + locs.size());
-    			for (AssetLocation assetLoc : locs) {
-    				if (StringUtils.equalsIgnoreCase(assetLoc.getAssetLocationTypeCode(), "O")) {
-    					remove |= StringUtils.isBlank(assetLoc.getAssetLocationStreetAddress());
-    				}
-    			}
-    			if (!remove) {
-    				resultsModified.add(asset);
-    			} else {
-    				LOG.info("Removing asset: " + asset.getCapitalAssetNumber());
-    			}
-    		} else {
-    			break;
-    		}
-    	}
+        for (BusinessObject boAsset : results) {
+            Asset asset;
+            if (boAsset instanceof Asset) {
+                count++;
+                boolean remove = false;
+                asset = (Asset) boAsset;
+                List<AssetLocation> locs = asset.getAssetLocations();
+                if (locs.isEmpty()) {
+                    resultsModified.add(asset);
+                }
+                LOG.info("Asset location counts: " + locs.size());
+                for (AssetLocation assetLoc : locs) {
+                    if (StringUtils.equalsIgnoreCase(assetLoc.getAssetLocationTypeCode(), "O")) {
+                        remove |= StringUtils.isBlank(assetLoc.getAssetLocationStreetAddress());
+                    }
+                }
+                if (!remove) {
+                    resultsModified.add(asset);
+                } else {
+                    LOG.info("Removing asset: " + asset.getCapitalAssetNumber());
+                }
+            } else {
+                break;
+            }
+        }
 
-    	LOG.info("Assets reviewed: " + count);
-    	LOG.info("Results returned: " + resultsModified.size());
-    	
-    	return resultsModified;
+        LOG.info("Assets reviewed: " + count);
+        LOG.info("Results returned: " + resultsModified.size());
+
+        return resultsModified;
     }
     
-
 }
