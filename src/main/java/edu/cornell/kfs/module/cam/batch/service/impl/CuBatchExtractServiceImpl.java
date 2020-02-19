@@ -224,7 +224,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                             (isPREQ ? isPositive : !isPositive); // case 1.1/1.2/2.1
                     GeneralLedgerEntry currentEntry = isDebitEntry ? debitEntry : creditEntry;
                     
-                    if(ObjectUtils.isNull(generalLedgerAccountIdentifier)){
+                    if (ObjectUtils.isNull(generalLedgerAccountIdentifier)) {
                         generalLedgerAccountIdentifier = currentEntry.getGeneralLedgerAccountIdentifier();
                     }
                     
@@ -236,9 +236,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                         assetAccount = createPurchasingAccountsPayableLineAssetAccount(generalLedgerEntry, cabPurapDoc, purApAccountingLine, itemAsset);
                         assetAcctLines.put(acctLineKey, assetAccount);
                         itemAsset.getPurchasingAccountsPayableLineAssetAccounts().add(assetAccount);
-                    }
-                    else if (!nonZero || hasPositiveAndNegative) {
-                       // if amount is zero, means canceled doc, then create a copy and retain the account line
+                    } else if (!nonZero || hasPositiveAndNegative) {
+                        // if amount is zero, means canceled doc, then create a copy and retain the account line
 
                         /*
                          * KFSMI-9760 / KFSCNTRB-???(FSKD-5097)
@@ -273,14 +272,12 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                             // if account line key matches within same GL Entry, combine the amount
                             assetAccount.setItemAccountTotalAmount(assetAccount.getItemAccountTotalAmount()
                                     .add(purApAccountingLine.getAmount()));
+                        } else {
+                            assetAccount = createPurchasingAccountsPayableLineAssetAccount(currentEntry, cabPurapDoc, purApAccountingLine, itemAsset);
+                            assetAcctLines.put(acctLineKey, assetAccount);
+                            itemAsset.getPurchasingAccountsPayableLineAssetAccounts().add(assetAccount);
                         }
-                        else{
-                        	assetAccount = createPurchasingAccountsPayableLineAssetAccount(currentEntry, cabPurapDoc, purApAccountingLine, itemAsset);
-                        	assetAcctLines.put(acctLineKey, assetAccount);
-                        	itemAsset.getPurchasingAccountsPayableLineAssetAccounts().add(assetAccount);
-                        }
-                    }
-                    else if (ObjectUtils.isNotNull(assetAccount)) {
+                    } else if (ObjectUtils.isNotNull(assetAccount)) {
                         // if account line key matches within same GL Entry, combine the amount
                         assetAccount.setItemAccountTotalAmount(assetAccount.getItemAccountTotalAmount().add(purApAccountingLine.getAmount()));
                     }
@@ -323,8 +320,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 if (newApDoc) {
                     purApDocuments.add(cabPurapDoc);
                 }
-            }
-            else {
+            } else {
                 LOG.error("Could not create a valid PurchasingAccountsPayableDocument object for document number " + entry.getDocumentNumber());
             }
         }
@@ -332,7 +328,6 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         return purApDocuments;
     }
     
-
     /**
      * Returns true if the item type code is trade-in or discount, since items with these types usually have negative amounts.
      */
@@ -362,15 +357,13 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
             PurApItem purapItem = purApAccountingLine.getPurapItem();
             if (isItemTypeUsuallyOfNegativeAmount(purapItem.getItemTypeCode())) {
                 hasItemsUsuallyNegative = true;
-            }
-            else {
+            } else {
                 hasOthers = true;
             }
             // when we hit the same item twice within the matched lines, which share the same account, then we find a revision
             if (itemIdentifiers.contains(purApAccountingLine.getItemIdentifier())) {
                 hasRevision = true;
-            }
-            else {
+            } else {
                 itemIdentifiers.add(purApAccountingLine.getItemIdentifier());
             }
             if (hasRevision && hasItemsUsuallyNegative && hasOthers) {
