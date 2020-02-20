@@ -1,8 +1,11 @@
 package edu.cornell.kfs.concur.businessobjects;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.sys.KFSConstants;
 
 public class ConcurEventNotification extends PersistableBusinessObjectBase{   
     protected int concurEventNotificationId;
@@ -105,4 +108,21 @@ public class ConcurEventNotification extends PersistableBusinessObjectBase{
         this.notificationURI = notificationURI;
     }
 
+    public String toPurgeRecordingString() {
+        SimpleDateFormat sdf = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
+        StringBuilder sb = new StringBuilder();
+        sb.append("concurEventNotificationId: ").append(concurEventNotificationId).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("context: ").append(context).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("eventDateTime: ").append(sdf.format(eventDateTime)).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("eventType: ").append(eventType).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("objectType: ").append(objectType).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("objectURI: ").append(objectURI).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("notificationURI: ").append(notificationURI).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("inProcess: ").append(inProcess).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("processed: ").append(processed).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("validationResult: ").append(validationResult).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append("validationResultMessage: ").append(validationResultMessage).append(KFSConstants.COMMA);
+        return sb.toString();
+    }
+    
 }

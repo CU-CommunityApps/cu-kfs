@@ -330,5 +330,29 @@
     <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype"/>
     <bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
           p:lookupableHelperService-ref="batchFileLookupableHelperService"/>
+          
+    <bean id="purgeJob" parent="purgeJob-parentBean">
+        <property name="steps">
+            <list merge="true">
+                <ref bean="purgeConcurTablesStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="purgeConcurTablesStep" parent="purgeConcurTablesStep-parentBean"/>
+    <bean id="purgeConcurTablesStep-parentBean" class="edu.cornell.kfs.sys.batch.PurgeConcurTablesStep"
+          parent="step" abstract="true" p:concurTablesPurgeService-ref="concurTablesPurgeService">
+    </bean>
+
+    <bean id="concurTablesPurgeService" parent="concurTablesPurgeService-parentBean"/>
+    <bean id="concurTablesPurgeService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurTablesPurgeServiceImpl"
+          abstract="true" p:concurEventNotificationDao-ref="concurEventNotificationDao" 
+          p:parameterService-ref="parameterService">
+    </bean>
+
+    <bean id="concurEventNotificationDao" parent="concurEventNotificationDao-parentBean"/>
+    <bean id="concurEventNotificationDao-parentBean" parent="platformAwareDao"
+          class="edu.cornell.kfs.concur.dataaccess.impl.ConcurEventNotificationDaoOjb" abstract="true"> 
+    </bean>
 
 </beans>
