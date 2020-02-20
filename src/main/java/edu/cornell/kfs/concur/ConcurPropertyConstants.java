@@ -9,10 +9,11 @@ public class ConcurPropertyConstants {
         public static final String EVENT_TYPE = "eventType";
         public static final String OBJECT_TYPE ="objectType";
         public static final String OBJECT_URI ="objectURI";
+        public static final String NOTIFICATION_URI ="notificationURI";
         public static final String IN_PROCESS ="inProcess";
         public static final String PROCESSED = "processed";
         public static final String VALIDATION_RESULT ="validationResult";
-        public static final String VALIDATION_RESULT_MESSAGE = "validationResultMessage";        
+        public static final String VALIDATION_RESULT_MESSAGE = "validationResultMessage";
     }
 
     public class ConcurRequestedCashAdvance {

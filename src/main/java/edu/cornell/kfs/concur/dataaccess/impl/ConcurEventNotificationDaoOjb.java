@@ -11,8 +11,8 @@ import edu.cornell.kfs.sys.dataaccess.impl.TablePurgeRecordsDaoOjb;
 public class ConcurEventNotificationDaoOjb extends TablePurgeRecordsDaoOjb implements ConcurEventNotificationDao {
     
     public void purgeRecords(java.util.Date jobRunDate, int daysOld) {
-        Date dateForPurge = super.getJavaSqlDateForComputedDate(jobRunDate, daysOld);
-        Criteria lookupCriteria = buildLookupCriteria(dateForPurge);
+        Date purgeDate = super.getPurgeDate(jobRunDate, daysOld);
+        Criteria lookupCriteria = buildLookupCriteria(purgeDate);
         identifyAndRequestRecordsDeletion(ConcurEventNotification.class, lookupCriteria);
     }
     
@@ -21,18 +21,6 @@ public class ConcurEventNotificationDaoOjb extends TablePurgeRecordsDaoOjb imple
         lookupCriteria.addEqualTo("processed", "Y");
         lookupCriteria.addLessOrEqualThan("eventDateTime", dateForPurge);
         return lookupCriteria;
-    }
-    
-    protected Criteria buildRecordDeletionCriteria(Object recordIdentifiedForDeletion) {
-        ConcurEventNotification record = (ConcurEventNotification) recordIdentifiedForDeletion;
-        Criteria singleRecordDeletionCriteria = new Criteria();
-        singleRecordDeletionCriteria.addEqualTo("concurEventNotificationId", record.getConcurEventNotificationId());
-        return singleRecordDeletionCriteria;
-    }
-    
-    protected String buildPurgeRecordingString(Object recordIdentifiedForDeletion) {
-        ConcurEventNotification record = (ConcurEventNotification) recordIdentifiedForDeletion;
-        return record.toPurgeRecordingString();
     }
 
 }
