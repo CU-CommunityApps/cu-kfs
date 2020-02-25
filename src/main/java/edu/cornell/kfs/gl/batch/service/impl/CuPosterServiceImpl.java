@@ -47,10 +47,12 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import org.kuali.kfs.gl.GLParameterConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPosterServiceImpl extends PosterServiceImpl implements PosterService {
     private static final Logger LOG = LogManager.getLogger(CuPosterServiceImpl.class);
+    private static final String GL_INDIRECT_COST_RECOVERY = "INDIRECT_COST_RECOVERY_DOCUMENT_TYPE";
 
     
     /**
@@ -109,8 +111,8 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
             return;
         }
 
-        e.setFinancialDocumentTypeCode(parameterService.getParameterValueAsString(PosterIndirectCostRecoveryEntriesStep.class, KFSConstants.SystemGroupParameterNames.GL_INDIRECT_COST_RECOVERY));
-        e.setFinancialSystemOriginationCode(parameterService.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, KFSConstants.SystemGroupParameterNames.GL_ORIGINATION_CODE));
+        e.setFinancialDocumentTypeCode(parameterService.getParameterValueAsString(PosterIndirectCostRecoveryEntriesStep.class, GL_INDIRECT_COST_RECOVERY));
+        e.setFinancialSystemOriginationCode(parameterService.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.GL_ORIGINATION_CODE));
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING);
         /*CUMod - start*/
         StringBuffer docNbr = new StringBuffer(ICR_EDOC_PREFIX);
@@ -150,7 +152,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
         }
 
         if (et.getBalanceTypeCode().equals(et.getOption().getExtrnlEncumFinBalanceTypCd()) || et.getBalanceTypeCode().equals(et.getOption().getIntrnlEncumFinBalanceTypCd()) || et.getBalanceTypeCode().equals(et.getOption().getPreencumbranceFinBalTypeCd()) || et.getBalanceTypeCode().equals(et.getOption().getCostShareEncumbranceBalanceTypeCd())) {
-            e.setDocumentNumber(parameterService.getParameterValueAsString(PosterIndirectCostRecoveryEntriesStep.class, KFSConstants.SystemGroupParameterNames.GL_INDIRECT_COST_RECOVERY));
+            e.setDocumentNumber(parameterService.getParameterValueAsString(PosterIndirectCostRecoveryEntriesStep.class, GL_INDIRECT_COST_RECOVERY));
         }
         e.setProjectCode(et.getProjectCode());
         if (GeneralLedgerConstants.getDashOrganizationReferenceId().equals(et.getOrganizationReferenceId())) {

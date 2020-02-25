@@ -44,6 +44,8 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  */
 public class CuScrubberProcessImpl extends ScrubberProcessImpl {
     private static final Logger LOG = LogManager.getLogger(CuScrubberProcessImpl.class);
+    private static final String COST_SHARE_OBJECT_CODE = "COST_SHARE_OBJECT_CODE";
+    private static final String PLANT_INDEBTEDNESS_IND = "PLANT_INDEBTEDNESS_IND";
 
     private static final int CONTINUATION_ACCOUNT_DEPTH_LIMIT = 10;
 
@@ -64,7 +66,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             SystemOptions scrubbedEntryOption = accountingCycleCachingService.getSystemOptions(scrubbedEntry.getUniversityFiscalYear());
             A21SubAccount scrubbedEntryA21SubAccount = accountingCycleCachingService.getA21SubAccount(scrubbedEntry.getChartOfAccountsCode(), scrubbedEntry.getAccountNumber(), scrubbedEntry.getSubAccountNumber());
 
-            costShareEntry.setFinancialObjectCode(parameterService.getParameterValueAsString(ScrubberStep.class, GeneralLedgerConstants.GlScrubberGroupParameters.COST_SHARE_OBJECT_CODE_PARM_NM));
+            costShareEntry.setFinancialObjectCode(parameterService.getParameterValueAsString(ScrubberStep.class, COST_SHARE_OBJECT_CODE));
             costShareEntry.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             costShareEntry.setFinancialObjectTypeCode(scrubbedEntryOption.getFinancialObjectTypeTransferExpenseCd());
             costShareEntry.setTransactionLedgerEntrySequenceNumber(new Integer(0));
@@ -327,8 +329,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
     @Override
     protected String processPlantIndebtedness(OriginEntryInformation scrubbedEntry, ScrubberReportData scrubberReport) {
         // Make sure plant indebtedness processing is enabled.
-        if (parameterService.getParameterValueAsBoolean(ScrubberStep.class,
-                GeneralLedgerConstants.GlScrubberGroupParameters.PLANT_INDEBTEDNESS_IND, Boolean.FALSE).booleanValue()) {
+        if (parameterService.getParameterValueAsBoolean(ScrubberStep.class, PLANT_INDEBTEDNESS_IND, Boolean.FALSE).booleanValue()) {
             // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
             ParameterEvaluator plantIndebtednessDocTypes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ScrubberStep.class,
                     CuGeneralLedgerConstants.CuGlScrubberGroupRules.PLANT_INDEBTEDNESS_DOC_TYPE_CODES, scrubbedEntry.getFinancialDocumentTypeCode());

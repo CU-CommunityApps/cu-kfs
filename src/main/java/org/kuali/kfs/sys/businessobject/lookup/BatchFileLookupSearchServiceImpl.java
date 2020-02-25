@@ -20,7 +20,6 @@ package org.kuali.kfs.sys.businessobject.lookup;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOCase;
@@ -34,28 +33,19 @@ import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
-import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.rest.application.SysApiApplication;
 import org.kuali.kfs.sys.util.DateRangeUtil;
-import org.kuali.rice.kim.api.identity.Person;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
-
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
@@ -71,19 +61,6 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
                 sortAscending, stream);
 
         return Pair.of(sortedAndSliced, allFiles.size());
-    }
-
-    private int compare(Comparator comparator, BusinessObjectBase left, BusinessObjectBase right, String key) {
-        Object leftValue = null;
-        Object rightValue = null;
-        try {
-            leftValue = PropertyUtils.getProperty(left, key);
-            rightValue = PropertyUtils.getProperty(right, key);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LOG.warn("Unable to sort BusinessObject: " + left.getClass().getSimpleName() + " on property named: " +
-                    key);
-        }
-        return comparator.compare(leftValue, rightValue);
     }
 
     private List<BatchFile> getFiles(MultivaluedMap<String, String> fieldValues) {
@@ -171,51 +148,6 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
         });
 
         return searchPaths;
-    }
-
-    protected BatchFileAdminAuthorizationService getBatchFileAdminAuthorizationService() {
-        return SpringContext.getBean(BatchFileAdminAuthorizationService.class);
-    }
-
-    @Override
-    public List<Map<String, Object>> getActionLinks(BusinessObjectBase businessObject, Person user) {
-        BatchFile batchFile = (BatchFile) businessObject;
-        List<Map<String, Object>> actionLinks = new LinkedList<>();
-
-        if (canDownloadFile(batchFile, user)) {
-            Map<String, Object> downloadLink = new LinkedHashMap<>();
-            downloadLink.put("label", "Download");
-            downloadLink.put("url", getDownloadURL(batchFile));
-            downloadLink.put("method", "GET");
-            actionLinks.add(downloadLink);
-        }
-
-        if (canDeleteFile(batchFile, user)) {
-            Map<String, Object> deleteLink = new LinkedHashMap<>();
-            deleteLink.put("label", "Delete");
-            deleteLink.put("url", getResourceURL(batchFile));
-            deleteLink.put("method", "DELETE");
-            actionLinks.add(deleteLink);
-        }
-
-        return actionLinks;
-    }
-
-    private boolean canDownloadFile(BatchFile batchFile, Person user) {
-        return getBatchFileAdminAuthorizationService().canDownload(batchFile, user);
-    }
-
-    private boolean canDeleteFile(BatchFile batchFile, Person user) {
-        return getBatchFileAdminAuthorizationService().canDelete(batchFile, user);
-    }
-
-    private String getResourceURL(BatchFile batchFile) {
-        return SysApiApplication.SYS_ROOT + "/" + SysApiApplication.BUSINESS_OBJECT_RESOURCE + "/BatchFile/" +
-                batchFile.getId();
-    }
-
-    private String getDownloadURL(BatchFile batchFile) {
-        return this.getResourceURL(batchFile) + ".bin";
     }
 
     protected class BatchFileFinder extends DirectoryWalker {

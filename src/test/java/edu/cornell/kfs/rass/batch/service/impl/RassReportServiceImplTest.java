@@ -26,6 +26,7 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassConstants.RassObjectGroupingUpdateResultCode;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
@@ -267,7 +268,7 @@ public class RassReportServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     private String addTextExtensionToBaseFileName(String fileName) {
-        return fileName + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION;
+        return fileName + CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION;
     }
 
     private String addXmlExtensionToBaseFileName(String fileName) {

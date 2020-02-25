@@ -7,6 +7,7 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurTestConstants;
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 
@@ -113,7 +114,7 @@ public enum ConcurSAEFileFixture {
 
     public ConcurStandardAccountingExtractFile toExtractFileWithoutDetailLines() {
         ConcurStandardAccountingExtractFile extractFile = new ConcurStandardAccountingExtractFile();
-        extractFile.setOriginalFileName(name() + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
+        extractFile.setOriginalFileName(name() + CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
         extractFile.setBatchId(batchId);
         extractFile.setBatchDate(ConcurFixtureUtils.toSqlDate(batchDate));
         extractFile.setRecordCount(recordCount);
