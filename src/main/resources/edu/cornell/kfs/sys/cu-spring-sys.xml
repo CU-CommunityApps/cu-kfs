@@ -347,6 +347,32 @@
     <bean id="tablesPurgeService" parent="tablesPurgeService-parentBean"/>
     <bean id="tablesPurgeService-parentBean" class="edu.cornell.kfs.sys.batch.service.impl.TablesPurgeServiceImpl"
           abstract="true" p:tablePurgeRecordsDao-ref="tablePurgeRecordsDao">
+          <property name="tablesDetailsForPurge">
+              <list>
+                  <ref bean="concurEventNotificationTableDetailsForPurge"/>
+              </list>
+          </property>
+    </bean>
+    
+    <bean id="concurEventNotificationTableDetailsForPurge" class="edu.cornell.kfs.sys.businessobject.TableDetailsForPurge">
+        <constructor-arg type="java.lang.Class">
+            <value>edu.cornell.kfs.concur.businessobjects.ConcurEventNotification</value>
+        </constructor-arg>
+        <constructor-arg type="boolean">
+            <value>true</value>
+        </constructor-arg>
+        <constructor-arg type="java.lang.String">
+            <value>null</value>
+        </constructor-arg>
+        <constructor-arg type="java.lang.String">
+            <value>null</value>
+        </constructor-arg>
+        <constructor-arg type="java.lang.String">
+            <value>null</value>
+        </constructor-arg>
+        <constructor-arg type="java.lang.String">
+            <value>edu.cornell.kfs.sys.batch.service.impl.ConcurEventNotificationLookupCriteriaPurgeServiceImpl</value>
+        </constructor-arg>
     </bean>
 
     <bean id="tablePurgeRecordsDao" parent="tablePurgeRecordsDao-parentBean"/>

@@ -8,6 +8,16 @@ public class TableDetailsForPurge {
     protected String parameterName;
     protected String serviceImplForPurgeTableLookupCriteria; 
     
+    public TableDetailsForPurge(Class businessObjectForRecordsTablePurge, boolean useDefaultDaysBeforePurgeParameter, String nameSpaceCode,
+                                String component, String parameterName, String serviceImplForPurgeTableLookupCriteria) {
+        this.businessObjectForRecordsTablePurge = businessObjectForRecordsTablePurge;
+        this.useDefaultDaysBeforePurgeParameter = useDefaultDaysBeforePurgeParameter;
+        this.nameSpaceCode = nameSpaceCode;
+        this.component = component;
+        this.parameterName = parameterName;
+        this.serviceImplForPurgeTableLookupCriteria = serviceImplForPurgeTableLookupCriteria;
+    }
+    
     public Class getBusinessObjectForRecordsTablePurge() {
         return businessObjectForRecordsTablePurge;
     }
