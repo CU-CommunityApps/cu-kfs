@@ -1,47 +1,52 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import edu.cornell.kfs.concur.dataaccess.ConcurEventNotificationDao;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
 import edu.cornell.kfs.sys.batch.service.TablesPurgeService;
+import edu.cornell.kfs.sys.businessobject.TableDetailsForPurge;
+import edu.cornell.kfs.sys.dataaccess.TablePurgeRecordsDao;
 
 public class TablesPurgeServiceImpl implements TablesPurgeService {
-    protected ParameterService parameterService;
-    protected ConcurEventNotificationDao concurEventNotificationDao;
+    private static final Logger LOG = LogManager.getLogger(TablesPurgeServiceImpl.class); 
+    protected TablePurgeRecordsDao tablePurgeRecordsDao;
+    protected List<TableDetailsForPurge> tablesDetailsForPurge;
     
     public void purgeRecords(Date jobRunDate) {
-        getConcurEventNotificationDao().purgeRecords(jobRunDate, retrieveDefaultDaysBeforePurgeParameterValue());
+        initializaDetails();
+        getTablePurgeRecordsDao().purgeRecords(jobRunDate, tablesDetailsForPurge);
     }
     
-    protected int retrieveDefaultDaysBeforePurgeParameterValue() {
-        return retrieveDaysBeforePurgeParameterValue(
-                CUKFSParameterKeyConstants.PurgeTablesParameterConstants.DEFAULT_NAME_SPACE_CODE, 
-                CUKFSParameterKeyConstants.PurgeTablesParameterConstants.DEFAULT_COMPONENT, 
-                CUKFSParameterKeyConstants.PurgeTablesParameterConstants.DEFAULT_PARAMETER_NAME);
+    private void initializaDetails() {
+        tablesDetailsForPurge = new ArrayList<TableDetailsForPurge>();
+        
+        TableDetailsForPurge tableDetails = new TableDetailsForPurge();
+        tableDetails.setBusinessObjectForRecordsTablePurge(ConcurEventNotification.class);
+        tableDetails.setUseDefaultDaysBeforePurgeParameter(true);
+        tableDetails.setServiceImplForPurgeTableLookupCriteria("edu.cornell.kfs.sys.batch.service.impl.ConcurEventNotificationLookupCriteriaPurgeServiceImpl");
+        
+        tablesDetailsForPurge.add(tableDetails);
+    }
+
+    public TablePurgeRecordsDao getTablePurgeRecordsDao() {
+        return tablePurgeRecordsDao;
+    }
+
+    public void setTablePurgeRecordsDao(TablePurgeRecordsDao tablePurgeRecordsDao) {
+        this.tablePurgeRecordsDao = tablePurgeRecordsDao;
+    }
+
+    public List<TableDetailsForPurge> getTablesDetailsForPurge() {
+        return tablesDetailsForPurge;
+    }
+
+    public void setTablesDetailsForPurge(List<TableDetailsForPurge> tablesDetailsForPurge) {
+        this.tablesDetailsForPurge = tablesDetailsForPurge;
     }
     
-    protected int retrieveDaysBeforePurgeParameterValue(String nameSpaceCode, String component, String parameterName) {
-        final String parameterValue = getParameterService().getParameterValueAsString(nameSpaceCode, component, parameterName);
-        return new Integer(parameterValue);
-    }
-
-    public ParameterService getParameterService() {
-        return parameterService;
-    }
-
-    public void setParameterService(ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
-
-    public ConcurEventNotificationDao getConcurEventNotificationDao() {
-        return concurEventNotificationDao;
-    }
-
-    public void setConcurEventNotificationDao(ConcurEventNotificationDao concurEventNotificationDao) {
-        this.concurEventNotificationDao = concurEventNotificationDao;
-    }
-
 }
