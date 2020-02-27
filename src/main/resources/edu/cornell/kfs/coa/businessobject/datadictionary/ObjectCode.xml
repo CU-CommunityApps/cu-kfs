@@ -32,7 +32,8 @@
           p:businessObjectClass="org.kuali.kfs.coa.businessobject.ObjectCode" p:name="ObjectCode"
           p:businessObjectAdminService-ref="defaultBoAdminService"
           p:inquiryDefinition-ref="ObjectCode-inquiryDefinition" p:lookupDefinition-ref="ObjectCode-lookupDefinition"
-          p:titleAttribute="financialObjectCode" p:objectLabel="Object Code">
+          p:actionsProvider-ref="businessObjectActionsProvider" p:titleAttribute="financialObjectCode"
+          p:objectLabel="Object Code">
         <property name="attributes">
             <list>
                 <ref bean="ObjectCode-universityFiscalYear"/>
