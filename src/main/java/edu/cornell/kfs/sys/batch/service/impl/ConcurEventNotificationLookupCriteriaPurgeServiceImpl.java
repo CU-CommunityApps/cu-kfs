@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import org.apache.ojb.broker.query.Criteria;
 
+import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.sys.batch.service.TableLookupCriteriaPurgeService;
 
 public class ConcurEventNotificationLookupCriteriaPurgeServiceImpl extends TableLookupCriteriaPurgeServiceImpl implements TableLookupCriteriaPurgeService {
@@ -11,8 +12,8 @@ public class ConcurEventNotificationLookupCriteriaPurgeServiceImpl extends Table
     @Override
     public Criteria buildLookupCriteria(Date dateForPurge) {
         Criteria lookupCriteria = new Criteria();
-        lookupCriteria.addEqualTo("processed", "Y");
-        lookupCriteria.addLessOrEqualThan("eventDateTime", dateForPurge);
+        lookupCriteria.addEqualTo(ConcurPropertyConstants.ConcurEventNotification.PROCESSED, "Y");
+        lookupCriteria.addLessOrEqualThan(ConcurPropertyConstants.ConcurEventNotification.EVENT_DATE_TIME, dateForPurge);
         return lookupCriteria;
     }
 
