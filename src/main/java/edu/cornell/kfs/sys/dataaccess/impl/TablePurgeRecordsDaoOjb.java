@@ -38,12 +38,12 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
         for (TableDetailsForPurge details : tableDetails) {
             daysOldToUse = details.isUseDefaultDaysBeforePurgeParameter() ? defaultDaysOld : retrieveDaysBeforePurgeParameterValue(details.getNameSpaceCode(), details.getComponent(), details.getParameterName());
             dateForPurge = getPurgeDate(jobRunDate, daysOldToUse);
-            lookupCriteria = requestTablePurgeCriteria(details.getServiceImplForPurgeTableLookupCriteria(), dateForPurge);
+            lookupCriteria = buildTablePurgeCriteria(details.getServiceImplForPurgeTableLookupCriteria(), dateForPurge);
             identifyAndRequestRecordsDeletion(details.getBusinessObjectForRecordsTablePurge(), lookupCriteria);
         }
     }
 
-    protected Criteria requestTablePurgeCriteria(String serviceImplClassForPurgeTableLookupCriteria, Date dateForPurge) {
+    protected Criteria buildTablePurgeCriteria(String serviceImplClassForPurgeTableLookupCriteria, Date dateForPurge) {
         Criteria lookupQueryCriteria = null;
         try {
             Class<?> computedClass = Class.forName(serviceImplClassForPurgeTableLookupCriteria);
@@ -52,27 +52,27 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
             TableLookupCriteriaPurgeService criteriaService = (TableLookupCriteriaPurgeService) serviceAsObject;
             lookupQueryCriteria =  criteriaService.buildLookupCriteria(dateForPurge);
         } catch (NoSuchMethodException nsme) {
-            String errorMessage = new String("requestTablePurgeCriteria: Caught NoSuchMethodException attempting to construct lookup perge query criteria.");
+            String errorMessage = new String("buildTablePurgeCriteria: Caught NoSuchMethodException attempting to construct lookup perge query criteria.");
             LOG.error(errorMessage + nsme.toString());
             throw new RuntimeException(errorMessage + nsme.toString());
             
         } catch (ClassNotFoundException cnfe) {
-            String errorMessage = new String("requestTablePurgeCriteria: Caught ClassNotFoundException attempting to construct lookup perge query criteria.");
+            String errorMessage = new String("buildTablePurgeCriteria: Caught ClassNotFoundException attempting to construct lookup perge query criteria.");
             LOG.error(errorMessage + cnfe.toString());
             throw new RuntimeException(errorMessage + cnfe.toString());
             
         } catch (InvocationTargetException ite) {
-            String errorMessage = new String("requestTablePurgeCriteria: Caught InvocationTargetException attempting to construct lookup perge query criteria.");
+            String errorMessage = new String("buildTablePurgeCriteria: Caught InvocationTargetException attempting to construct lookup perge query criteria.");
             LOG.error(errorMessage + ite.toString());
             throw new RuntimeException(errorMessage + ite.toString());
             
         } catch (InstantiationException ite) {
-            String errorMessage = new String("requestTablePurgeCriteria: Caught InstantiationException attempting to construct lookup perge query criteria.");
+            String errorMessage = new String("buildTablePurgeCriteria: Caught InstantiationException attempting to construct lookup perge query criteria.");
             LOG.error(errorMessage + ite.toString());
             throw new RuntimeException(errorMessage + ite.toString());
             
         } catch (IllegalAccessException iae) {
-            String errorMessage = new String("requestTablePurgeCriteria: Caught IllegalAccessException attempting to construct lookup perge query criteria.");
+            String errorMessage = new String("buildTablePurgeCriteria: Caught IllegalAccessException attempting to construct lookup perge query criteria.");
             LOG.error(errorMessage + iae.toString());
             throw new RuntimeException(errorMessage + iae.toString());
             

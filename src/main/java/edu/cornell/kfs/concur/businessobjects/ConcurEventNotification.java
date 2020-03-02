@@ -112,7 +112,7 @@ public class ConcurEventNotification extends PersistableBusinessObjectBase{
     }
 
     public String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT);
         StringBuilder sb = new StringBuilder();
         sb.append(ConcurPropertyConstants.ConcurEventNotification.CONCUR_EVENT_NOTIFICATION_ID).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(concurEventNotificationId).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
         sb.append(ConcurPropertyConstants.ConcurEventNotification.CONTEXT).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(context).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
