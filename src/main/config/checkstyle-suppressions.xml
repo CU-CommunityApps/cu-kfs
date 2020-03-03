@@ -23,31 +23,32 @@
         "-//Puppy Crawl//DTD Suppressions 1.1//EN"
         "http://checkstyle.sourceforge.net/dtds/suppressions_1_1.dtd">
 <suppressions>
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]com[\\/]rsmart[\\/]kuali" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]org[\\/]kuali[\\/]kfs" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]cynergy" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]util" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]coa" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]concur" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]fp" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]gl" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]integration" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]krad" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]pdp" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]pmw" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]rass" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]sec" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]sys" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]tax" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]vnd" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]web" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ar" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]cg" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ezra" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ld" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]purap" />
-    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]receiptProcessing" />
-    <suppress checks=".*" files="src[\\/]test" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]com[\\/]rsmart[\\/]kuali[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]org[\\/]kuali[\\/]kfs[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]cynergy[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]util[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]coa[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]concur[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]fp[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]gl[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]integration[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]krad[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]pdp[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]pmw[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]rass[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]sec[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]sys[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]tax[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]vnd[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]web[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ar[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]cg[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ezra[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]ld[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]purap[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]receiptProcessing[\\/].*" />
+    <suppress checks=".*" files="src[\\/]test[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]resources[\\/].*" />
     <suppress checks="AvoidStaticImport" files="[\\/]src[\\/]test[\\/].*" />
     <suppress checks="ModifiedControlVariable"
               files="ComponentServiceImpl|LookupableImpl|MaintainableXMLConversionServiceImpl|OrgReviewRoleServiceImpl|RichTable" />
