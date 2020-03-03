@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Notification>
+    <EventType>Report Entered Expense Report Workflow Step - SUBMIT</EventType>
+    <ObjectType>EXPRPT</ObjectType>
+    <ObjectURI>https://www.concursolutions.com/api/expense/expensereport/v1.1/reportfulldetails/3%Rek29$wsIY12Di3LS9$gjei%KL23</ObjectURI>
+    <EventDateTime>2012-05-02</EventDateTime>
+    <Context/>
+</Notification>
