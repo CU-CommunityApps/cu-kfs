@@ -20,13 +20,13 @@ public class ConcurEventNotificationDTOTest {
     private File xmlFile;
     
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         cuMarshalService = new CUMarshalServiceImpl();
         xmlFile = new File(EXAMPLE_FILE_NAME);
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         cuMarshalService = null;
         xmlFile = null;
     }
