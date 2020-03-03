@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="NotificationList", namespace="http://www.concursolutions.com/api/notification/2012/06")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ConcurEventNotificationListDTO {
     
     @XmlElement(name = "Notification")

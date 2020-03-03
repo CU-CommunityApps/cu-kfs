@@ -15,12 +15,13 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class ConcurEventNotificationDTOTest {
     private static final String EXAMPLE_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/xmlObjects/fixture/event-notification-payload-example.xml";
+    private static final String EQUAL_ASSERT_STATEMENT = "Expected value should equal the actual value.";
     
     private CUMarshalService cuMarshalService;
     private File xmlFile;
     
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         cuMarshalService = new CUMarshalServiceImpl();
         xmlFile = new File(EXAMPLE_FILE_NAME);
     }
