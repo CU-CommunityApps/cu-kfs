@@ -1,18 +1,20 @@
 package edu.cornell.kfs.sys.businessobject;
 
+import edu.cornell.kfs.sys.batch.service.TableLookupCriteriaPurgeService;
+
 public class TableDetailsForPurge {
     protected Class businessObjectForRecordsTablePurge;
     protected boolean useDefaultDaysBeforePurgeParameter;
     protected String nameSpaceCode;
     protected String component;
     protected String parameterName;
-    protected String serviceImplForPurgeTableLookupCriteria; 
+    protected TableLookupCriteriaPurgeService serviceImplForPurgeTableLookupCriteria;
     
     public TableDetailsForPurge() {
     }
     
     public TableDetailsForPurge(Class businessObjectForRecordsTablePurge, boolean useDefaultDaysBeforePurgeParameter, String nameSpaceCode,
-                                String component, String parameterName, String serviceImplForPurgeTableLookupCriteria) {
+                                String component, String parameterName, TableLookupCriteriaPurgeService serviceImplForPurgeTableLookupCriteria) {
         this.businessObjectForRecordsTablePurge = businessObjectForRecordsTablePurge;
         this.useDefaultDaysBeforePurgeParameter = useDefaultDaysBeforePurgeParameter;
         this.nameSpaceCode = nameSpaceCode;
@@ -61,11 +63,11 @@ public class TableDetailsForPurge {
         this.parameterName = parameterName;
     }
 
-    public String getServiceImplForPurgeTableLookupCriteria() {
+    public TableLookupCriteriaPurgeService getServiceImplForPurgeTableLookupCriteria() {
         return serviceImplForPurgeTableLookupCriteria;
     }
 
-    public void setServiceImplForPurgeTableLookupCriteria(String serviceImplForPurgeTableLookupCriteria) {
+    public void setServiceImplForPurgeTableLookupCriteria(TableLookupCriteriaPurgeService serviceImplForPurgeTableLookupCriteria) {
         this.serviceImplForPurgeTableLookupCriteria = serviceImplForPurgeTableLookupCriteria;
     }
 
