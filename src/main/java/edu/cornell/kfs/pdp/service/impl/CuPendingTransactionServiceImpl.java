@@ -93,6 +93,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 	private DocumentService documentService;
     private NoteService noteService;
     private CheckReconciliationDao checkReconciliationDao;
+    protected PurapAccountRevisionService purapAccountRevisionService;
 
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCRCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
@@ -510,7 +511,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             // manually save cm account change tables (CAMS needs this)
 
-                SpringContext.getBean(PurapAccountRevisionService.class).cancelCreditMemoAccountRevisions(cm.getItems(), cm.getPostingYearFromPendingGLEntries(), cm.getPostingPeriodCodeFromPendingGLEntries());
+            purapAccountRevisionService.cancelCreditMemoAccountRevisions(cm.getItems(), cm.getPostingYearFromPendingGLEntries(), cm.getPostingPeriodCodeFromPendingGLEntries());
       
         }
 
@@ -962,6 +963,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
           
         }
+        
+        LOG.info("generateEntriesPaymentRequest, cancel previous revisions of preq");
+        purapAccountRevisionService.cancelPaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
 
 
         // Manually save GL entries for Payment Request and encumbrances
@@ -997,5 +1001,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 	public void setNoteService(NoteService noteService) {
 		this.noteService = noteService;
 	}
+
+    public void setPurapAccountRevisionService(PurapAccountRevisionService purapAccountRevisionService) {
+        this.purapAccountRevisionService = purapAccountRevisionService;
+    }
 
 }
