@@ -1,0 +1,93 @@
+<TravelRequestDetails xmlns="http://www.concursolutions.com/api/travelrequest/2012/06" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <AgencyOfficeKey/>
+    <AgencyOfficeName/>
+    <ApprovalLimitDate i:nil="true"/>
+    <ApprovalStatusKey>Q_APPR</ApprovalStatusKey>
+    <ApprovalStatusName>Approved</ApprovalStatusName>
+    <AuthorizedDate>2020-02-27T14:20:21</AuthorizedDate>
+    <CashAdvanceCount>1</CashAdvanceCount>
+    <CashAdvancesList>
+        <CashAdvance>
+            <AmountRequested>227.200000</AmountRequested>
+            <ApprovalStatusKey>C_ISSU</ApprovalStatusKey>
+            <ApprovalStatusName>Issued</ApprovalStatusName>
+            <CashAdvanceKey></CashAdvanceKey>
+            <CommentCount>1</CommentCount>
+            <CommentsList>
+                <Comments>
+                    <Comment>Safe travels!</Comment>
+                    <DateTime>2020-02-27T14:32:41</DateTime>
+                    <FirstName>TestCashAdvanceAdministrator</FirstName>
+                    <LastName>TestCashAdvanceAdministrator</LastName>
+                </Comments>
+            </CommentsList>
+            <CurrencyCode>USD</CurrencyCode>
+            <CurrencyName>US, Dollar</CurrencyName>
+            <EmployeeCurrencyCode>USD</EmployeeCurrencyCode>
+            <EmployeeCurrencyName>US, Dollar</EmployeeCurrencyName>
+            <ExchangeRate>1.00000000000000</ExchangeRate>
+            <IssueDate>2020-02-27T14:32:41</IssueDate>
+            <RequestDate>2020-02-27T12:59:54</RequestDate>
+            <StartingBalance>227.20000000</StartingBalance>
+        </CashAdvance>
+    </CashAdvancesList>
+    <CommentCount>2</CommentCount>
+    <CommentsList>
+        <Comments>
+            <Comment>Comment to Approver 2/27/2020 Cash Advance Only</Comment>
+            <DateTime>2020-02-27T12:59:54</DateTime>
+            <FirstName>Jane</FirstName>
+            <LastName>Doe</LastName>
+        </Comments>
+        <Comments>
+            <Comment>Approved via Concur Connect</Comment>
+            <DateTime>2020-02-27T14:20:20</DateTime>
+            <FirstName>Concur</FirstName>
+            <IsLatest>true</IsLatest>
+            <LastName>System</LastName>
+        </Comments>
+    </CommentsList>
+    <CreationDate>2020-02-27T12:59:54</CreationDate>
+    <CurrencyCode>USD</CurrencyCode>
+    <EmployeeName>Doe, Jane</EmployeeName>
+    <EndDate>2/6/2020</EndDate>
+    <EndTime/>
+    <EverSentBack>N</EverSentBack>
+    <ExpensePolicyKey></ExpensePolicyKey>
+    <ExtensionOf/>
+    <HasException>N</HasException>
+    <LastModifiedDate>2020-02-27T14:20:21</LastModifiedDate>
+    <LoginID>user@cornell.edu</LoginID>
+    <Purpose>Business Purpose 2/27/2020 Cash Advance Only</Purpose>
+    <RequestID>3DK6</RequestID>
+    <RequestKey></RequestKey>
+    <RequestName>2/27/2020 Cash Advance Only</RequestName>
+    <RequestTotal>0.00000000</RequestTotal>
+    <StartDate>2/5/2020</StartDate>
+    <StartTime/>
+    <SubmitDate>2020-02-27T13:02:10</SubmitDate>
+    <TotalApprovedAmount>0.00000000</TotalApprovedAmount>
+    <TotalRemainingAmount>0.00000000</TotalRemainingAmount>
+    <TravelRequestPolicyKey></TravelRequestPolicyKey>
+    <WorkflowActionURL i:nil="true"/>
+    <Custom1>(IT)ITHACA CAMPUS</Custom1>
+    <Custom2>(G224700)FIS GENERAL OPERATING</Custom2>
+    <Custom3/>
+    <Custom4/>
+    <Custom5/>
+    <Custom6/>
+    <Custom7>(Employee)Employee</Custom7>
+    <Custom8>(Domestic Travel)1.  Domestic Travel</Custom8>
+    <Custom9>(Conference)Conference</Custom9>
+    <Custom10>(1)University Financial Service Center</Custom10>
+    <Custom11/>
+    <Custom12/>
+    <Custom13/>
+    <Custom14/>
+    <Custom15/>
+    <Custom16/>
+    <Custom17/>
+    <Custom18/>
+    <Custom19/>
+    <Custom20/>
+</TravelRequestDetails>

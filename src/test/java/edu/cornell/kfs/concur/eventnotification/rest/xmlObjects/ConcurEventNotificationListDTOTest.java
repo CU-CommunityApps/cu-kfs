@@ -22,6 +22,7 @@ public class ConcurEventNotificationListDTOTest {
     private CUMarshalService cuMarshalService;
     private File xmlFile;
     
+
     @Before
     public void setUp() throws Exception {
         cuMarshalService = new CUMarshalServiceImpl();
@@ -39,22 +40,20 @@ public class ConcurEventNotificationListDTOTest {
         ConcurEventNotificationListDTO dto = cuMarshalService.unmarshalFile(xmlFile, ConcurEventNotificationListDTO.class);
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(0), "1");
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(1), "2");
-        
     }
-    
+
     @Test
     public void marshalEventNoticationListString() throws JAXBException, IOException {
         String xmlString = FileUtils.readFileToString(xmlFile);
         ConcurEventNotificationListDTO dto = cuMarshalService.unmarshalString(xmlString, ConcurEventNotificationListDTO.class);
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(0), "1");
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(1), "2");
-        
-    }
-    
+    }    
+
     private void validateConcurEventNotificationDTO(ConcurEventNotificationDTO dto, String indexNumber) {
         String expectedEventType = "eventType" + indexNumber;
         assertEquals(EQUAL_ASSERT_STATEMENT, expectedEventType, dto.getEventType());
-        
+
         String notificationUri = "noticationUri" + indexNumber;
         assertEquals(EQUAL_ASSERT_STATEMENT, notificationUri, dto.getNotificationURI());
     }
