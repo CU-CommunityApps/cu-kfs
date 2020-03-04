@@ -45,6 +45,12 @@
         <powermock.version>2.0.4</powermock.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
+        
+        <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
+        <jaxb.version>2.2.11</jaxb.version>
+        <cxf.version>3.1.12</cxf.version>
+        <wss4j.version>2.1.9</wss4j.version>
+        
     </properties>
 
     <profiles>
@@ -710,6 +716,23 @@
                     <groupId>com.oracle</groupId>
                     <artifactId>ojdbc7</artifactId>
                 </exclusion>    
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.2.11</version>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.activation</groupId>
+                    <artifactId>jakarta.activation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>

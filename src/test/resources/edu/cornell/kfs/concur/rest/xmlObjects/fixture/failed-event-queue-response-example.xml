@@ -1,0 +1,20 @@
+<NotificationList
+	xmlns="http://www.concursolutions.com/api/notification/2012/06"
+	xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Notification>
+        <Context i:nil="true"/>
+        <EventDateTime>04/01/2017</EventDateTime>
+        <EventType>eventType1</EventType>
+        <NotificationURI>noticationUri1</NotificationURI>
+        <ObjectType>objectType1</ObjectType>
+        <ObjectURI>objectUri1</ObjectURI>
+    </Notification>
+    <Notification>
+        <Context i:nil="true"/>
+        <EventDateTime>04/02/2017</EventDateTime>
+        <EventType>eventType2</EventType>
+        <NotificationURI>noticationUri2</NotificationURI>
+        <ObjectType>objectType2</ObjectType>
+        <ObjectURI>objectUri2</ObjectURI>
+    </Notification>
+</NotificationList> 
