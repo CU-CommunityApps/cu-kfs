@@ -1,8 +1,14 @@
 package edu.cornell.kfs.concur.businessobjects;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.sys.KFSConstants;
+
+import edu.cornell.kfs.concur.ConcurPropertyConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurEventNotification extends PersistableBusinessObjectBase{   
     protected int concurEventNotificationId;
@@ -105,4 +111,21 @@ public class ConcurEventNotification extends PersistableBusinessObjectBase{
         this.notificationURI = notificationURI;
     }
 
+    public String toString() {
+        SimpleDateFormat sdf = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT);
+        StringBuilder sb = new StringBuilder();
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.CONCUR_EVENT_NOTIFICATION_ID).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(concurEventNotificationId).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.CONTEXT).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(context).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.EVENT_DATE_TIME).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(sdf.format(eventDateTime)).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.EVENT_TYPE).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(eventType).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.OBJECT_TYPE).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(objectType).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.OBJECT_URI).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(objectURI).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.NOTIFICATION_URI).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(notificationURI).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.IN_PROCESS).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(inProcess).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.PROCESSED).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(processed).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.VALIDATION_RESULT).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(validationResult).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+        sb.append(ConcurPropertyConstants.ConcurEventNotification.VALIDATION_RESULT_MESSAGE).append(CUKFSConstants.COLON).append(KFSConstants.BLANK_SPACE).append(validationResultMessage).append(KFSConstants.COMMA);
+        return sb.toString();
+    }
+    
 }
