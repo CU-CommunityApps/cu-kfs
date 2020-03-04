@@ -47,4 +47,10 @@ public class CUKFSParameterKeyConstants {
         public static final String VALIDATE_TRANSFER_ACCOUNT_TYPES_IND = "VALIDATE_TRANSFER_ACCOUNT_TYPES_IND";
         public static final String INVALID_TO_ACCOUNT_BY_FROM_ACCOUNT = "INVALID_TO_ACCOUNT_BY_FROM_ACCOUNT";
     }
+    
+    public static class PurgeTablesParameterConstants {
+        public static final String DEFAULT_NAME_SPACE_CODE = "KFS-SYS";
+        public static final String DEFAULT_COMPONENT = "PurgeTablesStep";
+        public static final String DEFAULT_PARAMETER_NAME = "DEFAULT_NUMBER_OF_DAYS_OLD";
+    }
 }
