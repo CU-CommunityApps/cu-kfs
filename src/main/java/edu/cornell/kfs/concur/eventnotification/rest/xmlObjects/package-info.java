@@ -1,0 +1,2 @@
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.concursolutions.com/api/notification/2012/06", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package edu.cornell.kfs.concur.eventnotification.rest.xmlObjects;
