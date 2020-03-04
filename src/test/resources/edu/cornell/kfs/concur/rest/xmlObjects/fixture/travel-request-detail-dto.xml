@@ -11,7 +11,7 @@
             <AmountRequested>227.200000</AmountRequested>
             <ApprovalStatusKey>C_ISSU</ApprovalStatusKey>
             <ApprovalStatusName>Issued</ApprovalStatusName>
-            <CashAdvanceKey>gWlZQ2wUJzQqWfFbGzIABTgUKDM$sPp6okWA</CashAdvanceKey>
+            <CashAdvanceKey></CashAdvanceKey>
             <CommentCount>1</CommentCount>
             <CommentsList>
                 <Comments>
@@ -36,8 +36,8 @@
         <Comments>
             <Comment>Comment to Approver 2/27/2020 Cash Advance Only</Comment>
             <DateTime>2020-02-27T12:59:54</DateTime>
-            <FirstName>Cheri</FirstName>
-            <LastName>Knapp</LastName>
+            <FirstName>Jane</FirstName>
+            <LastName>Doe</LastName>
         </Comments>
         <Comments>
             <Comment>Approved via Concur Connect</Comment>
@@ -49,18 +49,18 @@
     </CommentsList>
     <CreationDate>2020-02-27T12:59:54</CreationDate>
     <CurrencyCode>USD</CurrencyCode>
-    <EmployeeName>Knapp, Cheri</EmployeeName>
+    <EmployeeName>Doe, Jane</EmployeeName>
     <EndDate>2/6/2020</EndDate>
     <EndTime/>
     <EverSentBack>N</EverSentBack>
-    <ExpensePolicyKey>gWo8fzZUkDtPmrMubm6YwTZ4eHEJgH1aYag</ExpensePolicyKey>
+    <ExpensePolicyKey></ExpensePolicyKey>
     <ExtensionOf/>
     <HasException>N</HasException>
     <LastModifiedDate>2020-02-27T14:20:21</LastModifiedDate>
-    <LoginID>clk3@cornell.edu</LoginID>
+    <LoginID>user@cornell.edu</LoginID>
     <Purpose>Business Purpose 2/27/2020 Cash Advance Only</Purpose>
     <RequestID>3DK6</RequestID>
-    <RequestKey>gWr5AWhuxoUuqLSMwr1duivAgVTfV4bFOzw</RequestKey>
+    <RequestKey></RequestKey>
     <RequestName>2/27/2020 Cash Advance Only</RequestName>
     <RequestTotal>0.00000000</RequestTotal>
     <StartDate>2/5/2020</StartDate>
@@ -68,7 +68,7 @@
     <SubmitDate>2020-02-27T13:02:10</SubmitDate>
     <TotalApprovedAmount>0.00000000</TotalApprovedAmount>
     <TotalRemainingAmount>0.00000000</TotalRemainingAmount>
-    <TravelRequestPolicyKey>gWv9ehWd7YgizXo$pt$ppnakVZ5Gsp1eSlPSQ</TravelRequestPolicyKey>
+    <TravelRequestPolicyKey></TravelRequestPolicyKey>
     <WorkflowActionURL i:nil="true"/>
     <Custom1>(IT)ITHACA CAMPUS</Custom1>
     <Custom2>(G224700)FIS GENERAL OPERATING</Custom2>
