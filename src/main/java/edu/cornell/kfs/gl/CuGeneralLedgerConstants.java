@@ -27,5 +27,10 @@ public class CuGeneralLedgerConstants {
     public static class CuGlScrubberGroupRules {
         public static final String PLANT_INDEBTEDNESS_DOC_TYPE_CODES = "PLANT_INDEBTEDNESS_DOCUMENT_TYPES";
     }
+    
+    public static class BatchFileSystem {
+        public static final String TEXT_EXTENSION = ".txt";
+        
+    }
 
 }

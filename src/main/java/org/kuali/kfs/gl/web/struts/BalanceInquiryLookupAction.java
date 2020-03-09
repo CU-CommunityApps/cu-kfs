@@ -19,8 +19,8 @@
 package org.kuali.kfs.gl.web.struts;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -62,26 +62,20 @@ import java.util.Properties;
  * balance inquiries only show the end-user data, and allow the end-user to drill-down into inquiries. A traditional
  * lookup allows the user to return data to a form. This class is for balance inquiries implemented in the sense of a
  * traditional lookup for forms that pull data out of inquiries.<br/> <br/>
- * One example of this is the {@link org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument} which creates
+ * One example of this is the {@code org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument} which creates
  * source lines from a labor ledger balance inquiry screen.<br/> <br/>
  * This is a {@link KualiMultipleValueLookupAction} which required some customization because requirements were not
  * possible with displaytag.
  *
- * @see org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument;
- * @see org.kuali.kfs.module.ld.document.web.struts.SalaryExpenseTransferAction;
- * @see org.kuali.kfs.module.ld.document.web.struts.SalaryExpenseTransferForm;
+ * See:
+ * {@code org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument}
+ * {@code org.kuali.kfs.module.ld.document.web.struts.SalaryExpenseTransferAction}
+ * {@code org.kuali.kfs.module.ld.document.web.struts.SalaryExpenseTransferForm}
  */
 public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
-    private static final Logger LOG = LogManager.getLogger(BalanceInquiryLookupAction.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final String TOTALS_TABLE_KEY = "totalsTable";
-
-    /**
-     * If there is no app param defined for the # rows/page, then this value will be used for the default
-     *
-     * @see KualiMultipleValueLookupAction#getMaxRowsPerPage(MultipleValueLookupForm)
-     */
-    public static final int DEFAULT_MAX_ROWS_PER_PAGE = 50;
 
     private ConfigurationService kualiConfigurationService;
     private String[] totalTitles;
@@ -93,7 +87,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
 
     private void setTotalTitles() {
         totalTitles = new String[7];
-
         totalTitles[0] = kualiConfigurationService.getPropertyValueAsString(
                 KFSKeyConstants.AccountBalanceService.INCOME);
         totalTitles[1] = kualiConfigurationService.getPropertyValueAsString(
@@ -108,7 +101,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
                 KFSKeyConstants.AccountBalanceService.EXPENSE_TOTAL);
         totalTitles[6] = kualiConfigurationService.getPropertyValueAsString(
                 KFSKeyConstants.AccountBalanceService.TOTAL);
-
     }
 
     private String[] getTotalTitles() {
@@ -349,7 +341,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         }
 
         // since new search, nothing's checked
-        multipleValueLookupForm.setCompositeObjectIdMap(new HashMap<String, String>());
+        multipleValueLookupForm.setCompositeObjectIdMap(new HashMap<>());
 
         return displayList;
     }

@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 
+import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.gl.batch.service.impl.exception.FatalErrorException;
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
@@ -62,7 +63,7 @@ public class AccountReversionProcessImpl extends ReversionProcessBase implements
      */
     public void afterPropertiesSet() throws Exception {
         this.CARRY_FORWARD_OBJECT_CODE = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.CARRY_FORWARD_OBJECT_CODE);
-        this.DEFAULT_FINANCIAL_DOCUMENT_TYPE_CODE = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_DOCUMENT_TYPE);
+        this.DEFAULT_FINANCIAL_DOCUMENT_TYPE_CODE = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_DOCUMENT_TYPE);
         this.DEFAULT_FINANCIAL_SYSTEM_ORIGINATION_CODE = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.DEFAULT_FINANCIAL_SYSTEM_ORIGINATION_CODE);
         this.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE);
         this.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE_YEAR_END = getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.DEFAULT_FINANCIAL_BALANCE_TYPE_CODE_YEAR_END);

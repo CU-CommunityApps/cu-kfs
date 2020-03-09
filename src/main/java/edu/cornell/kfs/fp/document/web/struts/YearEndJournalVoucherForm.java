@@ -10,6 +10,7 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.BalanceTypeService;
 import org.kuali.kfs.fp.document.web.struts.JournalVoucherForm;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
+import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
@@ -47,7 +48,7 @@ public class YearEndJournalVoucherForm extends JournalVoucherForm {
 	
 	@Override
 	public void populateDefaultSelectedAccountingPeriod() {
-		Integer fiscalYear = new Integer(SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM));
+		Integer fiscalYear = new Integer(SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR));
         AccountingPeriod accountingPeriod = SpringContext.getBean(AccountingPeriodService.class).getByPeriod("13", fiscalYear);
 
         StringBuffer sb = new StringBuffer();

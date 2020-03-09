@@ -67,25 +67,26 @@ import java.util.Set;
  * A validation that checks whether the given accounting line is accessible to the given user or not
  */
 public class AccountingLineAccessibleValidation extends GenericValidation {
-	
+
     private static final Logger LOG = LogManager.getLogger(AccountingLineAccessibleValidation.class);
-    
+
     protected DataDictionaryService dataDictionaryService;
     protected AccountingDocument accountingDocumentForValidation;
     protected AccountingLine accountingLineForValidation;
 
     /**
-     * Indicates what is being done to an accounting line. This allows the same method to be used for different actions.
+     * Indicates what is being done to an accounting line. This allows the same method to be used for different
+     * actions.
      */
     public enum AccountingLineAction {
         ADD(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_ADD),
         DELETE(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_DELETE),
         UPDATE(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_UPDATE);
-    	
+
         public final String accessibilityErrorKey;
 
-        AccountingLineAction(String accessabilityErrorKey) {
-            this.accessibilityErrorKey = accessabilityErrorKey;
+        AccountingLineAction(String accessibilityErrorKey) {
+            this.accessibilityErrorKey = accessibilityErrorKey;
         }
     }
 
@@ -105,15 +106,15 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
             }
         }
 
-        final AccountingLineAuthorizer accountingLineAuthorizer = lookupAccountingLineAuthorizer();
         final Set<String> currentNodes = accountingDocumentForValidation.getDocumentHeader().getWorkflowDocument()
-                .getCurrentNodeNames();
+            .getCurrentNodeNames();
+        final AccountingLineAuthorizer accountingLineAuthorizer = lookupAccountingLineAuthorizer();
         final boolean lineIsAccessible = accountingLineAuthorizer
-                .hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation,
-                    getAccountingLineCollectionProperty(), currentUser, true, currentNodes);
+            .hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation,
+                getAccountingLineCollectionProperty(), currentUser, true, currentNodes);
         final boolean isAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation,
-                accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER,
-                lineIsAccessible, true, currentUser, currentNodes);
+            accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER,
+            lineIsAccessible, true, currentUser, currentNodes);
 
         boolean valid = true;
         boolean isExceptionNode = isExceptionNode(event.getDocument());
@@ -122,11 +123,11 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
             // if only object code changed and the user has edit permissions on object code, that's ok
             if (event instanceof UpdateAccountingLineEvent) {
                 final boolean isObjectCodeAccessible = accountingLineAuthorizer
-                        .hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation,
-                            getAccountingLineCollectionProperty(), KFSPropertyConstants.FINANCIAL_OBJECT_CODE,
-                            lineIsAccessible, true, currentUser, currentNodes);
+                    .hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation,
+                        getAccountingLineCollectionProperty(), KFSPropertyConstants.FINANCIAL_OBJECT_CODE,
+                        lineIsAccessible, true, currentUser, currentNodes);
                 final boolean onlyObjectCodeChanged = onlyObjectCodeChanged(((UpdateAccountingLineEvent) event)
-                        .getAccountingLine(), ((UpdateAccountingLineEvent) event).getUpdatedAccountingLine());
+                    .getAccountingLine(), ((UpdateAccountingLineEvent) event).getUpdatedAccountingLine());
 
                 if (isObjectCodeAccessible && onlyObjectCodeChanged) {
                     return true;
@@ -224,17 +225,16 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     protected AccountingLineAuthorizer lookupAccountingLineAuthorizer() {
         final String groupName = getGroupName();
         final Map<String, AccountingLineGroupDefinition> groups = ((FinancialSystemTransactionalDocumentEntry)
-                dataDictionaryService.getDataDictionary().getDictionaryObjectEntry(accountingDocumentForValidation
-                    .getClass().getName())).getAccountingLineGroups();
-        
-        if (groups.isEmpty())
-         {
+            dataDictionaryService.getDataDictionary().getDictionaryObjectEntry(accountingDocumentForValidation
+                .getClass().getName())).getAccountingLineGroups();
+
+        if (groups.isEmpty()) {
             // no groups? just use the default...
             return new AccountingLineAuthorizerBase();
         }
-        if (groups.containsKey(groupName))
-         {
-            return groups.get(groupName).getAccountingLineAuthorizer(); // we've got the group
+        if (groups.containsKey(groupName)) {
+            // we've got the group
+            return groups.get(groupName).getAccountingLineAuthorizer();
         }
 
         // we've got groups, just not the proper name; try our luck and get the first group iterator
@@ -256,8 +256,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
                     "");
         } else {
             propertyName = accountingLineForValidation.isSourceAccountingLine() ?
-                    KFSConstants.PermissionAttributeValue.SOURCE_ACCOUNTING_LINES.value :
-                    KFSConstants.PermissionAttributeValue.TARGET_ACCOUNTING_LINES.value;
+                KFSConstants.PermissionAttributeValue.SOURCE_ACCOUNTING_LINES.value :
+                KFSConstants.PermissionAttributeValue.TARGET_ACCOUNTING_LINES.value;
         }
         if ("newSourceLine".equals(propertyName)) {
             return KFSConstants.PermissionAttributeValue.SOURCE_ACCOUNTING_LINES.value;

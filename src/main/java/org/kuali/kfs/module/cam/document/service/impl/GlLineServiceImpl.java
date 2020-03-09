@@ -31,7 +31,7 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetAccountsGroupDetails;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
 import org.kuali.kfs.fp.document.dataaccess.CapitalAssetInformationDao;
-import org.kuali.kfs.gl.GeneralLedgerConstants;
+import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.document.Document;
@@ -500,7 +500,7 @@ public class GlLineServiceImpl implements GlLineService {
         if (evaluator.evaluationSucceeds()) {
             Integer closingYear = new Integer(parameterService
                     .getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class,
-                            GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM));
+                            GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR));
             if (entry.getUniversityFiscalYear().equals(closingYear + 1)) {
                 //default asset global year end accounting period drop down to current period instead of closing
                 // period(period 13)
