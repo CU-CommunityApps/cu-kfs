@@ -960,7 +960,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 purapAccountRevisionService.cancelPaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), 
                         preq.getPostingPeriodCodeFromPendingGLEntries());
             } else {
-                LOG.info("generateEntriesPaymentRequest, unable to cancel previous revisions becuase the items are empty for document: " + preq.getDocumentNumber());
+                LOG.info("generateEntriesPaymentRequest, unable to cancel previous revisions because the items are empty for document: " + preq.getDocumentNumber());
             }
         }
         
