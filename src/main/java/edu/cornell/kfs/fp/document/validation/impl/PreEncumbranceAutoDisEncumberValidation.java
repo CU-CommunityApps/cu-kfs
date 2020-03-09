@@ -10,7 +10,10 @@ import java.util.TreeMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.gl.GeneralLedgerConstants;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.gl.GLParameterConstants;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
@@ -18,9 +21,6 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceAccountingLineUtil;
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine;
@@ -43,7 +43,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                 ParameterService ps = SpringContext.getBean(ParameterService.class);
         try {
             DateFormat transactionDateFormat = new SimpleDateFormat(TRANSACTION_DATE_FORMAT_STRING);
-            annualClosingDate = new Date(transactionDateFormat.parse(ps.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM)).getTime());
+            annualClosingDate = new Date(transactionDateFormat.parse(ps.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_TRANSACTION_DATE)).getTime());
             // this needs to be changed
             annualClosingDate.setYear(annualClosingDate.getYear()+1);
             LOG.info("Annual closing Date of: " + annualClosingDate);

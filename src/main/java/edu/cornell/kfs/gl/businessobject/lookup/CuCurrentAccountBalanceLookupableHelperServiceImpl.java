@@ -26,6 +26,11 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentAccountBalanceLookupableHelperServiceImpl {
 
     private static final long serialVersionUID = 2542719296293895780L;
+    private static final String CASH_BUDGET_RECORD_LEVEL = "CASH_BUDGET_RECORD_LEVEL";
+    private static final String ENCUMBRANCE_BALANCE_TYPE = "ENCUMBRANCE_BALANCE_TYPE";
+    private static final String FUND_BALANCE_OBJECT_CODE = "FUND_BALANCE_OBJECT_CODE";
+    private static final String EXPENSE_OBJECT_TYPE = "EXPENSE_OBJECT_TYPE";
+    private static final String INCOME_OBJECT_TYPE = "INCOME_OBJECT_TYPE";
 
     /**
      * This override constructs and uses a custom helper class to execute the superclass's processing.
@@ -65,13 +70,13 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
             this.balance = balance;
             this.fiscalPeriod = fiscalPeriod;
             
-            this.cashBudgetRecordLevelCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.CASH_BUDGET_RECORD_LEVEL);
-            this.expenseObjectTypeCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.EXPENSE_OBJECT_TYPE);
-            this.fundBalanceObjCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.FUND_BALANCE_OBJECT_CODE);
+            this.cashBudgetRecordLevelCodes = getParameterValuesAsString(CASH_BUDGET_RECORD_LEVEL);
+            this.expenseObjectTypeCodes = getParameterValuesAsString(EXPENSE_OBJECT_TYPE);
+            this.fundBalanceObjCodes = getParameterValuesAsString(FUND_BALANCE_OBJECT_CODE);
             this.currentAssetObjTypeCodes = getParameterValuesAsString(CUKFSParameterKeyConstants.GlParameterConstants.CURRENT_ASSET_OBJECT_TYPE_CODE);
             this.currentLiabilityObjTypeCodes = getParameterValuesAsString(CUKFSParameterKeyConstants.GlParameterConstants.CURRENT_LIABILITY_OBJECT_TYPE_CODE);
-            this.incomeObjTypeCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.INCOME_OBJECT_TYPE);
-            this.encumbranceBalTypes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.ENCUMBRANCE_BALANCE_TYPE);
+            this.incomeObjTypeCodes = getParameterValuesAsString(INCOME_OBJECT_TYPE);
+            this.encumbranceBalTypes = getParameterValuesAsString(ENCUMBRANCE_BALANCE_TYPE);
             this.excludeCBPeriod = getParameterValueAsBoolean(CUKFSParameterKeyConstants.GlParameterConstants.EXCLUDE_CB_PERIOD, Boolean.FALSE)
                     .booleanValue();
             

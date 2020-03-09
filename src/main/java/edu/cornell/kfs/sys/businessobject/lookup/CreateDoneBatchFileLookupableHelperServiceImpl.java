@@ -30,9 +30,6 @@ import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService
 public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLookupSearchServiceImpl {
 	private static final Logger LOG = LogManager.getLogger(CreateDoneBatchFileLookupableHelperServiceImpl.class);
 
-	protected CreateDoneBatchFileAuthorizationService createDoneAuthorizationService;
-
-	@Override
 	public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(Class<? extends BusinessObjectBase> businessObjectClass,
             MultivaluedMap<String, String> fieldValues, int skip, int limit, String sortField, boolean sortAscending) {
 
@@ -52,45 +49,6 @@ public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLoo
 			}
 		}
 		return Pair.of(createDoneBatchFiles, createDoneBatchFiles.size());
-	}
-
-	@Override
-	public List<Map<String, Object>> getActionLinks(BusinessObjectBase businessObject, Person user) {
-		BatchFile batchFile = (BatchFile) businessObject;
-		List<Map<String, Object>> actionLinks = new LinkedList<>();
-
-		if (canCreateDoneFile(batchFile, user)) {
-			Map<String, Object> createDoneLink = new LinkedHashMap<>();
-			createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_LABEL, "Create Done");
-			createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_URL,
-					KRAD_URL_PREFIX + getCreateDoneUrl(batchFile));
-			createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_METHOD, "GET");
-			actionLinks.add(createDoneLink);
-		}
-
-		return actionLinks;
-	}
-
-	protected boolean canCreateDoneFile(BatchFile batchFile, Person user) {
-		boolean isDoneFile = StringUtils.endsWith(batchFile.getFileName(), ".done");
-		return (!isDoneFile && createDoneAuthorizationService.canCreateDoneFile(batchFile, user));
-	}
-
-	protected String getCreateDoneUrl(BatchFile batchFile) {
-		Properties parameters = new Properties();
-		parameters.put("filePath",
-				BatchFileUtils.pathRelativeToRootDirectory(batchFile.retrieveFile().getAbsolutePath()));
-		parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "createDone");
-		return UrlFactory.parameterizeUrl("../createDoneBatchFileAdmin.do", parameters);
-	}
-
-	public CreateDoneBatchFileAuthorizationService getCreateDoneAuthorizationService() {
-		return createDoneAuthorizationService;
-	}
-
-	public void setCreateDoneAuthorizationService(
-			CreateDoneBatchFileAuthorizationService createDoneAuthorizationService) {
-		this.createDoneAuthorizationService = createDoneAuthorizationService;
 	}
 
 }

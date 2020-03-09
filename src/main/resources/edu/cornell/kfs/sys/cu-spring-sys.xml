@@ -238,7 +238,6 @@
 	<bean id="createDoneBatchFileLookupableHelperService" parent="createDoneBatchFileLookupableHelperService-parentBean" scope="prototype" />	
 	<bean id="createDoneBatchFileLookupableHelperService-parentBean" class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
-		<property name="createDoneAuthorizationService" ref="createDoneAuthorizationService"/>
 	</bean>
 	
     <bean id="createDoneAuthorizationService" parent="createDoneAuthorizationService-parentBean" />	

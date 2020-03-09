@@ -31,6 +31,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService {
 	private static final Logger LOG = LogManager.getLogger(ConcurBatchUtilityServiceImpl.class);
@@ -93,7 +94,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     @Override
     public String buildFullyQualifiedPdpOutputFileName(String paymentImportDirectory, String pdpInputfileName) {
         String fullyQualifiedPdpOutputFileName = new String(paymentImportDirectory + ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + pdpInputfileName);
-        return StringUtils.replace(fullyQualifiedPdpOutputFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
+        return StringUtils.replace(fullyQualifiedPdpOutputFileName, CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     
     @Override

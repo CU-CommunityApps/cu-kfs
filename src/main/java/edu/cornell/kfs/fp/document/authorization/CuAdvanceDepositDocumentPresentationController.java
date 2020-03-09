@@ -41,7 +41,6 @@ public class CuAdvanceDepositDocumentPresentationController extends
 	    
 	    @Override
 	    public Set<String> getEditModes(Document document) {
-
 	        Set<String> editModes = super.getEditModes(document);
 	        if (document instanceof AmountTotaling) {
 	            editModes.add(KFSConstants.AMOUNT_TOTALING_EDITING_MODE);
@@ -57,7 +56,6 @@ public class CuAdvanceDepositDocumentPresentationController extends
 	        }
 
 	        return editModes;
-
 	    }
 
 }

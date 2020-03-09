@@ -19,6 +19,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
@@ -259,7 +260,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     
     protected String buildPdpOutputFileName(String originalFileName) {
         return ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + 
-                StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
+                StringUtils.replace(originalFileName, CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     
     protected boolean isCurrentAccountingEntrySameAsLineDetail(PdpFeedAccountingEntry currentAccountingEntry, 

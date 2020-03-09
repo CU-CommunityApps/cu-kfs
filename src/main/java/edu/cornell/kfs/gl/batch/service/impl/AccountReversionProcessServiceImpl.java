@@ -39,6 +39,7 @@ import edu.cornell.kfs.gl.batch.service.ReversionProcess;
 import edu.cornell.kfs.gl.batch.service.ReversionProcessService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import org.kuali.kfs.gl.GLParameterConstants;
 
 /**
  * The base implementation of OrganizationReversionProcessService
@@ -121,12 +122,12 @@ public class AccountReversionProcessServiceImpl implements ReversionProcessServi
     public Map getJobParameters() {
         // Get job parameters
         Map jobParameters = new HashMap();
-        String strTransactionDate = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_TRANSACTION_DATE_PARM);
+        String strTransactionDate = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_TRANSACTION_DATE);
         jobParameters.put(KFSConstants.UNALLOC_OBJECT_CD, getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.UNALLOC_OBJECT_CODE_PARM));
         jobParameters.put(CUKFSConstants.CASH_REVERSION_OBJECT_CD, getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.CASH_REVERSION_OBJECT_CODE_PARM));
         jobParameters.put(KFSConstants.BEG_BUD_CASH_OBJECT_CD, getParameterService().getParameterValueAsString(Reversion.class, CuGeneralLedgerConstants.ReversionProcess.CARRY_FORWARD_OBJECT_CODE));
-        jobParameters.put(KFSConstants.FUND_BAL_OBJECT_CD, getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FUND_BALANCE_OBJECT_CODE_PARM));
-        String strUniversityFiscalYear = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GeneralLedgerConstants.ANNUAL_CLOSING_FISCAL_YEAR_PARM);
+        jobParameters.put(KFSConstants.FUND_BAL_OBJECT_CD, getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FUND_BALANCE_OBJECT_CODE));
+        String strUniversityFiscalYear = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR);
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);

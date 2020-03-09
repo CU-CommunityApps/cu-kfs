@@ -28,20 +28,13 @@
     <import resource="classpath:org/kuali/kfs/coa/coa-lookup-beans.xml"/>
     
 	<bean id="SubFundGroup" parent="SubFundGroup-parentBean" />
-
-	<bean id="SubFundGroup-parentBean" abstract="true" parent="BusinessObjectEntry">
-		<property name="businessObjectClass"
-			value="org.kuali.kfs.coa.businessobject.SubFundGroup" />
-		<property name="name" value="SubFundGroup" />
-		<property name="businessObjectAdminService" ref="defaultBoAdminService" />
-		<property name="inquiryDefinition">
-			<ref bean="SubFundGroup-inquiryDefinition" />
-		</property>
-		<property name="lookupDefinition">
-			<ref bean="SubFundGroup-lookupDefinition" />
-		</property>
-		<property name="titleAttribute" value="subFundGroupCode" />
-		<property name="objectLabel" value="Sub-Fund Group" />
+    <bean id="SubFundGroup-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="org.kuali.kfs.coa.businessobject.SubFundGroup" p:name="SubFundGroup"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="SubFundGroup-inquiryDefinition"
+          p:lookupDefinition-ref="SubFundGroup-lookupDefinition"
+          p:actionsProvider-ref="businessObjectActionsProvider" p:titleAttribute="subFundGroupCode"
+          p:objectLabel="Sub-Fund Group">
 		<property name="attributes">
 			<list>
 				<ref bean="SubFundGroup-subFundGroupCode" />

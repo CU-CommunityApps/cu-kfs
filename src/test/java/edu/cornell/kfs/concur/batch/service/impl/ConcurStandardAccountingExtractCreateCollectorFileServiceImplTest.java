@@ -44,6 +44,7 @@ import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.concur.batch.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
 import edu.cornell.kfs.concur.batch.businessobject.CollectorBatchHeaderSerializerFieldUtil;
 import edu.cornell.kfs.concur.batch.businessobject.CollectorBatchTrailerRecordSerializerFieldUtil;
@@ -97,7 +98,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
             ConcurCollectorBatchFixture fixture) throws Exception {
         ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
         ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
-        saeFileContents.setOriginalFileName(fixture.name() + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
+        saeFileContents.setOriginalFileName(fixture.name() + CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
         
         String collectorFileName = collectorFileService.buildCollectorFile(saeFileContents, reportData);
         assertTrue("Collector file did not get created successfully", StringUtils.isNotBlank(collectorFileName));
@@ -162,7 +163,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     protected void assertCollectorFileIsNotGenerated(String fixtureName) throws Exception {
         ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
         ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
-        saeFileContents.setOriginalFileName(fixtureName + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
+        saeFileContents.setOriginalFileName(fixtureName + CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
         
         String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents, reportData);
         assertTrue("A Collector file should not have been created", StringUtils.isBlank(collectorFilePath));
