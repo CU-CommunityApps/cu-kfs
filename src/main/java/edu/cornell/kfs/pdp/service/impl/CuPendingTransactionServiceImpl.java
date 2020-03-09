@@ -16,15 +16,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
-import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
+import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
+import org.kuali.kfs.krad.datadictionary.BusinessObjectEntry;
+import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoItem;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
@@ -47,8 +56,6 @@ import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
-import org.kuali.kfs.pdp.service.PdpUtilService;
-import org.kuali.kfs.pdp.service.ResearchParticipantPaymentValidationService;
 import org.kuali.kfs.pdp.service.impl.PendingTransactionServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -57,34 +64,21 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
-import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
-import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
-import org.kuali.kfs.krad.datadictionary.BusinessObjectEntry;
-import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
+import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
-
 
 @Transactional
 public class CuPendingTransactionServiceImpl extends PendingTransactionServiceImpl implements CuPendingTransactionService{
@@ -93,6 +87,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 	private DocumentService documentService;
     private NoteService noteService;
     private CheckReconciliationDao checkReconciliationDao;
+    protected PurapAccountRevisionService purapAccountRevisionService;
 
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCRCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
@@ -510,7 +505,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             // manually save cm account change tables (CAMS needs this)
 
-                SpringContext.getBean(PurapAccountRevisionService.class).cancelCreditMemoAccountRevisions(cm.getItems(), cm.getPostingYearFromPendingGLEntries(), cm.getPostingPeriodCodeFromPendingGLEntries());
+            purapAccountRevisionService.cancelCreditMemoAccountRevisions(cm.getItems(), cm.getPostingYearFromPendingGLEntries(), cm.getPostingPeriodCodeFromPendingGLEntries());
       
         }
 
@@ -959,11 +954,16 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 }
 
             }
-
-          
+            
+            if (CollectionUtils.isNotEmpty(preq.getItems())) {
+                LOG.info("generateEntriesPaymentRequest, cancel previous revisions of preq document: " + preq.getDocumentNumber());
+                purapAccountRevisionService.cancelPaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), 
+                        preq.getPostingPeriodCodeFromPendingGLEntries());
+            } else {
+                LOG.info("generateEntriesPaymentRequest, unable to cancel previous revisions because the items are empty for document: " + preq.getDocumentNumber());
+            }
         }
-
-
+        
         // Manually save GL entries for Payment Request and encumbrances
         LOG.debug("saveGLEntries() started");
         businessObjectService.save(preq.getGeneralLedgerPendingEntries());
@@ -997,5 +997,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 	public void setNoteService(NoteService noteService) {
 		this.noteService = noteService;
 	}
+
+    public void setPurapAccountRevisionService(PurapAccountRevisionService purapAccountRevisionService) {
+        this.purapAccountRevisionService = purapAccountRevisionService;
+    }
 
 }
