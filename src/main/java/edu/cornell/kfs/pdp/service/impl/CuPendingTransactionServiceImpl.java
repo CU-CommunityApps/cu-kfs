@@ -954,18 +954,16 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 }
 
             }
-
-          
+            
+            if (CollectionUtils.isNotEmpty(preq.getItems())) {
+                LOG.info("generateEntriesPaymentRequest, cancel previous revisions of preq document: " + preq.getDocumentNumber());
+                purapAccountRevisionService.cancelPaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), 
+                        preq.getPostingPeriodCodeFromPendingGLEntries());
+            } else {
+                LOG.info("generateEntriesPaymentRequest, unable to cancel previous revisions becuase the items are empty for document: " + preq.getDocumentNumber());
+            }
         }
         
-        if (CollectionUtils.isNotEmpty(preq.getItems())) {
-            LOG.info("generateEntriesPaymentRequest, cancel previous revisions of preq document: " + preq.getDocumentNumber());
-            purapAccountRevisionService.cancelPaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), 
-                    preq.getPostingPeriodCodeFromPendingGLEntries());
-        } else {
-            LOG.info("generateEntriesPaymentRequest, unable to cancel previous revisions becuase they items are empty for document: " + preq.getDocumentNumber());
-        }
-
         // Manually save GL entries for Payment Request and encumbrances
         LOG.debug("saveGLEntries() started");
         businessObjectService.save(preq.getGeneralLedgerPendingEntries());
