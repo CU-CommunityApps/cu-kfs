@@ -31,7 +31,6 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetAccountsGroupDetails;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
 import org.kuali.kfs.fp.document.dataaccess.CapitalAssetInformationDao;
-import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.DocumentHeader;
