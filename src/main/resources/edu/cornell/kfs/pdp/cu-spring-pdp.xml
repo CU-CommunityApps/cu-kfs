@@ -68,6 +68,7 @@
     		<property name="documentService" ref="documentService"/>
     		<property name="noteService" ref="noteService"/>
             <property name="checkReconciliationDao" ref="crCheckReconciliationDao" />
+            <property name="purapAccountRevisionService" ref="purapAccountRevisionService" />
     </bean>
 
     
