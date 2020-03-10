@@ -159,6 +159,7 @@
         <property name="parameterService">
             <ref bean="parameterService" />
         </property>
+        <property name="purchasingAccountsPayableModuleService" ref="purchasingAccountsPayableModuleService"/>
     </bean>
     
 	<bean id="iWantDocVendorLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
