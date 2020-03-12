@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -114,6 +115,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
@@ -146,10 +148,11 @@ public class CreateAccountingDocumentServiceImplTest {
         ConfigurationService configurationService = buildMockConfigurationService();
         DateTimeService dateTimeService = buildMockDateTimeService();
         ParameterService parameterService = buildParameterService();
+        CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService = buildCuDisbursementVoucherDefaultDueDateService();
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
                 configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService(),
-                buildAccountingPeriodService(), dateTimeService);
+                buildAccountingPeriodService(), dateTimeService, cuDisbursementVoucherDefaultDueDateService);
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
                 AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT,
@@ -839,6 +842,14 @@ public class CreateAccountingDocumentServiceImplTest {
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
         return parameterService;
     }
+    
+    private CuDisbursementVoucherDefaultDueDateService buildCuDisbursementVoucherDefaultDueDateService() {
+        CuDisbursementVoucherDefaultDueDateService service = Mockito.mock(CuDisbursementVoucherDefaultDueDateService.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        Mockito.when(service.findDefaultDueDate()).thenReturn(new java.sql.Date(calendar.getTimeInMillis()));
+        return service;
+    }
 
     private CreateAccountingDocumentValidationService buildCreateAccountingDocumentValidationService(
             ConfigurationService configurationService) throws Exception {
@@ -1008,6 +1019,7 @@ public class CreateAccountingDocumentServiceImplTest {
         private UniversityDateService universityDateService;
         private AccountingPeriodService accountingPeriodService;
         private DateTimeService dateTimeService;
+        private CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
         
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
@@ -1017,7 +1029,8 @@ public class CreateAccountingDocumentServiceImplTest {
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
                 ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
                 DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService,
-                AccountingPeriodService accountingPeriodService, DateTimeService dateTimeService) {
+                AccountingPeriodService accountingPeriodService, DateTimeService dateTimeService,
+                CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService) {
             this.personService = personService;
             this.downloadAttachmentService = downloadAttachmentService;
             this.disbursementVoucherTravelService = disbursementVoucherTravelService;
@@ -1025,6 +1038,7 @@ public class CreateAccountingDocumentServiceImplTest {
             this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
             this.universityDateService = universityDateService;
             this.accountingPeriodService = accountingPeriodService;
+            this.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
             this.dateTimeService = dateTimeService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
@@ -1060,6 +1074,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) accountingDocumentGenerator;
                 dvGenerator.setUniversityDateService(universityDateService);
                 dvGenerator.setDisbursementVoucherTravelService(disbursementVoucherTravelService);
+                dvGenerator.setCuDisbursementVoucherDefaultDueDateService(cuDisbursementVoucherDefaultDueDateService);
             } else if (accountingDocumentGenerator instanceof AuxiliaryVoucherDocumentGenerator) {
                 AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) accountingDocumentGenerator;
                 avGenerator.setAccountingPeriodService(accountingPeriodService);
