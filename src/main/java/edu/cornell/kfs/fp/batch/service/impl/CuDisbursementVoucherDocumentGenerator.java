@@ -3,9 +3,12 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,9 +17,13 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -39,6 +46,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected UniversityDateService universityDateService;
     protected DisbursementVoucherTravelService disbursementVoucherTravelService;
     protected VendorService vendorService;
+    protected BusinessObjectService businessObjectService;
     
     public CuDisbursementVoucherDocumentGenerator() {
         super();
@@ -89,12 +97,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             payeeDetail.setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
             validateAndPopulatePayeeTypeCodeAndPayeeNumber(paymentInfo, payeeDetail);
             payeeDetail.setDisbVchrPayeePersonName(paymentInfo.getPayeeName());
-            payeeDetail.setDisbVchrPayeeLine1Addr(paymentInfo.getAddressLine1());
-            payeeDetail.setDisbVchrPayeeLine2Addr(paymentInfo.getAddressLine2());
-            payeeDetail.setDisbVchrPayeeCityName(paymentInfo.getCity());
-            payeeDetail.setDisbVchrPayeeStateCode(paymentInfo.getState());
-            payeeDetail.setDisbVchrPayeeCountryCode(paymentInfo.getCountry());
-            payeeDetail.setDisbVchrPayeeZipCode(paymentInfo.getPostalCode());
+            populateAddressFields(paymentInfo, dvDocument);
             payeeDetail.setDisbVchrSpecialHandlingPersonName(paymentInfo.getSpecialHandlingName());
             payeeDetail.setDisbVchrSpecialHandlingLine1Addr(paymentInfo.getSpecialHandlingAddress1());
             payeeDetail.setDisbVchrSpecialHandlingLine2Addr(paymentInfo.getSpecialHandlingAddress2());
@@ -145,6 +148,51 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         payeeDetail.setDisbVchrPayeeEmployeeCode(isEmployee);
         payeeDetail.setDisbursementVoucherPayeeTypeCode(payeeTypeCode);
         payeeDetail.setDisbVchrPayeeIdNumber(payeeId);
+    }
+    
+    private void populateAddressFields(DisbursementVoucherPaymentInformationXml paymentInfo, CuDisbursementVoucherDocument dvDocument) {
+        if (StringUtils.isNotBlank(paymentInfo.getPayeeAddressId())) {
+            VendorAddress vendorAddress = findVendorAddress(paymentInfo);
+            dvDocument.templateVendor(vendorAddress.getVendorDetail(), vendorAddress);
+        } else {
+            CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
+            LOG.info("populateAddressFields, no payee address ID provided, so using the address fields from the XML");
+            payeeDetail.setDisbVchrPayeeLine1Addr(paymentInfo.getAddressLine1());
+            payeeDetail.setDisbVchrPayeeLine2Addr(paymentInfo.getAddressLine2());
+            payeeDetail.setDisbVchrPayeeCityName(paymentInfo.getCity());
+            payeeDetail.setDisbVchrPayeeStateCode(paymentInfo.getState());
+            payeeDetail.setDisbVchrPayeeCountryCode(paymentInfo.getCountry());
+            payeeDetail.setDisbVchrPayeeZipCode(paymentInfo.getPostalCode());
+        }
+    }
+
+    private VendorAddress findVendorAddress(DisbursementVoucherPaymentInformationXml paymentInfo) {
+        Collection<VendorAddress> vendorAddresses;
+        try {
+            String[] payeeArray = StringUtils.split(paymentInfo.getPayeeId(), KFSConstants.DASH);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("findVendorAddress, vendorHeaderGeneratedIdentifier: " + payeeArray[0] + 
+                        " vendorDetailAssignedIdentifier: " + payeeArray[1] + 
+                        ", payee address id: " + paymentInfo.getPayeeAddressId());
+            }
+            Map<String, String> fieldValues = new HashMap<String, String>();
+            fieldValues.put(KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID, payeeArray[0]);
+            fieldValues.put(KFSPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, payeeArray[1]);
+            fieldValues.put(KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID, paymentInfo.getPayeeAddressId());
+            fieldValues.put(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR,  KFSConstants.ACTIVE_INDICATOR);
+            vendorAddresses = businessObjectService.findMatching(VendorAddress.class, fieldValues);
+        } catch (Exception e) {
+            LOG.error("findVendorAddress, there was an error attempting to find the vendor address", e);
+            throw new ValidationException("Unable to find the vendor address: " + e.getMessage());
+        }
+        
+        if (CollectionUtils.isEmpty(vendorAddresses)) {
+            throw new ValidationException("Unable to find a vendor address for vendor number " + paymentInfo.getPayeeId() + 
+                    " and vendor address id " + paymentInfo.getPayeeAddressId());
+        }
+        
+        VendorAddress address = vendorAddresses.iterator().next();
+        return address;
     }
     
     private void populateNonEmployeeTravelExpense(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
@@ -287,6 +335,10 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
 
     public void setVendorService(VendorService vendorService) {
         this.vendorService = vendorService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
 }
