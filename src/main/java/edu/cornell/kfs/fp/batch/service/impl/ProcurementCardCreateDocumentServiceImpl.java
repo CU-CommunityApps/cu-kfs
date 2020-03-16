@@ -25,9 +25,9 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
@@ -230,7 +230,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
 
         String errorText = "";
         
-        if (!accountingLineRuleUtil.isValidObjectCode("", targetLine.getObjectCode(), dataDictionaryService.getDataDictionary())) {
+        if (!accountingLineRuleUtil.isValidObjectCode("", targetLine.getObjectCode())) {
             String tempErrorText = "Target Accounting Line " + lineNumber + " Chart " 
                     + targetLine.getChartOfAccountsCode() + " Object Code " + targetLine.getFinancialObjectCode() 
                     + " is invalid; using default Object Code.";

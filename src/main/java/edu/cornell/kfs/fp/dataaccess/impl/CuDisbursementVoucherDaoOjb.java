@@ -12,7 +12,7 @@ import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 
 public class CuDisbursementVoucherDaoOjb extends DisbursementVoucherDaoOjb {
     private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDaoOjb.class);

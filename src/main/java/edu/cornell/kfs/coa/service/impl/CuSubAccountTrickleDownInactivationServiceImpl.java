@@ -16,6 +16,7 @@ import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.coa.COAKeyConstants;
 
 public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTrickleDownInactivationServiceImpl {
 	private static final Logger LOG = LogManager.getLogger(CuSubAccountTrickleDownInactivationServiceImpl.class);
@@ -31,7 +32,7 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
         Maintainable subAccountMaintainable;
         try {
             subAccountMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(SubAccount.class.getName()).newInstance();
-            subAccountMaintainable.setBoClass(SubAccount.class);
+            subAccountMaintainable.setDataObjectClass(SubAccount.class);
             subAccountMaintainable.setDocumentNumber(documentNumber);
         }
         catch (Exception e) {
@@ -89,9 +90,9 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
 
         Note newNote = new Note();
         
-        addNotes(documentNumber, inactivatedSubAccounts, KFSKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION, inactivatedAccount, newNote);
-        addNotes(documentNumber, errorPersistingSubAccounts, KFSKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, inactivatedAccount, newNote);
-        addMaintenanceLockedNotes(documentNumber, alreadyLockedSubAccounts, KFSKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED, inactivatedAccount, newNote);
+        addNotes(documentNumber, inactivatedSubAccounts, COAKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION, inactivatedAccount, newNote);
+        addNotes(documentNumber, errorPersistingSubAccounts,COAKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, inactivatedAccount, newNote);
+        addMaintenanceLockedNotes(documentNumber, alreadyLockedSubAccounts, COAKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED, inactivatedAccount, newNote);
     }
 
 }

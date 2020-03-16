@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
-import org.kuali.kfs.coa.document.KualiAccountMaintainableImpl;
+import org.kuali.kfs.coa.document.AccountMaintainableImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -42,7 +42,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  *
  */
 @SuppressWarnings("deprecation")
-public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
+public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
 
     private static final long serialVersionUID = 1L;
     private static final String SUB_FUND_GROUP_CODE = "subFundGroupCode";

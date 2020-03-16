@@ -57,7 +57,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         Maintainable accountReversionMaintainable;
         try {
             accountReversionMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(AccountReversion.class.getName()).newInstance();
-            accountReversionMaintainable.setBoClass(AccountReversion.class);
+            accountReversionMaintainable.setDataObjectClass(AccountReversion.class);
             accountReversionMaintainable.setDocumentNumber(documentNumber);
         }
         catch (Exception e) {
@@ -105,7 +105,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         Maintainable accountReversionMaintainable;
         try {
             accountReversionMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(AccountReversion.class.getName()).newInstance();
-            accountReversionMaintainable.setBoClass(AccountReversion.class);
+            accountReversionMaintainable.setDataObjectClass(AccountReversion.class);
             accountReversionMaintainable.setDocumentNumber(documentNumber);
         }
         catch (Exception e) {

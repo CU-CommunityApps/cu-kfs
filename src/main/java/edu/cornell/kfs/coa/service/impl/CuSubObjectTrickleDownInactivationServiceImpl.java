@@ -7,6 +7,7 @@ import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.service.impl.SubObjectTrickleDownInactivationServiceImpl;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.coa.COAKeyConstants;
 
 public class CuSubObjectTrickleDownInactivationServiceImpl extends SubObjectTrickleDownInactivationServiceImpl {
 	
@@ -36,9 +37,9 @@ public class CuSubObjectTrickleDownInactivationServiceImpl extends SubObjectTric
         
         Note newNote = new Note();
         
-        addNotes(documentNumber, trickleDownInactivationStatus.inactivatedSubObjCds, KFSKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION, inactivatedAccount, newNote);
-        addNotes(documentNumber, trickleDownInactivationStatus.errorPersistingSubObjCds, KFSKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, inactivatedAccount, newNote);
-        addMaintenanceLockedNotes(documentNumber, trickleDownInactivationStatus.alreadyLockedSubObjCds, KFSKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED, inactivatedAccount, newNote);
+        addNotes(documentNumber, trickleDownInactivationStatus.inactivatedSubObjCds, COAKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION, inactivatedAccount, newNote);
+        addNotes(documentNumber, trickleDownInactivationStatus.errorPersistingSubObjCds, COAKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, inactivatedAccount, newNote);
+        addMaintenanceLockedNotes(documentNumber, trickleDownInactivationStatus.alreadyLockedSubObjCds, COAKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED, inactivatedAccount, newNote);
     }
 
 }

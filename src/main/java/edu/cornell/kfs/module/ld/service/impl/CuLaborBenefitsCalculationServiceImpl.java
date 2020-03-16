@@ -75,7 +75,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
 
         LOG.info("Looking up Account {" + chartOfAccountsCode + "," + accountNumber + "}");
         //lookup the account from the db based off the account code and the account number
-        Account account = this.getAccountService().getByPrimaryId(chartOfAccountsCode, accountNumber);
+        Account account = this.accountService.getByPrimaryId(chartOfAccountsCode, accountNumber);
 
         String laborBenefitRateCategoryCode = null;
         if (account == null) {

@@ -49,13 +49,13 @@ import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 
 import com.rsmart.kuali.kfs.fp.FPConstants;
 import com.rsmart.kuali.kfs.fp.FPKeyConstants;

@@ -74,7 +74,7 @@ public class AccountReversionRule extends MaintenanceDocumentRuleBase {
 
         // make sure its a valid organization reversion MaintenanceDocument
         if (!isCorrectMaintenanceClass(document, AccountReversion.class)) {
-            throw new IllegalArgumentException("Maintenance Document passed in was of the incorrect type.  Expected " + "'" + AccountReversion.class.toString() + "', received " + "'" + document.getOldMaintainableObject().getBoClass().toString() + "'.");
+            throw new IllegalArgumentException("Maintenance Document passed in was of the incorrect type.  Expected " + "'" + AccountReversion.class.toString() + "', received " + "'" + document.getOldMaintainableObject().getDataObjectClass().toString() + "'.");
         }
 
         // get the real business object

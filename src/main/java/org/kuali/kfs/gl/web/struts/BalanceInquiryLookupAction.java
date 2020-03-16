@@ -35,7 +35,7 @@ import org.kuali.kfs.kns.web.struts.action.KualiMultipleValueLookupAction;
 import org.kuali.kfs.kns.web.struts.form.MultipleValueLookupForm;
 import org.kuali.kfs.kns.web.ui.Column;
 import org.kuali.kfs.kns.web.ui.ResultRow;
-import org.kuali.kfs.krad.lookup.CollectionIncomplete;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;

@@ -103,7 +103,7 @@ public class GlLineServiceImpl implements GlLineService {
         document.getNewMaintainableObject().setMaintenanceAction(KRADConstants.MAINTENANCE_NEW_ACTION);
         document.getDocumentHeader().setDocumentDescription(CAB_DESC_PREFIX + primary.getDocumentNumber());
         document.getNewMaintainableObject().setBusinessObject(assetGlobal);
-        document.getNewMaintainableObject().setBoClass(assetGlobal.getClass());
+        document.getNewMaintainableObject().setDataObjectClass(assetGlobal.getClass());
 
         documentService.saveDocument(document);
 

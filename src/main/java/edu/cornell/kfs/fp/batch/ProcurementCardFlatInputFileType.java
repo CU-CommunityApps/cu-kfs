@@ -41,6 +41,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSkippedTransactionEmailService;
@@ -476,7 +477,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     protected boolean shouldTransactionLineBySkipped(String line) {
         String transactionCode = USBankRecordFieldUtils.extractNormalizedString(line, 41, 45);
         Collection<String> transactionTypesToSkip = parameterService.getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTION_TYPES_TO_SKIP);
+                CUKFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTION_TYPES_TO_SKIP);
         boolean skipTransaction = false;
         
         if (CollectionUtils.isNotEmpty(transactionTypesToSkip)) {

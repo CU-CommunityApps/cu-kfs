@@ -8,11 +8,11 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.maintenance.Maintainable;
-import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
