@@ -930,6 +930,7 @@
         <property name="universityDateService" ref="universityDateService"/>
         <property name="disbursementVoucherTravelService" ref="disbursementVoucherTravelService"/>
         <property name="vendorService" ref="vendorService"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
     </bean>
 
     <bean id="AccountingDocumentGenerator_AV" class="edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator">

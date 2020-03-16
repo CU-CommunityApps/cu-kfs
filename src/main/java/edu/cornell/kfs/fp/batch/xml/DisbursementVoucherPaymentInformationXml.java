@@ -27,6 +27,10 @@ public class DisbursementVoucherPaymentInformationXml {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String payeeId;
     
+    @XmlElement(name = "payee_address_id", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String payeeAddressId;
+    
     @XmlElement(name = "payee_type_code", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String payeeTypeCode;
@@ -137,6 +141,14 @@ public class DisbursementVoucherPaymentInformationXml {
 
     public void setPayeeId(String payeeId) {
         this.payeeId = payeeId;
+    }
+
+    public String getPayeeAddressId() {
+        return payeeAddressId;
+    }
+
+    public void setPayeeAddressId(String payeeAddressId) {
+        this.payeeAddressId = payeeAddressId;
     }
 
     public String getPayeeTypeCode() {
