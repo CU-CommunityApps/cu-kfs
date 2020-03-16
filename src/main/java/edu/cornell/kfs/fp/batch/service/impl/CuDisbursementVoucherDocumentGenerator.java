@@ -181,7 +181,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             fieldValues.put(KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID, paymentInfo.getPayeeAddressId());
             fieldValues.put(KFSPropertyConstants.ACCOUNT_ACTIVE_INDICATOR,  KFSConstants.ACTIVE_INDICATOR);
             vendorAddresses = businessObjectService.findMatching(VendorAddress.class, fieldValues);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error("findVendorAddress, there was an error attempting to find the vendor address", e);
             throw new ValidationException("Unable to find the vendor address: " + e.getMessage());
         }
