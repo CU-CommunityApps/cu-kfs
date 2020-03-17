@@ -38,6 +38,7 @@ import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrantXm
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverviewXml;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 
 public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGeneratorBase<CuDisbursementVoucherDocument> {
@@ -47,6 +48,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected DisbursementVoucherTravelService disbursementVoucherTravelService;
     protected VendorService vendorService;
     protected BusinessObjectService businessObjectService;
+    protected CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
     
     public CuDisbursementVoucherDocumentGenerator() {
         super();
@@ -105,9 +107,15 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             payeeDetail.setDisbVchrSpecialHandlingStateCode(paymentInfo.getSpecialHandlingState());
             payeeDetail.setDisbVchrSpecialHandlingZipCode(paymentInfo.getSpecialHandlingZip());
             payeeDetail.setDisbVchrSpecialHandlingCountryCode(paymentInfo.getSpecialHandlingCountry());
-            
             dvDocument.setDisbVchrCheckTotalAmount(paymentInfo.getCheckAmount());
-            dvDocument.setDisbursementVoucherDueDate(buildSqlDateFromUtilDate(paymentInfo.getDueDate()));
+            
+            if (paymentInfo.getDueDate() == null) {
+                LOG.info("populatePaymentInformation, no due date defined on the XML, calculating default due date.");
+                dvDocument.setDisbursementVoucherDueDate(cuDisbursementVoucherDefaultDueDateService.findDefaultDueDate());
+            } else {
+                dvDocument.setDisbursementVoucherDueDate(buildSqlDateFromUtilDate(paymentInfo.getDueDate()));
+            }
+            
             dvDocument.setDisbVchrPaymentMethodCode(paymentInfo.getPaymentMethod());
             dvDocument.setDisbVchrCheckStubText(paymentInfo.getCheckStubText());
             dvDocument.setDisbursementVoucherDocumentationLocationCode(paymentInfo.getDocumentationLocationCode());
@@ -339,6 +347,10 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+    
+    public void setCuDisbursementVoucherDefaultDueDateService(CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService) {
+        this.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
     }
 
 }

@@ -2,16 +2,25 @@ package edu.cornell.kfs.fp.document;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
+import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
+import org.kuali.kfs.kns.service.DocumentHelperService;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
@@ -33,9 +42,6 @@ import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.actiontaken.ActionTakenValue;
 import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -44,19 +50,13 @@ import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.address.EntityAddress;
-import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
-import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
-import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
-import org.kuali.kfs.kns.service.DocumentHelperService;
-import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
@@ -95,6 +95,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
     private static DisbursementVoucherTaxService disbursementVoucherTaxService;
     private static DocumentHelperService documentHelperService;
+    private static CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
 
     public CuDisbursementVoucherDocument() {
         super();
@@ -735,10 +736,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             setCampusCode(affiliatedCampusCode);
         }
 
-        // due date
-        Calendar calendar = getDateTimeService().getCurrentCalendar();
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        setDisbursementVoucherDueDate(new Date(calendar.getTimeInMillis()));
+        setDisbursementVoucherDueDate(getCuDisbursementVoucherDefaultDueDateService().findDefaultDueDate());
 
         // default doc location
         if (StringUtils.isBlank(getDisbursementVoucherDocumentationLocationCode())) {
@@ -991,6 +989,17 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
     public static void setDocumentHelperService(DocumentHelperService documentHelperService) {
         CuDisbursementVoucherDocument.documentHelperService = documentHelperService;
+    }
+
+    public static CuDisbursementVoucherDefaultDueDateService getCuDisbursementVoucherDefaultDueDateService() {
+        if (cuDisbursementVoucherDefaultDueDateService == null) {
+            cuDisbursementVoucherDefaultDueDateService = SpringContext.getBean(CuDisbursementVoucherDefaultDueDateService.class);
+        }
+        return cuDisbursementVoucherDefaultDueDateService;
+    }
+
+    public static void setCuDisbursementVoucherDefaultDueDateService(CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService) {
+        CuDisbursementVoucherDocument.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
     }
 
 }
