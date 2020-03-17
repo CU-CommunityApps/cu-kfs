@@ -931,6 +931,7 @@
         <property name="disbursementVoucherTravelService" ref="disbursementVoucherTravelService"/>
         <property name="vendorService" ref="vendorService"/>
         <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="cuDisbursementVoucherDefaultDueDateService" ref="cuDisbursementVoucherDefaultDueDateService"/>
     </bean>
 
     <bean id="AccountingDocumentGenerator_AV" class="edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator">
@@ -939,6 +940,12 @@
         <property name="configurationService" ref="configurationService"/>
         <property name="accountingPeriodService" ref="accountingPeriodService"/>
         <property name="dateTimeService" ref="dateTimeService"/>
+    </bean>
+    
+    <bean id="cuDisbursementVoucherDefaultDueDateService" parent="cuDisbursementVoucherDefaultDueDateService-parentBean"/>
+    <bean id="cuDisbursementVoucherDefaultDueDateService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherDefaultDueDateServiceImpl" abstract="true">
+    	<property name="parameterService" ref="parameterService"/>
+    	<property name="dateTimeService" ref="dateTimeService"/>
     </bean>
 
 </beans>

@@ -74,5 +74,9 @@ public class CuFPParameterConstants {
         public static final String CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS = "CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS";
         public static final String CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE = "CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE";
     }
+    
+    public static class DisbursementVoucherDocument {
+        public static final String NUMBER_OF_DAYS_FOR_DEFAULT_DV_DUE_DATE = "NUMBER_OF_DAYS_FOR_DEFAULT_DV_DUE_DATE";
+    }
 
 }
