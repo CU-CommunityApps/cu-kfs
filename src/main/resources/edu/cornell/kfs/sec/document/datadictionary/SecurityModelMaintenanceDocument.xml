@@ -35,12 +35,15 @@
                    <property name="insertBefore">
                        <list>
                            <bean parent="MaintainableFieldDefinition" p:name="modelDefinitionId" p:required="true" p:unconditionallyReadOnly="true"
-                                   p:defaultValueFinderClass="edu.cornell.kfs.sec.businessobject.defaultvalue.CuNextSecurityModelDefinitionIdFinder"/>
+                                 p:defaultValueFinder-ref="cuNextSecurityModelIdFinder"/>
                        </list>
                    </property>
                </bean>
            </list>
        </property>
    </bean>
+   
+   <bean id="cuNextSecurityModelIdFinder"
+         class="edu.cornell.kfs.sec.businessobject.defaultvalue.CuNextSecurityModelDefinitionIdFinder"/>
 
 </beans>

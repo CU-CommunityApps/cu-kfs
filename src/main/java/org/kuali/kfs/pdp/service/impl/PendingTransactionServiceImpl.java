@@ -26,12 +26,12 @@ import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
@@ -136,7 +136,8 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
             glPendingTransaction.setChartOfAccountsCode(paymentAccountDetail.getFinChartCode());
 
             glPendingTransaction.setProjectCd(paymentAccountDetail.getProjectCode());
-            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, reversal) ? KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
+            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, reversal) ?
+                    KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
             glPendingTransaction.setAmount(paymentAccountDetail.getAccountNetAmount().abs());
 
             //Changes for Research Participant Upload
@@ -144,8 +145,10 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
             CustomerProfile customerProfile = paymentGroup.getBatch().getCustomerProfile();
 
             if (researchParticipantPaymentValidationService.isResearchParticipantPayment(customerProfile)) {
-                BusinessObjectEntry businessObjectEntry = dataDictionaryService.getDataDictionary().getBusinessObjectEntry(PaymentDetail.class.getName());
-                AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition("paymentGroup.payeeName");
+                BusinessObjectEntry businessObjectEntry = dataDictionaryService.getDataDictionary()
+                        .getBusinessObjectEntry(PaymentDetail.class.getName());
+                AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition(
+                        "paymentGroup.payeeName");
                 AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
                 //This is a temporary work around for an issue introduced with KFSCNTRB-705.
                 if (ObjectUtils.isNotNull(originalPayeeNameAttributeSecurity)) {

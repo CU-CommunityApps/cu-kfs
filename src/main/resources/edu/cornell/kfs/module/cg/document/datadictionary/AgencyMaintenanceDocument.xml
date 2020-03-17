@@ -38,10 +38,12 @@
                 <bean parent="FieldOverrideForListElementReplace" >
                     <property name="propertyName" value="maintainableItems" />
                     <property name="element">
-                        <bean parent="MaintainableFieldDefinition" p:name="agencyNumber" p:unconditionallyReadOnly="true" p:required="true" p:defaultValueFinderClass="org.kuali.kfs.module.cg.businessobject.defaultvalue.NextAgencyNumberFinder"/>
+                        <bean parent="MaintainableFieldDefinition" p:name="agencyNumber" p:unconditionallyReadOnly="true" 
+                              p:required="true" p:defaultValueFinder-ref="nextAgencyNumberFinder"/>
                     </property>
                     <property name="replaceWith">
-                        <bean parent="MaintainableFieldDefinition" p:name="agencyNumber" p:required="true" p:defaultValueFinderClass="org.kuali.kfs.module.cg.businessobject.defaultvalue.NextAgencyNumberFinder"/>
+                        <bean parent="MaintainableFieldDefinition" p:name="agencyNumber"
+                              p:required="true" p:defaultValueFinder-ref="nextAgencyNumberFinder"/>
                     </property>
                 </bean>
             </list>

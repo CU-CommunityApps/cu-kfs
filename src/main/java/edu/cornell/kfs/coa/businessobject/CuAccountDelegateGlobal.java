@@ -40,7 +40,6 @@ public class CuAccountDelegateGlobal extends AccountDelegateGlobal implements Gl
     /**
      * @see org.kuali.kfs.krad.document.GlobalBusinessObject#applyGlobalChanges(org.kuali.rice.krad.bo.BusinessObject)
      */
-    @SuppressWarnings("deprecation")
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
 
         BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
@@ -54,8 +53,8 @@ public class CuAccountDelegateGlobal extends AccountDelegateGlobal implements Gl
 
                 Account account = (Account) boService.findByPrimaryKey(Account.class, accountDetail.getPrimaryKeys());
 
-                // if the account doesnt exist, fail fast, as this should never happen,
-                // the busines rules for this document should have caught this.
+                // if the account doesn't exist, fail fast, as this should never happen, the business rules for this
+                // document should have caught this.
                 if (account == null) {
                     throw new RuntimeException("Account [" + accountDetail.getChartOfAccountsCode() + "-" + accountDetail.getAccountNumber() 
                           + "] was not present in the database. " + "This should never happen under normal circumstances, as an invalid account should have "
@@ -64,8 +63,8 @@ public class CuAccountDelegateGlobal extends AccountDelegateGlobal implements Gl
 
                 // attempt to load the existing Delegate from the DB, if it exists. we do this to avoid
                 // versionNumber conflicts if we tried to just insert a new record that already existed.
-                Map pkMap = new HashMap();
-                pkMap.putAll(accountDetail.getPrimaryKeys()); // chartOfAccountsCode & accountNumber
+                // chartOfAccountsCode & accountNumber
+                Map<String, Object> pkMap = new HashMap<>(accountDetail.getPrimaryKeys());
                 pkMap.put("financialDocumentTypeCode", changeDocument.getFinancialDocumentTypeCode());
                 pkMap.put("accountDelegateSystemId", changeDocument.getAccountDelegateUniversalId());
                 AccountDelegate delegate = (AccountDelegate) boService.findByPrimaryKey(AccountDelegate.class, pkMap);
@@ -94,7 +93,8 @@ public class CuAccountDelegateGlobal extends AccountDelegateGlobal implements Gl
 
                 // START DATE
                 if (changeDocument.getAccountDelegateStartDate() != null) {
-                    delegate.setAccountDelegateStartDate(new Date(changeDocument.getAccountDelegateStartDate().getTime()));
+                    delegate.setAccountDelegateStartDate(new Date(changeDocument.getAccountDelegateStartDate()
+                            .getTime()));
                 }
 
                 persistables.add(delegate);

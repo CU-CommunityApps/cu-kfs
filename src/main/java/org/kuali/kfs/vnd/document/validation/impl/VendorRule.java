@@ -89,6 +89,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
     private VendorDetail oldVendor;
     private VendorDetail newVendor;
+    private BusinessObjectService businessObjectService;
+    private PersistenceService persistenceService;
+    private PostalCodeValidationService postalCodeValidationService;
 
     /**
      * Overrides the setupBaseConvenienceObjects from the superclass because we cannot use the
@@ -135,8 +138,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             // Retrieve the references objects of the vendor header of this vendor.
             List<String> headerFieldNames = getObjectReferencesListFromBOClass(VendorHeader.class);
             vendor.getVendorHeader().refreshNonUpdateableReferences();
-            SpringContext.getBean(PersistenceService.class).retrieveReferenceObjects(vendor.getVendorHeader(),
-                    headerFieldNames);
+            getPersistenceService().retrieveReferenceObjects(vendor.getVendorHeader(), headerFieldNames);
 
             // We still need to retrieve all the other references of this vendor in addition to
             // vendor header. Since this is a parent vendor, whose vendor header saving is handled manually,
@@ -144,7 +146,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             // exclude retrieving reference objects of vendor header.
             List<String> detailFieldNames = getObjectReferencesListFromBOClass(vendor.getClass());
             detailFieldNames.remove(VendorConstants.VENDOR_HEADER_ATTR);
-            SpringContext.getBean(PersistenceService.class).retrieveReferenceObjects(vendor, detailFieldNames);
+            getPersistenceService().retrieveReferenceObjects(vendor, detailFieldNames);
         }
 
         // refresh addresses
@@ -826,12 +828,12 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             String[] parameters = new String[]{vendorTypeCode, vendorAddressTypeRequiredCode};
             putFieldError(vendorAddressTabPrefix + VendorPropertyConstants.VENDOR_ADDRESS_TYPE_CODE,
                     VendorKeyConstants.ERROR_ADDRESS_TYPE, parameters);
-            String addressLine1Label = SpringContext.getBean(DataDictionaryService.class)
-                    .getAttributeLabel(VendorAddress.class, VendorPropertyConstants.VENDOR_ADDRESS_LINE_1);
-            String addressCityLabel = SpringContext.getBean(DataDictionaryService.class)
-                    .getAttributeLabel(VendorAddress.class, VendorPropertyConstants.VENDOR_ADDRESS_CITY);
-            String addressCountryLabel = SpringContext.getBean(DataDictionaryService.class)
-                    .getAttributeLabel(VendorAddress.class, VendorPropertyConstants.VENDOR_ADDRESS_COUNTRY);
+            String addressLine1Label = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
+                    VendorPropertyConstants.VENDOR_ADDRESS_LINE_1);
+            String addressCityLabel = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
+                    VendorPropertyConstants.VENDOR_ADDRESS_CITY);
+            String addressCountryLabel = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
+                    VendorPropertyConstants.VENDOR_ADDRESS_COUNTRY);
             putFieldError(vendorAddressTabPrefix + VendorPropertyConstants.VENDOR_ADDRESS_LINE_1,
                     KFSKeyConstants.ERROR_REQUIRED, addressLine1Label);
             putFieldError(vendorAddressTabPrefix + VendorPropertyConstants.VENDOR_ADDRESS_CITY,
@@ -847,7 +849,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, newVendor.getVendorHeaderGeneratedIdentifier());
         // Find all the addresses for this vendor and its divisions:
-        Collection<VendorAddress> vendorDivisionAddresses = SpringContext.getBean(BusinessObjectService.class)
+        Collection<VendorAddress> vendorDivisionAddresses = getBusinessObjectService()
                 .findMatchingOrderBy(VendorAddress.class, fieldValues,
                         VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, true);
 
@@ -898,7 +900,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @return boolean false if the country is United States and there is no state or zip code
      */
     protected boolean checkAddressCountryEmptyStateZip(VendorAddress address) {
-        return SpringContext.getBean(PostalCodeValidationService.class).validateAddress(address.getVendorCountryCode(),
+        return getPostalCodeValidationService().validateAddress(address.getVendorCountryCode(),
                 address.getVendorStateCode(), address.getVendorZipCode(), VendorPropertyConstants.VENDOR_ADDRESS_STATE,
                 VendorPropertyConstants.VENDOR_ADDRESS_ZIP);
     }
@@ -1166,14 +1168,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         if (!StringUtils.isBlank(chartOfAccountsCode) && !StringUtils.isBlank(orgCode)) {
             Map<String, String> chartOrgMap = new HashMap<>();
             chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
-            if (SpringContext.getBean(BusinessObjectService.class).countMatching(Chart.class, chartOrgMap) < 1) {
+            if (getBusinessObjectService().countMatching(Chart.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(
                         VendorPropertyConstants.VENDOR_CUSTOMER_NUMBER_CHART_OF_ACCOUNTS_CODE,
                         KFSKeyConstants.ERROR_EXISTENCE, chartOfAccountsCode);
                 valid = false;
             }
             chartOrgMap.put("organizationCode", orgCode);
-            if (SpringContext.getBean(BusinessObjectService.class).countMatching(Organization.class, chartOrgMap) < 1) {
+            if (getBusinessObjectService().countMatching(Organization.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CUSTOMER_NUMBER_ORGANIZATION_CODE,
                         KFSKeyConstants.ERROR_EXISTENCE, orgCode);
                 valid = false;
@@ -1381,13 +1383,13 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         if (!StringUtils.isBlank(chartOfAccountsCode) && !StringUtils.isBlank(orgCode)) {
             Map<String, String> chartOrgMap = new HashMap<>();
             chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
-            if (SpringContext.getBean(BusinessObjectService.class).countMatching(Chart.class, chartOrgMap) < 1) {
+            if (getBusinessObjectService().countMatching(Chart.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CONTRACT_CHART_OF_ACCOUNTS_CODE,
                         KFSKeyConstants.ERROR_EXISTENCE, chartOfAccountsCode);
                 valid = false;
             }
             chartOrgMap.put("organizationCode", orgCode);
-            if (SpringContext.getBean(BusinessObjectService.class).countMatching(Organization.class, chartOrgMap) < 1) {
+            if (getBusinessObjectService().countMatching(Organization.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION_CODE,
                         KFSKeyConstants.ERROR_EXISTENCE, orgCode);
                 valid = false;
@@ -1395,7 +1397,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         if (shouldAddToErrorPath && organization.getVendorContractPurchaseOrderLimitAmount() != null) {
-            BusinessObjectEntry entry = SpringContext.getBean(DataDictionaryService.class).getDataDictionary()
+            BusinessObjectEntry entry = getDataDictionaryService().getDataDictionary()
                     .getBusinessObjectEntry(VendorContractOrganization.class.getName());
             AttributeDefinition attributeDefinition = entry.getAttributeDefinition(
                     VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION_APO_LIMIT);
@@ -1639,8 +1641,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 valid = false;
                 Map<String, String> fieldValues = new HashMap<>();
                 fieldValues.put("vendorOwnershipCode", vDetail.getVendorHeader().getVendorOwnershipCode());
-                Collection<W8TypeOwnershipType> vendorW8OwnershipTypes = SpringContext.getBean(
-                        BusinessObjectService.class).findMatching(W8TypeOwnershipType.class, fieldValues);
+                Collection<W8TypeOwnershipType> vendorW8OwnershipTypes = getBusinessObjectService()
+                        .findMatching(W8TypeOwnershipType.class, fieldValues);
                 for (W8TypeOwnershipType w8TypeOwnership : vendorW8OwnershipTypes) {
                     if (w8TypeOwnership.getW8TypeCode().equals(vDetail.getVendorHeader().getVendorW8TypeCode())) {
                         valid = true;
@@ -1737,5 +1739,41 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         String purchasingCommodityCode = commodityCode.getPurchasingCommodityCode();
         CommodityCodeService commodityCodeService = SpringContext.getBean(CommodityCodeService.class);
         return ObjectUtils.isNotNull(commodityCodeService.getByPrimaryId(purchasingCommodityCode));
+    }
+
+    private BusinessObjectService getBusinessObjectService() {
+        if (businessObjectService == null) {
+            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        }
+        return businessObjectService;
+    }
+
+    // Used by unit tests
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    private PersistenceService getPersistenceService() {
+        if (persistenceService == null) {
+            persistenceService = SpringContext.getBean(PersistenceService.class);
+        }
+        return persistenceService;
+    }
+
+    // Used by unit tests
+    public void setPersistenceService(PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
+
+    private PostalCodeValidationService getPostalCodeValidationService() {
+        if (postalCodeValidationService == null) {
+            postalCodeValidationService = SpringContext.getBean(PostalCodeValidationService.class);
+        }
+        return postalCodeValidationService;
+    }
+
+    // Used by unit tests
+    public void setPostalCodeValidationService(PostalCodeValidationService postalCodeValidationService) {
+        this.postalCodeValidationService = postalCodeValidationService;
     }
 }

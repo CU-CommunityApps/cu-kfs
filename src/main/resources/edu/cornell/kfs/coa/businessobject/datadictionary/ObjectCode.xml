@@ -281,9 +281,7 @@
                       parent="ObjectCode-historicalFinancialObjectCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialBudgetAggregationCd"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
-                      parent="ObjectCode-active" p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
-                      p:defaultValue="Y"/>
+                <ref bean="activeIndicatorLookupAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupResultAttributeDefinitions">
@@ -306,13 +304,13 @@
                       parent="ObjectCode-extension-sunyObjectCode"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-extension-financialObjectCodeDescr"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
-                      parent="ObjectCode-active"/>
+                <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupFields">
             <list>
-                <bean parent="FieldDefinition" p:required="true" p:attributeName="universityFiscalYear" p:defaultValueFinderClass="org.kuali.kfs.sys.businessobject.defaultvalue.FiscalYearFinder"/>
+                <bean parent="FieldDefinition" p:required="true" p:attributeName="universityFiscalYear"
+                	  p:defaultValueFinder-ref="fiscalYearFinder"/>
                 <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
                 <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
                 <bean parent="FieldDefinition" p:attributeName="financialObjectCodeName"/>

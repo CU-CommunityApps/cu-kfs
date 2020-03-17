@@ -62,7 +62,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * A validation that checks whether the given accounting line is accessible to the given user or not
  */
@@ -183,9 +182,9 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     /**
      * Checks to see if the object code is the only difference between the original accounting line and the updated
      * accounting line.
-     * 
-     * @param accountingLine
-     * @param updatedAccountingLine
+     *
+     * @param accountingLine original accounting line to compare
+     * @param updatedAccountingLine updated accounting line to compare
      * @return true if only the object code has changed on the accounting line, false otherwise
      */
     protected boolean onlyObjectCodeChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {
