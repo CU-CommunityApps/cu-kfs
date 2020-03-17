@@ -110,6 +110,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             dvDocument.setDisbVchrCheckTotalAmount(paymentInfo.getCheckAmount());
             
             if (paymentInfo.getDueDate() == null) {
+                LOG.info("populatePaymentInformation, no due date defined on the XML, calculating default due date.");
                 dvDocument.setDisbursementVoucherDueDate(cuDisbursementVoucherDefaultDueDateService.findDefaultDueDate());
             } else {
                 dvDocument.setDisbursementVoucherDueDate(buildSqlDateFromUtilDate(paymentInfo.getDueDate()));

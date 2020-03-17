@@ -99,8 +99,8 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
         assertEquals(dateFormat.format(expectedDate), dateFormat.format(actualDate));
     }
     
-    protected void prepCuDisbursementVoucherDefaultDueDateServiceImpl(String numberOfDays, Calendar calendar) {
-        cuDisbursementVoucherDefaultDueDateServiceImpl.setDateTimeService(buildMockDateTimeService(calendar));
+    protected void prepCuDisbursementVoucherDefaultDueDateServiceImpl(String numberOfDays, Calendar currentCalendar) {
+        cuDisbursementVoucherDefaultDueDateServiceImpl.setDateTimeService(buildMockDateTimeService(currentCalendar));
         cuDisbursementVoucherDefaultDueDateServiceImpl.setParameterService(buildMockParameterService(numberOfDays));
     }
     
@@ -111,9 +111,9 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
         return service;
     }
     
-    protected DateTimeService buildMockDateTimeService(Calendar calendar) {
+    protected DateTimeService buildMockDateTimeService(Calendar currentCalendar) {
         DateTimeService service = Mockito.mock(DateTimeService.class);
-        Mockito.when(service.getCurrentCalendar()).thenReturn(calendar);
+        Mockito.when(service.getCurrentCalendar()).thenReturn(currentCalendar);
         return service;
         
     }
