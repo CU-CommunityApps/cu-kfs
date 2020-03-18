@@ -53,11 +53,11 @@ import java.util.Map;
 public class LaborBenefitsCalculationServiceImpl implements LaborBenefitsCalculationService {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    private BusinessObjectService businessObjectService;
+    // CU customization change access level from private to protected
+    protected BusinessObjectService businessObjectService;
     private LaborPositionObjectBenefitService laborPositionObjectBenefitService;
     protected AccountService accountService;
-    private ParameterService parameterService;
+    protected ParameterService parameterService;
     private String costSharingSourceAccountNumber;
     private String costSharingSourceSubAccountNumber;
     private String costSharingSourceAccountChartOfAccountsCode;

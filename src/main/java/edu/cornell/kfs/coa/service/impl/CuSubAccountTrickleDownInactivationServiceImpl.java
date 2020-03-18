@@ -41,7 +41,8 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
         }
         
         inactivatedAccount.refreshReferenceObject(KFSPropertyConstants.SUB_ACCOUNTS);
-		if (ObjectUtils.isNotNull(inactivatedAccount.getSubAccounts()) && !inactivatedAccount.getSubAccounts().isEmpty()) {
+		if (ObjectUtils.isNotNull(inactivatedAccount.getSubAccounts()) 
+		        && !inactivatedAccount.getSubAccounts().isEmpty()) {
 			for (Object entry : inactivatedAccount.getSubAccounts()) {
 				SubAccount subAccount = (SubAccount) entry;
                 if (subAccount.isActive()) {
@@ -54,7 +55,8 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
                         alreadyLockedSubAccounts.put(subAccount, failedLock.getDocumentNumber());
                     }
                     else {
-                        // no locks other than our own (but there may have been no locks at all), just go ahead and try to update
+                        // no locks other than our own (but there may have been no locks at all), just go ahead and
+                        // try to update
                         subAccount.setActive(false);
                         
                         try {

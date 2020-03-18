@@ -91,7 +91,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     private VendorDetail newVendor;
     private BusinessObjectService businessObjectService;
     private PersistenceService persistenceService;
-    private PostalCodeValidationService postalCodeValidationService;
+    //CU customization change access level from private to protected
+    protected PostalCodeValidationService postalCodeValidationService;
 
     /**
      * Overrides the setupBaseConvenienceObjects from the superclass because we cannot use the
