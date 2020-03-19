@@ -99,7 +99,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
     /**
      * pre-populate the static list of details with each category
      * 
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.kfs.kns.bo.BusinessObject)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#setBusinessObject(org.kuali.kfs.kns.bo.BusinessObject)
      */
     public void setBusinessObject(PersistableBusinessObject businessObject) {
 
@@ -136,7 +136,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
      * A method that prevents lookups from refreshing the Organization Reversion Detail list (because, if it is refreshed before a
      * save...it ends up destroying the list).
      * 
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
      */
     @Override
     protected boolean isRelationshipRefreshable(Class boClass, String relationshipName) {
@@ -196,7 +196,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
 
     /**
      * Overridden to trickle down inactivation or activation to details
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#saveBusinessObject()
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#saveBusinessObject()
      */
     @Override
     public void saveBusinessObject() {
@@ -213,7 +213,7 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
     }
 
     /**
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, org.kuali.kfs.kns.maintenance.Maintainable)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, org.kuali.kfs.kns.maintenance.Maintainable)
      */
     @Override
     public List getSections(MaintenanceDocument document, Maintainable oldMaintainable) {

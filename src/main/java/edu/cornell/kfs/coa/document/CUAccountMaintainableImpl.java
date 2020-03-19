@@ -152,7 +152,7 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
      * if the new object has them. This is necessary to work around a section size mismatch issue
      * on certain ACCT maintenance documents.
      * 
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, Maintainable)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, Maintainable)
      */
     @SuppressWarnings("rawtypes")
     @Override

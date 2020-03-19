@@ -158,7 +158,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
      * Overridden to forcibly populate the multi-select procurementMethodsArray KNS field values,
      * and to forcibly hide the procurementMethods field's row.
      * 
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument,
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument,
      *      org.kuali.kfs.kns.maintenance.Maintainable)
      */
     @SuppressWarnings("rawtypes")
