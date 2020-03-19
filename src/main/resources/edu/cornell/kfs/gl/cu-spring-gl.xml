@@ -210,6 +210,18 @@
           p:batchFileDirectoryName="${staging.directory}/gl/originEntry"
           p:accountingCycleCachingService-ref="accountingCycleCachingService"
           p:persistenceStructureService-ref="persistenceStructureService" p:persistenceService-ref="persistenceService">
+          <property name="transactionPosters">
+            <list>
+                <ref bean="glPostGlEntry"/>
+                <ref bean="glPostGlAccountBalance"/>
+                <ref bean="glPostSufficientFundBalances"/>
+                <ref bean="glPostReversal"/>
+                <ref bean="glPostEncumbrance"/>
+                <ref bean="glPostExpenditureTransaction"/>
+                <ref bean="glPostBalance"/>
+            </list>
+        </property>
+    </bean>
 
 	<bean id="glCurrentAccountBalanceLookupableHelperService" parent="generalLedgerLookupableHelperService-parentBean"
 				class="edu.cornell.kfs.gl.businessobject.lookup.CuCurrentAccountBalanceLookupableHelperServiceImpl" scope="prototype">
