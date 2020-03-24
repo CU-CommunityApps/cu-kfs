@@ -91,8 +91,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     private VendorDetail newVendor;
     private BusinessObjectService businessObjectService;
     private PersistenceService persistenceService;
-    //CU customization change access level from private to protected
-    protected PostalCodeValidationService postalCodeValidationService;
+    private PostalCodeValidationService postalCodeValidationService;
 
     /**
      * Overrides the setupBaseConvenienceObjects from the superclass because we cannot use the
@@ -1765,8 +1764,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     public void setPersistenceService(PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
-
-    private PostalCodeValidationService getPostalCodeValidationService() {
+    
+    //CU customization change access level from private to protected
+    protected PostalCodeValidationService getPostalCodeValidationService() {
         if (postalCodeValidationService == null) {
             postalCodeValidationService = SpringContext.getBean(PostalCodeValidationService.class);
         }

@@ -27,7 +27,7 @@ public class CuBalanceServiceImpl extends BalanceServiceImpl implements CuBalanc
      * @see org.kuali.kfs.gl.service.BalanceService#findOrganizationReversionBalancesForFiscalYear(java.lang.Integer, boolean)
      */
     public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
-        SystemOptions options = SpringContext.getBean(OptionsService.class).getOptions(year);
+        SystemOptions options = optionsService.getOptions(year);
         List<ParameterEvaluator> parameterEvaluators = new ArrayList<ParameterEvaluator>();
 
         int i = 1;

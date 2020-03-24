@@ -15,8 +15,6 @@ import edu.cornell.kfs.coa.service.CuAccountService;
 
 public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccountService{
     
-    private static final String DEFAULT_BENEFIT_RATE_CATEGORY_CODE = "DEFAULT_BENEFIT_RATE_CATEGORY_CODE";
-    
     protected NoteService noteService;
 
     public String getDefaultLaborBenefitRateCategoryCodeForAccountType(String accountTypeCode) {

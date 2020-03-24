@@ -138,6 +138,7 @@
         <module name="OneStatementPerLine"/>
         <module name="OneTopLevelClass"/>
         <module name="OuterTypeNumber"/>
+        <module name="OverloadMethodsDeclarationOrder"/>
         <module name="ParenPad"/>
         <module name="RedundantImport"/>
         <module name="RedundantModifier"/>
