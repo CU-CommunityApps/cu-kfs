@@ -12,6 +12,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.ProcurementCardSkippedTransaction;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSkippedTransactionEmailService;
@@ -39,7 +40,7 @@ public class ProcurementCardSkippedTransactionEmailServiceImpl implements Procur
     protected Set<String> getToAddresses() {
         Set<String> addresses = new HashSet<String>();
         addresses.add(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS));
+                CUKFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_ADDRESS));
         return addresses;
     }
     
@@ -60,7 +61,7 @@ public class ProcurementCardSkippedTransactionEmailServiceImpl implements Procur
     
     protected String getEmailBodyTempalte() {
         return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE);
+                CUKFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE);
     }
 
     public ParameterService getParameterService() {

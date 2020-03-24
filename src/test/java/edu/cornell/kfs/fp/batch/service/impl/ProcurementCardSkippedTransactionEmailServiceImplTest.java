@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.ProcurementCardSkippedTransaction;
 
@@ -28,7 +29,7 @@ public class ProcurementCardSkippedTransactionEmailServiceImplTest {
         
         String emailMessageTemplate = "The {0} bank file had the following transactions skipped:";
         Mockito.when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                KFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE)).
+                CUKFSConstants.ProcurementCardParameters.PCARD_BATCH_LOAD_STEP, CuFPParameterConstants.ProcurementCardDocument.CARD_TRANSACTIONS_SKIPPED_EMAIL_BODY_TEMPLATE)).
         thenReturn(emailMessageTemplate);
         procurementCardSkippedTransactionEmailServiceImpl.setParameterService(parameterService);
         

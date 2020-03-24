@@ -52,6 +52,7 @@ import edu.cornell.kfs.module.ezra.businessobject.Sponsor;
 import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
 import edu.cornell.kfs.module.ezra.dataaccess.SponsorDao;
 import edu.cornell.kfs.module.ezra.service.EzraService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class EzraServiceImpl implements EzraService {
 
@@ -743,7 +744,7 @@ public class EzraServiceImpl implements EzraService {
     protected Map<String,String> getKeyValueMappingsFromParameter(String parameterName) {
         Map<String,String> mappings = new HashMap<String,String>();
         Collection<String> keyValuePairs = parameterService.getParameterValuesAsString(
-				KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT, parameterName);
+				CUKFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT, parameterName);
         for (String keyValuePair : keyValuePairs) {
             int equalsSignIndex = keyValuePair.indexOf('=');
             mappings.put(keyValuePair.substring(0, equalsSignIndex), keyValuePair.substring(equalsSignIndex + 1));

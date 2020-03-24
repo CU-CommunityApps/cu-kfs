@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
+import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;

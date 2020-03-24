@@ -11,10 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;

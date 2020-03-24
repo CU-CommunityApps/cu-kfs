@@ -111,7 +111,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * Just like AccountReversionMaintainableImpl's setBusinessObject method populates the list of details so there is one
      * detail per active Account Reversion Category, this method populates a list of Account Reversion Change details.
      * 
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.kfs.kns.bo.PersistableBusinessObject)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#setBusinessObject(org.kuali.kfs.kns.bo.PersistableBusinessObject)
      */
     @Override
     public void setBusinessObject(PersistableBusinessObject businessObject) {
@@ -150,7 +150,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * Prevents Account Reversion Change Details from being refreshed by a look up (because doing that refresh before a save
      * would wipe out the list of account reversion change details).
      * 
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#isRelationshipRefreshable(java.lang.Class, java.lang.String)
      */
     @Override
     protected boolean isRelationshipRefreshable(Class boClass, String relationshipName) {
@@ -167,7 +167,7 @@ public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGloba
      * Just like OrganizationReversionMaintainableImpl's setBusinessObject method populates the list of details so there is one
      * detail per active Organization Reversion Category, this method populates a list of Organization Reversion Change details.
      *
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#setBusinessObject(org.kuali.kfs.krad.bo.PersistableBusinessObject)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#setBusinessObject(org.kuali.kfs.krad.bo.PersistableBusinessObject)
      */
     @Override
     public void processAfterNew(MaintenanceDocument document, Map<String, String[]> requestParameters) {

@@ -33,6 +33,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.kns.datadictionary.control.SelectControlDefinition;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
@@ -44,7 +45,6 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -366,7 +366,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         });
         
         when(parameterService.getParameterValueAsString(
-                KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM))
+                KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARAM_NM))
                 .thenReturn(CUPdpTestConstants.ACH_EMAIL_FROM_ADDRESS);
         
         return parameterService;
@@ -433,7 +433,7 @@ public class PayeeACHAccountExtractServiceImplTest {
 
     private FinancialSystemMaintainable createNewMaintainableForPAAT() {
         FinancialSystemMaintainable maintainable = new CuPayeeACHAccountMaintainableImpl();
-        maintainable.setBoClass(PayeeACHAccount.class);
+        maintainable.setDataObjectClass(PayeeACHAccount.class);
         maintainable.setDataObject(new PayeeACHAccount());
         return maintainable;
     }

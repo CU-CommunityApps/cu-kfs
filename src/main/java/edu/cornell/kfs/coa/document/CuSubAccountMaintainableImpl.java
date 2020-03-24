@@ -19,7 +19,7 @@ import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kns.maintenance.Maintainable;
-import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -360,7 +360,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     /**
      * After a copy is done set specific fields on {@link SubAccount} to default values
      *
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#processAfterCopy(MaintenanceDocument, Map)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#processAfterCopy(MaintenanceDocument, Map)
      */
     @Override
     public void processAfterCopy(org.kuali.kfs.kns.document.MaintenanceDocument  document, Map<String, String[]> parameters) {
@@ -399,7 +399,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * if the new object has them. This is necessary to work around a section size mismatch issue, which can occur
      * when the old sub-account has a type of "CS" but the new one has a type of "EX" and possibly under other circumstances.
      *
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, Maintainable)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument, Maintainable)
      */
     @SuppressWarnings("rawtypes")
     @Override

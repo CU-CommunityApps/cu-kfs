@@ -281,7 +281,8 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     detailApplication.setAmountApplied(detailApplication.getAmountOpen());
                 } else {
                     // handle the user manually entering an amount
-                    if (detailApplication.isFullApplyChanged()) { // means it went from true to false
+                    if (detailApplication.isFullApplyChanged()) {
+                        // means it went from true to false
                         detailApplication.setAmountApplied(KualiDecimal.ZERO);
                     }
                 }
@@ -542,6 +543,23 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     /**
+     * Retrieve all invoices for the selected customer.
+     *
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward loadInvoices(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        PaymentApplicationForm pform = (PaymentApplicationForm) form;
+        loadInvoices(pform, pform.getEnteredInvoiceDocumentNumber());
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
+    /**
      * This method loads the invoices for currently selected customer
      *
      * @param payAppForm
@@ -795,23 +813,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {
             doApplicationOfFunds(payAppForm);
         }
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
-    }
-
-    /**
-     * Retrieve all invoices for the selected customer.
-     *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
-     */
-    public ActionForward loadInvoices(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm pform = (PaymentApplicationForm) form;
-        loadInvoices(pform, pform.getEnteredInvoiceDocumentNumber());
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 

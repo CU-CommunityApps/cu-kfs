@@ -31,7 +31,8 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.datadictionary.InquirySectionDefinition;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
@@ -288,7 +289,7 @@ public class DataObjectRestServiceController {
 
     public DataDictionaryService getDataDictionaryService() {
         if (this.dataDictionaryService == null) {
-            this.dataDictionaryService = KRADServiceLocatorWeb.getDataDictionaryService();
+            this.dataDictionaryService = KNSServiceLocator.getDataDictionaryService();
         }
         return this.dataDictionaryService;
     }

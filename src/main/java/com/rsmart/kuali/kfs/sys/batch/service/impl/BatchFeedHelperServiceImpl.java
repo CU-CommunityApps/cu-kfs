@@ -55,11 +55,11 @@ import org.kuali.kfs.krad.datadictionary.DataDictionaryEntry;
 import org.kuali.kfs.krad.datadictionary.DataDictionaryEntryBase;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 
 import com.rsmart.kuali.kfs.sys.KFSKeyConstants;
 import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;

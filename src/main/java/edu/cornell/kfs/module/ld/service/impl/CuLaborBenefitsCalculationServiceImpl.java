@@ -12,15 +12,10 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.service.impl.LaborBenefitsCalculationServiceImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculationServiceImpl {
     private static final Logger LOG = LogManager.getLogger(CuLaborBenefitsCalculationServiceImpl.class);
-    private BusinessObjectService businessObjectService;
 
     @Override
     public String getBenefitRateCategoryCode(String chartOfAccountsCode, String accountNumber, String subAccountNumber) {
@@ -32,9 +27,9 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
             LOG.info("Sub Account Number was filled in. Checking to see if it is a Cost Sharing Sub Account.");
 
             //make sure the system parameter exists
-            if (SpringContext.getBean(ParameterService.class).parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND")) {
+            if (parameterService.parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND")) {
                 //parameter exists, determine the value of the parameter
-                String sysParam2 = SpringContext.getBean(ParameterService.class).getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND");
+                String sysParam2 = parameterService.getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND");
                 LOG.debug("sysParam2: " + sysParam2);
 
                 //if sysParam2 == Y then check to see if it's a cost sharing sub account
@@ -46,10 +41,6 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
                     subFieldValues.put(KFSPropertyConstants.SUB_ACCOUNT_TYPE_CODE, "CS");
                     subFieldValues.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
                     LOG.info("Looking for a cost sharing sub account for sub account number " + subAccountNumber);
-
-                    if(ObjectUtils.isNull(businessObjectService)){
-                        this.businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-                    }
 
                     //perform the lookup
                     List<A21SubAccount> subAccountList = (List<A21SubAccount>) businessObjectService.findMatching(A21SubAccount.class, subFieldValues);
@@ -75,7 +66,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
 
         LOG.info("Looking up Account {" + chartOfAccountsCode + "," + accountNumber + "}");
         //lookup the account from the db based off the account code and the account number
-        Account account = this.getAccountService().getByPrimaryId(chartOfAccountsCode, accountNumber);
+        Account account = accountService.getByPrimaryId(chartOfAccountsCode, accountNumber);
 
         String laborBenefitRateCategoryCode = null;
         if (account == null) {
@@ -88,7 +79,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
         if(StringUtils.isBlank(laborBenefitRateCategoryCode)){
             LOG.info("The Account did not have a Labor Benefit Rate Category Code. Will use the system parameter default.");
             //The system parameter does not exist. Using a blank Labor Benefit Rate Category Code
-            laborBenefitRateCategoryCode = StringUtils.defaultString(SpringContext.getBean(ParameterService.class).getParameterValueAsString(Account.class, LaborConstants.BenefitCalculation.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_PARAMETER));
+            laborBenefitRateCategoryCode = StringUtils.defaultString(parameterService.getParameterValueAsString(Account.class, LaborConstants.BenefitCalculation.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_PARAMETER));
         }else{
             LOG.debug("Labor Benefit Rate Category Code for Account " + accountNumber + " is " + laborBenefitRateCategoryCode);
         }

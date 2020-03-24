@@ -40,7 +40,6 @@ import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -48,6 +47,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;

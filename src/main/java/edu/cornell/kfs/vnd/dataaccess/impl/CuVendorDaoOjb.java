@@ -23,7 +23,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.dataaccess.impl.VendorDaoOjb;
 import org.kuali.kfs.kns.lookup.LookupUtils;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.kfs.krad.lookup.CollectionIncomplete;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;

@@ -53,7 +53,7 @@
     <suppress checks="ModifiedControlVariable"
               files="ComponentServiceImpl|LookupableImpl|MaintainableXMLConversionServiceImpl|OrgReviewRoleServiceImpl|RichTable" />
     <suppress checks="NestedIfDepth"
-              files="BatchLookupableHelperService|DictionaryValidationServiceImpl|KualiMaintainableImpl|MaintenanceDocumentServiceImpl|PaymentDetailLookupableHelperService|PreScrubberServiceImpl|SectionBridge" />
+              files="BatchLookupableHelperService|DictionaryValidationServiceImpl|MaintainableImpl|MaintenanceDocumentServiceImpl|PaymentDetailLookupableHelperService|PreScrubberServiceImpl|SectionBridge" />
     <suppress checks="SuperClone"
               files="BaseAttributeValueReader|DictionaryObjectAttributeValueReader|SingleAttributeValueReader|ViewAttributeValueReader" />
 </suppressions>

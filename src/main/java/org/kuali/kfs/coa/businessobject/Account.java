@@ -534,8 +534,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     @Override
     public void setIndirectCostRecoveryAccounts(
             List<? extends IndirectCostRecoveryAccount> indirectCostRecoveryAccounts) {
-        List<IndirectCostRecoveryAccount> accountIcrList = new ArrayList<>();
-        accountIcrList.addAll(indirectCostRecoveryAccounts);
+        List<IndirectCostRecoveryAccount> accountIcrList = new ArrayList<>(indirectCostRecoveryAccounts);
         this.indirectCostRecoveryAccounts = accountIcrList;
     }
 

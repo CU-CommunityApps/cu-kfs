@@ -254,9 +254,7 @@
                       p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" />
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
-                      parent="SubFundGroup-active" p:defaultValue="Y"
-                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" />
+                <ref bean="activeIndicatorLookupAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupResultAttributeDefinitions">
@@ -275,8 +273,7 @@
                       parent="SubFundGroup-subFundGroupWagesIndicator" />
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
-                      parent="SubFundGroup-active" />
+                <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-fundGroupBudgetAdjustmentRestrictionLevelCode" />
             </list>

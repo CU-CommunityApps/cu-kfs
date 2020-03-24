@@ -185,5 +185,13 @@ public class CUKFSConstants {
     public static final class FILE_EXTENSIONS {
         public static final String CSV_FILE_EXTENSION = ".csv";
     }
+    
+    public static final class OptionalModuleNamespaces {
+        public static final String CONTRACTS_AND_GRANTS = "KFS-CG";
+    }
+    
+    public static final class ProcurementCardParameters {
+        public static final String PCARD_BATCH_LOAD_STEP = "ProcurementCardLoadStep";
+    }
 
 }

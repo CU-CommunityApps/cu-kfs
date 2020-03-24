@@ -128,7 +128,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         // KFSMI-4606 added routeNode condition
-        if (nodeName.equals(KFSConstants.REQUIRES_WORKSTUDY_REVIEW)) {
+        if (nodeName.equals(KFSConstants.REQUIRES_WORK_STUDY_REVIEW)) {
             return checkOjbectCodeForWorkstudy();
         } else {
             return super.answerSplitNodeQuestion(nodeName);
@@ -143,7 +143,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     protected boolean checkOjbectCodeForWorkstudy() {
         Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class)
                 .getParameterValuesAsString(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
-                        KFSConstants.WORKSTUDY_ROUTE_OBJECT_CODES_PARM_NM);
+                        KFSConstants.WORK_STUDY_ROUTE_OBJECT_CODES_PARAM_NM);
 
         List<SourceAccountingLine> sourceAccountingLines = getSourceAccountingLines();
         List<TargetAccountingLine> targetAccountingLines = getTargetAccountingLines();

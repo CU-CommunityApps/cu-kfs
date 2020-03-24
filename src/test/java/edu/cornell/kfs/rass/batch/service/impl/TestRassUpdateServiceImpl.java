@@ -4,9 +4,9 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.fixture.UserNameFixture;

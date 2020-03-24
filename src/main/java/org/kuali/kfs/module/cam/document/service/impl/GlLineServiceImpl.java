@@ -103,7 +103,7 @@ public class GlLineServiceImpl implements GlLineService {
         document.getNewMaintainableObject().setMaintenanceAction(KRADConstants.MAINTENANCE_NEW_ACTION);
         document.getDocumentHeader().setDocumentDescription(CAB_DESC_PREFIX + primary.getDocumentNumber());
         document.getNewMaintainableObject().setBusinessObject(assetGlobal);
-        document.getNewMaintainableObject().setBoClass(assetGlobal.getClass());
+        document.getNewMaintainableObject().setDataObjectClass(assetGlobal.getClass());
 
         documentService.saveDocument(document);
 
@@ -198,6 +198,37 @@ public class GlLineServiceImpl implements GlLineService {
                 assetGlobal.setManufacturerName(capitalAssetInformation.getCapitalAssetManufacturerName());
                 assetGlobal.setManufacturerModelNumber(capitalAssetInformation.getCapitalAssetManufacturerModelNumber());
                 assetGlobal.setCapitalAssetDescription(capitalAssetInformation.getCapitalAssetDescription());
+            }
+        }
+    }
+
+    /**
+     * Updates pre tag information received from FP document
+     *
+     * @param entry    GeneralLedgerEntry
+     * @param document AssetPaymentDocument
+     */
+    protected void updatePreTagInformation(GeneralLedgerEntry entry, AssetPaymentDocument document,
+            Integer capitalAssetLineNumber) {
+        CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(entry.getDocumentNumber(),
+                capitalAssetLineNumber);
+        if (ObjectUtils.isNotNull(capitalAssetInformation)) {
+            //if it is modify asset...
+            if (KFSConstants.CapitalAssets.CAPITAL_ASSET_MODIFY_ACTION_INDICATOR.equals(
+                    capitalAssetInformation.getCapitalAssetActionIndicator())) {
+                AssetPaymentAssetDetail assetPaymentAssetDetail = new AssetPaymentAssetDetail();
+                assetPaymentAssetDetail.setDocumentNumber(document.getDocumentNumber());
+                // get the allocated amount for the capital asset....
+                assetPaymentAssetDetail.setCapitalAssetNumber(capitalAssetInformation.getCapitalAssetNumber());
+                assetPaymentAssetDetail.setAllocatedAmount(KualiDecimal.ZERO);
+                assetPaymentAssetDetail.setAllocatedUserValue(assetPaymentAssetDetail.getAllocatedAmount());
+                assetPaymentAssetDetail.refreshReferenceObject(CamsPropertyConstants.AssetPaymentAssetDetail.ASSET);
+                Asset asset = assetPaymentAssetDetail.getAsset();
+                if (ObjectUtils.isNotNull(asset)) {
+                    assetPaymentAssetDetail.setPreviousTotalCostAmount(asset.getTotalCostAmount() != null ?
+                            asset.getTotalCostAmount() : KualiDecimal.ZERO);
+                    document.getAssetPaymentAssetDetail().add(assetPaymentAssetDetail);
+                }
             }
         }
     }
@@ -559,37 +590,6 @@ public class GlLineServiceImpl implements GlLineService {
         deactivateGLEntries(primaryGlEntry, document, capitalAssetLineNumber);
 
         return document;
-    }
-
-    /**
-     * Updates pre tag information received from FP document
-     *
-     * @param entry    GeneralLedgerEntry
-     * @param document AssetPaymentDocument
-     */
-    protected void updatePreTagInformation(GeneralLedgerEntry entry, AssetPaymentDocument document,
-            Integer capitalAssetLineNumber) {
-        CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(entry.getDocumentNumber(),
-                capitalAssetLineNumber);
-        if (ObjectUtils.isNotNull(capitalAssetInformation)) {
-            //if it is modify asset...
-            if (KFSConstants.CapitalAssets.CAPITAL_ASSET_MODIFY_ACTION_INDICATOR.equals(
-                    capitalAssetInformation.getCapitalAssetActionIndicator())) {
-                AssetPaymentAssetDetail assetPaymentAssetDetail = new AssetPaymentAssetDetail();
-                assetPaymentAssetDetail.setDocumentNumber(document.getDocumentNumber());
-                // get the allocated amount for the capital asset....
-                assetPaymentAssetDetail.setCapitalAssetNumber(capitalAssetInformation.getCapitalAssetNumber());
-                assetPaymentAssetDetail.setAllocatedAmount(KualiDecimal.ZERO);
-                assetPaymentAssetDetail.setAllocatedUserValue(assetPaymentAssetDetail.getAllocatedAmount());
-                assetPaymentAssetDetail.refreshReferenceObject(CamsPropertyConstants.AssetPaymentAssetDetail.ASSET);
-                Asset asset = assetPaymentAssetDetail.getAsset();
-                if (ObjectUtils.isNotNull(asset)) {
-                    assetPaymentAssetDetail.setPreviousTotalCostAmount(asset.getTotalCostAmount() != null ?
-                            asset.getTotalCostAmount() : KualiDecimal.ZERO);
-                    document.getAssetPaymentAssetDetail().add(assetPaymentAssetDetail);
-                }
-            }
-        }
     }
 
     /**

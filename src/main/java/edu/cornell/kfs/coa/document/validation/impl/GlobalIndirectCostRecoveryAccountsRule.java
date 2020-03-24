@@ -23,6 +23,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.coa.COAKeyConstants;
 
 import edu.cornell.kfs.coa.businessobject.GlobalObjectWithIndirectCostRecoveryAccounts;
 import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;
@@ -162,7 +163,7 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 		}
 
 		if (icraAccountLinePercentage.compareTo(BigDecimal.ZERO) <= 0 || icraAccountLinePercentage.compareTo(ONE_HUNDRED_PERCENT) == 1) {
-			GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ICR_ACCOUNT_LINE_PERCENT, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_INVALID_LINE_PERCENT);
+			GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ICR_ACCOUNT_LINE_PERCENT, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_ACCOUNT_INVALID_LINE_PERCENT);
 			success &= false;
 		}
 

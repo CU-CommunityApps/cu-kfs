@@ -15,7 +15,7 @@ import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.krad.lookup.CollectionIncomplete;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 
 import edu.cornell.kfs.module.ezra.service.EzraService;
 

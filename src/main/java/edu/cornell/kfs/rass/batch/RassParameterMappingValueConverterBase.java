@@ -4,8 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public abstract class RassParameterMappingValueConverterBase extends RassValueConverterBase {
     private ParameterService parameterService;
@@ -20,7 +21,7 @@ public abstract class RassParameterMappingValueConverterBase extends RassValueCo
         String mappedValue = value;
         
         if (StringUtils.isNotBlank(value)) {
-            mappedValue = parameterService.getSubParameterValueAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, 
+            mappedValue = parameterService.getSubParameterValueAsString(CUKFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, 
                     KfsParameterConstants.BATCH_COMPONENT, parameterName, value);
         }
         
