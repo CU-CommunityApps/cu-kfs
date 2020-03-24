@@ -26,8 +26,9 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.util.type.TypeUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.datadictionary.DataObjectEntry;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -145,7 +146,7 @@ public class RestXmlUtil {
 
     public DataDictionaryService getDataDictionaryService() {
         if (this.dataDictionaryService == null) {
-            this.dataDictionaryService = KRADServiceLocatorWeb.getDataDictionaryService();
+            this.dataDictionaryService = KNSServiceLocator.getDataDictionaryService();
         }
         return this.dataDictionaryService;
     }

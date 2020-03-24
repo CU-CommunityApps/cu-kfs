@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.COAKeyConstants;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail;
 import org.kuali.kfs.coa.document.validation.impl.AccountRule;
@@ -209,7 +210,7 @@ public class AccountExtensionRule extends AccountRule {
                 for (IndirectCostRecoveryRateDetail icrRateDetail : icrRateDetails) {
                     if (ObjectUtils.isNull(icrRateDetail.getIndirectCostRecoveryRate())) {
                         putFieldError(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER,
-                                KFSKeyConstants.IndirectCostRecovery.ERROR_DOCUMENT_ICR_RATE_NOT_FOUND,
+                                COAKeyConstants.ERROR_DOCUMENT_ICR_RATE_NOT_FOUND,
                                 new String[] {fiscalYear, icrSeriesId});
                         result &= false;
                         break;

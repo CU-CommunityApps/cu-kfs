@@ -1,5 +1,6 @@
 package edu.cornell.kfs.coa.businessobject.options;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,6 +21,10 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuSimpleChartValuesFinder extends KeyValuesBase {
     private static final long serialVersionUID = -7244709433023641702L;
+    private static final String DEFAULT_CHART_METHOD = "1";
+    private static final String DEFAULT_PRIMARY_DEPT_METHOD = "2";
+    private static final String DEFAULT_PRIMARY_DEPT_CHART_METHOD = "3";
+    
     protected ParameterService parameterService;
     protected KeyValuesService keyValuesService;
     protected FinancialSystemUserService financialSystemUserService;
@@ -48,7 +53,7 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
 	        }
         }
         //populate with the default chart
-        if (defaultChartCodeMethod.equals("1")) {
+        if (StringUtils.equals(defaultChartCodeMethod, DEFAULT_CHART_METHOD)) {
 	        chartKeyLabels.add(new ConcreteKeyValue(defaultChartCode, defaultChartCode));
 	        for (Iterator<Chart> iter = chartCodes.iterator(); iter.hasNext();) {
 	            Chart element = (Chart) iter.next();
@@ -58,7 +63,7 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
 	        }
         }
         //populate with chart code of the user's primary department
-        if (defaultChartCodeMethod.equals("2")) {
+        if (StringUtils.equals(defaultChartCodeMethod, DEFAULT_PRIMARY_DEPT_METHOD)) {
         	Person currentUser = GlobalVariables.getUserSession().getPerson();
         	String primaryDepartmentChartCode = financialSystemUserService.getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
         	chartKeyLabels.add(new ConcreteKeyValue(primaryDepartmentChartCode, primaryDepartmentChartCode));
@@ -70,7 +75,7 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
 	        }
         }
         //populate with the default chart unless user's primary department has been defined
-        if (defaultChartCodeMethod.equals("3")) {
+        if (StringUtils.equals(defaultChartCodeMethod, DEFAULT_PRIMARY_DEPT_CHART_METHOD)) {
         	Person currentUser = GlobalVariables.getUserSession().getPerson();
         	String primaryDepartmentChartCode = financialSystemUserService.getPrimaryOrganization(currentUser, "KFS-SYS").getChartOfAccountsCode();
         	String chartUsed = null;

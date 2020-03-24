@@ -29,6 +29,7 @@ import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 import edu.cornell.kfs.module.ezra.dataaccess.impl.EzraAwardProposalDaoOjb;
 import edu.cornell.kfs.module.ezra.dataaccess.impl.SponsorDaoOjb;
 import edu.cornell.kfs.module.ezra.service.impl.EzraServiceImpl;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class EzraCGCodeMappingParametersTest {
 
@@ -134,7 +135,7 @@ public class EzraCGCodeMappingParametersTest {
         for (ParameterNameAndMultiValue parameter : parameters) {
             List<String> expectedParameterValues = createParameterValueStrings(parameter.values);
             when(parameterService.getParameterValuesAsString(
-                    KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT, parameter.name
+                    CUKFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT, parameter.name
                 )).thenReturn(expectedParameterValues);
         }
         

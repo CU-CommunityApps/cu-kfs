@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.impl.AccountServiceImpl;
 import org.kuali.kfs.krad.bo.Note;
@@ -14,9 +15,6 @@ import edu.cornell.kfs.coa.service.CuAccountService;
 
 public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccountService{
     
-    private static final String DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE = "DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE";
-    private static final String DEFAULT_BENEFIT_RATE_CATEGORY_CODE = "DEFAULT_BENEFIT_RATE_CATEGORY_CODE";
-    
     protected NoteService noteService;
 
     public String getDefaultLaborBenefitRateCategoryCodeForAccountType(String accountTypeCode) {
@@ -25,9 +23,9 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
         //TODO rewrite to use parameter evaluator service
         
         // make sure the parameter exists
-        if (parameterService.parameterExists(Account.class, DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE)) {
+        if (parameterService.parameterExists(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE)) {
             // retrieve the value(s) for the parameter
-            String paramValues = parameterService.getParameterValueAsString(Account.class, DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE);
+            String paramValues = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE);
 
             // split the values of the parameter on the semi colon
             String[] paramValuesArray = paramValues.split(";");
@@ -45,8 +43,8 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
                 value = paramValuesMap.get(accountTypeCode);
             } else {
                 // make sure the system parameter exists
-                if (parameterService.parameterExists(Account.class, DEFAULT_BENEFIT_RATE_CATEGORY_CODE)) {
-                    value = parameterService.getParameterValueAsString(Account.class, DEFAULT_BENEFIT_RATE_CATEGORY_CODE);
+                if (parameterService.parameterExists(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE)) {
+                    value = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE);
                 }
             }
         }

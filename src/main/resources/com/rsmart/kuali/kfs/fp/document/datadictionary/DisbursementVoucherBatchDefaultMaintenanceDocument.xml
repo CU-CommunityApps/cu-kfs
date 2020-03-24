@@ -8,7 +8,7 @@
 
   <bean id="DisbursementVoucherBatchDefaultMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
     <property name="businessObjectClass" value="com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchDefault" />
-    <property name="maintainableClass" value="org.kuali.kfs.kns.maintenance.KualiMaintainableImpl" />
+    <property name="maintainableClass" value="org.kuali.kfs.kns.maintenance.MaintainableImpl" />
     <property name="maintainableSections" >
       <list>
         <ref bean="DisbursementVoucherBatchDefaultMaintenanceDocument-EditBatchDefaults" />

@@ -353,6 +353,22 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         return invoiceApplications.get(index);
     }
 
+    /**
+     * @param documentNumber
+     * @return
+     */
+    public PaymentApplicationInvoiceApply getInvoiceApplication(String documentNumber) {
+        if (StringUtils.isBlank(documentNumber)) {
+            throw new RuntimeException("The parameter passed in [documentNumber] was null or blank.");
+        }
+        for (PaymentApplicationInvoiceApply invoiceApplication : invoiceApplications) {
+            if (documentNumber.equalsIgnoreCase(invoiceApplication.getDocumentNumber())) {
+                return invoiceApplication;
+            }
+        }
+        return null;
+    }
+
     public void setInvoiceDetailApplication(int key, PaymentApplicationInvoiceDetailApply value) {
         getSelectedInvoiceDetailApplications().set(key, value);
     }
@@ -461,22 +477,6 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
             }
         }
         return number + 1;
-    }
-
-    /**
-     * @param documentNumber
-     * @return
-     */
-    public PaymentApplicationInvoiceApply getInvoiceApplication(String documentNumber) {
-        if (StringUtils.isBlank(documentNumber)) {
-            throw new RuntimeException("The parameter passed in [documentNumber] was null or blank.");
-        }
-        for (PaymentApplicationInvoiceApply invoiceApplication : invoiceApplications) {
-            if (documentNumber.equalsIgnoreCase(invoiceApplication.getDocumentNumber())) {
-                return invoiceApplication;
-            }
-        }
-        return null;
     }
 
     /**

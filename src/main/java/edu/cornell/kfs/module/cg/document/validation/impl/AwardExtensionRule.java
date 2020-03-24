@@ -255,7 +255,7 @@ public class AwardExtensionRule extends AwardRule {
     private boolean shouldEnforceAutoApproveReasonRule(MaintenanceDocument document) {
         String documentInitiator = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         Collection<String> byPassInitiators = getParameterService().getParameterValuesAsString(
-                KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS,
+                CUKFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS,
                 CUKFSConstants.CGParms.AWARD_RULE_COMPNONENT,
                 CUKFSConstants.CGParms.BYPASS_AWARD_EXTENSION_AUTO_APPROVE_REASON_RULE_INITIATORS);
         if (LOG.isDebugEnabled()) {

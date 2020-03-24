@@ -15,8 +15,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.NoteType;
 
 import edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAccountsRule;

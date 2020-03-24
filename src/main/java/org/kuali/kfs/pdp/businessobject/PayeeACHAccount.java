@@ -21,9 +21,10 @@ package org.kuali.kfs.pdp.businessobject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
-import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -446,7 +447,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      */
     @Override
     public String toString() {
-    		final class PayeeACHAccountToStringBuilder extends ReflectionToStringBuilder {
+        final class PayeeACHAccountToStringBuilder extends ReflectionToStringBuilder {
             private PayeeACHAccountToStringBuilder(Object object) {
                 super(object);
             }

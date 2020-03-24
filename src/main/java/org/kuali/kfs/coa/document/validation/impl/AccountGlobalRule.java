@@ -24,6 +24,7 @@ import edu.cornell.kfs.coa.businessobject.CuAccountGlobal;
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAccountsRule;
 import edu.cornell.kfs.coa.service.GlobalObjectWithIndirectCostRecoveryAccountsService;
+import edu.cornell.kfs.coa.CuCOAKeyConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
@@ -31,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.COAKeyConstants;
+import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
@@ -202,7 +205,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		if (details.size() == 0) {
 		    
 	            putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + "accountGlobalDetails.accountNumber",
-	                    KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_NO_ACCOUNTS);
+	                    COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_NO_ACCOUNTS);
 	            success = false;
 		}
 		else {
@@ -235,7 +238,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			dtl.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
 			if (ObjectUtils.isNull(dtl.getAccount())) {
 				GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, 
-                        KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, dtl.getChartOfAccountsCode(),
+                        COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, dtl.getChartOfAccountsCode(),
                         dtl.getAccountNumber());
 			}
 		}
@@ -280,7 +283,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
         if (isNonSystemSupervisorEditingAClosedAccount(maintenanceDocument, GlobalVariables.getUserSession().getPerson())) {
             success &= false;
-            putFieldError(KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ONLY_SUPERVISORS_CAN_EDIT);
+            putFieldError(KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ONLY_SUPERVISORS_CAN_EDIT);
         }
 
 		if (StringUtils.isNotBlank(newAccountGlobal.getAccountFiscalOfficerSystemIdentifier()) && (ObjectUtils.isNull(fiscalOfficer) || StringUtils.isEmpty(fiscalOfficer.getPrincipalId()) || !getDocumentHelperService().getDocumentAuthorizer(maintenanceDocument).isAuthorized(maintenanceDocument, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER.namespace, KFSConstants.PermissionNames.SERVE_AS_FISCAL_OFFICER.name, fiscalOfficer.getPrincipalId()))) {
@@ -289,7 +292,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			success = false;
         } else if (ObjectUtils.isNotNull(fiscalOfficer) && StringUtils.isNotBlank(fiscalOfficer.getPrincipalName())
                 && ObjectUtils.isNull(fiscalOfficer.getPrincipalId())) {
-			super.putFieldError(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCPAL_NAME_FISCAL_OFFICER_SUPER_INVALID);
+			super.putFieldError(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCIPAL_NAME_FISCAL_OFFICER_SUPER_INVALID);
 			success = false;
 		}
 
@@ -298,7 +301,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			super.putFieldError(KFSPropertyConstants.ACCOUNT_SUPERVISORY_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] {accountSupervisorName, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_SUPERVISOR.namespace, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_SUPERVISOR.name});
 			success = false;
 		} else if (ObjectUtils.isNotNull(accountSupervisor) && StringUtils.isNotBlank(accountSupervisor.getPrincipalName()) && ObjectUtils.isNull(accountSupervisor.getPrincipalId())) {
-			super.putFieldError(KFSPropertyConstants.ACCOUNT_SUPERVISORY_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCPAL_NAME_ACCOUNT_SUPER_INVALID);
+			super.putFieldError(KFSPropertyConstants.ACCOUNT_SUPERVISORY_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCIPAL_NAME_ACCOUNT_SUPER_INVALID);
 			success = false;
 		}
 		if (StringUtils.isNotBlank(newAccountGlobal.getAccountManagerSystemIdentifier()) && (ObjectUtils.isNull(accountManager) || StringUtils.isEmpty(accountManager.getPrincipalId()) || !getDocumentHelperService().getDocumentAuthorizer(maintenanceDocument).isAuthorized(maintenanceDocument, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_MANAGER.namespace, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_MANAGER.name, accountManager.getPrincipalId()))) {
@@ -306,7 +309,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			super.putFieldError(KFSPropertyConstants.ACCOUNT_MANAGER_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, KFSKeyConstants.ERROR_USER_MISSING_PERMISSION, new String[] {accountManagerName, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_MANAGER.namespace, KFSConstants.PermissionNames.SERVE_AS_ACCOUNT_MANAGER.name});
 			success = false;
 		} else if (ObjectUtils.isNotNull(accountManager) && StringUtils.isNotBlank(accountManager.getPrincipalName()) &&  ObjectUtils.isNull(accountManager.getPrincipalId())) {
-			super.putFieldError(KFSPropertyConstants.ACCOUNT_MANAGER_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCPAL_NAME_ACCOUNT_MANAGER_INVALID);
+			super.putFieldError(KFSPropertyConstants.ACCOUNT_MANAGER_USER + "." + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER, COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_PRINCIPAL_NAME_ACCOUNT_MANAGER_INVALID);
 			success = false;
 		}
 
@@ -316,17 +319,17 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		// the supervisor cannot be the same as the fiscal officer or account manager.
 		if (isSupervisorSameAsFiscalOfficer(newAccountGlobal)) {
 			success &= false;
-			putFieldError(KFSPropertyConstants.ACCOUNTS_SUPERVISORY_SYSTEMS_IDENTIFIER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_BE_FISCAL_OFFICER);
+			putFieldError(KFSPropertyConstants.ACCOUNTS_SUPERVISORY_SYSTEMS_IDENTIFIER, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_BE_FISCAL_OFFICER);
 		}
 		if (isSupervisorSameAsManager(newAccountGlobal)) {
 			success &= false;
-			putFieldError(KFSPropertyConstants.ACCOUNT_MANAGER_SYSTEM_IDENTIFIER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_BE_ACCT_MGR);
+			putFieldError(KFSPropertyConstants.ACCOUNT_MANAGER_SYSTEM_IDENTIFIER, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_BE_ACCT_MGR);
 		}
 
 		// disallow continuation account being expired
 		if (isContinuationAccountExpired(newAccountGlobal)) {
 			success &= false;
-			putFieldError(KFSPropertyConstants.CONTINUATION_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_EXPIRED_CONTINUATION);
+			putFieldError(KFSPropertyConstants.CONTINUATION_ACCOUNT_NUMBER, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCOUNT_EXPIRED_CONTINUATION);
 		}
 
 		// loop over change detail objects to test if the supervisor/FO/mgr restrictions are in place
@@ -369,7 +372,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 			success = !ObjectUtils.isNull(cfda);
 			if (!success) {
-				putFieldError(KFSPropertyConstants.CATALOG_OF_DOMESTIC_ASSISTANCE_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_CFDA_NUMBER_INVALID);
+				putFieldError(KFSPropertyConstants.CATALOG_OF_DOMESTIC_ASSISTANCE_NUMBER, COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_CFDA_NUMBER_INVALID);
 			}
 		}
 		return success;
@@ -437,7 +440,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
                     if (areTwoUsersTheSame(newSupervisor, account.getAccountFiscalOfficerUser())) {
                         success = false;
                         putFieldError("accountGlobalDetails[" + index + "].accountNumber",
-                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_FISCAL_OFFICER,
+                                COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_FISCAL_OFFICER,
                                 new String[]{
                                     account.getAccountFiscalOfficerUser().getPrincipalName(),
                                     "Fiscal Officer", detail.getAccountNumber()});
@@ -445,7 +448,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
                     if (areTwoUsersTheSame(newSupervisor, account.getAccountManagerUser())) {
                         success = false;
                         putFieldError("accountGlobalDetails[" + index + "].accountNumber",
-                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_ACCT_MGR,
+                                COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_ACCT_MGR,
                                 new String[]{
                                     account.getAccountManagerUser().getPrincipalName(),
                                     "Account Manager", detail.getAccountNumber()});
@@ -455,7 +458,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
                     if (areTwoUsersTheSame(newManager, account.getAccountSupervisoryUser())) {
                         success = false;
                         putFieldError("accountGlobalDetails[" + index + "].accountNumber",
-                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_MGR_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR,
+                                COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_MGR_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR,
                                 new String[]{
                                     account.getAccountSupervisoryUser().getPrincipalName(),
                                     "Account Supervisor", detail.getAccountNumber()});
@@ -465,7 +468,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
                     if (areTwoUsersTheSame(newFiscalOfficer, account.getAccountSupervisoryUser())) {
                         success = false;
                         putFieldError("accountGlobalDetails[" + index + "].accountNumber",
-                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_FISCAL_OFFICER_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR,
+                                COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_FISCAL_OFFICER_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR,
                                 new String[]{
                                     account.getAccountSupervisoryUser().getPrincipalName(),
                                     "Account Supervisor", detail.getAccountNumber()});
@@ -556,10 +559,10 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
             if (ObjectUtils.isNull(oldExpDate) || !oldExpDate.equals(newExpDate)) {
             	// KFSUPGRADE-925 check parameter to see if back date is allowed
-            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, KFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
+            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, COAParameterConstants.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
                 if (fundGroups == null || (ObjectUtils.isNotNull(newAccountGlobal.getSubFundGroup()) && !fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode()))) {
                 	if (!newExpDate.after(today) && !newExpDate.equals(today)) {
-                		putFieldError("accountExpirationDate", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
+                		putFieldError("accountExpirationDate", COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
                 		success = false;
                 	}
                 }
@@ -617,11 +620,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 				if (ObjectUtils.isNull(prevExpDate) || !prevExpDate.equals(newExpDate)) {
 					if(newAccountGlobal.getClosed() !=null && newAccountGlobal.getClosed()){
 						/*If the Account is being closed and the date is before today's date, the EXP date can only be today*/
-						putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
+						putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
 					}
 					else{
 						/*If the Account is not being closed and the date is before today's date, the EXP date can only be today or at a later date*/
-						putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
+						putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
 					}
 					success = false;
 				}
@@ -692,7 +695,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 
         // KFSUPGRADE-925
-        Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, KFSConstants.ChartApcParms.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
+        Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, COAParameterConstants.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
         if (fundGroups != null && !ObjectUtils.isNull(newAccountGlobal.getSubFundGroup()) && fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode())) {
         		return false;
         }
@@ -857,12 +860,12 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		if (ObjectUtils.isNotNull(newExpDate)) {
 			if (!checkEmptyValue(newAccountGlobal.getContinuationAccountNumber())) {
 				putFieldError("continuationAccountNumber",
-				        KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_ACCT_REQD_IF_EXP_DATE_COMPLETED);
+				        COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_ACCT_REQD_IF_EXP_DATE_COMPLETED);
 				continuationAccountIsValid = false;
 			}
 			if (!checkEmptyValue(newAccountGlobal.getContinuationFinChrtOfAcctCd())) {
 				putFieldError("continuationFinChrtOfAcctCd",
-				        KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_FINCODE_REQD_IF_EXP_DATE_COMPLETED);
+				        COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_FIN_CODE_REQD_IF_EXP_DATE_COMPLETED);
 				continuationAccountIsValid = false;
 			}
 		}
@@ -918,7 +921,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 					if ( null == orgService.getByPrimaryIdWithCaching( chartCode, acctGlobal.getOrganizationCode() ) ) {
 						result = false;
 						putFieldError("organizationCode",
-						        KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ORG,
+						        COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ORG,
 						        new String[]{chartCode, acctGlobal.getOrganizationCode()});
 						break;
 					}
@@ -938,8 +941,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		boolean required = false;
 
 		if (StringUtils.isNotBlank(fundGroupCode) && StringUtils.isNotBlank(subFundGroupCode)) {
-			if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_FUND_GROUPS, fundGroupCode).evaluationSucceeds()) {
-				if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, KFSConstants.ChartApcParms.INCOME_STREAM_ACCOUNT_REQUIRING_SUB_FUND_GROUPS, subFundGroupCode).evaluationSucceeds()) {
+			if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_ACCOUNT_REQUIRING_FUND_GROUPS, fundGroupCode).evaluationSucceeds()) {
+				if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_ACCOUNT_REQUIRING_SUB_FUND_GROUPS, subFundGroupCode).evaluationSucceeds()) {
 					required = true;
 				}
 			}
@@ -1152,12 +1155,12 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		 if (newAccount.getAccountsFringesBnftIndicator() !=null && !newAccount.getAccountsFringesBnftIndicator()){
 			 if (StringUtils.isBlank(newAccount.getReportsToAccountNumber())) {
-				 putFieldError(KFSPropertyConstants.REPORTS_TO_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGEBENEFIT_FALSE);
+				 putFieldError(KFSPropertyConstants.REPORTS_TO_ACCOUNT_NUMBER, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGE_BENEFIT_FALSE);
 				 result &= false;
 			 }
 
 			 if (StringUtils.isBlank(newAccount.getReportsToChartOfAccountsCode())) {
-				 putFieldError(KFSPropertyConstants.REPORTS_TO_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGEBENEFIT_FALSE);
+				 putFieldError(KFSPropertyConstants.REPORTS_TO_CHART_OF_ACCOUNTS_CODE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_REQUIRED_IF_FRINGE_BENEFIT_FALSE);
 				 result &= false;
 			 }
 
@@ -1178,7 +1181,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			 }
 
 			 if (!fringeBenefitAccount.isAccountsFringesBnftIndicator()) {
-				 putFieldError(KFSPropertyConstants.REPORTS_TO_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_MUST_BE_FLAGGED_FRINGEBENEFIT, fringeBenefitAccount.getChartOfAccountsCode() + "-" + fringeBenefitAccount.getAccountNumber());
+				 putFieldError(KFSPropertyConstants.REPORTS_TO_ACCOUNT_NUMBER, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_RPTS_TO_ACCT_MUST_BE_FLAGGED_FRINGE_BENEFIT, fringeBenefitAccount.getChartOfAccountsCode() + "-" + fringeBenefitAccount.getAccountNumber());
 				 result &= false;
 			 }
 		 }
@@ -1262,7 +1265,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			else {
 				for(IndirectCostRecoveryRateDetail icrRateDetail : icrRateDetails) {
 					if(ObjectUtils.isNull(icrRateDetail.getIndirectCostRecoveryRate())){
-						putFieldError(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, KFSKeyConstants.IndirectCostRecovery.ERROR_DOCUMENT_ICR_RATE_NOT_FOUND, new String[]{fiscalYear, icrSeriesId});
+						putFieldError(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, COAKeyConstants.ERROR_DOCUMENT_ICR_RATE_NOT_FOUND, new String[]{fiscalYear, icrSeriesId});
 						result &= false;
 						break;
 					}
@@ -1275,10 +1278,10 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 					accountGlobalDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
 
 					if(!filledIcrTypeCode){
-						result &= checkEmptyBOField( KFSPropertyConstants.ACCT_INDIRECT_COST_RCVY_TYPE_CD, accountGlobalDetail.getAccount().getAcctIndirectCostRcvyTypeCd(), formatErrorMessage(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_TYPE_CODE_CANNOT_BE_EMPTY));
+						result &= checkEmptyBOField( KFSPropertyConstants.ACCT_INDIRECT_COST_RCVY_TYPE_CD, accountGlobalDetail.getAccount().getAcctIndirectCostRcvyTypeCd(), formatErrorMessage(CuCOAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_TYPE_CODE_CANNOT_BE_EMPTY));
 					}
 					if(!filledFinancialIcrSeriesIdentifier){
-						result &= checkEmptyBOField(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, accountGlobalDetail.getAccount().getFinancialIcrSeriesIdentifier(), formatErrorMessage(KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_SERIES_IDENTIFIER_CANNOT_BE_EMPTY));
+						result &= checkEmptyBOField(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, accountGlobalDetail.getAccount().getFinancialIcrSeriesIdentifier(), formatErrorMessage(CuCOAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ICR_SERIES_IDENTIFIER_CANNOT_BE_EMPTY));
 					}
 
 				}
@@ -1325,7 +1328,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		 if (hasActiveUpdates){
 			 success = false;
-			 putFieldError(KFSPropertyConstants.INDIRECT_COST_RECOVERY_ACCOUNTS, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CG_ICR_FIELDS_FILLED_FOR_NON_CG_ACCOUNT, newAccount.getSubFundGroupCode());
+			 putFieldError(KFSPropertyConstants.INDIRECT_COST_RECOVERY_ACCOUNTS, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_CG_ICR_FIELDS_FILLED_FOR_NON_CG_ACCOUNT, newAccount.getSubFundGroupCode());
 		 }
 		 else {
 			 if(ObjectUtils.isNotNull(newAccount.getAccountGlobalDetails()) && !newAccount.getAccountGlobalDetails().isEmpty()){
@@ -1535,11 +1538,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	     
 		 // when closing an account, a continuation account is required
 		 if (StringUtils.isBlank(newAccountGlobal.getContinuationAccountNumber()) && StringUtils.isBlank( detail.getAccount().getContinuationAccountNumber())) {
-			 putFieldError(KFSPropertyConstants.CONTINUATION_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CLOSE_CONTINUATION_ACCT_REQD);
+			 putFieldError(KFSPropertyConstants.CONTINUATION_ACCOUNT_NUMBER, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CLOSE_CONTINUATION_ACCT_REQD);
 			 success &= false;
 		 }
 		 if (StringUtils.isBlank(newAccountGlobal.getContinuationFinChrtOfAcctCd())  && StringUtils.isBlank( detail.getAccount().getContinuationFinChrtOfAcctCd())) {
-			 putFieldError(KFSPropertyConstants.CONTINUATION_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CLOSE_CONTINUATION_CHART_CODE_REQD);
+			 putFieldError(KFSPropertyConstants.CONTINUATION_CHART_OF_ACCOUNTS_CODE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CLOSE_CONTINUATION_CHART_CODE_REQD);
 			 success &= false;
 		 }
 
@@ -1580,7 +1583,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		 Date userEnteredExpirationDate = newAccount.getAccountExpirationDate();
 		 if (ObjectUtils.isNotNull(userEnteredExpirationDate)) {
 			 if (!isExpirationDateCurrentDateOrEarlier(userEnteredExpirationDate)) {
-				 putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
+				 putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
 				 return false;
 			}
 		 }
@@ -1594,7 +1597,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 				 }
 			 }
 			 else {
-				 putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
+				 putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID);
 				 return false;
 			 }
 		 }
@@ -1649,13 +1652,13 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 					 // if sub_fund_grp_cd is blank, campus code should NOT be entered
 					 if (StringUtils.isNotBlank(campusCode)) {
-						 putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_BLANK_SUBFUNDGROUP_WITH_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
+						 putFieldError(errorPath, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_BLANK_SUBFUNDGROUP_WITH_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
 						 success &= false;
 					 }
 
 					 // if sub_fund_grp_cd is blank, then bldg_cd should NOT be entered
 					 if (StringUtils.isNotBlank(buildingCode)) {
-						 putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_BLANK_SUBFUNDGROUP_WITH_BUILDING_CD, subFundGroupCode);
+						 putFieldError(errorPath, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_BLANK_SUBFUNDGROUP_WITH_BUILDING_CD, subFundGroupCode);
 						 success &= false;
 					 }
 
@@ -1678,13 +1681,13 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 					 // if sub_fund_grp_cd is 'PFCMR' then campus_cd must be entered
 					 if (StringUtils.isBlank(campusCode)) {
-						 putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CAMS_SUBFUNDGROUP_WITH_MISSING_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
+						 putFieldError(errorPath, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_CAMS_SUBFUNDGROUP_WITH_MISSING_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
 						 success &= false;
 					 }
 
 					 // if sub_fund_grp_cd is 'PFCMR' then bldg_cd must be entered
 					 if (StringUtils.isBlank(buildingCode)) {
-						 putFieldError(errorPath, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CAMS_SUBFUNDGROUP_WITH_MISSING_BUILDING_CD, subFundGroupCode);
+						 putFieldError(errorPath, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_CAMS_SUBFUNDGROUP_WITH_MISSING_BUILDING_CD, subFundGroupCode);
 						 success &= false;
 					 }
 
@@ -1692,13 +1695,13 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 				 else {
 					 // if sub_fund_grp_cd is NOT 'PFCMR', campus code should NOT be entered
 					 if (StringUtils.isNotBlank(campusCode)) {
-						 putFieldError(KFSPropertyConstants.ACCOUNT_DESCRIPTION + "." + KFSPropertyConstants.CAMPUS_CODE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_NONCAMS_SUBFUNDGROUP_WITH_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
+						 putFieldError(KFSPropertyConstants.ACCOUNT_DESCRIPTION + "." + KFSPropertyConstants.CAMPUS_CODE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_NONCAMS_SUBFUNDGROUP_WITH_CAMPUS_CD_FOR_BLDG, subFundGroupCode);
 						 success &= false;
 					 }
 
 					 // if sub_fund_grp_cd is NOT 'PFCMR' then bldg_cd should NOT be entered
 					 if (StringUtils.isNotBlank(buildingCode)) {
-						 putFieldError(KFSPropertyConstants.ACCOUNT_DESCRIPTION + "." + KFSPropertyConstants.BUILDING_CODE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_NONCAMS_SUBFUNDGROUP_WITH_BUILDING_CD, subFundGroupCode);
+						 putFieldError(KFSPropertyConstants.ACCOUNT_DESCRIPTION + "." + KFSPropertyConstants.BUILDING_CODE, COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_NONCAMS_SUBFUNDGROUP_WITH_BUILDING_CD, subFundGroupCode);
 						 success &= false;
 					 }
 				 }

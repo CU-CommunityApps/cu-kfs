@@ -333,7 +333,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
         // Make sure plant indebtedness processing is enabled.
         if (parameterService.getParameterValueAsBoolean(ScrubberStep.class, PLANT_INDEBTEDNESS_IND, Boolean.FALSE).booleanValue()) {
             // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
-            ParameterEvaluator plantIndebtednessDocTypes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(ScrubberStep.class,
+            ParameterEvaluator plantIndebtednessDocTypes = parameterEvaluatorService.getParameterEvaluator(ScrubberStep.class,
                     CuGeneralLedgerConstants.CuGlScrubberGroupRules.PLANT_INDEBTEDNESS_DOC_TYPE_CODES, scrubbedEntry.getFinancialDocumentTypeCode());
             if (plantIndebtednessDocTypes.evaluationSucceeds()) {
                 return super.processPlantIndebtedness(scrubbedEntry, scrubberReport);

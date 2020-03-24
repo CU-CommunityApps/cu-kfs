@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
@@ -337,7 +338,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
             Collection<String> subFundGroupsForCumulativeBalanceForwardingArray = getParameterService().getParameterValuesAsString(
                     BalanceForwardStep.class, BalanceServiceImpl.SUB_FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING);
             Boolean fundGroupDenotesCGInd = getParameterService().getParameterValueAsBoolean(
-                    Account.class, KFSConstants.ChartApcParms.ACCOUNT_FUND_GROUP_DENOTES_CG);
+                    Account.class, COAParameterConstants.ACCOUNT_FUND_GROUP_DENOTES_CG);
             /*
              * NOTE: The base KFS code may have a bug where the contractsAndGrantsDenotingValues check does not normally
              * match anything unless the list contains only one value. The "if" block below has been coded to match the

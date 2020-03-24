@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 public final class BatchStepRunner {
-    private static final Logger LOG = LogManager.getLogger(BatchStepRunner.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * Private Constructor since this is a util class that should never be instantiated.
@@ -52,7 +52,6 @@ public final class BatchStepRunner {
             System.exit(8);
         }
         try {
-            Log4jConfigurer.configureLogging();
             SpringContextForBatchRunner.initializeKfs();
             
             /*

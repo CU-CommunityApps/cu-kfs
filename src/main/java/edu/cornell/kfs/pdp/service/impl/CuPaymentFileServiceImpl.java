@@ -322,7 +322,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private void sendInactiveVendorsMessage(CustomerProfile customer, String messageText) {
         BodyMailMessage message = new BodyMailMessage();
         message.setFromAddress(parameterService.getParameterValueAsString(
-                KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM));
+                KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARAM_NM));
         message.setSubject("Inactive vendors detected in PDP feed for customer: " + customer.getCustomerDescription());
         message.setMessage(messageText);
         // Send to pre-determined recipient list, plus the customer's process email address.

@@ -21,9 +21,9 @@ package org.kuali.kfs.sys.document.validation.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -61,7 +61,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * A validation that checks whether the given accounting line is accessible to the given user or not
@@ -183,9 +182,9 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     /**
      * Checks to see if the object code is the only difference between the original accounting line and the updated
      * accounting line.
-     * 
-     * @param accountingLine
-     * @param updatedAccountingLine
+     *
+     * @param accountingLine original accounting line to compare
+     * @param updatedAccountingLine updated accounting line to compare
      * @return true if only the object code has changed on the accounting line, false otherwise
      */
     protected boolean onlyObjectCodeChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {

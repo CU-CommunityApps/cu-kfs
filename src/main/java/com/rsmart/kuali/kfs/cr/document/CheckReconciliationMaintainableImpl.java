@@ -24,7 +24,7 @@ import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintainable {
 
     /**
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#doRouteStatusChange(org.kuali.kfs.kns.bo.DocumentHeader)
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#doRouteStatusChange(org.kuali.kfs.kns.bo.DocumentHeader)
      */
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         WorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();

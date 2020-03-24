@@ -524,7 +524,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setInstitutionContactPhoneNumber(requisitionDocument.getInstitutionContactPhoneNumber());
         this.setNonInstitutionFundAccountNumber(requisitionDocument.getNonInstitutionFundAccountNumber());
         this.setNonInstitutionFundChartOfAccountsCode(requisitionDocument.getNonInstitutionFundChartOfAccountsCode());
-        this.setNonInstitutionFundOrgChartOfAccountsCode(requisitionDocument.getNonInstitutionFundOrgChartOfAccountsCode());
+        this.setNonInstitutionFundOrgChartOfAccountsCode(
+                requisitionDocument.getNonInstitutionFundOrgChartOfAccountsCode());
         this.setNonInstitutionFundOrganizationCode(requisitionDocument.getNonInstitutionFundOrganizationCode());
         this.setOrganizationCode(requisitionDocument.getOrganizationCode());
         this.setRecurringPaymentTypeCode(requisitionDocument.getRecurringPaymentTypeCode());
@@ -645,7 +646,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     @Override
     public List<String> getWorkflowEngineDocumentIdsToLock() {
-        List<String> docIdStrings = new ArrayList<String>();
+        List<String> docIdStrings = new ArrayList<>();
         docIdStrings.add(getDocumentNumber());
         String currentDocumentTypeName = this.getFinancialSystemDocumentHeader().getWorkflowDocument()
                 .getDocumentTypeName();
@@ -741,7 +742,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 && !excludeList.contains(getRequisitionSourceCode())
                 && !PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(this.getApplicationDocumentStatus());
     }
-
 
     /**
      * Returns the name of the current route node.
@@ -1138,11 +1138,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.purchaseOrderFirstTransmissionTimestamp = purchaseOrderFirstTransmissionTimestamp;
     }
 
-    /**
-     * Gets the purchaseOrderQuoteAwardedDate attribute.
-     *
-     * @return Returns the purchaseOrderQuoteAwardedDate.
-     */
     public Date getPurchaseOrderQuoteAwardedDate() {
         return purchaseOrderQuoteAwardedDate;
     }
@@ -1274,11 +1269,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return getTotalDollarAmount(false, true);
     }
 
-    @Override
-    public KualiDecimal getTotalDollarAmountAboveLineItems() {
-        return getTotalDollarAmount(false, false);
-    }
-
     /**
      * Gets the total dollar amount for this Purchase Order.
      *
@@ -1305,14 +1295,14 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     @Override
-    public KualiDecimal getTotalPreTaxDollarAmount() {
-        // return total without inactive and with below the line
-        return getTotalPreTaxDollarAmount(false, true);
+    public KualiDecimal getTotalDollarAmountAboveLineItems() {
+        return getTotalDollarAmount(false, false);
     }
 
     @Override
-    public KualiDecimal getTotalPreTaxDollarAmountAboveLineItems() {
-        return getTotalPreTaxDollarAmount(false, false);
+    public KualiDecimal getTotalPreTaxDollarAmount() {
+        // return total without inactive and with below the line
+        return getTotalPreTaxDollarAmount(false, true);
     }
 
     /**
@@ -1337,14 +1327,14 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     @Override
-    public KualiDecimal getTotalTaxAmount() {
-        // return total without inactive and with below the line
-        return getTotalTaxAmount(false, true);
+    public KualiDecimal getTotalPreTaxDollarAmountAboveLineItems() {
+        return getTotalPreTaxDollarAmount(false, false);
     }
 
     @Override
-    public KualiDecimal getTotalTaxAmountAboveLineItems() {
-        return getTotalTaxAmount(false, false);
+    public KualiDecimal getTotalTaxAmount() {
+        // return total without inactive and with below the line
+        return getTotalTaxAmount(false, true);
     }
 
     /**
@@ -1366,6 +1356,11 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             }
         }
         return total;
+    }
+
+    @Override
+    public KualiDecimal getTotalTaxAmountAboveLineItems() {
+        return getTotalTaxAmount(false, false);
     }
 
     /**

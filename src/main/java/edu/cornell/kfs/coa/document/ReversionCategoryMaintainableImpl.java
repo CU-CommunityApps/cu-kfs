@@ -84,7 +84,7 @@ public class ReversionCategoryMaintainableImpl extends FinancialSystemMaintainab
 
     /**
      * Overridden to trickle down inactivation or activation to details
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#saveBusinessObject()
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#saveBusinessObject()
      */
     @Override
     public void saveBusinessObject() {

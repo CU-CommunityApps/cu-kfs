@@ -664,7 +664,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 	    	if (valid) {
 	    		//user entered all the data, now verify relationships in the data	    		
 	    		//verify US, state and zip are valid as they are related to each other, error message taken care of in called routine
-	    		valid &= SpringContext.getBean(PostalCodeValidationService.class).validateAddress(address.getVendorCountryCode(), address.getVendorStateCode(), address.getVendorZipCode(), propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_STATE, propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_ZIP);
+	    		valid &= getPostalCodeValidationService().validateAddress(address.getVendorCountryCode(), address.getVendorStateCode(), address.getVendorZipCode(), propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_STATE, propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_ZIP);
 	    	}        	
         	
         }

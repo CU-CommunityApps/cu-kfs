@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.gl.businessobject.Entry;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;

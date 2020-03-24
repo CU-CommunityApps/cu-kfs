@@ -35,7 +35,7 @@ import org.kuali.kfs.kns.web.struts.action.KualiMultipleValueLookupAction;
 import org.kuali.kfs.kns.web.struts.form.MultipleValueLookupForm;
 import org.kuali.kfs.kns.web.ui.Column;
 import org.kuali.kfs.kns.web.ui.ResultRow;
-import org.kuali.kfs.krad.lookup.CollectionIncomplete;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -273,6 +273,31 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
     }
 
     @Override
+    protected List<ResultRow> selectAll(MultipleValueLookupForm multipleValueLookupForm, int maxRowsPerPage) {
+        List<ResultRow> resultTable;
+        try {
+            LookupResultsService lookupResultsService = SpringContext.getBean(LookupResultsService.class);
+            String lookupResultsSequenceNumber = multipleValueLookupForm.getLookupResultsSequenceNumber();
+
+            resultTable = lookupResultsService.retrieveResultsTable(lookupResultsSequenceNumber,
+                    GlobalVariables.getUserSession().getPerson().getPrincipalId());
+        } catch (Exception e) {
+            LOG.error("error occurred trying to export multiple lookup results", e);
+            throw new RuntimeException("error occurred trying to export multiple lookup results");
+        }
+
+        Map<String, String> selectedObjectIds = this.getSelectedObjectIds(multipleValueLookupForm, resultTable);
+
+        multipleValueLookupForm.jumpToPage(multipleValueLookupForm.getViewedPageNumber(), resultTable.size(),
+                maxRowsPerPage);
+        multipleValueLookupForm.setColumnToSortIndex(
+                Integer.parseInt(multipleValueLookupForm.getPreviouslySortedColumnIndex()));
+        multipleValueLookupForm.setCompositeObjectIdMap(selectedObjectIds);
+
+        return resultTable;
+    }
+
+    @Override
     public ActionForward unselectAll(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         request.setAttribute(GeneralLedgerConstants.LookupableBeanKeys.SEGMENTED_LOOKUP_FLAG_NAME, Boolean.TRUE);
@@ -344,31 +369,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         multipleValueLookupForm.setCompositeObjectIdMap(new HashMap<>());
 
         return displayList;
-    }
-
-    @Override
-    protected List<ResultRow> selectAll(MultipleValueLookupForm multipleValueLookupForm, int maxRowsPerPage) {
-        List<ResultRow> resultTable;
-        try {
-            LookupResultsService lookupResultsService = SpringContext.getBean(LookupResultsService.class);
-            String lookupResultsSequenceNumber = multipleValueLookupForm.getLookupResultsSequenceNumber();
-
-            resultTable = lookupResultsService.retrieveResultsTable(lookupResultsSequenceNumber,
-                    GlobalVariables.getUserSession().getPerson().getPrincipalId());
-        } catch (Exception e) {
-            LOG.error("error occurred trying to export multiple lookup results", e);
-            throw new RuntimeException("error occurred trying to export multiple lookup results");
-        }
-
-        Map<String, String> selectedObjectIds = this.getSelectedObjectIds(multipleValueLookupForm, resultTable);
-
-        multipleValueLookupForm.jumpToPage(multipleValueLookupForm.getViewedPageNumber(), resultTable.size(),
-                maxRowsPerPage);
-        multipleValueLookupForm.setColumnToSortIndex(
-                Integer.parseInt(multipleValueLookupForm.getPreviouslySortedColumnIndex()));
-        multipleValueLookupForm.setCompositeObjectIdMap(selectedObjectIds);
-
-        return resultTable;
     }
 
     /**

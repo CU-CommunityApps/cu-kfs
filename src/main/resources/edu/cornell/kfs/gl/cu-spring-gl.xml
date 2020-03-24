@@ -80,25 +80,9 @@
 	</bean>
 
     <bean id="glBalanceDao" parent="platformAwareDao" class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb"/>
+    
+    <bean id="glBalanceService" class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl" parent="glBalanceService-parentBean"/>
 
-    <bean id="glBalanceService" parent="glBalanceService-parentBean"/>
-	<bean id="glBalanceService-parentBean" abstract="true"  class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl">
-		<property name="balanceDao">
-			<ref bean="glBalanceDao" />
-		</property>
-		<property name="optionsService">
-			<ref bean="optionsService" />
-		</property>
-	    <property name="objectTypeService">
-			<ref bean="objectTypeService" />
-		</property>
-	    <property name="parameterService">
-			<ref bean="parameterService" />
-		</property>	
-		<property name="balanceTypService">
-			<ref bean="balanceTypService" />
-		</property>	
-	</bean>
     <bean id="glAccountReversionCurrentYearAccountProcess" class="edu.cornell.kfs.gl.batch.service.impl.AccountReversionProcessImpl" scope="prototype">
 		<property name="accountReversionService" ref="accountReversionService" />
 		<property name="balanceService" ref="glBalanceService" />
@@ -205,107 +189,39 @@
         	</map>
         </property>
     </bean>
-
-	<bean id="scrubberProcess-parentBean" class="edu.cornell.kfs.gl.batch.service.impl.CuScrubberProcessImpl" abstract="true">
-		<property name="dateTimeService">
-			<ref bean="dateTimeService" />
-		</property>
-		<property name="runDateService">
-			<ref bean="glRunDateService" />
-		</property>
-		<property name="accountingCycleCachingService">
-		  	<ref bean="accountingCycleCachingService" />
-		</property>
-		<property name="configurationService">
-			<ref bean="kualiConfigurationService" />
-		</property>
-		<property name="scrubberValidator">
-			<ref bean="scrubberValidator" />
-		</property>
-		<property name="parameterService">
-			<ref bean="parameterService" />
-		</property>
-        <property name="businessObjectService">
-            <ref bean="businessObjectService"/>
-        </property>
-		<property name="persistenceService">
-			<ref bean="persistenceService" />
-		</property>
-		<property name="flexibleOffsetAccountService">
-			<ref bean="flexibleOffsetAccountService" />
-		</property>
-		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
-		<property name="scrubberReportWriterService" ref="scrubberReportWriterService" />
-        <property name="scrubberLedgerReportWriterService" ref="scrubberLedgerReportWriterService" />
-	</bean>
+    
+    <bean id="scrubberProcess" class="edu.cornell.kfs.gl.batch.service.impl.CuScrubberProcessImpl" parent="scrubberProcess-parentBean"/>
 
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
      
      
 	<bean id="glLedgerEntryBalanceCachingDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuLedgerEntryBalanceCachingDaoJdbc" />
 	 	
-	<bean id="glPosterService" abstract="true" class="edu.cornell.kfs.gl.batch.service.impl.CuPosterServiceImpl">
-		<property name="transactionPosters">
-			<list>
-				<ref bean="glPostGlEntry" />
-				<ref bean="glPostGlAccountBalance" />
-				<ref bean="glPostSufficientFundBalances" />
-				<ref bean="glPostReversal" />
-				<ref bean="glPostEncumbrance" />
-				<ref bean="glPostExpenditureTransaction" />
-				<ref bean="glPostBalance" />
-			</list>
-		</property>
-		<property name="flexibleOffsetAccountService">
-			<ref bean="flexibleOffsetAccountService" />
-		</property>
-		<property name="verifyTransaction">
-			<ref bean="glVerifyTransaction" />
-		</property>
-		<property name="dateTimeService">
-			<ref bean="dateTimeService" />
-		</property>
-		<property name="reversalDao">
-			<ref bean="glReversalDao" />
-		</property>
-		<property name="accountingPeriodService">
-			<ref bean="accountingPeriodService" />
-		</property>
-		<property name="expenditureTransactionDao">
-			<ref bean="glExpenditureTransactionDao" />
-		</property>
-		<property name="indirectCostRecoveryRateDetailDao">
-			<ref bean="indirectCostRecoveryRateDetailDao" />
-		</property>
-		<property name="objectCodeService">
-			<ref bean="objectCodeService" />
-		</property>
-		<property name="configurationService">
-			<ref bean="kualiConfigurationService" />
-		</property>
-		<property name="parameterService">
-			<ref bean="parameterService" />
-		</property>
-		<property name="runDateService">
-			<ref bean="glRunDateService"/>
-		</property>
-		<property name="offsetDefinitionService">
-			<ref bean="offsetDefinitionService"/>
-		</property>
-		<property name="dataDictionaryService">
-			<ref bean="dataDictionaryService"/>
-		</property>
-		<property name="businessObjectService">
-			<ref bean="businessObjectService"/>
-		</property>
-		<property name="batchFileDirectoryName" value="${staging.directory}/gl/originEntry"/>
-		<property name="accountingCycleCachingService">
-		  	<ref bean="accountingCycleCachingService" />
-		</property>
-		<property name="persistenceStructureService">
-			<ref bean="persistenceStructureService" />
-		</property>
-	</bean>
+	    <bean id="glPosterService" abstract="true" class="edu.cornell.kfs.gl.batch.service.impl.CuPosterServiceImpl"
+          p:flexibleOffsetAccountService-ref="flexibleOffsetAccountService"
+          p:verifyTransaction-ref="glVerifyTransaction" p:dateTimeService-ref="dateTimeService"
+          p:reversalDao-ref="glReversalDao" p:accountingPeriodService-ref="accountingPeriodService"
+          p:expenditureTransactionDao-ref="glExpenditureTransactionDao"
+          p:indirectCostRecoveryRateDetailDao-ref="indirectCostRecoveryRateDetailDao"
+          p:objectCodeService-ref="objectCodeService" p:configurationService-ref="kualiConfigurationService"
+          p:parameterService-ref="parameterService" p:runDateService-ref="glRunDateService"
+          p:offsetDefinitionService-ref="offsetDefinitionService" p:dataDictionaryService-ref="dataDictionaryService"
+          p:businessObjectService-ref="businessObjectService"
+          p:batchFileDirectoryName="${staging.directory}/gl/originEntry"
+          p:accountingCycleCachingService-ref="accountingCycleCachingService"
+          p:persistenceStructureService-ref="persistenceStructureService" p:persistenceService-ref="persistenceService">
+          <property name="transactionPosters">
+            <list>
+                <ref bean="glPostGlEntry"/>
+                <ref bean="glPostGlAccountBalance"/>
+                <ref bean="glPostSufficientFundBalances"/>
+                <ref bean="glPostReversal"/>
+                <ref bean="glPostEncumbrance"/>
+                <ref bean="glPostExpenditureTransaction"/>
+                <ref bean="glPostBalance"/>
+            </list>
+        </property>
+    </bean>
 
 	<bean id="glCurrentAccountBalanceLookupableHelperService" parent="generalLedgerLookupableHelperService-parentBean"
 				class="edu.cornell.kfs.gl.businessobject.lookup.CuCurrentAccountBalanceLookupableHelperServiceImpl" scope="prototype">

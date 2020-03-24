@@ -30,7 +30,7 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
-import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
+import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -158,7 +158,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
      * Overridden to forcibly populate the multi-select procurementMethodsArray KNS field values,
      * and to forcibly hide the procurementMethods field's row.
      * 
-     * @see org.kuali.kfs.kns.maintenance.KualiMaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument,
+     * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#getSections(org.kuali.kfs.kns.document.MaintenanceDocument,
      *      org.kuali.kfs.kns.maintenance.Maintainable)
      */
     @SuppressWarnings("rawtypes")
