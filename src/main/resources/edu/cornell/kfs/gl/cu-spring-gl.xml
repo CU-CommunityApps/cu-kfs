@@ -189,9 +189,20 @@
         	</map>
         </property>
     </bean>
-    
-    <bean id="scrubberProcess" class="edu.cornell.kfs.gl.batch.service.impl.CuScrubberProcessImpl" parent="scrubberProcess-parentBean"/>
 
+    <bean id="scrubberProcess-parentBean" class="edu.cornell.kfs.gl.batch.service.impl.CuScrubberProcessImpl"
+          abstract="true"
+          p:dateTimeService-ref="dateTimeService" p:runDateService-ref="glRunDateService"
+          p:accountingCycleCachingService-ref="accountingCycleCachingService"
+          p:configurationService-ref="kualiConfigurationService" p:scrubberValidator-ref="scrubberValidator"
+          p:parameterService-ref="parameterService" p:businessObjectService-ref="businessObjectService"
+          p:persistenceService-ref="persistenceService"
+          p:flexibleOffsetAccountService-ref="flexibleOffsetAccountService"
+          p:batchFileDirectoryName="${staging.directory}/gl/originEntry"
+          p:scrubberReportWriterService-ref="scrubberReportWriterService"
+          p:scrubberLedgerReportWriterService-ref="scrubberLedgerReportWriterService"
+          p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
+	
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
      
      
