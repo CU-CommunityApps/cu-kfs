@@ -189,9 +189,11 @@
         	</map>
         </property>
     </bean>
-    
-    <bean id="scrubberProcess" class="edu.cornell.kfs.gl.batch.service.impl.CuScrubberProcessImpl" parent="scrubberProcess-parentBean"/>
 
+	<bean id="scrubberProcess" class="edu.cornell.kfs.gl.batch.service.impl.CuScrubberProcessImpl"
+	    parent="scrubberProcess-parentBean" scope="prototype"
+	    p:scrubberBadBalanceListingReportWriterService-ref="scrubberBadBalanceListingReportWriterService"/>
+	
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
      
      
