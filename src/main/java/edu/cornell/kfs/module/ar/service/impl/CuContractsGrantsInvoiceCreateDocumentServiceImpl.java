@@ -542,7 +542,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
         awards = setContractGrantInvoiceDocumentCreationProcessTypeCodeOnEachAward(awards, creationProcessTypeCode);
         
-        performAwardValidation(awards, invalidGroup, qualifiedAwards);
+        performAwardValidation(awards, invalidGroup, qualifiedAwards, creationProcessTypeCode);
 
         if (!MapUtils.isEmpty(invalidGroup)) {
             if (StringUtils.isNotBlank(errOutputFile)) {
@@ -557,7 +557,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     @Override
     protected void performAwardValidation(Collection<ContractsAndGrantsBillingAward> awards,
             Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
-            List<ContractsAndGrantsBillingAward> qualifiedAwards) {
+            List<ContractsAndGrantsBillingAward> qualifiedAwards, String creationProcessTypeCode) {
         Set<ContractsAndGrantsBillingAward> awardsWithDuplicateAccounts = findAwardsWithDuplicateAccounts(awards);
 
         for (ContractsAndGrantsBillingAward award : awards) {
@@ -571,7 +571,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                         errorList.add(configurationService.getPropertyValueAsString(
                                 ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
                 }
-                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award)) {
+                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award) &&
+                        !ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC.getCode()
+                                .equals(creationProcessTypeCode)) {
                     errorList.add(configurationService.getPropertyValueAsString(
                             ArKeyConstants.CGINVOICE_CREATION_AWARD_LOCB_BILLING_FREQUENCY));
                 } else {

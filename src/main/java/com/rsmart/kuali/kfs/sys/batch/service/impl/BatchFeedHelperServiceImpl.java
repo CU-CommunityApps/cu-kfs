@@ -52,7 +52,6 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.DataDictionary;
 import org.kuali.kfs.krad.datadictionary.DataDictionaryEntry;
-import org.kuali.kfs.krad.datadictionary.DataDictionaryEntryBase;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.util.ErrorMessage;
@@ -184,7 +183,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
             return;
         }
 
-        List<AttributeDefinition> attributes = ((DataDictionaryEntryBase) entry).getAttributes();
+        List<AttributeDefinition> attributes = ((DataDictionaryEntry) entry).getAttributes();
         for (AttributeDefinition attribute : attributes) {
             try {
                 if (!attribute.getForceUppercase() || !PropertyUtils.isWriteable(businessObject, attribute.getName())) {

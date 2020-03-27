@@ -15,6 +15,7 @@
  */
 package edu.cornell.kfs.fp.service.impl;
 
+import org.kuali.kfs.fp.FPKeyConstants;
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
@@ -381,7 +382,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     
             if (success) {
                 AccountingDocumentRuleHelperService accountingDocumentRuleUtil = SpringContext.getBean(AccountingDocumentRuleHelperService.class);
-                bankOffsetEntry.setTransactionLedgerEntryDescription(accountingDocumentRuleUtil.formatProperty(KFSKeyConstants.Bank.DESCRIPTION_GLPE_BANK_OFFSET));
+                bankOffsetEntry.setTransactionLedgerEntryDescription(accountingDocumentRuleUtil.formatProperty(FPKeyConstants.DESCRIPTION_GLPE_BANK_OFFSET));
                 bankOffsetEntry.setFinancialDocumentTypeCode(documentTypeCode);
                 document.addPendingEntry(bankOffsetEntry);
                 sequenceHelper.increment();

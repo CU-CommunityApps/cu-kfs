@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.FPParameterConstants;
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
@@ -248,9 +250,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         final ParameterService parameterService = this.getParameterService();
 
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)
                 && parameterService.getParameterValueAsBoolean(
-                        DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
+                        DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCityName(employee.getAddressCityUnmasked());
@@ -292,13 +294,13 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
         // Determine if employee is a research subject
         ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
-                DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM,
+                DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
                 this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                    DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
+                    FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
                 String researchPayLimit = getParameterService().getParameterValueAsString(
-                        DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                        DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -335,9 +337,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         final ParameterService parameterService = this.getParameterService();
 
         // Use the same parameter as for employees even though this is a student as basic intention is the same
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)
                 && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class,
-                        DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
+                        FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(student.getAddressLine1Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCityName(student.getAddressCityUnmasked());
@@ -373,12 +375,12 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
 
         ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
-                DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM);
+                DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS);
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                    DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
+                    FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
                 String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
-                        DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                        FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -416,9 +418,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         final ParameterService parameterService = this.getParameterService();
 
         // Use the same parameter as for employees even though this is a alumni as basic intention is the same
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)
+        if (parameterService.parameterExists(DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)
                 && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class,
-                        DisbursementVoucherDocument.USE_DEFAULT_EMPLOYEE_ADDRESS_PARAMETER_NAME)) {
+                        FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)) {
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
             this.getDvPayeeDetail().setDisbVchrPayeeCityName(alumni.getAddressCityUnmasked());
@@ -452,13 +454,13 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
         // Determine if alumni is a research subject
         ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
-                DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM,
+                DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
                 this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                    DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
+                    FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
                 String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
-                        DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                        FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -628,14 +630,14 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             // Determine if employee student or alumni is a research subject
             ParameterEvaluator researchPaymentReasonCodeEvaluator = /*REFACTORME*/SpringContext
                 .getBean(ParameterEvaluatorService.class).getParameterEvaluator(DisbursementVoucherDocument.class,
-                    DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM,
+                    FPParameterConstants.RESEARCH_PAYMENT_REASONS,
                     payeeDetail.getDisbVchrPaymentReasonCode());
             if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()
                     && getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                            DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM)) {
+                            FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
                 String researchPayLimit = getParameterService()
                         .getParameterValueAsString(DisbursementVoucherDocument.class,
-                                DisbursementVoucherConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT_PARM_NM);
+                                FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -680,11 +682,11 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
             VendorDetail vendorDetail = getVendorService().getVendorDetail(getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger(), getDvPayeeDetail().getDisbVchrVendorDetailAssignedIdNumberAsInteger());
             if (vendorDetail == null) {
-                clearPayee(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
+                clearPayee(FPKeyConstants.WARNING_DV_PAYEE_NON_EXISTENT_CLEARED);
             } else {
                 DisbursementPayee payee = getDisbursementVoucherPayeeService().getPayeeFromVendor(vendorDetail);
                 if (!getDisbursementVoucherPaymentReasonService().isPayeeQualifiedForPayment(payee, getDvPayeeDetail().getDisbVchrPaymentReasonCode())) {
-                    clearPayee(KFSKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE_CLEARED);
+                    clearPayee(FPKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE_CLEARED);
                 }
             }
         }
@@ -740,7 +742,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         // default doc location
         if (StringUtils.isBlank(getDisbursementVoucherDocumentationLocationCode())) {
-            setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.DEFAULT_DOC_LOCATION_PARM_NM));
+            setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, FPParameterConstants.DEFAULT_DOC_LOCATION));
         }
 
         // default bank code

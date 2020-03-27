@@ -49,8 +49,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * This class provides actions for the format process
@@ -274,7 +275,7 @@ public class FormatAction extends KualiAction {
         String basePath = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
                 KFSConstants.APPLICATION_URL_KEY);
 
-        Properties parameters = new Properties();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.SEARCH_METHOD);
         parameters.put(KFSConstants.BACK_LOCATION, basePath + "/" + KFSConstants.MAPPING_PORTAL + ".do");
         parameters.put(KRADConstants.DOC_FORM_KEY, "88888888");

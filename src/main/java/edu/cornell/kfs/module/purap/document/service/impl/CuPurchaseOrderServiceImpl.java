@@ -54,7 +54,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         // KFSUPGRADE-336
         boolean performedAction = purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission", CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, GlobalVariables.getUserSession().getPerson(), null);
         if (!performedAction) {
-            Person systemUserPerson = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+            Person systemUserPerson = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
             purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission by user " + GlobalVariables.getUserSession().getPerson().getName(), CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, systemUserPerson, KFSConstants.SYSTEM_USER);
         }
         po.setOverrideWorkflowButtons(Boolean.TRUE);

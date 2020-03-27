@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -273,7 +274,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
     }
 
     protected HtmlData getDownloadUrl(BatchFile batchFile) {
-        Properties parameters = new Properties();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("filePath", BatchFileUtils.pathRelativeToRootDirectory(batchFile.retrieveFile().getAbsolutePath()));
         parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "download");
         String href = UrlFactory.parameterizeUrl("../batchFileAdmin.do", parameters);
@@ -281,7 +282,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
     }
 
     protected HtmlData getDeleteUrl(BatchFile batchFile) {
-        Properties parameters = new Properties();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("filePath", BatchFileUtils.pathRelativeToRootDirectory(batchFile.retrieveFile().getAbsolutePath()));
         parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "delete");
         String href = UrlFactory.parameterizeUrl("../batchFileAdmin.do", parameters);

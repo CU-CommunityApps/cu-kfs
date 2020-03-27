@@ -27,6 +27,7 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
@@ -44,7 +45,6 @@ import org.kuali.kfs.pdp.service.PdpUtilService;
 import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.pdp.service.ResearchParticipantPaymentValidationService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.service.BankService;
@@ -329,7 +329,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         }
         bankPendingTransaction.setAmount(glPendingTransaction.getAmount());
 
-        String description = kualiConfigurationService.getPropertyValueAsString(KFSKeyConstants.Bank.DESCRIPTION_GLPE_BANK_OFFSET);
+        String description = kualiConfigurationService.getPropertyValueAsString(FPKeyConstants.DESCRIPTION_GLPE_BANK_OFFSET);
         bankPendingTransaction.setDescription(description);
         bankPendingTransaction.setOrgDocNbr(glPendingTransaction.getOrgDocNbr());
         bankPendingTransaction.setOrgReferenceId(null);

@@ -28,7 +28,7 @@ import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.util.type.TypeUtils;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
-import org.kuali.kfs.krad.datadictionary.DataObjectEntry;
+import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -51,8 +51,8 @@ public class RestXmlUtil {
      * @param o
      * @return
      */
-    public static String toXML(DataObjectEntry doe, Object o) {
-        XStream xStream = getXStream(doe.getDataObjectClass().getName());
+    public static String toXML(BusinessObjectEntry doe, Object o) {
+        XStream xStream = getXStream(doe.getBusinessObjectClass().getName());
 
         return xStream.toXML(o);
     }
@@ -65,8 +65,8 @@ public class RestXmlUtil {
      * @param xml
      * @return
      */
-    public static Object fromXML(DataObjectEntry doe, String xml) {
-        XStream xStream = getXStream(doe.getDataObjectClass().getName());
+    public static Object fromXML(BusinessObjectEntry doe, String xml) {
+        XStream xStream = getXStream(doe.getBusinessObjectClass().getName());
 
         return xStream.fromXML(xml);
     }
@@ -80,7 +80,7 @@ public class RestXmlUtil {
      * @return
      * @throws Exception
      */
-    public static List<?> parseXML(DataObjectEntry doe, String xml) {
+    public static List<?> parseXML(BusinessObjectEntry doe, String xml) {
         List<Object> list = new ArrayList<Object>();
 
         Object fromXML = fromXML(doe, xml);
@@ -99,8 +99,8 @@ public class RestXmlUtil {
         return list;
     }
 
-    protected static Object populateBusinessObject(DataObjectEntry doe, Map<?,?> m) {
-        Object bo = ObjectUtils.createNewObjectFromClass(doe.getDataObjectClass());
+    protected static Object populateBusinessObject(BusinessObjectEntry doe, Map<?,?> m) {
+        Object bo = ObjectUtils.createNewObjectFromClass(doe.getBusinessObjectClass());
         PersistenceStructureService persistenceStructureService = SpringContext.getBean(PersistenceStructureService.class);
 
         for (Object key : m.keySet()) {

@@ -35,7 +35,7 @@ import org.kuali.kfs.kns.util.FieldUtils;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.datadictionary.DocumentEntry;
+import org.kuali.kfs.kns.datadictionary.DocumentEntry;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;

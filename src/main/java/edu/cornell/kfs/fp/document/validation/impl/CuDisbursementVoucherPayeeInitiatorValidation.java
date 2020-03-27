@@ -3,6 +3,7 @@ package edu.cornell.kfs.fp.document.validation.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherPayeeInitiatorValidation;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -57,7 +58,7 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
         if (StringUtils.isNotBlank(uuid)) {
             Person initUser = getInitiator(document);
             if (uuid.equals(initUser.getPrincipalId())) {
-                errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_PAYEE_INITIATOR);
+                errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, FPKeyConstants.ERROR_PAYEE_INITIATOR);
                 isValid = false;
             }
         }

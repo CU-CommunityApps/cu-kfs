@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.businessobject.CapitalAccountingLines;
 import org.kuali.kfs.fp.businessobject.CapitalAssetAccountsGroupDetails;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
@@ -863,7 +864,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         if (capitalAssetInformation.get(addIndex).getCapitalAssetQuantity() == null
                 || capitalAssetInformation.get(addIndex).getCapitalAssetQuantity() <= 0) {
             GlobalVariables.getMessageMap().putError(KFSConstants.EDIT_CAPITAL_ASSET_INFORMATION_ERRORS,
-                    KFSKeyConstants.ERROR_DOCUMENT_CAPITAL_ASSET_QUANTITY_REQUIRED);
+                    FPKeyConstants.ERROR_DOCUMENT_CAPITAL_ASSET_QUANTITY_REQUIRED);
         } else {
             this.addCapitalAssetInfoDetailLines(capitalAssetInformation.get(addIndex));
         }
@@ -903,7 +904,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         if (capitalAssetInformation.get(addIndex).getCapitalAssetQuantity() == null
                 || capitalAssetInformation.get(addIndex).getCapitalAssetQuantity() <= 0) {
             GlobalVariables.getMessageMap().putError(KFSConstants.EDIT_CAPITAL_ASSET_INFORMATION_ERRORS,
-                    KFSKeyConstants.ERROR_DOCUMENT_CAPITAL_ASSET_QUANTITY_REQUIRED);
+                    FPKeyConstants.ERROR_DOCUMENT_CAPITAL_ASSET_QUANTITY_REQUIRED);
         } else {
             this.addCapitalAssetInfoDetailLines(capitalAssetInformation.get(addIndex));
         }
@@ -941,7 +942,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
         if (capitalAssetInformation.get(refreshIndex).getCapitalAssetNumber() == null) {
             GlobalVariables.getMessageMap().putError(KFSConstants.EDIT_CAPITAL_ASSET_MODIFY_ERRORS,
-                    KFSKeyConstants.ERROR_DOCUMENT_CAPITAL_ASSET_NUMBER_REQUIRED);
+                    FPKeyConstants.ERROR_DOCUMENT_CAPITAL_ASSET_NUMBER_REQUIRED);
         }
 
         //now process the remaining capital asset records

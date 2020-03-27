@@ -74,28 +74,6 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return valid;
     }
     
-    
-    
-    /**
-     * Validates that the document contains at least one item.
-     *
-     * @param purDocument the purchasing document to be validated
-     * @return boolean false if the document does not contain at least one item.
-     */
-    public boolean validateContainsAtLeastOneItem(PurchasingDocument purDocument) {
-        for (PurApItem item : purDocument.getItems()) {
-            if (!((PurchasingItemBase) item).isEmpty() && item.getItemType().isLineItemIndicator()) {
-                return true;
-            }
-        }
-        String documentType = getDocumentTypeLabel(purDocument.getDocumentHeader().getWorkflowDocument()
-                .getDocumentTypeName());
-
-        GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
-                PurapKeyConstants.ERROR_ITEM_REQUIRED, documentType);
-
-        return false;
-    }
 
     /**
      * Validates whether the commodity code existed on the item, and if existed, whether the commodity code on the

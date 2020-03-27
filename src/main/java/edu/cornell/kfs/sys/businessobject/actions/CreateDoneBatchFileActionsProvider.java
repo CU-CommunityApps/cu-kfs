@@ -1,5 +1,6 @@
 package edu.cornell.kfs.sys.businessobject.actions;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider
     }
     
     protected String getCreateDoneUrl(BatchFile batchFile) {
-        Properties parameters = new Properties();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("filePath",
                 BatchFileUtils.pathRelativeToRootDirectory(batchFile.retrieveFile().getAbsolutePath()));
         parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "createDone");
