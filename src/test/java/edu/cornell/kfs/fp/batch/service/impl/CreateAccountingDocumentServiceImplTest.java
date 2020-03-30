@@ -116,6 +116,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixt
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
@@ -142,6 +143,7 @@ public class CreateAccountingDocumentServiceImplTest {
     private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
     private List<String> creationOrderedBaseFileNames;
+    private SimpleDateFormat dateFormat;
 
     @Before
     public void setUp() throws Exception {
@@ -170,11 +172,13 @@ public class CreateAccountingDocumentServiceImplTest {
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         createTargetTestDirectory();
+        dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd);
     }
 
     @After
     public void tearDown() throws Exception {
         deleteTargetTestDirectory();
+        dateFormat = null;
     }
 
     @Test
@@ -684,6 +688,10 @@ public class CreateAccountingDocumentServiceImplTest {
                 actualDvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses(), this::assertTravelExpenseCorrect);
         assertObjectListIsCorrect("non employee prepaid travel expenses aren't correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), 
                 actualDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), this::assertTravelExpenseCorrect);
+        assertEquals("Due Dates should match", dateFormat.format(actualDvDocument.getDisbursementVoucherDueDate()), 
+                dateFormat.format(expectedDvDocument.getDisbursementVoucherDueDate()));
+        
+        
     }
     
     private void assertTravelExpenseCorrect(DisbursementVoucherNonEmployeeExpense expectedExpense, DisbursementVoucherNonEmployeeExpense actualExpense) {
