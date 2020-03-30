@@ -826,6 +826,8 @@ public enum AccountingXmlDocumentEntryFixture {
             dvDoc.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(dvDetails.nonEmployeeCarMileage);
             dvDoc.getDvPreConferenceDetail().setDvConferenceDestinationName(dvDetails.conferenceDestination);
             dvDoc.setDisbursementVoucherDueDate(dvDetails.dueDate);
+            dvDoc.setInvoiceDate(dvDetails.invoiceDate);
+            dvDoc.setInvoiceNumber(dvDetails.invoiceNumber);
             for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerExpense) {
                 DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
                 expense.setDisbVchrExpenseCode(expenseFixture.expenseType);

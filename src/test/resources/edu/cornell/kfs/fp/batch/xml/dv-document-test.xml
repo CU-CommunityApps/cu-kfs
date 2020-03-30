@@ -228,6 +228,8 @@
             		<postal_code>14850</postal_code>
             		<check_amount>60</check_amount>
             		<due_date></due_date>
+            		<invoice_date>04/15/2020</invoice_date>
+            		<invoice_number>12321</invoice_number>
             		<payment_method>P</payment_method>
             		<documentation_location_code>N</documentation_location_code>
             		<check_stub_text>Testing DV from create accting document</check_stub_text>
