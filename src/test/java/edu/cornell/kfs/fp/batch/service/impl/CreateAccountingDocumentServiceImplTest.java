@@ -457,6 +457,13 @@ public class CreateAccountingDocumentServiceImplTest {
         attachService.setForceUseOfRealClientToTestAttachmentUrls(true);
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST);
     }
+    
+    @Test
+    public void testDvDocumentTest() throws Exception {
+        copyTestFilesAndCreateDoneFiles("dv-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
+    }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
         boolean actualResults = createAccountingDocumentService.createAccountingDocumentsFromXml();

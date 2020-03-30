@@ -459,6 +459,25 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
             CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
+    DV_DOC_TEST1(1, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            "Test DV Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(),
+            items(),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
+            CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
     MULTI_DOC_TYPE_TEST_YEBA(9, CuFPTestConstants.YEAR_END_BUDGET_ADJUSTMENT_DOC_TYPE,
             "Test YEBA Document in multi doc file", "This is a YEBA doc for testing", "WXYZ567D", CuFPTestConstants.FY_2018,
             sourceAccountingLines(
