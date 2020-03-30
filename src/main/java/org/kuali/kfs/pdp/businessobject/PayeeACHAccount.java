@@ -24,7 +24,6 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
-import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -442,8 +441,6 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
 
     /**
      * KFSCNTRB-1682: Some of the fields contain confidential information
-     *
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toString()
      */
     @Override
     public String toString() {
@@ -458,10 +455,11 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
                     return false;
                 }
 
-                DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
-                AttributeSecurity attributeSecurity = dataDictionaryService.getAttributeSecurity(PayeeACHAccount.class.getName(), field.getName());
+                AttributeSecurity attributeSecurity = getDataDictionaryService()
+                        .getAttributeSecurity(PayeeACHAccount.class.getName(), field.getName());
                 if (ObjectUtils.isNotNull(attributeSecurity)
-                    && (attributeSecurity.isHide() || attributeSecurity.isMask() || attributeSecurity.isPartialMask())) {
+                    && (attributeSecurity.isHide() || attributeSecurity.isMask()
+                        || attributeSecurity.isPartialMask())) {
                     return false;
                 }
 

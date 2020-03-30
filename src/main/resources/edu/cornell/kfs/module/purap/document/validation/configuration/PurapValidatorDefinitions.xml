@@ -18,24 +18,9 @@
 		<property name="businessObjectService" ref="businessObjectService" />	
 		<property name="parameterService" ref="parameterService" />	
 	</bean>
-	
-  <bean id="PurchaseOrderAmendment-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentNewIndividualItemValidation" abstract="true">
-	    <property name="parameterService" ref="parameterService" />
-	    <property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="businessObjectService" ref="businessObjectService" />
-		<property name="purchaseOrderService" ref="purchaseOrderService" />
-		<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
-		<property name="emptyItemsWithAccountsValidation" ref="PurchaseOrder-emptyItemWithAccountsValidation"/>
-		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
-		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
-		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
-		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
-        <property name="commodityCodeValidation" ref="PurchaseOrderAmendment-commodityCodeValidation" />
-		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
-		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />		
-	</bean>
 
-	<bean id="PurchaseOrderAmendment-accountValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentAccountValidation" abstract="true"/>
+	<bean id="PurchaseOrderAmendment-accountValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentAccountValidation" abstract="true"
+	      p:purchaseOrderService-ref="purchaseOrderService"/>
 
 	<bean id="PurchaseOrderAmendment-accountingLineDataDictionaryValidation"
 			class="org.kuali.kfs.module.purap.document.validation.impl.PurapAccountingLineDataDictionaryValidation" abstract="true">
@@ -45,20 +30,6 @@
 	<bean id="PurchaseOrderAmendment-accountingLineRequiredOverridesValidation"
 			class="edu.cornell.kfs.sys.document.validation.impl.AccountingLineRequiredOverridesValidation" abstract="true">
 		<property name="accountingLineRuleHelperService" ref="purchaseOrderAmendmentAccountingLineRuleHelperService"/>
-	</bean>
-
-	<bean id="Requisition-newIndividualItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation" abstract="true">  
-	<property name="parameterService" ref="parameterService" />
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="businessObjectService" ref="businessObjectService" />
-		<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
-		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
-		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
-		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
-		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
-		<property name="commodityCodeValidation" ref="Requisition-commodityCodeValidation" />
-		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
-		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />
 	</bean>
 	
   
@@ -77,41 +48,24 @@
 		<property name="businessObjectService" ref="businessObjectService" />	
 		<property name="parameterService" ref="parameterService" />	
 	</bean>
-    
-    <bean id="Purchasing-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />		
-		<property name="businessObjectService" ref="businessObjectService" />
-		<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
-		<property name="parameterService" ref="parameterService" />
-		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
-		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
-		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
-		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
-		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
-		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
-		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />
-	</bean>
+
+    <bean id="Purchasing-newIndividualItemValidation"
+          class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation"
+          abstract="true" parent="PurchasingAccountsPayable-newIndividualItemValidation"
+          p:businessObjectService-ref="businessObjectService"
+          p:capitalAssetManagementModuleService-ref="capitalAssetManagementModuleService"
+          p:unitOfMeasureValidation-ref="Purchasing-unitOfMeasureValidation"
+          p:itemUnitPriceValidation-ref="Purchasing-itemUnitPriceValidation"
+          p:itemDescriptionValidation-ref="Purchasing-itemDescriptionValidation"
+          p:itemQuantityValidation-ref="Purchasing-itemQuantityValidation"
+          p:commodityCodeValidation-ref="Purchasing-commodityCodeValidation"
+          p:belowTheLineItemNoUnitCostValidation-ref="Purchasing-belowTheLineItemNoUnitCostValidation"/>
 	
 	<bean id="PurchaseOrder-commodityCodeValidation" parent="PurchaseOrder-commodityCodeValidation-parentBean" scope="prototype" />
 	<bean id="PurchaseOrder-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchaseOrderCommodityCodeValidation" abstract="true">
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 		<property name="businessObjectService" ref="businessObjectService" />	
 		<property name="parameterService" ref="parameterService" />	
-	</bean>
-	
-	<bean id="PurchaseOrder-newIndividualItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderNewIndividualItemValidation" abstract="true">
-	    <property name="parameterService" ref="parameterService" />
-	    <property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="businessObjectService" ref="businessObjectService" />
-		<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
-		<property name="emptyItemsWithAccountsValidation" ref="PurchaseOrder-emptyItemWithAccountsValidation"/>
-		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
-		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
-		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
-		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
-		<property name="commodityCodeValidation" ref="PurchaseOrder-commodityCodeValidation" />
-		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
-		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />		
 	</bean>
 	
 	<bean id="Purchasing-addItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true">
@@ -127,43 +81,35 @@
 		<property name="businessObjectService" ref="businessObjectService" />		
 		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
 	</bean>
-
-	<bean id="Purchasing-processVendorValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingProcessVendorValidation">
-		<property name="vendorService" ref="vendorService" />
-		<property name="parameterService" ref="parameterService" />
-        <property name="postalCodeValidationService" ref="postalCodeValidationService" />
-		<property name="purchaseOrderTransmissionMethodDataRulesService" ref="purchaseOrderTransmissionMethodDataRulesService" />
-		<property name="financialSystemWorkflowHelperService" ref="financialSystemWorkflowHelperService" />
-	</bean>
-
-    <bean id="PurchaseOrder-processVendorValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderProcessVendorValidation" abstract="true">
-	    <property name="vendorService" ref="vendorService" />
-		<property name="parameterService" ref="parameterService" />
-        <property name="postalCodeValidationService" ref="postalCodeValidationService" />
-		<property name="purchaseOrderTransmissionMethodDataRulesService" ref="purchaseOrderTransmissionMethodDataRulesService" />
-		<property name="financialSystemWorkflowHelperService" ref="financialSystemWorkflowHelperService" />
-    </bean>
+	
+	<bean id="Purchasing-processVendorValidation"
+          class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingProcessVendorValidation"
+          p:vendorService-ref="vendorService" p:parameterService-ref="parameterService"
+          p:postalCodeValidationService-ref="postalCodeValidationService"
+          p:purchaseOrderTransmissionMethodDataRulesService-ref="purchaseOrderTransmissionMethodDataRulesService"
+          p:financialSystemWorkflowHelperService-ref="financialSystemWorkflowHelperService"
+          p:dataDictionaryService-ref="dataDictionaryService" p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"/>
 
 	<bean id="PaymentRequest-totalsValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestTotalsValidation" abstract="true"/>
-	<bean id="PaymentRequest-processItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestProcessItemValidation" abstract="true">
-		<property name="purapService" ref="purapService" />
-		<property name="reviewAccountingLineValidation" ref="PaymentRequest-reviewAccountingLine" />		
-	</bean>
+	<bean id="PaymentRequest-processItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestProcessItemValidation" abstract="true"
+		p:purapService-ref="purapService" p:parameterService-ref="parameterService"
+	    p:reviewAccountingLineValidation-ref="PaymentRequest-reviewAccountingLine" />		
     <bean id="PaymentRequest-lineItemQuantityNotZero" class="edu.cornell.kfs.module.purap.document.validation.impl.CuLineItemQuantityNotZero" abstract="true" />
     
-    <bean id="PurchasingAccountsPayable-objectCodeOverrideBranchingValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation" abstract="true">
-    	<property name="parameterService" ref="parameterService" />
-		<property name="responsibleProperty" value="financialObjectCode" />
-		<property name="propertyPath" value="financialObjectCode" />
-		<property name="parameterToCheckAgainst" value="OBJECT_CODES_OVERRIDING_RESTRICTIONS" />		
-	</bean>
+    <bean id="PurchasingAccountsPayable-objectCodeOverrideBranchingValidation" 
+          class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation"          
+          abstract="true" p:parameterService-ref="parameterService" p:responsibleProperty="financialObjectCode"
+          p:propertyPath="financialObjectCode" p:parameterToCheckAgainst="OBJECT_CODES_OVERRIDING_RESTRICTIONS"
+          p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
     
     <bean id="PaymentRequest-taxAreaValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestTaxAreaValidation" >
     <property name="businessObjectService" ref="businessObjectService" />
     </bean>
     
-    <bean id="PurchasingAccountsPayable-bankCodeValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuAccountsPayableBankCodeValidation" abstract="true"
-            p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
+    <bean id="PurchasingAccountsPayable-bankCodeValidation" 
+          class="edu.cornell.kfs.module.purap.document.validation.impl.CuAccountsPayableBankCodeValidation" 
+          abstract="true" p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
     
     	<!--  KFSPTS-1891 -->
 	<bean id="PaymentRequest-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestWireTransferValidation" abstract="true" />

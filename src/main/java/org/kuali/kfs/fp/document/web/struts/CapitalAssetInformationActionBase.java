@@ -1442,7 +1442,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
         return null;
     }
-    
+
     /**
      * @param kualiAccountingDocumentFormBase
      * @return

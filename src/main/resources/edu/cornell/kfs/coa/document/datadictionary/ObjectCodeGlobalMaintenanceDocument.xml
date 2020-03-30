@@ -34,7 +34,8 @@
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectCodeName" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectCodeShortName" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="reportsToFinancialObjectCode" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="financialObjectTypeCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="financialObjectTypeCode" p:required="true"
+              p:newLookup="true"/>        
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectLevelCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="cgReportingCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectSubTypeCode" p:required="true"/>

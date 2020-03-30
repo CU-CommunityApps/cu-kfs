@@ -98,13 +98,12 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
             KFSConstants.DocumentStatusCodes.CANCELLED);
         criteria.addNotEqualTo(KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE,
             KFSConstants.DocumentStatusCodes.DISAPPROVED);
-        QueryByCriteria query = QueryFactory.newQuery(FinancialSystemDocumentHeader.class, criteria);
 
-        return query;
+        return QueryFactory.newQuery(FinancialSystemDocumentHeader.class, criteria);
     }
 
     private Criteria buildFundAndSubFundGroupCriteria(Integer currentFiscalYear, Collection<String> fundGroups,
-                                                      Collection<String> subFundGroups) {
+            Collection<String> subFundGroups) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, currentFiscalYear);
         if (!fundGroups.isEmpty()) {

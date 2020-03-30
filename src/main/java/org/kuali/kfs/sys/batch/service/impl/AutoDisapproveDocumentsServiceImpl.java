@@ -65,18 +65,15 @@ public class AutoDisapproveDocumentsServiceImpl implements AutoDisapproveDocumen
     private static final Logger LOG = LogManager.getLogger(AutoDisapproveDocumentsServiceImpl.class);
     public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "routeHeaderId";
 
-    private DocumentService documentService;
-    // KFSPTS-16185 Overlay created to change the access modifier for several services to protected
-    protected DocumentTypeService documentTypeService;
-
     private DateTimeService dateTimeService;
-    private ParameterService parameterService;
-
-    protected NoteService noteService;
-    protected PersonService personService;
-
-    private ReportWriterService autoDisapproveErrorReportWriterService;
+    private DocumentService documentService;
     private FinancialSystemDocumentService financialSystemDocumentService;
+    protected NoteService noteService;
+    private ParameterService parameterService;
+    protected PersonService personService;
+    private ReportWriterService autoDisapproveErrorReportWriterService;
+    // documentTypeService is protected for sake of known customization
+    protected DocumentTypeService documentTypeService;
     protected WorkflowDocumentService workflowDocumentService;
 
     /**
@@ -107,7 +104,7 @@ public class AutoDisapproveDocumentsServiceImpl implements AutoDisapproveDocumen
     /**
      * This method checks if the System parameters have been set up for this batch job.
      *
-     * @result return true if the system parameters exist, else false
+     * @return true if the system parameters exist, else false
      */
     protected boolean systemParametersForAutoDisapproveDocumentsJobExist() {
         LOG.debug("systemParametersForAutoDisapproveDocumentsJobExist() started.");
@@ -294,7 +291,8 @@ public class AutoDisapproveDocumentsServiceImpl implements AutoDisapproveDocumen
     }
 
     /**
-     * This method will check the document's document type against the parent document type as specified in the system parameter
+     * This method will check the document's document type against the parent document type as specified in the
+     * system parameter
      *
      * @param documentHeader
      * @return true if  document type of the document is a child of the parent document.
@@ -370,15 +368,12 @@ public class AutoDisapproveDocumentsServiceImpl implements AutoDisapproveDocumen
 
         Note approveNote = noteService.createNote(new Note(), documentHeader, systemUser.getPrincipalId());
         approveNote.setNoteText(annotationForAutoDisapprovalDocument);
-
         approveNote.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
-
         approveNote.setNotePostedTimestampToCurrent();
 
         noteService.save(approveNote);
 
         Document document = documentService.getByDocumentHeaderId(documentHeader.getDocumentNumber());
-
         document.addNote(approveNote);
 
         documentService.superUserDisapproveDocumentWithoutSaving(document,
