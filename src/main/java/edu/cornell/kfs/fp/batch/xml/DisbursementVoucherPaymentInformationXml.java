@@ -126,6 +126,14 @@ public class DisbursementVoucherPaymentInformationXml {
     @XmlElement(name = "special_handling_country", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String specialHandlingCountry;
+    
+    @XmlElement(name = "invoice_date", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    protected Date invoiceDate;
+    
+    @XmlElement(name = "invoice_number", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String invoiceNumber;
 
     public String getPaymentReasonCode() {
         return paymentReasonCode;
@@ -341,6 +349,22 @@ public class DisbursementVoucherPaymentInformationXml {
 
     public void setSpecialHandlingCountry(String specialHandlingCountry) {
         this.specialHandlingCountry = specialHandlingCountry;
+    }
+
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
+
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
     }
     
 }
