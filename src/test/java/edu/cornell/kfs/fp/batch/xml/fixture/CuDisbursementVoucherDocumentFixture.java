@@ -14,6 +14,11 @@ public enum CuDisbursementVoucherDocumentFixture {
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING),
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
+                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER)),
+    JOHN_DOE_DV_DETAIL("DISB", "Doe, John", "X", "E", 50, "Freeville", "Jane Doe", 25,
+            buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
+                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING),
+            buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER));
     
     public final String bankCode;
