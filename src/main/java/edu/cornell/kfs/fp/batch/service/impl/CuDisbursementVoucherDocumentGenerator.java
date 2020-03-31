@@ -108,6 +108,10 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             payeeDetail.setDisbVchrSpecialHandlingZipCode(paymentInfo.getSpecialHandlingZip());
             payeeDetail.setDisbVchrSpecialHandlingCountryCode(paymentInfo.getSpecialHandlingCountry());
             dvDocument.setDisbVchrCheckTotalAmount(paymentInfo.getCheckAmount());
+            if (paymentInfo.getInvoiceDate() != null) {
+                dvDocument.setInvoiceDate(buildSqlDateFromUtilDate(paymentInfo.getInvoiceDate()));
+            }
+            dvDocument.setInvoiceNumber(paymentInfo.getInvoiceNumber());
             
             if (paymentInfo.getDueDate() == null) {
                 LOG.info("populatePaymentInformation, no due date defined on the XML, calculating default due date.");
