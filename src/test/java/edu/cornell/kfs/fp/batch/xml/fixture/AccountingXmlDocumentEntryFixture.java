@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import static edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.function.LongFunction;
 
@@ -459,37 +460,6 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
             CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
-    DV_DOC_TEST1(1, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
-            "Test DV Document", "This is only a test document!", "ABCD1234",
-            sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
-            targetAccountingLines(),
-            items(),
-            notes(
-                    "This is a sample note",
-                    "Another note"),
-            adHocRecipients(
-                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
-                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
-                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
-                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
-            backupLinks(
-                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
-                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
-            CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
-    DV_DOC_TEST2(2, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
-            "Test DV Document - No Due Date", "This is only a test document!", "ABCD1234",
-            sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
-            targetAccountingLines(),
-            items(),
-            notes(
-                    "This is a sample note"),
-            adHocRecipients(),
-            backupLinks(),
-            CuDisbursementVoucherDocumentFixture.JOHN_DOE_DV_DETAIL),
     MULTI_DOC_TYPE_TEST_YEBA(9, CuFPTestConstants.YEAR_END_BUDGET_ADJUSTMENT_DOC_TYPE,
             "Test YEBA Document in multi doc file", "This is a YEBA doc for testing", "WXYZ567D", CuFPTestConstants.FY_2018,
             sourceAccountingLines(
@@ -592,7 +562,39 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.AWS_BILLING_INVOICE,
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
-
+    
+    DV_DOC_TEST1(1, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            "Test DV Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(),
+            items(),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
+            CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
+    DV_DOC_TEST2(2, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            "Test DV Document - No Due Date", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(),
+            items(),
+            notes(
+                    "This is a sample note"),
+            adHocRecipients(),
+            backupLinks(),
+            CuDisbursementVoucherDocumentFixture.JOHN_DOE_DV_DETAIL),
+    
     SINGLE_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
@@ -825,8 +827,10 @@ public enum AccountingXmlDocumentEntryFixture {
             dvDoc.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(dvDetails.nonEmployeeTravelerName);
             dvDoc.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(dvDetails.nonEmployeeCarMileage);
             dvDoc.getDvPreConferenceDetail().setDvConferenceDestinationName(dvDetails.conferenceDestination);
-            dvDoc.setDisbursementVoucherDueDate(dvDetails.dueDate);
-            dvDoc.setInvoiceDate(dvDetails.invoiceDate);
+            dvDoc.setDisbursementVoucherDueDate(new Date(dvDetails.dueDate.getMillis()));
+            if (dvDetails.invoiceDate != null) {
+                dvDoc.setInvoiceDate(new Date(dvDetails.invoiceDate.getMillis()));
+            }
             dvDoc.setInvoiceNumber(dvDetails.invoiceNumber);
             for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerExpense) {
                 DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();

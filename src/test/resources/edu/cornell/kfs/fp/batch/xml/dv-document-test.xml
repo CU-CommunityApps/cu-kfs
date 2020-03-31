@@ -246,7 +246,7 @@
             		<special_handling_country>US</special_handling_country>
             	</payment_information>
             	<non_employee_travel>
-            		<traveler_name>Jane Doe</traveler_name>
+            		<traveler_name>John Doe</traveler_name>
             		<service_performed>did cool stuff</service_performed>
             		<service_performed_location>Freeville</service_performed_location>
             		<service_performed_employee_name>jdh34</service_performed_employee_name>

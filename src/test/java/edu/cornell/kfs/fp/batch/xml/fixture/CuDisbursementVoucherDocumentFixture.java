@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
@@ -18,7 +19,7 @@ public enum CuDisbursementVoucherDocumentFixture {
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING),
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER)),
-    JOHN_DOE_DV_DETAIL("DISB", "Doe, John", "X", "E", 50, "Freeville", "Jane Doe", 25, StringUtils.EMPTY, "04/15/2020", "12321",
+    JOHN_DOE_DV_DETAIL("DISB", "Doe, John", "X", "E", 50, "Freeville", "John Doe", 25, StringUtils.EMPTY, "04/15/2020", "12321",
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING), 
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
@@ -32,8 +33,8 @@ public enum CuDisbursementVoucherDocumentFixture {
     public final String conferenceDestination;
     public final String nonEmployeeTravelerName;
     public final Integer nonEmployeeCarMileage;
-    public final Date dueDate;
-    public final Date invoiceDate;
+    public final DateTime dueDate;
+    public final DateTime invoiceDate;
     public final String invoiceNumber;
     public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerExpense;
     public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerPrepaidExpense;
@@ -70,22 +71,22 @@ public enum CuDisbursementVoucherDocumentFixture {
         this.nonEmployeeTravelerExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerExpenseArray);
         this.nonEmployeeTravelerPrepaidExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerPrepaidExpenseArray);
         if (StringUtils.isNotEmpty(dueDateString)) {
-            this.dueDate = new Date(StringToJavaDateAdapter.parseToDateTime(dueDateString).getMillis());
+            this.dueDate = new DateTime(StringToJavaDateAdapter.parseToDateTime(dueDateString).getMillis());
         } else {
             this.dueDate = calculateDefaultDueDate();
         }
         this.invoiceNumber = invoiceNumber;
         if (StringUtils.isNotEmpty(invoiceDateString)) {
-            this.invoiceDate = new Date(StringToJavaDateAdapter.parseToDateTime(invoiceDateString).getMillis());
+            this.invoiceDate = new DateTime(StringToJavaDateAdapter.parseToDateTime(invoiceDateString).getMillis());
         } else {
             this.invoiceDate = null;
         }
     }
     
-    private static Date calculateDefaultDueDate() {
+    private static DateTime calculateDefaultDueDate() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, 1);;
-        return new Date(cal.getTimeInMillis());
+        cal.add(Calendar.DATE, 1);
+        return new DateTime(cal.getTimeInMillis());
     }
     
     private static CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture... fixtures) {
