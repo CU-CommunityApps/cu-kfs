@@ -690,8 +690,8 @@ public class CreateAccountingDocumentServiceImplTest {
                 actualDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), this::assertTravelExpenseCorrect);
         assertEquals("Due Dates should match", dateFormat.format(expectedDvDocument.getDisbursementVoucherDueDate()), 
                 dateFormat.format(actualDvDocument.getDisbursementVoucherDueDate()) );
-        assertEquals("Invoice Dates should match", actualDvDocument.getInvoiceDate(), expectedDvDocument.getInvoiceDate());
-        assertEquals("Invoice numbers should match", actualDvDocument.getInvoiceDate(), expectedDvDocument.getInvoiceDate());
+        assertEquals("Invoice Dates should match", expectedDvDocument.getInvoiceDate(), actualDvDocument.getInvoiceDate());
+        assertEquals("Invoice numbers should match", expectedDvDocument.getInvoiceNumber(), actualDvDocument.getInvoiceNumber());
     }
     
     private void assertTravelExpenseCorrect(DisbursementVoucherNonEmployeeExpense expectedExpense, DisbursementVoucherNonEmployeeExpense actualExpense) {

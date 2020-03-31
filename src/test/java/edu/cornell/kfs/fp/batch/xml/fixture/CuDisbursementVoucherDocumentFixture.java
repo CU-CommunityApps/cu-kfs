@@ -14,7 +14,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum CuDisbursementVoucherDocumentFixture {
     EMPTY(),
-    JANE_DOE_DV_DETAIL("DISB", "Doe, Jane", "X", "E", 50, "Freeville", "Jane Doe", 25, "7/24/2018", StringUtils.EMPTY, StringUtils.EMPTY,
+    JANE_DOE_DV_DETAIL("DISB", "Doe, Jane", "X", "E", 50, "Freeville", "Jane Doe", 25, "7/24/2018", StringUtils.EMPTY, null,
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING),
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
