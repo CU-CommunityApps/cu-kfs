@@ -231,15 +231,16 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
     @Override
     protected Map<String, String> getPersonFieldValues(Map<String, String> fieldValues) {
         Map<String, String> personFieldValues = new HashMap<>();
-        personFieldValues.put(KFSPropertyConstants.PERSON_FIRST_NAME, fieldValues.get(KFSPropertyConstants.PERSON_FIRST_NAME));
-        personFieldValues.put(KFSPropertyConstants.PERSON_LAST_NAME, fieldValues.get(KFSPropertyConstants.PERSON_LAST_NAME));
-        personFieldValues.put(KFSPropertyConstants.EMPLOYEE_ID, fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID));
-                      
-        
+        personFieldValues.put(KFSPropertyConstants.PERSON_FIRST_NAME,
+                fieldValues.get(KFSPropertyConstants.PERSON_FIRST_NAME));
+        personFieldValues.put(KFSPropertyConstants.PERSON_LAST_NAME,
+                fieldValues.get(KFSPropertyConstants.PERSON_LAST_NAME));
+        personFieldValues.put(KFSPropertyConstants.EMPLOYEE_ID, fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID));       
         personFieldValues.put(KFSPropertyConstants.ACTIVE, fieldValues.get(KFSPropertyConstants.ACTIVE));
         personFieldValues.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME));
         
-        Map<String, String> fieldConversionMap = disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndPerson();
+        Map<String, String> fieldConversionMap =
+                disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndPerson();
         this.replaceFieldKeys(personFieldValues, fieldConversionMap);
         
 
