@@ -123,7 +123,6 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         PurchasingAccountsPayableDocumentBase purApDocument = (PurchasingAccountsPayableDocumentBase) document;
         String accountDistributionMethod = purApDocument.getAccountDistributionMethod();
 
-        KualiRuleService kualiRuleService = SpringContext.getBean(KualiRuleService.class);
         WorkflowDocument workflowDocument = purApDocument.getDocumentHeader().getWorkflowDocument();
 
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();

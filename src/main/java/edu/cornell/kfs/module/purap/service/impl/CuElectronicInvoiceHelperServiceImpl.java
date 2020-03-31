@@ -125,7 +125,7 @@ import edu.cornell.kfs.module.purap.service.CuElectronicInvoiceHelperService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelperServiceImpl implements CuElectronicInvoiceHelperService {
-    private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceHelperServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     private StringBuffer emailTextErrorList;
     private HashMap<String, Integer> loadCounts = new HashMap<String, Integer>();
     private static final String EXTRACT_FAILURES = "Extract Failures";
@@ -792,7 +792,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setBank(defaultBank);
         }
 
-        RequisitionDocument reqDoc = SpringContext.getBean(RequisitionService.class).getRequisitionById(poDoc.getRequisitionIdentifier());
+        RequisitionDocument reqDoc = requisitionService.getRequisitionById(poDoc.getRequisitionIdentifier());
         String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {
             Person user = KimApiServiceLocator.getPersonService().getPerson(reqDocInitiator);
@@ -806,7 +806,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             return null;
         }
 
-        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = SpringContext.getBean(AccountsPayableService.class).expiredOrClosedAccountsList(poDoc);
+        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = accountsPayableService.expiredOrClosedAccountsList(poDoc);
         if (expiredOrClosedAccountList == null) {
             expiredOrClosedAccountList = new HashMap();
         }
@@ -1165,7 +1165,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         try {
             eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
             String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
             eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription(rejectdocDesc);
             eInvoiceRejectDocument.setDocumentCreationInProgress(true);
@@ -1243,7 +1243,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         try {
             eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
             eInvoiceRejectDocument.setVendorDunsNumber(fileDunsNumber);
             eInvoiceRejectDocument.setDocumentCreationInProgress(true);
 

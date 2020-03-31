@@ -47,8 +47,6 @@ import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 
 public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapService {
 
-    protected ParameterEvaluatorService parameterEvaluatorService;
-
     // ==== CU Customization (KFSPTS-1656): Save IWantDocument routing data. ====
     @Override
     public void saveRoutingDataForRelatedDocuments(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
@@ -126,7 +124,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
             purapAccountingService.updateAccountAmounts(purDoc);
 
             //calculate tax
-            boolean salesTaxInd = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean( KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
+            boolean salesTaxInd = parameterService.getParameterValueAsBoolean( KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
             boolean useTaxIndicator = purDoc.isUseTaxIndicator();
 
             if(salesTaxInd == true && (ObjectUtils.isNull(fullOrderDiscount.getItemTaxAmount()) && useTaxIndicator == false)){
@@ -180,11 +178,11 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
             //Before generating the summary, lets replace the object code in a cloned accounts collection sothat we can
             //consolidate all the modified object codes during summary generation.
             List<PurApItem> clonedTradeInItems = new ArrayList<PurApItem>();
-            Collection<String> objectSubTypesRequiringQty = new ArrayList<String>( SpringContext.getBean(ParameterService.class).getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.OBJECT_SUB_TYPES_REQUIRING_QUANTITY) );
-            Collection<String> purchasingObjectSubTypes = new ArrayList<String>( SpringContext.getBean(ParameterService.class).getParameterValuesAsString( KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, PurapParameterConstants.PURCHASING_OBJECT_SUB_TYPES) );
+            Collection<String> objectSubTypesRequiringQty = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.OBJECT_SUB_TYPES_REQUIRING_QUANTITY) );
+            Collection<String> purchasingObjectSubTypes = new ArrayList<String>( parameterService.getParameterValuesAsString( KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, PurapParameterConstants.PURCHASING_OBJECT_SUB_TYPES) );
 
-             String tradeInCapitalObjectCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_ASSET");
-             String tradeInCapitalLeaseObjCd = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_LEASE");
+             String tradeInCapitalObjectCode = parameterService.getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_ASSET");
+             String tradeInCapitalLeaseObjCd = parameterService.getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_LEASE");
 
             for(PurApItem item : purDoc.getTradeInItems()){
                PurApItem cloneItem = (PurApItem)ObjectUtils.deepCopy(item);
@@ -342,10 +340,6 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
         } else {
             return StringUtils.EMPTY;
         }
-    }
-
-    public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
-        this.parameterEvaluatorService = parameterEvaluatorService;
     }
 
 }

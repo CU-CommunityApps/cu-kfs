@@ -11,11 +11,11 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import com.rsmart.kuali.kfs.sys.KFSConstants;
 
 public class CuBatchFileUtils {
+    private static ConfigurationService configurationService;
 
     public static List<File> retrieveBatchFileStagingRootDirectories() {
-        ConfigurationService kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
         List<File> directories = new ArrayList<File>();
-        String configProperty = kualiConfigurationService.getPropertyValueAsString(KFSConstants.STAGING_DIRECTORY_KEY);
+        String configProperty = getConfigurationService().getPropertyValueAsString(KFSConstants.STAGING_DIRECTORY_KEY);
 
         String[] directoryNames = StringUtils.split(configProperty, ";");
         for (String directoryName : directoryNames) {
@@ -43,5 +43,12 @@ public class CuBatchFileUtils {
     
     private static boolean isPrefixOfAnother(String str1, String str2) {
         return str1.startsWith(str2) || str2.startsWith(str1);
+    }
+
+    private static ConfigurationService getConfigurationService() {
+        if (configurationService == null) {
+            configurationService = SpringContext.getBean(ConfigurationService.class);
+        }
+        return configurationService;
     }
 }

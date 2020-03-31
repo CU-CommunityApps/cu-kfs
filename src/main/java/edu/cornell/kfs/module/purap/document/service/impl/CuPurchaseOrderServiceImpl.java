@@ -37,7 +37,7 @@ import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuPurchaseOrderServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     public void performPurchaseOrderFirstTransmitViaPrinting(PurchaseOrderDocument po) {
@@ -69,8 +69,8 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
     private boolean shouldAdhocFyi(String reqSourceCode) {
         Collection<String> excludeList = new ArrayList<String>();
-        if (SpringContext.getBean(ParameterService.class).parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
-            excludeList = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
+        if (parameterService.parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
+            excludeList = parameterService.getParameterValuesAsString(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
         }
         return !excludeList.contains(reqSourceCode);
     }
@@ -148,7 +148,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         if (noteLength > 0) {
             for (Note note : notes) {
                 try {
-                    Note copyingNote = SpringContext.getBean(DocumentService.class).createNoteFromDocument(poDoc, note.getNoteText());
+                    Note copyingNote = documentService.createNoteFromDocument(poDoc, note.getNoteText());
                     purapService.saveDocumentNoValidation(poDoc);
                     copyingNote.setNotePostedTimestamp(note.getNotePostedTimestamp());
                     copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
