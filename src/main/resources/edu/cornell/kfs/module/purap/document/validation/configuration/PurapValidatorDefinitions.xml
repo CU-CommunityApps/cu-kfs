@@ -31,6 +31,20 @@
 			class="edu.cornell.kfs.sys.document.validation.impl.AccountingLineRequiredOverridesValidation" abstract="true">
 		<property name="accountingLineRuleHelperService" ref="purchaseOrderAmendmentAccountingLineRuleHelperService"/>
 	</bean>
+
+	<bean id="Requisition-newIndividualItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation" abstract="true">  
+	<property name="parameterService" ref="parameterService" />
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
+		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
+		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
+		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
+		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
+		<property name="commodityCodeValidation" ref="Requisition-commodityCodeValidation" />
+		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
+		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />
+	</bean>
 	
   
 	<bean id="PurchasingAccountsPayable-accountPercentBetween0And100Validation" parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" scope="prototype"/>
