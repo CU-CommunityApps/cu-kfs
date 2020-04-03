@@ -48,7 +48,20 @@
 	 	<property name="moduleConfiguration" ref="cu-purap"/>
 	</bean>
 	
-	<bean id="b2bPurchaseOrderService" parent="b2bPurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BPurchaseOrderSciquestServiceImpl" />
+	<bean id="b2bPurchaseOrderService" parent="b2bPurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BPurchaseOrderSciquestServiceImpl">
+    	<property name="attachmentService">
+			<ref bean="attachmentService" />
+		</property>	
+		<property name="businessObjectService">
+			<ref bean="businessObjectService" />
+		</property>
+    	<property name="purchaseOrderService">
+			<ref bean="purchaseOrderService" />
+		</property>
+		<property name="vendorService">
+			<ref bean="vendorService" />
+		</property>
+	</bean>
      
     <bean id="b2bPunchOutOrderFileType" class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType">
 	    <property name="digestorRulesFileName">
@@ -174,7 +187,9 @@
         <property name="userFavoriteAccountService" ref="userFavoriteAccountService"/>
     </bean>
    
-   <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl"/>
+   <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl">
+       <property name="roleService" ref="roleService"/>
+   </bean>
    
    <bean id="requisitionService" parent="requisitionService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuRequisitionServiceImpl"/>
     
@@ -221,10 +236,17 @@
 
 	<bean id="autoClosePurchaseOrderService" parent="autoClosePurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.batch.service.impl.CuAutoClosePurchaseOrderServiceImpl" />
 	<bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
- 	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl" />
+ 	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl">
+ 	    <property name="attachmentService" ref="attachmentService" />
+ 	</bean>
  	<bean id="relatedDocumentDerivedRoleTypeService" parent="relatedDocumentDerivedRoleTypeService-parentBean" class="edu.cornell.kfs.module.purap.identity.CuRelatedDocumentDerivedRoleTypeServiceImpl" />
     <bean id="receivingService" parent="receivingService-parentBean"  class="edu.cornell.kfs.module.purap.document.service.impl.CuReceivingServiceImpl" />
-    <bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean"  class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceHelperServiceImpl"/>
+    <bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean"  class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceHelperServiceImpl">
+        <property name="workflowDocumentService" ref="workflowDocumentService" />
+        <property name="financialSystemDocumentService" ref="financialSystemDocumentService" />
+        <property name="cUPaymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
+        
+    </bean>
     <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />
     <bean id="creditMemoService" parent="creditMemoService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuCreditMemoServiceImpl" >
             <!-- KFSPTS-1891 -->
@@ -232,10 +254,11 @@
     </bean>
     
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
-    <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl">
-        <property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>
+    <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
+
+    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl">
+        <property name="documentTypeService" ref="documentTypeService"/>
     </bean>
-    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
 
 	<bean id="creditMemoDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuCreditMemoDaoOjb" />
     <bean id="paymentRequestDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPaymentRequestDaoOjb"/>

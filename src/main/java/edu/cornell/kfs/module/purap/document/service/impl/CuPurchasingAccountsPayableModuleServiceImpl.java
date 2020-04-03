@@ -15,21 +15,21 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleService;
 
 public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAccountsPayableModuleServiceImpl implements CuPurchasingAccountsPayableModuleService {
-    private static final Logger LOG = LogManager.getLogger(CuPurchasingAccountsPayableModuleServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
    /**
     * @see org.kuali.kfs.integration.pdp.service.PurchasingAccountsPayableModuleService#handlePurchasingBatchCancels(java.lang.String)
     */
    public void handlePurchasingBatchCancels(String documentNumber, String documentTypeCode, boolean primaryCancel, boolean disbursedPayment, boolean crCancel) {
-       ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-       PaymentRequestService paymentRequestService = SpringContext.getBean(PaymentRequestService.class);
-       CreditMemoService creditMemoService = SpringContext.getBean(CreditMemoService.class);
-
-       String preqCancelNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class, PurapParameterConstants.PURAP_PDP_PREQ_CANCEL_NOTE);
-       String preqResetNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class, PurapParameterConstants.PURAP_PDP_PREQ_RESET_NOTE);
-       String cmCancelNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class, PurapParameterConstants.PURAP_PDP_CM_CANCEL_NOTE);
-       String cmResetNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class, PurapParameterConstants.PURAP_PDP_CM_RESET_NOTE);
-
+       String preqCancelNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+               PurapParameterConstants.PURAP_PDP_PREQ_CANCEL_NOTE);
+       String preqResetNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+               PurapParameterConstants.PURAP_PDP_PREQ_RESET_NOTE);
+       String cmCancelNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class,
+               PurapParameterConstants.PURAP_PDP_CM_CANCEL_NOTE);
+       String cmResetNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class,
+               PurapParameterConstants.PURAP_PDP_CM_RESET_NOTE);
+       
        if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(documentTypeCode)) {
            PaymentRequestDocument pr = paymentRequestService.getPaymentRequestByDocumentNumber(documentNumber);
            if (pr != null) {

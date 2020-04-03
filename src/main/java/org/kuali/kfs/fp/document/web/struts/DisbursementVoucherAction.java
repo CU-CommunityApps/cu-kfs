@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant;
@@ -364,15 +365,15 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         // Ensure all fields are filled in before attempting to add a new expense line
         if (StringUtils.isBlank(newExpenseLine.getDisbVchrPrePaidExpenseCode())) {
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DISB_VCHR_EXPENSE_CODE,
-                    KFSKeyConstants.ERROR_DV_EXPENSE_CODE);
+                    FPKeyConstants.ERROR_DV_EXPENSE_CODE);
         }
         if (StringUtils.isBlank(newExpenseLine.getDisbVchrPrePaidExpenseCompanyName())) {
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DISB_VCHR_EXPENSE_COMPANY_NAME,
-                    KFSKeyConstants.ERROR_DV_EXPENSE_COMPANY_NAME);
+                    FPKeyConstants.ERROR_DV_EXPENSE_COMPANY_NAME);
         }
         if (ObjectUtils.isNull(newExpenseLine.getDisbVchrExpenseAmount())) {
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DISB_VCHR_EXPENSE_AMOUNT,
-                    KFSKeyConstants.ERROR_DV_EXPENSE_AMOUNT);
+                    FPKeyConstants.ERROR_DV_EXPENSE_AMOUNT);
         }
 
         GlobalVariables.getMessageMap().removeFromErrorPath(KFSPropertyConstants.NEW_NONEMPLOYEE_EXPENSE_LINE);
@@ -408,15 +409,15 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         // Ensure all fields are filled in before attempting to add a new expense line
         if (StringUtils.isBlank(newExpenseLine.getDisbVchrPrePaidExpenseCode())) {
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DISB_VCHR_PRE_PAID_EXPENSE_CODE,
-                    KFSKeyConstants.ERROR_DV_PREPAID_EXPENSE_CODE);
+                    FPKeyConstants.ERROR_DV_PREPAID_EXPENSE_CODE);
         }
         if (StringUtils.isBlank(newExpenseLine.getDisbVchrPrePaidExpenseCompanyName())) {
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DISB_VCHR_PRE_PAID_EXPENSE_COMPANY_NAME,
-                    KFSKeyConstants.ERROR_DV_PREPAID_EXPENSE_COMPANY_NAME);
+                    FPKeyConstants.ERROR_DV_PREPAID_EXPENSE_COMPANY_NAME);
         }
         if (ObjectUtils.isNull(newExpenseLine.getDisbVchrExpenseAmount())) {
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DISB_VCHR_EXPENSE_AMOUNT,
-                    KFSKeyConstants.ERROR_DV_PREPAID_EXPENSE_AMOUNT);
+                    FPKeyConstants.ERROR_DV_PREPAID_EXPENSE_AMOUNT);
         }
         GlobalVariables.getMessageMap().removeFromErrorPath(KFSPropertyConstants.NEW_PREPAID_EXPENSE_LINE);
 
@@ -725,7 +726,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      */
     protected ActionForward renderVendorAddressSelection(ActionMapping mapping, HttpServletRequest request,
             DisbursementVoucherForm dvForm) {
-        Properties props = new Properties();
+        Map<String, String> props = new HashMap<>();
 
         props.put(KRADConstants.SUPPRESS_ACTIONS, Boolean.toString(true));
         props.put(KRADConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, VendorAddress.class.getName());
@@ -733,15 +734,12 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.LOOKED_UP_COLLECTION_NAME, KFSPropertyConstants.VENDOR_ADDRESSES);
 
         String conversionPattern = "{0}" + KFSConstants.FIELD_CONVERSION_PAIR_SEPERATOR + "{0}";
-        StringBuilder filedConversion = new StringBuilder();
-        filedConversion.append(
-                MessageFormat.format(conversionPattern, KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID)).append(
-                KFSConstants.FIELD_CONVERSIONS_SEPERATOR);
-        filedConversion.append(
-                MessageFormat.format(conversionPattern, KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID)).append(
-                KFSConstants.FIELD_CONVERSIONS_SEPERATOR);
-        filedConversion.append(
-                MessageFormat.format(conversionPattern, KFSPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID));
+        String filedConversion = MessageFormat.format(conversionPattern,
+                KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID) +
+                KFSConstants.FIELD_CONVERSIONS_SEPERATOR +
+                MessageFormat.format(conversionPattern, KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID) +
+                KFSConstants.FIELD_CONVERSIONS_SEPERATOR +
+                MessageFormat.format(conversionPattern, KFSPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID);
         props.put(KRADConstants.CONVERSION_FIELDS_PARAMETER, filedConversion);
 
         props.put(KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID, dvForm.getVendorHeaderGeneratedIdentifier());
@@ -758,8 +756,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.DOC_NUM, dvForm.getDocument().getDocumentNumber());
 
         // TODO: how should this forward be handled
-        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/kr/" + KRADConstants.LOOKUP_ACTION,
-                props);
+        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/kr/" + KRADConstants.LOOKUP_ACTION, props);
 
         dvForm.registerEditableProperty("methodToCall");
 
@@ -811,7 +808,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      */
     protected ActionForward renderCustomerAddressSelection(ActionMapping mapping, HttpServletRequest request,
             DisbursementVoucherForm dvForm) {
-        Properties props = new Properties();
+        Map<String, String> props = new HashMap<>();
 
         props.put(KRADConstants.SUPPRESS_ACTIONS, Boolean.toString(true));
         props.put(KRADConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, AccountsReceivableCustomerAddress.class.getName());
@@ -819,10 +816,9 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.LOOKED_UP_COLLECTION_NAME, KFSPropertyConstants.VENDOR_ADDRESSES);
 
         String conversionPattern = "{0}" + KFSConstants.FIELD_CONVERSION_PAIR_SEPERATOR + "{0}";
-        StringBuilder filedConversion = new StringBuilder();
-        filedConversion.append(MessageFormat.format(conversionPattern, KFSPropertyConstants.CUSTOMER_NUMBER)).append(
-                KFSConstants.FIELD_CONVERSIONS_SEPERATOR);
-        filedConversion.append(MessageFormat.format(conversionPattern, KFSPropertyConstants.CUSTOMER_ADDRESS_IDENTIFIER));
+        String filedConversion = MessageFormat.format(conversionPattern, KFSPropertyConstants.CUSTOMER_NUMBER) +
+                KFSConstants.FIELD_CONVERSIONS_SEPERATOR + MessageFormat.format(conversionPattern,
+                KFSPropertyConstants.CUSTOMER_ADDRESS_IDENTIFIER);
         props.put(KRADConstants.CONVERSION_FIELDS_PARAMETER, filedConversion);
 
         props.put(KFSPropertyConstants.CUSTOMER_NUMBER, dvForm.getPayeeIdNumber());

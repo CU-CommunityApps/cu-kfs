@@ -25,7 +25,7 @@ public class CuRelatedDocumentDerivedRoleTypeServiceImpl extends RelatedDocument
         if(qualification!=null && !qualification.isEmpty()){
             if (SOURCE_DOCUMENT_ROUTER_ROLE_NAME.equals(roleName)) {
                 try {
-                    PurchasingAccountsPayableDocument document = (PurchasingAccountsPayableDocument) getDocumentService().getByDocumentHeaderId(qualification.get(KFSPropertyConstants.DOCUMENT_NUMBER));
+                    PurchasingAccountsPayableDocument document = (PurchasingAccountsPayableDocument) documentService.getByDocumentHeaderId(qualification.get(KFSPropertyConstants.DOCUMENT_NUMBER));
                     if (document != null) {
                         PurchasingAccountsPayableDocument sourceDocument = document.getPurApSourceDocumentIfPossible();
                         if (sourceDocument != null && StringUtils.isNotBlank(sourceDocument.getDocumentHeader().getWorkflowDocument().getRoutedByPrincipalId()) ) {
@@ -45,16 +45,16 @@ public class CuRelatedDocumentDerivedRoleTypeServiceImpl extends RelatedDocument
                 if (!qualification.containsKey(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER)) {
                     Map<String,String> tempQualification = new HashMap<String,String>(1);
                     tempQualification.put(KFSPropertyConstants.DOCUMENT_NUMBER, qualification.get("documentNumber"));
-                    for ( String principalId : getRoleService().getRoleMemberPrincipalIds(KRADConstants.KUALI_RICE_WORKFLOW_NAMESPACE, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
+                    for ( String principalId : roleService.getRoleMemberPrincipalIds(KRADConstants.KUALI_RICE_WORKFLOW_NAMESPACE, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
                         Builder roleMember = RoleMembership.Builder.create(null,null,principalId,KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE,tempQualification);
                         members.add( roleMember.build());
 
                     }
                 } else { 
-                    for (String documentId : getPurapService().getRelatedDocumentIds(new Integer(qualification.get(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER)))) {
+                    for (String documentId : purapService.getRelatedDocumentIds(new Integer(qualification.get(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER)))) {
                         Map<String,String> tempQualification = new HashMap<String,String>(1);
                         tempQualification.put(KFSPropertyConstants.DOCUMENT_NUMBER, documentId);
-                        for ( String principalId : getRoleService().getRoleMemberPrincipalIds(KRADConstants.KUALI_RICE_WORKFLOW_NAMESPACE, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
+                        for ( String principalId : roleService.getRoleMemberPrincipalIds(KRADConstants.KUALI_RICE_WORKFLOW_NAMESPACE, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
                             Builder roleMember = RoleMembership.Builder.create(null,null,principalId,KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE,tempQualification);
                             members.add( roleMember.build());
 

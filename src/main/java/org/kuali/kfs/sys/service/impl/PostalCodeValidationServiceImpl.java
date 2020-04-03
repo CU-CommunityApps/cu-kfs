@@ -29,7 +29,8 @@ import org.kuali.kfs.sys.service.PostalCodeValidationService;
 
 public class PostalCodeValidationServiceImpl implements PostalCodeValidationService {
 
-    private LocationService locationService;
+    // locationService is protected for sake of known customization
+    protected LocationService locationService;
 
     public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode,
             String statePropertyConstant, String postalCodePropertyConstant) {
@@ -60,7 +61,6 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
                     }
                 }
             }
-
         }
 
         // verify state code exist

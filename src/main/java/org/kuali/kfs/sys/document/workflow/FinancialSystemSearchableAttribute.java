@@ -35,7 +35,7 @@ import org.kuali.kfs.kns.util.FieldUtils;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.datadictionary.DocumentEntry;
+import org.kuali.kfs.kns.datadictionary.DocumentEntry;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -127,7 +127,6 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         }
 
         DocumentEntry entry = ddService.getDataDictionary().getDocumentEntry(documentTypeName);
-
         if (entry != null) {
             Class<? extends Document> docClass = entry.getDocumentClass();
 
@@ -143,7 +142,6 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                 }
 
                 BusinessObject alBusinessObject;
-
                 try {
                     alBusinessObject = (BusinessObject) alClass.newInstance();
                 } catch (Exception cnfe) {
@@ -219,7 +217,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         if (LOG.isDebugEnabled()) {
             LOG.debug("extractDocumentAttributes( " + extensionDefinition + ", " + documentWithContent + " )");
         }
-        List<DocumentAttribute> searchAttrValues = super.extractDocumentAttributes(extensionDefinition, documentWithContent);
+        List<DocumentAttribute> searchAttrValues = super.extractDocumentAttributes(extensionDefinition,
+                documentWithContent);
 
         String docId = documentWithContent.getDocument().getDocumentId();
         DocumentService docService = SpringContext.getBean(DocumentService.class);

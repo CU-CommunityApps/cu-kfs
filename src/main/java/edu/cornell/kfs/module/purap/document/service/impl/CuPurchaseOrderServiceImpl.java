@@ -8,12 +8,10 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -27,7 +25,6 @@ import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
@@ -37,7 +34,9 @@ import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuPurchaseOrderServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
+    
+    private AttachmentService attachmentService;
 
     @Override
     public void performPurchaseOrderFirstTransmitViaPrinting(PurchaseOrderDocument po) {
@@ -54,7 +53,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         // KFSUPGRADE-336
         boolean performedAction = purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission", CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, GlobalVariables.getUserSession().getPerson(), null);
         if (!performedAction) {
-            Person systemUserPerson = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+            Person systemUserPerson = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
             purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission by user " + GlobalVariables.getUserSession().getPerson().getName(), CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, systemUserPerson, KFSConstants.SYSTEM_USER);
         }
         po.setOverrideWorkflowButtons(Boolean.TRUE);
@@ -69,8 +68,8 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
     private boolean shouldAdhocFyi(String reqSourceCode) {
         Collection<String> excludeList = new ArrayList<String>();
-        if (SpringContext.getBean(ParameterService.class).parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
-            excludeList = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
+        if (parameterService.parameterExists(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS)) {
+            excludeList = parameterService.getParameterValuesAsString(PurchaseOrderDocument.class, PurapParameterConstants.PO_NOTIFY_EXCLUSIONS);
         }
         return !excludeList.contains(reqSourceCode);
     }
@@ -148,16 +147,16 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         if (noteLength > 0) {
             for (Note note : notes) {
                 try {
-                    Note copyingNote = SpringContext.getBean(DocumentService.class).createNoteFromDocument(poDoc, note.getNoteText());
+                    Note copyingNote = documentService.createNoteFromDocument(poDoc, note.getNoteText());
                     purapService.saveDocumentNoValidation(poDoc);
                     copyingNote.setNotePostedTimestamp(note.getNotePostedTimestamp());
                     copyingNote.setAuthorUniversalIdentifier(note.getAuthorUniversalIdentifier());
                     copyingNote.setNoteTopicText(note.getNoteTopicText());
-                    Attachment originalAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                    Attachment originalAttachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
                     NoteExtendedAttribute noteExtendedAttribute = (NoteExtendedAttribute) note.getExtension();
                     if (originalAttachment != null || (ObjectUtils.isNotNull(noteExtendedAttribute) && noteExtendedAttribute.isCopyNoteIndicator())) {
                     	if (originalAttachment != null) {
-                    		Attachment newAttachment = SpringContext.getBean(AttachmentService.class).createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
+                    		Attachment newAttachment = attachmentService.createAttachment((PersistableBusinessObject)copyingNote, originalAttachment.getAttachmentFileName(), originalAttachment.getAttachmentMimeTypeCode(), originalAttachment.getAttachmentFileSize().intValue(), originalAttachment.getAttachmentContents(), originalAttachment.getAttachmentTypeCode());//new Attachment();
 
                     		if (ObjectUtils.isNotNull(originalAttachment) && ObjectUtils.isNotNull(newAttachment)) {
                     			copyingNote.addAttachment(newAttachment);
@@ -225,6 +224,10 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
     protected void resetOverrideCodeOnAccountingLine(PurApAccountingLine accountingLine) {
         accountingLine.setOverrideCode(AccountingLineOverride.CODE.NONE);
+    }
+
+    public void setAttachmentService(AttachmentService attachmentService) {
+        this.attachmentService = attachmentService;
     }
 
 }

@@ -78,5 +78,7 @@ public class CuFPParameterConstants {
     public static class DisbursementVoucherDocument {
         public static final String NUMBER_OF_DAYS_FOR_DEFAULT_DV_DUE_DATE = "NUMBER_OF_DAYS_FOR_DEFAULT_DV_DUE_DATE";
     }
+    
+    public static final String ERROR_TRANS_OBJECT_CODE_PARM_NM = "ERROR_TRANSACTION_OBJECT_CODE";
 
 }

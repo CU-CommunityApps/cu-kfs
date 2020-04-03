@@ -42,6 +42,7 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import org.kuali.kfs.fp.FPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSkippedTransactionEmailService;
@@ -131,7 +132,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
      * @see org.kuali.kfs.sys.batch.BatchInputFileType#getTitleKey()
      */
     public String getTitleKey() {
-        return KFSKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_PCDO;
+        return FPKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_PCDO;
     }
 
     

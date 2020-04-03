@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.kuali.kfs.fp.FPParameterConstants;
 import org.kuali.kfs.fp.businessobject.SalesTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kns.service.DataDictionaryService;
@@ -54,7 +55,6 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent;
 import org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent;
-import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.APPLICATION_PARAMETER;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
 import org.kuali.kfs.sys.exception.AccountingLineParserException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
@@ -70,10 +70,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -653,7 +654,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         String callerDocFormKey = GlobalVariables.getUserSession().addObjectWithGeneratedKey(form);
 
         // now add required parameters
-        Properties parameters = new Properties();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.START_METHOD);
         // need this next param b/c the lookup's return back will overwrite the original doc form key
         parameters.put(KFSConstants.BALANCE_INQUIRY_REPORT_MENU_CALLER_DOC_FORM_KEY, callerDocFormKey);
@@ -830,7 +831,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         ParameterEvaluatorService parameterEvaluatorService = SpringContext.getBean(ParameterEvaluatorService.class);
         ParameterEvaluator docTypeSalesTaxCheckEvaluator =
                 parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,
-                        APPLICATION_PARAMETER.DOCTYPE_SALES_TAX_CHECK, docType);
+                        FPParameterConstants.SALES_TAX_DOCUMENT_TYPES, docType);
         if (docTypeSalesTaxCheckEvaluator.evaluationSucceeds()) {
             required = true;
         }
@@ -844,7 +845,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
                 String compare = account + ":" + objCd;
                 ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator =
                         parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,
-                                APPLICATION_PARAMETER.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
+                                FPParameterConstants.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
                 if (!salesTaxApplicableAcctAndObjectEvaluator.evaluationSucceeds()) {
                     required = false;
                 }

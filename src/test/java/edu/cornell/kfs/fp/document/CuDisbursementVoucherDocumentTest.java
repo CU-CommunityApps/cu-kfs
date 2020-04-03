@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.businessobject.PaymentReasonCode;
@@ -138,7 +139,7 @@ public class CuDisbursementVoucherDocumentTest {
 
         cuDisbursementVoucherDocument.clearInvalidPayee();
         assertTrue("Should be valid and have one error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 1);
-        assertEquals("The error message isn't what we expected.", KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
+        assertEquals("The error message isn't what we expected.", FPKeyConstants.WARNING_DV_PAYEE_NON_EXISTENT_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
         assertEquals("DV Payee ID Number should be cleared", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
     }
 
@@ -148,7 +149,7 @@ public class CuDisbursementVoucherDocumentTest {
 
         cuDisbursementVoucherDocument.clearInvalidPayee();
         assertTrue("Should be valid and have one error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 1);
-        assertEquals("The error message isn't what we expected.", KFSKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
+        assertEquals("The error message isn't what we expected.", FPKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
         assertEquals("DV Payee ID Number should be cleared", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
     }
 
@@ -157,9 +158,9 @@ public class CuDisbursementVoucherDocumentTest {
         cuDisbursementVoucherDocument.setDvPayeeDetail(new CuDisbursementVoucherPayeeDetail());
         cuDisbursementVoucherDocument.getDvPayeeDetail().setDisbVchrPayeeIdNumber("12345");
         cuDisbursementVoucherDocument.clearDvPayeeIdType();
-        cuDisbursementVoucherDocument.clearPayee(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
+        cuDisbursementVoucherDocument.clearPayee(FPKeyConstants.WARNING_DV_PAYEE_NON_EXISTENT_CLEARED);
         assertTrue("Should be valid and have one error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 1);
-        assertEquals("The error message isn't what we expected.", KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
+        assertEquals("The error message isn't what we expected.", FPKeyConstants.WARNING_DV_PAYEE_NON_EXISTENT_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
         assertEquals("DV Payee ID Number should be cleared", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
     }
 

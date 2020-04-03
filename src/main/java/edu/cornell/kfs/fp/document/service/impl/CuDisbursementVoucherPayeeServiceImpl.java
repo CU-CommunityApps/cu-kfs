@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.FPParameterConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
@@ -64,10 +65,10 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         if (KFSConstants.PaymentPayeeTypes.EMPLOYEE.equals(payeeTypeCode) || 
         CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI.equals(payeeTypeCode) ||
         CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT.equals(payeeTypeCode)) {
-            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, DisbursementVoucherConstants.NON_VENDOR_EMPLOYEE_PAYEE_TYPE_LABEL_PARM_NM);
+            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, FPParameterConstants.NON_VENDOR_EMPLOYEE_PAYEE_TYPE_LABEL);
         }
         else if (KFSConstants.PaymentPayeeTypes.VENDOR.equals(payeeTypeCode)) {
-            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, DisbursementVoucherConstants.PO_AND_DV_PAYEE_TYPE_LABEL_PARM_NM);
+            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, FPParameterConstants.PO_AND_DV_PAYEE_TYPE_LABEL);
         }
         else if (KFSConstants.PaymentPayeeTypes.REVOLVING_FUND_VENDOR.equals(payeeTypeCode)) {
             payeeTypeDescription = this.getVendorTypeDescription(VendorConstants.VendorTypes.REVOLVING_FUND);

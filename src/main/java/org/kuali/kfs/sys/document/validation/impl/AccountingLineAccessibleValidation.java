@@ -141,7 +141,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
             if (!isExceptionNode) {
             final String principalName = currentUser.getPrincipalName();
             
-            final String[] chartErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
+            final String[] chartErrorParams = new String[] { dataDictionaryService.getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
             // KFSPTS-1273 : fixing an exisiting issue.  Limit to REQ and POA.  Broader solution need more work.
             if (event instanceof UpdateAccountingLineEvent) {
            //     if (CollectionUtils.isEmpty(GlobalVariables.getMessageMap().getErrorPath()) && event instanceof UpdateAccountingLineEvent) {
@@ -150,7 +150,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, convertEventToMessage(event), chartErrorParams);
             }
             
-            final String[] accountErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
+            final String[] accountErrorParams = new String[] { dataDictionaryService.getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
             // KFSPTS-1273 : fixing an exisiting issue.  Limit to REQ and POA.  Broader solution need more work.
             if (event instanceof UpdateAccountingLineEvent) {
                 GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(event.getErrorPathPrefix() + "." + KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
@@ -161,9 +161,9 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         } else 
             if (event instanceof AddAccountingLineEvent && isAccountNode(event.getDocument()) && !isAccountingLineFo(event.getDocument()) && !isDiscountTradeInAccount()) {
                 final String principalName = currentUser.getPrincipalName();
-                final String[] chartErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
+                final String[] chartErrorParams = new String[] { dataDictionaryService.getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE), accountingLineForValidation.getChartOfAccountsCode(),  principalName};
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, convertEventToMessage(event), chartErrorParams);
-                final String[] accountErrorParams = new String[] { getDataDictionaryService().getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
+                final String[] accountErrorParams = new String[] { dataDictionaryService.getAttributeLabel(accountingLineForValidation.getClass(), KFSPropertyConstants.ACCOUNT_NUMBER), accountingLineForValidation.getAccountNumber(), principalName };
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, convertEventToMessage(event), accountErrorParams);
                 valid=false;
             }
@@ -299,10 +299,6 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     public void setAccountingLineForValidation(AccountingLine accountingLineForValidation) {
         this.accountingLineForValidation = accountingLineForValidation;
-    }
-
-    public DataDictionaryService getDataDictionaryService() {
-        return dataDictionaryService;
     }
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
