@@ -43,8 +43,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     
     public boolean validate(AttributedDocumentEvent event) {
         boolean valid = super.validate(event);
-        PurchasingDocument purDoc = (PurchasingDocument)event.getDocument();
-        String recurringPaymentTypeCode = purDoc.getRecurringPaymentTypeCode();
+        String recurringPaymentTypeCode = ((PurchasingDocument) event.getDocument()).getRecurringPaymentTypeCode();
         //Capital asset validations are only done on line items (not additional charge items).
         if (!getItemForValidation().getItemType().isAdditionalChargeIndicator()) {
             valid &= capitalAssetManagementModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode,
@@ -74,28 +73,6 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return valid;
     }
     
-    
-    
-    /**
-     * Validates that the document contains at least one item.
-     *
-     * @param purDocument the purchasing document to be validated
-     * @return boolean false if the document does not contain at least one item.
-     */
-    public boolean validateContainsAtLeastOneItem(PurchasingDocument purDocument) {
-        for (PurApItem item : purDocument.getItems()) {
-            if (!((PurchasingItemBase) item).isEmpty() && item.getItemType().isLineItemIndicator()) {
-                return true;
-            }
-        }
-        String documentType = getDocumentTypeLabel(purDocument.getDocumentHeader().getWorkflowDocument()
-                .getDocumentTypeName());
-
-        GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
-                PurapKeyConstants.ERROR_ITEM_REQUIRED, documentType);
-
-        return false;
-    }
 
     /**
      * Validates whether the commodity code existed on the item, and if existed, whether the commodity code on the
@@ -107,16 +84,9 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
      */
     
 
-    public BusinessObjectService getBusinessObjectService() {
-        return businessObjectService;
-    }
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
-    }
-
-    public CapitalAssetManagementModuleService getCapitalAssetManagementModuleService() {
-        return capitalAssetManagementModuleService;
     }
 
     public void setCapitalAssetManagementModuleService(
@@ -124,40 +94,20 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         this.capitalAssetManagementModuleService = capitalAssetManagementModuleService;
     }
 
-    public PurchasingUnitOfMeasureValidation getUnitOfMeasureValidation() {
-        return unitOfMeasureValidation;
-    }
-
     public void setUnitOfMeasureValidation(PurchasingUnitOfMeasureValidation unitOfMeasureValidation) {
         this.unitOfMeasureValidation = unitOfMeasureValidation;
-    }
-
-    public PurchasingItemUnitPriceValidation getItemUnitPriceValidation() {
-        return itemUnitPriceValidation;
     }
 
     public void setItemUnitPriceValidation(PurchasingItemUnitPriceValidation itemUnitPriceValidation) {
         this.itemUnitPriceValidation = itemUnitPriceValidation;
     }
 
-    public PurchasingItemDescriptionValidation getItemDescriptionValidation() {
-        return itemDescriptionValidation;
-    }
-
     public void setItemDescriptionValidation(PurchasingItemDescriptionValidation itemDescriptionValidation) {
         this.itemDescriptionValidation = itemDescriptionValidation;
     }
 
-    public PurchasingItemQuantityValidation getItemQuantityValidation() {
-        return itemQuantityValidation;
-    }
-
     public void setItemQuantityValidation(PurchasingItemQuantityValidation itemQuantityValidation) {
         this.itemQuantityValidation = itemQuantityValidation;
-    }
-
-    public PurchasingBelowTheLineItemNoUnitCostValidation getBelowTheLineItemNoUnitCostValidation() {
-        return belowTheLineItemNoUnitCostValidation;
     }
 
     public void setBelowTheLineItemNoUnitCostValidation(

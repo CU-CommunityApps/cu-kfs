@@ -7,11 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentSourceAccountingLine;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentTargetAccountingLine;
 import org.kuali.kfs.fp.document.validation.impl.BudgetAdjustmentDocumentBalancedValidation;
-import org.kuali.kfs.fp.document.validation.impl.BudgetAdjustmentDocumentRuleConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -27,6 +27,8 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustmentDocumentBalancedValidation {
 
+    static final String INCOME_STREAM_CHART_ACCOUNT_DELIMITER = "|";
+    
     public boolean validate(AttributedDocumentEvent event) {
         boolean balanced = true;
 
@@ -38,7 +40,7 @@ public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustme
                 .subtract(getAccountingDocumentForValidation().getTargetBaseBudgetExpenseTotal());
         if (sourceBaseBudgetTotal.compareTo(targetBaseBudgetTotal) != 0) {
             GlobalVariables.getMessageMap().putError(KFSConstants.ACCOUNTING_LINE_ERRORS,
-                    KFSKeyConstants.ERROR_DOCUMENT_BA_BASE_AMOUNTS_BALANCED);
+                    FPKeyConstants.ERROR_DOCUMENT_BA_BASE_AMOUNTS_BALANCED);
             balanced = false;
         }
         // check document is balanced within the accounts
@@ -61,7 +63,7 @@ public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustme
         }
 
         if (totalCurrentAmount.isNonZero()) {
-            GlobalVariables.getMessageMap().putError(KFSConstants.ACCOUNTING_LINE_ERRORS, KFSKeyConstants.ERROR_DOCUMENT_BA_CURRENT_AMOUNTS_BALANCED);
+            GlobalVariables.getMessageMap().putError(KFSConstants.ACCOUNTING_LINE_ERRORS, FPKeyConstants.ERROR_DOCUMENT_BA_CURRENT_AMOUNTS_BALANCED);
             balanced = false;
         }
         // check document is balanced within the accounts
@@ -91,7 +93,7 @@ public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustme
         accountingLines.addAll(getAccountingDocumentForValidation().getTargetAccountingLines());
         for (BudgetAdjustmentAccountingLine budgetAccountingLine : accountingLines) {
 
-            String accountKey = budgetAccountingLine.getAccount().getChartOfAccountsCode() + BudgetAdjustmentDocumentRuleConstants.INCOME_STREAM_CHART_ACCOUNT_DELIMITER + budgetAccountingLine.getAccount().getAccountNumber();
+            String accountKey = budgetAccountingLine.getAccount().getChartOfAccountsCode() + INCOME_STREAM_CHART_ACCOUNT_DELIMITER + budgetAccountingLine.getAccount().getAccountNumber();
 
             // place record in balance map
             accountBalance.put(accountKey, getAccountAmount(budgetAccountingLine, accountBalance.get(accountKey), isBaseAmount));

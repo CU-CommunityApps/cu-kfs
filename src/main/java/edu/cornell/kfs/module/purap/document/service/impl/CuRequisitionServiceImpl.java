@@ -83,7 +83,7 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
             requisition.setVendorDetail(vendorDetail);
 
             if ((!PurapConstants.RequisitionSources.B2B.equals(requisitionSource)) && ObjectUtils.isNull(requisition.getVendorContractGeneratedIdentifier())) {
-               Person initiator = getPersonService().getPerson(requisition.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
+               Person initiator = personService.getPerson(requisition.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
                 VendorContract b2bContract = vendorService.getVendorB2BContract(vendorDetail, initiator.getCampusCode());
                 if (b2bContract != null) {
                     return "Standard requisition with no contract selected but a B2B contract exists for the selected vendor.";

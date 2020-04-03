@@ -27,13 +27,11 @@ import org.kuali.kfs.module.purap.document.validation.event.PurchasingAccountsPa
 import org.kuali.kfs.module.purap.service.impl.PurapAccountingServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.role.RoleService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -43,6 +41,8 @@ import edu.cornell.kfs.module.purap.service.CuPurapAccountingService;
 
 public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl implements CuPurapAccountingService {
 
+    private RoleService roleService;
+    
     public boolean isFiscalOfficersForAllAcctLines(PurchasingAccountsPayableDocument document) {
 
         boolean isFoForAcctLines = true;
@@ -86,15 +86,15 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
                     document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().toString());
             roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLine.getChartOfAccountsCode());
             roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER,accountingLine.getAccountNumber());
-            fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.KFS,
+            fiscalOfficers.addAll(roleService.getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.KFS,
                     KFSConstants.SysKimApiConstants.FISCAL_OFFICER_KIM_ROLE_NAME,roleQualifier));
             if (!fiscalOfficers.contains(personId)) {
-                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(
+                fiscalOfficers.addAll(roleService.getRoleMemberPrincipalIds(
                                         KFSConstants.CoreModuleNamespaces.KFS,KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
                                         roleQualifier));
             }
             if (!fiscalOfficers.contains(personId)) {
-                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.KFS,
+                fiscalOfficers.addAll(roleService.getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.KFS,
                                         KFSConstants.SysKimApiConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
             }
             if (isExistingReqAcctline) {
@@ -111,7 +111,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
     private PurApAccountingLineBase getAccountFromDb(PurApAccountingLineBase accountingLine, Class clazz) {
         Map<String, Object> primaryKeys = new HashMap<String, Object>();
         primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
-        return (PurApAccountingLineBase)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(clazz, primaryKeys);
+        return (PurApAccountingLineBase)businessObjectService.findByPrimaryKey(clazz, primaryKeys);
     }
     
     /**
@@ -123,7 +123,6 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         PurchasingAccountsPayableDocumentBase purApDocument = (PurchasingAccountsPayableDocumentBase) document;
         String accountDistributionMethod = purApDocument.getAccountDistributionMethod();
 
-        KualiRuleService kualiRuleService = SpringContext.getBean(KualiRuleService.class);
         WorkflowDocument workflowDocument = purApDocument.getDocumentHeader().getWorkflowDocument();
 
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
@@ -394,6 +393,9 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
                 account.setAmount(KualiDecimal.ZERO);
             }
         }
+    }
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
     }
 
 }

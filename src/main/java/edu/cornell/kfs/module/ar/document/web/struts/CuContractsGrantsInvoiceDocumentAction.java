@@ -42,7 +42,8 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentAction.class);
 
     @Override
-    public ActionForward prorateBill(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward prorateBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm = (ContractsGrantsInvoiceDocumentForm) form;
         KualiDecimal budgetTotalAmount = findAwardBudgetTotal(contractsGrantsInvoiceDocumentForm);
         
@@ -60,19 +61,22 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     @Override
-    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         ActionForward forward = validateBillingPeriod(mapping, form, request, response);
         return forward != null ? forward : super.approve(mapping, form, request, response);
     }
 
     @Override
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         ActionForward forward = validateBillingPeriod(mapping, form, request, response);
         return forward != null ? forward : super.save(mapping, form, request, response);
     }
 
     @Override
-    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         ActionForward forward = validateBillingPeriod(mapping, form, request, response);
         return forward != null ? forward : super.route(mapping, form, request, response);
     }
@@ -198,13 +202,16 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     @Override
-    protected ActionForward promptForSuspensionCategories(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, String caller) throws Exception {
+    protected ActionForward promptForSuspensionCategories(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response,
+            ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, String caller) throws Exception {
         ActionForward forward = null;
 
         if (CollectionUtils.size(contractsGrantsInvoiceDocument.getInvoiceSuspensionCategories()) > 0) {
             Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
             if (question == null || question.toString().equals(CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION)) {
-                String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(ArKeyConstants.WARNING_SUSPENSION_CATEGORIES_PRESENT);
+                String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+                        ArKeyConstants.WARNING_SUSPENSION_CATEGORIES_PRESENT);
                 return performQuestionWithoutInput(mapping, form, request, response, ArConstants.SUSPENSION_CATEGORIES_PRESENT_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
             }
 

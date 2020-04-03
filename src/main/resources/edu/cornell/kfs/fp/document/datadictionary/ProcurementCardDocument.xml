@@ -33,7 +33,9 @@
   <bean id="ProcurementCard-targetGroupTotals" class="org.springframework.beans.factory.config.ListFactoryBean">
     	<property name="sourceList">
     		<list>
-    			<bean class="org.kuali.kfs.fp.document.web.ProcurementCardGroupTotalDefinition" p:totalProperty="targetTotal" p:representedProperty="amount"/>
+    			<bean class="org.kuali.kfs.fp.document.web.ProcurementCardGroupTotalDefinition"
+                      parent="AccountingLineView-groupTotal" p:totalProperty="targetTotal"
+                      p:representedProperty="amount"/>
     		</list>
     	</property>
   </bean>

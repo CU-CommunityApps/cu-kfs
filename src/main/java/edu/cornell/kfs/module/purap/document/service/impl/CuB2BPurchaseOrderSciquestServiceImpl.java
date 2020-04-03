@@ -47,7 +47,7 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.service.CuB2BPurchaseOrderService;
 
 public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciquestServiceImpl implements CuB2BPurchaseOrderService{
-    private static final Logger LOG = LogManager.getLogger(CuB2BPurchaseOrderSciquestServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     private static final String NEWLINE = "\r\n";
     private static final String PREFIX = "--";
@@ -67,6 +67,11 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     // Text to pass to SciQuest in the case where a federally funded account is used on the PO
     private static final String FEDERAL_FUNDING_TEXT = "Federal funding has been designated for this purchase order.";
     // end KFSUPGRADE-583
+    
+    private AttachmentService attachmentService;
+    private BusinessObjectService businessObjectService;
+    private PurchaseOrderService purchaseOrderService;
+    private VendorService vendorService;
     
     public String sendPurchaseOrder(PurchaseOrderDocument purchaseOrder) {
         /*
@@ -214,10 +219,14 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         cxml.append("    <MessageId>KFS_cXML_PO</MessageId>\n");
 
         // Timestamp - it doesn't matter what's in the timezone, just that it's there (need "T" space between date/time)
-        Date d = SpringContext.getBean(DateTimeService.class).getCurrentDate();
-        SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
-        SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
-        cxml.append("    <Timestamp>").append(date.format(d)).append("T").append(time.format(d)).append("+05:30").append("</Timestamp>\n");
+        Date currentDate = dateTimeService.getCurrentDate();
+        SimpleDateFormat dateFormat = PurApDateFormatUtils.getSimpleDateFormat(
+                PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
+        SimpleDateFormat timeFormat = PurApDateFormatUtils.getSimpleDateFormat(
+                PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
+        cxml.append("    <Timestamp>").append(dateFormat.format(currentDate)).append("T")
+                .append(timeFormat.format(currentDate)).append("+05:30")
+                .append("</Timestamp>\n");
 
         cxml.append("    <Authentication>\n");
         // Cu is using useragent
@@ -339,7 +348,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             cxml.append("      </Supplier>\n");
 
             /** *** DISTRIBUTION SECTION *** */
-            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
+            VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
             cxml.append("      <OrderDistribution>\n");
 
             // first take fax from PO, if empty then get fax number for PO default vendor address
@@ -497,11 +506,11 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         String payTermCode = purchaseOrder.getVendorPaymentTermsCode();
         if(StringUtils.isBlank(payTermCode)) {
         	// Retrieve the vendor and pull the payment terms from the vendor record if the PO terms are null
-        	VendorDetail poVendor = SpringContext.getBean(VendorService.class).getByVendorNumber(purchaseOrder.getVendorNumber());
+        	VendorDetail poVendor = vendorService.getByVendorNumber(purchaseOrder.getVendorNumber());
         	payTermCode = poVendor.getVendorPaymentTermsCode();
         }
         
-        PaymentTermType payTerm = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(PaymentTermType.class, payTermCode);
+        PaymentTermType payTerm = businessObjectService.findBySinglePrimaryKey(PaymentTermType.class, payTermCode);
         
         cxml.append("      <PaymentInfo>\n");
         cxml.append("        <Terms>\n");
@@ -542,7 +551,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             cxml.append("      <ExternalInfo>\n");
             for (int i = 0; i < notesToSendToVendor.size(); i++) {
                 Note note = notesToSendToVendor.get(i);
-                Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                Attachment attachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
                 if (ObjectUtils.isNotNull(attachment)) {
                     allNotes = allNotes + "\n(" + (i + 1) + ") " + note.getNoteText() + "  ";
                 } else {
@@ -554,7 +563,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 
             for (int i = 0; i < notesToSendToVendor.size(); i++) {
                 Note note = notesToSendToVendor.get(i);
-                Attachment attachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+                Attachment attachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
                 if (ObjectUtils.isNotNull(attachment)) {
                     cxml.append("          <Attachment id=\"" + attachment.getAttachmentIdentifier() + "\" type=\"file\">\n");
                     cxml.append("            <AttachmentName><![CDATA[" + attachment.getAttachmentFileName() + "]]></AttachmentName>\n");
@@ -705,7 +714,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         	for (int i = 0; i < notesToSendToVendor.size(); i++) {
         		Note note = notesToSendToVendor.get(i);
         		try {
-        			Attachment poAttachment = SpringContext.getBean(AttachmentService.class).getAttachmentByNoteId(note.getNoteIdentifier());
+        			Attachment poAttachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
         			if (ObjectUtils.isNotNull(poAttachment)) {
         				//        cxml.append("\r\n"); // blank line.  This extra blank line cause first word doc has format issue
         				cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\r\n");
@@ -920,7 +929,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     	// FIXME : if discontinue this fix, then contractmanagermail will be empty, and this will cause verifypocxml to have error,
     	// hence cxml will not be sent to SQ.  this is mostly for non-b2b order.
     	if(cm.getContractManagerCode().equals(PurapConstants.APO_CONTRACT_MANAGER)) {
-    		return SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.APO_CONTRACT_MANAGER_EMAIL);
+    		return parameterService.getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.APO_CONTRACT_MANAGER_EMAIL);
     	} 
 
         return super.getContractManagerEmail(cm);
@@ -935,7 +944,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     	String emailAddressToUse = null;
     	
     	try
-    	{	emailAddressToUse = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.MANUAL_DISTRIBUTION_EMAIL);
+    	{	emailAddressToUse = parameterService.getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.MANUAL_DISTRIBUTION_EMAIL);
     		if ( (emailAddressToUse == null) || emailAddressToUse.length() == 0) {
     			//parameter value is not defined, return email address defined as a fail-safe constant when this condition occurs
     			emailAddressToUse = CUPurapConstants.MANUAL_DISRIBUTION_FAILSAFE_EMAIL_ADDRESS;
@@ -958,7 +967,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         List<Note> notesToSend = new ArrayList<Note>(); // this may not work for POA because PO note is linked to oldest PO
         List<Note> boNotes = purchaseOrder.getNotes(); 
         if (CollectionUtils.isEmpty(boNotes)) {
-        	boNotes = SpringContext.getBean(PurchaseOrderService.class).getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
+        	boNotes = purchaseOrderService.getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
         }
 
         for (Note note : boNotes) {
@@ -1013,6 +1022,26 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     		return purchaseOrder.getVendorCountry().getName();
     	}
 
+    }
+
+
+    public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
+        this.purchaseOrderService = purchaseOrderService;
+    }
+
+
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
+
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+
+    public void setAttachmentService(AttachmentService attachmentService) {
+        this.attachmentService = attachmentService;
     }
 
 }

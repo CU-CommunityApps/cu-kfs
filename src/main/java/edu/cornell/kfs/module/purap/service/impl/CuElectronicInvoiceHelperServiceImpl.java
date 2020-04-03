@@ -45,16 +45,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.service.impl.StringHelper;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -78,9 +72,6 @@ import org.kuali.kfs.module.purap.document.ElectronicInvoiceRejectDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
-import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
-import org.kuali.kfs.module.purap.document.service.PaymentRequestService;
-import org.kuali.kfs.module.purap.document.service.RequisitionService;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedCalculateAccountsPayableEvent;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedPaymentRequestForEInvoiceEvent;
 import org.kuali.kfs.module.purap.exception.CxmlParseException;
@@ -91,12 +82,9 @@ import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceOrderHolder;
 import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
-import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
@@ -125,7 +113,7 @@ import edu.cornell.kfs.module.purap.service.CuElectronicInvoiceHelperService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelperServiceImpl implements CuElectronicInvoiceHelperService {
-    private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceHelperServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     private StringBuffer emailTextErrorList;
     private HashMap<String, Integer> loadCounts = new HashMap<String, Integer>();
     private static final String EXTRACT_FAILURES = "Extract Failures";
@@ -137,6 +125,10 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
     //KFSPTS-1891
 	protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
+	
+	private WorkflowDocumentService workflowDocumentService;
+	private FinancialSystemDocumentService financialSystemDocumentService;
+	private CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService;
 
     public ElectronicInvoiceLoad loadElectronicInvoices() {
         LOG.debug("loadElectronicInvoices() started");
@@ -534,8 +526,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         
         //Collections.reverse(documentIdList);
         LOG.info("EIRTs to Route: "+documentIdList);
-
-        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
         
         for (String eirtDocumentId: documentIdList) {
             try {
@@ -574,8 +564,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         
         //Collections.reverse(documentIdList);
         LOG.info("PREQs to Route: "+documentIdList);
-
-        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
         
         for (String preqDocumentId: documentIdList) {
             try {
@@ -608,13 +596,13 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     	Set<String> documentIds = new HashSet<String>();
         
         DocumentSearchCriteria.Builder criteria = DocumentSearchCriteria.Builder.create();
-        criteria.setDocumentTypeName(SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(document));
+        criteria.setDocumentTypeName(dataDictionaryService.getDocumentTypeNameByClass(document));
         criteria.setDocumentStatuses(Collections.singletonList(DocumentStatus.fromCode(statusCode)));
 
         DocumentSearchCriteria crit = criteria.build();
 
-        int maxResults = SpringContext.getBean(FinancialSystemDocumentService.class).getMaxResultCap(crit);
-        int iterations = SpringContext.getBean(FinancialSystemDocumentService.class).getFetchMoreIterationLimit();
+        int maxResults = financialSystemDocumentService.getMaxResultCap(crit);
+        int iterations = financialSystemDocumentService.getFetchMoreIterationLimit();
 
         for (int i = 0; i < iterations; i++) {
             LOG.debug("Fetch Iteration: "+ i);
@@ -780,7 +768,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
         Bank defaultBank = null;
         if ( hasPaymentMethodCode ) {
-            defaultBank = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class).getBankForPaymentMethod( ((CuPaymentRequestDocument)preqDoc).getPaymentMethodCode() );
+            defaultBank = cUPaymentMethodGeneralLedgerPendingEntryService.getBankForPaymentMethod( ((CuPaymentRequestDocument)preqDoc).getPaymentMethodCode() );
         } else { // default to baseline behavior - extended documents not in use
             //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
             //set bank code to default bank code in the system parameter
@@ -792,7 +780,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setBank(defaultBank);
         }
 
-        RequisitionDocument reqDoc = SpringContext.getBean(RequisitionService.class).getRequisitionById(poDoc.getRequisitionIdentifier());
+        RequisitionDocument reqDoc = requisitionService.getRequisitionById(poDoc.getRequisitionIdentifier());
         String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {
             Person user = KimApiServiceLocator.getPersonService().getPerson(reqDocInitiator);
@@ -806,7 +794,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             return null;
         }
 
-        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = SpringContext.getBean(AccountsPayableService.class).expiredOrClosedAccountsList(poDoc);
+        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = accountsPayableService.expiredOrClosedAccountsList(poDoc);
         if (expiredOrClosedAccountList == null) {
             expiredOrClosedAccountList = new HashMap();
         }
@@ -1052,7 +1040,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                
 			                LOG.info("Saving Load Summary for DUNS '" + dunsNumber + "'");
-			                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
+			                businessObjectService.save(loadSummary);
 			                updateSummaryCounts(REJECT);
 			            } else {
 			                
@@ -1072,7 +1060,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                    
 				                LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
-				                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
+				                businessObjectService.save(loadSummary);
 				                updateSummaryCounts(REJECT);
 			                } else {
 			                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
@@ -1080,7 +1068,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 
 			                    LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
-				                SpringContext.getBean(BusinessObjectService.class).save(loadSummary);
+				                businessObjectService.save(loadSummary);
 				                updateSummaryCounts(ACCEPT);
 			                }
 			                
@@ -1165,7 +1153,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         try {
             eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
             String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
             eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription(rejectdocDesc);
             eInvoiceRejectDocument.setDocumentCreationInProgress(true);
@@ -1190,7 +1178,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         // get note text max length from DD
         int noteTextMaxLength = NOTE_TEXT_DEFAULT_MAX_LENGTH;
 
-        Integer noteTextLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(Note.class, KRADConstants.NOTE_TEXT_PROPERTY_NAME);
+        Integer noteTextLength = dataDictionaryService.getAttributeMaxLength(Note.class, KRADConstants.NOTE_TEXT_PROPERTY_NAME);
         if (noteTextLength != null) {
         	noteTextMaxLength = noteTextLength.intValue();
         }        
@@ -1243,7 +1231,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         try {
             eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
             eInvoiceRejectDocument.setVendorDunsNumber(fileDunsNumber);
             eInvoiceRejectDocument.setDocumentCreationInProgress(true);
 
@@ -1358,7 +1346,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             note.setAttachment(attachment);
             attachment.setNote(note);
         }
-        SpringContext.getBean(NoteService.class).save(note);
+        noteService.save(note);
     }
 
     
@@ -1794,6 +1782,19 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         String attributeName = StringUtils.lowerCase(attribute.getName());
         return StringUtils.startsWith(attributeName, XMLNS_ATTRIBUTE_PREFIX)
                 && !ALLOWED_XMLNS_ATTRIBUTES_PATTERN.matcher(attributeName).matches();
+    }
+
+    public void setWorkflowDocumentService(WorkflowDocumentService workflowDocumentService) {
+        this.workflowDocumentService = workflowDocumentService;
+    }
+
+    public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
+        this.financialSystemDocumentService = financialSystemDocumentService;
+    }
+
+    public void setcUPaymentMethodGeneralLedgerPendingEntryService(
+            CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService) {
+        this.cUPaymentMethodGeneralLedgerPendingEntryService = cUPaymentMethodGeneralLedgerPendingEntryService;
     }
 
 }

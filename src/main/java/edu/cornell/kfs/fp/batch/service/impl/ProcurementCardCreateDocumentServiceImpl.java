@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import static edu.cornell.kfs.fp.document.validation.impl.CuProcurementCardDocumentRuleConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM; 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +31,7 @@ import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtende
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataDetail;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 
 
 public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
@@ -280,7 +279,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
         
     }
     protected String getErrorObjectCode() {
-        return parameterService.getParameterValueAsString(ProcurementCardCreateDocumentsStep.class, ERROR_TRANS_OBJECT_CODE_PARM_NM);
+        return parameterService.getParameterValueAsString(ProcurementCardCreateDocumentsStep.class, CuFPParameterConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM);
     }
     
     @Override

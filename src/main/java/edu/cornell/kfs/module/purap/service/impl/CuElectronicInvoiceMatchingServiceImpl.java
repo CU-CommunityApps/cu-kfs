@@ -19,7 +19,6 @@ import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceItemHolder;
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceMatchingServiceImpl;
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceOrderHolder;
 import org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.PurchaseOrderCostSource;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -156,7 +155,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
              * If exists in param, create reject reason.
              * If not exists, continue with UOM and unit price match.
              */
-            String reqSourceRequiringCatalogMatch = SpringContext.getBean(ParameterService.class).getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.REQUISITION_SOURCES_REQUIRING_CATALOG_MATCHING);
+            String reqSourceRequiringCatalogMatch = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.REQUISITION_SOURCES_REQUIRING_CATALOG_MATCHING);
             String requisitionSourceCodeInPO = orderHolder.getPurchaseOrderDocument().getRequisitionSourceCode();
 
             if (StringUtils.isNotEmpty(reqSourceRequiringCatalogMatch)){

@@ -54,7 +54,7 @@ import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
 public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuB2BShoppingServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     private static final String TRUE = "true";
     private BusinessObjectService businessObjectService;
@@ -259,7 +259,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 
     public String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation) {
         StringBuffer cxml = new StringBuffer();
-        Date d = SpringContext.getBean(DateTimeService.class).getCurrentDate();
+        Date currentDate = dateTimeService.getCurrentDate();
         SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
         SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
 
@@ -269,8 +269,8 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 
         cxml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         cxml.append("<!DOCTYPE cXML SYSTEM \"cXML.dtd\">\n");
-        cxml.append("<cXML payloadID=\"irrelevant\" xml:lang=\"en-US\" timestamp=\"").append(date.format(d)).append("T")
-            .append(time.format(d)).append("-05:00").append("\">\n");
+        cxml.append("<cXML payloadID=\"irrelevant\" xml:lang=\"en-US\" timestamp=\"").append(date.format(currentDate)).append("T")
+            .append(time.format(currentDate)).append("-05:00").append("\">\n");
 
         // note that timezone is hard coded b/c this is the format
         // they wanted, but SimpleDateFormat returns -0500, so rather than

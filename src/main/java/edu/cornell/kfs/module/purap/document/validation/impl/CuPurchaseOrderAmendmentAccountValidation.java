@@ -8,9 +8,7 @@ import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
-import org.kuali.kfs.module.purap.document.service.PurchaseOrderService;
 import org.kuali.kfs.module.purap.document.validation.impl.PurchaseOrderAmendmentAccountValidation;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 
 public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmendmentAccountValidation {
@@ -27,7 +25,7 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
         PurchaseOrderDocument poaDocument = (PurchaseOrderDocument) event.getDocument();
         List<PurApItem> items = poaDocument.getItemsActiveOnly();
 
-        PurchaseOrderDocument po = SpringContext.getBean(PurchaseOrderService.class).getCurrentPurchaseOrder(poaDocument.getPurapDocumentIdentifier());
+        PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(poaDocument.getPurapDocumentIdentifier());
         List<PurApItem> poItems = po.getItems();
 
         for (PurApItem item : items) {

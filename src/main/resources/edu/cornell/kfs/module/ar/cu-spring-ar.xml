@@ -91,4 +91,16 @@
           p:accountingPeriodService-ref="accountingPeriodService"
           p:dateTimeService-ref="dateTimeService" />
           
+    <bean id="accountsReceivablesDocumentHeaderLookupable"
+          parent="accountsReceivablesDocumentHeaderLookupable-parentBean" scope="prototype"/>
+    <bean id="accountsReceivablesDocumentHeaderLookupable-parentBean"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
+          p:lookupableHelperService-ref="accountsReceivablesDocumentHeaderLookupHelperService"/>
+
+    <bean id="accountsReceivablesDocumentHeaderLookupHelperService" scope="prototype"
+          parent="accountsReceivablesDocumentHeaderLookupHelperService-parentBean"/>
+    <bean id="accountsReceivablesDocumentHeaderLookupHelperService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.AccountsReceivablesDocumentHeaderLookupableHelperServiceImpl"
+          scope="prototype" parent="cf.lookupableHelperService"/>
+          
 </beans>

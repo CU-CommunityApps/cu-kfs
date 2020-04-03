@@ -19,8 +19,8 @@
 package org.kuali.kfs.gl.web.struts;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -29,13 +29,13 @@ import org.kuali.kfs.gl.ObjectHelper;
 import org.kuali.kfs.gl.businessobject.AccountBalance;
 import org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl;
 import org.kuali.kfs.integration.ld.SegmentedBusinessObject;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.kns.lookup.LookupResultsService;
 import org.kuali.kfs.kns.lookup.Lookupable;
 import org.kuali.kfs.kns.web.struts.action.KualiMultipleValueLookupAction;
 import org.kuali.kfs.kns.web.struts.form.MultipleValueLookupForm;
 import org.kuali.kfs.kns.web.ui.Column;
 import org.kuali.kfs.kns.web.ui.ResultRow;
-import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -55,7 +55,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Balance inquiries are pretty much just lookups already, but are not used in the traditional sense. In most cases,
@@ -202,15 +201,14 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param request
      * @param response
      * @return none of the selected results and redirects back to the lookup caller.
-     * @throws Exception
      */
     public ActionForward prepareToReturnNone(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
         MultipleValueLookupForm multipleValueLookupForm = (MultipleValueLookupForm) form;
         prepareToReturnNone(multipleValueLookupForm);
 
         // build the parameters for the refresh url
-        Properties parameters = new Properties();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put(KFSConstants.DOC_FORM_KEY, multipleValueLookupForm.getFormKey());
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.RETURN_METHOD_TO_CALL);
         parameters.put(KFSConstants.REFRESH_CALLER, KFSConstants.MULTIPLE_VALUE);
@@ -231,10 +229,9 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     public ActionForward prepareToReturnSelectedResults(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
         MultipleValueLookupForm multipleValueLookupForm = (MultipleValueLookupForm) form;
         if (StringUtils.isBlank(multipleValueLookupForm.getLookupResultsSequenceNumber())) {
             // no search was executed
@@ -244,7 +241,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         prepareToReturnSelectedResultBOs(multipleValueLookupForm);
 
         // build the parameters for the refresh url
-        Properties parameters = new Properties();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put(KFSConstants.LOOKUP_RESULTS_BO_CLASS_NAME, multipleValueLookupForm.getBusinessObjectClassName());
         parameters.put(KFSConstants.LOOKUP_RESULTS_SEQUENCE_NUMBER,
                 multipleValueLookupForm.getLookupResultsSequenceNumber());

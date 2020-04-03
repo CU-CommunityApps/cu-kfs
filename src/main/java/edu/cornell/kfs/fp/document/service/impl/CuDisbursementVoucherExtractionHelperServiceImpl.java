@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.fp.FPParameterConstants;
 import org.kuali.kfs.fp.batch.DvToPdpExtractStep;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
@@ -76,11 +77,11 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pg.setTaxablePayment(
                     !/*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
                             DisbursementVoucherDocument.class,
-                            DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
+                            FPParameterConstants.RESEARCH_PAYMENT_REASONS, rc).evaluationSucceeds()
                         && !parameterService.getParameterValueAsString(DisbursementVoucherDocument.class,
-                            DisbursementVoucherConstants.PAYMENT_REASON_CODE_RENTAL_PAYMENT_PARM_NM).equals(rc)
+                            FPParameterConstants.PAYMENT_REASON_CODE_RENTAL_PAYMENT).equals(rc)
                         && !parameterService.getParameterValueAsString(DisbursementVoucherDocument.class,
-                            DisbursementVoucherConstants.PAYMENT_REASON_CODE_ROYALTIES_PARM_NM).equals(rc));
+                            FPParameterConstants.PAYMENT_REASON_CODE_ROYALTIES).equals(rc));
         }
         // KFSUPGRADE-973 : Cu mods
         // If the payee is an alumni or student, set these flags accordingly
@@ -90,7 +91,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             // All payments are taxable except research participant, rental & royalties
             pg.setTaxablePayment(
                     !parameterEvaluatorService.getParameterEvaluator(CuDisbursementVoucherDocument.class,
-                            DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
+                            FPParameterConstants.RESEARCH_PAYMENT_REASONS, rc).evaluationSucceeds()
                         && !CuDisbursementVoucherConstants.PaymentReasonCodes.RENTAL_PAYMENT.equals(rc)
                         && !CuDisbursementVoucherConstants.PaymentReasonCodes.ROYALTIES.equals(rc));
         }
@@ -111,26 +112,26 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
             ParameterEvaluator parameterEvaluator1 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
                     DvToPdpExtractStep.class,
-                    PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME,
-                    PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME,
+                    FPParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES,
+                    FPParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES,
                     vendorOwnerCode, payReasonCode);
             ParameterEvaluator parameterEvaluator2 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
                     DvToPdpExtractStep.class,
-                    PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME,
-                    PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME,
+                    FPParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY,
+                    FPParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY,
                     vendorOwnerCategoryCode, payReasonCode);
             
             if ( parameterEvaluator1.evaluationSucceeds() ) {
                 pg.setTaxablePayment(Boolean.TRUE);
             } else if (parameterService.getParameterValueAsString(DvToPdpExtractStep.class,
-                    PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP") &&
+                    FPParameterConstants.CORPORATION_OWNERSHIP_TYPE).equals("CP") &&
                 StringUtils.isEmpty(vendorOwnerCategoryCode) &&
                       /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(DvToPdpExtractStep.class,
-                    PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_FOR_BLANK_CORPORATION_OWNERSHIP_TYPE_CATEGORIES_PARAMETER_NAME,
+                              FPParameterConstants.TAXABLE_PAYMENT_REASON_CODES_FOR_BLANK_CORPORATION_OWNERSHIP_TYPE_CATEGORIES,
                     payReasonCode).evaluationSucceeds()) {
                 pg.setTaxablePayment(Boolean.TRUE);
             } else if (parameterService.getParameterValueAsString(DvToPdpExtractStep.class,
-                    PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP")
+                    FPParameterConstants.CORPORATION_OWNERSHIP_TYPE).equals("CP")
                 && !StringUtils.isEmpty(vendorOwnerCategoryCode)
                 && parameterEvaluator2.evaluationSucceeds()) {
                 pg.setTaxablePayment(Boolean.TRUE);
@@ -295,7 +296,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
         String paymentReasonCode = dvpd.getDisbVchrPaymentReasonCode();
         if (/*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
-                DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_PAY_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
+                FPParameterConstants.NON_EMPLOYEE_TRAVEL_PAY_REASONS, paymentReasonCode).evaluationSucceeds()) {
             DisbursementVoucherNonEmployeeTravel dvnet = document.getDvNonEmployeeTravel();
 
             pnt = new PaymentNoteText();
@@ -338,7 +339,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                 }
             }
         } else if (/*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
-                DisbursementVoucherConstants.PREPAID_TRAVEL_PAYMENT_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
+                FPParameterConstants.PREPAID_TRAVEL_PAYMENT_REASONS, paymentReasonCode).evaluationSucceeds()) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Payment is for the following individuals/charges:");
