@@ -152,9 +152,9 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
     protected NoteService noteService;
     protected BankService bankService;
     protected KualiRuleService kualiRuleService;
-    private BusinessObjectService businessObjectService;
-    private DataDictionaryService dataDictionaryService;
-    //CU customization change from priate to protected
+    //CU customization change from private to protected
+    protected BusinessObjectService businessObjectService;
+    protected DataDictionaryService dataDictionaryService;
     protected RequisitionService requisitionService;
     protected AccountsPayableService accountsPayableService;
 

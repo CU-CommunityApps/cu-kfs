@@ -32,24 +32,14 @@
 		<property name="accountingLineRuleHelperService" ref="purchaseOrderAmendmentAccountingLineRuleHelperService"/>
 	</bean>
 
-	<bean id="Requisition-newIndividualItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation" abstract="true">  
-	<property name="parameterService" ref="parameterService" />
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="businessObjectService" ref="businessObjectService" />
-		<property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService" />
-		<property name="unitOfMeasureValidation" ref="Purchasing-unitOfMeasureValidation" />
-		<property name="itemUnitPriceValidation" ref="Purchasing-itemUnitPriceValidation" />
-		<property name="itemDescriptionValidation" ref="Purchasing-itemDescriptionValidation" />
-		<property name="itemQuantityValidation" ref="Purchasing-itemQuantityValidation" />
-		<property name="commodityCodeValidation" ref="Requisition-commodityCodeValidation" />
-		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
-		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />
-	</bean>
+    <bean id="Requisition-newIndividualItemValidation"
+          class="edu.cornell.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation"
+          abstract="true" parent="Purchasing-newIndividualItemValidation"/>	
 	
   
 	<bean id="PurchasingAccountsPayable-accountPercentBetween0And100Validation" parent="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" scope="prototype"/>
 	<bean id="PurchasingAccountsPayable-accountPercentBetween0And100Validation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingAccountsPayableAccountPercentBetween0And100Validation" abstract="true"/>
-<bean id="PurchaseOrderAmendment-hasUnitCostAndValidPercentage" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentHasUnitCostAndValidPercentage" abstract="true" />
+    <bean id="PurchaseOrderAmendment-hasUnitCostAndValidPercentage" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentHasUnitCostAndValidPercentage" abstract="true" />
 
    <bean id="Purchasing-saveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
    <bean id="Purchasing-submitItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
@@ -104,6 +94,10 @@
           p:financialSystemWorkflowHelperService-ref="financialSystemWorkflowHelperService"
           p:dataDictionaryService-ref="dataDictionaryService" p:businessObjectService-ref="businessObjectService"
           p:dateTimeService-ref="dateTimeService"/>
+          
+    <bean id="PurchaseOrder-processVendorValidation"
+          class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderProcessVendorValidation"
+          abstract="true" parent="Purchasing-processVendorValidation"/>
 
 	<bean id="PaymentRequest-totalsValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestTotalsValidation" abstract="true"/>
 	<bean id="PaymentRequest-processItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestProcessItemValidation" abstract="true"

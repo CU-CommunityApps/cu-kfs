@@ -51,8 +51,8 @@ public class RestXmlUtil {
      * @param o
      * @return
      */
-    public static String toXML(BusinessObjectEntry doe, Object o) {
-        XStream xStream = getXStream(doe.getBusinessObjectClass().getName());
+    public static String toXML(BusinessObjectEntry boe, Object o) {
+        XStream xStream = getXStream(boe.getBusinessObjectClass().getName());
 
         return xStream.toXML(o);
     }
@@ -65,8 +65,8 @@ public class RestXmlUtil {
      * @param xml
      * @return
      */
-    public static Object fromXML(BusinessObjectEntry doe, String xml) {
-        XStream xStream = getXStream(doe.getBusinessObjectClass().getName());
+    public static Object fromXML(BusinessObjectEntry boe, String xml) {
+        XStream xStream = getXStream(boe.getBusinessObjectClass().getName());
 
         return xStream.fromXML(xml);
     }
@@ -75,32 +75,32 @@ public class RestXmlUtil {
      *
      * This method parses the xml back to list of business objects.
      *
-     * @param doe
+     * @param boe
      * @param xml
      * @return
      * @throws Exception
      */
-    public static List<?> parseXML(BusinessObjectEntry doe, String xml) {
+    public static List<?> parseXML(BusinessObjectEntry boe, String xml) {
         List<Object> list = new ArrayList<Object>();
 
-        Object fromXML = fromXML(doe, xml);
+        Object fromXML = fromXML(boe, xml);
         if (fromXML instanceof Collection) {
             Collection<Object> c = (Collection<Object>)fromXML;
 
             for (Object o : c) {
                 Map<?,?> m = (Map<?,?>) o;
-                list.add(populateBusinessObject(doe, m));
+                list.add(populateBusinessObject(boe, m));
             }
         } else if (fromXML instanceof Map) {
             Map<?,?> m = (Map<?,?>) fromXML;
-            list.add(populateBusinessObject(doe, m));
+            list.add(populateBusinessObject(boe, m));
         }
 
         return list;
     }
 
-    protected static Object populateBusinessObject(BusinessObjectEntry doe, Map<?,?> m) {
-        Object bo = ObjectUtils.createNewObjectFromClass(doe.getBusinessObjectClass());
+    protected static Object populateBusinessObject(BusinessObjectEntry boe, Map<?,?> m) {
+        Object bo = ObjectUtils.createNewObjectFromClass(boe.getBusinessObjectClass());
         PersistenceStructureService persistenceStructureService = SpringContext.getBean(PersistenceStructureService.class);
 
         for (Object key : m.keySet()) {

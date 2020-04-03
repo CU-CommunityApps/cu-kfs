@@ -17,7 +17,6 @@ import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.validation.impl.PurchasingProcessVendorValidation;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
@@ -36,7 +35,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;
-import edu.cornell.kfs.module.purap.document.service.impl.PurchaseOrderTransmissionMethodDataRulesServiceImpl;
 
 public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendorValidation {
 
@@ -119,10 +117,6 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
 
     }
 
-    public PurchaseOrderTransmissionMethodDataRulesService getPurchaseOrderTransmissionMethodDataRulesService() {
-        return purchaseOrderTransmissionMethodDataRulesService;
-    }
-
     public void setPurchaseOrderTransmissionMethodDataRulesService(PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService) {
         this.purchaseOrderTransmissionMethodDataRulesService = purchaseOrderTransmissionMethodDataRulesService;
     }
@@ -196,24 +190,23 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
 		
 		//for REQ, PO, and POA verify that data exists on form for method of PO transmission value selected
 		if ((document instanceof RequisitionDocument) || (document instanceof PurchaseOrderDocument) || (document instanceof PurchaseOrderAmendmentDocument)) {
-			PurchaseOrderTransmissionMethodDataRulesServiceImpl purchaseOrderTransmissionMethodDataRulesServiceImpl = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesServiceImpl.class);
 			PurchasingDocumentBase purapDocument = (PurchasingDocumentBase) document;
 			String poTransMethodCode = purapDocument.getPurchaseOrderTransmissionMethodCode();
 			if (poTransMethodCode != null && !StringUtils.isBlank(poTransMethodCode) ) {
 				if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.FAX)) {
-					dataExists = purchaseOrderTransmissionMethodDataRulesServiceImpl.isFaxNumberValid(purapDocument.getVendorFaxNumber());
+					dataExists = purchaseOrderTransmissionMethodDataRulesService.isFaxNumberValid(purapDocument.getVendorFaxNumber());
 					if (!dataExists) {
 						errorMap.putError(VendorPropertyConstants.VENDOR_FAX_NUMBER, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
 					}
 				}
 				else if (poTransMethodCode.equals(CUPurapConstants.POTransmissionMethods.EMAIL)) {					
-					dataExists = purchaseOrderTransmissionMethodDataRulesServiceImpl.isEmailAddressValid(purapDocument.getVendorEmailAddress());
+					dataExists = purchaseOrderTransmissionMethodDataRulesService.isEmailAddressValid(purapDocument.getVendorEmailAddress());
 					if (!dataExists) {
 						errorMap.putError("vendorEmailAddress", CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);						
 					}				
 				}
 				else if (poTransMethodCode.equals(CUPurapConstants.POTransmissionMethods.MANUAL)) {
-					dataExists = purchaseOrderTransmissionMethodDataRulesServiceImpl.isPostalAddressValid(purapDocument.getVendorLine1Address(), purapDocument.getVendorCityName(), purapDocument.getVendorStateCode(), purapDocument.getVendorPostalCode(), purapDocument.getVendorCountryCode());
+					dataExists = purchaseOrderTransmissionMethodDataRulesService.isPostalAddressValid(purapDocument.getVendorLine1Address(), purapDocument.getVendorCityName(), purapDocument.getVendorStateCode(), purapDocument.getVendorPostalCode(), purapDocument.getVendorCountryCode());
                     if (!dataExists) {
 						errorMap.putError(VendorPropertyConstants.VENDOR_ADDRESS_LINE_1, CUPurapKeyConstants.PURAP_MOPOT_REQUIRED_DATA_MISSING);
                     }
