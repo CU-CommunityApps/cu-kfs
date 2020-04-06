@@ -291,7 +291,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     public void setSortValue(int sortGroupId) {
         String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class)
-                .getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID_PARAMETER);
+                .getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID);
         String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 PaymentGroup.class, defaultSortOrderParameterName);
 

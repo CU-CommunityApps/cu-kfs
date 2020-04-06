@@ -239,6 +239,22 @@ public class PurchasingAccountsPayableModuleServiceImpl implements PurchasingAcc
     }
 
     @Override
+    public boolean isDocumentPaid(String documentNumber, String financialSystemDocumentTypeCode) {
+        if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(financialSystemDocumentTypeCode)) {
+            PaymentRequestDocument pr = paymentRequestService.getPaymentRequestByDocumentNumber(documentNumber);
+            if (pr != null) {
+                return pr.getPaymentPaidTimestamp() != null;
+            }
+        } else if (PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(financialSystemDocumentTypeCode)) {
+            VendorCreditMemoDocument cm = creditMemoService.getCreditMemoByDocumentNumber(documentNumber);
+            if (cm != null) {
+                return cm.getCreditMemoPaidTimestamp() != null;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String getB2BUrlString() {
         return PurapConstants.B2B_URL_STRING;
     }

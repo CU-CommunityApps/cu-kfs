@@ -255,7 +255,7 @@ public class FormatAction extends KualiAction {
      */
     public ActionForward clearUnfinishedFormat(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        String processIdParam = request.getParameter(PdpParameterConstants.FormatProcess.PROCESS_ID_PARAM);
+        String processIdParam = request.getParameter(PdpConstants.PROCESS_ID);
         Integer processId = Integer.parseInt(processIdParam);
 
         if (processId != null) {

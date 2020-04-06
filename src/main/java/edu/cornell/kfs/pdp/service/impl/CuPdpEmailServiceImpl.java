@@ -346,7 +346,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             }
 
             if (paymentDetail.getNotes().isEmpty()) {
-            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NONOTES));
+            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NO_NOTES));
             }
         	
             formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));        	
@@ -372,7 +372,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             }
 
             if (paymentDetail.getNotes().isEmpty()) {
-            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NONOTES));
+            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NO_NOTES));
             }
         	
             formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));        	
