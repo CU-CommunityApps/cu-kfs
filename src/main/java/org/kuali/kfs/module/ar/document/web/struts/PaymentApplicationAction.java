@@ -521,16 +521,17 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
             return null;
         }
 
-        // build a new NonAppliedHolding
-        NonAppliedHolding nonAppliedHolding = new NonAppliedHolding();
-        nonAppliedHolding.setCustomerNumber(payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase());
-        nonAppliedHolding.setReferenceFinancialDocumentNumber(payAppDoc.getDocumentNumber());
+        // if we already have a NonAppliedHolding on the doc, we want to get that to avoid an OLE, otherwise, we'll
+        // create a new one
+        NonAppliedHolding nonAppliedHolding = payAppDoc.getNonAppliedHolding();
+        if (ObjectUtils.isNull(nonAppliedHolding)) {
+            nonAppliedHolding = new NonAppliedHolding();
+            nonAppliedHolding.setCustomerNumber(payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase());
+            nonAppliedHolding.setReferenceFinancialDocumentNumber(payAppDoc.getDocumentNumber());
+            payAppDoc.setNonAppliedHolding(nonAppliedHolding);
+        }
         nonAppliedHolding.setFinancialDocumentLineAmount(amount);
 
-        // set it to the document
-        payAppDoc.setNonAppliedHolding(nonAppliedHolding);
-
-        // validate it
         boolean isValid = PaymentApplicationDocumentRuleUtil.validateNonAppliedHolding(payAppDoc,
                 payAppForm.getTotalFromControl());
 

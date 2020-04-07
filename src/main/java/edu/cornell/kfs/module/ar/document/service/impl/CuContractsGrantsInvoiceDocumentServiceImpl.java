@@ -45,8 +45,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     @Override
     protected Map<String, String> getTemplateParameterList(ContractsGrantsInvoiceDocument document) {
         Map<String, String> templateParameters = super.getTemplateParameterList(document);
-        // TODO: Should we overlay PdfFormattingMap instead of using a raw-type hack?
-        Map localParameterMap =  new HashMap<String, Object>();
+        Map<String, Object> localParameterMap =  new HashMap<String, Object>();
         
         if (document.getInvoiceGeneralDetail().isFinalBillIndicator()) {
             localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, CUKFSConstants.CAPITAL_X);

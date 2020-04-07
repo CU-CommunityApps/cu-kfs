@@ -29,7 +29,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
-import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.FormatProcessSummary;
@@ -108,7 +107,6 @@ public class FormatAction extends KualiAction {
             List<CustomerProfile> customers = formatSelection.getCustomerList();
 
             for (CustomerProfile element : customers) {
-
                 if (formatSelection.getCampus().equals(element.getDefaultPhysicalCampusProcessingCode())) {
                     element.setSelectedForFormat(Boolean.TRUE);
                 } else {
