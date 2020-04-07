@@ -64,8 +64,8 @@ public class InvoiceGeneralDetail extends PersistableBusinessObjectBase implemen
     private ContractsAndGrantsBillingAward award;
     
     /*
-     *  brought in InvoiceGeneralDetail as a new overlay class so wan backport FINP-6611
-     *  base code as of our current overlay kualiModuleService is not a transient service. FINP-6611 makes it transient
+     *  Brought in InvoiceGeneralDetail as a new overlay class to back port FINP-6611 from base code as the version of 
+     *  KFS we overlay does not have kualiModuleService as a transient service. FINP-6611 makes it transient.
      *  This overlay should be removed when the 3/26 version of KFS is brought in
      */
     private transient KualiModuleService kualiModuleService;
