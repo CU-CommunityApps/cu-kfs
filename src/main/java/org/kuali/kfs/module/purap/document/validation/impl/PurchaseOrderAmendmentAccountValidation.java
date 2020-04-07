@@ -1,4 +1,4 @@
-/**
+/*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
  * Copyright 2005-2019 Kuali, Inc.
