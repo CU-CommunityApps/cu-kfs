@@ -150,13 +150,22 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
      *                   This adjustment needs to be performed when invoices are created by BOTH Batch and Manual processing.
      */
     public boolean isFirstMilestoneOrPredeterminedInvoiceBySchedule(String billingFrequencyCode, String invoicingOptionCode, Date lastBilledDate) {
-        if (StringUtils.equalsIgnoreCase(ArIntegrationConstants.AwardInvoicingOptions.INV_SCHEDULE, invoicingOptionCode)
-                && (ArIntegrationConstants.BillingFrequencyValues.MILESTONE.equals(billingFrequencyCode) 
-                        || ArIntegrationConstants.BillingFrequencyValues.PREDETERMINED_BILLING.equals(billingFrequencyCode))
-                && ObjectUtils.isNull(lastBilledDate)) {
-            return true;
-        }
-        return false;
+        return (isInvoiceBySchedule(invoicingOptionCode) 
+                && isBillingFrequencyMilesoneOrPredetermined(billingFrequencyCode)
+                && isLastBilledDateNull(lastBilledDate));
+    }
+    
+    private boolean isInvoiceBySchedule(String invoicingOptionCode) {
+        return (StringUtils.equalsIgnoreCase(ArIntegrationConstants.AwardInvoicingOptions.INV_SCHEDULE, invoicingOptionCode));
+    }
+    
+    private boolean isBillingFrequencyMilesoneOrPredetermined(String billingFrequencyCode) {
+        return (StringUtils.equalsIgnoreCase(ArIntegrationConstants.BillingFrequencyValues.MILESTONE, billingFrequencyCode)
+                || StringUtils.equalsIgnoreCase(ArIntegrationConstants.BillingFrequencyValues.PREDETERMINED_BILLING, billingFrequencyCode)); 
+    }
+    
+    private boolean isLastBilledDateNull(Date lastBilledDate) {
+        return (ObjectUtils.isNull(lastBilledDate));
     }
 
     public DateTimeService getDateTimeService() {
