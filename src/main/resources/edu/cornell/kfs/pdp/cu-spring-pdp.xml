@@ -213,4 +213,23 @@
        </property>
     </bean>
 
+    <!--
+        CU Customization: The following beans are only needed for including
+        KualiCo's FINP-6390 fix, and can be removed once we upgrade
+        to the 2020-03-05 financials patch:
+        
+        * purchasingPaymentDetailLookupableHelperService
+        * purchasingPaymentDetailLookupableHelperService-parentBean
+        * purchasingPaymentDetailLookupable
+     -->
+
+    <bean id="purchasingPaymentDetailLookupableHelperService"
+          parent="purchasingPaymentDetailLookupableHelperService-parentBean" scope="prototype"/>
+    <bean id="purchasingPaymentDetailLookupableHelperService-parentBean"
+          class="org.kuali.kfs.pdp.businessobject.lookup.PurchasingPaymentDetailLookupableHelperService"
+          parent="paymentDetailLookupableHelperService-parentBean" abstract="true"/>
+
+    <bean id="purchasingPaymentDetailLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="purchasingPaymentDetailLookupableHelperService"/>
+
 </beans>

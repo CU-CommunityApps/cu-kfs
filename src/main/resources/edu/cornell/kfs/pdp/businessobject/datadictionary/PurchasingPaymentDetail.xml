@@ -1,0 +1,63 @@
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2020 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    CU Customization: Added the 2020-03-05 financials version of this file, to include the FINP-6390 fix.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PurchasingPaymentDetail" parent="PurchasingPaymentDetail-parentBean"/>
+    <bean id="PurchasingPaymentDetail-parentBean" abstract="true" parent="PaymentDetail-parentBean"
+          p:businessObjectClass="org.kuali.kfs.pdp.businessobject.PurchasingPaymentDetail"
+          p:inquiryDefinition-ref="PurchasingPaymentDetail-inquiryDefinition"
+          p:lookupDefinition-ref="PurchasingPaymentDetail-lookupDefinition"
+          p:objectLabel="Purchasing Payment Detail"/>
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="PurchasingPaymentDetail-inquiryDefinition"
+          parent="PurchasingPaymentDetail-inquiryDefinition-parentBean"/>
+    <bean id="PurchasingPaymentDetail-inquiryDefinition-parentBean" abstract="true"
+          parent="PaymentDetail-inquiryDefinition-parentBean"
+          p:inquirableClass="org.kuali.kfs.pdp.businessobject.inquiry.PurchasingPaymentDetailInquirable"/>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="PurchasingPaymentDetail-lookupDefinition" parent="PurchasingPaymentDetail-lookupDefinition-parentBean"/>
+    <bean id="PurchasingPaymentDetail-lookupDefinition-parentBean" abstract="true"
+          parent="PaymentDetail-lookupDefinition-parentBean" p:lookupableID="purchasingPaymentDetailLookupable">
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="paymentGroup.batch.customerProfile.unitCode"
+                      p:readOnly="true"/>
+                <bean parent="FieldDefinition" p:attributeName="paymentGroup.batch.customerProfile.subUnitCode"
+                      p:readOnly="true"/>
+                <bean parent="FieldDefinition" p:attributeName="custPaymentDocNbr" p:readOnly="true"/>
+                <bean parent="FieldDefinition" p:attributeName="financialDocumentTypeCode" p:readOnly="true"/>
+                <bean parent="FieldDefinition" p:attributeName="paymentGroupId" p:readOnly="true"/>
+                <bean parent="FieldDefinition" p:attributeName="paymentGroup.disbursementNbr" p:readOnly="true"/>
+            </list>
+        </property>
+    </bean>
+</beans>
