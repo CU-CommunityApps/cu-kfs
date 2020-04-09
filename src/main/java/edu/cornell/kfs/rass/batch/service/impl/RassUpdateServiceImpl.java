@@ -36,6 +36,8 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
+import org.kuali.rice.kew.api.document.DocumentProcessingQueue;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.springframework.transaction.annotation.Propagation;
@@ -459,6 +461,10 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
         try {
             maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(maintenanceDocument, annotation, null);
+            
+            DocumentProcessingQueue documentProcessingQueue = getDocumentProcessingQueue(maintenanceDocument.getDocumentNumber());
+            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), documentProcessingQueue)).run();
+            
         } catch (ValidationException ve) {
             LOG.error("createAndRouteMaintenanceDocumentInternal, Error routing document # " + maintenanceDocument.getDocumentNumber() + " " + ve.getMessage(),
                     ve);
@@ -468,6 +474,10 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         }
 
         return maintenanceDocument;
+    }
+    
+    protected DocumentProcessingQueue getDocumentProcessingQueue(String documentNumber) {
+        return KewApiServiceLocator.getDocumentProcessingQueue(documentNumber, "KFS");
     }
 
     public String buildValidationErrorMessage(ValidationException validationException) {
