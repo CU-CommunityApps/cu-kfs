@@ -13,7 +13,6 @@ public class CUPdpKeyConstants {
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE = "message.pdp.achAdvice.email.body.paymentHeaderLineOne";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PURCHASE_ORDER_NUMBER = "message.pdp.achAdvice.email.body.purchaseOrderNumber";	
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_INVOICE_NUMBER ="message.pdp.achAdvice.email.body.invoiceNumber";
-	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_INVOICE_DATE ="message.pdp.achAdvice.email.body.invoiceDate";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PO_NUMBER = "message.pdp.achAdvice.email.body.purchaseOrderNumber";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_SOURCE_DOCUMENT_NUMBER = "message.pdp.achAdvice.email.body.sourceDocumentNumber";	
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_NET_PAYMENT_AMOUNT = "message.pdp.achAdvice.email.body.netPaymentAmount";
