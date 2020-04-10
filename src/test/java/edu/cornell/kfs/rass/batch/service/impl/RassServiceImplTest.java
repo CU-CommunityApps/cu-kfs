@@ -40,7 +40,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.document.DocumentProcessingQueue;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Stubber;

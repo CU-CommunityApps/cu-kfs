@@ -36,7 +36,6 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.DocumentProcessingQueue;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
