@@ -33,6 +33,8 @@ import org.kuali.kfs.module.cg.businessobject.Primaryable;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.context.SpringConfigurationConsistencyCheckTest;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -462,7 +464,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         try {
             maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(maintenanceDocument, annotation, null);
             
-            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), documentProcessingQueue)).run();
+            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), getDocumentProcessingQueue())).run();
             
         } catch (ValidationException ve) {
             LOG.error("createAndRouteMaintenanceDocumentInternal, Error routing document # " + maintenanceDocument.getDocumentNumber() + " " + ve.getMessage(),
@@ -552,6 +554,13 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     public void setDocumentProcessingQueue(DocumentProcessingQueue documentProcessingQueue) {
         this.documentProcessingQueue = documentProcessingQueue;
+    }
+
+    public DocumentProcessingQueue getDocumentProcessingQueue() {
+        if (documentProcessingQueue == null) {
+            documentProcessingQueue = (DocumentProcessingQueue) SpringContext.getService("rice.kew.documentProcessingQueue");
+        }
+        return documentProcessingQueue;
     }
 
 }
