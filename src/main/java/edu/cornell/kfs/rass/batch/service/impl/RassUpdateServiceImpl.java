@@ -557,7 +557,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     public DocumentProcessingQueue getDocumentProcessingQueue() {
         if (documentProcessingQueue == null) {
-            documentProcessingQueue = (DocumentProcessingQueue) SpringContext.getService("rice.kew.documentProcessingQueue");
+            documentProcessingQueue = (DocumentProcessingQueue) SpringContext.getService(RassConstants.RICE_DOCUMENT_PROCESSING_QUEUE_SERVICE_NAME);
         }
         return documentProcessingQueue;
     }
