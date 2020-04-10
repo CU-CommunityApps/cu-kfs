@@ -69,6 +69,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     protected DataDictionaryService dataDictionaryService;
     protected ConfigurationService configurationService;
     protected RouteHeaderService routeHeaderService;
+    protected DocumentProcessingQueue documentProcessingQueue;
 
     protected long documentStatusCheckDelayMillis;
     protected int maxStatusCheckAttempts;
@@ -462,7 +463,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         try {
             maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(maintenanceDocument, annotation, null);
             
-            DocumentProcessingQueue documentProcessingQueue = getDocumentProcessingQueue(maintenanceDocument.getDocumentNumber());
             new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), documentProcessingQueue)).run();
             
         } catch (ValidationException ve) {
@@ -474,10 +474,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         }
 
         return maintenanceDocument;
-    }
-    
-    protected DocumentProcessingQueue getDocumentProcessingQueue(String documentNumber) {
-        return KewApiServiceLocator.getDocumentProcessingQueue(documentNumber, "KFS");
     }
 
     public String buildValidationErrorMessage(ValidationException validationException) {
@@ -553,6 +549,10 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     public void setMaxStatusCheckAttempts(int maxStatusCheckAttempts) {
         this.maxStatusCheckAttempts = maxStatusCheckAttempts;
+    }
+
+    public void setDocumentProcessingQueue(DocumentProcessingQueue documentProcessingQueue) {
+        this.documentProcessingQueue = documentProcessingQueue;
     }
 
 }

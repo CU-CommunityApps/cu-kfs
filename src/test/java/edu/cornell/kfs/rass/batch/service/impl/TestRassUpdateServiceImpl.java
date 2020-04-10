@@ -10,10 +10,8 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.rice.kew.api.document.DocumentProcessingQueue;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
-import org.mockito.Mockito;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,11 +72,6 @@ public class TestRassUpdateServiceImpl extends RassUpdateServiceImpl {
     protected UserSession buildSessionForSystemUser() {
         Person mockSystemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
         return MockPersonUtil.createMockUserSession(mockSystemUser);
-    }
-    
-    @Override
-    protected DocumentProcessingQueue getDocumentProcessingQueue(String documentNumber) {
-        return Mockito.mock(DocumentProcessingQueue.class);
     }
 
 }

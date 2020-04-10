@@ -30,6 +30,7 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.document.DocumentProcessingQueue;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
@@ -270,6 +271,11 @@ public class RassMockServiceFactory {
 
     public EmailService buildMockEmailService() throws Exception {
         return Mockito.mock(EmailService.class);
+    }
+    
+    public DocumentProcessingQueue buildMockDocumentProcessingQueue() {
+        DocumentProcessingQueue queue = Mockito.mock(DocumentProcessingQueue.class);
+        return queue;
     }
 
 }
