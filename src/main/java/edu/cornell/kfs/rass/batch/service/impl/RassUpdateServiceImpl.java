@@ -17,25 +17,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
-import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Primaryable;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.document.DocumentProcessingQueue;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.springframework.transaction.annotation.Propagation;
@@ -67,6 +69,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     protected DataDictionaryService dataDictionaryService;
     protected ConfigurationService configurationService;
     protected RouteHeaderService routeHeaderService;
+    protected DocumentProcessingQueue documentProcessingQueue;
 
     protected long documentStatusCheckDelayMillis;
     protected int maxStatusCheckAttempts;
@@ -459,6 +462,9 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
         try {
             maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(maintenanceDocument, annotation, null);
+            
+            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), documentProcessingQueue)).run();
+            
         } catch (ValidationException ve) {
             LOG.error("createAndRouteMaintenanceDocumentInternal, Error routing document # " + maintenanceDocument.getDocumentNumber() + " " + ve.getMessage(),
                     ve);
@@ -543,6 +549,10 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     public void setMaxStatusCheckAttempts(int maxStatusCheckAttempts) {
         this.maxStatusCheckAttempts = maxStatusCheckAttempts;
+    }
+
+    public void setDocumentProcessingQueue(DocumentProcessingQueue documentProcessingQueue) {
+        this.documentProcessingQueue = documentProcessingQueue;
     }
 
 }
