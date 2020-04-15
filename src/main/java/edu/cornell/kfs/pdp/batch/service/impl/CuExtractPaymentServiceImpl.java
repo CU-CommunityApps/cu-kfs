@@ -53,7 +53,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private static final Logger LOG = LogManager.getLogger(CuExtractPaymentServiceImpl.class);
     public static final String DV_EXTRACT_SUB_UNIT_CODE = "DV";
     public static final String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
-    public static final String DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER = "Doc:";
     
     protected AchBundlerHelperService achBundlerHelperService;
     protected CuPayeeAddressService cuPayeeAddressService;
@@ -419,10 +418,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         if (StringUtils.isNotBlank(invoiceNumber) && ObjectUtils.isNotNull(invoiceDate)) {
             formattedRemittanceIdText.append(invoiceNumber);
             formattedRemittanceIdText.append(KFSConstants.BLANK_SPACE);
-            formattedRemittanceIdText.append(DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
+            formattedRemittanceIdText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
             formattedRemittanceIdText.append(customerPaymentDocumentNumber);
         } else if (StringUtils.isNotBlank(customerPaymentDocumentNumber)) {
-            formattedRemittanceIdText.append(DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
+            formattedRemittanceIdText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
             formattedRemittanceIdText.append(customerPaymentDocumentNumber);
         }
         return formattedRemittanceIdText.toString();
@@ -442,7 +441,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         String customerProfileSubUnitCode = determineCustomerProfileSubUnitCode(pdpPaymemtGroup);
         
         if (StringUtils.equalsIgnoreCase(customerProfileSubUnitCode, CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) {
-            formattedEdocText.append(DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
+            formattedEdocText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
             formattedEdocText.append(customerPaymentDocumentNumber);
             formattedEdocText.append(KFSConstants.BLANK_SPACE);
         }
@@ -459,6 +458,25 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             }
         }
         return customerProfileSubUnitCode;
+    }
+    
+    public int calculateMaxNumCharsFromNewNoteLine(int numCharsAlreadyExisting, int numCharsInNewNoteLine) {
+        int totalNumChars = numCharsAlreadyExisting + numCharsInNewNoteLine;
+        if (totalNumChars < CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
+            return numCharsInNewNoteLine;
+        } else {
+            return CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE - numCharsAlreadyExisting;
+        }
+    }
+    
+    public String obtainTruncatedNoteLineSection(String noteLine, String currentCheckStubDataLine) {
+        int startPositionOfTextBeingTruncated = calculateMaxNumCharsFromNewNoteLine(currentCheckStubDataLine.length(), noteLine.length());
+        return (startPositionOfTextBeingTruncated == noteLine.length()) ? "" : noteLine.substring(startPositionOfTextBeingTruncated);
+    }
+    
+    public String obtainLeadingNoteLineSection(String noteLine, String currentCheckStubDataLine) {
+        int maxNumCharsFromNewNoteLine = calculateMaxNumCharsFromNewNoteLine(currentCheckStubDataLine.length(), noteLine.length());
+        return noteLine.substring(0, maxNumCharsFromNewNoteLine);
     }
     
     // This method is called by the method that generates the XML file for checks to be printed by BNY Mellon
@@ -499,9 +517,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         String RefDesc2 = "";   // Note lines that are not the alternate address
         String RefDesc3 = "";   // Note lines that are not the alternate address
         String RefDesc4 = "";   // Note lines that are not the alternate address
-        int maxNumCharsFromNewNoteLine = 0;
-        int startPostionToInitializeNextNoteLine = 0;
-        String portionOfCurrentNoteToAppendToThisNoteLine = "";
         String FirstNoteAfterAddressInfo = "";
         String SecondNoteAfterAddressInfo = "";
         String ThirdNoteAfterAddressInfo = "";
@@ -606,9 +621,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         altAddrCityStateZip = "";
                         PreparerInfoText = "";
                         SendToPrefLength = 0;
-                        maxNumCharsFromNewNoteLine = 0;
-                        startPostionToInitializeNextNoteLine = 0;
-                        portionOfCurrentNoteToAppendToThisNoteLine = "";
                         FirstNoteAfterAddressInfo = constructDocumentNumberForFirstNoteLineWhenDv(pg, pd.getCustPaymentDocNbr());
                         SecondNoteAfterAddressInfo="";
                         ThirdNoteAfterAddressInfo="";
@@ -686,42 +698,25 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                         // Trim the first two characters from the note and assign it as the first user typed note line
                                         NoteLine = NoteLine.substring(2);
-                                        maxNumCharsFromNewNoteLine = CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE - FirstNoteAfterAddressInfo.length();
-                                        startPostionToInitializeNextNoteLine = maxNumCharsFromNewNoteLine;
-                                        portionOfCurrentNoteToAppendToThisNoteLine = NoteLine.substring(0, maxNumCharsFromNewNoteLine);
-                                        FirstNoteAfterAddressInfo = FirstNoteAfterAddressInfo + portionOfCurrentNoteToAppendToThisNoteLine;
-                                        SecondNoteAfterAddressInfo = (NoteLine.length() <= CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) ? 
-                                                NoteLine.substring(startPostionToInitializeNextNoteLine, NoteLine.length()) : 
-                                                    NoteLine.substring(startPostionToInitializeNextNoteLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE);
+                                        SecondNoteAfterAddressInfo = obtainTruncatedNoteLineSection(NoteLine, FirstNoteAfterAddressInfo);
+                                        FirstNoteAfterAddressInfo = obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo);
                                         // See if we have a second user typed note line.  If so, then get it.
                                         if (ix.hasNext()) {
                                             note = (PaymentNoteText) ix.next();
                                             NoteLine = note.getCustomerNoteText();
-                                            maxNumCharsFromNewNoteLine = 0;
-                                            startPostionToInitializeNextNoteLine = 0;
-                                            portionOfCurrentNoteToAppendToThisNoteLine = "";
                                             if (NoteLine.length() >=2) {
                                                 if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                                     NoteLine = NoteLine.substring(2);
-                                                    maxNumCharsFromNewNoteLine = CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE - SecondNoteAfterAddressInfo.length();
-                                                    startPostionToInitializeNextNoteLine = maxNumCharsFromNewNoteLine;
-                                                    portionOfCurrentNoteToAppendToThisNoteLine = NoteLine.substring(0, maxNumCharsFromNewNoteLine);
-                                                    SecondNoteAfterAddressInfo = SecondNoteAfterAddressInfo + portionOfCurrentNoteToAppendToThisNoteLine;
-                                                    ThirdNoteAfterAddressInfo = (NoteLine.length() <= CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) ? 
-                                                            NoteLine.substring(startPostionToInitializeNextNoteLine, NoteLine.length()) : 
-                                                                NoteLine.substring(startPostionToInitializeNextNoteLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE);
+                                                    ThirdNoteAfterAddressInfo = obtainTruncatedNoteLineSection(NoteLine, SecondNoteAfterAddressInfo);
+                                                    SecondNoteAfterAddressInfo = obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo);
                                                     // Try to get the third user typed note line
                                                     if (ix.hasNext()) {
                                                         note = (PaymentNoteText) ix.next();
                                                         NoteLine = note.getCustomerNoteText();
-                                                        maxNumCharsFromNewNoteLine = 0;
-                                                        portionOfCurrentNoteToAppendToThisNoteLine = "";
                                                         if (NoteLine.length() >=2) {
                                                             if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                                                 NoteLine = NoteLine.substring(2);
-                                                                maxNumCharsFromNewNoteLine = CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE - ThirdNoteAfterAddressInfo.length();
-                                                                portionOfCurrentNoteToAppendToThisNoteLine = NoteLine.substring(0, maxNumCharsFromNewNoteLine);
-                                                                ThirdNoteAfterAddressInfo = ThirdNoteAfterAddressInfo + portionOfCurrentNoteToAppendToThisNoteLine;
+                                                                ThirdNoteAfterAddressInfo = obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo);
                                                                 break;  // Break here because the Mellon spec only allows us to use the first three user typed note lines
                                                             }
                                                             else break;  // Since we're on our potentially last note if this isn't a user types note, then we're done with the while loop
