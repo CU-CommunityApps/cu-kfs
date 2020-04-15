@@ -54,6 +54,8 @@
     <bean id="personService" factory-bean="testServiceFactory" factory-method="buildMockPersonService"/>
     
     <bean id="kimRoleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
+    
+    <bean id="kimRoleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">

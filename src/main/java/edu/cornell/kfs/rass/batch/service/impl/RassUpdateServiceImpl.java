@@ -463,7 +463,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         try {
             maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(maintenanceDocument, annotation, null);
             
-            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), getDocumentProcessingQueue())).run();
+            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), documentProcessingQueue)).run();
             
         } catch (ValidationException ve) {
             LOG.error("createAndRouteMaintenanceDocumentInternal, Error routing document # " + maintenanceDocument.getDocumentNumber() + " " + ve.getMessage(),
@@ -553,13 +553,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     public void setDocumentProcessingQueue(DocumentProcessingQueue documentProcessingQueue) {
         this.documentProcessingQueue = documentProcessingQueue;
-    }
-
-    public DocumentProcessingQueue getDocumentProcessingQueue() {
-        if (documentProcessingQueue == null) {
-            documentProcessingQueue = (DocumentProcessingQueue) SpringContext.getService(RassConstants.RICE_DOCUMENT_PROCESSING_QUEUE_SERVICE_NAME);
-        }
-        return documentProcessingQueue;
     }
 
 }
