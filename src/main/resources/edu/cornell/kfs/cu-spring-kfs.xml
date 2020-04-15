@@ -9,6 +9,8 @@
 	<!-- Import KRAD CriteriaLookupService, which is not auto-GRL-loaded by the base KFS beans. -->
 	<bean id="criteriaLookupService" p:serviceName="criteriaLookupService" parent="grlBeanImporter" />
 	
+	<bean id="rice.kew.documentProcessingQueue" p:serviceName="rice.kew.documentProcessingQueue" parent="grlBeanImporter" />
+	
 	<import resource="sys/cu-spring-sys.xml" />
 	<import resource="coa/cu-spring-coa.xml" />
 	<import resource="module/cg/cu-spring-cg.xml" />
