@@ -419,7 +419,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             formattedRemittanceIdText.append(invoiceNumber);
             formattedRemittanceIdText.append(KFSConstants.BLANK_SPACE);
             formattedRemittanceIdText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
-            formattedRemittanceIdText.append(customerPaymentDocumentNumber);
+            formattedRemittanceIdText.append(StringUtils.isNotBlank(customerPaymentDocumentNumber) ? customerPaymentDocumentNumber : KFSConstants.EMPTY_STRING);
         } else if (StringUtils.isNotBlank(customerPaymentDocumentNumber)) {
             formattedRemittanceIdText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
             formattedRemittanceIdText.append(customerPaymentDocumentNumber);
