@@ -3,6 +3,8 @@ package edu.cornell.kfs.concur.service.impl;
 import static org.junit.Assert.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +14,8 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.rass.RassConstants;
 
 public class ConcurEventNotificationServiceImplTest {
-    
-    ConcurEventNotificationServiceImpl concurEventNotificationServiceImpl;
+    private static final Logger LOG = LogManager.getLogger(ConcurEventNotificationServiceImplTest.class);
+    private ConcurEventNotificationServiceImpl concurEventNotificationServiceImpl;
 
     @Before
     public void setUp() throws Exception {
@@ -68,31 +70,37 @@ public class ConcurEventNotificationServiceImplTest {
     }
     
     @Test
-    public void findCOncurFailedEventQueueProcessingControllerReadOnly() {
+    public void findConcurFailedEventQueueProcessingControllerReadOnly() {
         ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
                 RassConstants.RASS_FAILED_EVENT_QUEUE_READONLY);
-        assertEquals(ConcurFailedEventQueueProcessingController.READONLY.name, controller.name);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READONLY, controller);
     }
     
     @Test
-    public void findCOncurFailedEventQueueProcessingControllerReadWrite() {
+    public void findConcurFailedEventQueueProcessingControllerReadWrite() {
         ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
                 KFSConstants.ParameterValues.YES);
-        assertEquals(ConcurFailedEventQueueProcessingController.READWRITE.name, controller.name);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READWRITE, controller);
     }
     
     @Test
-    public void findCOncurFailedEventQueueProcessingControllerOff() {
+    public void findConcurFailedEventQueueProcessingControllerOff() {
         ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
                 KFSConstants.ParameterValues.NO);
-        assertEquals(ConcurFailedEventQueueProcessingController.OFF.name, controller.name);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, controller);
     }
     
     @Test
-    public void findCOncurFailedEventQueueProcessingControllerDefault() {
+    public void findConcurFailedEventQueueProcessingControllerDefault() {
         ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
                 "FOO");
-        assertEquals(ConcurFailedEventQueueProcessingController.OFF.name, controller.name);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, controller);
+    }
+    
+    private void validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController expected, 
+            ConcurFailedEventQueueProcessingController actual) {
+        LOG.info("validateConcurFailedEventQueueProcessingController, actual: " + actual.toString());
+        assertEquals(expected, actual);
     }
 
 }

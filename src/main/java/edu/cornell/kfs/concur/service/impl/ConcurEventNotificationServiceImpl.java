@@ -66,14 +66,15 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     @Override
     public void retrieveAndPersistFailedEventQueueReports() {
         ConcurFailedEventQueueProcessingController controller = findCOncurFailedEventQueueProcessingController();
+        LOG.info("retrieveAndPersistFailedEventQueueReports, ConcurFailedEventQueueProcessingController name: " + controller.toString());
         if (controller.queryFailedEventQueue) {
             ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
             if (controller.logFailedEventQueue) {
                 String notificationListString = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcurAsString();
                 LOG.info("retrieveAndPersistFailedEventQueueReports, notificationListString: " + notificationListString);
             }
-            if (areThereNotificationsToProcess(notificationList)) {
-                if (controller.writeFailedEventQueue) {
+            if (controller.writeFailedEventQueue) {
+                if (areThereNotificationsToProcess(notificationList)) {
                     LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
                     for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
                         try {
@@ -84,12 +85,14 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
                             LOG.error("retrieveAndPersistFailedEventQueueReports, error trying to save items: " + e.getMessage(), e);
                         }
                     }
+                } else {
+                    LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
                 }
             } else {
-                LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
+                LOG.info("retrieveAndPersistFailedEventQueueReports, persisting failed event queue items is turned off.");
             }
         } else {
-            LOG.info("retrieveAndPersistFailedEventQueueReports, failed event queue processing is turned off");
+            LOG.info("retrieveAndPersistFailedEventQueueReports, failed event queue processing is turned off.");
         }
     }
     
