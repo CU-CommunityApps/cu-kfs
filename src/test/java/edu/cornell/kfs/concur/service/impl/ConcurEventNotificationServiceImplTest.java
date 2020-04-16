@@ -93,8 +93,8 @@ public class ConcurEventNotificationServiceImplTest {
                 findConcurFailedEventQueueProcessingControllerByString("foo"));
     }
     
-    private ConcurFailedEventQueueProcessingController findConcurFailedEventQueueProcessingControllerByString(String parm) {
-        return ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(parm);
+    private ConcurFailedEventQueueProcessingController findConcurFailedEventQueueProcessingControllerByString(String processFailedEventQueue) {
+        return ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(processFailedEventQueue);
     }
     
     private void validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController expected, 
