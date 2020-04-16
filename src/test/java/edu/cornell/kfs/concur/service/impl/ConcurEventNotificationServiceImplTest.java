@@ -6,8 +6,10 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.rass.RassConstants;
 
 public class ConcurEventNotificationServiceImplTest {
     
@@ -63,6 +65,34 @@ public class ConcurEventNotificationServiceImplTest {
     
     private String buildLongMessage() {
         return StringUtils.repeat("A", ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+    }
+    
+    @Test
+    public void findCOncurFailedEventQueueProcessingControllerReadOnly() {
+        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
+                RassConstants.RASS_FAILED_EVENT_QUEUE_READONLY);
+        assertEquals(ConcurFailedEventQueueProcessingController.READONLY.name, controller.name);
+    }
+    
+    @Test
+    public void findCOncurFailedEventQueueProcessingControllerReadWrite() {
+        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
+                KFSConstants.ParameterValues.YES);
+        assertEquals(ConcurFailedEventQueueProcessingController.READWRITE.name, controller.name);
+    }
+    
+    @Test
+    public void findCOncurFailedEventQueueProcessingControllerOff() {
+        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
+                KFSConstants.ParameterValues.NO);
+        assertEquals(ConcurFailedEventQueueProcessingController.OFF.name, controller.name);
+    }
+    
+    @Test
+    public void findCOncurFailedEventQueueProcessingControllerDefault() {
+        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
+                "FOO");
+        assertEquals(ConcurFailedEventQueueProcessingController.OFF.name, controller.name);
     }
 
 }

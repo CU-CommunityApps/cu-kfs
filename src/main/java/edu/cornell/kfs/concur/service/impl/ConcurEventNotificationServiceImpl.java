@@ -65,17 +65,24 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     
     @Override
     public void retrieveAndPersistFailedEventQueueReports() {
-        if (shouldProcessFailedEventQueue()) {
+        ConcurFailedEventQueueProcessingController controller = findCOncurFailedEventQueueProcessingController();
+        if (controller.queryFailedEventQueue) {
             ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
+            if (controller.logFailedEventQueue) {
+                String notificationListString = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcurAsString();
+                LOG.info("retrieveAndPersistFailedEventQueueReports, notificationListString: " + notificationListString);
+            }
             if (areThereNotificationsToProcess(notificationList)) {
-                LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
-                for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
-                    try {
-                        ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
-                        saveConcurEventNotification(concurEventNotification);
-                        getConcurReportsService().deleteFailedEventQueueItemInConcur(findNotificationId(concurEventNotification.getNotificationURI()));
-                    } catch (ParseException e) {
-                        LOG.error("validate():" + e.getMessage(), e);
+                if (controller.writeFailedEventQueue) {
+                    LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
+                    for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
+                        try {
+                            ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
+                            saveConcurEventNotification(concurEventNotification);
+                            getConcurReportsService().deleteFailedEventQueueItemInConcur(findNotificationId(concurEventNotification.getNotificationURI()));
+                        } catch (ParseException e) {
+                            LOG.error("retrieveAndPersistFailedEventQueueReports, error trying to save items: " + e.getMessage(), e);
+                        }
                     }
                 }
             } else {
@@ -86,9 +93,9 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
         }
     }
     
-    private boolean shouldProcessFailedEventQueue() {
+    protected ConcurFailedEventQueueProcessingController findCOncurFailedEventQueueProcessingController() {
         String processFailedEventQueue = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_PROCESS_FAILED_EVENT_QUEUE);
-        return StringUtils.equalsIgnoreCase(processFailedEventQueue, KFSConstants.ParameterValues.YES);
+        return ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(processFailedEventQueue);
     }
 
     private boolean areThereNotificationsToProcess(ConcurEventNotificationListDTO notificationList) {

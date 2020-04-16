@@ -290,6 +290,21 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
             CURestClientUtils.closeQuietly(response);
         }
     }
+    
+    @Override 
+    public String retrieveFailedEventQueueNotificationsFromConcurAsString() {
+        LOG.info("retrieveFailedEventQueueNotificationsFromConcurAsString, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
+        Response response = null;
+        
+        try {
+            Invocation request = buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET);
+            response = request.invoke();
+            String reportDetails = response.readEntity(String.class);
+            return reportDetails;
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+        }
+    }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {
         String errorMessagesString = addMessageHeader(message);

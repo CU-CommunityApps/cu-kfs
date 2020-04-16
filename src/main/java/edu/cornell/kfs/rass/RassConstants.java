@@ -41,5 +41,7 @@ public final class RassConstants {
     public static final String PROPOSAL_ORG_CHART = "IT";
     
     public static final String RASS_MODULE = "KFS-RASS";
+    
+    public static final String RASS_FAILED_EVENT_QUEUE_READONLY = "R";
 
 }
