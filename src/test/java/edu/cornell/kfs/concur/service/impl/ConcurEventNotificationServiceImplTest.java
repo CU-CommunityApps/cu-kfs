@@ -71,30 +71,30 @@ public class ConcurEventNotificationServiceImplTest {
     
     @Test
     public void findConcurFailedEventQueueProcessingControllerReadOnly() {
-        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
-                RassConstants.RASS_FAILED_EVENT_QUEUE_READONLY);
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READONLY, controller);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READONLY, 
+                findConcurFailedEventQueueProcessingControllerByString(RassConstants.RASS_FAILED_EVENT_QUEUE_READONLY));
     }
     
     @Test
     public void findConcurFailedEventQueueProcessingControllerReadWrite() {
-        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
-                KFSConstants.ParameterValues.YES);
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READWRITE, controller);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READWRITE, 
+                findConcurFailedEventQueueProcessingControllerByString(KFSConstants.ParameterValues.YES));
     }
     
     @Test
     public void findConcurFailedEventQueueProcessingControllerOff() {
-        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
-                KFSConstants.ParameterValues.NO);
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, controller);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, 
+                findConcurFailedEventQueueProcessingControllerByString(KFSConstants.ParameterValues.NO));
     }
     
     @Test
     public void findConcurFailedEventQueueProcessingControllerDefault() {
-        ConcurFailedEventQueueProcessingController controller = ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(
-                "FOO");
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, controller);
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, 
+                findConcurFailedEventQueueProcessingControllerByString("foo"));
+    }
+    
+    private ConcurFailedEventQueueProcessingController findConcurFailedEventQueueProcessingControllerByString(String parm) {
+        return ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(parm);
     }
     
     private void validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController expected, 
