@@ -357,6 +357,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	    } else if (this.getClosed() != null && !this.getClosed() && aea.getAccountClosedDate() != null) {
 	        aea.setAccountClosedDate(null);
 	    }
+	    aea.setSubFundGroupCode(account.getSubFundGroupCode());
 	}
 
 	public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
