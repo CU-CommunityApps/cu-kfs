@@ -13,5 +13,7 @@ public interface ConcurReportsService {
     boolean deleteFailedEventQueueItemInConcur(String noticationId);
     
     ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur();
+    
+    String retrieveFailedEventQueueNotificationsFromConcurAsString();
 
 }

@@ -3,15 +3,18 @@ package edu.cornell.kfs.concur.service.impl;
 import static org.junit.Assert.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 
 public class ConcurEventNotificationServiceImplTest {
-    
-    ConcurEventNotificationServiceImpl concurEventNotificationServiceImpl;
+    private static final Logger LOG = LogManager.getLogger(ConcurEventNotificationServiceImplTest.class);
+    private ConcurEventNotificationServiceImpl concurEventNotificationServiceImpl;
 
     @Before
     public void setUp() throws Exception {
@@ -63,6 +66,40 @@ public class ConcurEventNotificationServiceImplTest {
     
     private String buildLongMessage() {
         return StringUtils.repeat("A", ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+    }
+    
+    @Test
+    public void findConcurFailedEventQueueProcessingModeReadOnly() {
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.READONLY, 
+                findConcurFailedEventQueueProcessingModeByString(ConcurConstants.CONCUR_FAILED_EVENT_QUEUE_READONLY));
+    }
+    
+    @Test
+    public void findConcurFailedEventQueueProcessingModeReadWrite() {
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.READWRITE, 
+                findConcurFailedEventQueueProcessingModeByString(KFSConstants.ParameterValues.YES));
+    }
+    
+    @Test
+    public void findConcurFailedEventQueueProcessingModeOff() {
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.OFF, 
+                findConcurFailedEventQueueProcessingModeByString(KFSConstants.ParameterValues.NO));
+    }
+    
+    @Test
+    public void findConcurFailedEventQueueProcessingModeDefault() {
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.OFF, 
+                findConcurFailedEventQueueProcessingModeByString("foo"));
+    }
+    
+    private ConcurFailedEventQueueProcessingMode findConcurFailedEventQueueProcessingModeByString(String processFailedEventQueue) {
+        return ConcurFailedEventQueueProcessingMode.getConcurFailedEventQueueProcessingModeFromString(processFailedEventQueue);
+    }
+    
+    private void validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode expected, 
+            ConcurFailedEventQueueProcessingMode actual) {
+        LOG.info("validateConcurFailedEventQueueProcessingMode, actual: " + actual.toString());
+        assertEquals(expected, actual);
     }
 
 }
