@@ -1,4 +1,4 @@
-/**
+/*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
  * Copyright 2005-2019 Kuali, Inc.
@@ -113,7 +113,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
 
         String daysStr = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentDetail.class,
                 PdpParameterConstants.DISBURSEMENT_CANCELLATION_DAYS);
-        int days = Integer.valueOf(daysStr);
+        int days = Integer.parseInt(daysStr);
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, days * -1);

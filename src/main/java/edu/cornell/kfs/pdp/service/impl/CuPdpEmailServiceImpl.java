@@ -240,9 +240,8 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         String bankName = "";
         ACHBank achBank = achBankService.getByPrimaryId(paymentGroup.getAchBankRoutingNbr());
         if (achBank == null) {
-            LOG.error("Bank cound not be found for routing number " + paymentGroup.getAchBankRoutingNbr());
-        }
-        else {
+            LOG.error("Bank could not be found for routing number " + paymentGroup.getAchBankRoutingNbr());
+        } else {
             bankName = achBank.getBankName();
         }
 		String disbNbr = "";
@@ -251,13 +250,15 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         }
         
         //verbiage stating bank, net amount, and disb num that was sent
-        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_BANK_AMOUNT, bankName, moneyFormatter.formatForPresentation(netPaymentAmount), disbNbr)); 
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_BANK_AMOUNT, bankName,
+                moneyFormatter.formatForPresentation(netPaymentAmount), disbNbr)); 
         
         //verbiage stating when the deposit should be expected
         body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_DAYS));
         		
         //verbiage stating the number of payments the net deposit was for
-        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_NUM_PAYMENTS, integerFormatter.formatForPresentation(numPayments.toString())));
+        body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DEPOSIT_NUM_PAYMENTS,
+                integerFormatter.formatForPresentation(numPayments.toString())));
     	
     	return body;
     }
@@ -346,7 +347,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             }
 
             if (paymentDetail.getNotes().isEmpty()) {
-            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NONOTES));
+            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NO_NOTES));
             }
         	
             formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));        	
@@ -372,7 +373,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             }
 
             if (paymentDetail.getNotes().isEmpty()) {
-            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NONOTES));
+            	formattedPaymentDetail.append(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_NO_NOTES));
             }
         	
             formattedPaymentDetail.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));        	

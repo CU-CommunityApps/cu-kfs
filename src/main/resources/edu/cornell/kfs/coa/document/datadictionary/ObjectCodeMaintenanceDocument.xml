@@ -28,7 +28,8 @@
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
                    <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="financialObjectSubTypeCode" />
+                           <bean parent="MaintainableFieldDefinition" p:name="financialObjectSubTypeCode" p:required="true"
+                                 p:newLookup="true"/>
                    </property>
                    <property name="insertAfter">
                        <list>

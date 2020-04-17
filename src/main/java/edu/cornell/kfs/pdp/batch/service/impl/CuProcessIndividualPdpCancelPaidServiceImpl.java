@@ -27,7 +27,8 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
         String documentNumber = paymentDetail.getCustPaymentDocNbr();
 
         boolean primaryCancel = paymentDetail.getPrimaryCancelledPayment();
-        boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(paymentDetail.getPaymentGroup().getPaymentStatusCode());
+        boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(
+                paymentDetail.getPaymentGroup().getPaymentStatusCode());
 
         //KFSPTS-2719
         boolean crCancel = false;
@@ -57,7 +58,8 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
                     throw new RuntimeException("Could not retrieve document #" + documentNumber, we);
                 }
             } else {
-                LOG.warn("processPdpCancel() Unknown document type (" + documentTypeCode + ") for document ID: " + documentNumber);
+                LOG.warn("processPdpCancel() Unknown document type (" + documentTypeCode + ") for document ID: " +
+                        documentNumber);
                 return;
             }
         }

@@ -1,4 +1,4 @@
-/**
+/*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
  * Copyright 2005-2019 Kuali, Inc.
@@ -251,7 +251,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             List<ErrorMessage> errorMessages = status.getMessageMap().getMessages(KFSConstants.GLOBAL_ERRORS);
             for (ErrorMessage errorMessage : errorMessages) {
                 String resourceMessage = kualiConfigurationService.getPropertyValueAsString(errorMessage.getErrorKey());
-                resourceMessage = MessageFormat.format(resourceMessage, (Object[]) errorMessage.getMessageParameters());
+                resourceMessage = MessageFormat.format(resourceMessage, errorMessage.getMessageParameters());
                 message += resourceMessage + ", ";
             }
         }
@@ -362,72 +362,42 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         }
     }
 
-    /**
-     * @param outgoingDirectoryName The outgoingDirectoryName value to set.
-     */
     public void setOutgoingDirectoryName(String outgoingDirectoryName) {
         this.outgoingDirectoryName = outgoingDirectoryName;
     }
 
-    /**
-     * @param parameterService The parameterService to set.
-     */
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
 
-    /**
-     * @param customerProfileService The customerProfileService to set.
-     */
     public void setCustomerProfileService(CustomerProfileService customerProfileService) {
         this.customerProfileService = customerProfileService;
     }
 
-    /**
-     * @param batchInputFileService The batchInputFileService to set.
-     */
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
     }
 
-    /**
-     * @param paymentFileValidationService The paymentFileValidationService to set.
-     */
     public void setPaymentFileValidationService(PaymentFileValidationService paymentFileValidationService) {
         this.paymentFileValidationService = paymentFileValidationService;
     }
 
-    /**
-     * @param businessObjectService The businessObjectService to set.
-     */
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    /**
-     * @param dateTimeService The dateTimeService to set.
-     */
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    /**
-     * @param paymentFileEmailService The paymentFileEmailService to set.
-     */
     public void setPaymentFileEmailService(PdpEmailService paymentFileEmailService) {
         this.paymentFileEmailService = paymentFileEmailService;
     }
 
-    /**
-     * @param kualiConfigurationService The kualiConfigurationService to set.
-     */
     public void setConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.batch.InitiateDirectory#getRequiredDirectoryNames()
-     */
     @Override
     public List<String> getRequiredDirectoryNames() {
         return new ArrayList<String>() {

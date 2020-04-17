@@ -1,4 +1,4 @@
-/**
+/*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
  * Copyright 2005-2019 Kuali, Inc.
@@ -60,6 +60,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
      * @param fileData line of data from the FedACH Directory file
      */
     public ACHBank(String fileData) {
+        this();
         // 074914274O0710003011020207000000000UNITED COMMERCE BANK 211 SOUTH COLLEGE AVENUE BLOOMINGTON IN474040000812336226511
         // Routing Number 9 1-9 The institution's routing number
         // Office Code 1 10 Main office or branch O=main B=branch
