@@ -65,15 +65,15 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     
     @Override
     public void retrieveAndPersistFailedEventQueueReports() {
-        ConcurFailedEventQueueProcessingController controller = findCOncurFailedEventQueueProcessingController();
-        LOG.info("retrieveAndPersistFailedEventQueueReports, ConcurFailedEventQueueProcessingController name: " + controller.toString());
-        if (controller.queryFailedEventQueue) {
-            ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
-            if (controller.logFailedEventQueue) {
+        ConcurFailedEventQueueProcessingMode processingMode = findConcurFailedEventQueueProcessingMode();
+        LOG.info("retrieveAndPersistFailedEventQueueReports, processingMode: " + processingMode.toString());
+        if (processingMode.queryQueue) {
+            if (processingMode.logQueue) {
                 String notificationListString = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcurAsString();
                 LOG.info("retrieveAndPersistFailedEventQueueReports, notificationListString: " + notificationListString);
             }
-            if (controller.writeFailedEventQueue) {
+            if (processingMode.persistQueue) {
+                ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
                 if (areThereNotificationsToProcess(notificationList)) {
                     LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
                     for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
@@ -96,9 +96,9 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
         }
     }
     
-    protected ConcurFailedEventQueueProcessingController findCOncurFailedEventQueueProcessingController() {
+    protected ConcurFailedEventQueueProcessingMode findConcurFailedEventQueueProcessingMode() {
         String processFailedEventQueue = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_PROCESS_FAILED_EVENT_QUEUE);
-        return ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(processFailedEventQueue);
+        return ConcurFailedEventQueueProcessingMode.getConcurFailedEventQueueProcessingModeFromString(processFailedEventQueue);
     }
 
     private boolean areThereNotificationsToProcess(ConcurEventNotificationListDTO notificationList) {

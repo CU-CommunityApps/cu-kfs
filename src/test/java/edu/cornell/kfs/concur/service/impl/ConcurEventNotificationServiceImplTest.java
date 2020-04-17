@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.rass.RassConstants;
 
 public class ConcurEventNotificationServiceImplTest {
     private static final Logger LOG = LogManager.getLogger(ConcurEventNotificationServiceImplTest.class);
@@ -70,35 +69,35 @@ public class ConcurEventNotificationServiceImplTest {
     }
     
     @Test
-    public void findConcurFailedEventQueueProcessingControllerReadOnly() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READONLY, 
-                findConcurFailedEventQueueProcessingControllerByString(RassConstants.RASS_FAILED_EVENT_QUEUE_READONLY));
+    public void findConcurFailedEventQueueProcessingModeReadOnly() {
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.READONLY, 
+                findConcurFailedEventQueueProcessingControllerByString(ConcurConstants.CONCUR_FAILED_EVENT_QUEUE_READONLY));
     }
     
     @Test
-    public void findConcurFailedEventQueueProcessingControllerReadWrite() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.READWRITE, 
+    public void findConcurFailedEventQueueProcessingModeReadWrite() {
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.READWRITE, 
                 findConcurFailedEventQueueProcessingControllerByString(KFSConstants.ParameterValues.YES));
     }
     
     @Test
-    public void findConcurFailedEventQueueProcessingControllerOff() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, 
+    public void findConcurFailedEventQueueProcessingModeOff() {
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.OFF, 
                 findConcurFailedEventQueueProcessingControllerByString(KFSConstants.ParameterValues.NO));
     }
     
     @Test
-    public void findConcurFailedEventQueueProcessingControllerDefault() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController.OFF, 
+    public void findConcurFailedEventQueueProcessingModeDefault() {
+        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.OFF, 
                 findConcurFailedEventQueueProcessingControllerByString("foo"));
     }
     
-    private ConcurFailedEventQueueProcessingController findConcurFailedEventQueueProcessingControllerByString(String processFailedEventQueue) {
-        return ConcurFailedEventQueueProcessingController.getConcurFailedEventQueueProcessingControllerFromString(processFailedEventQueue);
+    private ConcurFailedEventQueueProcessingMode findConcurFailedEventQueueProcessingControllerByString(String processFailedEventQueue) {
+        return ConcurFailedEventQueueProcessingMode.getConcurFailedEventQueueProcessingModeFromString(processFailedEventQueue);
     }
     
-    private void validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingController expected, 
-            ConcurFailedEventQueueProcessingController actual) {
+    private void validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode expected, 
+            ConcurFailedEventQueueProcessingMode actual) {
         LOG.info("validateConcurFailedEventQueueProcessingController, actual: " + actual.toString());
         assertEquals(expected, actual);
     }
