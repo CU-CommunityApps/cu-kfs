@@ -53,7 +53,6 @@ public class CuFormatAction extends FormatAction {
             List<CustomerProfile> customers = formatSelection.getCustomerList();
 
             for (CustomerProfile element : customers) {
-
                 if (formatSelection.getCampus().equals(element.getDefaultPhysicalCampusProcessingCode())) {
                     element.setSelectedForFormat(Boolean.TRUE);
                 } else {

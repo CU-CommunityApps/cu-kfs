@@ -62,7 +62,8 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                     || (PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus))) {
                 LOG.debug("cancelDisbursement() Payment status is " + paymentStatus + "; continue with cancel.");
 
-                List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(paymentGroup.getDisbursementNbr().intValue());
+                List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(
+                        paymentGroup.getDisbursementNbr().intValue());
 
                 for (PaymentGroup element : allDisbursementPaymentGroups) {
                     // should be the same DV type and the same bank
@@ -103,7 +104,6 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                             this.businessObjectService.save(pd);
                         }
                     }
-
                 }
 
                 LOG.debug("cancelDisbursement() Disbursement cancelled; exit method.");
@@ -131,8 +131,10 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
         // All actions must be performed on entire group not individual detail record
 
         if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
-            LOG.warn("cancelReissueDisbursement() User " + user.getPrincipalId() + " does not have rights to cancel payments. This should not happen unless user is URL spoofing.");
-            throw new RuntimeException("cancelReissueDisbursement() User " + user.getPrincipalId() + " does not have rights to cancel payments. This should not happen unless user is URL spoofing.");
+            LOG.warn("cancelReissueDisbursement() User " + user.getPrincipalId() + " does not have rights to " +
+                    " cancel payments. This should not happen unless user is URL spoofing.");
+            throw new RuntimeException("cancelReissueDisbursement() User " + user.getPrincipalId() + " does not " +
+                    "have rights to cancel payments. This should not happen unless user is URL spoofing.");
         }
 
         PaymentGroup paymentGroup = this.paymentGroupService.get(paymentGroupId);
@@ -145,12 +147,16 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
         String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
         if (!(PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus))) {
-            if (((PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)) && (ObjectUtils.isNotNull(paymentGroup.getDisbursementDate()))) || (PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus))) {
+            if (((PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus))
+                    && (ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())))
+                    || (PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus))) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("cancelReissueDisbursement() Payment status is " + paymentStatus + "; continue with cancel.");
+                    LOG.debug("cancelReissueDisbursement() Payment status is " + paymentStatus +
+                            "; continue with cancel.");
                 }
 
-                List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(paymentGroup.getDisbursementNbr().intValue());
+                List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(
+                        paymentGroup.getDisbursementNbr().intValue());
 
                 for (PaymentGroup pg : allDisbursementPaymentGroups) {
                     PaymentGroupHistory pgh = new PaymentGroupHistory();

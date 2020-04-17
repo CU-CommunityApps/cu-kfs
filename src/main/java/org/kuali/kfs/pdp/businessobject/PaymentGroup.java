@@ -1,4 +1,4 @@
-/**
+/*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
  * Copyright 2005-2019 Kuali, Inc.
@@ -291,7 +291,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     public void setSortValue(int sortGroupId) {
         String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class)
-                .getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID_PARAMETER);
+                .getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID);
         String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 PaymentGroup.class, defaultSortOrderParameterName);
 
@@ -841,18 +841,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      * @return the street as a combined representation of the address lines
      */
     public String getStreet() {
-        StringBuffer street = new StringBuffer();
-
-        street.append(StringUtils
-                .isNotBlank(line1Address) ? (line1Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
-        street.append(StringUtils
-                .isNotBlank(line2Address) ? (line2Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
-        street.append(StringUtils
-                .isNotBlank(line3Address) ? (line3Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
-        street.append(StringUtils
-                .isNotBlank(line4Address) ? (line4Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
-
-        return street.toString();
+        return (StringUtils.isNotBlank(line1Address) ? line1Address + KFSConstants.NEWLINE : KFSConstants.EMPTY_STRING) +
+                (StringUtils.isNotBlank(line2Address) ? line2Address + KFSConstants.NEWLINE : KFSConstants.EMPTY_STRING) +
+                (StringUtils.isNotBlank(line3Address) ? line3Address + KFSConstants.NEWLINE : KFSConstants.EMPTY_STRING) +
+                (StringUtils.isNotBlank(line4Address) ? line4Address + KFSConstants.NEWLINE : KFSConstants.EMPTY_STRING);
     }
     
     public void validateVendorIdAndCustomerInstitutionIdentifier() {
