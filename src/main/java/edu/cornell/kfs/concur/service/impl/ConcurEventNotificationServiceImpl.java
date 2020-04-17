@@ -65,30 +65,40 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     
     @Override
     public void retrieveAndPersistFailedEventQueueReports() {
-        if (shouldProcessFailedEventQueue()) {
+        ConcurFailedEventQueueProcessingMode processingMode = findConcurFailedEventQueueProcessingMode();
+        LOG.info("retrieveAndPersistFailedEventQueueReports, processingMode: " + processingMode.toString());
+        if (processingMode.queryQueue) {
             ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
-            if (areThereNotificationsToProcess(notificationList)) {
-                LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
-                for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
-                    try {
-                        ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
-                        saveConcurEventNotification(concurEventNotification);
-                        getConcurReportsService().deleteFailedEventQueueItemInConcur(findNotificationId(concurEventNotification.getNotificationURI()));
-                    } catch (ParseException e) {
-                        LOG.error("validate():" + e.getMessage(), e);
+            if (processingMode.logQueue) {
+                String notificationListString = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcurAsString();
+                LOG.info("retrieveAndPersistFailedEventQueueReports, notificationListString: " + notificationListString);
+            }
+            if (processingMode.persistQueue) {
+                if (areThereNotificationsToProcess(notificationList)) {
+                    LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
+                    for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
+                        try {
+                            ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
+                            saveConcurEventNotification(concurEventNotification);
+                            getConcurReportsService().deleteFailedEventQueueItemInConcur(findNotificationId(concurEventNotification.getNotificationURI()));
+                        } catch (ParseException e) {
+                            LOG.error("retrieveAndPersistFailedEventQueueReports, error trying to save items: " + e.getMessage(), e);
+                        }
                     }
+                } else {
+                    LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
                 }
             } else {
-                LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
+                LOG.info("retrieveAndPersistFailedEventQueueReports, persisting failed event queue items is turned off.");
             }
         } else {
-            LOG.info("retrieveAndPersistFailedEventQueueReports, failed event queue processing is turned off");
+            LOG.info("retrieveAndPersistFailedEventQueueReports, failed event queue processing is turned off.");
         }
     }
     
-    private boolean shouldProcessFailedEventQueue() {
+    protected ConcurFailedEventQueueProcessingMode findConcurFailedEventQueueProcessingMode() {
         String processFailedEventQueue = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_PROCESS_FAILED_EVENT_QUEUE);
-        return StringUtils.equalsIgnoreCase(processFailedEventQueue, KFSConstants.ParameterValues.YES);
+        return ConcurFailedEventQueueProcessingMode.getConcurFailedEventQueueProcessingModeFromString(processFailedEventQueue);
     }
 
     private boolean areThereNotificationsToProcess(ConcurEventNotificationListDTO notificationList) {
