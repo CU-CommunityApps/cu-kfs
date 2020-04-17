@@ -70,35 +70,35 @@ public class ConcurEventNotificationServiceImplTest {
     
     @Test
     public void findConcurFailedEventQueueProcessingModeReadOnly() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.READONLY, 
-                findConcurFailedEventQueueProcessingControllerByString(ConcurConstants.CONCUR_FAILED_EVENT_QUEUE_READONLY));
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.READONLY, 
+                findConcurFailedEventQueueProcessingModeByString(ConcurConstants.CONCUR_FAILED_EVENT_QUEUE_READONLY));
     }
     
     @Test
     public void findConcurFailedEventQueueProcessingModeReadWrite() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.READWRITE, 
-                findConcurFailedEventQueueProcessingControllerByString(KFSConstants.ParameterValues.YES));
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.READWRITE, 
+                findConcurFailedEventQueueProcessingModeByString(KFSConstants.ParameterValues.YES));
     }
     
     @Test
     public void findConcurFailedEventQueueProcessingModeOff() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.OFF, 
-                findConcurFailedEventQueueProcessingControllerByString(KFSConstants.ParameterValues.NO));
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.OFF, 
+                findConcurFailedEventQueueProcessingModeByString(KFSConstants.ParameterValues.NO));
     }
     
     @Test
     public void findConcurFailedEventQueueProcessingModeDefault() {
-        validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode.OFF, 
-                findConcurFailedEventQueueProcessingControllerByString("foo"));
+        validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode.OFF, 
+                findConcurFailedEventQueueProcessingModeByString("foo"));
     }
     
-    private ConcurFailedEventQueueProcessingMode findConcurFailedEventQueueProcessingControllerByString(String processFailedEventQueue) {
+    private ConcurFailedEventQueueProcessingMode findConcurFailedEventQueueProcessingModeByString(String processFailedEventQueue) {
         return ConcurFailedEventQueueProcessingMode.getConcurFailedEventQueueProcessingModeFromString(processFailedEventQueue);
     }
     
-    private void validateConcurFailedEventQueueProcessingController(ConcurFailedEventQueueProcessingMode expected, 
+    private void validateConcurFailedEventQueueProcessingMode(ConcurFailedEventQueueProcessingMode expected, 
             ConcurFailedEventQueueProcessingMode actual) {
-        LOG.info("validateConcurFailedEventQueueProcessingController, actual: " + actual.toString());
+        LOG.info("validateConcurFailedEventQueueProcessingMode, actual: " + actual.toString());
         assertEquals(expected, actual);
     }
 

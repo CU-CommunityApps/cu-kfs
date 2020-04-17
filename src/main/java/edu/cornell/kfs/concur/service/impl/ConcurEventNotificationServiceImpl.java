@@ -68,12 +68,12 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
         ConcurFailedEventQueueProcessingMode processingMode = findConcurFailedEventQueueProcessingMode();
         LOG.info("retrieveAndPersistFailedEventQueueReports, processingMode: " + processingMode.toString());
         if (processingMode.queryQueue) {
+            ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
             if (processingMode.logQueue) {
                 String notificationListString = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcurAsString();
                 LOG.info("retrieveAndPersistFailedEventQueueReports, notificationListString: " + notificationListString);
             }
             if (processingMode.persistQueue) {
-                ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
                 if (areThereNotificationsToProcess(notificationList)) {
                     LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
                     for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
