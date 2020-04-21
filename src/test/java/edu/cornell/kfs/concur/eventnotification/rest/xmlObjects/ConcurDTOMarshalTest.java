@@ -8,14 +8,12 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.cornell.kfs.concur.rest.xmlObjects.TravelRequestDetailsDTO;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
-@Ignore
 public class ConcurDTOMarshalTest {
     private static final String EXAMPLE_EVENT_NOTIFCATION_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/xmlObjects/fixture/event-notification-payload-example.xml";
     private static final String EXAMPLE_TRAVEL_REQUEST_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/xmlObjects/fixture/travel-request-detail-dto.xml";
