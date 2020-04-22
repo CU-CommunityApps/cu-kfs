@@ -22,7 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.kfs.module.ld.LaborConstants;
+import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.businessobject.LateAdjustment;
@@ -109,10 +109,10 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
 
         String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
-                LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_CHART_PARM_NM);
+                LaborParameterConstants.BENEFIT_CLEARING_CHART);
         String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
-                LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_ACCOUNT_PARM_NM);
+                LaborParameterConstants.BENEFIT_CLEARING_CHART);
 
         List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
                 LaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber,

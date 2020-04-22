@@ -17,15 +17,15 @@ package edu.cornell.kfs.fp.document.validation.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.document.validation.impl.KfsMaintenanceDocumentRuleBase;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;
 
-public class PaymentMethodRule extends KfsMaintenanceDocumentRuleBase {
+public class PaymentMethodRule extends MaintenanceDocumentRuleBase {
 
     protected static final String ERROR_NO_BANK_WHEN_INTERDEPT = "error.document.paymentmethod.no.bank.when.interdept";
     protected static final String ERROR_NOT_PDP_AND_INTERDEPT = "error.document.paymentmethod.not.pdp.and.interdept";
