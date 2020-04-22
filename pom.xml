@@ -51,7 +51,13 @@
         <java.version>1.8</java.version>
         <maven.compiler.version>3.3</maven.compiler.version>
         <project.java.version>1.8</project.java.version>
+        <unpack.includes>org/kuali/rice/**/*.class,org/kuali/rice/**/*.properties,META-INF/**</unpack.includes>
+        <unpack.meta.excludes>META-INF/maven/**,META-INF/MANIFEST.MF,META-INF/*weaving.xml</unpack.meta.excludes>
+        <unpack.cynergy.excludes>**/*Cynergy*.class,**/*Dummy*.class</unpack.cynergy.excludes>
+        <unpack.excludes>org/kuali/rice/db/**,${unpack.meta.excludes},${unpack.cynergy.excludes}</unpack.excludes>
+        <unpack.overlays.directory>${project.build.directory}/unpacked-overlays</unpack.overlays.directory>
         <plugin.surefire.version>2.22.2</plugin.surefire.version>
+        <plugin.dependency.version>3.1.2</plugin.dependency.version>
         <plugin.war.version>3.2.2</plugin.war.version>
         <log4j.version>2.11.0</log4j.version>
         <javax.activation.version>1.1.1</javax.activation.version>
@@ -109,9 +115,39 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${plugin.dependency.version}</version>
+                <executions>
+                    <execution>
+                        <id>unpack-overlays-from-jars</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.kuali.kfs,edu.cornell.cynergy</includeGroupIds>
+                            <includeArtifactIds>kfs-kns,kfs-core,cynergy-customizations</includeArtifactIds>
+                            <includeTypes>jar</includeTypes>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includes>${unpack.includes}</includes>
+                            <excludes>${unpack.excludes}</excludes>
+                            <outputDirectory>${unpack.overlays.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${plugin.war.version}</version>
                 <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>${unpack.overlays.directory}</directory>
+                            <targetPath>WEB-INF/classes</targetPath>
+                            <filtering>false</filtering>
+                        </resource>
+                    </webResources>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
