@@ -72,12 +72,12 @@
 		<property name="parameterService" ref="parameterService" />	
 	</bean>
 	
-	<bean id="Purchasing-addItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
-		<property name="businessObjectService" ref="businessObjectService" />		
-		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
-	</bean>
+	<bean id="Purchasing-addItemValidation"
+		class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true"
+		p:dataDictionaryService-ref="dataDictionaryService"
+		p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+		p:dictionaryValidationService-ref="dictionaryValidationService"
+		p:businessObjectService-ref="businessObjectService"/>
 	
 	<bean id="Purchasing-importItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true">
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
