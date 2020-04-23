@@ -46,12 +46,10 @@
 
     <bean id="Purchasing-approveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
     
-    <bean id="Purchasing-commodityCodeValidation" parent="Purchasing-commodityCodeValidation-parentBean" scope="prototype" />
-	<bean id="Purchasing-commodityCodeValidation-parentBean" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="businessObjectService" ref="businessObjectService" />	
-		<property name="parameterService" ref="parameterService" />	
-	</bean>
+    <bean id="Purchasing-commodityCodeValidation"
+    	class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation"
+    	abstract="true" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+    	p:businessObjectService-ref="businessObjectService"/>
 
     <bean id="Purchasing-newIndividualItemValidation"
           class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation"
@@ -74,7 +72,6 @@
 	
 	<bean id="Purchasing-addItemValidation"
 		class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true"
-		p:dataDictionaryService-ref="dataDictionaryService"
 		p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
 		p:dictionaryValidationService-ref="dictionaryValidationService"
 		p:businessObjectService-ref="businessObjectService"/>

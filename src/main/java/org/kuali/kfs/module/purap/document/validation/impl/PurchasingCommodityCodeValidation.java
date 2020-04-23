@@ -20,7 +20,7 @@ package org.kuali.kfs.module.purap.document.validation.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -43,10 +43,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PurchasingCommodityCodeValidation extends GenericValidation {
-    // TODO : CU has quite a few change in this class.  Just try to make this work for POAmendmentValidation.
-	// need further check on this class.
+    // TODO : CU has quite a few change in this class.  Just try to make this work for POAmendmentValidation. need further check on this class.
+    private BusinessObjectDictionaryService businessObjectDictionaryService;
     private BusinessObjectService businessObjectService;
-    private DataDictionaryService dataDictionaryService;
     private PurApItem itemForValidation;
     private ParameterService parameterService;
     public static final String UNORDERED_ITEM_DEFAULT_COMMODITY_CODE = "UNORDERED_ITEM_DEFAULT_COMMODITY_CODE";
@@ -101,9 +100,9 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         if (commodityCodeRequired && StringUtils.isBlank(purItem.getPurchasingCommodityCode()) ) {
             //This is the case where the commodity code is required but the item does not currently contain the commodity code.
             valid = false;
-            String attributeLabel = dataDictionaryService.
-                                    getDataDictionary().getBusinessObjectEntry(CommodityCode.class.getName()).
-                                    getAttributeDefinition(PurapPropertyConstants.ITEM_COMMODITY_CODE).getLabel();
+            String attributeLabel = businessObjectDictionaryService
+                    .getBusinessObjectEntry(CommodityCode.class.getName()).getAttributeDefinition(
+                            PurapPropertyConstants.ITEM_COMMODITY_CODE).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE,
                     KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + identifierString);
         }
@@ -184,6 +183,11 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
     protected boolean commodityCodeIsRequired() {
         return false;
     }
+    
+    public void setBusinessObjectDictionaryService(
+            BusinessObjectDictionaryService businessObjectDictionaryService) {
+        this.businessObjectDictionaryService = businessObjectDictionaryService;
+    }
 
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
@@ -191,14 +195,6 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
-    }
-
-    public DataDictionaryService getDataDictionaryService() {
-        return dataDictionaryService;
-    }
-
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
     }
 
 	public ParameterService getParameterService() {
