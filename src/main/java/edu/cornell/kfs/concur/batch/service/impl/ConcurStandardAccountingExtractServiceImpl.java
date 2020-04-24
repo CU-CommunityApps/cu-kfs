@@ -41,7 +41,7 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
-	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
 
     protected String paymentImportDirectory;
     protected String collectorImportDirectory;
@@ -166,7 +166,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     
     private boolean shouldLineTotalsBeAddedToReimbursementReportTotals(ConcurStandardAccountingExtractDetailLine line ) {
         boolean isPersonalExpenseChargedToCorporateCard = getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line);
-        boolean isCashAdvanceLine = getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line);
+        boolean isCashAdvanceLine = getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceToBeAppliedToReimbursement(line);
         return !isPersonalExpenseChargedToCorporateCard && !isCashAdvanceLine;
     }
     
@@ -244,7 +244,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private ConcurAccountInfo buildConcurAccountInfoFromExtractDetailLine(ConcurStandardAccountingExtractDetailLine line,
             ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         ConcurAccountInfo concurAccountInfo;
-        if (getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
+        if (getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceToBeAppliedToReimbursement(line)) {
             concurAccountInfo = getConcurStandardAccountingExtractCashAdvanceService().findAccountingInfoForCashAdvanceLine(line, 
                     concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines());
         } else if (getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
@@ -259,7 +259,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     protected String buildPdpOutputFileName(String originalFileName) {
-        return ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + 
+        return ConcurConstants.PDP_CONCUR_TRIP_REIMBURSEMENT_OUTPUT_FILE_NAME_PREFIX + 
                 StringUtils.replace(originalFileName, CuGeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     
