@@ -10,6 +10,7 @@
             p:businessObjectClass="edu.cornell.kfs.module.cg.businessobject.AgencyOrigin"
             p:name="AgencyOrigin"
             p:businessObjectAdminService-ref="defaultBoAdminService"
+            p:actionsProvider-ref="businessObjectActionsProvider"
             p:objectLabel="Agency Origin"
             p:titleAttribute="Agency Origin"
             p:inquiryDefinition-ref="AgencyOrigin-inquiryDefinition"
