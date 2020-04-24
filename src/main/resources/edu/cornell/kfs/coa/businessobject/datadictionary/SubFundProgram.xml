@@ -6,6 +6,7 @@
     <property name="objectLabel" value="Sub-Fund Program"/>
     <property name="name" value="SubFundProgram"/>
     <property name="businessObjectAdminService" ref="defaultBoAdminService"/>
+    <property name="actionsProvider" ref="businessObjectActionsProvider"/>
 
     <property name="titleAttribute" value="programCode"/>
 
