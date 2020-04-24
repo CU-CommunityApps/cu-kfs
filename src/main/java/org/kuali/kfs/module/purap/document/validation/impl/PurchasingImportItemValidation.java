@@ -19,7 +19,7 @@
 package org.kuali.kfs.module.purap.document.validation.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -40,8 +40,8 @@ import java.util.Map;
 
 public class PurchasingImportItemValidation extends PurchasingAccountsPayableImportItemValidation {
 
+    private BusinessObjectDictionaryService businessObjectDictionaryService;
     private BusinessObjectService businessObjectService;
-    private DataDictionaryService dataDictionaryService;
     private PurchasingUnitOfMeasureValidation unitOfMeasureValidation;
     private PurchasingItemUnitPriceValidation itemUnitPriceValidation;
     private PurchasingItemDescriptionValidation itemDescriptionValidation;
@@ -80,9 +80,8 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
         boolean valid = true;      
         if (StringUtils.isEmpty(item.getItemDescription())) {
             valid = false;
-            String attributeLabel = dataDictionaryService.
-                getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
+            String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+                    .getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_DESCRIPTION,
                     KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
         }
@@ -101,9 +100,9 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
         if (item.getItemType().isLineItemIndicator()) {
             if (ObjectUtils.isNull(item.getItemUnitPrice())) {
                 valid = false;
-                String attributeLabel = dataDictionaryService.
-                    getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                    getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
+                String attributeLabel = businessObjectDictionaryService
+                        .getBusinessObjectEntry(item.getClass().getName())
+                        .getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
                 GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
                         KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
             }
@@ -118,9 +117,9 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
                         PurapKeyConstants.ERROR_ITEM_AMOUNT_BELOW_ZERO, ItemFields.UNIT_COST,
                         item.getItemIdentifierString());
                 valid = false;
-            } else if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) < 0)
-                    && ((item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE))
-                    || (item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
+            } else if (BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) < 0
+                    && (item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE)
+                            || item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE))) {
                 // If the item type is full order discount or trade in items, its unit price must be negative.
                 GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
                         PurapKeyConstants.ERROR_ITEM_AMOUNT_NOT_BELOW_ZERO, ItemFields.UNIT_COST,
@@ -168,12 +167,9 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
         this.businessObjectService = businessObjectService;
     }
 
-    public DataDictionaryService getDataDictionaryService() {
-        return dataDictionaryService;
-    }
-
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
+    public void setBusinessObjectDictionaryService(
+            BusinessObjectDictionaryService businessObjectDictionaryService) {
+        this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
     
     public PurchasingUnitOfMeasureValidation getUnitOfMeasureValidation() {
