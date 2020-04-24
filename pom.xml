@@ -56,6 +56,8 @@
         <unpack.cynergy.excludes>**/*Cynergy*.class,**/*Dummy*.class</unpack.cynergy.excludes>
         <unpack.excludes>org/kuali/rice/db/**,${unpack.meta.excludes},${unpack.cynergy.excludes}</unpack.excludes>
         <unpack.overlays.directory>${project.build.directory}/unpacked-overlays</unpack.overlays.directory>
+        <unpack.test.overlays.directory>${project.build.directory}/test-classes</unpack.test.overlays.directory>
+        <plugin.lifecycle-mapping.version>1.0.0</plugin.lifecycle-mapping.version>
         <plugin.surefire.version>2.22.2</plugin.surefire.version>
         <plugin.dependency.version>3.1.2</plugin.dependency.version>
         <plugin.war.version>3.2.2</plugin.war.version>
@@ -85,6 +87,34 @@
     </profiles>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>${plugin.lifecycle-mapping.version}</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>unpack-dependencies</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -119,6 +149,24 @@
                 <version>${plugin.dependency.version}</version>
                 <executions>
                     <execution>
+                        <id>unpack-overlays-for-testing</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.kuali.kfs,edu.cornell.cynergy</includeGroupIds>
+                            <includeArtifactIds>kfs-kns,kfs-core,cynergy-customizations</includeArtifactIds>
+                            <includeTypes>jar</includeTypes>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includes>${unpack.includes}</includes>
+                            <excludes>${unpack.excludes}</excludes>
+                            <outputDirectory>${unpack.test.overlays.directory}</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-overlays-from-jars</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -132,6 +180,8 @@
                             <includes>${unpack.includes}</includes>
                             <excludes>${unpack.excludes}</excludes>
                             <outputDirectory>${unpack.overlays.directory}</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
                 </executions>
