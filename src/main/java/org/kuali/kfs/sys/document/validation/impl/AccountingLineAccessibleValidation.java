@@ -224,8 +224,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     protected AccountingLineAuthorizer lookupAccountingLineAuthorizer() {
         final String groupName = getGroupName();
         final Map<String, AccountingLineGroupDefinition> groups = ((FinancialSystemTransactionalDocumentEntry)
-            dataDictionaryService.getDataDictionary().getDictionaryObjectEntry(accountingDocumentForValidation
-                .getClass().getName())).getAccountingLineGroups();
+                dataDictionaryService.getDictionaryObjectEntry(accountingDocumentForValidation
+                        .getClass().getName())).getAccountingLineGroups();
 
         if (groups.isEmpty()) {
             // no groups? just use the default...

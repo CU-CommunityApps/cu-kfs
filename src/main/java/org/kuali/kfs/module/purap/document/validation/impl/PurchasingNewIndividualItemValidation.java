@@ -19,6 +19,7 @@
 package org.kuali.kfs.module.purap.document.validation.impl;
 
 import org.kuali.kfs.integration.cam.CapitalAssetManagementModuleService;
+import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -30,6 +31,7 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 
 public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPayableNewIndividualItemValidation {
 
+    private BusinessObjectDictionaryService businessObjectDictionaryService;
     private BusinessObjectService businessObjectService;
     private CapitalAssetManagementModuleService capitalAssetManagementModuleService;
     private PurchasingUnitOfMeasureValidation unitOfMeasureValidation;
@@ -83,8 +85,11 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
      * @return boolean false if the validation fails and true otherwise.
      */
     
-
-
+    public void setBusinessObjectDictionaryService(
+            BusinessObjectDictionaryService businessObjectDictionaryService) {
+        this.businessObjectDictionaryService = businessObjectDictionaryService;
+    }
+            
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }

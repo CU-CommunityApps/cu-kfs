@@ -46,13 +46,17 @@ public final class VendorPropertyConstants {
     public static final String VENDOR_ADDRESS_LINE_1 = "vendorLine1Address";
     public static final String VENDOR_ADDRESS_CITY = "vendorCityName";
     public static final String VENDOR_ADDRESS_COUNTRY = "vendorCountryCode";
-    public static final String VENDOR_ADDRESS_EMAIL = "vendorAddresses.vendorAddressEmailAddress";
     public static final String VENDOR_DEFAULT_ADDRESS_INDICATOR = "vendorDefaultAddressIndicator";
     public static final String VENDOR_ADDRESS_ACTIVE_INDICATOR = "active";
     public static final String VENDOR_DEFAULT_ADDRESS_CAMPUS = "vendorCampusCode";
+    /*
+     * VENDOR_SUPPLIER_DIVERSITY_CODE was removed from base code, however, it is still an attribute on VendorSupplierDiversity,
+     * and we use this value
+     */
     public static final String VENDOR_SUPPLIER_DIVERSITY_CODE = "vendorSupplierDiversities.vendorSupplierDiversityCode";
-    public static final String VENDOR_SUPPLIER_DIVERSITY_ACTIVE = "vendorSupplierDiversities.active";
-    public static final String VENDOR_FEIN_SSN_INDICATOR = "vendorFeinSocialSecurityNumberIndicator";
+    /*
+     * VENDOR_TAX_NUMBER_ONLY was removed from base code, however we need this constant
+     */
     public static final String VENDOR_TAX_NUMBER_ONLY = "vendorTaxNumber";
     public static final String VENDOR_NAME = "vendorName";
     public static final String VENDOR_FIRST_NAME = "vendorFirstName";
@@ -63,8 +67,10 @@ public final class VendorPropertyConstants {
     public static final String VENDOR_TAX_TYPE_CODE = "vendorHeader.vendorTaxTypeCode";
     public static final String VENDOR_OWNERSHIP_CODE = "vendorHeader.vendorOwnershipCode";
     public static final String VENDOR_OWNERSHIP_CATEGORY_CODE = "vendorHeader.vendorOwnershipCategoryCode";
-    public static final String VENDOR_FEDERAL_WITHOLDING_TAX_BEGINNING_DATE = "vendorHeader.vendorFederalWithholdingTaxBeginningDate";
-    public static final String VENDOR_FEDERAL_WITHOLDING_TAX_END_DATE = "vendorHeader.vendorFederalWithholdingTaxEndDate";
+    public static final String VENDOR_FEDERAL_WITHHOLDING_TAX_BEGINNING_DATE =
+            "vendorHeader.vendorFederalWithholdingTaxBeginningDate";
+    public static final String VENDOR_FEDERAL_WITHHOLDING_TAX_END_DATE =
+            "vendorHeader.vendorFederalWithholdingTaxEndDate";
     public static final String VENDOR_TYPE_CODE = "vendorHeader.vendorTypeCode";
     public static final String VENDOR_W9_RECEIVED_INDICATOR = "vendorHeader.vendorW9ReceivedIndicator";
     public static final String VENDOR_W8_BEN_RECEIVED_INDICATOR = "vendorHeader.vendorW8BenReceivedIndicator";
@@ -83,10 +89,8 @@ public final class VendorPropertyConstants {
 
 
     public static final String VENDOR_PAYMENT_TERMS = "vendorPaymentTerms";
-    public static final String VENDOR_SHIPPING_TITLE = "vendorShippingTitle";
     public static final String VENDOR_SHIPPING_PAYMENT_TERMS = "vendorShippingPaymentTerms";
 
-    public static final String VENDOR_TAX_TYPE_CODE_WITHOUT_HEADER = "vendorTaxTypeCode";
     public static final String VENDOR_MIN_ORDER_AMOUNT = "vendorMinimumOrderAmount";
     public static final String VENDOR_DETAIL_ASSIGNED_ID = "vendorDetailAssignedIdentifier";
     public static final String VENDOR_HEADER_GENERATED_ID = "vendorHeaderGeneratedIdentifier";
@@ -118,15 +122,10 @@ public final class VendorPropertyConstants {
     // Vendor commodities code
     public static final String VENDOR_COMMODITIES_CODE = "vendorCommodities";
     public static final String PURCHASING_COMMODITY_CODE = "purchasingCommodityCode";
-    public static final String COMMODITY_DESCRIPTION = "commodityDescription";
-    public static final String CONTRACT_MANAGER_CODE = "contractManagerCode";
     public static final String CAMPUS_CODE = "campusCode";
-    public static final String VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE = "vendorCommodities." + PURCHASING_COMMODITY_CODE;
+    public static final String VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE = "vendorCommodities." + 
+            PURCHASING_COMMODITY_CODE;
     public static final String VENDOR_COMMODITIES_DEFAULT_INDICATOR = "commodityDefaultIndicator";
-
-    //Purchase order cost source
-    public static final String ITEM_UNIT_PRICE_UPPER_VARIANCE_PERCENT = "itemUnitPriceUpperVariancePercent";
-    public static final String ITEM_UNIT_PRICE_LOWER_VARIANCE_PERCENT = "itemUnitPriceLowerVariancePercent";
 
     public static final String PURCHASING_DEPARTMENT_STATE = "purchasingDepartmentStateCode";
     public static final String PURCHASING_DEPARTMENT_POSTAL_CODE = "purchasingDepartmentZipCode";

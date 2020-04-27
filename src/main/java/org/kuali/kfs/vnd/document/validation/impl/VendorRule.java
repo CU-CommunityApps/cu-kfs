@@ -26,7 +26,6 @@ import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.FixedPointValidationPattern;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
-import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.validation.ValidationPattern;
@@ -220,7 +219,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      */
     private boolean processValidation(MaintenanceDocument document) {
         boolean valid = processVendorValidation(document);
-        valid &= processContactValidation(document);
+        valid &= processContactValidation();
         if (ObjectUtils.isNotNull(newVendor.getVendorHeader().getVendorType())) {
             valid &= processAddressValidation(document);
             valid &= processContractValidation(document);
@@ -620,7 +619,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * Validates that the minimum order amount is less than the maximum allowed amount.
      *
      * @param vendorDetail The VendorDetail object to be validated
-     * @return booelan true if the vendorMinimumOrderAmount is less than the maximum allowed amount.
+     *  @return true if the vendorMinimumOrderAmount is less than the maximum allowed amount.
      */
     private boolean validateMinimumOrderAmount(VendorDetail vendorDetail) {
         boolean valid = true;
@@ -928,9 +927,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @return boolean false or true
      */
     protected boolean findAllowDefaultAddressIndicatorHelper(VendorAddress vendorAddress) {
-        AddressType addressType = new AddressType();
-
-        addressType = vendorAddress.getVendorAddressType();
+        AddressType addressType = vendorAddress.getVendorAddressType();
         if (ObjectUtils.isNull(addressType)) {
             return false;
         }
@@ -945,12 +942,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      *
      * @param vendorDetail        VendorDetail document
      * @param addedDefaultAddress VendorDefaultAddress which is being added
-     * @param parent              The VendorAddress which we are adding a default address to it
+     * @param vendorAddress       The VendorAddress which we are adding a default address to it
      * @return boolean false or true
      */
     protected boolean checkDefaultAddressCampus(VendorDetail vendorDetail, VendorDefaultAddress addedDefaultAddress,
-            VendorAddress parent) {
-        VendorAddress vendorAddress = parent;
+            VendorAddress vendorAddress) {
         if (ObjectUtils.isNull(vendorAddress)) {
             return false;
         }
@@ -1110,7 +1106,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param document MaintenanceDocument instance
      * @return boolean false or true
      */
-    private boolean processContactValidation(MaintenanceDocument document) {
+    private boolean processContactValidation() {
         boolean valid = true;
         int i = 0;
         for (VendorContact contact : newVendor.getVendorContacts()) {
@@ -1129,26 +1125,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             }
             // ==== End CU Customization Section ====
             Map<String, AutoPopulatingList<ErrorMessage>> errors = GlobalVariables.getMessageMap().getErrorMessages();
-            if ((errors != null) && (!errors.isEmpty())) {
+            if (errors != null && !errors.isEmpty()) {
                 valid = false;
             }
             i++;
             GlobalVariables.getMessageMap().clearErrorPath();
-        }
-        return valid;
-    }
-
-    /**
-     * Validates vendor customer numbers
-     *
-     * @param document MaintenanceDocument instance
-     * @return boolean false or true
-     */
-    private boolean processCustomerNumberValidation(MaintenanceDocument document) {
-        boolean valid = true;
-        List<VendorCustomerNumber> customerNumbers = newVendor.getVendorCustomerNumbers();
-        for (VendorCustomerNumber customerNumber : customerNumbers) {
-            valid &= validateVendorCustomerNumber(customerNumber);
         }
         return valid;
     }
@@ -1176,7 +1157,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             }
             chartOrgMap.put("organizationCode", orgCode);
             if (getBusinessObjectService().countMatching(Organization.class, chartOrgMap) < 1) {
-                GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CUSTOMER_NUMBER_ORGANIZATION_CODE,
+                GlobalVariables.getMessageMap().putError(
+                        VendorPropertyConstants.VENDOR_CUSTOMER_NUMBER_ORGANIZATION_CODE,
                         KFSKeyConstants.ERROR_EXISTENCE, orgCode);
                 valid = false;
             }
@@ -1216,10 +1198,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
             valid = validateVendorContractPOLimitAndExcludeFlagCombination(contract);
             valid &= validateVendorContractBeginEndDates(contract);
-            valid &= processContractB2BValidation(document, contract, i);
+            valid &= processContractB2BValidation(contract, i);
             if (contract.getOrganizationAutomaticPurchaseOrderLimit() != null) {
-                BusinessObjectEntry entry = SpringContext.getBean(DataDictionaryService.class).getDataDictionary()
-                        .getBusinessObjectEntry(VendorContract.class.getName());
+                BusinessObjectEntry entry = boDictionaryService.getBusinessObjectEntry(VendorContract.class.getName());
                 AttributeDefinition attributeDefinition = entry.getAttributeDefinition(
                         VendorPropertyConstants.VENDOR_CONTRACT_DEFAULT_APO_LIMIT);
                 valid &= validateAPOAmount(contract.getOrganizationAutomaticPurchaseOrderLimit(), attributeDefinition);
@@ -1231,9 +1212,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     }
 
     /**
-     * Validates that the APO amount is a valid amount according to
-     * the FixedPointValidationPattern (i.e. non negative number with the precision and scale
-     * as defined in the data dictionary).
+     * Validates that the APO amount is a valid amount according to the FixedPointValidationPattern (i.e. non negative
+     * number with the precision and scale as defined in the data dictionary).
      *
      * @param apoAmount
      * @param attributeDefinition
@@ -1271,7 +1251,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * Y, the organization APO Amount is not allowed.
      *
      * @param contract VendorContract
-     * @return boolean true if the proper combination of Exclude Indicator and APO Amount is present, otherwise flase.
+     * @return boolean true if the proper combination of Exclude Indicator and APO Amount is present, otherwise false.
      */
     protected boolean validateVendorContractPOLimitAndExcludeFlagCombination(VendorContract contract) {
         boolean valid = true;
@@ -1397,8 +1377,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         if (shouldAddToErrorPath && organization.getVendorContractPurchaseOrderLimitAmount() != null) {
-            BusinessObjectEntry entry = getDataDictionaryService().getDataDictionary()
-                    .getBusinessObjectEntry(VendorContractOrganization.class.getName());
+            BusinessObjectEntry entry = boDictionaryService.getBusinessObjectEntry(
+                    VendorContractOrganization.class.getName());
             AttributeDefinition attributeDefinition = entry.getAttributeDefinition(
                     VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION_APO_LIMIT);
             valid &= validateAPOAmount(organization.getVendorContractPurchaseOrderLimitAmount(), attributeDefinition);
@@ -1415,10 +1395,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * Validates vendor contracts against single B2B restriction on a vendor/campus basis. Only one B2B contract
      * allowed per vendor/campus
      *
-     * @param document MaintenanceDocument
      * @return boolean false or true
      */
-    private boolean processContractB2BValidation(MaintenanceDocument document, VendorContract contract, int contractPos) {
+    private boolean processContractB2BValidation(VendorContract contract, int contractPos) {
         boolean valid = true;
         //list of contracts already associated with vendor
         List<VendorContract> contracts = newVendor.getVendorContracts();
@@ -1479,7 +1458,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         if (bo instanceof VendorContract) {
             VendorContract contract = (VendorContract) bo;
             success &= validateVendorContractBeginEndDates(contract);
-            success &= processContractB2BValidation(document, contract, -1);
+            success &= processContractB2BValidation(contract, -1);
         }
         if (bo instanceof VendorContractOrganization) {
             VendorContractOrganization contractOrg = (VendorContractOrganization) bo;
@@ -1528,7 +1507,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         Date endDate = vdDocument.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
         if (ObjectUtils.isNotNull(beginDate) && ObjectUtils.isNotNull(endDate)) {
             if (dateTimeService.dateDiff(beginDate, endDate, false) <= 0) {
-                putFieldError(VendorPropertyConstants.VENDOR_FEDERAL_WITHOLDING_TAX_BEGINNING_DATE,
+                putFieldError(VendorPropertyConstants.VENDOR_FEDERAL_WITHHOLDING_TAX_BEGINNING_DATE,
                         VendorKeyConstants.ERROR_VENDOR_TAX_BEGIN_DATE_AFTER_END);
                 return false;
             }
