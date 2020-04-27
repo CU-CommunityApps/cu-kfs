@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.kuali.kfs.gl.batch.service.impl.ExceptionCaughtStatus;
 import org.kuali.kfs.gl.batch.service.impl.FileReconBadLoadAbortedStatus;
 import org.kuali.kfs.gl.batch.service.impl.FileReconOkLoadOkStatus;
@@ -24,6 +25,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl;
 
+@Ignore
 @ConfigureContext
 public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiTestBase {
 	private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederHelperServiceImplTest.class);
