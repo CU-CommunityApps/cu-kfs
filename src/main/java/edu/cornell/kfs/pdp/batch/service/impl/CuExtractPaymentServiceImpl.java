@@ -449,12 +449,12 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return formattedEdocText.toString();
     }
     
-    private String determineCustomerProfileSubUnitCode(PaymentGroup pdpPaymemtGroup) {
+    private String determineCustomerProfileSubUnitCode(PaymentGroup pdpPaymentGroup) {
         CustomerProfile customerProfile = null;
         String subUnitCode = KFSConstants.EMPTY_STRING;
         
-        if (ObjectUtils.isNotNull(pdpPaymemtGroup.getBatch())) {
-            customerProfile = pdpPaymemtGroup.getBatch().getCustomerProfile();
+        if (ObjectUtils.isNotNull(pdpPaymentGroup.getBatch())) {
+            customerProfile = pdpPaymentGroup.getBatch().getCustomerProfile();
             if (ObjectUtils.isNotNull(customerProfile)) {
                 if (ObjectUtils.isNotNull(customerProfile.getSubUnitCode())) {
                     subUnitCode = customerProfile.getSubUnitCode();
@@ -463,7 +463,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     LOG.info("determineCustomerProfileSubUnitCode: No subUnitCode could be determined for customerProfile.customerShortName = " + customerProfile.getCustomerShortName());
                 }
             } else {
-                LOG.info("determineCustomerProfileSubUnitCode: No customer profile exists for payee name = " + pdpPaymemtGroup.getPayeeName());
+                LOG.info("determineCustomerProfileSubUnitCode: No customer profile exists for payee name = " + pdpPaymentGroup.getPayeeName());
             }
         } else {
             LOG.info("determineCustomerProfileSubUnitCode: pdpPaymemtGroup.getBatch() detected as NULL.");
