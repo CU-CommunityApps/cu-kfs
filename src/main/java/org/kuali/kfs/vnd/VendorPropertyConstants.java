@@ -49,15 +49,6 @@ public final class VendorPropertyConstants {
     public static final String VENDOR_DEFAULT_ADDRESS_INDICATOR = "vendorDefaultAddressIndicator";
     public static final String VENDOR_ADDRESS_ACTIVE_INDICATOR = "active";
     public static final String VENDOR_DEFAULT_ADDRESS_CAMPUS = "vendorCampusCode";
-    /*
-     * VENDOR_SUPPLIER_DIVERSITY_CODE was removed from base code, however, it is still an attribute on VendorSupplierDiversity,
-     * and we use this value
-     */
-    public static final String VENDOR_SUPPLIER_DIVERSITY_CODE = "vendorSupplierDiversities.vendorSupplierDiversityCode";
-    /*
-     * VENDOR_TAX_NUMBER_ONLY was removed from base code, however we need this constant
-     */
-    public static final String VENDOR_TAX_NUMBER_ONLY = "vendorTaxNumber";
     public static final String VENDOR_NAME = "vendorName";
     public static final String VENDOR_FIRST_NAME = "vendorFirstName";
     public static final String VENDOR_LAST_NAME = "vendorLastName";

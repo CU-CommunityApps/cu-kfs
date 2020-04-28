@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
@@ -83,7 +83,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String nameVal = fieldValues.get(VendorPropertyConstants.VENDOR_NAME);
         String typeVal = fieldValues.get(VendorPropertyConstants.VENDOR_TYPE_CODE);
         String stateVal = fieldValues.get(VendorPropertyConstants.VENDOR_ADDRESS + "." + VendorPropertyConstants.VENDOR_ADDRESS_STATE);
-        String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
+        String supplierDiversityVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX + CUVendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITY_CODE);
         String vendorOwnershipCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE);
         String commodityCodeVal = fieldValues.get(VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE);
         String vendorSupplierDiversityExpirationDateVal = fieldValues.get(VendorPropertyConstants.VENDOR_HEADER_PREFIX  +
