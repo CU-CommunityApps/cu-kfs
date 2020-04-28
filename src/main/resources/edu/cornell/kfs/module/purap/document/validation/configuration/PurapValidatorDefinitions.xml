@@ -54,6 +54,7 @@
     <bean id="Purchasing-newIndividualItemValidation"
           class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation"
           abstract="true" parent="PurchasingAccountsPayable-newIndividualItemValidation"
+          p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
           p:businessObjectService-ref="businessObjectService"
           p:capitalAssetManagementModuleService-ref="capitalAssetManagementModuleService"
           p:unitOfMeasureValidation-ref="Purchasing-unitOfMeasureValidation"
@@ -76,21 +77,20 @@
 		p:dictionaryValidationService-ref="dictionaryValidationService"
 		p:businessObjectService-ref="businessObjectService"/>
 	
-	<bean id="Purchasing-importItemValidation" class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
-		<property name="dictionaryValidationService" ref="dictionaryValidationService" />		
-		<property name="businessObjectService" ref="businessObjectService" />		
-		<property name="commodityCodeValidation" ref="Purchasing-commodityCodeValidation" />
-	</bean>
+	<bean id="Purchasing-importItemValidation"
+           class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true"
+           p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+           p:dictionaryValidationService-ref="dictionaryValidationService"
+           p:businessObjectService-ref="businessObjectService"/>
 	
 	<bean id="Purchasing-processVendorValidation"
           class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingProcessVendorValidation"
+          abstract="true" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+          p:businessObjectService-ref="businessObjectService" p:dateTimeService-ref="dateTimeService"
           p:vendorService-ref="vendorService" p:parameterService-ref="parameterService"
           p:postalCodeValidationService-ref="postalCodeValidationService"
           p:purchaseOrderTransmissionMethodDataRulesService-ref="purchaseOrderTransmissionMethodDataRulesService"
-          p:financialSystemWorkflowHelperService-ref="financialSystemWorkflowHelperService"
-          p:dataDictionaryService-ref="dataDictionaryService" p:businessObjectService-ref="businessObjectService"
-          p:dateTimeService-ref="dateTimeService"/>
+          p:financialSystemWorkflowHelperService-ref="financialSystemWorkflowHelperService"/>
           
     <bean id="PurchaseOrder-processVendorValidation"
           class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderProcessVendorValidation"
