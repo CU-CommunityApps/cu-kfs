@@ -64,7 +64,7 @@ public class CuExtractPaymentServiceImplTest {
                                                         
                                                         "First line notes text fully filled with characters to see how this wrap", 
                                                         "Second line notes text is fully filled with data to see what it will do",
-                                                        "Third line is parially filled.",
+                                                        "Third line is partially filled.",
                                                         
                                                         "First line where line fully filled with data to see what will happen to", 
                                                         "Second line notes text is fully filled with data to see what it will do",
@@ -82,7 +82,7 @@ public class CuExtractPaymentServiceImplTest {
             
                                                                  "Doc:12345678 First line notes text fully filled with characters to see h", 
                                                                  "ow this wrapSecond line notes text is fully filled with data to see what",
-                                                                 " it will doThird line is parially filled.",
+                                                                 " it will doThird line is partially filled.",
             
                                                                  "Doc:12345678 First line where line fully filled with data to see what wi", 
                                                                  "ll happen toSecond line notes text is fully filled with data to see what",
@@ -108,26 +108,26 @@ public class CuExtractPaymentServiceImplTest {
         int line2ArrayPosition = 1;
         int line3ArrayPosition = 2;
         
-        for (int numTests = 1; numTests <= MAX_NUM_DV_CHECK_STUB_NOTES_TESTS; numTests++) {
+        for (int testIndex = 1; testIndex <= MAX_NUM_DV_CHECK_STUB_NOTES_TESTS; testIndex++) {
             String stubLine1 = EDOC_DV_IDENTIFIER_AND_NUMBER;
             
-            String stubLine2 = cuExtractPaymentServiceImpl.obtainTruncatedNoteLineSection(DV_NOTES_TEST_DATA[line1ArrayPosition], stubLine1);
-            stubLine1 = stubLine1 + cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(DV_NOTES_TEST_DATA[line1ArrayPosition], stubLine1);
+            String stubLine2 = cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(DV_NOTES_TEST_DATA[line1ArrayPosition], stubLine1);
+            stubLine1 = stubLine1.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(DV_NOTES_TEST_DATA[line1ArrayPosition], stubLine1));
             
-            String stubLine3 = cuExtractPaymentServiceImpl.obtainTruncatedNoteLineSection(DV_NOTES_TEST_DATA[line2ArrayPosition], stubLine2);;
-            stubLine2 = stubLine2 + cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(DV_NOTES_TEST_DATA[line2ArrayPosition], stubLine2);
+            String stubLine3 = cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(DV_NOTES_TEST_DATA[line2ArrayPosition], stubLine2);
+            stubLine2 = stubLine2.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(DV_NOTES_TEST_DATA[line2ArrayPosition], stubLine2));
             
-            stubLine3 = stubLine3 + cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(DV_NOTES_TEST_DATA[line3ArrayPosition], stubLine3);
+            stubLine3 = stubLine3.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(DV_NOTES_TEST_DATA[line3ArrayPosition], stubLine3));
             
-            LOG.info("Check Stub Text for check #" + numTests);
+            LOG.info("Check Stub Text for check #" + testIndex);
             LOG.info("stubLine1 = '" + stubLine1 + "'" );
             LOG.info("stubLine2 = '" + stubLine2 + "'" );
             LOG.info("stubLine3 = '" + stubLine3 + "'" );
             LOG.info("");
             
-            assertEquals("TEST(" + numTests + ") should equal results for Check Stub Data("+ line1ArrayPosition + "): " , DV_CHECK_STUB_EXPECTED_TEXT[line1ArrayPosition], stubLine1);
-            assertEquals("TEST(" + numTests + ") should equal results for Check Stub Data("+ line2ArrayPosition + "): " , DV_CHECK_STUB_EXPECTED_TEXT[line2ArrayPosition], stubLine2);
-            assertEquals("TEST(" + numTests + ") should equal results for Check Stub Data("+ line3ArrayPosition + "): " , DV_CHECK_STUB_EXPECTED_TEXT[line3ArrayPosition], stubLine3);
+            assertEquals("TEST(" + testIndex + ") should equal results for Check Stub Data("+ line1ArrayPosition + "): " , DV_CHECK_STUB_EXPECTED_TEXT[line1ArrayPosition], stubLine1);
+            assertEquals("TEST(" + testIndex + ") should equal results for Check Stub Data("+ line2ArrayPosition + "): " , DV_CHECK_STUB_EXPECTED_TEXT[line2ArrayPosition], stubLine2);
+            assertEquals("TEST(" + testIndex + ") should equal results for Check Stub Data("+ line3ArrayPosition + "): " , DV_CHECK_STUB_EXPECTED_TEXT[line3ArrayPosition], stubLine3);
             
             line1ArrayPosition = line1ArrayPosition + MAX_NUM_DV_CHECK_STUB_LINES_PER_TEST;
             line2ArrayPosition = line2ArrayPosition + MAX_NUM_DV_CHECK_STUB_LINES_PER_TEST;
