@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.kuali.kfs.module.ld.batch.service.EnterpriseFeederService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
@@ -18,7 +19,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-
+@Ignore
 @ConfigureContext
 public class CuFileEnterpriseFeederServiceImplTest extends KualiTestBase  {
 	private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederServiceImplTest.class);

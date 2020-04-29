@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.cornell.kfs</groupId>
     <artifactId>kfs-war</artifactId>
@@ -19,12 +20,13 @@
         <buildNumber>6.0.1-SNAPSHOT</buildNumber>
         <cynergy.development>true</cynergy.development>
         <job.name>${project.artifactId}</job.name>
+
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
         <kfs.version>2019-12-19</kfs.version>
         <rice.version>2.7.0</rice.version>
-        <cynergy.version>2.7.0</cynergy.version>
+        <cynergy.version>2.7.0.j11</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
 
         <aws-java-sdk-dynamodb.version>1.11.18</aws-java-sdk-dynamodb.version>
@@ -32,10 +34,10 @@
         <hibernate-validator-annotation-processor.version>5.4.1.Final</hibernate-validator-annotation-processor.version>
         <httpclient.version>4.5.5</httpclient.version>
         <jasperreports.version>2.0.4</jasperreports.version>
-        <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jersey.version>2.25.1</jersey.version>
         <jotm-core.version>2.1.10-kuali-1</jotm-core.version>
-        <jsp-api.version>2.2</jsp-api.version>
+        <jsp-api.version>2.3.1</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.3.1</junit.version>
         <ojdbc6.version>11.2.0.4</ojdbc6.version>
@@ -45,8 +47,23 @@
         <powermock.version>2.0.4</powermock.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
-        
+
+        <java.version>1.8</java.version>
+        <maven.compiler.version>3.3</maven.compiler.version>
+        <project.java.version>1.8</project.java.version>
+        <unpack.includes>org/kuali/rice/**/*.class,org/kuali/rice/**/*.properties,META-INF/**</unpack.includes>
+        <unpack.meta.excludes>META-INF/maven/**,META-INF/MANIFEST.MF,META-INF/*weaving.xml</unpack.meta.excludes>
+        <unpack.cynergy.excludes>**/*Cynergy*.class,**/*Dummy*.class</unpack.cynergy.excludes>
+        <unpack.excludes>org/kuali/rice/db/**,${unpack.meta.excludes},${unpack.cynergy.excludes}</unpack.excludes>
+        <unpack.overlays.directory>${project.build.directory}/unpacked-overlays</unpack.overlays.directory>
+        <unpack.test.overlays.directory>${project.build.directory}/test-classes</unpack.test.overlays.directory>
+        <plugin.lifecycle-mapping.version>1.0.0</plugin.lifecycle-mapping.version>
         <plugin.surefire.version>2.22.2</plugin.surefire.version>
+        <plugin.dependency.version>3.1.2</plugin.dependency.version>
+        <plugin.war.version>3.2.2</plugin.war.version>
+        <log4j.version>2.11.0</log4j.version>
+        <javax.activation.version>1.1.1</javax.activation.version>
+        <jaxws-ri.version>2.3.0</jaxws-ri.version>
     </properties>
 
     <profiles>
@@ -70,6 +87,34 @@
     </profiles>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>${plugin.lifecycle-mapping.version}</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>unpack-dependencies</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -83,48 +128,76 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>-Xmx2G -Xms2G</argLine>
-                    <skipTests>${skipTests}</skipTests>
+                    <argLine>-Xms1024m -Xmx1024m</argLine>
                     <excludes>
                         <exclude>${test.excludes}</exclude>
                     </excludes>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <check>
-                        <packageRate>68</packageRate>
-                        <fileRate>55</fileRate>
-                        <classRate>45</classRate>
-                        <methodRate>29</methodRate>
-                        <lineRate>22</lineRate>
-                        <conditionalRate>15</conditionalRate>
-                        <haltOnFailure>false</haltOnFailure>
-                    </check>
-                    <instrumentation>
-                        <excludes>
-                            <exclude>org/kuali/**/*.class</exclude>
-                            <exclude>com/rsmart/**/*.class</exclude>
-                        </excludes>
-                    </instrumentation>
-                </configuration>
-            </plugin>
-            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>${maven.compiler.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${plugin.dependency.version}</version>
+                <executions>
+                    <execution>
+                        <id>unpack-overlays-for-testing</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.kuali.kfs,edu.cornell.cynergy</includeGroupIds>
+                            <includeArtifactIds>kfs-kns,kfs-core,cynergy-customizations</includeArtifactIds>
+                            <includeTypes>jar</includeTypes>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includes>${unpack.includes}</includes>
+                            <excludes>${unpack.excludes}</excludes>
+                            <outputDirectory>${unpack.test.overlays.directory}</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-overlays-from-jars</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.kuali.kfs,edu.cornell.cynergy</includeGroupIds>
+                            <includeArtifactIds>kfs-kns,kfs-core,cynergy-customizations</includeArtifactIds>
+                            <includeTypes>jar</includeTypes>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includes>${unpack.includes}</includes>
+                            <excludes>${unpack.excludes}</excludes>
+                            <outputDirectory>${unpack.overlays.directory}</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
+                <version>${plugin.war.version}</version>
                 <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>${unpack.overlays.directory}</directory>
+                            <targetPath>WEB-INF/classes</targetPath>
+                            <filtering>false</filtering>
+                        </resource>
+                    </webResources>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -675,7 +748,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
             <version>${jsp-api.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -775,18 +848,24 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.2.11</version>
-            <scope>runtime</scope>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>${javax.activation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-ri</artifactId>
+            <version>${jaxws-ri.version}</version>
+            <type>pom</type>
             <exclusions>
                 <exclusion>
-                    <groupId>jakarta.activation</groupId>
-                    <artifactId>jakarta.activation-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>jakarta.xml.bind</groupId>
-                    <artifactId>jakarta.xml.bind-api</artifactId>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>eclipselink</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

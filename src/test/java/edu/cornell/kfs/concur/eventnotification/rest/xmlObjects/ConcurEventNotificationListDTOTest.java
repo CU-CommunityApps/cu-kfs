@@ -10,11 +10,13 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
+@Ignore
 public class ConcurEventNotificationListDTOTest {
     private static final String EXAMPLE_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/xmlObjects/fixture/failed-event-queue-response-example.xml";
     private static final String EQUAL_ASSERT_STATEMENT = "Expected value should equal the actual value.";

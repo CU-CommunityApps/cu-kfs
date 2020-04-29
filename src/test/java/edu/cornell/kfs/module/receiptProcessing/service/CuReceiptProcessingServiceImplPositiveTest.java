@@ -2,21 +2,18 @@ package edu.cornell.kfs.module.receiptProcessing.service;
 
 import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
-import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-
 import java.io.File;
-import java.util.Collection;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.junit.Ignore;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-
+@Ignore
 @ConfigureContext(session = ccs1)
 public class CuReceiptProcessingServiceImplPositiveTest extends KualiTestBase {
 
