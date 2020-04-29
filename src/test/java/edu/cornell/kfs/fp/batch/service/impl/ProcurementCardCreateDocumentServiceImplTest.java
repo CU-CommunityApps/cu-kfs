@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
@@ -15,9 +16,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
-
-
+@Ignore
 @ConfigureContext(session = kfs)
 public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase {
 
