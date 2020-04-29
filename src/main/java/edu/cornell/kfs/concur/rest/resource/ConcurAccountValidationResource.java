@@ -15,7 +15,8 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
-import edu.cornell.kfs.concur.eventnotification.rest.xmlObjects.ConcurEventNotificationDTO;
+import edu.cornell.kfs.concur.eventnotification.rest.plain.xmlObjects.ConcurEventNotificationDTO;
+import edu.cornell.kfs.concur.eventnotification.rest.plain.xmlObjects.ConcurStandaloneEventNotificationDTO;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationConversionService;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 import edu.cornell.kfs.sys.service.CUMarshalService;
@@ -36,7 +37,7 @@ public class ConcurAccountValidationResource {
         ConcurEventNotification concurEventNotification = null;
         try {
             ConcurEventNotificationDTO concurEventNotificationDTO = getCuMarshalService().unmarshalString(
-                    concurEventNotificationXml, ConcurEventNotificationDTO.class);
+                    concurEventNotificationXml, ConcurStandaloneEventNotificationDTO.class);
             concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
         } catch (ParseException | JAXBException e) {
             LOG.error("validate():" + e.getMessage(), e);
