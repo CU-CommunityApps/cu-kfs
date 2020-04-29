@@ -212,7 +212,6 @@
           p:businessObjectService-ref="businessObjectService"
           p:batchFileDirectoryName="${staging.directory}/gl/originEntry"
           p:accountingCycleCachingService-ref="accountingCycleCachingService"
-          p:
           p:persistenceStructureService-ref="persistenceStructureService" p:persistenceService-ref="persistenceService">
           <property name="transactionPosters">
             <list>
