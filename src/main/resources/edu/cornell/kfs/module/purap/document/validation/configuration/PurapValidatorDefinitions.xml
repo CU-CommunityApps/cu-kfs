@@ -7,14 +7,14 @@
          
     <bean id="Requisition-commodityCodeValidation" parent="Requisition-commodityCodeValidation-parentBean" scope="prototype" />
 	<bean id="Requisition-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.CuRequisitionCommodityCodeValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
 		<property name="businessObjectService" ref="businessObjectService" />	
 		<property name="parameterService" ref="parameterService" />	
 	</bean> 
 	
 	<bean id="PurchaseOrderAmendment-commodityCodeValidation" parent="PurchaseOrderAmendment-commodityCodeValidation-parentBean" scope="prototype" />
 	<bean id="PurchaseOrderAmendment-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentCommodityCodeValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
 		<property name="businessObjectService" ref="businessObjectService" />	
 		<property name="parameterService" ref="parameterService" />	
 	</bean>
@@ -66,7 +66,7 @@
 	
 	<bean id="PurchaseOrder-commodityCodeValidation" parent="PurchaseOrder-commodityCodeValidation-parentBean" scope="prototype" />
 	<bean id="PurchaseOrder-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchaseOrderCommodityCodeValidation" abstract="true">
-		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
 		<property name="businessObjectService" ref="businessObjectService" />	
 		<property name="parameterService" ref="parameterService" />	
 	</bean>
