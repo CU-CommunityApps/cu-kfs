@@ -92,6 +92,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCRCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
+    @Override
     public void generateCRCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
@@ -99,12 +100,14 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, 
+                PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true);
     }
 
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
+    @Override
     public void generateStopGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
@@ -112,7 +115,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, CUPdpConstants.FDOC_TYP_CD_STOP_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, 
+                CUPdpConstants.FDOC_TYP_CD_STOP_CHECK, true);
     }
     
     
@@ -120,8 +124,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
+    @Override
     public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, 
+                CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, true);
     }
     
     /**
