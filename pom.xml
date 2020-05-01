@@ -43,7 +43,7 @@
         <ojdbc6.version>11.2.0.4</ojdbc6.version>
         <opencsv.version>4.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
-        <mockito.version>3.1.0</mockito.version>
+        <mockito.version>3.2.4</mockito.version>
         <powermock.version>2.0.4</powermock.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
@@ -156,7 +156,7 @@
                         </goals>
                         <configuration>
                             <includeGroupIds>org.kuali.kfs,edu.cornell.cynergy</includeGroupIds>
-                            <includeArtifactIds>kfs-kns,kfs-core,cynergy-customizations</includeArtifactIds>
+                            <includeArtifactIds>kfs-core,cynergy-customizations</includeArtifactIds>
                             <includeTypes>jar</includeTypes>
                             <excludeTransitive>true</excludeTransitive>
                             <includes>${unpack.includes}</includes>
@@ -174,7 +174,7 @@
                         </goals>
                         <configuration>
                             <includeGroupIds>org.kuali.kfs,edu.cornell.cynergy</includeGroupIds>
-                            <includeArtifactIds>kfs-kns,kfs-core,cynergy-customizations</includeArtifactIds>
+                            <includeArtifactIds>kfs-core,cynergy-customizations</includeArtifactIds>
                             <includeTypes>jar</includeTypes>
                             <excludeTransitive>true</excludeTransitive>
                             <includes>${unpack.includes}</includes>
