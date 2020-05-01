@@ -21,6 +21,8 @@ package org.kuali.kfs.module.ld.document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
@@ -47,7 +49,8 @@ import java.util.Map;
 public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentBase implements LateAdjustable {
 
     private static final Logger LOG = LogManager.getLogger();
-
+    
+    private transient BusinessObjectDictionaryService businessObjectDictionaryService;
     protected Map<String, KualiDecimal> approvalObjectCodeBalances;
     protected LateAdjustment lateAdjustment;
 
@@ -74,11 +77,6 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         this.lateAdjustment = lateAdjustment;
     }
 
-    /**
-     * @see org.kuali.kfs.module.ld.document.LaborExpenseTransferDocumentBase#generateLaborLedgerPendingEntries(
-     * org.kuali.kfs.sys.businessobject.AccountingLine,
-     * org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper)
-     */
     @Override
     public boolean generateLaborLedgerPendingEntries(AccountingLine accountingLine,
             GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
@@ -178,7 +176,8 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
 //            String personName = SpringContext.getBean(FinancialSystemUserService.class).getPersonNameByEmployeeId(this.getEmplid());
 //
 //            // Get the maxlength of the description field we are setting
-//            BusinessObjectEntry laborLedgerPendingEntryBusinessObjectEntry = getDataDictionaryService().getDataDictionary().getBusinessObjectEntry(LaborLedgerPendingEntry.class.getName());
+//             BusinessObjectEntry laborLedgerPendingEntryBusinessObjectEntry = getBusinessObjectDictionaryService()
+//                    .getBusinessObjectEntry(LaborLedgerPendingEntry.class.getName());
 //            AttributeDefinition laborLedgerPendingEntryAttribute = laborLedgerPendingEntryBusinessObjectEntry.getAttributeDefinition(KFSPropertyConstants.TRANSACTION_LEDGER_ENTRY_DESC);
 //            int descriptionLength = laborLedgerPendingEntryAttribute.getMaxLength();
 //
@@ -194,6 +193,13 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     @Override
     public List getLaborLedgerPendingEntriesForSearching() {
         return super.getLaborLedgerPendingEntries();
+    }
+    
+    public BusinessObjectDictionaryService getBusinessObjectDictionaryService() {
+        if (businessObjectDictionaryService == null) {
+            businessObjectDictionaryService = KNSServiceLocator.getBusinessObjectDictionaryService();
+        }
+        return businessObjectDictionaryService;
     }
 
 }
