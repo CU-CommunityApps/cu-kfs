@@ -52,4 +52,7 @@ public class CUVendorPropertyConstants {
     
     public static final String VENDOR_SUPPLIER_DIVERSITY_CODE = "vendorSupplierDiversities.vendorSupplierDiversityCode";
     public static final String VENDOR_TAX_NUMBER_ONLY = "vendorTaxNumber";
+    
+    public static final String VENDOR_HEADER_PREFIX = "vendorHeader.";
+    public static final String VENDOR_ADDRESS_STATE_CODE = "vendorAddresses.vendorStateCode";
 }

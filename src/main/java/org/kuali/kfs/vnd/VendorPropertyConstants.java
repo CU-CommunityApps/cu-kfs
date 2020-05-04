@@ -24,7 +24,6 @@ package org.kuali.kfs.vnd;
 // ==== CU Customization: Added constant for Vendor Contact Phone Number property. ====
 public final class VendorPropertyConstants {
 
-    public static final String VENDOR_HEADER_PREFIX = "vendorHeader.";
     public static final String VENDOR_DETAIL = "vendorDetail";
     public static final String VENDOR_NUMBER = "vendorNumber";
     public static final String VENDOR_DUNS_NUMBER = "vendorDunsNumber";
@@ -38,7 +37,6 @@ public final class VendorPropertyConstants {
     public static final String VENDOR_DEFAULT_ADDRESS = "vendorDefaultAddresses";
     public static final String VENDOR_SUPPLIER_DIVERSITIES = "vendorSupplierDiversities";
     public static final String VENDOR_ADDRESS_STATE = "vendorStateCode";
-    public static final String VENDOR_ADDRESS_STATE_CODE = "vendorAddresses.vendorStateCode";
     public static final String VENDOR_ADDRESS_ZIP = "vendorZipCode";
     public static final String VENDOR_ADDRESS_TYPE_CODE = "vendorAddressTypeCode";
     public static final String VENDOR_ADDRESS_LINE_1 = "vendorLine1Address";
