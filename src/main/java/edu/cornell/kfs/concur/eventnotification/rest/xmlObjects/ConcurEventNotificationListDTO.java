@@ -12,13 +12,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ConcurEventNotificationListDTO {
     
     @XmlElement(name = "Notification")
-    private List<ConcurEventNotificationDTO> concurEventNotificationDTOs;
+    private List<ConcurListItemEventNotificationDTO> concurEventNotificationDTOs;
 
-    public List<ConcurEventNotificationDTO> getConcurEventNotificationDTOs() {
+    public List<ConcurListItemEventNotificationDTO> getConcurEventNotificationDTOs() {
         return concurEventNotificationDTOs;
     }
 
-    public void setConcurEventNotificationDTO(List<ConcurEventNotificationDTO> concurEventNotificationDTOs) {
+    public void setConcurEventNotificationDTO(List<ConcurListItemEventNotificationDTO> concurEventNotificationDTOs) {
         this.concurEventNotificationDTOs = concurEventNotificationDTOs;
     }
 }
