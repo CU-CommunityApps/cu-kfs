@@ -1,15 +1,15 @@
-package edu.cornell.kfs.concur.eventnotification.rest.xmlObjects;
+package edu.cornell.kfs.concur.eventnotification.rest.plain.xmlObjects;
 
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-@XmlRootElement(name = "Notification")
+@XmlTransient
 @XmlAccessorType(XmlAccessType.NONE)
-public class ConcurEventNotificationDTO {
+public abstract class ConcurEventNotificationDTO {
     @XmlElement(name = "Context")
     private String context;
     @XmlElement(name = "EventDateTime")

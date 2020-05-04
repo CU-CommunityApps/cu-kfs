@@ -5,7 +5,7 @@ import java.text.ParseException;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
-import edu.cornell.kfs.concur.eventnotification.rest.xmlObjects.ConcurEventNotificationDTO;
+import edu.cornell.kfs.concur.eventnotification.rest.plain.xmlObjects.ConcurEventNotificationDTO;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationConversionService;
 
 public class ConcurEventNotificationConversionServiceImpl implements ConcurEventNotificationConversionService {

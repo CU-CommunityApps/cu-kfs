@@ -1,11 +1,13 @@
-package edu.cornell.kfs.concur.rest.xmlObjects;
+package edu.cornell.kfs.concur.rest.request.xmlObjects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(namespace = "http://www.concursolutions.com/api/travelrequest/2012/06", name = "TravelRequestDetails")
+import edu.cornell.kfs.concur.ConcurConstants.ConcurXmlNamespaces;
+
+@XmlRootElement(namespace = ConcurXmlNamespaces.TRAVEL_REQUEST, name = "TravelRequestDetails")
 @XmlAccessorType(XmlAccessType.NONE)
 public class TravelRequestDetailsDTO {
 

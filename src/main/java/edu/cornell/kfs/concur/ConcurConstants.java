@@ -143,4 +143,9 @@ public class ConcurConstants {
     
     public static final String SAE_REQUEST_ID_PREFIX = "SAE";
 
+    public static class ConcurXmlNamespaces {
+        public static final String NOTIFICATION = "http://www.concursolutions.com/api/notification/2012/06";
+        public static final String TRAVEL_REQUEST = "http://www.concursolutions.com/api/travelrequest/2012/06";
+    }
+
 }

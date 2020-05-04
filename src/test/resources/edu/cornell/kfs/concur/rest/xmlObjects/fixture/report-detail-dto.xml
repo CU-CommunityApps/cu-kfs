@@ -1,0 +1,433 @@
+<ReportDetails xmlns:ns="http://www.concursolutions.com/api/expense/expensereport/2011/03"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <X_UserID>abc123@cornell.edu</X_UserID>
+    <ReportId>020406080A0C0E111315</ReportId>
+    <ReportName>Cornell Testing interview</ReportName>
+    <Purpose>Attend Cornell Testing interviews</Purpose>
+    <CrnCode>USD</CrnCode>
+    <ApsKey>A_APPR</ApsKey>
+    <ReportDate>2020-04-14T00:00:00</ReportDate>
+    <CreationDate>2020-04-14T15:16:49</CreationDate>
+    <ReceiptImageUrl>https://imagingupload.concurfakesite.com/file/p00123456789/0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF?id=1133557799AABBCCDDEE&amp;e=p00123456789&amp;t=ZZ&amp;s=ConcurTesting</ReceiptImageUrl>
+    <HasException>N</HasException>
+    <EverSentBack>Y</EverSentBack>
+    <EmployeeName>Doe, John</EmployeeName>
+    <ApvStatusName>Approved</ApvStatusName>
+    <PayKey>P_PROC</PayKey>
+    <PayStatusName>Processing Payment</PayStatusName>
+    <PaidDate i:nil="true" />
+    <SubmitDate>0001-01-01T00:00:00</SubmitDate>
+    <EntryCount>2</EntryCount>
+    <LedgerName>CORNELL</LedgerName>
+    <OrgUnit1>(IT)ITHACA CAMPUS</OrgUnit1>
+    <OrgUnit2>(4321000)Assistant Testing Unit</OrgUnit2>
+    <OrgUnit3 />
+    <OrgUnit4 />
+    <OrgUnit5 />
+    <OrgUnit6 />
+    <Custom1>(Employee)Employee</Custom1>
+    <Custom2>(Domestic Travel)1. Domestic Travel</Custom2>
+    <Custom3>(Meeting/Interview)Meeting/Interview</Custom3>
+    <Custom4 />
+    <Custom5>012T</Custom5>
+    <Custom6 />
+    <Custom7 />
+    <Custom8>(12)Test Travel Management</Custom8>
+    <Custom9>(012T)Asst Dean Testing Unit</Custom9>
+    <Custom10 />
+    <Custom11 />
+    <Custom12 />
+    <Custom13 />
+    <Custom14 />
+    <Custom15>(Cornell)Cornell</Custom15>
+    <Custom16 />
+    <Custom17 />
+    <Custom18 />
+    <Custom19 />
+    <Custom20 />
+    <PolKey>aBcDeFgHiJkLmNoPqRsTuVwXyZ123456789</PolKey>
+    <RptKey>987654321aAbBcCdDeEfFgGhHiIjJkKlLmM</RptKey>
+    <ReportTotal>243.86000000</ReportTotal>
+    <PersonalExpenses>0.00000000</PersonalExpenses>
+    <AmountDueEmployee>49.50000000</AmountDueEmployee>
+    <AmountDueCompanyCard>194.36000000</AmountDueCompanyCard>
+    <TotalClaimedAmount>243.86000000</TotalClaimedAmount>
+    <TotalApprovedAmount>243.86000000</TotalApprovedAmount>
+    <WorkflowActionURL>https://www.concurfakesite.com/api/expense/expensereport/v1.1/report/pPqQrRstuvWXyz9A8b7C6d5E4f3G2h1I0jklMNmn1/WorkFlowAction</WorkflowActionURL>
+    <Entries Count="2">
+        <ExpenseEntry>
+            <ReceiptRequired>N</ReceiptRequired>
+            <ImageRequired>Y</ImageRequired>
+            <EreceiptId />
+            <Custom1>(Meeting/Interview)Meeting/Interview</Custom1>
+            <Custom2>(Federal Allowable)Federal Allowable</Custom2>
+            <Custom3>(Domestic Travel)1. Domestic Travel</Custom3>
+            <Custom4>(Employee)Employee</Custom4>
+            <Custom5 />
+            <Custom6 />
+            <Custom7 />
+            <Custom8 />
+            <Custom9 />
+            <Custom10 />
+            <Custom11 />
+            <Custom12 />
+            <Custom13 />
+            <Custom14 />
+            <Custom15 />
+            <Custom16 />
+            <Custom17 />
+            <Custom18 />
+            <Custom19 />
+            <Custom20 />
+            <Custom21 />
+            <Custom22 />
+            <Custom23 />
+            <Custom24 />
+            <Custom25 />
+            <Custom26 />
+            <Custom27 />
+            <Custom28 />
+            <Custom29 />
+            <Custom30 />
+            <Custom31 />
+            <Custom32 />
+            <Custom33 />
+            <Custom34 />
+            <Custom35 />
+            <Custom36 />
+            <Custom37 />
+            <Custom38 />
+            <Custom39 />
+            <Custom40 />
+            <X_UserID>abc123@cornell.edu</X_UserID>
+            <RpeKey>TeStInG1KeY1$THISisONLYforTESTING001</RpeKey>
+            <RptKey>987654321aAbBcCdDeEfFgGhHiIjJkKlLmM</RptKey>
+            <ExpKey>LODNG</ExpKey>
+            <FormKey>formKEY123FORMkey123formKEY123FRMkey</FormKey>
+            <ReceiptImageId>1C2C3C4C5C6C7C8C9C8C7C6C5C4C3C2C</ReceiptImageId>
+            <ExpName>Hotel</ExpName>
+            <SpendCategory>Lodging - Track Room Rate Spending</SpendCategory>
+            <BusinessPurpose />
+            <HasVat>N</HasVat>
+            <ExchangeRate>1.00000000000000</ExchangeRate>
+            <TransactionAmount>194.36000000</TransactionAmount>
+            <PostedAmount>194.36000000</PostedAmount>
+            <ApprovedAmount />
+            <TransactionCurrencyName>US, Dollar</TransactionCurrencyName>
+            <VendorDescription>NAMELESS INN</VendorDescription>
+            <LocationName>Stamford</LocationName>
+            <LocationSubdivision>US-CT</LocationSubdivision>
+            <LocationCountry>US</LocationCountry>
+            <HasComments>N</HasComments>
+            <CommentCount>0</CommentCount>
+            <PaymentTypeKey>1234</PaymentTypeKey>
+            <IsItemized>Y</IsItemized>
+            <HasExceptions>N</HasExceptions>
+            <IsPersonal>N</IsPersonal>
+            <HasAttendees>N</HasAttendees>
+            <HasAllocation>N</HasAllocation>
+            <IsCreditCardCharge>Y</IsCreditCardCharge>
+            <AttendeeCount>0</AttendeeCount>
+            <IsPersonalCardCharge>N</IsPersonalCardCharge>
+            <TransactionDate>2020-04-01T00:00:00</TransactionDate>
+            <LastModified>2020-04-14T13:20:10</LastModified>
+            <OrgUnit1 />
+            <OrgUnit2 />
+            <OrgUnit3 />
+            <OrgUnit4 />
+            <OrgUnit5 />
+            <OrgUnit6 />
+            <Allocations></Allocations>
+            <AttendeeDetails></AttendeeDetails>
+            <ItemizationsList>
+                <ItemizationEntryDetails>
+                    <Custom1>(Meeting/Interview)Meeting/Interview</Custom1>
+                    <Custom2>(Federal Allowable)Federal Allowable</Custom2>
+                    <Custom3>(Domestic Travel)1. Domestic Travel</Custom3>
+                    <Custom4>(Employee)Employee</Custom4>
+                    <Custom5 />
+                    <Custom6 />
+                    <Custom7 />
+                    <Custom8 />
+                    <Custom9 />
+                    <Custom10 />
+                    <Custom11 />
+                    <Custom12 />
+                    <Custom13 />
+                    <Custom14 />
+                    <Custom15 />
+                    <Custom16 />
+                    <Custom17 />
+                    <Custom18 />
+                    <Custom19 />
+                    <Custom20 />
+                    <Custom21 />
+                    <Custom22 />
+                    <Custom23 />
+                    <Custom24 />
+                    <Custom25 />
+                    <Custom26 />
+                    <Custom27 />
+                    <Custom28 />
+                    <Custom29 />
+                    <Custom30 />
+                    <Custom31 />
+                    <Custom32 />
+                    <Custom33 />
+                    <Custom34 />
+                    <Custom35>US</Custom35>
+                    <Custom36 />
+                    <Custom37 />
+                    <Custom38 />
+                    <Custom39>0.00000000</Custom39>
+                    <Custom40>25.36000000</Custom40>
+                    <ItemizationKey>itemKEYitemKEY123123$ITEMkeyITEMkey1</ItemizationKey>
+                    <ExpenseKey>LODTX</ExpenseKey>
+                    <ExpenseName>Hotel Tax</ExpenseName>
+                    <BusinessPurpose />
+                    <TransactionAmount>25.36000000</TransactionAmount>
+                    <TransactionDate>2020-03-31T00:00:00</TransactionDate>
+                    <PostedAmount>25.36000000</PostedAmount>
+                    <ApprovedAmount>25.36000000</ApprovedAmount>
+                    <HasComments>N</HasComments>
+                    <CommentCount>0</CommentCount>
+                    <IsPersonal>N</IsPersonal>
+                    <LastModified>2020-04-10T18:00:15</LastModified>
+                    <AllocationsList>
+                        <Allocations>
+                            <Custom1>(IT) ITHACA CAMPUS</Custom1>
+                            <Custom2>(4321000) Assistant Testing Unit</Custom2>
+                            <Custom3 />
+                            <Custom4 />
+                            <Custom5 />
+                            <Custom6 />
+                            <Custom7 />
+                            <Custom8 />
+                            <Custom9 />
+                            <Custom10 />
+                            <Custom11 />
+                            <Custom12 />
+                            <Custom13 />
+                            <Custom14 />
+                            <Custom15 />
+                            <Custom16 />
+                            <Custom17 />
+                            <Custom18 />
+                            <Custom19 />
+                            <Custom20 />
+                            <AllocationKey>thisISallocationNUMBER1forTHEtravel</AllocationKey>
+                            <Percentage>100.00000000%</Percentage>
+                            <AccountCode1>6750</AccountCode1>
+                            <AccountCode2>Pending Client</AccountCode2>
+                        </Allocations>
+                    </AllocationsList>
+                    <OrgUnit1 />
+                    <OrgUnit2 />
+                    <OrgUnit3 />
+                    <OrgUnit4 />
+                    <OrgUnit5 />
+                    <OrgUnit6 />
+                </ItemizationEntryDetails>
+                <ItemizationEntryDetails>
+                    <Custom1>(Meeting/Interview)Meeting/Interview</Custom1>
+                    <Custom2>(Federal Allowable)Federal Allowable</Custom2>
+                    <Custom3>(Domestic Travel)1. Domestic Travel</Custom3>
+                    <Custom4>(Employee)Employee</Custom4>
+                    <Custom5 />
+                    <Custom6 />
+                    <Custom7 />
+                    <Custom8 />
+                    <Custom9 />
+                    <Custom10 />
+                    <Custom11 />
+                    <Custom12 />
+                    <Custom13 />
+                    <Custom14 />
+                    <Custom15 />
+                    <Custom16 />
+                    <Custom17 />
+                    <Custom18 />
+                    <Custom19 />
+                    <Custom20 />
+                    <Custom21 />
+                    <Custom22 />
+                    <Custom23 />
+                    <Custom24 />
+                    <Custom25 />
+                    <Custom26 />
+                    <Custom27 />
+                    <Custom28 />
+                    <Custom29 />
+                    <Custom30 />
+                    <Custom31 />
+                    <Custom32 />
+                    <Custom33 />
+                    <Custom34 />
+                    <Custom35>US</Custom35>
+                    <Custom36 />
+                    <Custom37 />
+                    <Custom38 />
+                    <Custom39>0.00000000</Custom39>
+                    <Custom40>169.00000000</Custom40>
+                    <ItemizationKey>itemKEYitemKEY234234$ITEMkeyITEMkey2</ItemizationKey>
+                    <ExpenseKey>LODNG</ExpenseKey>
+                    <ExpenseName>Hotel</ExpenseName>
+                    <BusinessPurpose />
+                    <TransactionAmount>169.00000000</TransactionAmount>
+                    <TransactionDate>2020-03-31T00:00:00</TransactionDate>
+                    <PostedAmount>169.00000000</PostedAmount>
+                    <ApprovedAmount>169.00000000</ApprovedAmount>
+                    <HasComments>N</HasComments>
+                    <CommentCount>0</CommentCount>
+                    <IsPersonal>N</IsPersonal>
+                    <LastModified>2020-04-10T18:32:23</LastModified>
+                    <AllocationsList>
+                        <Allocations>
+                            <Custom1>(IT) ITHACA CAMPUS</Custom1>
+                            <Custom2>(4321000) Assistant Testing Unit</Custom2>
+                            <Custom3 />
+                            <Custom4 />
+                            <Custom5 />
+                            <Custom6 />
+                            <Custom7 />
+                            <Custom8 />
+                            <Custom9 />
+                            <Custom10 />
+                            <Custom11 />
+                            <Custom12 />
+                            <Custom13 />
+                            <Custom14 />
+                            <Custom15 />
+                            <Custom16 />
+                            <Custom17 />
+                            <Custom18 />
+                            <Custom19 />
+                            <Custom20 />
+                            <AllocationKey>thisISallocationNUMBER2forTHEtravel</AllocationKey>
+                            <Percentage>100.00000000%</Percentage>
+                            <AccountCode1>6750</AccountCode1>
+                            <AccountCode2>Pending Client</AccountCode2>
+                        </Allocations>
+                    </AllocationsList>
+                    <OrgUnit1 />
+                    <OrgUnit2 />
+                    <OrgUnit3 />
+                    <OrgUnit4 />
+                    <OrgUnit5 />
+                    <OrgUnit6 />
+                </ItemizationEntryDetails>
+            </ItemizationsList>
+        </ExpenseEntry>
+        <ExpenseEntry>
+            <ReceiptRequired>N</ReceiptRequired>
+            <ImageRequired>N</ImageRequired>
+            <EreceiptId />
+            <Custom1>(Meeting/Interview)Meeting/Interview</Custom1>
+            <Custom2>(Federal Allowable)Federal Allowable</Custom2>
+            <Custom3>(Domestic Travel)1. Domestic Travel</Custom3>
+            <Custom4>(Employee)Employee</Custom4>
+            <Custom5 />
+            <Custom6 />
+            <Custom7 />
+            <Custom8 />
+            <Custom9 />
+            <Custom10 />
+            <Custom11 />
+            <Custom12 />
+            <Custom13 />
+            <Custom14 />
+            <Custom15 />
+            <Custom16 />
+            <Custom17 />
+            <Custom18 />
+            <Custom19 />
+            <Custom20 />
+            <Custom21 />
+            <Custom22 />
+            <Custom23 />
+            <Custom24 />
+            <Custom25 />
+            <Custom26 />
+            <Custom27 />
+            <Custom28 />
+            <Custom29 />
+            <Custom30 />
+            <Custom31 />
+            <Custom32 />
+            <Custom33 />
+            <Custom34 />
+            <Custom35>US</Custom35>
+            <Custom36 />
+            <Custom37 />
+            <Custom38 />
+            <Custom39>0.00000000</Custom39>
+            <Custom40>49.50000000</Custom40>
+            <X_UserID>abc123@cornell.edu</X_UserID>
+            <RpeKey>TeStInG2KeY2$THISisONLYforTESTING002</RpeKey>
+            <RptKey>987654321aAbBcCdDeEfFgGhHiIjJkKlLmM</RptKey>
+            <ExpKey>FXMLS</ExpKey>
+            <FormKey>formKEY456FORMkey456formKEY456FRMkey</FormKey>
+            <ReceiptImageId />
+            <ExpName>Daily Allowance</ExpName>
+            <SpendCategory>Meal - Count in Daily Meal Allowance</SpendCategory>
+            <BusinessPurpose />
+            <HasVat>N</HasVat>
+            <ExchangeRate>1.00000000000000</ExchangeRate>
+            <TransactionAmount>49.50000000</TransactionAmount>
+            <PostedAmount>49.50000000</PostedAmount>
+            <ApprovedAmount>49.50000000</ApprovedAmount>
+            <TransactionCurrencyName>US, Dollar</TransactionCurrencyName>
+            <VendorDescription />
+            <LocationName>Stamford</LocationName>
+            <LocationSubdivision>US-CT</LocationSubdivision>
+            <LocationCountry>US</LocationCountry>
+            <HasComments>N</HasComments>
+            <CommentCount>0</CommentCount>
+            <PaymentTypeKey>CASH</PaymentTypeKey>
+            <IsItemized>N</IsItemized>
+            <HasExceptions>N</HasExceptions>
+            <IsPersonal>N</IsPersonal>
+            <HasAttendees>N</HasAttendees>
+            <HasAllocation>N</HasAllocation>
+            <IsCreditCardCharge>N</IsCreditCardCharge>
+            <AttendeeCount>0</AttendeeCount>
+            <IsPersonalCardCharge>N</IsPersonalCardCharge>
+            <TransactionDate>2020-04-01T00:00:00</TransactionDate>
+            <LastModified>2020-04-10T18:32:23</LastModified>
+            <OrgUnit1 />
+            <OrgUnit2 />
+            <OrgUnit3 />
+            <OrgUnit4 />
+            <OrgUnit5 />
+            <OrgUnit6 />
+            <Allocations>
+                <Custom1>(IT) ITHACA CAMPUS</Custom1>
+                <Custom2>(4321000) Assistant Testing Unit</Custom2>
+                <Custom3 />
+                <Custom4 />
+                <Custom5 />
+                <Custom6 />
+                <Custom7 />
+                <Custom8 />
+                <Custom9 />
+                <Custom10 />
+                <Custom11 />
+                <Custom12 />
+                <Custom13 />
+                <Custom14 />
+                <Custom15 />
+                <Custom16 />
+                <Custom17 />
+                <Custom18 />
+                <Custom19 />
+                <Custom20 />
+                <AllocationKey>thisISallocationNUMBER3forTHEtravel</AllocationKey>
+                <Percentage>100.00000000%</Percentage>
+                <AccountCode1>6750</AccountCode1>
+                <AccountCode2>Pending Client</AccountCode2>
+            </Allocations>
+            <AttendeeDetails></AttendeeDetails>
+            <ItemizationsList />
+        </ExpenseEntry>
+    </Entries>
+</ReportDetails>

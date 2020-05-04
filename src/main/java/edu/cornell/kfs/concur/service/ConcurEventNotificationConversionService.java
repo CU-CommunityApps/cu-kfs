@@ -3,7 +3,7 @@ package edu.cornell.kfs.concur.service;
 import java.text.ParseException;
 
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
-import edu.cornell.kfs.concur.eventnotification.rest.xmlObjects.ConcurEventNotificationDTO;
+import edu.cornell.kfs.concur.eventnotification.rest.plain.xmlObjects.ConcurEventNotificationDTO;
 
 public interface ConcurEventNotificationConversionService {
     
