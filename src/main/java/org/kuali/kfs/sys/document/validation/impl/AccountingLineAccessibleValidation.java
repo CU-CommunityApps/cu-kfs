@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2019 Kuali, Inc.
+ * Copyright 2005-2020 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -224,8 +224,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     protected AccountingLineAuthorizer lookupAccountingLineAuthorizer() {
         final String groupName = getGroupName();
         final Map<String, AccountingLineGroupDefinition> groups = ((FinancialSystemTransactionalDocumentEntry)
-            dataDictionaryService.getDataDictionary().getDictionaryObjectEntry(accountingDocumentForValidation
-                .getClass().getName())).getAccountingLineGroups();
+                dataDictionaryService.getDictionaryObjectEntry(accountingDocumentForValidation
+                        .getClass().getName())).getAccountingLineGroups();
 
         if (groups.isEmpty()) {
             // no groups? just use the default...

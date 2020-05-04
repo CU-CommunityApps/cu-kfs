@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.ld.document;
 
 import java.util.List;
 
-import org.kuali.kfs.module.ld.LaborConstants;
+import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument;
@@ -50,8 +50,8 @@ public class CuSalaryExpenseTransferDocument extends SalaryExpenseTransferDocume
     public boolean generateLaborLedgerBenefitClearingPendingEntries(GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerBenefitClearingPendingEntries()");
 
-        String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_CHART_PARM_NM);
-        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborConstants.SalaryExpenseTransfer.BENEFIT_CLEARING_ACCOUNT_PARM_NM);
+        String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_CHART);
+        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
 
         List<LaborLedgerPendingEntry> benefitClearingPendingEntries = CuLaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber, chartOfAccountsCode);
 

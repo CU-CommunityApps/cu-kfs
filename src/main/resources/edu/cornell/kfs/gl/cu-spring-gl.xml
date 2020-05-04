@@ -203,6 +203,7 @@
           p:flexibleOffsetAccountService-ref="flexibleOffsetAccountService"
           p:verifyTransaction-ref="glVerifyTransaction" p:dateTimeService-ref="dateTimeService"
           p:reversalDao-ref="glReversalDao" p:accountingPeriodService-ref="accountingPeriodService"
+          p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
           p:expenditureTransactionDao-ref="glExpenditureTransactionDao"
           p:indirectCostRecoveryRateDetailDao-ref="indirectCostRecoveryRateDetailDao"
           p:objectCodeService-ref="objectCodeService" p:configurationService-ref="kualiConfigurationService"

@@ -935,7 +935,7 @@ public class CreateAccountingDocumentServiceImplTest {
         FiscalYearFunctionControl functionControl = new FiscalYearFunctionControl();
         functionControl.setUniversityFiscalYear(Integer.valueOf(fiscalYear));
         functionControl.setFinancialSystemFunctionControlCode(FiscalYearFunctionControlServiceImpl.FY_FUNCTION_CONTROL_BA_ALLOWED);
-        functionControl.setFinancialSystemFunctionActiveIndicator(true);
+        functionControl.setActive(true);
         return functionControl;
     }
 

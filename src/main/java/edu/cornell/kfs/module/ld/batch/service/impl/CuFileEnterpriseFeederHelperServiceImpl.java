@@ -24,7 +24,7 @@ import org.kuali.kfs.gl.report.LedgerSummaryReport;
 import org.kuali.kfs.gl.service.impl.EnterpriseFeederStatusAndErrorMessagesWrapper;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.ld.LaborConstants;
+import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.batch.LaborEnterpriseFeedStep;
 import org.kuali.kfs.module.ld.batch.service.impl.FileEnterpriseFeederHelperServiceImpl;
@@ -104,7 +104,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 int count = 0;
                     
                 Collection<String> offsetDocTypes = parameterService.getParameterValuesAsString(
-                        LaborEnterpriseFeedStep.class, LaborConstants.BenefitCalculation.LABOR_BENEFIT_OFFSET_DOCTYPE);
+                        LaborEnterpriseFeedStep.class, LaborParameterConstants.LABOR_BENEFIT_OFFSET_DOCTYPE);
                 offsetDocTypes = offsetDocTypes.stream().map(String::toUpperCase).collect(Collectors.toList());
 
                 while ((line = dataFileReader.readLine()) != null) {
@@ -245,7 +245,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             
             String originCode = parameterService.getParameterValueAsString(
-                    LaborEnterpriseFeedStep.class, LaborConstants.BenefitCalculation.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
+                    LaborEnterpriseFeedStep.class, LaborParameterConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
             
             offsetEntry.setFinancialSystemOriginationCode(originCode);
             offsetEntry.setDocumentNumber(wageEntry.getDocumentNumber());

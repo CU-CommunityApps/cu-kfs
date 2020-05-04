@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2019 Kuali, Inc.
+ * Copyright 2005-2020 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,6 @@ import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
 import org.kuali.kfs.integration.ld.LaborLedgerPendingEntryForSearching;
 import org.kuali.kfs.integration.ld.LaborLedgerPostingDocumentForSearching;
 import org.kuali.kfs.kns.lookup.LookupUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.kns.service.DictionaryValidationService;
 import org.kuali.kfs.kns.util.FieldUtils;
 import org.kuali.kfs.kns.web.ui.Field;
@@ -37,6 +36,7 @@ import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.kns.datadictionary.DocumentEntry;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.DocumentDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.workflow.attribute.DataDictionarySearchableAttribute;
@@ -112,8 +112,6 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
             }
         }
 
-        DataDictionaryService ddService = SpringContext.getBean(DataDictionaryService.class);
-
         List<Row> docSearchRows = super.getSearchingRows(documentTypeName);
 
         // add account number search field when selected document type is COA
@@ -126,7 +124,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
             }
         }
 
-        DocumentEntry entry = ddService.getDataDictionary().getDocumentEntry(documentTypeName);
+        DocumentEntry entry = SpringContext.getBean(DocumentDictionaryService.class).getDocumentEntry(documentTypeName);
         if (entry != null) {
             Class<? extends Document> docClass = entry.getDocumentClass();
 

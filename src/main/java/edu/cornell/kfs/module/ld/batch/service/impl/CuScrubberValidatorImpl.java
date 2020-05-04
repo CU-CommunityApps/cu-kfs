@@ -10,6 +10,7 @@ import org.kuali.kfs.gl.businessobject.OriginEntryInformation;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.LaborKeyConstants;
+import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.batch.LaborScrubberStep;
 import org.kuali.kfs.module.ld.batch.service.LaborAccountingCycleCachingService;
 import org.kuali.kfs.module.ld.batch.service.impl.ScrubberValidatorImpl;
@@ -95,7 +96,7 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
             }
 
             boolean suspenseAccountLogicInd = parameterService.getParameterValueAsBoolean(
-                    LaborScrubberStep.class, LaborConstants.Scrubber.SUSPENSE_ACCOUNT_LOGIC_PARAMETER);
+                    LaborScrubberStep.class, LaborParameterConstants.SUSPENSE_ACCOUNT_LOGIC);
             if (suspenseAccountLogicInd) {
                 return useSuspenseAccount(laborWorkingEntry);
             }

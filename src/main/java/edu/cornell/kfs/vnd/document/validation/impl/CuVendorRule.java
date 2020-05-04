@@ -641,7 +641,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 	    		valid &= false;
 	    	}
 	        if ( !purchaseOrderTransmissionMethodDataRulesService.isStateCodeValid(address.getVendorStateCode()) ) {
-	    		propertyName = new String ( propertyScope + VendorPropertyConstants.VENDOR_ADDRESS_STATE_CODE);
+	    		propertyName = new String ( propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_STATE_CODE);
 	    		putFieldError(propertyName, CUVendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_US_POSTAL);               
 	    		valid &= false;        		
 	    	}
