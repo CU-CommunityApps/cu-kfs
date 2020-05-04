@@ -223,7 +223,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             // KFSUPGRADE-973 
             if (researchParticipantPaymentValidationService.isResearchParticipantPayment(customerProfile)) {
-                BusinessObjectEntry businessObjectEntry = dataDictionaryService.getDataDictionary().getBusinessObjectEntry(PaymentDetail.class.getName());
+                BusinessObjectEntry businessObjectEntry = businessObjectDictionaryService.getBusinessObjectEntry(PaymentDetail.class.getName());
                 AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition("paymentGroup.payeeName");
                 AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
                 //This is a temporary work around for an issue introduced with KFSCNTRB-705.

@@ -75,13 +75,15 @@
 		class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true"
 		p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
 		p:dictionaryValidationService-ref="dictionaryValidationService"
-		p:businessObjectService-ref="businessObjectService" p:commodityCodeValidation-ref="commodityCodeValidation"/>
+		p:businessObjectService-ref="businessObjectService" 
+		p:commodityCodeValidation-ref="Purchasing-commodityCodeValidation"/>
 	
 	<bean id="Purchasing-importItemValidation"
            class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true"
            p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
            p:dictionaryValidationService-ref="dictionaryValidationService"
-           p:businessObjectService-ref="businessObjectService"/>
+           p:businessObjectService-ref="businessObjectService"
+           p:commodityCodeValidation-ref="Purchasing-commodityCodeValidation"/>
 	
 	<bean id="Purchasing-processVendorValidation"
           class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingProcessVendorValidation"

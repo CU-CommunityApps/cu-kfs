@@ -110,7 +110,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
                 LaborParameterConstants.BENEFIT_CLEARING_CHART);
         String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
-                LaborParameterConstants.BENEFIT_CLEARING_CHART);
+                LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
 
         List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
                 LaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber,

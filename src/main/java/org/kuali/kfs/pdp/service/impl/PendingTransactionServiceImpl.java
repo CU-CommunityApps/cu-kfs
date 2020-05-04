@@ -70,7 +70,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     protected AccountingPeriodService accountingPeriodService;
     protected DateTimeService dateTimeService;
     private ConfigurationService kualiConfigurationService;
-    private BusinessObjectDictionaryService businessObjectDictionaryService;
+    protected BusinessObjectDictionaryService businessObjectDictionaryService;
     protected BusinessObjectService businessObjectService;
     protected BankService bankService;
     protected DataDictionaryService dataDictionaryService;
