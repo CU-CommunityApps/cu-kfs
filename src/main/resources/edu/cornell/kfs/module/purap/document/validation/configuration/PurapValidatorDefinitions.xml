@@ -49,7 +49,7 @@
     <bean id="Purchasing-commodityCodeValidation"
     	class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation"
     	abstract="true" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
-    	p:businessObjectService-ref="businessObjectService"/>
+    	p:businessObjectService-ref="businessObjectService" p:parameterService-ref="parameterService"/>
 
     <bean id="Purchasing-newIndividualItemValidation"
           class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation"
@@ -75,7 +75,7 @@
 		class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true"
 		p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
 		p:dictionaryValidationService-ref="dictionaryValidationService"
-		p:businessObjectService-ref="businessObjectService"/>
+		p:businessObjectService-ref="businessObjectService" p:commodityCodeValidation-ref="commodityCodeValidation"/>
 	
 	<bean id="Purchasing-importItemValidation"
            class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true"

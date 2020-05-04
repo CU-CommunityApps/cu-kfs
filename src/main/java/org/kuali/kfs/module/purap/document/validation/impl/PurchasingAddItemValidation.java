@@ -86,7 +86,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
             if (ObjectUtils.isNull(item.getItemUnitPrice())) {
                 valid = false;
                 String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
-                        .getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
+                        .getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
                 GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
                         KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
 

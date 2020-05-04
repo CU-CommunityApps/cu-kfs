@@ -51,7 +51,7 @@ public class CuSalaryExpenseTransferDocument extends SalaryExpenseTransferDocume
         LOG.debug("started generateLaborLedgerBenefitClearingPendingEntries()");
 
         String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_CHART);
-        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_CHART);
+        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
 
         List<LaborLedgerPendingEntry> benefitClearingPendingEntries = CuLaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber, chartOfAccountsCode);
 
