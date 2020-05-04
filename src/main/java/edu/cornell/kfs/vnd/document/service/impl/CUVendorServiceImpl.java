@@ -36,6 +36,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 @Transactional
@@ -109,7 +110,7 @@ public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorSe
     public VendorHeader getVendorByEin(String vendorEin) {
         LOG.info("Entering getVendorByEin f:" );
         Map criteria = new HashMap();
-        criteria.put(VendorPropertyConstants.VENDOR_TAX_NUMBER_ONLY, vendorEin);
+        criteria.put(CUVendorPropertyConstants.VENDOR_TAX_NUMBER_ONLY, vendorEin);
         criteria.put("VNDR_TAX_TYP_CD", "FEIN");
         List<VendorHeader> vds = (List) businessObjectService.findMatching(VendorHeader.class, criteria);
         LOG.debug("Exiting getVendorByEin.");

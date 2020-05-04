@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2019 Kuali, Inc.
+ * Copyright 2005-2020 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -112,12 +112,12 @@ public final class LaborPendingEntryGenerator {
             return null;
         }
 
-        Integer payrollFiscalyear = accountingLine.getPayrollEndDateFiscalYear();
+        Integer payrollFiscalYear = accountingLine.getPayrollEndDateFiscalYear();
         String chartOfAccountsCode = accountingLine.getChartOfAccountsCode();
         String objectCode = accountingLine.getFinancialObjectCode();
         Collection<PositionObjectBenefit> positionObjectBenefits =
                 SpringContext.getBean(LaborPositionObjectBenefitService.class).getActivePositionObjectBenefits(
-                        payrollFiscalyear, chartOfAccountsCode, objectCode);
+                        payrollFiscalYear, chartOfAccountsCode, objectCode);
 
         List<LaborLedgerPendingEntry> benefitPendingEntries = new ArrayList<>();
         for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
@@ -281,13 +281,13 @@ public final class LaborPendingEntryGenerator {
             return;
         }
 
-        Integer payrollFiscalyear = accountingLine.getPayrollEndDateFiscalYear();
+        Integer payrollFiscalYear = accountingLine.getPayrollEndDateFiscalYear();
         String chartOfAccountsCode = accountingLine.getChartOfAccountsCode();
         String objectCode = accountingLine.getFinancialObjectCode();
 
         Collection<PositionObjectBenefit> positionObjectBenefits =
                 SpringContext.getBean(LaborPositionObjectBenefitService.class).getActivePositionObjectBenefits(
-                        payrollFiscalyear, chartOfAccountsCode, objectCode);
+                        payrollFiscalYear, chartOfAccountsCode, objectCode);
         for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
             positionObjectBenefit.setLaborBenefitRateCategoryCode(accountingLine.getAccount()
                     .getLaborBenefitRateCategoryCode());
@@ -301,28 +301,6 @@ public final class LaborPendingEntryGenerator {
             }
             benefitAmountSumByBenefitType.put(benefitTypeCode, benefitAmount);
         }
-    }
-
-    /**
-     * determine if the pay fiscal year and period from the accounting line match with its university fiscal year and
-     * period.
-     *
-     * @param document       the given document
-     * @param accountingLine the given accounting line of the document
-     * @return true if the pay fiscal year and period from the accounting line match with its university fiscal year
-     *         and period; otherwise, false
-     */
-    protected static boolean isAccountingLinePayFYPeriodMatchesUniversityPayFYPeriod(
-            LaborLedgerPostingDocument document, ExpenseTransferAccountingLine accountingLine) {
-        Integer fiscalYear = document.getPostingYear();
-        Integer payFiscalYear = accountingLine.getPayrollEndDateFiscalYear();
-        if (!fiscalYear.equals(payFiscalYear)) {
-            return false;
-        }
-
-        String periodCode = document.getPostingPeriodCode();
-        String payPeriodCode = accountingLine.getPayrollEndDateFiscalPeriodCode();
-        return StringUtils.equals(periodCode, payPeriodCode);
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2019 Kuali, Inc.
+ * Copyright 2005-2020 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -45,8 +45,8 @@ import java.util.Map;
 
 public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddItemValidation {
 
+    private BusinessObjectDictionaryService businessObjectDictionaryService;
     private BusinessObjectService businessObjectService;
-    private DataDictionaryService dataDictionaryService;
     private PurchasingCommodityCodeValidation commodityCodeValidation;
     
     public boolean validate(AttributedDocumentEvent event) {     
@@ -85,9 +85,8 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         if (item.getItemType().isLineItemIndicator()) {
             if (ObjectUtils.isNull(item.getItemUnitPrice())) {
                 valid = false;
-                String attributeLabel = dataDictionaryService.
-                                        getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                                        getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
+                String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+                        .getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
                 GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
                         KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
 
@@ -131,10 +130,9 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
             String uomCode = purItem.getItemUnitOfMeasureCode();
             if (StringUtils.isEmpty(uomCode)) {
                 valid = false;
-                String attributeLabel = dataDictionaryService.
-                        getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                        getAttributeDefinition(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).
-                        getLabel();
+                String attributeLabel = businessObjectDictionaryService
+                        .getBusinessObjectEntry(item.getClass().getName()).getAttributeDefinition(
+                                KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).getLabel();
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE,
                         KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
             }
@@ -155,9 +153,9 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         if (purItem.getItemType().isAmountBasedGeneralLedgerIndicator()
                 && StringUtils.isNotBlank(purItem.getItemUnitOfMeasureCode())) {
             valid = false;
-            String attributeLabel = dataDictionaryService.
-                getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).getLabel();
+            String attributeLabel = businessObjectDictionaryService
+                    .getBusinessObjectEntry(item.getClass().getName()).getAttributeDefinition(
+                            PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE,
                     PurapKeyConstants.ERROR_ITEM_UOM_NOT_ALLOWED, attributeLabel + " in " + item.getItemIdentifierString());
         }
@@ -168,16 +166,15 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
     /**
      * Checks that a description was entered for the item.
      *
-     * @param item
-     * @return
+     * @param item Item to be checked
+     * @return {@code true} if a description was entered for the item; {@code false} otherwise.
      */
     public boolean validateItemDescription(PurApItem item) {
         boolean valid = true;
         if (StringUtils.isEmpty(item.getItemDescription())) {
             valid = false;
-            String attributeLabel = dataDictionaryService.
-                getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
+            String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+                    .getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_DESCRIPTION,
                     KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
         }
@@ -195,19 +192,17 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         boolean valid = true;
         PurchasingItemBase purItem = (PurchasingItemBase) item;
         if (purItem.getItemType().isQuantityBasedGeneralLedgerIndicator()
-                && (ObjectUtils.isNull(purItem.getItemQuantity()))) {
+                && ObjectUtils.isNull(purItem.getItemQuantity())) {
             valid = false;
-            String attributeLabel = dataDictionaryService.
-                getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
+            String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+                    .getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.QUANTITY, KFSKeyConstants.ERROR_REQUIRED,
                     attributeLabel + " in " + item.getItemIdentifierString());
         } else if (purItem.getItemType().isAmountBasedGeneralLedgerIndicator()
                 && ObjectUtils.isNotNull(purItem.getItemQuantity())) {
             valid = false;
-            String attributeLabel = dataDictionaryService.
-                getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
+            String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+                    .getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.QUANTITY,
                     PurapKeyConstants.ERROR_ITEM_QUANTITY_NOT_ALLOWED, attributeLabel + " in " + item.getItemIdentifierString());
         }
@@ -262,13 +257,11 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         this.businessObjectService = businessObjectService;
     }
 
-    public DataDictionaryService getDataDictionaryService() {
-        return dataDictionaryService;
+    public void setBusinessObjectDictionaryService(
+            BusinessObjectDictionaryService businessObjectDictionaryService) {
+        this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
-
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-    }
+            
     
     public PurchasingCommodityCodeValidation getCommodityCodeValidation() {
         return commodityCodeValidation;
