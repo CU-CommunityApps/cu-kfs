@@ -7,13 +7,13 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Ignore;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-@Ignore
+import edu.cornell.kfs.module.receiptProcessing.service.impl.ReceiptProcessingServiceImpl;
+
 @ConfigureContext(session = ccs1)
 public class CuReceiptProcessingServiceImplPositiveTest extends KualiTestBase {
 
@@ -23,10 +23,9 @@ public class CuReceiptProcessingServiceImplPositiveTest extends KualiTestBase {
     private static final Logger LOG = LogManager.getLogger(CuReceiptProcessingServiceImplPositiveTest.class);
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_test.csv";
     private static final String IMG_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/receiptProcessing/service/attachments/testUnit.pdf";
+    private static final String CSV_ARCHIVE_SUB_PATH = "/CIT-csv-archive/";
     private String batchDirectory;  
-    private String receiptDir = "/infra/receipt_processing/CIT-csv-archive/";
-    
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -53,17 +52,14 @@ public class CuReceiptProcessingServiceImplPositiveTest extends KualiTestBase {
         }
         
         //make sure we have a pdf directory
-        //pdfDirectory = SpringContext.getBean(ReceiptProcessingService.class).getPdfPath();
-        File pdfDirectoryFile = new File(receiptDir);
+        String pdfDirectory = ((ReceiptProcessingServiceImpl) receiptProcessingService).getPdfDirectory();
+        File pdfDirectoryFile = new File(pdfDirectory);
         pdfDirectoryFile.mkdir();
 
         //copy the data file into place
         File imgFileSrc = new File(IMG_FILE_PATH);
-        File imgFileDest = new File(receiptDir + "/testUnit.pdf");
+        File imgFileDest = new File(pdfDirectory + CSV_ARCHIVE_SUB_PATH + "testUnit.pdf");
         FileUtils.copyFile(imgFileSrc, imgFileDest);
-
-        
-        
     }
     
     public void testCanLoadFiles() {
