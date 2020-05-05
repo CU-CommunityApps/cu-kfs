@@ -85,16 +85,17 @@ public class CuDisbursementVoucherTaxServiceImplTest{
         assertFalse("isForeignVendorAndTaxReviewNotRequired method should have returned false when input is foreign vendor and payment reason that requires tax review", isForeignVendorAndTaxReviewNotRequired);
 	}
 	
-	@Test
-    public void testIsForeignVendor_true()  {
-        boolean isForeignVendorAndTaxReviewRequired = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.VENDOR, FOREIGN_VENDOR_HEADER_ID);
-        assertTrue("isForeignVendorAndTaxReviewRequired method should have returned true when input is foreign vendor and payment reason that requires tax review", isForeignVendorAndTaxReviewRequired);
-    }
-    
     @Test
-    public void testIsForeignVendor_false()  {
-        boolean isForeignVendorAndTaxReviewRequired = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.EMPLOYEE, null);
-        assertFalse("isForeignVendorAndTaxReviewRequired method should have returned false when input payee type is not Vendor", isForeignVendorAndTaxReviewRequired);
+    public void testIsForeignVendor_true() {
+        boolean isForeign = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.VENDOR,
+                FOREIGN_VENDOR_HEADER_ID);
+        assertTrue("isForeign method should have returned true when input is foreign vendor", isForeign);
+    }
+
+    @Test
+    public void testIsForeignVendor_false() {
+        boolean isForeign = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.EMPLOYEE, null);
+        assertFalse("isForeign method should have returned false when input payee type is not Vendor", isForeign);
     }
 	
 	 private class MockVendorService implements VendorService {
