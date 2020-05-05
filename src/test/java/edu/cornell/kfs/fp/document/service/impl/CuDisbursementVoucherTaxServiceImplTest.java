@@ -85,6 +85,18 @@ public class CuDisbursementVoucherTaxServiceImplTest{
         assertFalse("isForeignVendorAndTaxReviewNotRequired method should have returned false when input is foreign vendor and payment reason that requires tax review", isForeignVendorAndTaxReviewNotRequired);
 	}
 	
+	@Test
+    public void testIsForeignVendor_true()  {
+        boolean isForeignVendorAndTaxReviewRequired = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.VENDOR, FOREIGN_VENDOR_HEADER_ID);
+        assertTrue("isForeignVendorAndTaxReviewRequired method should have returned true when input is foreign vendor and payment reason that requires tax review", isForeignVendorAndTaxReviewRequired);
+    }
+    
+    @Test
+    public void testIsForeignVendor_false()  {
+        boolean isForeignVendorAndTaxReviewRequired = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.EMPLOYEE, null);
+        assertFalse("isForeignVendorAndTaxReviewRequired method should have returned false when input payee type is not Vendor", isForeignVendorAndTaxReviewRequired);
+    }
+	
 	 private class MockVendorService implements VendorService {
 
 		@Override

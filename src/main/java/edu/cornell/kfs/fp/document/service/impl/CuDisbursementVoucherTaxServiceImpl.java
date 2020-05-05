@@ -34,7 +34,8 @@ public class CuDisbursementVoucherTaxServiceImpl extends DisbursementVoucherTaxS
 		return isForeignVendor(payeeTypeCode, vendorHeaderId) && paymentReasonDoesNotRequireTaxReviewForForeignVendor(paymentReasonCode);
 	}
 	
-	protected boolean isForeignVendor(String payeeTypeCode, Integer vendorHeaderId){
+    @Override
+	public boolean isForeignVendor(String payeeTypeCode, Integer vendorHeaderId){
 		return KFSConstants.PaymentPayeeTypes.VENDOR.equalsIgnoreCase(payeeTypeCode) && vendorService.isVendorForeign(vendorHeaderId);
 	}
 	
