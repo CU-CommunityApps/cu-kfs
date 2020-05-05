@@ -22,7 +22,7 @@ public class RecurringDisbursementVoucherForeignVendorValidation extends Generic
     
     @Override
     public boolean validate(AttributedDocumentEvent event) {
-        LOG.info("validate, entering");
+        LOG.debug("validate, entering");
         RecurringDisbursementVoucherDocument rcdvDocument = (RecurringDisbursementVoucherDocument) accountingDocumentForValidation;
         return validateRecurringDVForeignVendor(rcdvDocument);
     }
@@ -35,13 +35,13 @@ public class RecurringDisbursementVoucherForeignVendorValidation extends Generic
         
         if (StringUtils.isNotBlank(payeeTypeCode) && vendorHeaderId != null) {
             if (cuDisbursementVoucherTaxService.isForeignVendor(payeeTypeCode, vendorHeaderId)) {
-                LOG.info("validateRecurringDVForeignVendor, found a foreign vendor, which is not allowed on a recurring DV");
+                LOG.debug("validateRecurringDVForeignVendor, found a foreign vendor, which is not allowed on a recurring DV");
                 GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(KFSConstants.GENERAL_PAYMENT_TAB_ERRORS, 
                         CUKFSKeyConstants.ERROR_RCDV_NO_FOREIGN_VENDORS);
                 isValid = false;
             }
         } else {
-            LOG.info("validateRecurringDVForeignVendor, could not validate, no payee type code, or no vendor header id");
+            LOG.debug("validateRecurringDVForeignVendor, could not validate, no payee type code, or no vendor header id");
         }
         return isValid;
     }
