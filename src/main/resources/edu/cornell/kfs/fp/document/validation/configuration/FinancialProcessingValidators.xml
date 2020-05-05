@@ -37,6 +37,9 @@
 	<bean id="DisbursementVoucher-payeeStateAndCountryValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeStateAndCountryValidation" abstract="true">
 		<property name="cuDisbursementVoucherTaxService" ref="disbursementVoucherTaxService" />
 	</bean>
+	<bean id="RecurringDisbursementVoucherForeignVendorValidation" class="edu.cornell.kfs.fp.document.validation.impl.RecurringDisbursementVoucherForeignVendorValidation" abstract="true">
+		<property name="cuDisbursementVoucherTaxService" ref="disbursementVoucherTaxService" />
+	</bean>
 	    
 	<bean id="YearEndJournalVoucher-accountingLinesBalanceValidation" class="edu.cornell.kfs.fp.document.validation.impl.YearEndJournalVoucherAccountingLinesBalanceValidation" abstract="true" />
 

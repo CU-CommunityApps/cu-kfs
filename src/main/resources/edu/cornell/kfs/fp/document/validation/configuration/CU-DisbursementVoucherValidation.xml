@@ -98,4 +98,18 @@
 	</property>
 	</bean>
 	
+	<bean id="RecurringDisbursementVoucher-saveDocumentValidation" parent="DisbursementVoucher-saveDocumentValidation-parentBean">
+		<property name="validations">
+			<list merge="true">
+				<bean parent="RecurringDisbursementVoucherForeignVendorValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+			</list>
+		</property>
+    </bean>
+	
 </beans>
