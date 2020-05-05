@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -15,6 +16,7 @@ import org.kuali.kfs.pdp.businessobject.AchAccountNumber;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
@@ -49,11 +51,11 @@ public class CuExtractPaymentServiceImplTest {
     private static final Logger LOG = LogManager.getLogger(CuExtractPaymentServiceImplTest.class);
     
     private static final String EDOC_DV_IDENTIFIER_AND_NUMBER = CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER + "12345678 ";
-    private static final int MAX_NUM_DV_CHECK_STUB_NOTES_TESTS = 4;
+    private static final int MAX_NUM_DV_CHECK_STUB_NOTES_TESTS = 5;
     private static final int MAX_NUM_DV_CHECK_STUB_LINES_PER_TEST = 3;
     
-                                                       //          1         2         3         4         5         6         7
-                                                       //01234567890123456789012345678901234567890123456789012345678901234567890
+                                                       //         1         2         3         4         5         6         7
+                                                       //012345678901234567890123456789012345678901234567890123456789012345678901
     private static final String[] DV_NOTES_TEST_DATA = {"First line of note text present. Next two lines blank.",
                                                         "",
                                                         "",
@@ -68,9 +70,13 @@ public class CuExtractPaymentServiceImplTest {
                                                         
                                                         "First line where line fully filled with data to see what will happen to", 
                                                         "Second line notes text is fully filled with data to see what it will do",
-                                                        "Third line notes text fully filled should truncate all extra characters"};
+                                                        "Third line notes text fully filled should truncate all extra characters",
+                                                       
+                                                        "First line with data up to the very end with no wrap to see", 
+                                                        "Second line note text not fully filled with data to see what it will do",
+                                                        "Third lines notes text fully filled should not truncate extra characters"};
 
-                                                                //          1         2         3         4         5         6         7
+                                                                //         1         2         3         4         5         6         7
                                                                 //012345678901234567890123456789012345678901234567890123456789012345678901
     private static final String[] DV_CHECK_STUB_EXPECTED_TEXT = {"Doc:12345678 First line of note text present. Next two lines blank.",
                                                                  "",
@@ -86,7 +92,11 @@ public class CuExtractPaymentServiceImplTest {
             
                                                                  "Doc:12345678 First line where line fully filled with data to see what", 
                                                                  "will happen to Second line notes text is fully filled with data to see",
-                                                                 "what it will do Third line notes text fully filled should truncate all"};
+                                                                 "what it will do Third line notes text fully filled should truncate all",
+                                                                 
+                                                                 "Doc:12345678 First line with data up to the very end with no wrap to see", 
+                                                                 "Second line note text not fully filled with data to see what it will do",
+                                                                 "Third lines notes text fully filled should not truncate extra characters"};
     
     private CuExtractPaymentServiceImpl cuExtractPaymentServiceImpl;
 
@@ -109,19 +119,46 @@ public class CuExtractPaymentServiceImplTest {
         int line3ArrayPosition = 2;
         
         for (int testIndex = 1; testIndex <= MAX_NUM_DV_CHECK_STUB_NOTES_TESTS; testIndex++) {
-        LOG.info("testDvCheckStubCreation: Test[" + testIndex + "]");
+            LOG.info("testDvCheckStubCreation: Test[" + testIndex + "]");
             String stubLine1 = EDOC_DV_IDENTIFIER_AND_NUMBER;
+            String stubLine2 = "";
+            String stubLine3 = "";
+            String noteLine = DV_NOTES_TEST_DATA[line1ArrayPosition];
             
-            String noteLine = cuExtractPaymentServiceImpl.stripLeadingSpace(DV_NOTES_TEST_DATA[line1ArrayPosition]);
-            String stubLine2 = cuExtractPaymentServiceImpl.stripLeadingSpace(cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(noteLine, stubLine1));
-            stubLine1 = cuExtractPaymentServiceImpl.stripTrailingSpace(stubLine1.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine1)));
-            
-            noteLine = cuExtractPaymentServiceImpl.stripLeadingSpace(DV_NOTES_TEST_DATA[line2ArrayPosition]);
-            String stubLine3 = cuExtractPaymentServiceImpl.stripLeadingSpace(cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(noteLine, stubLine2));
-            stubLine2 = cuExtractPaymentServiceImpl.stripTrailingSpace(stubLine2.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine2)));
-            
-            noteLine = cuExtractPaymentServiceImpl.stripLeadingSpace(DV_NOTES_TEST_DATA[line3ArrayPosition]);
-            stubLine3 = cuExtractPaymentServiceImpl.stripTrailingSpace(stubLine3.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine3)));
+            if (noteLine.length() >= 0) {
+                //Trim initialization data of any leading or trailing spaces.
+                //Subsequent methods called deal with this internally for note lines 2&3 initalization.
+                //Being done here so test mimics actual processing method logic.
+                stubLine1 = cuExtractPaymentServiceImpl.stripTrailingSpace(cuExtractPaymentServiceImpl.stripLeadingSpace(stubLine1));
+                
+                stubLine2 = cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(noteLine, stubLine1);
+                
+                stubLine1 = (StringUtils.equals(stubLine1, KFSConstants.BLANK_SPACE) | StringUtils.equals(stubLine1, KFSConstants.EMPTY_STRING))
+                        ? stubLine1.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine1))
+                                : stubLine1.concat(KFSConstants.BLANK_SPACE).concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine1));
+                
+                noteLine = DV_NOTES_TEST_DATA[line2ArrayPosition];
+                
+                if (noteLine.length() >= 0) {
+                    stubLine3 = cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(noteLine, stubLine2);
+                    
+                    stubLine2 = (StringUtils.equals(stubLine2, KFSConstants.BLANK_SPACE) | StringUtils.equals(stubLine2, KFSConstants.EMPTY_STRING))
+                            ? stubLine2.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine2))
+                                    : stubLine2.concat(KFSConstants.BLANK_SPACE).concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine2));
+                            
+                    noteLine = DV_NOTES_TEST_DATA[line3ArrayPosition];
+                    
+                    if (noteLine.length() >= 0) {
+                        stubLine3 = (StringUtils.equals(stubLine3, KFSConstants.BLANK_SPACE) | StringUtils.equals(stubLine3, KFSConstants.EMPTY_STRING))
+                                ? stubLine3.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine3))
+                                        : stubLine3.concat(KFSConstants.BLANK_SPACE).concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine3));
+                    }
+                }
+            }
+          
+            LOG.info("stubLine1.length() = '" + stubLine1.length() + "'" );
+            LOG.info("stubLine2.length() = '" + stubLine2.length() + "'" );
+            LOG.info("stubLine3.length() = '" + stubLine3.length() + "'" );
             
             LOG.info("Check Stub Text for check #" + testIndex);
             LOG.info("stubLine1 = '" + stubLine1 + "'" );

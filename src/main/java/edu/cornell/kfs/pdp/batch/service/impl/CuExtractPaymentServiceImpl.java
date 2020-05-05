@@ -471,15 +471,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return subUnitCode;
     }
     
-    public int calculateMaxNumCharsFromNewNoteLine(int numCharsAlreadyExisting, int numCharsInNewNoteLine) {
-        int totalNumChars = numCharsAlreadyExisting + numCharsInNewNoteLine;
-        if (totalNumChars < CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
-            return numCharsInNewNoteLine;
-        } else {
-            return CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE - numCharsAlreadyExisting;
-        }
-    }
-    
     public boolean isLastCharacterSpace(String stringToCheck) {
         return StringUtils.endsWith(stringToCheck, KFSConstants.BLANK_SPACE);
     }
@@ -497,30 +488,46 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
     
     public int calculateMaxNumCharsFromNewNoteLine(String noteLine, String currentCheckStubDataLine) {
-        String proposedCheckStubLine = (isLastCharacterSpace(currentCheckStubDataLine) || isFirstCharacterSpace(noteLine)) ? 
-                (currentCheckStubDataLine + noteLine) : (currentCheckStubDataLine + KFSConstants.BLANK_SPACE + noteLine);
-                
+        String proposedCheckStubLine;
+        
+        if (StringUtils.isBlank(currentCheckStubDataLine) & StringUtils.isBlank(noteLine)) {
+            proposedCheckStubLine = KFSConstants.EMPTY_STRING;
+            
+        } else if (StringUtils.isBlank(currentCheckStubDataLine) & StringUtils.isNotBlank(noteLine)) {
+            proposedCheckStubLine = noteLine;
+            
+        } else if (StringUtils.isNotBlank(currentCheckStubDataLine) & StringUtils.isBlank(noteLine)) {
+            proposedCheckStubLine = currentCheckStubDataLine;
+            
+        } else {
+            proposedCheckStubLine = (currentCheckStubDataLine + KFSConstants.BLANK_SPACE + noteLine);
+        }
+         
         int totalNumChars = proposedCheckStubLine.length();
-        if (totalNumChars < CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
+        
+        if (totalNumChars == 0 || totalNumChars <= CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
             return noteLine.length();
         } else {
-            String wrappedText = WordUtils.wrap(proposedCheckStubLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE);
-            String[] constructedCheckStubLines = wrappedText.replaceAll("[\r]", "").split("\\n");
+            String wrappedText = WordUtils.wrap(proposedCheckStubLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE, "\n", false);
+            String[] constructedCheckStubLines = wrappedText.split("\n");
             return noteLine.length() - constructedCheckStubLines[1].length();
         }
     }
     
     public String obtainNoteLineSectionExceedingCheckStubLine(String noteLine, String currentCheckStubDataLine) {
-        int startPositionOfTextBeingTruncated = calculateMaxNumCharsFromNewNoteLine(noteLine, currentCheckStubDataLine);
-        return (startPositionOfTextBeingTruncated == noteLine.length()) 
-                ? "" : (isLastCharacterSpace(noteLine.substring(startPositionOfTextBeingTruncated)) 
-                        ? (noteLine.substring(startPositionOfTextBeingTruncated)) 
-                        : (noteLine.substring(startPositionOfTextBeingTruncated) + KFSConstants.BLANK_SPACE)); 
+        String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
+        String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
+        
+        int startPositionOfTextBeingTruncated = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
+        return (startPositionOfTextBeingTruncated == strippedNoteLine.length()) ? "" : strippedNoteLine.substring(startPositionOfTextBeingTruncated);
     }
     
     public String obtainLeadingNoteLineSection(String noteLine, String currentCheckStubDataLine) {
-        int maxNumCharsFromNewNoteLine = calculateMaxNumCharsFromNewNoteLine(noteLine, currentCheckStubDataLine);
-        return noteLine.substring(0, maxNumCharsFromNewNoteLine);
+        String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
+        String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
+        
+        int maxNumCharsFromNewNoteLine = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
+        return stripTrailingSpace(stripLeadingSpace(strippedNoteLine.substring(0, maxNumCharsFromNewNoteLine)));
     }
     
     // This method is called by the method that generates the XML file for checks to be printed by BNY Mellon
@@ -742,9 +749,18 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                         // Trim the first two characters from the note and assign it as the first user typed note line
                                         NoteLine = NoteLine.substring(2);
-                                        stripLeadingSpace(NoteLine);
-                                        SecondNoteAfterAddressInfo = stripLeadingSpace(obtainNoteLineSectionExceedingCheckStubLine(NoteLine, FirstNoteAfterAddressInfo));
-                                        FirstNoteAfterAddressInfo = stripTrailingSpace(FirstNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo)));
+                                        
+                                        //Trim initialization data of any leading or trailing spaces for very first note line. 
+                                        //Subsequent methods called to build note lines deals with this internally for remaing note lines.
+                                        FirstNoteAfterAddressInfo = stripTrailingSpace(stripLeadingSpace(FirstNoteAfterAddressInfo));
+                                        
+                                        SecondNoteAfterAddressInfo = obtainNoteLineSectionExceedingCheckStubLine(NoteLine, FirstNoteAfterAddressInfo);
+                                        
+                                        FirstNoteAfterAddressInfo = (StringUtils.equals(FirstNoteAfterAddressInfo, KFSConstants.BLANK_SPACE) |
+                                                StringUtils.equals(FirstNoteAfterAddressInfo, KFSConstants.EMPTY_STRING))
+                                                ? FirstNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo))
+                                                : FirstNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo));
+                                                
                                         // See if we have a second user typed note line.  If so, then get it.
                                         if (ix.hasNext()) {
                                             note = (PaymentNoteText) ix.next();
@@ -752,9 +768,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                             if (NoteLine.length() >=2) {
                                                 if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                                     NoteLine = NoteLine.substring(2);
-                                                    stripLeadingSpace(NoteLine);
-                                                    ThirdNoteAfterAddressInfo = stripLeadingSpace(obtainNoteLineSectionExceedingCheckStubLine(NoteLine, SecondNoteAfterAddressInfo));
-                                                    SecondNoteAfterAddressInfo = stripTrailingSpace(SecondNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo)));
+                                                    
+                                                    ThirdNoteAfterAddressInfo = obtainNoteLineSectionExceedingCheckStubLine(NoteLine, SecondNoteAfterAddressInfo);
+                                                    
+                                                    SecondNoteAfterAddressInfo = (StringUtils.equals(SecondNoteAfterAddressInfo, KFSConstants.BLANK_SPACE) |
+                                                            StringUtils.equals(SecondNoteAfterAddressInfo, KFSConstants.EMPTY_STRING))
+                                                            ? SecondNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo))
+                                                            : SecondNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo));
+                                                    
                                                     // Try to get the third user typed note line
                                                     if (ix.hasNext()) {
                                                         note = (PaymentNoteText) ix.next();
@@ -762,8 +783,12 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                                         if (NoteLine.length() >=2) {
                                                             if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                                                 NoteLine = NoteLine.substring(2);
-                                                                stripLeadingSpace(NoteLine);
-                                                                ThirdNoteAfterAddressInfo = stripTrailingSpace(ThirdNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo)));
+                                                                
+                                                                ThirdNoteAfterAddressInfo = (StringUtils.equals(ThirdNoteAfterAddressInfo, KFSConstants.BLANK_SPACE) |
+                                                                        StringUtils.equals(ThirdNoteAfterAddressInfo, KFSConstants.EMPTY_STRING))
+                                                                        ? ThirdNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo))
+                                                                        : ThirdNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo));
+                                                                        
                                                                 break;  // Break here because the Mellon spec only allows us to use the first three user typed note lines
                                                             }
                                                             else break;  // Since we're on our potentially last note if this isn't a user types note, then we're done with the while loop
