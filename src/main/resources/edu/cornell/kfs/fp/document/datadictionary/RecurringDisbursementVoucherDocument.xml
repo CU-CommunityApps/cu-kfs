@@ -130,31 +130,31 @@
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="RecurringDisbursementVoucherDocument-validations" parent="RecurringDisbursementVoucherDocument-validations-parentBean"/>
-    <bean id="RecurringDisbursementVoucherDocument-validations-parentBean" abstract="true"
-    	parent="DisbursementVoucherDocument-validations-parentBean" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map key-type="java.lang.Class">
-                <entry key="org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent"
-                       value="DisbursementVoucher-routeDocumentValidation"/>
-                <entry key="org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent"
-                       value="RecurringDisbursementVoucher-saveDocumentValidation"/>
-                <entry key="org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent"
-                       value="DisbursementVoucher-approveDocumentValidation"/>
-                <entry key="org.kuali.kfs.sys.document.validation.event.AttributedBlanketApproveDocumentEvent"
-                       value="DisbursementVoucher-blanketApproveDocumentValidation"/>
-                <entry key="org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent"
-                       value="DisbursementVoucher-addAccountingLineValidation"/>
-                <entry key="org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent"
-                       value="DisbursementVoucher-deleteAccountingLineValidation"/>
-                <entry key="org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent"
-                       value="DisbursementVoucher-updateAccountingLineValidation"/>
-                <entry key="org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent"
-                       value="DisbursementVoucher-reviewAccountingLineValidation"/>
-            </map>
-        </property>
-    </bean>
+
+	<bean id="RecurringDisbursementVoucherDocument-validations" parent="RecurringDisbursementVoucherDocument-validations-parentBean" />
+	<bean id="RecurringDisbursementVoucherDocument-validations-parentBean" abstract="true" 
+		parent="DisbursementVoucherDocument-validations-parentBean" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map key-type="java.lang.Class">
+				<entry key="org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent"
+					value="DisbursementVoucher-routeDocumentValidation" />
+				<entry key="org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent"
+					value="RecurringDisbursementVoucher-saveDocumentValidation" />
+				<entry key="org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent"
+					value="DisbursementVoucher-approveDocumentValidation" />
+				<entry key="org.kuali.kfs.sys.document.validation.event.AttributedBlanketApproveDocumentEvent"
+					value="DisbursementVoucher-blanketApproveDocumentValidation" />
+				<entry key="org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent"
+					value="DisbursementVoucher-addAccountingLineValidation" />
+				<entry key="org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent"
+					value="DisbursementVoucher-deleteAccountingLineValidation" />
+				<entry key="org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent"
+					value="DisbursementVoucher-updateAccountingLineValidation" />
+				<entry key="org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent"
+					value="DisbursementVoucher-reviewAccountingLineValidation" />
+			</map>
+		</property>
+	</bean>
 	
     <bean id="recurringDisbursementVoucherPaymentMethodValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"
