@@ -133,7 +133,7 @@ public class CuExtractPaymentServiceImplTest {
                 
                 stubLine2 = cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(noteLine, stubLine1);
                 
-                stubLine1 = (StringUtils.equals(stubLine1, KFSConstants.BLANK_SPACE) | StringUtils.equals(stubLine1, KFSConstants.EMPTY_STRING))
+                stubLine1 = (StringUtils.isBlank(stubLine1))
                         ? stubLine1.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine1))
                                 : stubLine1.concat(KFSConstants.BLANK_SPACE).concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine1));
                 
@@ -142,14 +142,14 @@ public class CuExtractPaymentServiceImplTest {
                 if (noteLine.length() >= 0) {
                     stubLine3 = cuExtractPaymentServiceImpl.obtainNoteLineSectionExceedingCheckStubLine(noteLine, stubLine2);
                     
-                    stubLine2 = (StringUtils.equals(stubLine2, KFSConstants.BLANK_SPACE) | StringUtils.equals(stubLine2, KFSConstants.EMPTY_STRING))
+                    stubLine2 = (StringUtils.isBlank(stubLine2))
                             ? stubLine2.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine2))
                                     : stubLine2.concat(KFSConstants.BLANK_SPACE).concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine2));
                             
                     noteLine = DV_NOTES_TEST_DATA[line3ArrayPosition];
                     
                     if (noteLine.length() >= 0) {
-                        stubLine3 = (StringUtils.equals(stubLine3, KFSConstants.BLANK_SPACE) | StringUtils.equals(stubLine3, KFSConstants.EMPTY_STRING))
+                        stubLine3 = (StringUtils.isBlank(stubLine3))
                                 ? stubLine3.concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine3))
                                         : stubLine3.concat(KFSConstants.BLANK_SPACE).concat(cuExtractPaymentServiceImpl.obtainLeadingNoteLineSection(noteLine, stubLine3));
                     }

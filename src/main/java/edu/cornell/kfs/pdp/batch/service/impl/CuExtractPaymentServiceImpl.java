@@ -466,17 +466,9 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                 LOG.info("determineCustomerProfileSubUnitCode: No customer profile exists for payee name = " + pdpPaymentGroup.getPayeeName());
             }
         } else {
-            LOG.info("determineCustomerProfileSubUnitCode: pdpPaymemtGroup.getBatch() detected as NULL.");
+            LOG.info("determineCustomerProfileSubUnitCode: pdpPaymentGroup.getBatch() detected as NULL.");
         }
         return subUnitCode;
-    }
-    
-    public boolean isLastCharacterSpace(String stringToCheck) {
-        return StringUtils.endsWith(stringToCheck, KFSConstants.BLANK_SPACE);
-    }
-    
-    public boolean isFirstCharacterSpace(String stringToCheck) {
-        return StringUtils.startsWith(stringToCheck, KFSConstants.BLANK_SPACE);
     }
     
     public String stripLeadingSpace(String stringToCheck) {
@@ -493,10 +485,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         if (StringUtils.isBlank(currentCheckStubDataLine) & StringUtils.isBlank(noteLine)) {
             proposedCheckStubLine = KFSConstants.EMPTY_STRING;
             
-        } else if (StringUtils.isBlank(currentCheckStubDataLine) & StringUtils.isNotBlank(noteLine)) {
+        } else if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isNotBlank(noteLine)) {
             proposedCheckStubLine = noteLine;
             
-        } else if (StringUtils.isNotBlank(currentCheckStubDataLine) & StringUtils.isBlank(noteLine)) {
+        } else if (StringUtils.isNotBlank(currentCheckStubDataLine) && StringUtils.isBlank(noteLine)) {
             proposedCheckStubLine = currentCheckStubDataLine;
             
         } else {
@@ -756,8 +748,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                         
                                         SecondNoteAfterAddressInfo = obtainNoteLineSectionExceedingCheckStubLine(NoteLine, FirstNoteAfterAddressInfo);
                                         
-                                        FirstNoteAfterAddressInfo = (StringUtils.equals(FirstNoteAfterAddressInfo, KFSConstants.BLANK_SPACE) |
-                                                StringUtils.equals(FirstNoteAfterAddressInfo, KFSConstants.EMPTY_STRING))
+                                        FirstNoteAfterAddressInfo = (StringUtils.isBlank(FirstNoteAfterAddressInfo))
                                                 ? FirstNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo))
                                                 : FirstNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo));
                                                 
@@ -770,9 +761,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                                     NoteLine = NoteLine.substring(2);
                                                     
                                                     ThirdNoteAfterAddressInfo = obtainNoteLineSectionExceedingCheckStubLine(NoteLine, SecondNoteAfterAddressInfo);
-                                                    
-                                                    SecondNoteAfterAddressInfo = (StringUtils.equals(SecondNoteAfterAddressInfo, KFSConstants.BLANK_SPACE) |
-                                                            StringUtils.equals(SecondNoteAfterAddressInfo, KFSConstants.EMPTY_STRING))
+                                                   
+                                                    SecondNoteAfterAddressInfo = (StringUtils.isBlank(SecondNoteAfterAddressInfo))
                                                             ? SecondNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo))
                                                             : SecondNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo));
                                                     
@@ -784,8 +774,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                                             if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                                                 NoteLine = NoteLine.substring(2);
                                                                 
-                                                                ThirdNoteAfterAddressInfo = (StringUtils.equals(ThirdNoteAfterAddressInfo, KFSConstants.BLANK_SPACE) |
-                                                                        StringUtils.equals(ThirdNoteAfterAddressInfo, KFSConstants.EMPTY_STRING))
+                                                                ThirdNoteAfterAddressInfo = (StringUtils.isBlank(ThirdNoteAfterAddressInfo))
                                                                         ? ThirdNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo))
                                                                         : ThirdNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo));
                                                                         
