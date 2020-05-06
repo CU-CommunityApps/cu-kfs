@@ -46,9 +46,9 @@
 
     <bean id="Purchasing-approveItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchasingProcessItemValidation" abstract="true" />
     
-    <bean id="Purchasing-commodityCodeValidation"
+    <bean id="Purchasing-commodityCodeValidation" scope="prototype"
     	class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation"
-    	abstract="true" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+    	abstract="false" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
     	p:businessObjectService-ref="businessObjectService" p:parameterService-ref="parameterService"/>
 
     <bean id="Purchasing-newIndividualItemValidation"
