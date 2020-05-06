@@ -16,6 +16,7 @@ import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.kfs.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -96,10 +97,31 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, validationErrors);
             LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation error(s): " + validationErrors.toString());
             LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation exception caught: " + ve.getMessage());
+            GlobalVariables.getMessageMap().clearErrorMessages();
+            saveVendorMaintenanceDocument(vendorMaintenceDoc, reportData, pmwVendor);        
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
         }
         return documentValidated;
+    }
+    
+    private boolean saveVendorMaintenanceDocument(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor) {
+       // vendorMaintenceDoc.validateBusinessRules(new SaveDocumentEvent(vendorMaintenceDoc));
+        LOG.info("saveVendorMaintenanceDocument: vendorMaintenceDoc validate save business rules.");
+        boolean documentSaved = false;
+        try {
+            getDocumentService().saveDocument(vendorMaintenceDoc);
+            LOG.info("kfsVendorMaintenceDocumentRouted: vendorMaintenceDoc routed.");
+            documentSaved = true;
+        } catch (WorkflowException we) {
+            List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
+            captureKfsProcessingErrorsForVendor(pmwVendor, reportData, edocCreateErrors);
+            LOG.error("saveVendorMaintenanceDocument: eDoc saving error(s): " + edocCreateErrors.toString());
+            LOG.error("saveVendorMaintenanceDocument: eDoc saving exception caught: " + we.getMessage());
+        } finally {
+            GlobalVariables.getMessageMap().clearErrorMessages();
+        }
+        return documentSaved;
     }
 
     private boolean kfsVendorMaintenceDocumentRouted(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor) {
