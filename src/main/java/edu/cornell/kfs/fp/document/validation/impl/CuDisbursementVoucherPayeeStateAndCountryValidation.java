@@ -1,6 +1,8 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -20,12 +22,14 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  * undeliverable checks, especially for foreign addresses.
  */
 public class CuDisbursementVoucherPayeeStateAndCountryValidation extends GenericValidation {
+    private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherPayeeStateAndCountryValidation.class);
 
     private AccountingDocument accountingDocumentForValidation;
-    protected transient CuDisbursementVoucherTaxService cuDisbursementVoucherTaxService;
+    protected transient RecurringDisbursementVoucherForeignVendorValidation recurringDisbursementVoucherForeignVendorValidation;
 
     @Override
     public boolean validate(AttributedDocumentEvent event) {
+        LOG.debug("validate, entering");
         boolean isValid = true;
         DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) accountingDocumentForValidation;
         DisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
@@ -40,14 +44,9 @@ public class CuDisbursementVoucherPayeeStateAndCountryValidation extends Generic
         }
         
         if (dvDocument instanceof RecurringDisbursementVoucherDocument) {
-            String payeeTypeCode = payeeDetail.getDisbursementVoucherPayeeTypeCode();
-            String paymentReasonCode = payeeDetail.getDisbVchrPaymentReasonCode();
-            Integer vendorHeaderId = payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger();
-            if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewRequired(payeeTypeCode, paymentReasonCode, vendorHeaderId)) {
-                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(KFSConstants.GENERAL_PAYMENT_TAB_ERRORS, 
-                        CUKFSKeyConstants.ERROR_RCDV_NO_FOREIGN_VENDORS);
-                isValid = false;
-            }
+            LOG.debug("validate, found a recurring DV");
+            RecurringDisbursementVoucherDocument rcdvDocument = (RecurringDisbursementVoucherDocument) dvDocument;
+            isValid &= recurringDisbursementVoucherForeignVendorValidation.validateRecurringDVForeignVendor(rcdvDocument);
         }
         
         GlobalVariables.getMessageMap().removeFromErrorPath(KFSPropertyConstants.DOCUMENT);
@@ -64,13 +63,10 @@ public class CuDisbursementVoucherPayeeStateAndCountryValidation extends Generic
     public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
         this.accountingDocumentForValidation = accountingDocumentForValidation;
     }
-    
-    protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
-        return cuDisbursementVoucherTaxService;
-    }
 
-    public void setCuDisbursementVoucherTaxService(CuDisbursementVoucherTaxService cuDisbursementVoucherTaxService) {
-        this.cuDisbursementVoucherTaxService = cuDisbursementVoucherTaxService;
+    public void setRecurringDisbursementVoucherForeignVendorValidation(
+            RecurringDisbursementVoucherForeignVendorValidation recurringDisbursementVoucherForeignVendorValidation) {
+        this.recurringDisbursementVoucherForeignVendorValidation = recurringDisbursementVoucherForeignVendorValidation;
     }
 
 }

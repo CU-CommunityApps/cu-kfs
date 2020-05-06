@@ -23,7 +23,7 @@ import org.kuali.kfs.krad.document.Document;
 
 public class CuDisbursementVoucherTaxServiceImplTest{
 	
-	private static final Integer FOREIGN_VENDOR_HEADER_ID = 1000;	
+	private static final Integer FOREIGN_VENDOR_HEADER_ID = 1000;
 	private static final Integer NON_FOREIGN_VENDOR_HEADER_ID = 2000;
 	private static final String PAYMENT_REASON_THAT_REQUIRES_TAX_REVIEW_FOR_FOREIGN_VENDOR = "Z";
 	private static final String PAYMENT_REASON_THAT_DOES_NOT_REQUIRE_TAX_REVIEW_FOR_FOREIGN_VENDOR = "F";
@@ -84,6 +84,26 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 		boolean isForeignVendorAndTaxReviewNotRequired = disbursementVoucherTaxService.isForeignVendorAndTaxReviewNotRequired(KFSConstants.PaymentPayeeTypes.VENDOR, PAYMENT_REASON_THAT_REQUIRES_TAX_REVIEW_FOR_FOREIGN_VENDOR, FOREIGN_VENDOR_HEADER_ID);
         assertFalse("isForeignVendorAndTaxReviewNotRequired method should have returned false when input is foreign vendor and payment reason that requires tax review", isForeignVendorAndTaxReviewNotRequired);
 	}
+	
+    @Test
+    public void testIsForeignVendor_true() {
+        boolean isForeign = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.VENDOR,
+                FOREIGN_VENDOR_HEADER_ID);
+        assertTrue("isForeign method should have returned true when input is foreign vendor", isForeign);
+    }
+
+    @Test
+    public void testIsForeignVendor_false_employee() {
+        boolean isForeign = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.EMPLOYEE, null);
+        assertFalse("isForeign method should have returned false when input payee type is not Vendor", isForeign);
+    }
+    
+    @Test
+    public void testIsForeignVendor_false_domestic() {
+        boolean isForeign = disbursementVoucherTaxService.isForeignVendor(KFSConstants.PaymentPayeeTypes.VENDOR, 
+                NON_FOREIGN_VENDOR_HEADER_ID);
+        assertFalse("isForeign method should have returned false when input payee type is a domestic vendor", isForeign);
+    }
 	
 	 private class MockVendorService implements VendorService {
 

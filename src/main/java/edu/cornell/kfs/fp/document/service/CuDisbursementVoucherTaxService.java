@@ -7,5 +7,7 @@ public interface CuDisbursementVoucherTaxService {
 	
 	boolean isForeignVendorAndTaxReviewNotRequired(String payeeTypeCode,
 			String paymentReasonCode, Integer vendorHeaderId);
+	
+	boolean isForeignVendor(String payeeTypeCode, Integer vendorHeaderId);
 
 }

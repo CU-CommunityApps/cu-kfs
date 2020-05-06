@@ -16,6 +16,7 @@
 		<property name="documentTypeName" value="RCDV" />
 		<property name="documentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
 		<property name="baseDocumentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
+		<property name="validationMap" ref="RecurringDisbursementVoucherDocument-validations"/>
 		<property name="accountingLineGroups">
 			<map>
 				<entry>
@@ -130,6 +131,17 @@
 		</property>
 	</bean>
 
+	<bean id="RecurringDisbursementVoucherDocument-validations" parent="RecurringDisbursementVoucherDocument-validations-parentBean" />
+	<bean id="RecurringDisbursementVoucherDocument-validations-parentBean" abstract="true" 
+		parent="DisbursementVoucherDocument-validations">
+		<property name="sourceMap">
+			<map key-type="java.lang.Class" merge="true">
+				<entry key="org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent"
+					value="RecurringDisbursementVoucher-saveDocumentValidation" />
+			</map>
+		</property>
+	</bean>
+	
     <bean id="recurringDisbursementVoucherPaymentMethodValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"
           p:businessObjectService-ref="businessObjectService" p:parameterService-ref="parameterService"/>
