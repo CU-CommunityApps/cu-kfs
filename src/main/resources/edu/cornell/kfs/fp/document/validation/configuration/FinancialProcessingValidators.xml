@@ -37,7 +37,8 @@
 	<bean id="DisbursementVoucher-payeeStateAndCountryValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeStateAndCountryValidation" abstract="true">
 		<property name="recurringDisbursementVoucherForeignVendorValidation" ref="RecurringDisbursementVoucherForeignVendorValidation" />
 	</bean>
-	<bean id="RecurringDisbursementVoucherForeignVendorValidation" class="edu.cornell.kfs.fp.document.validation.impl.RecurringDisbursementVoucherForeignVendorValidation" abstract="true">
+	<bean id="RecurringDisbursementVoucherForeignVendorValidation" class="edu.cornell.kfs.fp.document.validation.impl.RecurringDisbursementVoucherForeignVendorValidation" 
+		abstract="false" scope="prototype">
 		<property name="cuDisbursementVoucherTaxService" ref="disbursementVoucherTaxService" />
 	</bean>
 	    
