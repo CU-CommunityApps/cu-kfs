@@ -2,8 +2,6 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,8 +57,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     public void createKfsVendorsFromPmwNewVendorRequests() {
         LOG.info("createKfsVendorsFromPmwNewVendorRequests: was invoked");
         List<String> pmwNewVendorIdentifers = getPaymentWorksWebServiceCallsService().obtainPmwIdentifiersForApprovedNewVendorRequests();
-        pmwNewVendorIdentifers.add("22533");
-        if (false) {
+        if (pmwNewVendorIdentifers.isEmpty()) {
             LOG.info("createKfsVendorsFromPmwNewVendorRequests: No PaymentWorks APPROVED New Vendors found to process.");
             sendEmailThatNoPmwDataWasFoundToCreateNewKfsVendors();
         } 
@@ -85,23 +82,17 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
 
         for (String pmwNewVendorRequestId : identifiersForPendingNewVendorsToProcess) {
             LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS: Processing started for PMW-vendor-id=" + pmwNewVendorRequestId);
-            //PaymentWorksVendor stgNewVendorRequestDetailToProcess = getPaymentWorksWebServiceCallsService().obtainPmwNewVendorRequestDetailForPmwIdentifier(pmwNewVendorRequestId, reportData);
-            PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = null;
-            Map<String, String> fieldValues = new HashMap<String, String>();
-            fieldValues.put("id", "443");
-            savedStgNewVendorRequestDetailToProcess = (PaymentWorksVendor)businessObjectService.findByPrimaryKey(PaymentWorksVendor.class, fieldValues);
-            if (true) {
-
+            PaymentWorksVendor stgNewVendorRequestDetailToProcess = getPaymentWorksWebServiceCallsService().obtainPmwNewVendorRequestDetailForPmwIdentifier(pmwNewVendorRequestId, reportData);
+            if (canPaymentWorksNewVendorRequestProcessingContinueForVendor(stgNewVendorRequestDetailToProcess, reportData, pmwNewVendorRequestId)) {
+                PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = null;
                 String stagingTableSaveExceptionMessageForUser = KFSConstants.BLANK_SPACE;
                 try {
-                   // savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable(stgNewVendorRequestDetailToProcess);
+                    savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable(stgNewVendorRequestDetailToProcess);
                 } catch (Exception e) {
                     LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS: Caught Exception attempting PMW vendor save to KFS staging table, unable to save PaymentWorks vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId, e);
                     stagingTableSaveExceptionMessageForUser = parseSqlExceptionStringForOracleError(e.toString());
                 }
-                if (true) {
-
-                   
+                if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, stgNewVendorRequestDetailToProcess, stagingTableSaveExceptionMessageForUser, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                         LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS, successfully processed vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                     } else {
@@ -113,7 +104,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             } else {
                 LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
             }
-            //getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
+            getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
         }
         getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
     }
