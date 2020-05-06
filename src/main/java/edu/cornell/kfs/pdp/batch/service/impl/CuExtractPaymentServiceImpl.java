@@ -482,7 +482,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     public int calculateMaxNumCharsFromNewNoteLine(String noteLine, String currentCheckStubDataLine) {
         String proposedCheckStubLine;
         
-        if (StringUtils.isBlank(currentCheckStubDataLine) & StringUtils.isBlank(noteLine)) {
+        if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isBlank(noteLine)) {
             proposedCheckStubLine = KFSConstants.EMPTY_STRING;
             
         } else if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isNotBlank(noteLine)) {
