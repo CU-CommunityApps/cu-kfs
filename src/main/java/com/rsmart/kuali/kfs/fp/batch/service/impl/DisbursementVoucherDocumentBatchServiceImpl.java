@@ -55,7 +55,7 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 
 import com.rsmart.kuali.kfs.fp.FPConstants;
 import com.rsmart.kuali.kfs.fp.FPKeyConstants;

@@ -22,8 +22,7 @@ public class IWantDocumentRule extends DocumentRuleBase implements AddIWantItemR
         boolean valid = true;
         if (StringUtils.isBlank(item.getItemDescription())) {
             valid = false;
-            String attributeLabel = getDataDictionaryService().getDataDictionary().getBusinessObjectEntry(
-                    IWantItem.class.getName()).getAttributeDefinition(CUPurapPropertyConstants.IWNT_ITEM_DESC).getLabel();
+            String attributeLabel = getDocumentDictionaryService().getDocumentEntry(IWantItem.class.getName()).getAttributeDefinition(CUPurapPropertyConstants.IWNT_ITEM_DESC).getLabel();
             GlobalVariables.getMessageMap().putError("newIWantItemLine.itemDescription", KFSKeyConstants.ERROR_REQUIRED, attributeLabel);
         }
         return valid;

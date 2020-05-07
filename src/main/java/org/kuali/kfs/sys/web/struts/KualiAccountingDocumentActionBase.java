@@ -29,7 +29,7 @@ import org.apache.struts.upload.FormFile;
 import org.kuali.kfs.fp.FPParameterConstants;
 import org.kuali.kfs.fp.businessobject.SalesTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.kfs.krad.service.BusinessObjectService;

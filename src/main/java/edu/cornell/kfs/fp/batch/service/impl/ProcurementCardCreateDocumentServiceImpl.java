@@ -25,7 +25,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;

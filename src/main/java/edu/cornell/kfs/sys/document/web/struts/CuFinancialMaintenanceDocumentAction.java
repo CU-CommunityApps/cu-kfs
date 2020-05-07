@@ -21,7 +21,7 @@ import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.datadictionary.DataDictionary;
+import org.kuali.kfs.datadictionary.legacy.DataDictionary;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.AddNoteEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -102,8 +102,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
             }
         }
 
-        DataDictionary dataDictionary = getDataDictionaryService().getDataDictionary();
-        DocumentEntry entry = dataDictionary.getDocumentEntry(document.getClass().getName());
+        DocumentEntry entry = getDocumentDictionaryService().getDocumentEntry(document.getClass().getName());
 
         if (entry.getDisplayTopicFieldInNotes()) {
             String topicText = kualiDocumentFormBase.getNewNote().getNoteTopicText();

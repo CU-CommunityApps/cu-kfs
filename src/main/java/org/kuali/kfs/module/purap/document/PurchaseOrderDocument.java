@@ -26,7 +26,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.service.SufficientFundsService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.dao.DocumentDao;
@@ -809,8 +809,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * Gets the active items in this Purchase Order.
-     *
      * @return the list of all active items in this Purchase Order.
      */
     public List getItemsActiveOnly() {

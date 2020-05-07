@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.kfs.gl.businessobject.Entry;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
