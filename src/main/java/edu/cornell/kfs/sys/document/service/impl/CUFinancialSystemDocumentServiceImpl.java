@@ -21,7 +21,8 @@ import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DocumentDictionaryService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
@@ -267,9 +268,8 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     }
     
     protected FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(Document doc) {
-    	DataDictionaryService dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
-        final String docTypeName = dataDictionaryService.getDocumentTypeNameByClass(doc.getClass());
-        Class<? extends DocumentAuthorizer> documentAuthorizerClass = (Class<? extends DocumentAuthorizer>) dataDictionaryService.getDataDictionary().getDocumentEntry(docTypeName).getDocumentAuthorizerClass();
+        DocumentDictionaryService documentDictionaryService = SpringContext.getBean(DocumentDictionaryService.class);
+        Class<? extends DocumentAuthorizer> documentAuthorizerClass = (Class<? extends DocumentAuthorizer>) documentDictionaryService.getDocumentEntry(doc.getClass().getName()).getDocumentAuthorizerClass();
         
         FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = null;
         try {

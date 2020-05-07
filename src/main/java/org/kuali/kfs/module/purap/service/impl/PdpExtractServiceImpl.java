@@ -25,7 +25,7 @@ import org.kuali.kfs.coreservice.api.parameter.Parameter;
 import org.kuali.kfs.coreservice.api.parameter.Parameter.Builder;
 import org.kuali.kfs.coreservice.api.parameter.ParameterType;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;

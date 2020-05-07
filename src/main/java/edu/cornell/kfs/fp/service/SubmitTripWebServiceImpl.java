@@ -12,7 +12,7 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.affiliation.EntityAffiliationContract;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.document.Document;

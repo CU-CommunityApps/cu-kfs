@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.service.impl.StringHelper;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.DocumentHeader;

@@ -47,7 +47,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
