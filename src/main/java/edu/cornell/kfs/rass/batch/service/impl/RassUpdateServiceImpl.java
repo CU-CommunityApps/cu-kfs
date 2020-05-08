@@ -240,7 +240,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("updateObject, Updating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
 
-        if (!objectDefinition.businessObjectEditIsPermitted(xmlObject)) {
+        if (!objectDefinition.businessObjectEditIsPermitted(xmlObject, oldBusinessObject)) {
             LOG.info("updateObject, Updates are not permitted for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
                     + " so any changes to it will be skipped");
             return new RassBusinessObjectUpdateResult<>(objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
@@ -277,7 +277,13 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
         R businessObject = businessObjectSupplier.get();
         List<String> missingRequiredFields = new ArrayList<>();
+        boolean isNewObject = StringUtils.equalsIgnoreCase(maintenanceAction, KRADConstants.MAINTENANCE_NEW_ACTION);
+        boolean isObjectEdit = StringUtils.equalsIgnoreCase(maintenanceAction, KRADConstants.MAINTENANCE_EDIT_ACTION);
+        
         for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
+            if (isObjectEdit && propertyMapping.isSkipForObjectEdit()) {
+                continue;
+            }
             Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlPropertyName());
             RassValueConverter valueConverter = propertyMapping.getValueConverter();
             Object convertedValue = valueConverter.convert(businessObjectClass, propertyMapping, xmlPropertyValue);
@@ -296,7 +302,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject) + " is missing values for the following required fields: "
                     + missingRequiredFields.toString());
         }
-        if (StringUtils.equalsIgnoreCase(maintenanceAction, KRADConstants.MAINTENANCE_NEW_ACTION)) {
+        if (isNewObject) {
             objectDefinition.makeBusinessObjectActiveIfApplicable(xmlObject, businessObject);
         }
         return businessObject;

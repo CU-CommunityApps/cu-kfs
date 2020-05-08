@@ -7,6 +7,7 @@ public class RassPropertyDefinition {
     private boolean required;
     private RassValueConverter valueConverter;
     private boolean truncateWithEllipsis;
+    private boolean skipForObjectEdit;
     
     public String getXmlPropertyName() {
         return xmlPropertyName;
@@ -47,6 +48,14 @@ public class RassPropertyDefinition {
 
     public void setTruncateWithEllipsis(boolean truncateWithEllipsis) {
         this.truncateWithEllipsis = truncateWithEllipsis;
+    }
+
+    public boolean isSkipForObjectEdit() {
+        return skipForObjectEdit;
+    }
+
+    public void setSkipForObjectEdit(boolean skipForObjectEdit) {
+        this.skipForObjectEdit = skipForObjectEdit;
     }
 
 }

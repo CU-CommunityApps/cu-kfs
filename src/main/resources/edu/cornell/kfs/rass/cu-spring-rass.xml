@@ -185,23 +185,23 @@
 			p:documentTypeName="PRPL">
 		<property name="propertyMappings">
 			<list>
-				<bean parent="rassProperty" p:xmlPropertyName="proposalNumber" p:boPropertyName="proposalNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="status" p:boPropertyName="proposalStatusCode" p:required="false" p:valueConverter-ref="rassProposalStatusConverter"/>
-				<bean parent="rassProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="agencyNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectTitle" p:required="false" p:truncateWithEllipsis="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="startDate" p:boPropertyName="proposalBeginningDate" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="stopDate" p:boPropertyName="proposalEndingDate" p:required="false"/>
-				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="proposalDirectCostAmount" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="proposalIndirectCostAmount" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="proposalTotalProjectAmount" p:required="true"/>
-				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false" p:valueConverter-ref="rassPurposeCodeConverter"/>
+				<bean parent="rassProperty" p:xmlPropertyName="proposalNumber" p:boPropertyName="proposalNumber" p:required="true" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="status" p:boPropertyName="proposalStatusCode" p:required="false" p:valueConverter-ref="rassProposalStatusConverter" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="agencyNumber" p:boPropertyName="agencyNumber" p:required="true" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="projectTitle" p:boPropertyName="proposalProjectTitle" p:required="false" p:truncateWithEllipsis="true" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="startDate" p:boPropertyName="proposalBeginningDate" p:required="false" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="stopDate" p:boPropertyName="proposalEndingDate" p:required="false" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="directCostAmount" p:boPropertyName="proposalDirectCostAmount" p:required="true" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="indirectCostAmount" p:boPropertyName="proposalIndirectCostAmount" p:required="true" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="totalAmount" p:boPropertyName="proposalTotalProjectAmount" p:required="true" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="purpose" p:boPropertyName="proposalPurposeCode" p:required="false" p:valueConverter-ref="rassPurposeCodeConverter" p:skipForObjectEdit="true"/>
 				<bean parent="rassProperty" p:xmlPropertyName="grantNumber" p:boPropertyName="grantNumber" p:required="false"/>
 				<bean parent="rassProperty" p:xmlPropertyName="federalPassThrough" p:boPropertyName="proposalFederalPassThroughIndicator" p:required="false"
-						p:valueConverter-ref="rassPrimitiveBooleanConverter"/>
-				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false"/>
+						p:valueConverter-ref="rassPrimitiveBooleanConverter" p:skipForObjectEdit="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="federalPassThroughAgencyNumber" p:boPropertyName="federalPassThroughAgencyNumber" p:required="false" p:skipForObjectEdit="true"/>
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="organizationCode" p:boPropertyName="proposalOrganizations" p:required="false"
 						p:valueConverter-ref="rassProposalOrganizationConverter" p:subObjectDefinition-ref="proposalOrganizationDefinition"/>
-				<bean parent="rassProperty" p:xmlPropertyName="finalReportDueDate" p:boPropertyName="proposalDueDate" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="finalReportDueDate" p:boPropertyName="proposalDueDate" p:required="false" p:skipForObjectEdit="true"/>
 				<bean parent="rassListPropertyWithProposalNumberMapping" p:xmlPropertyName="principalAndCoPrincipalInvestigators" p:boPropertyName="proposalProjectDirectors"
 						p:required="false" p:valueConverter-ref="rassProposalProjectDirectorConverter" p:subObjectDefinition-ref="proposalProjectDirectorDefinition"/>
 			</list>

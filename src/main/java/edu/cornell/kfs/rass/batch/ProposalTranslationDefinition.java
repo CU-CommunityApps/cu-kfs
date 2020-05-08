@@ -11,16 +11,29 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.springframework.beans.factory.InitializingBean;
 
+import edu.cornell.kfs.module.cg.CuCGPropertyConstants;
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.util.RassUtil;
 
-public class ProposalTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> {
+public class ProposalTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal>
+            implements InitializingBean {
 
 	protected BusinessObjectService businessObjectService;
 	protected DateTimeService dateTimeService;
 	protected ParameterService parameterService;
+	protected RassPropertyDefinition grantNumberMapping;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        grantNumberMapping = getPropertyMappings().stream()
+                .filter(propertyMapping -> StringUtils.equals(
+                        CuCGPropertyConstants.GRANT_NUMBER, propertyMapping.getBoPropertyName()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No property mapping was found for Grant Number"));
+    }
 
 	@Override
 	public Class<RassXmlAwardEntry> getXmlObjectClass() {
@@ -72,11 +85,15 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
 		return proposal;
 	}
 
-	@Override
-	public boolean businessObjectEditIsPermitted(RassXmlAwardEntry xmlObject) {
-		return false;
-	}
-	
+    @Override
+    public boolean businessObjectEditIsPermitted(RassXmlAwardEntry xmlProposal, Proposal oldProposal) {
+        String xmlGrantNumber = xmlProposal.getGrantNumber();
+        String convertedGrantNumber = (String) grantNumberMapping.getValueConverter().convert(
+                getBusinessObjectClass(), grantNumberMapping, xmlGrantNumber);
+        return StringUtils.isNotBlank(convertedGrantNumber)
+                && !StringUtils.equals(convertedGrantNumber, oldProposal.getGrantNumber());
+    }
+
     @Override
     public boolean businessObjectCreateIsPermitted(RassXmlAwardEntry xmlObject) {
        return xmlObject.getTotalAmount() != null && xmlObject.getCostShareRequired() != null
