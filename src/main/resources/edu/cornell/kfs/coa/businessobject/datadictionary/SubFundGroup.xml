@@ -239,42 +239,42 @@
 		</property>
         <property name="lookupAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-subFundGroupCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-subFundGroupDescription" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-extension-subFundGroupDetailedDescr" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-subFundGroupTypeCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-fundGroupCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-subFundGroupWagesIndicator" p:defaultValue=""
                       p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
                 <ref bean="activeIndicatorLookupAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupResultAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-subFundGroupCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-subFundGroupDescription" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-extension-subFundGroupDetailedDescr" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-subFundGroupTypeCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-fundGroupCode" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-subFundGroupWagesIndicator" />
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
                 <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="SubFundGroup-fundGroupBudgetAdjustmentRestrictionLevelCode" />
             </list>
         </property>
