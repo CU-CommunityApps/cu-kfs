@@ -158,30 +158,30 @@
     </property>
     <property name="lookupAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="SubFundProgram-programCode"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="SubFundProgram-programName"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="SubFundProgram-subFundGroupCode"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="SubFundProgram-programDescription"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="SubFundProgram-active" p:defaultValue="Y"
                 p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"/>
       </list>
     </property>
     <property name="lookupResultAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="SubFundProgram-programCode"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="SubFundProgram-programName"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="SubFundProgram-subFundGroupCode"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="SubFundProgram-programDescription"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="SubFundProgram-active"/>
       </list>
     </property>

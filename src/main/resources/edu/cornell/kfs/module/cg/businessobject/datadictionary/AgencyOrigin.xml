@@ -86,21 +86,21 @@
         </property>
         <property name="lookupAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-code"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-name"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-code"/>
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-name"/>
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                         parent="AgencyOrigin-active" p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
                         p:defaultValue="Y"/>
             </list>
         </property>
         <property name="LookupResultAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                         parent="AgencyOrigin-code"
                         p:disableInquiry="true"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                         parent="AgencyOrigin-name"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                         parent="AgencyOrigin-active"/>
             </list>
         </property>

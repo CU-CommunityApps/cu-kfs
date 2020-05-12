@@ -98,12 +98,12 @@
                    <property name="propertyName" value="lookupAttributeDefinitions" />
                    <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
-                       <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                       <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                                parent="PositionData-departmentId"/>
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                           <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                                    parent="PositionData-extension-orgCode"/>
                        </list>
                    </property>
@@ -112,12 +112,12 @@
                    <property name="propertyName" value="lookupResultAttributeDefinitions" />
                    <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
-                       <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                       <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                                parent="PositionData-departmentId"/>
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                           <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                                    parent="PositionData-extension-orgCode"/>
                        </list>
                    </property>
