@@ -90,8 +90,7 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
         String xmlGrantNumber = xmlProposal.getGrantNumber();
         String convertedGrantNumber = (String) grantNumberMapping.getValueConverter().convert(
                 getBusinessObjectClass(), grantNumberMapping, xmlGrantNumber);
-        return StringUtils.isNotBlank(convertedGrantNumber)
-                && !StringUtils.equals(convertedGrantNumber, oldProposal.getGrantNumber());
+        return !StringUtils.equals(convertedGrantNumber, oldProposal.getGrantNumber());
     }
 
     @Override

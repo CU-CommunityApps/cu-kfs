@@ -23,6 +23,7 @@ public final class RassTestConstants {
             + CUKFSConstants.COLON + DEFAULT_AWARD_ACCOUNT + CUKFSConstants.COLON + DEFAULT_AWARD_ACCOUNT_ACTIVE_INDICATOR;
     public static final String DEFAULT_FUND_MANAGER_PRINCIPAL_ID = "mgw3";
     public static final String DEFAULT_PROJECT_DIRECTOR_PRINCIPAL_ID = "mo14";
+    public static final String PROPOSAL_AWARDED_STATUS = "A";
 
     public static final String RASS_SERVICE_BEAN_NAME = "rassService";
     public static final String RASS_UPDATE_SERVICE_BEAN_NAME = "rassUpdateService";

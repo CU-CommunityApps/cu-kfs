@@ -8,7 +8,7 @@ Number of Agency objects that resulted in error: 0.
 Number of Agency objects skipped: 2.
 
 Number of Proposal objects created: 2.
-Number of Proposal objects with updates to Grant Number only: 1.
+Number of Proposal objects with updates to Grant Number: 1.
 Number of Proposal objects that resulted in error: 1.
 Number of Proposal objects skipped: 2.
 
@@ -43,7 +43,7 @@ Agency #: 70023 skipped.
 Proposal #: 44567 created by document #: 3106
 Proposal #: 45599 created by document #: 3107
 
-** Proposal objects with successful updates to Grant Number only:
+** Proposal objects with successful updates to Grant Number:
 Proposal #: 35791 updated by document #: 3108
 
 ** Proposal objects that had errors:
