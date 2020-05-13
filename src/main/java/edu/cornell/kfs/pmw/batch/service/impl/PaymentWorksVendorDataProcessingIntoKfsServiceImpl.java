@@ -47,15 +47,24 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
     @Override
-    public boolean createValidateAndRouteKFSVendor(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
+    public boolean createValidateAndRouteOrSaveKFSVendor(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
                                                    Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         boolean processingSuccessful = false;
-        MaintenanceDocument vendorMaintenceDoc = createKfsVendorMaintenaceDocument(pmwVendor, paymentWorksIsoToFipsCountryMap, paymentWorksToKfsDiversityMap, reportData);
-        if (ObjectUtils.isNotNull(vendorMaintenceDoc) && 
-            kfsVendorMaintenanceDocumentValidated(vendorMaintenceDoc, reportData, pmwVendor) &&
-            kfsVendorMaintenceDocumentRouted(vendorMaintenceDoc, reportData, pmwVendor)) {
-            pmwVendor.setKfsVendorDocumentNumber(vendorMaintenceDoc.getDocumentNumber());
-            processingSuccessful = true;
+        MaintenanceDocument vendorMaintenceDoc = createKfsVendorMaintenaceDocument(pmwVendor, paymentWorksIsoToFipsCountryMap, paymentWorksToKfsDiversityMap,
+                reportData);
+        if (ObjectUtils.isNotNull(vendorMaintenceDoc)) {
+            if (kfsVendorMaintenanceDocumentValidated(vendorMaintenceDoc, reportData, pmwVendor)) {
+                if (kfsVendorMaintenceDocumentRouted(vendorMaintenceDoc, reportData, pmwVendor)) {
+                    pmwVendor.setKfsVendorDocumentNumber(vendorMaintenceDoc.getDocumentNumber());
+                    processingSuccessful = true;
+                }
+            }
+            else {
+                if ( saveVendorMaintenanceDocument(vendorMaintenceDoc, reportData, pmwVendor)) {
+                    pmwVendor.setKfsVendorDocumentNumber(vendorMaintenceDoc.getDocumentNumber());
+                    processingSuccessful = true;
+                }                  
+            }
         }
         return processingSuccessful;
     }
@@ -96,9 +105,7 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
             List<String> validationErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, validationErrors);
             LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation error(s): " + validationErrors.toString());
-            LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation exception caught: " + ve.getMessage());
-            GlobalVariables.getMessageMap().clearErrorMessages();
-            saveVendorMaintenanceDocument(vendorMaintenceDoc, reportData, pmwVendor);        
+            LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation exception caught: " + ve.getMessage());       
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
         }
@@ -107,6 +114,7 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
     
     private boolean saveVendorMaintenanceDocument(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor) {
        // vendorMaintenceDoc.validateBusinessRules(new SaveDocumentEvent(vendorMaintenceDoc));
+        GlobalVariables.getMessageMap().clearErrorMessages();
         LOG.info("saveVendorMaintenanceDocument: vendorMaintenceDoc validate save business rules.");
         boolean documentSaved = false;
         try {
