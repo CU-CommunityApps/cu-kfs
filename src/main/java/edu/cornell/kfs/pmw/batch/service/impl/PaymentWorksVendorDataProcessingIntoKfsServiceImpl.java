@@ -119,7 +119,7 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
         boolean documentSaved = false;
         try {
             getDocumentService().saveDocument(vendorMaintenceDoc);
-            LOG.info("kfsVendorMaintenceDocumentRouted: vendorMaintenceDoc routed.");
+            LOG.info("saveVendorMaintenanceDocument: vendorMaintenceDoc saved.");
             documentSaved = true;
         } catch (WorkflowException we) {
             List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
