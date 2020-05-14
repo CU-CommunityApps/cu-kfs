@@ -9,6 +9,7 @@ public final class CuCGPropertyConstants {
     public static final String AGENCY_ORIGIN = "agencyOrigin";
     public static final String AWARD_STATUS = "awardStatus";
     public static final String AWARD_PURPOSE = "awardPurpose";
+    public static final String GRANT_NUMBER = "grantNumber";
     public static final String GRANT_DESCRIPTION = "grantDescription";
 
 }

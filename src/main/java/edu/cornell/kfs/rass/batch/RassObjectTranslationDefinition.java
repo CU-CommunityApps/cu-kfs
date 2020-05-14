@@ -43,7 +43,7 @@ public abstract class RassObjectTranslationDefinition<T extends RassXmlObject, R
         // Do nothing by default.
     }
 
-    public boolean businessObjectEditIsPermitted(T xmlObject) {
+    public boolean businessObjectEditIsPermitted(T xmlObject, R oldBusinessObject) {
         return true;
     }
     

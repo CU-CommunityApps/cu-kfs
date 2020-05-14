@@ -240,7 +240,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("updateObject, Updating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
 
-        if (!objectDefinition.businessObjectEditIsPermitted(xmlObject)) {
+        if (!objectDefinition.businessObjectEditIsPermitted(xmlObject, oldBusinessObject)) {
             LOG.info("updateObject, Updates are not permitted for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
                     + " so any changes to it will be skipped");
             return new RassBusinessObjectUpdateResult<>(objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
@@ -277,7 +277,8 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
         R businessObject = businessObjectSupplier.get();
         List<String> missingRequiredFields = new ArrayList<>();
-        for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
+        
+        for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappingsApplicableForAction(maintenanceAction)) {
             Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlPropertyName());
             RassValueConverter valueConverter = propertyMapping.getValueConverter();
             Object convertedValue = valueConverter.convert(businessObjectClass, propertyMapping, xmlPropertyValue);
@@ -292,6 +293,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
                 ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(), convertedValue);
             }
         }
+        
         if (!missingRequiredFields.isEmpty()) {
             throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject) + " is missing values for the following required fields: "
                     + missingRequiredFields.toString());

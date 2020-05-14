@@ -184,27 +184,24 @@ public class RassReportServiceImpl implements RassReportService {
     private void writeAgencySummaryToReport(RassXmlFileProcessingResult fileResult) {
         RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = fileResult.getAgencyResults();
         List<RassBusinessObjectUpdateResult<Agency>> agencyResults = agencyResultGrouping.getObjectResults();
-        writeBOResultsSummaryToReport(agencyResults, Agency.class, true);
+        writeBOResultsSummaryToReport(agencyResults, Agency.class);
     }
 
     private void writeProposalSummaryToReport(RassXmlFileProcessingResult fileResult) {
         RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = fileResult.getProposalResults();
         List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
-        writeBOResultsSummaryToReport(proposalResults, Proposal.class, false);
+        writeBOResultsSummaryToReport(proposalResults, Proposal.class);
     }
 
     private void writeAwardSummaryToReport(RassXmlFileProcessingResult fileResult) {
         RassBusinessObjectUpdateResultGrouping<Award> awardResultGrouping = fileResult.getAwardResults();
         List<RassBusinessObjectUpdateResult<Award>> awardResults = awardResultGrouping.getObjectResults();
-        writeBOResultsSummaryToReport(awardResults, Award.class, true);
+        writeBOResultsSummaryToReport(awardResults, Award.class);
     }
 
-    private <R extends PersistableBusinessObject> void writeBOResultsSummaryToReport(List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass,
-            boolean shouldReportUpdates) {
+    private <R extends PersistableBusinessObject> void writeBOResultsSummaryToReport(List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass) {
         writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SUCCESS_NEW, businessObjectClass);
-        if (shouldReportUpdates) {
-            writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT, businessObjectClass);
-        }
+        writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT, businessObjectClass);
         writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.ERROR, businessObjectClass);
         writeResultsSummaryToReportByResultCode(results, RassConstants.RassObjectUpdateResultCode.SKIPPED, businessObjectClass);
     }
@@ -225,7 +222,8 @@ public class RassReportServiceImpl implements RassReportService {
                 resultMessage = " created";
                 break;
             case SUCCESS_EDIT:
-                resultMessage = " updated";
+                resultMessage = Proposal.class.isAssignableFrom(businessObjectClass)
+                        ? " with updates to Grant Number" : " updated";
                 break;
             case ERROR:
                 resultMessage = " that resulted in error";
@@ -259,27 +257,24 @@ public class RassReportServiceImpl implements RassReportService {
     private void writeAgencyDetailsToReport(RassXmlFileProcessingResult fileResult) {
         RassBusinessObjectUpdateResultGrouping<Agency> agencyResultGrouping = fileResult.getAgencyResults();
         List<RassBusinessObjectUpdateResult<Agency>> agencyResults = agencyResultGrouping.getObjectResults();
-        writeResultsDetailsToReport(agencyResults, Agency.class, true);
+        writeResultsDetailsToReport(agencyResults, Agency.class);
     }
 
     private void writeProposalDetailsToReport(RassXmlFileProcessingResult fileResult) {
         RassBusinessObjectUpdateResultGrouping<Proposal> proposalResultGrouping = fileResult.getProposalResults();
         List<RassBusinessObjectUpdateResult<Proposal>> proposalResults = proposalResultGrouping.getObjectResults();
-        writeResultsDetailsToReport(proposalResults, Proposal.class, false);
+        writeResultsDetailsToReport(proposalResults, Proposal.class);
     }
 
     private void writeAwardDetailsToReport(RassXmlFileProcessingResult fileResult) {
         RassBusinessObjectUpdateResultGrouping<Award> awardResultGrouping = fileResult.getAwardResults();
         List<RassBusinessObjectUpdateResult<Award>> awardResults = awardResultGrouping.getObjectResults();
-        writeResultsDetailsToReport(awardResults, Award.class, true);
+        writeResultsDetailsToReport(awardResults, Award.class);
     }
 
-    private <R extends PersistableBusinessObject> void writeResultsDetailsToReport(List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass,
-            boolean shouldReportUpdates) {
+    private <R extends PersistableBusinessObject> void writeResultsDetailsToReport(List<RassBusinessObjectUpdateResult<R>> results, Class businessObjectClass) {
         writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.SUCCESS_NEW);
-        if (shouldReportUpdates) {
-            writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT);
-        }
+        writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.SUCCESS_EDIT);
         writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.ERROR);
         writeResultsDetailsToReportByResultCode(results, businessObjectClass, RassConstants.RassObjectUpdateResultCode.SKIPPED);
     }
@@ -298,13 +293,16 @@ public class RassReportServiceImpl implements RassReportService {
 
     private void writeHeaderForResultsDetailsByResultCode(Class businessObjectClass, RassObjectUpdateResultCode resultCode) {
         String header;
+        String updateMessageSuffix;
         String objectName = businessObjectClass.getSimpleName();
         switch (resultCode) {
             case SUCCESS_NEW:
                 header = "** " + objectName + " objects successfully created:";
                 break;
             case SUCCESS_EDIT:
-                header = "** " + objectName + " objects successfully updated:";
+                updateMessageSuffix = Proposal.class.isAssignableFrom(businessObjectClass)
+                        ? " objects with successful updates to Grant Number:" : " objects successfully updated:";
+                header = "** " + objectName + updateMessageSuffix;
                 break;
             case ERROR:
                 header = "** " + objectName + " objects that had errors:";

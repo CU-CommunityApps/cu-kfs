@@ -8,6 +8,7 @@ Number of Agency objects that resulted in error: 2.
 Number of Agency objects skipped: 0.
 
 Number of Proposal objects created: 0.
+Number of Proposal objects with updates to Grant Number: 0.
 Number of Proposal objects that resulted in error: 0.
 Number of Proposal objects skipped: 0.
 
@@ -36,6 +37,8 @@ Agency #: 66661 error: Cannot proceed with processing object because an update f
 
 
 ** Proposal objects successfully created:
+
+** Proposal objects with successful updates to Grant Number:
 
 ** Proposal objects that had errors:
 

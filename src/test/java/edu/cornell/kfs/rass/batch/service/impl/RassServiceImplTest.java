@@ -892,6 +892,58 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                                 award(RassXmlAwardEntryFixture.SAMPLE_PROJECT_SKIP_DUE_TO_NULLS_V3, RassObjectUpdateResultCode.ERROR))));
     }
 
+    @Test
+    public void testUpdateGrantNumberOnProposal() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_GRANT_NUM_UPDATE_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testClearAndSetGrantNumberOnProposal() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_AWARD_MULTI_CHANGE_GRANT_NUM_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CLEAR, RassObjectUpdateResultCode.SUCCESS_EDIT),
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED),
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
+    @Test
+    public void testUpdateProposalGrantNumberPlusOtherAwardField() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_GRANT_NUM_UPDATE_FILE2,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE2, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE2, RassObjectUpdateResultCode.SUCCESS_EDIT))));
+    }
+
+    @Test
+    public void testScopeOfProposalFieldUpdatesForGrantNumberChange() throws Exception {
+        modifyExistingProposalForTestingProposalUpdateScope(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                fileWithResults(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AWARD_GRANT_NUM_UPDATE_FILE,
+                        emptyAgencyResults(),
+                        proposals(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                proposal(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT_GRANT_NUM_CHANGE_ALT, RassObjectUpdateResultCode.SUCCESS_EDIT)),
+                        awards(RassObjectGroupingUpdateResultCode.SUCCESS,
+                                award(RassXmlAwardEntryFixture.SOME_DEPARTMENT_PROJECT, RassObjectUpdateResultCode.SKIPPED))));
+    }
+
     private void assertXmlContentsPerformExpectedObjectUpdates(
             FileWithExpectedResults... filesWithResults) throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(Arrays.asList(filesWithResults));
@@ -1278,6 +1330,25 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             valuesToReturn = valuesToReturn.doReturn(routeStatuses[i]);
         }
         valuesToReturn.when(routeHeaderService).getDocumentStatus(Mockito.eq(documentNumber));
+    }
+
+    private void modifyExistingProposalForTestingProposalUpdateScope(RassXmlAwardEntryFixture fixture) {
+        Map<String, Object> proposalPrimaryKeys = Collections.singletonMap(
+                KFSPropertyConstants.PROPOSAL_NUMBER, fixture.proposalNumber);
+        Proposal proposal = mockBusinessObjectService.findByPrimaryKey(Proposal.class, proposalPrimaryKeys);
+        setValuesForOtherFieldsThatWillBeUpdatedForGrantNumberChange(proposal);
+        setValueForSampleFieldThatWillNotUpdateForGrantNumberChange(proposal);
+        Mockito.doReturn(proposal)
+                .when(mockBusinessObjectService).findByPrimaryKey(Proposal.class, proposalPrimaryKeys);
+    }
+
+    private void setValuesForOtherFieldsThatWillBeUpdatedForGrantNumberChange(Proposal proposal) {
+        proposal.setProposalOrganizations(new ArrayList<>());
+        proposal.setProposalProjectDirectors(new ArrayList<>());
+    }
+
+    private void setValueForSampleFieldThatWillNotUpdateForGrantNumberChange(Proposal proposal) {
+        proposal.setProposalStatusCode(RassTestConstants.PROPOSAL_AWARDED_STATUS);
     }
 
     private FileWithExpectedResults fileWithResults(

@@ -82,6 +82,7 @@ public class RassReportServiceImplTest extends SpringEnabledMicroTestBase {
     private static final String DOCUMENT_3107 = "3107";
     private static final String DOCUMENT_3108 = "3108";
     private static final String DOCUMENT_3109 = "3109";
+    private static final String DOCUMENT_3110 = "3110";
 
     private RassReportServiceImpl rassReportService;
 
@@ -357,19 +358,19 @@ public class RassReportServiceImplTest extends SpringEnabledMicroTestBase {
                         RassObjectGroupingUpdateResultCode.ERROR,
                         proposalSkip(PROPOSAL_98765),
                         proposalError(PROPOSAL_44556, "Invalid Purpose Code"),
-                        proposalSuccess(PROPOSAL_44567, DOCUMENT_3106),
-                        proposalSuccess(PROPOSAL_45599, DOCUMENT_3108),
-                        proposalSkip(PROPOSAL_35791),
+                        proposalSuccess(PROPOSAL_44567, DOCUMENT_3106, RassObjectUpdateResultCode.SUCCESS_NEW),
+                        proposalSuccess(PROPOSAL_45599, DOCUMENT_3107, RassObjectUpdateResultCode.SUCCESS_NEW),
+                        proposalSuccess(PROPOSAL_35791, DOCUMENT_3108, RassObjectUpdateResultCode.SUCCESS_EDIT),
                         proposalSkip(PROPOSAL_38333)),
                 awardResults(
                         RassObjectGroupingUpdateResultCode.ERROR,
                         awardError(PROPOSAL_98765, "Project Title is a required field"),
                         awardError(PROPOSAL_44556, "Cannot proceed with processing object because an update failure "
                                 + "was detected for Proposal with ID 44556"),
-                        awardSuccess(PROPOSAL_44567, DOCUMENT_3107, RassObjectUpdateResultCode.SUCCESS_NEW),
+                        awardSuccess(PROPOSAL_44567, DOCUMENT_3109, RassObjectUpdateResultCode.SUCCESS_NEW),
                         awardError(PROPOSAL_45599, "Invalid Grant Description"),
                         awardSkip(PROPOSAL_35791),
-                        awardSuccess(PROPOSAL_38333, DOCUMENT_3109, RassObjectUpdateResultCode.SUCCESS_EDIT))
+                        awardSuccess(PROPOSAL_38333, DOCUMENT_3110, RassObjectUpdateResultCode.SUCCESS_EDIT))
                 );
     }
 
@@ -418,9 +419,10 @@ public class RassReportServiceImplTest extends SpringEnabledMicroTestBase {
                 Proposal.class, Arrays.asList(proposalResults), resultCode);
     }
 
-    private RassBusinessObjectUpdateResult<Proposal> proposalSuccess(String proposalNumber, String documentId) {
+    private RassBusinessObjectUpdateResult<Proposal> proposalSuccess(
+            String proposalNumber, String documentId, RassObjectUpdateResultCode resultCode) {
         return new RassBusinessObjectUpdateResult<>(
-                Proposal.class, proposalNumber, documentId, RassObjectUpdateResultCode.SUCCESS_NEW, StringUtils.EMPTY);
+                Proposal.class, proposalNumber, documentId, resultCode, StringUtils.EMPTY);
     }
 
     private RassBusinessObjectUpdateResult<Proposal> proposalSkip(String proposalNumber) {
