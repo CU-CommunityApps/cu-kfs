@@ -230,6 +230,8 @@ public class CUPurapConstants {
         public static final String DOCUMENT_NUMBER = "document_number";
         public static final String DOCUMENT_STATUS = "document_status";
         public static final String EMAIL = "email";
+        public static final String SHIPPING_NAME = "shipping_name";
+        public static final String SHIPPING_DELIVER_TO = "shipping_deliver_to";
         public static final String ADDRESS_LINE1 = "address_line1";
         public static final String ADDRESS_LINE2 = "address_line2";
         public static final String STATE = "state";
