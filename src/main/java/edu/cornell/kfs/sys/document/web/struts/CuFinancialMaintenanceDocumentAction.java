@@ -102,7 +102,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
             }
         }
 
-        DocumentEntry entry = getDocumentDictionaryService().getDocumentEntry(document.getClass().getName());
+        DocumentEntry entry = getDocumentDictionaryService().getDocumentEntryByClass(document.getClass());
 
         if (entry.getDisplayTopicFieldInNotes()) {
             String topicText = kualiDocumentFormBase.getNewNote().getNoteTopicText();

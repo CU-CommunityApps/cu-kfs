@@ -269,7 +269,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     
     protected FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(Document doc) {
         DocumentDictionaryService documentDictionaryService = SpringContext.getBean(DocumentDictionaryService.class);
-        Class<? extends DocumentAuthorizer> documentAuthorizerClass = (Class<? extends DocumentAuthorizer>) documentDictionaryService.getDocumentEntry(doc.getClass().getName()).getDocumentAuthorizerClass();
+        Class<? extends DocumentAuthorizer> documentAuthorizerClass = (Class<? extends DocumentAuthorizer>) documentDictionaryService.getDocumentEntryByClass(doc.getClass()).getDocumentAuthorizerClass();
         
         FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = null;
         try {
