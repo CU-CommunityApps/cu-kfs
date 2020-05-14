@@ -277,13 +277,8 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
         R businessObject = businessObjectSupplier.get();
         List<String> missingRequiredFields = new ArrayList<>();
-        boolean isNewObject = StringUtils.equalsIgnoreCase(maintenanceAction, KRADConstants.MAINTENANCE_NEW_ACTION);
-        boolean isObjectEdit = StringUtils.equalsIgnoreCase(maintenanceAction, KRADConstants.MAINTENANCE_EDIT_ACTION);
         
-        for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
-            if (isObjectEdit && propertyMapping.isSkipForObjectEdit()) {
-                continue;
-            }
+        for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappingsApplicableForAction(maintenanceAction)) {
             Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlPropertyName());
             RassValueConverter valueConverter = propertyMapping.getValueConverter();
             Object convertedValue = valueConverter.convert(businessObjectClass, propertyMapping, xmlPropertyValue);
@@ -298,11 +293,12 @@ public class RassUpdateServiceImpl implements RassUpdateService {
                 ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(), convertedValue);
             }
         }
+        
         if (!missingRequiredFields.isEmpty()) {
             throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject) + " is missing values for the following required fields: "
                     + missingRequiredFields.toString());
         }
-        if (isNewObject) {
+        if (StringUtils.equalsIgnoreCase(maintenanceAction, KRADConstants.MAINTENANCE_NEW_ACTION)) {
             objectDefinition.makeBusinessObjectActiveIfApplicable(xmlObject, businessObject);
         }
         return businessObject;

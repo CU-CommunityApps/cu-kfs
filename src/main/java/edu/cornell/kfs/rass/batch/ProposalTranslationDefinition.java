@@ -32,7 +32,8 @@ public class ProposalTranslationDefinition extends RassObjectTranslationDefiniti
                 .filter(propertyMapping -> StringUtils.equals(
                         CuCGPropertyConstants.GRANT_NUMBER, propertyMapping.getBoPropertyName()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No property mapping was found for Grant Number"));
+                .orElseThrow(() -> new IllegalStateException("No property mapping was found for Grant Number; "
+                        + "please add one to the 'propertyMappings' list"));
     }
 
 	@Override
