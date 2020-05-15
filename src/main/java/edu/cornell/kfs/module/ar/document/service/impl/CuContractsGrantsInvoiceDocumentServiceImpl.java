@@ -655,6 +655,9 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         super.recalculateObjectCodeByCategory(contractsGrantsInvoiceDocument, invoiceDetail, total, invoiceDetailAccountObjectCodes);
     }
     
+    /*
+     * CUMod: KFSPTS-14929
+     */
     @Override
     protected String getRecipientAccountNumber(List<InvoiceAccountDetail> accountDetails) {
         if (CollectionUtils.isNotEmpty(accountDetails)) {
@@ -667,7 +670,11 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return null;
     }
     
-    //Part of the logic to determine contract control account was obtained from FINP-4726.
+    /*
+     * CUMod: KFSPTS-14929
+     * 
+     * Part of the logic to determine contract control account was obtained from FINP-4726.
+     */
     @Override
     public Account determineContractControlAccount(InvoiceAccountDetail invoiceAccountDetail) {
         Account contractControlAccount = null;
@@ -686,6 +693,9 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return contractControlAccount;
     }
     
+    /*
+     * CUMod: KFSPTS-14929
+     */
     @Override
     protected CustomerInvoiceDetail createSourceAccountingLinesByContractControlAccount(
             ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
@@ -708,7 +718,9 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 coaCode, accountNumber, objectCode, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
     }
 
-    /**
+    /*
+     * CUMod: KFSPTS-15342
+     * 
      * Overridden to also update the invoice due date.
      * 
      * NOTE: There isn't an easy way to hook in the invoice-due-date updates independently of this
@@ -723,12 +735,18 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         setInvoiceDueDateBasedOnNetTermsAndCurrentDate(document);
     }
 
+    /*
+     * CUMod: KFSPTS-15342
+     */
     @Override
     public void setInvoiceDueDateBasedOnNetTermsAndCurrentDate(ContractsGrantsInvoiceDocument document) {
         Date invoiceDueDate = calculateInvoiceDueDate(document);
         document.setInvoiceDueDate(invoiceDueDate);
     }
 
+    /*
+     * CUMod: KFSPTS-15342
+     */
     protected Date calculateInvoiceDueDate(ContractsGrantsInvoiceDocument document) {
         Calendar calendar = dateTimeService.getCurrentCalendar();
         Optional<Integer> customerNetTerms = getCustomerNetTerms(document);
@@ -755,6 +773,9 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         return new Date(calendar.getTimeInMillis());
     }
 
+    /*
+     * CUMod: KFSPTS-15342
+     */
     protected Optional<Integer> getCustomerNetTerms(ContractsGrantsInvoiceDocument document) {
         Customer customer = null;
         

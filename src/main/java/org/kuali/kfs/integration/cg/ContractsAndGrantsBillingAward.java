@@ -375,8 +375,8 @@ public interface ContractsAndGrantsBillingAward extends Billable, ContractsAndGr
 
     List<String> getSelectedAccounts();
     
-    /**
-     *  CU Customization
+    /*
+     *  CUMod: KFSPTS-14970
      */
     
     String getCgInvoiceDocumentCreationProcessTypeCode();
