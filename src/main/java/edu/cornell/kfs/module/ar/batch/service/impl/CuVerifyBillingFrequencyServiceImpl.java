@@ -25,11 +25,9 @@ import org.apache.logging.log4j.Logger;
 
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
-import org.kuali.kfs.integration.ar.ArIntegrationConstants;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.batch.service.impl.VerifyBillingFrequencyServiceImpl;
 import org.kuali.kfs.module.ar.businessobject.BillingFrequency;
@@ -141,31 +139,6 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
     @Override
     public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, Date calculatedLastBilledDate, AccountingPeriod currPeriod, String creationProcessTypeCode) {
         return BillingPeriod.determineBillingPeriodPriorTo(award.getAwardBeginningDate(), this.dateTimeService.getCurrentSqlDate(), calculatedLastBilledDate, ArConstants.BillingFrequencyValues.fromCode(award.getBillingFrequencyCode()), this.accountingPeriodService, creationProcessTypeCode);
-    }
-    
-    /**
-     * CU Customization: The lastBilledDate should be set to the invoice creation date on the first invoice when
-     *                   Invoicing Option is Invoice By Schedule (Milestone or Predetermined) and Last Billed Date (Award) is null.
-     *                   Invoice is considered to be first invoice based on above listed criteria.
-     *                   This adjustment needs to be performed when invoices are created by BOTH Batch and Manual processing.
-     */
-    public boolean isFirstMilestoneOrPredeterminedInvoiceBySchedule(String billingFrequencyCode, String invoicingOptionCode, Date lastBilledDate) {
-        return (isInvoiceBySchedule(invoicingOptionCode) 
-                && isBillingFrequencyMilesoneOrPredetermined(billingFrequencyCode)
-                && isLastBilledDateNull(lastBilledDate));
-    }
-    
-    private boolean isInvoiceBySchedule(String invoicingOptionCode) {
-        return (StringUtils.equalsIgnoreCase(ArIntegrationConstants.AwardInvoicingOptions.INV_SCHEDULE, invoicingOptionCode));
-    }
-    
-    private boolean isBillingFrequencyMilesoneOrPredetermined(String billingFrequencyCode) {
-        return (StringUtils.equalsIgnoreCase(ArIntegrationConstants.BillingFrequencyValues.MILESTONE, billingFrequencyCode)
-                || StringUtils.equalsIgnoreCase(ArIntegrationConstants.BillingFrequencyValues.PREDETERMINED_BILLING, billingFrequencyCode)); 
-    }
-    
-    private boolean isLastBilledDateNull(Date lastBilledDate) {
-        return (ObjectUtils.isNull(lastBilledDate));
     }
 
     public DateTimeService getDateTimeService() {

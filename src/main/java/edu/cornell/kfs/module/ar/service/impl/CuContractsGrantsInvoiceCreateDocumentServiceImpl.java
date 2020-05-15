@@ -330,8 +330,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
      *   CU Customization:
      *   Overridden method signature above is from base code interface.
      *   This method is in Cornell's customized interface due to method signature change.
-     *   Code being used here is minimally modified base code in areas of last billed date 
-     *   and billing period start and end dates.
+     *   Code being used here is minimally modified base code.
      */
     protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award, Date calculatedLastBilledDate,
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
@@ -351,15 +350,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             BillingPeriod billingPeriod = getCuVerifyBillingFrequencyService().getStartDateAndEndDateOfPreviousBillingPeriod(award, calculatedLastBilledDate, currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
             invoiceGeneralDetail.setBillingPeriod(getDateTimeService().toDateString(billingPeriod.getStartDate()) + " to " +
                     getDateTimeService().toDateString(billingPeriod.getEndDate()));
+            invoiceGeneralDetail.setLastBilledDate(billingPeriod.getEndDate());
 
-            if (getCuVerifyBillingFrequencyService().isFirstMilestoneOrPredeterminedInvoiceBySchedule(award.getBillingFrequencyCode(), 
-                    award.getInvoicingOptionCode(), calculatedLastBilledDate)) {
-                invoiceGeneralDetail.setLastBilledDate(today);
-            } else {
-                invoiceGeneralDetail.setLastBilledDate(billingPeriod.getEndDate());
-            }
-            LOG.info("populateInvoiceFromAward: invoiceGeneralDetail.lastBilledDate = " + invoiceGeneralDetail.getLastBilledDate());
-            
             populateInvoiceDetailFromAward(invoiceGeneralDetail, award);
             document.setInvoiceGeneralDetail(invoiceGeneralDetail);
             // To set Bill by address identifier because it is a required field - set the value to 1 as it is never
