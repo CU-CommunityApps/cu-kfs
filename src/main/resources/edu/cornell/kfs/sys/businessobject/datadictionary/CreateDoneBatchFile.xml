@@ -85,22 +85,22 @@
           p:title="Create Done Batch File Lookup" p:lookupSearchService-ref="createDoneBatchFileLookupSearchService">
         <property name="lookupAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="CreateDoneBatchFile-path"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition" parent="CreateDoneBatchFile-path"/>
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="CreateDoneBatchFile-fileName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="CreateDoneBatchFile-lastModifiedDate"/>
             </list>
         </property>
         <property name="lookupResultAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="CreateDoneBatchFile-path"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="CreateDoneBatchFile-fileName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="CreateDoneBatchFile-lastModifiedDate"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="CreateDoneBatchFile-fileSize"/>
             </list>
         </property>

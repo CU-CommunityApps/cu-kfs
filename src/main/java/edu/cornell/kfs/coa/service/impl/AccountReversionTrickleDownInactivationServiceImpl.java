@@ -14,7 +14,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kns.maintenance.Maintainable;
-import org.kuali.kfs.kns.service.MaintenanceDocumentDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.MaintenanceDocumentDictionaryService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;

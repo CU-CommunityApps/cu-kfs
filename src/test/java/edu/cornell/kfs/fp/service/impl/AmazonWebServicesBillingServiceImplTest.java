@@ -12,7 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;

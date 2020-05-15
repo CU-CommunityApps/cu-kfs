@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.util.type.TypeUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;

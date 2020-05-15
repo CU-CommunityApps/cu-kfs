@@ -254,55 +254,55 @@
         </property>
         <property name="lookupAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-universityFiscalYear" p:disableLookup="true"
                       p:defaultValueFinder-ref="fiscalYearFinder"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-chartOfAccountsCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectCodeName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectCodeShortName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectLevelCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectTypeCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialObjectSubTypeCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-extension-sunyObjectCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-extension-financialObjectCodeDescr"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-historicalFinancialObjectCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                       parent="ObjectCode-financialBudgetAggregationCd"/>
                 <ref bean="activeIndicatorLookupAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupResultAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-universityFiscalYear"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-chartOfAccountsCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-financialObjectCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-financialObjectCodeName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-financialObjectLevelCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-financialObjectTypeCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-extension-sunyObjectCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="ObjectCode-extension-financialObjectCodeDescr"/>
                 <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
             </list>

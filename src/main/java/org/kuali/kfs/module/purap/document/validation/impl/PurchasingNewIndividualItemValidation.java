@@ -19,7 +19,7 @@
 package org.kuali.kfs.module.purap.document.validation.impl;
 
 import org.kuali.kfs.integration.cam.CapitalAssetManagementModuleService;
-import org.kuali.kfs.kns.service.BusinessObjectDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapConstants;

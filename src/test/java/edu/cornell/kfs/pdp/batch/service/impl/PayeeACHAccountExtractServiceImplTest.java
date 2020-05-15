@@ -33,7 +33,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.kns.datadictionary.control.SelectControlDefinition;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;

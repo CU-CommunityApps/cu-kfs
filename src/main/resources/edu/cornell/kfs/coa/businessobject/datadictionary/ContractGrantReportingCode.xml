@@ -124,26 +124,26 @@
     </property>
     <property name="lookupAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="ContractGrantReportingCode-chartOfAccountsCode"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="ContractGrantReportingCode-code"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="ContractGrantReportingCode-name"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 parent="ContractGrantReportingCode-active"
                 p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" p:defaultValue="Y"/>
       </list>
     </property>
     <property name="lookupResultAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="ContractGrantReportingCode-chartOfAccountsCode"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="ContractGrantReportingCode-code"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="ContractGrantReportingCode-name"/>
-        <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                 parent="ContractGrantReportingCode-active"/>
       </list>
     </property>
