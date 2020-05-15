@@ -50,7 +50,7 @@ import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
-import org.kuali.kfs.krad.datadictionary.DataDictionary;
+import org.kuali.kfs.datadictionary.legacy.DataDictionary;
 import org.kuali.kfs.krad.datadictionary.DataDictionaryEntry;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.AttachmentService;
@@ -58,7 +58,7 @@ import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 
 import com.rsmart.kuali.kfs.sys.KFSKeyConstants;
 import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
@@ -176,9 +176,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
      * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService#performForceUppercase(java.lang.String, java.lang.Object)
      */
     public void performForceUppercase(String entryName, Object businessObject) {
-        DataDictionary dataDictionary = dataDictionaryService.getDataDictionary();
-
-        DataDictionaryEntry entry = dataDictionary.getDictionaryObjectEntry(entryName);
+        DataDictionaryEntry entry = dataDictionaryService.getDictionaryObjectEntry(entryName);
         if (entry == null) {
             return;
         }

@@ -248,45 +248,45 @@
         </property>
         <property name="lookupAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 	  parent="PayeeACHAccountExtractDetail-status"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 	  parent="PayeeACHAccountExtractDetail-createDate"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 	  parent="PayeeACHAccountExtractDetail-employeeID"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
                 	  parent="PayeeACHAccountExtractDetail-netID"/>
             </list>
         </property>
         <property name="lookupResultAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-status"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-createDate"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-retryCount"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-employeeID"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-netID"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-lastName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-firstName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-paymentType"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-balanceAccount"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-completedDate"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-bankName"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-bankRoutingNumber"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-bankAccountNumber"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
                       parent="PayeeACHAccountExtractDetail-bankAccountType"/>
             </list>
         </property>

@@ -36,7 +36,7 @@ import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.kns.datadictionary.DocumentEntry;
 import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.DocumentDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DocumentDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.workflow.attribute.DataDictionarySearchableAttribute;

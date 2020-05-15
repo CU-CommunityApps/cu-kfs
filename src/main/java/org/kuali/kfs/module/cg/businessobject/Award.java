@@ -21,6 +21,8 @@ package org.kuali.kfs.module.cg.businessobject;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.integration.ar.AccountsReceivableBillingFrequency;
+import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
+import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
 import org.kuali.kfs.integration.ar.AccountsReceivableMilestoneSchedule;
 import org.kuali.kfs.integration.ar.AccountsReceivableModuleBillingService;
 import org.kuali.kfs.integration.ar.AccountsReceivablePredeterminedBillingSchedule;
@@ -55,7 +57,9 @@ import java.util.stream.Collectors;
 /**
  * Defines a financial award object.
  */
-public class Award extends PersistableBusinessObjectBase implements MutableInactivatable, ContractsAndGrantsBillingAward {
+public class Award extends PersistableBusinessObjectBase implements MutableInactivatable,
+        ContractsAndGrantsBillingAward {
+
     private static final String AWARD_INQUIRY_TITLE_PROPERTY = "message.inquiry.award.title";
     private String proposalNumber;
     private Date awardBeginningDate;
@@ -128,11 +132,14 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     private String excludedFromInvoicingReason;
     private String instrumentTypeCode;
     private String invoicingOptionCode;
+    private String customerNumber;
+    private Integer customerAddressIdentifier;
 
     private KualiDecimal minInvoiceAmount = KualiDecimal.ZERO;
 
     private boolean autoApproveIndicator;
 
+    private AccountsReceivableCustomerAddress customerAddress;
     private AccountsReceivableMilestoneSchedule milestoneSchedule;
     private AccountsReceivablePredeterminedBillingSchedule predeterminedBillingSchedule;
     private AccountsReceivableBillingFrequency billingFrequency;
@@ -152,7 +159,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     private transient String lookupPersonUniversalIdentifier;
     private transient Person lookupPerson;
 
-    private final String userLookupRoleNamespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
+    private final String userLookupRoleNamespaceCode = KFSConstants.ParameterNamespaces.KFS;
     private final String userLookupRoleName = KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR;
 
     private transient String lookupFundMgrPersonUniversalIdentifier;
@@ -207,11 +214,9 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      * Creates a collection of lists within this award object that should be aware of when the deletion of one of their
      * elements occurs. This collection is used to refresh the display upon deletion of an element to ensure that the
      * deleted element is not longer visible on the interface.
-     *
-     * @see org.kuali.rice.krad.bo.PersistableBusinessObjectBase#buildListOfDeletionAwareLists()
      */
     @Override
-    public List buildListOfDeletionAwareLists() {
+    public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {
         List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
         managedLists.add(ObjectUtils.isNull(getAwardAccounts()) ? new ArrayList() : new ArrayList(getAwardAccounts()));
         managedLists.add(ObjectUtils.isNull(getAwardOrganizations()) ? new ArrayList() :
@@ -908,8 +913,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     @Override
     public String getLookupPersonUniversalIdentifier() {
-        lookupPerson = SpringContext.getBean(PersonService.class).updatePersonIfNecessary(lookupPersonUniversalIdentifier,
-            lookupPerson);
+        lookupPerson = SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
+                lookupPersonUniversalIdentifier, lookupPerson);
         return lookupPersonUniversalIdentifier;
     }
 
@@ -1025,6 +1030,27 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return invoicingOptionCode;
     }
 
+    public String getCustomerNumber() {
+        // if we don't have a customerNumber, but we do have an agency, we want to seed it from the agency so the
+        // customer lookup will work appropriately
+        if (agency != null && StringUtils.isBlank(customerNumber)) {
+            customerNumber = agency.getCustomerNumber();
+        }
+        return customerNumber;
+    }
+
+    public void setCustomerNumber(String customerNumber) {
+        this.customerNumber = customerNumber;
+    }
+
+    public Integer getCustomerAddressIdentifier() {
+        return customerAddressIdentifier;
+    }
+
+    public void setCustomerAddressIdentifier(Integer customerAddressIdentifier) {
+        this.customerAddressIdentifier = customerAddressIdentifier;
+    }
+
     @Override
     public String getInvoicingOptionDescription() {
         return CGIntegrationConstants.AwardInvoicingOption.Types.get(invoicingOptionCode);
@@ -1032,6 +1058,21 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     public void setInvoicingOptionCode(String invoicingOptionCode) {
         this.invoicingOptionCode = invoicingOptionCode;
+    }
+
+    public AccountsReceivableCustomerAddress getCustomerAddress() {
+        if (customerAddress == null || !StringUtils.equals(customerAddress.getCustomerNumber(), customerNumber)
+                || (customerAddressIdentifier != null
+                && customerAddressIdentifier.intValue() != customerAddress.getCustomerAddressIdentifier().intValue())) {
+            customerAddress = SpringContext.getBean(KualiModuleService.class)
+                    .getResponsibleModuleService(AccountsReceivableCustomer.class)
+                    .retrieveExternalizableBusinessObjectIfNecessary(this, customerAddress, "customerAddress");
+        }
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(AccountsReceivableCustomerAddress customerAddress) {
+        this.customerAddress = customerAddress;
     }
 
     public AccountsReceivableMilestoneSchedule getMilestoneSchedule() {
@@ -1046,7 +1087,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return predeterminedBillingSchedule;
     }
 
-    public void setPredeterminedBillingSchedule(AccountsReceivablePredeterminedBillingSchedule predeterminedBillingSchedule) {
+    public void setPredeterminedBillingSchedule(
+            AccountsReceivablePredeterminedBillingSchedule predeterminedBillingSchedule) {
         this.predeterminedBillingSchedule = predeterminedBillingSchedule;
     }
 
@@ -1068,10 +1110,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     /**
-     * Gets the awardPrimaryFundManager attribute. This field would not be persisted into the DB, just for display
-     * purposes.
-     *
-     * @return Returns the awardPrimaryFundManager.
+     * @return the awardPrimaryFundManager attribute. This field would not be persisted into the DB, just for display
+     *         purposes.
      */
     @Override
     public AwardFundManager getAwardPrimaryFundManager() {
@@ -1152,7 +1192,6 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         }
 
         return boNotes;
-
     }
 
     public void setBoNotes(List boNotes) {

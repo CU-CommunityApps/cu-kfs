@@ -29,8 +29,6 @@ import org.kuali.kfs.krad.document.TransactionalDocument;
 import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
-import org.kuali.kfs.krad.service.KualiModuleService;
-import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -75,7 +73,6 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -465,7 +462,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @SuppressWarnings("rawtypes")
     public PurApItem getItemByLineNumber(int lineNumber) {
         for (PurApItem item : items) {
-            // CU Customization (KFSPTS-17401): Perform a null check on the item's line number before using it.
             if (item.getItemLineNumber() != null && item.getItemLineNumber() == lineNumber) {
                 return item;
             }
@@ -931,8 +927,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Added only to allow for {@link org.kuali.kfs.module.purap.util.PurApObjectUtils} class to work correctly.
-     *
-     * @deprecated
      */
     @Deprecated
     public void setVendorCountry(Country vendorCountry) {
@@ -1215,7 +1209,6 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         } catch (IllegalArgumentException iae) {
             // do nothing, not a problem if no restricted types are defined
         }
-        PurapAccountingService purApAccountingService = SpringContext.getBean(PurapAccountingService.class);
         List currentSourceLines = new ArrayList();
         for (PurApItem item : (List<PurApItem>) this.getItems()) {
             // Disable validation if the item is read-only
