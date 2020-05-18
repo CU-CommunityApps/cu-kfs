@@ -136,7 +136,7 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
 
     private boolean kfsVendorMaintenceDocumentActionProcessed(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData,
             PaymentWorksVendor pmwVendor, DocumentAction documentAction) {
-        boolean documentEventProcessed = false;
+        boolean documentActionProcessed = false;
         try {
             if (DocumentAction.SAVE.equals(documentAction)) {
                 getDocumentService().saveDocument(vendorMaintenceDoc);
@@ -149,17 +149,16 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
                 return false;
             }
 
-            documentEventProcessed = true;
+            documentActionProcessed = true;
         } catch (WorkflowException we) {
-            List<String> edocCreateErrors = getPaymentWorksBatchUtilityService()
-                    .convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
+            List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, edocCreateErrors);
             LOG.error("kfsVendorMaintenceDocumentActionProcessed: eDoc error(s): " + edocCreateErrors.toString());
             LOG.error("kfsVendorMaintenceDocumentActionProcessed: eDoc exception caught: " + we.getMessage());
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
         }
-        return documentEventProcessed;
+        return documentActionProcessed;
     }
     
     private void captureKfsProcessingErrorsForVendor(PaymentWorksVendor pmwVendorWithFailure, PaymentWorksNewVendorRequestsBatchReportData reportData, List<String> validationErrors) {
