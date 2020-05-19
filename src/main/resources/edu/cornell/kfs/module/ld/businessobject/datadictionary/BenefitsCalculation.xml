@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:dd="http://rice.kuali.org/dd"
+    xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+   
+  <bean id="BenefitsCalculation" parent="BenefitsCalculation-parentBean">
+  </bean>
+  
+  <!-- Business Object Lookup Definition -->
+
+  <bean id="BenefitsCalculation-lookupDefinition" parent="BenefitsCalculation-lookupDefinition-parentBean"/>
+  <bean id="BenefitsCalculation-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+        p:title="Labor Benefits Calculation Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+      <property name="lookupAttributeDefinitions">
+          <list>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-universityFiscalYear" p:disableLookup="true"
+                    p:defaultValueFinder-ref="fiscalYearFinder"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-chartOfAccountsCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-positionBenefitTypeCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-laborBenefitRateCategoryCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-positionFringeBenefitObjectCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-positionFringeBenefitPercent"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-accountCodeOffset"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                    parent="BenefitsCalculation-objectCodeOffset"/>
+              <ref bean="activeIndicatorLookupAttributeDefinition"/>
+          </list>
+      </property>
+      <property name="lookupResultAttributeDefinitions">
+          <list>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-universityFiscalYear"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-chartOfAccountsCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-positionBenefitTypeCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-laborBenefitRateCategoryCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-positionFringeBenefitObjectCode"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-accountCodeOffset"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-objectCodeOffset"/>
+              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                    parent="BenefitsCalculation-positionFringeBenefitPercent">
+                  <property name="validationPattern">
+                      <bean parent="FixedPointValidationPattern" p:scale="2" p:precision="7" />
+                  </property>
+              </bean>
+              <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
+          </list>
+      </property>
+      <property name="lookupFields">
+          <list>
+              <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
+              <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+              <bean parent="FieldDefinition" p:attributeName="positionBenefitTypeCode"/>
+              <bean parent="FieldDefinition" p:attributeName="laborBenefitRateCategoryCode"/>
+              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitObjectCode"/>
+              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitPercent"/>
+              <bean parent="FieldDefinition" p:attributeName="accountCodeOffset"/>
+              <bean parent="FieldDefinition" p:attributeName="objectCodeOffset"/>
+              <bean parent="FieldDefinition" p:attributeName="active"/>
+          </list>
+      </property>
+      <property name="resultFields">
+          <list>
+              <bean parent="FieldDefinition" p:attributeName="laborBenefitsCalculationViewer"/>
+              <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
+              <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+              <bean parent="FieldDefinition" p:attributeName="positionBenefitTypeCode"/>
+              <bean parent="FieldDefinition" p:attributeName="laborBenefitRateCategoryCode"/>
+              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitObjectCode"/>
+              <bean parent="FieldDefinition" p:attributeName="accountCodeOffset"/>
+              <bean parent="FieldDefinition" p:attributeName="objectCodeOffset"/>
+              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitPercent"/>
+              <bean parent="FieldDefinition" p:attributeName="active"/>
+          </list>
+      </property>
+  </bean>
+</beans>
