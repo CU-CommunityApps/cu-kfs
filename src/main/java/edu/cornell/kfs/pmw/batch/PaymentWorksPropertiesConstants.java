@@ -19,5 +19,10 @@ public class PaymentWorksPropertiesConstants {
     public static final class PaymentWorksIsoCountryToFipsCountryAssociation {
         public static final String FIPS_CNTRY_CD = "fipsCountryCode";
     }
+    
+    public static final class PaymentWorksFromModes {
+        public static final String LEGACY_FORM_MODE = "L";
+        public static final String FOREIGN_FORM_MODE = "F";
+    }
 
 }

@@ -35,6 +35,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
@@ -48,6 +49,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected DateTimeService dateTimeService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected BusinessObjectService businessObjectService;
+    protected PaymentWorksFormModeService paymentWorksFormModeService;
             
     @Override
     public KfsVendorDataWrapper createKfsVendorDetailFromPmwVendor(PaymentWorksVendor pmwVendor,
@@ -66,7 +68,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTypeCode(determineKfsVendorTypeCodeBasedOnPmwVendorType(pmwVendor.getVendorType()));
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
             kfsVendorDataWrapper.getVendorDetail().setVendorDunsNumber(pmwVendor.getRequestingCompanyDuns());
-            kfsVendorDataWrapper.getVendorDetail().setVendorCreditCardIndicator(new Boolean(pmwVendor.isAcceptCreditCards()));
+            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                kfsVendorDataWrapper.getVendorDetail().setVendorCreditCardIndicator(new Boolean(pmwVendor.isAcceptCreditCards()));
+            }
             kfsVendorDataWrapper.getVendorDetail().setActiveIndicator(true);
             kfsVendorDataWrapper.getVendorDetail().setVendorUrlAddress(pmwVendor.getRequestingCompanyUrl());
             kfsVendorDataWrapper.getVendorDetail().setVendorAddresses(buildVendorAddresses(pmwVendor, paymentWorksIsoToFipsCountryMap));
@@ -354,10 +358,13 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             vendorContacts.add(buildInsuranceContact(pmwVendor));
             vendorContacts.add(buildSalesContact(pmwVendor));
             vendorContacts.add(buildAccountsReceivableContact(pmwVendor));
-
-            if (pmwVendor.isInvoicing()) {
+            
+            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() && 
+                    paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() && 
+                    pmwVendor.isInvoicing()) {
                 vendorContacts.add(buildEinvoicingContact(pmwVendor));
             }
+            
         }
         return vendorContacts;
     }
@@ -765,11 +772,13 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private KfsVendorDataWrapper buildRemainingVendorNotes(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
-        kfsVendorDataWrapper = createGoodsAndServicesNote(pmwVendor, kfsVendorDataWrapper);
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            kfsVendorDataWrapper = createGoodsAndServicesNote(pmwVendor, kfsVendorDataWrapper);
+            kfsVendorDataWrapper = createInsuranceCertificateNote(pmwVendor, kfsVendorDataWrapper);
+        }
         kfsVendorDataWrapper = createInitiatorNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createVendorTypeBusinessPurposeNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createConflictOfInterestNote(pmwVendor, kfsVendorDataWrapper);
-        kfsVendorDataWrapper = createInsuranceCertificateNote(pmwVendor, kfsVendorDataWrapper);
         return kfsVendorDataWrapper;
     }
     
@@ -864,6 +873,10 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
+        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 
 }
