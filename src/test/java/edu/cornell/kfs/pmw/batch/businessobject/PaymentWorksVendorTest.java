@@ -1,7 +1,6 @@
 package edu.cornell.kfs.pmw.batch.businessobject;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

@@ -359,12 +359,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             vendorContacts.add(buildSalesContact(pmwVendor));
             vendorContacts.add(buildAccountsReceivableContact(pmwVendor));
             
-            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() && 
-                    paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() && 
-                    pmwVendor.isInvoicing()) {
+            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() && pmwVendor.isInvoicing()) {
                 vendorContacts.add(buildEinvoicingContact(pmwVendor));
             }
-            
         }
         return vendorContacts;
     }
@@ -774,11 +771,13 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private KfsVendorDataWrapper buildRemainingVendorNotes(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
             kfsVendorDataWrapper = createGoodsAndServicesNote(pmwVendor, kfsVendorDataWrapper);
-            kfsVendorDataWrapper = createInsuranceCertificateNote(pmwVendor, kfsVendorDataWrapper);
         }
         kfsVendorDataWrapper = createInitiatorNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createVendorTypeBusinessPurposeNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createConflictOfInterestNote(pmwVendor, kfsVendorDataWrapper);
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            kfsVendorDataWrapper = createInsuranceCertificateNote(pmwVendor, kfsVendorDataWrapper);
+        }
         return kfsVendorDataWrapper;
     }
     
