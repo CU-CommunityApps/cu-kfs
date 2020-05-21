@@ -254,13 +254,15 @@ public class CuEinvoiceApiResource {
     }
 
     private String serializePoShippingAddressToJson(PurchaseOrderDocument poDoc) {
-        // TODO: If the PO is configured to use the receiving address, should that be returned instead?
         Properties addressProps = new Properties();
         safelyAddProperty(addressProps, CUPurapConstants.Einvoice.DOCUMENT_NUMBER, poDoc.getDocumentNumber());
         safelyAddProperty(addressProps, CUPurapConstants.Einvoice.SHIPPING_NAME, poDoc.getDeliveryToName());
-        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.SHIPPING_DELIVER_TO, buildDeliveryToLine(poDoc));
+        if (StringUtils.isNotBlank(poDoc.getDeliveryBuildingCode())) {
+            safelyAddProperty(addressProps, CUPurapConstants.Einvoice.SHIPPING_DELIVER_TO, poDoc.getDeliveryBuildingCode());
+        }
         safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ADDRESS_LINE1, poDoc.getDeliveryBuildingLine1Address());
         safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ADDRESS_LINE2, poDoc.getDeliveryBuildingLine2Address());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ROOM_NUMBER_LINE, buildRoomNumberLine(poDoc));
         safelyAddProperty(addressProps, CUPurapConstants.Einvoice.CITY, poDoc.getDeliveryCityName());
         safelyAddProperty(addressProps, CUPurapConstants.Einvoice.STATE, poDoc.getDeliveryStateCode());
         safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ZIPCODE, poDoc.getDeliveryPostalCode());
@@ -270,11 +272,8 @@ public class CuEinvoiceApiResource {
         return gson.toJson(addressProps);
     }
 
-    // TODO: Uses logic based on that from PurchaseOrderPdf class; is this what should be used in the CXML?
-    private String buildDeliveryToLine(PurchaseOrderDocument poDoc) {
-        String buildingName = poDoc.isDeliveryBuildingOtherIndicator()
-                ? StringUtils.EMPTY : poDoc.getDeliveryBuildingName() + KFSConstants.BLANK_SPACE;
-        return buildingName + "Room #" + poDoc.getDeliveryBuildingRoomNumber();
+    private String buildRoomNumberLine(PurchaseOrderDocument poDoc) {
+        return CUPurapConstants.Einvoice.ROOM_NUMBER_PREFIX + poDoc.getDeliveryBuildingRoomNumber();
     }
 
     private void safelyAddProperty(Properties properties, String key, String value) {
