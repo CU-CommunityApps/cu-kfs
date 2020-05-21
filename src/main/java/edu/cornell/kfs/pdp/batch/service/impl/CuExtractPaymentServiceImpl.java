@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -412,6 +413,127 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
     }
 
+    private String createAchFormattedRemittanceIdTextBasedOnInvoiceDataForDv(String invoiceNumber, Date invoiceDate, String customerPaymentDocumentNumber) {
+        StringBuilder formattedRemittanceIdText = new StringBuilder(KFSConstants.EMPTY_STRING);
+
+        if (StringUtils.isNotBlank(invoiceNumber) && ObjectUtils.isNotNull(invoiceDate)) {
+            formattedRemittanceIdText.append(invoiceNumber);
+            formattedRemittanceIdText.append(KFSConstants.BLANK_SPACE);
+            formattedRemittanceIdText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
+            formattedRemittanceIdText.append(StringUtils.isNotBlank(customerPaymentDocumentNumber) ? customerPaymentDocumentNumber : KFSConstants.EMPTY_STRING);
+        } else if (StringUtils.isNotBlank(customerPaymentDocumentNumber)) {
+            formattedRemittanceIdText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
+            formattedRemittanceIdText.append(customerPaymentDocumentNumber);
+        }
+        return formattedRemittanceIdText.toString();
+    }
+
+    /**
+     * When invoice number and invoice date are provided, the remittanceIdText will contain the invoiceNumber data value; 
+     * otherwise, the remittanceIdText will contain the DV KFS edoc number with the prefix identifier contained in 
+     * CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER.
+     * @param invoiceNumber
+     * @param invoiceDate
+     * @param customerPaymentDocumentNumber
+     * @return
+     */
+    private String createCheckFormattedRemittanceIdTextBasedOnInvoiceDataFromDv(String invoiceNumber, Date invoiceDate, String customerPaymentDocumentNumber) {
+        StringBuilder formattedRemittanceIdText = new StringBuilder(KFSConstants.EMPTY_STRING);
+        
+        if (StringUtils.isNotBlank(invoiceNumber) && ObjectUtils.isNotNull(invoiceDate)) {
+            formattedRemittanceIdText.append(invoiceNumber);
+        } else {
+            formattedRemittanceIdText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
+            formattedRemittanceIdText.append(customerPaymentDocumentNumber);
+        }
+        return formattedRemittanceIdText.toString();
+    }
+    
+    private String constructDocumentNumberForFirstNoteLineWhenDv(PaymentGroup pdpPaymentGroup, String customerPaymentDocumentNumber) {
+        StringBuilder formattedEdocText = new StringBuilder(KFSConstants.EMPTY_STRING);
+        String customerProfileSubUnitCode = determineCustomerProfileSubUnitCode(pdpPaymentGroup);
+
+        if (StringUtils.equalsIgnoreCase(customerProfileSubUnitCode, CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) {
+            formattedEdocText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
+            formattedEdocText.append(customerPaymentDocumentNumber);
+        }
+        LOG.info("constructDocumentNumberForFirstNoteLineWhenDv: SENDING BACK AS DOC# FOR FIRST NOTE LINE '" + formattedEdocText.toString() + "'");
+        return formattedEdocText.toString();
+    }
+    
+    private String determineCustomerProfileSubUnitCode(PaymentGroup pdpPaymentGroup) {
+        CustomerProfile customerProfile = null;
+        String subUnitCode = KFSConstants.EMPTY_STRING;
+        
+        if (ObjectUtils.isNotNull(pdpPaymentGroup.getBatch())) {
+            customerProfile = pdpPaymentGroup.getBatch().getCustomerProfile();
+            if (ObjectUtils.isNotNull(customerProfile)) {
+                if (ObjectUtils.isNotNull(customerProfile.getSubUnitCode())) {
+                    subUnitCode = customerProfile.getSubUnitCode();
+                    LOG.info("determineCustomerProfileSubUnitCode: subUnitCode = " + subUnitCode);
+                } else {
+                    LOG.info("determineCustomerProfileSubUnitCode: No subUnitCode could be determined for customerProfile.customerShortName = " + customerProfile.getCustomerShortName());
+                }
+            } else {
+                LOG.info("determineCustomerProfileSubUnitCode: No customer profile exists for payee name = " + pdpPaymentGroup.getPayeeName());
+            }
+        } else {
+            LOG.info("determineCustomerProfileSubUnitCode: pdpPaymentGroup.getBatch() detected as NULL.");
+        }
+        return subUnitCode;
+    }
+    
+    public String stripLeadingSpace(String stringToCheck) {
+        return (StringUtils.isNotEmpty(stringToCheck)) ? StringUtils.removeStart(stringToCheck, KFSConstants.BLANK_SPACE) : stringToCheck;
+    }
+    
+    public String stripTrailingSpace(String stringToCheck) {
+        return (StringUtils.isNotEmpty(stringToCheck)) ? StringUtils.removeEnd(stringToCheck, KFSConstants.BLANK_SPACE) : stringToCheck;
+    }
+    
+    public int calculateMaxNumCharsFromNewNoteLine(String noteLine, String currentCheckStubDataLine) {
+        String proposedCheckStubLine;
+        
+        if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isBlank(noteLine)) {
+            proposedCheckStubLine = KFSConstants.EMPTY_STRING;
+            
+        } else if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isNotBlank(noteLine)) {
+            proposedCheckStubLine = noteLine;
+            
+        } else if (StringUtils.isNotBlank(currentCheckStubDataLine) && StringUtils.isBlank(noteLine)) {
+            proposedCheckStubLine = currentCheckStubDataLine;
+            
+        } else {
+            proposedCheckStubLine = (currentCheckStubDataLine + KFSConstants.BLANK_SPACE + noteLine);
+        }
+         
+        int totalNumChars = proposedCheckStubLine.length();
+        
+        if (totalNumChars == 0 || totalNumChars <= CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
+            return noteLine.length();
+        } else {
+            String wrappedText = WordUtils.wrap(proposedCheckStubLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE, "\n", false);
+            String[] constructedCheckStubLines = wrappedText.split("\n");
+            return noteLine.length() - constructedCheckStubLines[1].length();
+        }
+    }
+    
+    public String obtainNoteLineSectionExceedingCheckStubLine(String noteLine, String currentCheckStubDataLine) {
+        String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
+        String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
+        
+        int startPositionOfTextBeingTruncated = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
+        return (startPositionOfTextBeingTruncated == strippedNoteLine.length()) ? "" : strippedNoteLine.substring(startPositionOfTextBeingTruncated);
+    }
+    
+    public String obtainLeadingNoteLineSection(String noteLine, String currentCheckStubDataLine) {
+        String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
+        String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
+        
+        int maxNumCharsFromNewNoteLine = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
+        return stripTrailingSpace(stripLeadingSpace(strippedNoteLine.substring(0, maxNumCharsFromNewNoteLine)));
+    }
+    
     // This method is called by the method that generates the XML file for checks to be printed by BNY Mellon
     protected void writeExtractCheckFileMellonBankFastTrack(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId, List<String> notificationEmailAddresses) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
@@ -554,7 +676,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         altAddrCityStateZip = "";
                         PreparerInfoText = "";
                         SendToPrefLength = 0;
-                        FirstNoteAfterAddressInfo="";
+                        FirstNoteAfterAddressInfo = constructDocumentNumberForFirstNoteLineWhenDv(pg, pd.getCustPaymentDocNbr());
                         SecondNoteAfterAddressInfo="";
                         ThirdNoteAfterAddressInfo="";
                         MissingCommaFromSpecialHandlingAddress = false;
@@ -622,7 +744,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     continue;
                                 }
                             }  //if ( NoteLine.contains(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS3) )
-                        
+
                             // Retrieve up to 3 subsequent note lines and only the first 72 characters as per the BNY Mellon spec.
                             else {
                                 //  User typed notes will always be contiguous so once we find the first, we just need to keep grabbing 
@@ -631,8 +753,17 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                         // Trim the first two characters from the note and assign it as the first user typed note line
                                         NoteLine = NoteLine.substring(2);
-                                        FirstNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
                                         
+                                        //Trim initialization data of any leading or trailing spaces for very first note line. 
+                                        //Subsequent methods called to build note lines deals with this internally for remaing note lines.
+                                        FirstNoteAfterAddressInfo = stripTrailingSpace(stripLeadingSpace(FirstNoteAfterAddressInfo));
+                                        
+                                        SecondNoteAfterAddressInfo = obtainNoteLineSectionExceedingCheckStubLine(NoteLine, FirstNoteAfterAddressInfo);
+                                        
+                                        FirstNoteAfterAddressInfo = (StringUtils.isBlank(FirstNoteAfterAddressInfo))
+                                                ? FirstNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo))
+                                                : FirstNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, FirstNoteAfterAddressInfo));
+                                                
                                         // See if we have a second user typed note line.  If so, then get it.
                                         if (ix.hasNext()) {
                                             note = (PaymentNoteText) ix.next();
@@ -640,8 +771,13 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                             if (NoteLine.length() >=2) {
                                                 if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                                     NoteLine = NoteLine.substring(2);
-                                                    SecondNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
-                                            
+                                                    
+                                                    ThirdNoteAfterAddressInfo = obtainNoteLineSectionExceedingCheckStubLine(NoteLine, SecondNoteAfterAddressInfo);
+                                                   
+                                                    SecondNoteAfterAddressInfo = (StringUtils.isBlank(SecondNoteAfterAddressInfo))
+                                                            ? SecondNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo))
+                                                            : SecondNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, SecondNoteAfterAddressInfo));
+                                                    
                                                     // Try to get the third user typed note line
                                                     if (ix.hasNext()) {
                                                         note = (PaymentNoteText) ix.next();
@@ -649,7 +785,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                                         if (NoteLine.length() >=2) {
                                                             if (NoteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
                                                                 NoteLine = NoteLine.substring(2);
-                                                                ThirdNoteAfterAddressInfo = (NoteLine.length() <= 72) ? NoteLine : NoteLine.substring(0,72);
+                                                                
+                                                                ThirdNoteAfterAddressInfo = (StringUtils.isBlank(ThirdNoteAfterAddressInfo))
+                                                                        ? ThirdNoteAfterAddressInfo.concat(obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo))
+                                                                        : ThirdNoteAfterAddressInfo.concat(KFSConstants.BLANK_SPACE).concat(obtainLeadingNoteLineSection(NoteLine, ThirdNoteAfterAddressInfo));
+                                                                        
                                                                 break;  // Break here because the Mellon spec only allows us to use the first three user typed note lines
                                                             }
                                                             else break;  // Since we're on our potentially last note if this isn't a user types note, then we're done with the while loop
@@ -680,11 +820,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                 if (ObjectUtils.isNotNull(cp.getSubUnitCode()))
                                     subUnitCode = cp.getSubUnitCode();
                                 else {
-                                    LOG.error("No Sub Unit Code provided for requisition number: " + pd.getRequisitionNbr());
+                                    LOG.error("writeExtractCheckFileMellonBankFastTrack: No Sub Unit Code provided for paymentDetail requisition number: " + pd.getRequisitionNbr());
                                     break;
                                 }
                             else {
-                                LOG.error("No customer profile exists for payee name: " + pg.getPayeeName());
+                                LOG.error("writeExtractCheckFileMellonBankFastTrack: No customer profile exists for paymentGroup payee name: " + pg.getPayeeName());
                                 break;
                             }
                         }
@@ -955,7 +1095,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         //   Here we will NOT have an invoice number but we will have an eDoc number and NO PO number
                         if (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) {
                             remittanceIdCode = "TN";
-                            remittanceIdText = "Doc No:" + pd.getCustPaymentDocNbr();   // Here, we are guaranteed to have a pd.getCustPaymentDocNbr
+                            remittanceIdText = createCheckFormattedRemittanceIdTextBasedOnInvoiceDataFromDv(pd.getInvoiceNbr(), pd.getInvoiceDate(), pd.getCustPaymentDocNbr());
                             // Assign RefDesc1
                             RefDesc1 = "";
                         }
@@ -980,6 +1120,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             // Assign RefDesc1
                             RefDesc1 = "Doc No:" + pd.getCustPaymentDocNbr();
                         }
+                        LOG.info("writeExtractCheckFileMellonBankFastTrack: remittanceIdText = " + remittanceIdText);
 
                         // Assign the RefDesc fields.
                         if (!PreparerInfoText.isEmpty())
@@ -1823,7 +1964,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         // Set up remittanceIdCode and remittanceIdText based on whether its a DV or something else.
                         String remittanceIdCode = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
                         String remittanceIdText = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
-                                ObjectUtils.isNotNull(pd.getCustPaymentDocNbr()) ? "Doc No:" + pd.getCustPaymentDocNbr() : "" : 
+                                createAchFormattedRemittanceIdTextBasedOnInvoiceDataForDv(pd.getInvoiceNbr(), pd.getInvoiceDate(), pd.getCustPaymentDocNbr()) :
                                     ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? pd.getInvoiceNbr() : "";
                         
                         //All of these are limited to 18 bytes in Fast Track.
