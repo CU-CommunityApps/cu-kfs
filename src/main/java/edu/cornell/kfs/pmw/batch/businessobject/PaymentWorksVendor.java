@@ -4,15 +4,19 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable{
-
     private static final long serialVersionUID = -6784832598701451681L;
+    protected transient PaymentWorksFormModeService paymentWorksFormModeService;
     
     private Integer id;
     private String pmwVendorRequestId;
@@ -84,7 +88,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private boolean customFieldConversionErrors = false;
 
     // custom fields
-    private String taxCountry;
     private String initiatorNetId;
     private String vendorType;
 
@@ -107,19 +110,10 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String conflictOfInterestEmployeeName;
     private String conflictOfInterestEmployeePhoneNumber;
 
-    private boolean acceptCreditCards;
-    
     private String insuranceContactName;
     private String insuranceContactPhoneNumber;
     private String insuranceContactPhoneExtension;
     private String insuranceContactEmail;
-    private String insuranceCertificate;
-    
-    private boolean invoicing;
-    private String eInvoiceContactName;
-    private String eInvoiceContactPhoneNumber;
-    private String eInvoicePhoneExtension;
-    private String eInvoiceEmail;
     
     private String poCountry;
     private String poUsState;
@@ -147,7 +141,18 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String poFaxNumber;
     private String poEmailAddress;
 
-    private String servicesProvided;
+    /*
+     * Fields removed from the new foreign vendor 
+     */
+    private boolean acceptCreditCards;
+    private String taxCountry;
+    private String insuranceCertificate;
+    private boolean invoicing;
+    private String eInvoiceContactName;
+    private String eInvoiceContactPhoneNumber;
+    private String eInvoicePhoneExtension;
+    private String eInvoiceEmail;
+    private String servicesProvided;    
     private boolean currentlyPaidThroughPayroll;
     private boolean everPaidThroughPayroll;
     private boolean seperateLegalEntityProvidingServices;
@@ -1105,7 +1110,36 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.servicesProvidedWithoutInsurance = servicesProvidedWithoutInsurance;
     }
 
+    public PaymentWorksFormModeService getPaymentWorksFormModeService() {
+        if (paymentWorksFormModeService == null) {
+            paymentWorksFormModeService = SpringContext.getBean(PaymentWorksFormModeService.class);
+        }
+        return paymentWorksFormModeService;
+    }
+
+    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
+        this.paymentWorksFormModeService = paymentWorksFormModeService;
+    }
+    
+    @Override
     public String toString() {
+        if (getPaymentWorksFormModeService().shouldUseForeignFormProcessingMode()) {
+            ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
+            builder.setExcludeFieldNames("requestingCompanyTin", "requestingCompanyW8W9", 
+                    "bankAcctRoutingNumber", "bankAcctBankAccountNumber", "bankAcctBankValidationFile");
+            builder.append("requestingCompanyTin", (StringUtils.isNotEmpty(requestingCompanyTin)) ? 
+                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
+            builder.append("requestingCompanyW8W9", (StringUtils.isNotEmpty(requestingCompanyW8W9)) ? 
+                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
+            builder.append("bankAcctRoutingNumber", (StringUtils.isNotEmpty(bankAcctRoutingNumber)) ? 
+                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
+            builder.append("bankAcctBankAccountNumber", (StringUtils.isNotEmpty(bankAcctBankAccountNumber)) ? 
+                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
+            builder.append("bankAcctBankValidationFile", (StringUtils.isNotEmpty(bankAcctBankValidationFile)) ? 
+                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
+            return builder.build();
+        }
+        
         StringBuilder sb = new StringBuilder("PaymentWorksVendor::  pmwVendorRequestId:  ").append(pmwVendorRequestId).append(System.lineSeparator());
         sb.append("requestingCompanyId: ").append(requestingCompanyId).append(System.lineSeparator());
         sb.append("requestingCompanyTin: ").append((StringUtils.isNotBlank(requestingCompanyTin) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
