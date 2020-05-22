@@ -107,13 +107,7 @@ public class PdpExtractServiceImpl implements PdpExtractService {
     @Override
     public void extractImmediatePaymentsOnly() {
         LOG.debug("extractImmediatePaymentsOnly() started");
-        Date processRunDate = dateTimeService.getCurrentDate();
-        lockUnlockDocuments(true);
-        try {
-            extractPayments(true, processRunDate);
-        } finally {
-            lockUnlockDocuments(false);
-        }
+        extractPayments(true, dateTimeService.getCurrentDate());
     }
 
     @Override
@@ -141,10 +135,15 @@ public class PdpExtractServiceImpl implements PdpExtractService {
         LOG.debug("fetched system user");
         List<String> campusesToProcess = getChartCodes(immediateOnly, processRunDate);
         for (String campus : campusesToProcess) {
-            extractPaymentsForCampus(campus, uuser, processRunDate, immediateOnly);
+            lockUnlockDocuments(true);
+            try {
+                extractPaymentsForCampus(campus, uuser, processRunDate, immediateOnly);
+            } finally {
+                lockUnlockDocuments(false);
+            }
         }
     }
-
+    
     /**
      * Handle a single campus
      *

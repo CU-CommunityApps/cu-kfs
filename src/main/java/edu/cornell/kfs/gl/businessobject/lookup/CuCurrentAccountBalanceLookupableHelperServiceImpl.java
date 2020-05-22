@@ -9,7 +9,6 @@ import org.kuali.kfs.gl.businessobject.CurrentAccountBalance;
 import org.kuali.kfs.gl.businessobject.lookup.CurrentAccountBalanceLookupableHelperServiceImpl;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -26,11 +25,6 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentAccountBalanceLookupableHelperServiceImpl {
 
     private static final long serialVersionUID = 2542719296293895780L;
-    private static final String CASH_BUDGET_RECORD_LEVEL = "CASH_BUDGET_RECORD_LEVEL";
-    private static final String ENCUMBRANCE_BALANCE_TYPE = "ENCUMBRANCE_BALANCE_TYPE";
-    private static final String FUND_BALANCE_OBJECT_CODE = "FUND_BALANCE_OBJECT_CODE";
-    private static final String EXPENSE_OBJECT_TYPE = "EXPENSE_OBJECT_TYPE";
-    private static final String INCOME_OBJECT_TYPE = "INCOME_OBJECT_TYPE";
 
     /**
      * This override constructs and uses a custom helper class to execute the superclass's processing.

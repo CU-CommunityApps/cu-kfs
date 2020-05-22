@@ -1,4 +1,4 @@
-/**
+/*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
  * Copyright 2005-2020 Kuali, Inc.
@@ -59,9 +59,14 @@ public class InvoiceGeneralDetail extends PersistableBusinessObjectBase implemen
     private String letterOfCreditCreationType;
     private String letterOfCreditFundGroupCode;
     private String letterOfCreditFundCode;
+    private String customerNumber;
+    private int customerAddressIdentifier;
+    private String customerInvoiceTemplateCode;
+    private long invoiceNoteId;
 
     private ContractsGrantsInvoiceDocument invoiceDocument;
     private ContractsAndGrantsBillingAward award;
+    private CustomerAddress customerAddress;
     
     /*
      *  Brought in InvoiceGeneralDetail as a new overlay class to back port FINP-6611 from base code as the version of 
@@ -166,9 +171,7 @@ public class InvoiceGeneralDetail extends PersistableBusinessObjectBase implemen
      * @return the calculated amountRemainingToBill (the award total minus the amount billed to date)
      */
     public KualiDecimal getAmountRemainingToBill() {
-        KualiDecimal total = KualiDecimal.ZERO;
-        total = getAwardTotal().subtract(getTotalAmountBilledToDate());
-        return total;
+        return getAwardTotal().subtract(getTotalAmountBilledToDate());
     }
 
     public String getDocumentNumber() {
@@ -275,6 +278,38 @@ public class InvoiceGeneralDetail extends PersistableBusinessObjectBase implemen
         this.letterOfCreditFundCode = letterOfCreditFundCode;
     }
 
+    public String getCustomerNumber() {
+        return customerNumber;
+    }
+
+    public void setCustomerNumber(String customerNumber) {
+        this.customerNumber = customerNumber;
+    }
+
+    public int getCustomerAddressIdentifier() {
+        return customerAddressIdentifier;
+    }
+
+    public void setCustomerAddressIdentifier(int customerAddressIdentifier) {
+        this.customerAddressIdentifier = customerAddressIdentifier;
+    }
+
+    public String getCustomerInvoiceTemplateCode() {
+        return customerInvoiceTemplateCode;
+    }
+
+    public void setCustomerInvoiceTemplateCode(String customerInvoiceTemplateCode) {
+        this.customerInvoiceTemplateCode = customerInvoiceTemplateCode;
+    }
+
+    public long getInvoiceNoteId() {
+        return invoiceNoteId;
+    }
+
+    public void setInvoiceNoteId(long invoiceNoteId) {
+        this.invoiceNoteId = invoiceNoteId;
+    }
+
     public ContractsAndGrantsBillingAward getAward() {
         final ContractsAndGrantsBillingAward updatedAward = getContractsAndGrantsModuleBillingService().
                 updateAwardIfNecessary(proposalNumber, award);
@@ -289,6 +324,14 @@ public class InvoiceGeneralDetail extends PersistableBusinessObjectBase implemen
 
     public void setAward(ContractsAndGrantsBillingAward award) {
         this.award = award;
+    }
+
+    public CustomerAddress getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(CustomerAddress customerAddress) {
+        this.customerAddress = customerAddress;
     }
 
     public KualiModuleService getKualiModuleService() {

@@ -271,6 +271,10 @@ public interface ContractsAndGrantsBillingAward extends Billable, ContractsAndGr
      */
     String getInvoicingOptionCode();
 
+    String getCustomerNumber();
+
+    Integer getCustomerAddressIdentifier();
+
     /**
      * Returns the module specific description for the invoicing option selected.
      * This will likely be different from CG and KC.

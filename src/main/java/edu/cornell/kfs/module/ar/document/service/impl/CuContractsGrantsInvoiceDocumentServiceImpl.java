@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.ar.document.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl implements CuContractsGrantsInvoiceDocumentService {
-    private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * The financials base version of this method is incorrectly forcing the parameterMap to have String-only values,
@@ -617,7 +618,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 // use BigDecimal because percentage should not have only a
                 // scale of 2, we need more for accuracy
                 BigDecimal percentage = amountEligibleForBilling.bigDecimalValue().divide(totalCost.bigDecimalValue(),
-                        10, BigDecimal.ROUND_HALF_DOWN);
+                        10, RoundingMode.HALF_DOWN);
                 // use to check if rounding has left a few cents off
                 KualiDecimal amountToBill = new KualiDecimal(0);
 
@@ -625,7 +626,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 BigDecimal largestAmount = BigDecimal.ZERO;
                 for (ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
                     BigDecimal newValue = invD.getInvoiceAmount().bigDecimalValue().multiply(percentage);
-                    KualiDecimal newKualiDecimalValue = new KualiDecimal(newValue.setScale(2, BigDecimal.ROUND_DOWN));
+                    KualiDecimal newKualiDecimalValue = new KualiDecimal(newValue.setScale(2, RoundingMode.HALF_DOWN));
                     invD.setInvoiceAmount(newKualiDecimalValue);
                     amountToBill = amountToBill.add(newKualiDecimalValue);
                     if (newValue.compareTo(largestAmount) > 0) {

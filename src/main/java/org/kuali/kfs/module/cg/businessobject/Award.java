@@ -30,6 +30,7 @@ import org.kuali.kfs.integration.cg.CGIntegrationConstants;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsLetterOfCreditFund;
+import org.kuali.kfs.kim.impl.identity.PersonImpl;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -42,7 +43,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
 import java.sql.Date;
@@ -157,13 +157,13 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      * Dummy value used to facilitate lookups
      */
     private transient String lookupPersonUniversalIdentifier;
-    private transient Person lookupPerson;
+    private transient PersonImpl lookupPerson;
 
     private final String userLookupRoleNamespaceCode = KFSConstants.ParameterNamespaces.KFS;
     private final String userLookupRoleName = KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR;
 
     private transient String lookupFundMgrPersonUniversalIdentifier;
-    private transient Person lookupFundMgrPerson;
+    private transient PersonImpl lookupFundMgrPerson;
 
     private transient String scheduleInquiryTitle;
 
@@ -894,11 +894,11 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public Person getLookupPerson() {
+    public PersonImpl getLookupPerson() {
         return lookupPerson;
     }
 
-    public void setLookupPerson(Person lookupPerson) {
+    public void setLookupPerson(PersonImpl lookupPerson) {
         this.lookupPerson = lookupPerson;
     }
 
@@ -913,7 +913,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     @Override
     public String getLookupPersonUniversalIdentifier() {
-        lookupPerson = SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
+        lookupPerson = (PersonImpl) SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
                 lookupPersonUniversalIdentifier, lookupPerson);
         return lookupPersonUniversalIdentifier;
     }
@@ -1030,6 +1030,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return invoicingOptionCode;
     }
 
+    @Override
     public String getCustomerNumber() {
         // if we don't have a customerNumber, but we do have an agency, we want to seed it from the agency so the
         // customer lookup will work appropriately
@@ -1043,6 +1044,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         this.customerNumber = customerNumber;
     }
 
+    @Override
     public Integer getCustomerAddressIdentifier() {
         return customerAddressIdentifier;
     }
@@ -1140,11 +1142,11 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public Person getLookupFundMgrPerson() {
+    public PersonImpl getLookupFundMgrPerson() {
         return lookupFundMgrPerson;
     }
 
-    public void setLookupFundMgrPerson(Person lookupFundMgrPerson) {
+    public void setLookupFundMgrPerson(PersonImpl lookupFundMgrPerson) {
         this.lookupFundMgrPerson = lookupFundMgrPerson;
     }
 

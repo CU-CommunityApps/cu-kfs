@@ -35,7 +35,6 @@ import org.kuali.kfs.gl.GLParameterConstants;
 
 public class CuPosterServiceImpl extends PosterServiceImpl implements PosterService {
     private static final Logger LOG = LogManager.getLogger(CuPosterServiceImpl.class);
-    private static final String GL_INDIRECT_COST_RECOVERY = "INDIRECT_COST_RECOVERY_DOCUMENT_TYPE";
 
     
     /**

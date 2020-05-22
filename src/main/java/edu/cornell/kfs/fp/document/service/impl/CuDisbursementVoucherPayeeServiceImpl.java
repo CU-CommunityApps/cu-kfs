@@ -19,7 +19,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.impl.KIMPropertyConstants;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;

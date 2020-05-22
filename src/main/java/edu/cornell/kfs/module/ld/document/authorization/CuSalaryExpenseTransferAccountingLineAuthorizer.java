@@ -20,7 +20,6 @@ package edu.cornell.kfs.module.ld.document.authorization;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.kuali.kfs.module.ld.document.authorization.SalaryExpenseTransferAccountingLineAuthorizer;
 import org.kuali.kfs.sys.businessobject.AccountingLine;

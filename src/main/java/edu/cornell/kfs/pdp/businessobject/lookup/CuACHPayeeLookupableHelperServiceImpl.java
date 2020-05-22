@@ -14,7 +14,7 @@ import org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceIm
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.impl.KIMPropertyConstants;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
