@@ -1,4 +1,5 @@
 //KualiCo Patch Release 2020-02-13
+//FINP-4769 FK-117 changes applied.
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
@@ -186,7 +187,7 @@ public class ContractsGrantsLetterOfCreditReviewDocument extends FinancialSystem
         } else {
             List<ContractsAndGrantsBillingAward> validAwards = (List<ContractsAndGrantsBillingAward>) contractsGrantsInvoiceCreateDocumentService
                     .validateAwards(awards, contractsGrantsInvoiceDocumentErrorLogs, null,
-                            ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC.getCode());
+                            ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC);
 
             if (CollectionUtils.isEmpty(validAwards)) {
                 GlobalVariables.getMessageMap().putWarningForSectionId("Contracts & Grants LOC Review Initiation",

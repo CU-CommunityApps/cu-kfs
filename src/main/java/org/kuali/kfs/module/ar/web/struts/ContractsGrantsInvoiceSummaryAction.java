@@ -1,4 +1,5 @@
 //KualiCo Patch Release 2020-02-13
+//FINP-4769 FK-117 changes applied
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
@@ -124,7 +125,7 @@ public class ContractsGrantsInvoiceSummaryAction extends ContractsGrantsBillingS
             Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs =
                     new ArrayList<>();
             awards = cgInvoiceDocumentCreateService.validateAwards(awards, contractsGrantsInvoiceDocumentErrorLogs,
-                    null, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.getCode());
+                    null, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL);
             validationErrors += contractsGrantsInvoiceDocumentErrorLogs.size();
             validAwards += awards.size();
             if (awards.size() > 0) {

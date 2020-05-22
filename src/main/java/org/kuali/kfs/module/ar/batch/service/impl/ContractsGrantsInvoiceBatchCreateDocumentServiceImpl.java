@@ -1,4 +1,5 @@
 //KualiCo Patch Release 2020-02-13
+//FINP-4769 FK-117 changes applied.
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
@@ -80,7 +81,7 @@ public class ContractsGrantsInvoiceBatchCreateDocumentServiceImpl implements
         final Collection<ContractsAndGrantsBillingAward> validAwards =
                 getContractsGrantsInvoiceCreateDocumentService().validateAwards(awards, null,
                         validationErrorOutputFileName,
-                        ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH.getCode());
+                        ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH);
         createCGInvoiceDocumentsByAwards(validAwards, invoiceDocumentErrorOutputFileName);
     }
 

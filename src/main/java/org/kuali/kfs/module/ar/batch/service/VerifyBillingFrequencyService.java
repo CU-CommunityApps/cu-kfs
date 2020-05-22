@@ -1,4 +1,5 @@
 //KualiCo Patch Release 2020-02-13
+//FINP-4769 FK-117 changes applied.
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
@@ -33,18 +34,20 @@ public interface VerifyBillingFrequencyService {
      * This method checks if the award is within the grace period.
      *
      * @param award ContractsAndGrantsBillingAward to validate billing frequency for
+     * @param checkBillingPeriodEnd boolean to check grace period logic
      * @return true if valid else false.
      */
-    boolean validateBillingFrequency(ContractsAndGrantsBillingAward award);
+    boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, boolean checkBillingPeriodEnd);
 
     /**
      * This method checks if the award account is within the grace period.
      *
      * @param award ContractsAndGrantsBillingAward to validate billing frequency for
      * @param award ContractsAndGrantsBillingAwardAccount to validate billing frequency for
+     * * @param checkBillingPeriodEnd boolean to check grace period logic
      * @return true if valid else false.
      */
-    boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount);
+    boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount, boolean checkBillingPeriodEnd);
 
     /**
      * This method returns the start and end date of previous billing period.

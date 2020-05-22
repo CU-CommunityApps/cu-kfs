@@ -1,4 +1,5 @@
 //KualiCo Patch Release 2020-02-13
+//FINP-4769 FK-117 changes applied.
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
@@ -22,7 +23,7 @@ package org.kuali.kfs.module.ar.service;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
-import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditReviewDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
@@ -43,22 +44,23 @@ public interface ContractsGrantsInvoiceCreateDocumentService {
      *                                                stated.
      * @param errOutputFile                           The name of the file recording unqualified awards with reason
      *                                                stated (null to skip writing to a file).
-     * @param creationProcessTypeCode                 type of process (Batch, LOC or Manual) calling this method
+     * @param creationProcessType                     type of process (Batch, LOC or Manual) calling this method
      * @return Collection of qualified Awards - awards that are qualified to be used to create Contracts & Grants Invoice
      *         Documents
      */
     Collection<ContractsAndGrantsBillingAward> validateAwards(Collection<ContractsAndGrantsBillingAward> awards,
             Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs,
-            String errOutputFile, String creationProcessTypeCode);
+            String errOutputFile, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
 
     /**
      * This method is called by the manual CINV creation process create Contracts & Grants Invoice Documents by Awards.
      *
      * @param awards Collection of Awards used to create Contracts & Grants Invoice Documents
+     * @param creationProcessType type of process (Batch, LOC or Manual) calling this method
      * @return List<ErrorMessage> of error messages that can be displayed to the user (empty if successful)
      */
     List<ErrorMessage> createCGInvoiceDocumentsByAwards(Collection<ContractsAndGrantsBillingAward> awards,
-            ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessTypeCode);
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
 
     /**
      * Looks for Contracts & Grants Invoice Document with a status of Saved, meaning they have been created and saved to

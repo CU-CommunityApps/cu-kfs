@@ -1,4 +1,5 @@
 //KualiCo Patch Release 2020-02-13
+//FINP-4769 FK-117 changes applied
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
@@ -45,6 +46,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.ArParameterConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
@@ -151,11 +153,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     @Override
     public List<ErrorMessage> createCGInvoiceDocumentsByAwards(Collection<ContractsAndGrantsBillingAward> awards,
-            ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessTypeCode) {
-        List<ErrorMessage> errorMessages = createInvoices(awards, null, null);
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+        List<ErrorMessage> errorMessages = createInvoices(awards, creationProcessType, null, null);
 
         if (!CollectionUtils.isEmpty(errorMessages)) {
-            storeCreationErrors(errorMessages, creationProcessTypeCode.getCode());
+            storeCreationErrors(errorMessages, creationProcessType.getCode());
         }
 
         return errorMessages;
@@ -164,11 +166,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     @Override
     public List<ErrorMessage> createCGInvoiceDocumentsByAwards(Collection<ContractsAndGrantsBillingAward> awards,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
-        List<ErrorMessage> errorMessages = createInvoices(awards, accountDetails, locCreationType);
+        List<ErrorMessage> errorMessages = createInvoices(awards, ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC, accountDetails, locCreationType);
 
         if (!CollectionUtils.isEmpty(errorMessages)) {
             storeCreationErrors(errorMessages,
-                    ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC.getCode());
+                    ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC.getCode());
         }
 
         return errorMessages;
@@ -178,11 +180,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      * This method iterates through awards and create cgInvoice documents
      *
      * @param awards          used to create cgInvoice documents
+     * @param creationProcessType  creation process type
      * @param accountDetails  letter of credit details if we're creating via loc
      * @param locCreationType letter of credit creation type if we're creating via loc
      * @return List of error messages (if any)
      */
     protected List<ErrorMessage> createInvoices(Collection<ContractsAndGrantsBillingAward> awards,
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
         List<ErrorMessage> errorMessages = new ArrayList<>();
 
@@ -199,14 +203,14 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     switch (invOpt) {
                         case ArConstants.INV_ACCOUNT:
                         case ArConstants.INV_SCHEDULE:
-                            createInvoicesByAccounts(awd, errorMessages, accountDetails, locCreationType);
+                            createInvoicesByAccounts(awd, errorMessages, creationProcessType, accountDetails, locCreationType);
                             break;
                         case ArConstants.INV_CONTRACT_CONTROL_ACCOUNT:
-                            createInvoicesByContractControlAccounts(awd, errorMessages, accountDetails,
+                            createInvoicesByContractControlAccounts(awd, errorMessages, creationProcessType, accountDetails,
                                     locCreationType);
                             break;
                         case ArConstants.INV_AWARD:
-                            createInvoicesByAward(awd, errorMessages, accountDetails, locCreationType);
+                            createInvoicesByAward(awd, errorMessages, creationProcessType, accountDetails, locCreationType);
                             break;
                         default:
                             break;
@@ -226,10 +230,12 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      *
      * @param awd             the award to generate a Contracts & Grants Invoice Document for
      * @param errorMessages   a holder for error messages
+     * @param creationProcessType invoice document creation process type
      * @param accountDetails  letter of credit details if we're creating via loc
      * @param locCreationType letter of credit creation type if we're creating via loc
      */
     protected void createInvoicesByAward(ContractsAndGrantsBillingAward awd, List<ErrorMessage> errorMessages,
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
         // Check if award accounts has the same control account
         int accountNum = awd.getActiveAwardAccounts().size();
@@ -261,7 +267,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
             if (isValid) {
                 // To get valid award accounts of amounts > zero$ and pass it to the create invoices method
-                if (!getValidAwardAccounts(awd.getActiveAwardAccounts(), awd)
+                if (!getValidAwardAccounts(awd.getActiveAwardAccounts(), awd, creationProcessType)
                         .containsAll(awd.getActiveAwardAccounts())) {
                     final ErrorMessage errorMessage = new ErrorMessage(
                             ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NOT_ALL_BILLABLE_ACCOUNTS,
@@ -269,7 +275,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     errorMessages.add(errorMessage);
                 }
                 generateAndSaveContractsAndGrantsInvoiceDocument(awd,
-                        getValidAwardAccounts(awd.getActiveAwardAccounts(), awd), errorMessages, accountDetails,
+                        getValidAwardAccounts(awd.getActiveAwardAccounts(), awd, creationProcessType), errorMessages, accountDetails,
                         locCreationType);
             }
         }
@@ -284,8 +290,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      * @param locCreationType letter of credit creation type if we're creating via loc
      */
     protected void createInvoicesByContractControlAccounts(ContractsAndGrantsBillingAward awd,
-            List<ErrorMessage> errorMessages, List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
-            String locCreationType) {
+            List<ErrorMessage> errorMessages, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType, 
+            List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
         List<ContractsAndGrantsBillingAwardAccount> tmpAcctList = new ArrayList<>();
         List<Account> controlAccounts = getContractsGrantsInvoiceDocumentService().getContractControlAccounts(awd);
         List<Account> controlAccountsTemp = getContractsGrantsInvoiceDocumentService().getContractControlAccounts(awd);
@@ -332,13 +338,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     }
 
                     // To get valid award accounts of amounts > zero$ and pass it to the create invoices method
-                    if (!getValidAwardAccounts(tmpAcctList, awd).containsAll(tmpAcctList)) {
+                    if (!getValidAwardAccounts(tmpAcctList, awd, creationProcessType).containsAll(tmpAcctList)) {
                         final ErrorMessage errorMessage = new ErrorMessage(
                                 ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.CONTROL_ACCOUNT_NON_BILLABLE,
                                 controlAccount.getAccountNumber(), awd.getProposalNumber());
                         errorMessages.add(errorMessage);
                     }
-                    generateAndSaveContractsAndGrantsInvoiceDocument(awd, getValidAwardAccounts(tmpAcctList, awd),
+                    generateAndSaveContractsAndGrantsInvoiceDocument(awd, getValidAwardAccounts(tmpAcctList, awd, creationProcessType),
                             errorMessages, accountDetails, locCreationType);
                 }
             } else {
@@ -355,10 +361,12 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      *
      * @param award           the award to build Contracts & Grants Invoice Documents from the award accounts on
      * @param errorMessages   a holder for error messages
+     * @param creationProcessType invoice document creation process type 
      * @param accountDetails  letter of credit details if we're creating via loc
      * @param locCreationType letter of credit creation type if we're creating via loc
      */
     protected void createInvoicesByAccounts(ContractsAndGrantsBillingAward award, List<ErrorMessage> errorMessages,
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
         List<ContractsAndGrantsBillingAwardAccount> tmpAcctList = new ArrayList<>();
 
@@ -368,7 +376,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 tmpAcctList.add(awardAccount);
 
                 final List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts =
-                        getValidAwardAccounts(tmpAcctList, award);
+                        getValidAwardAccounts(tmpAcctList, award, creationProcessType);
                 if (validAwardAccounts.containsAll(tmpAcctList)
                         && contractsGrantsBillingAwardVerificationService.isAwardAccountValidToInvoiceBasedOnSchedule(
                         awardAccount)) {
@@ -1675,7 +1683,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     @Override
     public Collection<ContractsAndGrantsBillingAward> validateAwards(Collection<ContractsAndGrantsBillingAward> awards,
             Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs,
-            String errOutputFile, String creationProcessTypeCode) {
+            String errOutputFile, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup = new HashMap<>();
         List<ContractsAndGrantsBillingAward> qualifiedAwards = new ArrayList<>();
 
@@ -1683,13 +1691,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             contractsGrantsInvoiceDocumentErrorLogs = new ArrayList<>();
         }
 
-        performAwardValidation(awards, invalidGroup, qualifiedAwards, creationProcessTypeCode);
+        performAwardValidation(awards, invalidGroup, qualifiedAwards, creationProcessType);
 
         if (!CollectionUtils.isEmpty(invalidGroup)) {
             if (StringUtils.isNotBlank(errOutputFile)) {
                 writeErrorToFile(invalidGroup, errOutputFile);
             }
-            storeValidationErrors(invalidGroup, contractsGrantsInvoiceDocumentErrorLogs, creationProcessTypeCode);
+            storeValidationErrors(invalidGroup, contractsGrantsInvoiceDocumentErrorLogs, creationProcessType.getCode());
         }
 
         return qualifiedAwards;
@@ -1701,11 +1709,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      * @param awards                  List of awards to be validated
      * @param invalidGroup            Map of errors per award that failed validation
      * @param qualifiedAwards         List of awards that are valid to create CGB Invoice docs from
-     * @param creationProcessTypeCode The code indicating which type of process is creating the awards to be validated
+     * @param creationProcessType     The code indicating which type of process is creating the awards to be validated
      */
     protected void performAwardValidation(Collection<ContractsAndGrantsBillingAward> awards,
             Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
-            List<ContractsAndGrantsBillingAward> qualifiedAwards, String creationProcessTypeCode) {
+            List<ContractsAndGrantsBillingAward> qualifiedAwards, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         Set<ContractsAndGrantsBillingAward> awardsWithDuplicateAccounts = findAwardsWithDuplicateAccounts(awards);
 
         for (ContractsAndGrantsBillingAward award : awards) {
@@ -1719,9 +1727,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     errorList.add(configurationService.getPropertyValueAsString(
                             ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
                 }
-                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award) &&
-                        !ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC.getCode()
-                                .equals(creationProcessTypeCode)) {
+                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award)
+                        && ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC != creationProcessType) {
                     errorList.add(configurationService.getPropertyValueAsString(
                             ArKeyConstants.CGINVOICE_CREATION_AWARD_LOCB_BILLING_FREQUENCY));
                 } else {
@@ -1729,8 +1736,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                         if (award.getBillingFrequencyCode() != null
                                 && getContractsGrantsBillingAwardVerificationService()
                                     .isValueOfBillingFrequencyValid(award)) {
-                            if (verifyBillingFrequencyService.validateBillingFrequency(award)) {
-                                validateAward(errorList, award);
+                            boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
+                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)) {
+                                validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
                                         ArKeyConstants.CGINVOICE_CREATION_AWARD_INVALID_BILLING_PERIOD));
@@ -1779,8 +1787,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      *
      * @param errorList list of validation errors per award
      * @param award     to perform validation upon
+     * @param creationProcessType invoice document creation process type 
      */
-    protected void validateAward(List<String> errorList, ContractsAndGrantsBillingAward award) {
+    protected void validateAward(List<String> errorList, ContractsAndGrantsBillingAward award, 
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
 
         if (!award.isActive()) {
             errorList.add(configurationService.getPropertyValueAsString(
@@ -1819,7 +1829,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_AGENCY_NO_CUSTOMER_RECORD));
         }
 
-        if (!hasBillableAccounts(award)) {
+        if (!hasBillableAccounts(award, creationProcessType)) {
             errorList.add(configurationService.getPropertyValueAsString(
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_NO_VALID_ACCOUNTS));
         }
@@ -2103,22 +2113,29 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         printStream.print("\r\n");
     }
 
-    protected boolean hasBillableAccounts(ContractsAndGrantsBillingAward award) {
+    /**
+     * @param awardAccounts
+     * @param creationProcessType invoice document creation process type
+     * @return true award has billable award accounts
+     */
+    protected boolean hasBillableAccounts(ContractsAndGrantsBillingAward award, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         if (ArConstants.BillingFrequencyValues.isMilestone(award)
                 || ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             return !getContractsGrantsBillingAwardVerificationService().isInvoiceInProgress(award);
         } else {
             return CollectionUtils.isEmpty(award.getActiveAwardAccounts())
-                    || !CollectionUtils.isEmpty(getValidAwardAccounts(award.getActiveAwardAccounts(), award));
+                    || !CollectionUtils.isEmpty(getValidAwardAccounts(award.getActiveAwardAccounts(), award, creationProcessType));
         }
     }
 
     /**
      * @param awardAccounts
+     * @param creationProcessType invoice document creation process type
      * @return the valid award accounts based on evaluation of billing frequency and invoice document status
      */
     protected List<ContractsAndGrantsBillingAwardAccount> getValidAwardAccounts(
-            List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award) {
+            List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award,
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         if (!ArConstants.BillingFrequencyValues.isMilestone(award)
                 && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts = new ArrayList<>();
@@ -2127,7 +2144,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
-                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount)) {
+                    boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod)) {
                         validAwardAccounts.add(awardAccount);
                     }
                 }

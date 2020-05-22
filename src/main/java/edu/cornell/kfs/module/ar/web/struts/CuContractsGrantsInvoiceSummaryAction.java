@@ -37,8 +37,8 @@ import java.util.Set;
 
 public class CuContractsGrantsInvoiceSummaryAction extends ContractsGrantsInvoiceSummaryAction {
     
-
-    /**
+    //CUMod: Base code method copied locally so that private method could be modified.
+    /** 
      * This method would create invoices for the list of awards. It calls the batch process to reuse the functionality
      * to create the invoices.
      *
@@ -77,7 +77,7 @@ public class CuContractsGrantsInvoiceSummaryAction extends ContractsGrantsInvoic
             Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs =
                     new ArrayList<>();
             awards = cgInvoiceDocumentCreateService.validateAwards(awards, contractsGrantsInvoiceDocumentErrorLogs,
-                    null, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.getCode());
+                    null, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL);
             validationErrors += contractsGrantsInvoiceDocumentErrorLogs.size();
             validAwards += awards.size();
             if (awards.size() > 0) {

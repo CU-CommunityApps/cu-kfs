@@ -1,4 +1,5 @@
 //KualiCo Patch Release 2020-02-13
+//FINP-4769 FK-117 changes applied.
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
@@ -55,16 +56,16 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
     }
 
     @Override
-    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award) {
-        return validateBillingFrequency(award, award.getLastBilledDate());
+    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, boolean checkBillingPeriodEnd) {
+        return validateBillingFrequency(award, award.getLastBilledDate(), checkBillingPeriodEnd);
     }
 
     @Override
-    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount) {
-        return validateBillingFrequency(award, awardAccount.getCurrentLastBilledDate());
+    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount, boolean checkBillingPeriodEnd) {
+        return validateBillingFrequency(award, awardAccount.getCurrentLastBilledDate(), checkBillingPeriodEnd);
     }
 
-    private boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, Date lastBilledDate) {
+    private boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, Date lastBilledDate, boolean checkBillingPeriodEnd) {
         final Date today = getDateTimeService().getCurrentSqlDate();
         AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
 
@@ -77,20 +78,30 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
                 && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             return false;
         }
-        return calculateIfWithinGracePeriod(today, billingPeriod, lastBilledDate, (BillingFrequency) award.getBillingFrequency());
+        if (beforeBillingPeriodStart(billingPeriod)) {
+            return false;
+        }
+        return validateBillingFrequencyWithGracePeriod(today, billingPeriod, lastBilledDate, (BillingFrequency) award.getBillingFrequency(), checkBillingPeriodEnd);
     }
 
-    public boolean calculateIfWithinGracePeriod(Date today, BillingPeriod billingPeriod, Date lastBilledDate, BillingFrequency billingFrequency) {
-        Date gracePeriodEnd = calculateDaysBeyond(billingPeriod.getEndDate(), billingFrequency.getGracePeriodDays());
+    /**
+     * @param billingPeriod the billing period to be checked
+     * @return true if today is earlier than the start date of billing period; false if today is same day or after billing start
+     */
+    protected boolean beforeBillingPeriodStart(BillingPeriod billingPeriod) {
+        final Date today = getDateTimeService().getCurrentSqlDate();
+        return KfsDateUtils.isEarlierDay(today, billingPeriod.getStartDate());
+    }
+
+    public boolean validateBillingFrequencyWithGracePeriod(Date today, BillingPeriod billingPeriod, Date lastBilledDate, BillingFrequency billingFrequency, boolean checkBillingPeriodEnd) {
+        Date gracePeriodAfterBillingEnd = calculateDaysBeyond(billingPeriod.getEndDate(), billingFrequency.getGracePeriodDays());
         Date gracePeriodAfterLastBilled = null;
         if (lastBilledDate != null) {
             gracePeriodAfterLastBilled = calculateDaysBeyond(lastBilledDate, billingFrequency.getGracePeriodDays());
         }
-        boolean beforeGracePeriodEnd = KfsDateUtils.isSameDayOrEarlier(gracePeriodEnd, today);
-        boolean afterBillingStart = KfsDateUtils.isSameDayOrLater(today, billingPeriod.getStartDate());
+        boolean afterBillingPeriodEnd = !checkBillingPeriodEnd || KfsDateUtils.isSameDayOrLater(today, gracePeriodAfterBillingEnd);
         boolean haveNotBilledYet = lastBilledDate == null || KfsDateUtils.isEarlierDay(gracePeriodAfterLastBilled, today);
-
-        return afterBillingStart && beforeGracePeriodEnd && haveNotBilledYet;
+        return afterBillingPeriodEnd && haveNotBilledYet;
     }
 
 //Had to add "award.getCgInvoiceDocumentCreationProcessTypeCode()" to method call to get KualiCo Patch Release 2020-02-13 to compile
