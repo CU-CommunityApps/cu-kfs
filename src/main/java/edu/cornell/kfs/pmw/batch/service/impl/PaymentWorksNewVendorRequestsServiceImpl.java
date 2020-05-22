@@ -28,6 +28,7 @@ import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
@@ -48,6 +49,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     protected PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
     protected PaymentWorksIsoFipsCountryDao paymentWorksIsoFipsCountryDao;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
+    protected PaymentWorksFormModeService paymentWorksFormModeService;
     
     protected Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap = null; 
     protected Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap = null;
@@ -174,17 +176,26 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         
         allValidationPassed = validateVendorType(stgNewVendorRequestDetailToProcess.getVendorType(), errorMessages) && allValidationPassed;
         
-        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getMbeCertificationExpirationDate(), 
-                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), errorMessages) 
-                && allValidationPassed;
-        
-        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getWbeCertificationExpirationDate(), 
-                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION), errorMessages) 
-                && allValidationPassed;
-        
-        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), 
-                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages) 
-                && allValidationPassed;
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getMbeCertificationExpirationDate(), 
+                    getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), 
+                        errorMessages) 
+                    && allValidationPassed;
+            
+            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getWbeCertificationExpirationDate(), 
+                    getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION),
+                        errorMessages) 
+                    && allValidationPassed;
+            
+            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), 
+                    getConfigurationService().getPropertyValueAsString(
+                            PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages) 
+                    && allValidationPassed;
+        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            /*
+             * to do: fill in with new form values
+             */
+        }
         
         return allValidationPassed;
     }
@@ -500,6 +511,10 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
 
     public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
         this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
+    }
+
+    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
+        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 
 }

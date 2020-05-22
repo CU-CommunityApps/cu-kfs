@@ -97,13 +97,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String vendorInformationEmail;
 
     private boolean diverseBusiness;
-    private String diversityClassifications;
-    private String minorityStatus;
-    private String mbeCertificationExpirationDate;
-    private String womanOwned;
-    private String wbeCertificationExpirationDate;
-    private String disabledVeteran;
-    private String veteranCertificationExpirationDate;
 
     private boolean conflictOfInterest;
     private String conflictOfInterestRelationshipToEmployee;
@@ -140,7 +133,22 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String poTransmissionMethod;
     private String poFaxNumber;
     private String poEmailAddress;
-
+    
+    /*
+     * new fields
+     */
+    private String supplierCategory;
+    private String federalDivsersityCertificates;
+    private String paymentMethod;
+    private String discountedPaymentTerms;
+    private String w8SignedDated;
+    private String chapter3StatusCode;
+    private String chapter4StatusCode;
+    private String giinCode;
+    private String newYorkCertfiedBusiness;
+    private String newYorkDiversityCertificates;
+    private String federalDivsersityClassifications;
+    
     /*
      * Fields removed from the new foreign vendor 
      */
@@ -159,6 +167,13 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private boolean cornellProvidedTrainingOrEquipmentRequired;
     private boolean informalMarketing;
     private boolean servicesProvidedWithoutInsurance;
+    private String diversityClassifications;
+    private String veteranCertificationExpirationDate;
+    private String mbeCertificationExpirationDate;
+    private String womanOwned;
+    private String wbeCertificationExpirationDate;
+    private String disabledVeteran;
+    private String minorityStatus;
 
     public Integer getId() {
         return id;
