@@ -145,6 +145,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String chapter3StatusCode;
     private String chapter4StatusCode;
     private String giinCode;
+    private String dateOfBirth;
     private String newYorkCertfiedBusiness;
     private String newYorkDiversityCertificates;
     private String federalDivsersityClassifications;
@@ -1136,6 +1137,102 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
     
+    public String getSupplierCategory() {
+        return supplierCategory;
+    }
+
+    public void setSupplierCategory(String supplierCategory) {
+        this.supplierCategory = supplierCategory;
+    }
+
+    public String getFederalDivsersityCertificates() {
+        return federalDivsersityCertificates;
+    }
+
+    public void setFederalDivsersityCertificates(String federalDivsersityCertificates) {
+        this.federalDivsersityCertificates = federalDivsersityCertificates;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getDiscountedPaymentTerms() {
+        return discountedPaymentTerms;
+    }
+
+    public void setDiscountedPaymentTerms(String discountedPaymentTerms) {
+        this.discountedPaymentTerms = discountedPaymentTerms;
+    }
+
+    public String getW8SignedDated() {
+        return w8SignedDated;
+    }
+
+    public void setW8SignedDated(String w8SignedDated) {
+        this.w8SignedDated = w8SignedDated;
+    }
+
+    public String getChapter3StatusCode() {
+        return chapter3StatusCode;
+    }
+
+    public void setChapter3StatusCode(String chapter3StatusCode) {
+        this.chapter3StatusCode = chapter3StatusCode;
+    }
+
+    public String getChapter4StatusCode() {
+        return chapter4StatusCode;
+    }
+
+    public void setChapter4StatusCode(String chapter4StatusCode) {
+        this.chapter4StatusCode = chapter4StatusCode;
+    }
+
+    public String getGiinCode() {
+        return giinCode;
+    }
+
+    public void setGiinCode(String giinCode) {
+        this.giinCode = giinCode;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getNewYorkCertfiedBusiness() {
+        return newYorkCertfiedBusiness;
+    }
+
+    public void setNewYorkCertfiedBusiness(String newYorkCertfiedBusiness) {
+        this.newYorkCertfiedBusiness = newYorkCertfiedBusiness;
+    }
+
+    public String getNewYorkDiversityCertificates() {
+        return newYorkDiversityCertificates;
+    }
+
+    public void setNewYorkDiversityCertificates(String newYorkDiversityCertificates) {
+        this.newYorkDiversityCertificates = newYorkDiversityCertificates;
+    }
+
+    public String getFederalDivsersityClassifications() {
+        return federalDivsersityClassifications;
+    }
+
+    public void setFederalDivsersityClassifications(String federalDivsersityClassifications) {
+        this.federalDivsersityClassifications = federalDivsersityClassifications;
+    }
+
     @Override
     public String toString() {
         if (getPaymentWorksFormModeService().shouldUseForeignFormProcessingMode()) {
