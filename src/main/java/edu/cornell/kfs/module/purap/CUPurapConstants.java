@@ -230,8 +230,11 @@ public class CUPurapConstants {
         public static final String DOCUMENT_NUMBER = "document_number";
         public static final String DOCUMENT_STATUS = "document_status";
         public static final String EMAIL = "email";
+        public static final String SHIPPING_NAME = "shipping_name";
+        public static final String SHIPPING_DELIVER_TO = "shipping_deliver_to";
         public static final String ADDRESS_LINE1 = "address_line1";
         public static final String ADDRESS_LINE2 = "address_line2";
+        public static final String ROOM_NUMBER_LINE = "room_number_line";
         public static final String STATE = "state";
         public static final String CITY = "city";
         public static final String ZIPCODE = "zipcode";
@@ -262,5 +265,6 @@ public class CUPurapConstants {
         public static final String PO_QUANTITY = "po_quantity";
         public static final String INVOICE_QUANTITY = "invoice_quantity";
         public static final String NULL = "null";
+        public static final String ROOM_NUMBER_PREFIX = "Room ";
     }
 }
