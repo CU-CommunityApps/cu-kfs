@@ -125,6 +125,26 @@ public class CuEinvoiceApiResource {
     }
 
     @GET
+    @Path("po/address/shipping/{purapDocumentIdentifier}")
+    public Response getPurchaseOrderShippingAddress(
+            @PathParam(PurapPropertyConstants.PURAP_DOC_ID) String purapDocumentIdentifier, @Context HttpHeaders headers) {
+        try {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(PurapPropertyConstants.PURAP_DOC_ID, purapDocumentIdentifier);
+            map.put(PurapPropertyConstants.PURCHASE_ORDER_CURRENT_INDICATOR, CuFPConstants.YES);
+            PurchaseOrderDocument poDoc = getLookupDao().findObjectByMap(PurchaseOrderDocument.class.newInstance(), map);
+            if (ObjectUtils.isNull(poDoc)) {
+                return respondNotFound();
+            }
+            String responseBody = serializePoShippingAddressToJson(poDoc);
+            return Response.ok(responseBody).build();
+        } catch (Exception ex) {
+            LOG.error("getPurchaseOrderShippingAddress", ex);
+            return respondInternalServerError(ex);
+        }
+    }
+
+    @GET
     @Path("uom/active")
     public Response getUnitOfMeasureCodes(@Context HttpHeaders headers) {
         try {
@@ -231,6 +251,29 @@ public class CuEinvoiceApiResource {
         safelyAddProperty(unitProps, CUPurapConstants.Einvoice.UNIT_OF_MEASURE, unitOfMeasure.getItemUnitOfMeasureCode());
         safelyAddProperty(unitProps, CUPurapConstants.Einvoice.DESCRIPTION, unitOfMeasure.getItemUnitOfMeasureDescription());
         return unitProps;
+    }
+
+    private String serializePoShippingAddressToJson(PurchaseOrderDocument poDoc) {
+        Properties addressProps = new Properties();
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.DOCUMENT_NUMBER, poDoc.getDocumentNumber());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.SHIPPING_NAME, poDoc.getDeliveryToName());
+        if (StringUtils.isNotBlank(poDoc.getDeliveryBuildingCode())) {
+            safelyAddProperty(addressProps, CUPurapConstants.Einvoice.SHIPPING_DELIVER_TO, poDoc.getDeliveryBuildingCode());
+        }
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ADDRESS_LINE1, poDoc.getDeliveryBuildingLine1Address());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ADDRESS_LINE2, poDoc.getDeliveryBuildingLine2Address());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ROOM_NUMBER_LINE, buildRoomNumberLine(poDoc));
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.CITY, poDoc.getDeliveryCityName());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.STATE, poDoc.getDeliveryStateCode());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.ZIPCODE, poDoc.getDeliveryPostalCode());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.COUNTRY_CODE, poDoc.getDeliveryCountryCode());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.COUNTRY_NAME, poDoc.getDeliveryCountryName());
+        safelyAddProperty(addressProps, CUPurapConstants.Einvoice.EMAIL, poDoc.getDeliveryToEmailAddress());
+        return gson.toJson(addressProps);
+    }
+
+    private String buildRoomNumberLine(PurchaseOrderDocument poDoc) {
+        return CUPurapConstants.Einvoice.ROOM_NUMBER_PREFIX + poDoc.getDeliveryBuildingRoomNumber();
     }
 
     private void safelyAddProperty(Properties properties, String key, String value) {
