@@ -37,7 +37,10 @@ import java.util.Set;
 
 public class CuContractsGrantsInvoiceSummaryAction extends ContractsGrantsInvoiceSummaryAction {
     
-    //CUMod: Base code method copied locally so that private method could be modified.
+    /*
+     * CUMod KFSPTS-14970: Base code method copied locally so that private method
+     *                     setupSelectedAccountsForValidationAndInvoiceCreation could be modified.
+     */
     /** 
      * This method would create invoices for the list of awards. It calls the batch process to reuse the functionality
      * to create the invoices.
@@ -103,11 +106,12 @@ public class CuContractsGrantsInvoiceSummaryAction extends ContractsGrantsInvoic
     }
     
     /**
-     * CU Customization 
+     * CUMod: KFSPTS-14970
      * 
      * Obtain the award accouts the user selected to perform validation on and create invoices for.
      * This sets up a list of the selected accounts on the awards to facilitate that downstream.
-     * CU functional users desire that 
+     * CU functional users desire that this setup be performed for all billing frequencies not just
+     * Milestone and Predetermined as specified by base code.
      *
      * @param awards awards to process
      * @param contractsGrantsInvoiceLookupResult lookup result used to get the users selected award accounts

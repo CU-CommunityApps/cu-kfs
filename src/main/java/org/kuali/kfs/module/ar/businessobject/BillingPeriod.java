@@ -28,6 +28,11 @@ import org.kuali.kfs.module.ar.ArConstants;
 
 import java.sql.Date;
 
+/*
+ * CUMod: KFSPTS-15655 Brought this class file into CU customizations for additional logging.
+ * 
+ * CUMod: KFSPTS-14970 
+ */
 public abstract class BillingPeriod {
 
     private static final Logger LOG = LogManager.getLogger(BillingPeriod.class);
@@ -70,7 +75,7 @@ public abstract class BillingPeriod {
             billingPeriod.endDate = billingPeriod.determineEndDateByFrequency();
             
             /**
-             * CU Customization Adjust endDate to be currentDate when billingPeriod startDate is after billingPeriod endDate AND CINV edoc is being created Manually  
+             * CUMod: KFSPTS-14970 Adjust endDate to be currentDate when billingPeriod startDate is after billingPeriod endDate AND CINV edoc is being created Manually.
              */
             if (StringUtils.isNotBlank(creationProcessTypeCode) 
                     && StringUtils.equalsIgnoreCase(creationProcessTypeCode, ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.getCode())) {
@@ -82,6 +87,9 @@ public abstract class BillingPeriod {
         return billingPeriod;
     }
     
+    /*
+     * CUMod: KFSPTS-14970
+     */
     protected abstract Date adjustEndDateForManualBilling(Date currentDate);
 
     protected abstract Date determineEndDateByFrequency();

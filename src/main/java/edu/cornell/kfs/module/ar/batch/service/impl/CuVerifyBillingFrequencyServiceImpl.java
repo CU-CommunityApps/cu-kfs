@@ -44,6 +44,9 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
     
     private static final Logger LOG = LogManager.getLogger(CuVerifyBillingFrequencyServiceImpl.class);
     
+    /*
+     * CUMod: KFSPTS-14970
+     */
     private Date calculateLastBilledDateBasedOnAwardInvoiceOption(ContractsAndGrantsBillingAward award, String awardInvoiceOption) {
         Date lastBilledDateToUse;
         if (StringUtils.equals(awardInvoiceOption, ArConstants.INV_CONTRACT_CONTROL_ACCOUNT)
@@ -69,7 +72,10 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         return lastBilledDateToUse;
     }
 
-    //CUMod: Reason for override is calculateLastBilledDateBasedOnAwardInvoiceOption used to compute second parameter in method call.
+    /*
+     * CUMod: KFSPTS-15655 additional logging
+     * CUMod: KFSPTS-14970 calculateLastBilledDateBasedOnAwardInvoiceOption used to compute second parameter in method call.
+     */
     @Override
     public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, boolean checkBillingPeriodEnd) {
         LOG.info("validateBillingFrequency: CU Customization invoked with Award containing creationProcessTypeCode = " 
@@ -78,7 +84,9 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         return validateBillingFrequency(award, calculateLastBilledDateBasedOnAwardInvoiceOption(award, award.getInvoicingOptionCode()), checkBillingPeriodEnd);
     }
 
-    //CUMod: Reason for override is additional logging.
+    /*
+     * CUMod: KFSPTS-15655 additional logging
+     */
     @Override
     public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount, boolean checkBillingPeriodEnd) {
         LOG.info("validateBillingFrequency: CU Customization invoked with Award, Award Account and boolean. Sending awardAccount = "
@@ -89,7 +97,10 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         return validateBillingFrequency(award, awardAccount.getCurrentLastBilledDate(), checkBillingPeriodEnd);
     }
 
-    
+    /*
+     * CUMod: KFSPTS-15655 additional logging
+     * CUMod: KFSPTS-14970 
+     */
     //CUMod: Super class private method with additional logging and 
     private boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, Date lastBilledDate, boolean checkBillingPeriodEnd) {
         LOG.info("validateBillingFrequency(private): For Award/Proposal# = " + award.getProposalNumber()
@@ -141,7 +152,9 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         return afterBillingPeriodEnd && haveNotBilledYet;
     }
 
-    //CUMod: Base code method signature calls CUMod.
+    /*
+     * CUMod: KFSPTS-14970 Base code method signature calls CUMod method of same name with different signature.
+     */
     @Override
     public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, AccountingPeriod currPeriod) {
         LOG.info("getStartDateAndEndDateOfPreviousBillingPeriod: Basecode method called. Invoking CU Customization with Award lastBilledDate = "
@@ -149,7 +162,9 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         return getStartDateAndEndDateOfPreviousBillingPeriod(award, award.getLastBilledDate(), currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
     }
 
-    //CUMod
+    /*
+     * CUMod: KFSPTS-14970 Method of same name as base code with different signature.
+     */
     @Override
     public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, Date calculatedLastBilledDate, AccountingPeriod currPeriod, String creationProcessTypeCode) {
         return BillingPeriod.determineBillingPeriodPriorTo(award.getAwardBeginningDate(), this.dateTimeService.getCurrentSqlDate(), calculatedLastBilledDate, ArConstants.BillingFrequencyValues.fromCode(award.getBillingFrequencyCode()), this.accountingPeriodService, creationProcessTypeCode);

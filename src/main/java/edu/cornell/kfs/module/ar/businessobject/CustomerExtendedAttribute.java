@@ -2,6 +2,9 @@ package edu.cornell.kfs.module.ar.businessobject;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
+/*
+ * CUMod: KFSPTS-15342
+ */
 public class CustomerExtendedAttribute extends PersistableBusinessObjectExtensionBase {
 
     private static final long serialVersionUID = -6758800807674053445L;

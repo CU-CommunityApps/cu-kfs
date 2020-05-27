@@ -10,7 +10,9 @@ import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditRevie
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.ContractsGrantsInvoiceCreateDocumentService;
 
-
+/* 
+ * CUMod: KFSPTS-14970
+ */
 public interface CuContractsGrantsInvoiceCreateDocumentService extends ContractsGrantsInvoiceCreateDocumentService {
 
     ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(ContractsAndGrantsBillingAward awd, Date calculatedLastBilledDate,

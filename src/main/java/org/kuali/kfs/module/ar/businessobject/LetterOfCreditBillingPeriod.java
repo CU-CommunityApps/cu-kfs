@@ -26,6 +26,9 @@ import org.kuali.kfs.sys.util.KfsDateUtils;
 
 import java.sql.Date;
 
+/*
+ * CUMod: KFSPTS-15655 Brought this class file into CU customizations for additional logging.
+ */
 public class LetterOfCreditBillingPeriod extends BillingPeriod {
     
     private static final Logger LOG = LogManager.getLogger(LetterOfCreditBillingPeriod.class);
@@ -59,7 +62,7 @@ public class LetterOfCreditBillingPeriod extends BillingPeriod {
     }
     
     /*
-     * CU Customization
+     * CUMod: KFSPTS-14970
      */
     @Override
     protected Date adjustEndDateForManualBilling(Date currentDate) {
