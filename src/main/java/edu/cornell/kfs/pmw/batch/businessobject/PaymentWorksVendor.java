@@ -96,8 +96,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String vendorInformationPhoneExtension;
     private String vendorInformationEmail;
 
-    private boolean diverseBusiness;
-
     private boolean conflictOfInterest;
     private String conflictOfInterestRelationshipToEmployee;
     private String conflictOfInterestEmployeeName;
@@ -141,14 +139,27 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String federalDivsersityCertificates;
     private String paymentMethod;
     private String discountedPaymentTerms;
-    private String w8SignedDated;
+    private String w8SignedDate;
     private String chapter3StatusCode;
     private String chapter4StatusCode;
     private String giinCode;
     private String dateOfBirth;
+    private String stateDivsersityClassifications;
+    
+    /*
+     * Altered fields
+     */
     private String newYorkCertfiedBusiness;
     private String newYorkDiversityCertificates;
     private String federalDivsersityClassifications;
+    private boolean diverseBusiness;
+    private String diversityClassifications;
+    private String minorityStatus;
+    private String mbeCertificationExpirationDate;
+    private String womanOwned;
+    private String wbeCertificationExpirationDate;
+    private String disabledVeteran;
+    private String veteranCertificationExpirationDate;
     
     /*
      * Fields removed from the new foreign vendor 
@@ -168,13 +179,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private boolean cornellProvidedTrainingOrEquipmentRequired;
     private boolean informalMarketing;
     private boolean servicesProvidedWithoutInsurance;
-    private String diversityClassifications;
-    private String veteranCertificationExpirationDate;
-    private String mbeCertificationExpirationDate;
-    private String womanOwned;
-    private String wbeCertificationExpirationDate;
-    private String disabledVeteran;
-    private String minorityStatus;
+    
 
     public Integer getId() {
         return id;
@@ -1169,12 +1174,12 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.discountedPaymentTerms = discountedPaymentTerms;
     }
 
-    public String getW8SignedDated() {
-        return w8SignedDated;
+    public String getW8SignedDate() {
+        return w8SignedDate;
     }
 
-    public void setW8SignedDated(String w8SignedDated) {
-        this.w8SignedDated = w8SignedDated;
+    public void setW8SignedDate(String w8SignedDate) {
+        this.w8SignedDate = w8SignedDate;
     }
 
     public String getChapter3StatusCode() {
@@ -1231,6 +1236,14 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setFederalDivsersityClassifications(String federalDivsersityClassifications) {
         this.federalDivsersityClassifications = federalDivsersityClassifications;
+    }
+
+    public String getStateDivsersityClassifications() {
+        return stateDivsersityClassifications;
+    }
+
+    public void setStateDivsersityClassifications(String stateDivsersityClassifications) {
+        this.stateDivsersityClassifications = stateDivsersityClassifications;
     }
 
     @Override

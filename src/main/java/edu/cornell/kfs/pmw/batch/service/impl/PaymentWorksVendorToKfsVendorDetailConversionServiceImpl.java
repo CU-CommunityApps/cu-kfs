@@ -66,7 +66,11 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         KfsVendorDataWrapper kfsVendorDataWrapper = populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
         if (ObjectUtils.isNotNull(kfsVendorDataWrapper.getVendorDetail())) {
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTypeCode(determineKfsVendorTypeCodeBasedOnPmwVendorType(pmwVendor.getVendorType()));
-            kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
+            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
+            } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+                
+            }
             kfsVendorDataWrapper.getVendorDetail().setVendorDunsNumber(pmwVendor.getRequestingCompanyDuns());
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
                 kfsVendorDataWrapper.getVendorDetail().setVendorCreditCardIndicator(new Boolean(pmwVendor.isAcceptCreditCards()));
@@ -638,10 +642,11 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     protected static String truncateValueToMaxLength(String inputValue, int maxLength) {
-        if (inputValue.length() <= maxLength)
+        if (StringUtils.length(inputValue) <= maxLength) {
             return inputValue;
-        else
+        } else {
             return inputValue.substring(0, maxLength);
+        }
     }
 
     protected static String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName, String delim, int maxLength) {

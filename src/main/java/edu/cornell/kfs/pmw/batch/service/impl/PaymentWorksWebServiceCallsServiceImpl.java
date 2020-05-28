@@ -184,6 +184,11 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
     
     private void updateNewVendorStatusInPaymentWorks(String jsonString) {
+        /**
+         * @todo turn this back on before merging to develop
+         */
+        LOG.info("updateNewVendorStatusInPaymentWorks, intentionally not updating status in PMW while testing, the JSON is: " + jsonString);
+        /*
         URI statusUpdateURI = buildPaymentWorksNewVendorUpdateStatusURI();
         Response updateResponse = null;
         try{
@@ -193,6 +198,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         } finally {
             CURestClientUtils.closeQuietly(updateResponse);
         }
+        */
     }
     
     private String buildPaymentWorksNewVendorUpdateStatusJson(String vendorId, String statusCode) {

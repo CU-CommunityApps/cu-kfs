@@ -205,8 +205,8 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
                 setPaymentWorksVendorCustomFieldAttributeToReceivedValue(stgNewVendor, paymentWorksCustomFieldId, fieldMapping, customFieldsDTOMap, customFieldErrors);
             } 
             else {
-                stgNewVendor.setCustomFieldConversionErrors(true);
-                customFieldErrors.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_REQUEST_CUSTOM_FIELD_MISSING_ERROR_MESSAGE), paymentWorksCustomFieldId));
+                //stgNewVendor.setCustomFieldConversionErrors(true);
+                //customFieldErrors.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_REQUEST_CUSTOM_FIELD_MISSING_ERROR_MESSAGE), paymentWorksCustomFieldId));
                 LOG.error("processEachPaymentWorksCustomFieldReceived: Unable to find KFS staging table column for PaymentWorks custom field '" + paymentWorksCustomFieldId + "'");
             }
         }
