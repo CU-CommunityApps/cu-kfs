@@ -163,7 +163,7 @@
     <field-descriptor name="supplierCategory" column="SUPP_CAT" jdbc-type="VARCHAR" />
     <field-descriptor name="federalDivsersityCertificates" column="FED_DIVERSE_CERT" jdbc-type="VARCHAR" />
     <field-descriptor name="paymentMethod" column="PAY_METHOD" jdbc-type="VARCHAR" />
-    <field-descriptor name="discountedPaymentTerms" column="DISC_PAY_TERM" jdbc-type="VARCHAR" />
+    <field-descriptor name="discountedPaymentTerms" column="DISC_PAY_TERM" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="w8SignedDate" column="W8_SIG_DATE" jdbc-type="VARCHAR" />
     <field-descriptor name="chapter3StatusCode" column="CHPTR3_STAT_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="chapter4StatusCode" column="CHPTR4_STAT_CD" jdbc-type="VARCHAR" />
