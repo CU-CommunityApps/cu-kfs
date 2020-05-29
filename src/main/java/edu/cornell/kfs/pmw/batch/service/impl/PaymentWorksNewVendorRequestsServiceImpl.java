@@ -192,9 +192,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                             PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages) 
                     && allValidationPassed;
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            /*
-             * to do: fill in with new form values
-             */
+            LOG.info("pmwNewVendorAttributesConformToKfsLengthsOrFormats, foreign form processing not set up for certifications yet.");
         }
         
         return allValidationPassed;
