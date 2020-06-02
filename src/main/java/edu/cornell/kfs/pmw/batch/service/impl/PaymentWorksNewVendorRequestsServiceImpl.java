@@ -104,11 +104,27 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                     LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, could not save vendor staging data for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                 }
             } else {
-                LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
+                if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                    LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
+                } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+                    LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed but will attempt to save it in the staging table for pmwNewVendorRequestId: " 
+                            + pmwNewVendorRequestId);
+                    attemptToSavePaymentWorksVendorThatWillNotBeProcessed(stgNewVendorRequestDetailToProcess);
+                }
             }
             getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
         }
         getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
+    }
+    
+    private void attemptToSavePaymentWorksVendorThatWillNotBeProcessed(PaymentWorksVendor paymentWorksVendor) {
+        PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = null;
+        paymentWorksVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_REJECTED);
+        try {
+            savePaymentWorksVendorToStagingTable(paymentWorksVendor);
+        } catch (Exception e) {
+            LOG.error("attemptToSavePaymentWorksVendorThatWillNotBeProcessed: Caught Exception attempting PMW vendor save to KFS staging table, unable to save PaymentWorks vendor for pmwNewVendorRequestId: " + paymentWorksVendor.getPmwVendorRequestId(), e);
+        }
     }
     
     private boolean pmwNewVendorRequestProcessingIntoKfsWasSuccessful(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
