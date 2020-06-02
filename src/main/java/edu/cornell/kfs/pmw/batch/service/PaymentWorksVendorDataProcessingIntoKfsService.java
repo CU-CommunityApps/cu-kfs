@@ -11,7 +11,7 @@ import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReport
 
 public interface PaymentWorksVendorDataProcessingIntoKfsService {
     
-    boolean createValidateAndRouteKFSVendor(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
+    boolean createValidateAndRouteOrSaveKFSVendor(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
                                             Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, PaymentWorksNewVendorRequestsBatchReportData reportData);
     
 }
