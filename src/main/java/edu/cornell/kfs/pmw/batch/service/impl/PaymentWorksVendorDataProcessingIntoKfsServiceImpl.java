@@ -1,7 +1,5 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -9,22 +7,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.springframework.util.AutoPopulatingList;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.kfs.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
-import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
@@ -45,16 +42,30 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
     protected PaymentWorksNewVendorRequestsReportService paymentWorksNewVendorRequestsReportService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
+    private enum DocumentAction {
+        SAVE, ROUTE
+    };
+    
     @Override
-    public boolean createValidateAndRouteKFSVendor(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
+    public boolean createValidateAndRouteOrSaveKFSVendor(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
                                                    Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         boolean processingSuccessful = false;
-        MaintenanceDocument vendorMaintenceDoc = createKfsVendorMaintenaceDocument(pmwVendor, paymentWorksIsoToFipsCountryMap, paymentWorksToKfsDiversityMap, reportData);
-        if (ObjectUtils.isNotNull(vendorMaintenceDoc) && 
-            kfsVendorMaintenanceDocumentValidated(vendorMaintenceDoc, reportData, pmwVendor) &&
-            kfsVendorMaintenceDocumentRouted(vendorMaintenceDoc, reportData, pmwVendor)) {
-            pmwVendor.setKfsVendorDocumentNumber(vendorMaintenceDoc.getDocumentNumber());
-            processingSuccessful = true;
+        MaintenanceDocument vendorMaintenceDoc = createKfsVendorMaintenaceDocument(pmwVendor, paymentWorksIsoToFipsCountryMap, paymentWorksToKfsDiversityMap,
+                reportData);
+        if (ObjectUtils.isNotNull(vendorMaintenceDoc)) {
+            if (kfsVendorMaintenanceDocumentValidatedForRoute(vendorMaintenceDoc, reportData, pmwVendor)) {
+                if (kfsVendorMaintenceDocumentRouted(vendorMaintenceDoc, reportData, pmwVendor)) {
+                    pmwVendor.setKfsVendorDocumentNumber(vendorMaintenceDoc.getDocumentNumber());
+                    processingSuccessful = true;
+                }
+            } else {
+                if (kfsVendorMaintenanceDocumentValidatedForSave(vendorMaintenceDoc, reportData, pmwVendor)) {
+                    if (saveVendorMaintenanceDocument(vendorMaintenceDoc, reportData, pmwVendor)) {
+                        pmwVendor.setKfsVendorDocumentNumber(vendorMaintenceDoc.getDocumentNumber());
+                        processingSuccessful = true;
+                    }
+                }
+            }
         }
         return processingSuccessful;
     }
@@ -85,38 +96,69 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
         return vendorMaintenceDoc;
     }
 
-    private boolean kfsVendorMaintenanceDocumentValidated(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor) {
+    private boolean kfsVendorMaintenanceDocumentValidatedForRoute(MaintenanceDocument vendorMaintenceDoc,
+            PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor) {
+        return kfsVendorMaintenanceDocumentValidatedForEvent(vendorMaintenceDoc, reportData, pmwVendor, new RouteDocumentEvent(vendorMaintenceDoc));
+    }
+
+    private boolean kfsVendorMaintenanceDocumentValidatedForSave(MaintenanceDocument vendorMaintenceDoc,
+            PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor) {
+        return kfsVendorMaintenanceDocumentValidatedForEvent(vendorMaintenceDoc, reportData, pmwVendor, new SaveDocumentEvent(vendorMaintenceDoc));
+    }
+    
+    private boolean kfsVendorMaintenanceDocumentValidatedForEvent(MaintenanceDocument vendorMaintenceDoc,
+            PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor, KualiDocumentEvent documentEvent) {
         boolean documentValidated = false;
         try {
-            vendorMaintenceDoc.validateBusinessRules(new RouteDocumentEvent(vendorMaintenceDoc));
-            LOG.info("kfsVendorMaintenanceDocumentValidated: vendorMaintenceDoc validate.");
+            vendorMaintenceDoc.validateBusinessRules(documentEvent);
+            LOG.info("kfsVendorMaintenanceDocumentValidatedForEvent: vendorMaintenceDoc validate.");
             documentValidated = true;
         } catch (ValidationException ve) {
             List<String> validationErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, validationErrors);
-            LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation error(s): " + validationErrors.toString());
-            LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation exception caught: " + ve.getMessage());
+            LOG.error("kfsVendorMaintenanceDocumentValidatedForEvent: eDoc validation error(s): " + validationErrors.toString());
+            LOG.error("kfsVendorMaintenanceDocumentValidatedForEvent: eDoc validation exception caught: " + ve.getMessage());
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
         }
         return documentValidated;
     }
+    
+    private boolean saveVendorMaintenanceDocument(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData,
+            PaymentWorksVendor pmwVendor) {
+        return kfsVendorMaintenceDocumentActionProcessed(vendorMaintenceDoc, reportData, pmwVendor, DocumentAction.SAVE);
+    }
 
-    private boolean kfsVendorMaintenceDocumentRouted(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor) {
-        boolean documentRouted = false;
+    private boolean kfsVendorMaintenceDocumentRouted(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData,
+            PaymentWorksVendor pmwVendor) {
+        return kfsVendorMaintenceDocumentActionProcessed(vendorMaintenceDoc, reportData, pmwVendor, DocumentAction.ROUTE);
+    }
+
+    private boolean kfsVendorMaintenceDocumentActionProcessed(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData,
+            PaymentWorksVendor pmwVendor, DocumentAction documentAction) {
+        boolean documentActionProcessed = false;
         try {
-            getDocumentService().routeDocument(vendorMaintenceDoc, PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_CREATE_ROUTE_ANNOTATION, null);
-            LOG.info("kfsVendorMaintenceDocumentRouted: vendorMaintenceDoc routed.");
-            documentRouted = true;
+            if (DocumentAction.SAVE.equals(documentAction)) {
+                getDocumentService().saveDocument(vendorMaintenceDoc);
+                LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc saved.");
+            } else if (DocumentAction.ROUTE.equals(documentAction)) {
+                getDocumentService().routeDocument(vendorMaintenceDoc, PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_CREATE_ROUTE_ANNOTATION, null);
+                LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc routed.");
+            } else {
+                LOG.info("kfsVendorMaintenceDocumentActionProcessed: document action not supported.");
+                return false;
+            }
+
+            documentActionProcessed = true;
         } catch (WorkflowException we) {
             List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, edocCreateErrors);
-            LOG.error("kfsVendorMaintenceDocumentRouted: eDoc routing error(s): " + edocCreateErrors.toString());
-            LOG.error("kfsVendorMaintenceDocumentRouted: eDoc routing exception caught: " + we.getMessage());
+            LOG.error("kfsVendorMaintenceDocumentActionProcessed: eDoc error(s): " + edocCreateErrors.toString());
+            LOG.error("kfsVendorMaintenceDocumentActionProcessed: eDoc exception caught: " + we.getMessage());
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
         }
-        return documentRouted;
+        return documentActionProcessed;
     }
     
     private void captureKfsProcessingErrorsForVendor(PaymentWorksVendor pmwVendorWithFailure, PaymentWorksNewVendorRequestsBatchReportData reportData, List<String> validationErrors) {
