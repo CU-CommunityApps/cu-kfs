@@ -24,6 +24,8 @@ public class PaymentWorksConstants {
     public static final String NULL_STRING = "NULL";
     public static final String SUPPLIER_UPLOAD_DELETE_INDICATOR = "DEL";
     
+    public static final String FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE = "PMW foreign mode processing not implemented yet.";
+    
     public static final class PaymentWorksCustomFieldBooleanPrimitive {
         public static final String YES = "YES";
         public static final String NO = "NO";

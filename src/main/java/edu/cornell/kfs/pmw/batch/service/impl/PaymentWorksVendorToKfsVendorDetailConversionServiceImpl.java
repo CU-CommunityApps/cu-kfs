@@ -69,7 +69,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
                 kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
             } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-                LOG.info("createVendorDetail, foreign vendor supplier diversity not set up yet.");
+                LOG.info("createVendorDetail, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
             }
             kfsVendorDataWrapper.getVendorDetail().setVendorDunsNumber(pmwVendor.getRequestingCompanyDuns());
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
@@ -712,7 +712,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                 kfsVendorSupplierDiversities.add(veteran);
             }
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            LOG.info("buildVendorDiversitiesFromPmwFormDropDownLists, foreign vendor supplier diversity not set up yet.");
+            LOG.info("buildVendorDiversitiesFromPmwFormDropDownLists, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
         }
         return kfsVendorSupplierDiversities;
     }
@@ -761,7 +761,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                  }
             }
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            LOG.info("buildVendorDiversitiesFromPmwFormCheckboxes, foreign vendor supplier diversity not set up yet.");
+            LOG.info("buildVendorDiversitiesFromPmwFormCheckboxes, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
         }
         return kfsVendorSupplierDiversities;
     }
