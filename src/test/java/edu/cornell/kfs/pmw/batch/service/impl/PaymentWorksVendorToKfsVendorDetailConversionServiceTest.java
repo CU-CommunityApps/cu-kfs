@@ -2,8 +2,6 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class PaymentWorksVendorToKfsVendorDetailConversionServiceTest {
@@ -58,6 +56,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceTest {
 				.truncateValueToMaxLength(EMPTY_STRING, MAX_LENGTH);
 		assertEquals("Empty input value was not properly truncated:  ", EMPTY_STRING, truncatedValue);
 	}
+	
+    @Test
+    public void testTruncateValueToMaxLengthInputNull() {
+        String truncatedValue = PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.truncateValueToMaxLength(null, MAX_LENGTH);
+        assertEquals("Empty input value was not properly truncated:  ", null, truncatedValue);
+    }
 
 	@Test
 	public void testTruncateFirstNameWhenLastNameLongerThanMaxLength() {

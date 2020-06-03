@@ -75,10 +75,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         try{
             clientForNewVendorRequestsRootResults = constructClientToUseForPagedResponses();
             responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildPaymentWorksApprovedNewVendorRequestsURI());
-            if (LOG.isInfoEnabled()) {
-                String xmlOutput = responseForNewVendorRequestsRootResults.readEntity(String.class);
-                LOG.info("retrieveAllPaymentWorksApprovedNewVendorRequests, xmlOutput: " + xmlOutput);
-            }
             PaymentWorksNewVendorRequestsRootDTO newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
             LOG.info("retrieveAllPaymentWorksApprovedNewVendorRequests: newVendorsRoot.getCount()=" + newVendorsRoot.getCount());
             
@@ -151,12 +147,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         PaymentWorksNewVendorRequestDetailDTO pmwRequestedNewVendorDetail = null;
         try{
             responseForNewVendorRequestSpecificDetail = buildXmlOutput(newVendorRequestDetailURI);
-            
-            if (LOG.isInfoEnabled()) {
-                String xmlOutput = responseForNewVendorRequestSpecificDetail.readEntity(String.class);
-                LOG.info("retrieveAllPaymentWorksDetailsForRequestedVendor, xmlOutput: " + xmlOutput);
-            }
-            
             pmwRequestedNewVendorDetail = responseForNewVendorRequestSpecificDetail.readEntity(PaymentWorksNewVendorRequestDetailDTO.class);
             LOG.info("retrieveAllPaymentWorksDetailsForRequestedVendor: legalName=" + pmwRequestedNewVendorDetail.getRequesting_company().getLegal_name());
             return pmwRequestedNewVendorDetail;
