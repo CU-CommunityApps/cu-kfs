@@ -129,6 +129,11 @@ public class PaymentWorksConstants {
         public static final char EXCEPTION_REASON_END_CHAR = ')';
     }
     
+    public static final class CustomAttributeValueToUse {
+        public static final String FILE = "file";
+        public static final String FIELD_VALUE = "field_value";
+    }
+    
     public enum PaymentWorksNewVendorRequestStatusType {
         APPROVED(1, "1", "Approved"),
         PROCESSED(2, "2", "Processed"),

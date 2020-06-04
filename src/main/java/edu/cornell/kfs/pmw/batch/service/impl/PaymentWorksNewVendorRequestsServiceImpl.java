@@ -104,6 +104,9 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                     LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, could not save vendor staging data for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                 }
             } else {
+                /*
+                 * @Todo remove this before moving to develop
+                 */
                 if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
                     LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                 } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {

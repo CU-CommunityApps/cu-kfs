@@ -100,6 +100,7 @@
     <bean id="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="configurationService" ref="configurationService"/>
+        <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService"/>
     </bean>
 
     <bean id="paymentWorksVendorToKfsVendorDetailConversionService" parent="paymentWorksVendorToKfsVendorDetailConversionService-parentBean" />

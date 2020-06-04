@@ -11,7 +11,7 @@ public class PaymentWorksCustomFieldDTO {
     private String field_id;
     private String field_label;
     private String field_value;
-    private String field_file;
+    private String file;
     private String display_order;
 
     public String getField_id() {
@@ -38,12 +38,12 @@ public class PaymentWorksCustomFieldDTO {
         this.field_value = field_value;
     }
 
-    public String getField_file() {
-        return field_file;
+    public String getFile() {
+        return file;
     }
 
-    public void setField_file(String field_file) {
-        this.field_file = field_file;
+    public void setFile(String file) {
+        this.file = file;
     }
 
     public String getDisplay_order() {
