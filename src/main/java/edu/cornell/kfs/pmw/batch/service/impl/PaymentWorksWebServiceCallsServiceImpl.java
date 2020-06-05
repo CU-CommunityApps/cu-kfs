@@ -149,13 +149,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             responseForNewVendorRequestSpecificDetail = buildXmlOutput(newVendorRequestDetailURI);
             pmwRequestedNewVendorDetail = responseForNewVendorRequestSpecificDetail.readEntity(PaymentWorksNewVendorRequestDetailDTO.class);
             LOG.info("retrieveAllPaymentWorksDetailsForRequestedVendor: legalName=" + pmwRequestedNewVendorDetail.getRequesting_company().getLegal_name());
-            
-            /*
-             * @todo, be sure to remove this before getting these changes into kfs-dev
-             */
-            String xmlString = responseForNewVendorRequestSpecificDetail.readEntity(String.class);
-            LOG.info("retrieveAllPaymentWorksDetailsForRequestedVendor, xmlString: " + xmlString);
-            
             return pmwRequestedNewVendorDetail;
         } finally {
             CURestClientUtils.closeQuietly(responseForNewVendorRequestSpecificDetail);

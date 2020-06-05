@@ -66,11 +66,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         KfsVendorDataWrapper kfsVendorDataWrapper = populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
         if (ObjectUtils.isNotNull(kfsVendorDataWrapper.getVendorDetail())) {
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTypeCode(determineKfsVendorTypeCodeBasedOnPmwVendorType(pmwVendor.getVendorType()));
-            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-                kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
-            } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-                LOG.info("createVendorDetail, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
-            }
+            kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
             kfsVendorDataWrapper.getVendorDetail().setVendorDunsNumber(pmwVendor.getRequestingCompanyDuns());
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
                 kfsVendorDataWrapper.getVendorDetail().setVendorCreditCardIndicator(new Boolean(pmwVendor.isAcceptCreditCards()));
@@ -679,12 +675,20 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         List<VendorSupplierDiversity> kfsVendorSupplierDiversities = new ArrayList<VendorSupplierDiversity>();
         if (pmwVendor.isDiverseBusiness()) {
             List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForCheckBoxes = new ArrayList<VendorSupplierDiversity>();
-            kfsVendorSupplierDiversitiesForCheckBoxes = buildVendorDiversitiesFromPmwFormCheckboxes(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForCheckBoxes);
+            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                kfsVendorSupplierDiversitiesForCheckBoxes = buildVendorDiversitiesFromPmwFormCheckboxes(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForCheckBoxes);
+            } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+                kfsVendorSupplierDiversities = buildVendorDiversitiesFromPmwNewFormCheckBoxes(pmwVendor, paymentWorksToKfsDiversityMap);
+            }
             if (!kfsVendorSupplierDiversitiesForCheckBoxes.isEmpty()){
                 kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForCheckBoxes);
             }
             List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForDropDowns = new ArrayList<VendorSupplierDiversity>();
-            kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForDropDowns);
+            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForDropDowns);
+            } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+                kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromNewPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap);
+            }
             if (!kfsVendorSupplierDiversitiesForDropDowns.isEmpty()){
                 kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForDropDowns);
             }
@@ -693,28 +697,32 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private List<VendorSupplierDiversity> buildVendorDiversitiesFromPmwFormDropDownLists(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, List<VendorSupplierDiversity> kfsVendorSupplierDiversities) {
-        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            VendorSupplierDiversity minority = createVendorSupplierDiversityForDropDownData(pmwVendor.getMinorityStatus(), 
-                    pmwVendor.getMbeCertificationExpirationDate(), paymentWorksToKfsDiversityMap);
-            if (ObjectUtils.isNotNull(minority)) {
-                kfsVendorSupplierDiversities.add(minority);
-            }
-            
-            VendorSupplierDiversity womanOwned = createVendorSupplierDiversityForDropDownData(pmwVendor.getWomanOwned(), 
-                    pmwVendor.getWbeCertificationExpirationDate(), paymentWorksToKfsDiversityMap);
-            if (ObjectUtils.isNotNull(womanOwned)) {
-                kfsVendorSupplierDiversities.add(womanOwned);
-            }
-            
-            VendorSupplierDiversity veteran = createVendorSupplierDiversityForDropDownData(pmwVendor.getDisabledVeteran(), 
-                    pmwVendor.getVeteranCertificationExpirationDate(), paymentWorksToKfsDiversityMap);
-            if (ObjectUtils.isNotNull(veteran)) {
-                kfsVendorSupplierDiversities.add(veteran);
-            }
-        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            LOG.info("buildVendorDiversitiesFromPmwFormDropDownLists, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
+        VendorSupplierDiversity minority = createVendorSupplierDiversityForDropDownData(pmwVendor.getMinorityStatus(), 
+                pmwVendor.getMbeCertificationExpirationDate(), paymentWorksToKfsDiversityMap);
+        if (ObjectUtils.isNotNull(minority)) {
+            kfsVendorSupplierDiversities.add(minority);
+        }
+        
+        VendorSupplierDiversity womanOwned = createVendorSupplierDiversityForDropDownData(pmwVendor.getWomanOwned(), 
+                pmwVendor.getWbeCertificationExpirationDate(), paymentWorksToKfsDiversityMap);
+        if (ObjectUtils.isNotNull(womanOwned)) {
+            kfsVendorSupplierDiversities.add(womanOwned);
+        }
+        
+        VendorSupplierDiversity veteran = createVendorSupplierDiversityForDropDownData(pmwVendor.getDisabledVeteran(), 
+                pmwVendor.getVeteranCertificationExpirationDate(), paymentWorksToKfsDiversityMap);
+        if (ObjectUtils.isNotNull(veteran)) {
+            kfsVendorSupplierDiversities.add(veteran);
         }
         return kfsVendorSupplierDiversities;
+    }
+    
+    private List<VendorSupplierDiversity> buildVendorDiversitiesFromNewPmwFormDropDownLists(PaymentWorksVendor pmwVendor, Map<String, 
+            SupplierDiversity> paymentWorksToKfsDiversityMap) {
+        //This should be implemented using the fields on the new PMW form.
+        LOG.info("buildVendorDiversitiesFromPmwFormDropDownLists, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
+        List<VendorSupplierDiversity> supplierDiversities = new ArrayList<VendorSupplierDiversity>();
+        return supplierDiversities;
     }
 
     private VendorSupplierDiversity createVendorSupplierDiversityForDropDownData (String pmwDiversityStatusDescription, String pmwDiversityCertifiedExpirationDate, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
@@ -744,26 +752,27 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private List<VendorSupplierDiversity> buildVendorDiversitiesFromPmwFormCheckboxes(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, List<VendorSupplierDiversity> kfsVendorSupplierDiversities) {
-        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            ArrayList<String> pmwDiversities = new ArrayList<String>(Arrays.asList(pmwVendor.getDiversityClassifications().split("\\s*,\\s*")));
-            if (!pmwDiversities.isEmpty()) {
-                 for (String pmwDiversity : pmwDiversities) {
-                     if (paymentWorksToKfsDiversityMap.containsKey(pmwDiversity)) {
-                         SupplierDiversity supplierDiversityFromMap = paymentWorksToKfsDiversityMap.get(pmwDiversity);
-                         kfsVendorSupplierDiversities.add(buildVendorSupplierDiversity(supplierDiversityFromMap.
-                                 getVendorSupplierDiversityCode(), addOneYearToDate(getDateTimeService().getCurrentDate())));
-                     }
-                     else
-                     {
-                         LOG.info("buildVendorDiversities:: PaymentWorks Vendor : " + pmwVendor.getRequestingCompanyLegalName() + 
-                                  "  Diversity Value : " + pmwDiversity + " does not have corresponding KFS SupplierDiversity defined."); 
-                     }
+        ArrayList<String> pmwDiversities = new ArrayList<String>(Arrays.asList(pmwVendor.getDiversityClassifications().split("\\s*,\\s*")));
+        if (!pmwDiversities.isEmpty()) {
+             for (String pmwDiversity : pmwDiversities) {
+                 if (paymentWorksToKfsDiversityMap.containsKey(pmwDiversity)) {
+                     SupplierDiversity supplierDiversityFromMap = paymentWorksToKfsDiversityMap.get(pmwDiversity);
+                     kfsVendorSupplierDiversities.add(buildVendorSupplierDiversity(supplierDiversityFromMap.
+                             getVendorSupplierDiversityCode(), addOneYearToDate(getDateTimeService().getCurrentDate())));
+                 } else {
+                     LOG.info("buildVendorDiversities:: PaymentWorks Vendor : " + pmwVendor.getRequestingCompanyLegalName() + 
+                              "  Diversity Value : " + pmwDiversity + " does not have corresponding KFS SupplierDiversity defined."); 
                  }
-            }
-        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            LOG.info("buildVendorDiversitiesFromPmwFormCheckboxes, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
+             }
         }
         return kfsVendorSupplierDiversities;
+    }
+    
+    private List<VendorSupplierDiversity> buildVendorDiversitiesFromPmwNewFormCheckBoxes(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
+        //This function should be implemented using the new supplier diversity fields on the new PMW form
+        LOG.info("buildVendorDiversitiesFromPmwNewFormCheckBoxes, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
+        List<VendorSupplierDiversity> supolierDiversity = new ArrayList<VendorSupplierDiversity>();
+        return supolierDiversity;
     }
     
     private VendorSupplierDiversity buildVendorSupplierDiversity(String vendorSupplierDiversityCode, java.sql.Date vendorSupplierDiversityExpirationDate) {

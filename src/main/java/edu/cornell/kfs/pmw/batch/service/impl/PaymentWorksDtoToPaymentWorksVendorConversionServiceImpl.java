@@ -216,11 +216,11 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
                 }
             }
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            processEachCustomFIeldsTheNewWay(stgNewVendor, pmwNewVendorDetailDTO, customFieldErrors);
+            processEachCustomFieldsTheNewWay(stgNewVendor, pmwNewVendorDetailDTO, customFieldErrors);
         }
     }
 
-    protected void processEachCustomFIeldsTheNewWay(PaymentWorksVendor stgNewVendor, PaymentWorksNewVendorRequestDetailDTO pmwNewVendorDetailDTO,
+    protected void processEachCustomFieldsTheNewWay(PaymentWorksVendor stgNewVendor, PaymentWorksNewVendorRequestDetailDTO pmwNewVendorDetailDTO,
             List<String> customFieldErrors) {
         for (PaymentWorksCustomFieldDTO customField : pmwNewVendorDetailDTO.getCustom_fields().getCustom_fields()) {
             PaymentWorksFieldMapping fieldMapping = findPaymentWorksFieldMapping(customField.getField_id());
@@ -233,7 +233,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
                 stgNewVendor.setCustomFieldConversionErrors(true);
                 customFieldErrors.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(
                         PaymentWorksKeyConstants.NEW_VENDOR_REQUEST_CUSTOM_FIELD_MISSING_ERROR_MESSAGE), customField.getField_id()));
-                LOG.error("processEachCustomFIeldsTheNewWay: Unable to find KFS staging table column for PaymentWorks custom field '" + 
+                LOG.error("processEachCustomFieldsTheNewWay: Unable to find KFS staging table column for PaymentWorks custom field '" + 
                         customField.getField_id() + "'");
             }
         }
@@ -245,7 +245,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
         } else if (StringUtils.equalsIgnoreCase(fieldMapping.getCustomAttributeValueToUse(), PaymentWorksConstants.CustomAttributeValueToUse.FIELD_VALUE)) {
             return dto.getField_value();
         } else {
-            throw new IllegalArgumentException("The custom attrbute value to use is not value: " + fieldMapping.getCustomAttributeValueToUse());
+            throw new IllegalArgumentException("The custom attrbute value to use is not valid: " + fieldMapping.getCustomAttributeValueToUse());
         }
     }
     

@@ -78,5 +78,7 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_BANK_ACCOUNT_NUMBER_INVALID = "error.paymentworks.bank.account.number.invalid";
     public static final String ERROR_BANK_ACCOUNT_TYPE_INVALID = "error.paymentworks.bank.account.type.invalid";
     public final static String NO_ACH_DATA_PROVIDED_BY_VENDOR_MESSAGE = "message.paymentworks.no.ach.data.provided";
+    public static final String ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION = "error.paymentworks.date.of.birth.description";
+    public static final String ERROR_W8_SIGNED_DATE_DESCRIPTION = "error.paymentworks.w8.signed.date.description";
 
 }

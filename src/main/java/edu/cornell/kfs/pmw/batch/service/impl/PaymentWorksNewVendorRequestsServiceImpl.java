@@ -176,23 +176,34 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         
         allValidationPassed = validateVendorType(stgNewVendorRequestDetailToProcess.getVendorType(), errorMessages) && allValidationPassed;
         
-        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getMbeCertificationExpirationDate(), 
-                    getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), 
-                        errorMessages) 
-                    && allValidationPassed;
-            
-            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getWbeCertificationExpirationDate(), 
-                    getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION),
-                        errorMessages) 
-                    && allValidationPassed;
-            
-            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), 
-                    getConfigurationService().getPropertyValueAsString(
-                            PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages) 
-                    && allValidationPassed;
-        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            LOG.info("pmwNewVendorAttributesConformToKfsLengthsOrFormats, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
+        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getMbeCertificationExpirationDate(), 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), 
+                    errorMessages) 
+                && allValidationPassed;
+        
+        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getWbeCertificationExpirationDate(), 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION),
+                    errorMessages) 
+                && allValidationPassed;
+        
+        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), 
+                getConfigurationService().getPropertyValueAsString(
+                        PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages) 
+                && allValidationPassed;
+        
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getDateOfBirth())) {
+                allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getDateOfBirth(), 
+                        getConfigurationService().getPropertyValueAsString(
+                                PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION), errorMessages) 
+                        && allValidationPassed;
+            }
+            if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getW8SignedDate())) {
+                allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getW8SignedDate(), 
+                        getConfigurationService().getPropertyValueAsString(
+                                PaymentWorksKeyConstants.ERROR_W8_SIGNED_DATE_DESCRIPTION), errorMessages) 
+                        && allValidationPassed;
+            }
         }
         
         return allValidationPassed;
