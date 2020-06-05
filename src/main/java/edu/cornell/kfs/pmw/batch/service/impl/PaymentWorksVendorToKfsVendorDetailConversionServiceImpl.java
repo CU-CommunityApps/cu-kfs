@@ -752,18 +752,20 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private List<VendorSupplierDiversity> buildVendorDiversitiesFromPmwFormCheckboxes(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, List<VendorSupplierDiversity> kfsVendorSupplierDiversities) {
-        ArrayList<String> pmwDiversities = new ArrayList<String>(Arrays.asList(pmwVendor.getDiversityClassifications().split("\\s*,\\s*")));
-        if (!pmwDiversities.isEmpty()) {
-             for (String pmwDiversity : pmwDiversities) {
-                 if (paymentWorksToKfsDiversityMap.containsKey(pmwDiversity)) {
-                     SupplierDiversity supplierDiversityFromMap = paymentWorksToKfsDiversityMap.get(pmwDiversity);
-                     kfsVendorSupplierDiversities.add(buildVendorSupplierDiversity(supplierDiversityFromMap.
-                             getVendorSupplierDiversityCode(), addOneYearToDate(getDateTimeService().getCurrentDate())));
-                 } else {
-                     LOG.info("buildVendorDiversities:: PaymentWorks Vendor : " + pmwVendor.getRequestingCompanyLegalName() + 
-                              "  Diversity Value : " + pmwDiversity + " does not have corresponding KFS SupplierDiversity defined."); 
+        if (StringUtils.isNotBlank(pmwVendor.getDiversityClassifications())) {
+            ArrayList<String> pmwDiversities = new ArrayList<String>(Arrays.asList(pmwVendor.getDiversityClassifications().split("\\s*,\\s*")));
+            if (!pmwDiversities.isEmpty()) {
+                 for (String pmwDiversity : pmwDiversities) {
+                     if (paymentWorksToKfsDiversityMap.containsKey(pmwDiversity)) {
+                         SupplierDiversity supplierDiversityFromMap = paymentWorksToKfsDiversityMap.get(pmwDiversity);
+                         kfsVendorSupplierDiversities.add(buildVendorSupplierDiversity(supplierDiversityFromMap.
+                                 getVendorSupplierDiversityCode(), addOneYearToDate(getDateTimeService().getCurrentDate())));
+                     } else {
+                         LOG.info("buildVendorDiversities:: PaymentWorks Vendor : " + pmwVendor.getRequestingCompanyLegalName() + 
+                                  "  Diversity Value : " + pmwDiversity + " does not have corresponding KFS SupplierDiversity defined."); 
+                     }
                  }
-             }
+            }
         }
         return kfsVendorSupplierDiversities;
     }
