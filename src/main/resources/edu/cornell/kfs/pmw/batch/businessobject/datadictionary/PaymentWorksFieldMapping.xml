@@ -27,6 +27,7 @@
         <property name="shortLabel" value="Id" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="10" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextControlDefinition" p:size="12" />
         </property>
@@ -39,6 +40,7 @@
         <property name="shortLabel" value="PMW Field Id" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="36" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextareaControlDefinition" p:rows="4" p:cols="38" />
         </property>
@@ -51,6 +53,7 @@
         <property name="shortLabel" value="PMW Field Label" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="200" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextareaControlDefinition" p:rows="4" p:cols="50" />
         </property>
@@ -63,6 +66,7 @@
         <property name="shortLabel" value="KFS Stg Table Col" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="200" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextareaControlDefinition" p:rows="4" p:cols="50" />
         </property>
@@ -75,6 +79,7 @@
         <property name="shortLabel" value="XML Field to use" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="25" />
+        <property name="required" value="true" />
         <property name="control">
 			<bean parent="SelectControlDefinition"
 				p:valuesFinder-ref="paymentWorksCustomAttributeValueToUseValuesFinder"
