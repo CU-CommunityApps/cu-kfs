@@ -138,20 +138,22 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String supplierCategory;
     private String federalDivsersityCertificates;
     private String paymentMethod;
-    private String discountedPaymentTerms;
+    private boolean discountedPaymentTerms;
     private String w8SignedDate;
     private String chapter3StatusCode;
     private String chapter4StatusCode;
     private String giinCode;
     private String dateOfBirth;
+    private String newYorkCertfiedBusiness;
+    private String newYorkDiversityCertificates;
     private String stateDivsersityClassifications;
+    private String federalDivsersityClassifications;
+    
     
     /*
      * Altered fields
      */
-    private String newYorkCertfiedBusiness;
-    private String newYorkDiversityCertificates;
-    private String federalDivsersityClassifications;
+    
     private boolean diverseBusiness;
     private String diversityClassifications;
     private String minorityStatus;
@@ -1165,14 +1167,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.paymentMethod = paymentMethod;
     }
 
-    public String getDiscountedPaymentTerms() {
-        return discountedPaymentTerms;
-    }
-
-    public void setDiscountedPaymentTerms(String discountedPaymentTerms) {
-        this.discountedPaymentTerms = discountedPaymentTerms;
-    }
-
     public String getW8SignedDate() {
         return w8SignedDate;
     }
@@ -1219,6 +1213,14 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setNewYorkCertfiedBusiness(String newYorkCertfiedBusiness) {
         this.newYorkCertfiedBusiness = newYorkCertfiedBusiness;
+    }
+
+    public boolean isDiscountedPaymentTerms() {
+        return discountedPaymentTerms;
+    }
+
+    public void setDiscountedPaymentTerms(boolean discountedPaymentTerms) {
+        this.discountedPaymentTerms = discountedPaymentTerms;
     }
 
     public String getNewYorkDiversityCertificates() {
