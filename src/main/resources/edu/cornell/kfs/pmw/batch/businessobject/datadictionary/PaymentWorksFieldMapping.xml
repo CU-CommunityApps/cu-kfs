@@ -82,9 +82,9 @@
 		</property>
     </bean>
     
-    <bean id="paymentWorksCustomAttributeValueToUseValuesFinder"
-          class="edu.cornell.kfs.pmw.batch.businessobject.options.PaymentWorksCustomAttributeValueToUseValuesFinder"/>
-
+    <bean id="paymentWorksCustomAttributeValueToUseValuesFinder" 
+    	class="edu.cornell.kfs.pmw.batch.businessobject.options.PaymentWorksCustomAttributeValueToUseValuesFinder"/>
+    
     <bean id="PaymentWorksFieldMapping-lookupDefinition" parent="PaymentWorksFieldMapping-lookupDefinition-parentBean" />
     <bean id="PaymentWorksFieldMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="PaymentWorks Field Mapping Lookup" />

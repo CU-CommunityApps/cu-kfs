@@ -20,6 +20,8 @@ public class PaymentWorksConstants {
     public final static String DIVERSITY_EXPIRATION_DATE_CERTIFIED = "Certified";
     public final static String REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = "^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$";
     public final static Pattern PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = Pattern.compile(REGEX_FOR_MM_SLASH_DD_SLASH_YYYY);
+    public final static String REGEX_FOR_YYYY_SLASH_MM_SLASH_DD = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$";
+    public final static Pattern PATTERN_COMPILED_REGEX_FOR_YYYY_SLASH_MM_SLASH_DD = Pattern.compile(REGEX_FOR_YYYY_SLASH_MM_SLASH_DD);
     
     public static final String NULL_STRING = "NULL";
     public static final String SUPPLIER_UPLOAD_DELETE_INDICATOR = "DEL";
