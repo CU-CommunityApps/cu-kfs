@@ -30,7 +30,7 @@ import java.sql.Date;
 public class TimeBasedBillingPeriod extends BillingPeriod {
     
     /*
-     * CU Customization
+     * CUMod: KFSPTS-13005
      */
     private static final Logger LOG = LogManager.getLogger(TimeBasedBillingPeriod.class);
     
@@ -39,6 +39,9 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         super(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
     }
 
+    /*
+     * CUMod: KFSPTS-15655
+     */
     @Override
     protected Date determineEndDateByFrequency() {
         final AccountingPeriod accountingPeriod = findPreviousAccountingPeriod(currentDate);
@@ -55,6 +58,9 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         return previousAccountingPeriodCode;
     }
 
+    /*
+     * CUMod: KFSPTS-15655
+     */
     @Override
     protected boolean canThisBeBilledByBillingFrequency() {
         if (ArConstants.BillingFrequencyValues.ANNUALLY.equals(billingFrequency)
@@ -73,7 +79,8 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     }
     
     /*
-     * CU Customization
+     * CUMod: KFSPTS-13005
+     * CUMod: KFSPTS-15655
      */
     @Override
     protected Date determineStartDateByFrequency() {
@@ -86,7 +93,7 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     }
 
     /*
-     * CU Customization
+     * CUMod: KFSPTS-14970
      */
     @Override
     protected Date adjustEndDateForManualBilling(Date currentDate) {

@@ -7,7 +7,9 @@ import org.kuali.kfs.module.ar.document.service.ContractsGrantsInvoiceDocumentSe
 
 public interface CuContractsGrantsInvoiceDocumentService extends ContractsGrantsInvoiceDocumentService{
     
+    //CUMod: KFSPTS-14929
     Account determineContractControlAccount(InvoiceAccountDetail invoiceAccountDetail);
 
+    //CUMod: KFSPTS-15342
     void setInvoiceDueDateBasedOnNetTermsAndCurrentDate(ContractsGrantsInvoiceDocument document);
 }
