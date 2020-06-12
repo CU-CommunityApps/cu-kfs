@@ -1,5 +1,10 @@
 //KualiCo Patch Release 2020-02-13
-//FINP-4769 FK-117 changes applied.
+//
+//CU had to add "award.getCgInvoiceDocumentCreationProcessTypeCode()" to method call 
+//to get KualiCo Patch Release 2020-02-13 to compile once file was brought in for overlay.
+//This was needed BEFORE FINP-4769 was applied.
+//
+//FINP-4769 FK-117 changes applied from KualiCo Path Release 2020-04-23
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *

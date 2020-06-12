@@ -99,9 +99,8 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
 
     /*
      * CUMod: KFSPTS-15655 additional logging
-     * CUMod: KFSPTS-14970 
+     * CUMod: KFSPTS-14970 Method called signature change required additional parameters.
      */
-    //CUMod: Super class private method with additional logging and 
     private boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, Date lastBilledDate, boolean checkBillingPeriodEnd) {
         LOG.info("validateBillingFrequency(private): For Award/Proposal# = " + award.getProposalNumber()
                 + " with calculatedLastBilledDate = " + lastBilledDate + ", checkBillingPeriodEnd = " + checkBillingPeriodEnd
@@ -110,7 +109,8 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         AccountingPeriod currPeriod = getAccountingPeriodService().getByDate(today);
 
         //basecode: BillingPeriod billingPeriod = getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod);
-        BillingPeriod billingPeriod = getStartDateAndEndDateOfPreviousBillingPeriod(award, lastBilledDate, currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode()); //CUmod
+        //CUMod: KFSPTS-14970 
+        BillingPeriod billingPeriod = getStartDateAndEndDateOfPreviousBillingPeriod(award, lastBilledDate, currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
         if (!billingPeriod.isBillable()) {
             LOG.info("validateBillingFrequency: NOT VALID: getStartDateAndEndDateOfPreviousBillingPeriod returned billingPeriod"
                     + " denoting Award is NOT billable: billingPeriod.startDate = " + billingPeriod.getStartDate()

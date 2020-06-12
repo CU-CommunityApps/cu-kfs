@@ -1,5 +1,5 @@
 //KualiCo Patch Release 2020-02-13
-//FINP-4769 FK-117 changes applied
+//FINP-4769 FK-117 changes applied from KualiCo Path Release 2020-04-23
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
