@@ -25,6 +25,7 @@ import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArKeyConstants;
+import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.ArPropertyConstants.ContractsGrantsInvoiceDocumentErrorLogLookupFields;
 import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
 import org.kuali.kfs.module.ar.businessobject.AwardAccountObjectCodeTotalBilled;
@@ -133,6 +134,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         }
     }
 
+    /*
+     * CUMod: KFSPTS-12866
+     */
     protected void populateDocumentDescription(ContractsGrantsInvoiceDocument cgInvoiceDocument) {
         String proposalNumber = cgInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
         if (StringUtils.isNotBlank(proposalNumber)) {
@@ -142,6 +146,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         }
     }
     
+    /*
+     * CUMod: KFSPTS-12866, KFSPTS-14929
+     */
     protected String findContractControlAccountNumber(List<InvoiceAccountDetail> details) {
         for (InvoiceAccountDetail detail : details) {
             Account contractControlAccount = getCuContractsGrantsInvoiceDocumentService().determineContractControlAccount(detail);
@@ -153,11 +160,15 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return StringUtils.EMPTY;
     }
     
+    /*
+     * CUMod: KFSPTS-12866
+     */
     protected String findTitleFormatString() {
         return getConfigurationService().getPropertyValueAsString(CuArParameterConstants.CONTRACTS_GRANTS_INVOICE_DOCUMENT_TITLE_FORMAT);
     }
     
-    /**
+    /*
+     * CUMod: KFSPTS-13256
      * Added evaluation of account sub-fund not being an expenditure to existing base code evaluation
      * of billing frequency and invoice document status when determining valid award accounts.
      * Expenditure sub-funds associated to accounts to exclude are defined in CG system parameter
@@ -165,7 +176,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
      */
     @Override
     protected List<ContractsAndGrantsBillingAwardAccount> getValidAwardAccounts(
-            List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award) {
+            List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award,
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         LOG.info("getValidAwardAccounts: CU Customization invoked with creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()));
         if (!ArConstants.BillingFrequencyValues.isMilestone(award)
                 && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
@@ -175,7 +187,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
-                    if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award, awardAccount)
+                    boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
+                    //CUMod KFSPTS-13256
+                    if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award, awardAccount, checkGracePeriod)
                             && isNotExpenditureAccount(awardAccount)) {
                         LOG.info("getValidAwardAccounts: Evaluation of account sub-fund not being an expenditure was performed.");
                         validAwardAccounts.add(awardAccount);
@@ -189,6 +203,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         }
     }
 
+    /*
+     * CUMod: KFSPTS-13256
+     */
     protected boolean isNotExpenditureAccount(ContractsAndGrantsBillingAwardAccount billingAwardAccount) {
         Account accountLinkedToAward = getAccountService().getByPrimaryId(billingAwardAccount.getChartOfAccountsCode(), billingAwardAccount.getAccountNumber());
         if (ObjectUtils.isNotNull(accountLinkedToAward)) {
@@ -197,6 +214,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return true;
     }
     
+    /*
+     * CUMod: KFSPTS-13256
+     */
     protected boolean isExpenditureSubFund(String subFundGroupCode) {
         if (StringUtils.isNotBlank(subFundGroupCode)) {
             Collection<String> acceptedValuesForExpenditureSubFundCodes = parameterService.getParameterValuesAsString(KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE,
@@ -208,6 +228,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return false;
     }
 
+    /*
+     * CUMod: KFSPTS-14970
+     */
     private Date determineLastBilledDateByInvoicingOption(List<ContractsAndGrantsBillingAwardAccount> awardAccounts, String invoicingOptionCode, Date awardLastBilledDate) {
         Date computedLastBilledDate = null;
         if (StringUtils.equalsIgnoreCase(CuArConstants.AwardInvoicingOptionCodeToName.INV_ACCOUNT.getCode(), invoicingOptionCode)
@@ -237,6 +260,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return computedLastBilledDate;
     }
     
+    /*
+     * CUMod: KFSPTS-14970
+     */
     @Override
     public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(ContractsAndGrantsBillingAward awd,
             List<ContractsAndGrantsBillingAwardAccount> accounts, String chartOfAccountsCode, String organizationCode,
@@ -249,8 +275,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return this.createCGInvoiceDocumentByAwardInfo(awd, calculatedLastBilledDate, accounts, chartOfAccountsCode, organizationCode, errorMessages, accountDetails, locCreationType);
     }
 
-    /**
-     *   CU Customization:
+    /*
+     *   CUMod: KFSPTS-14970
      *   Overridden method signature above is from base code interface.
      *   This method is in Cornell's customized interface due to method signature change.
      *   Code being used here is minimally modified base code.
@@ -263,7 +289,10 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         if (ObjectUtils.isNotNull(accounts) && !accounts.isEmpty()) {
             if (chartOfAccountsCode != null && organizationCode != null) {
                 try {
-                    cgInvoiceDocument = (ContractsGrantsInvoiceDocument) documentService.getNewDocument(ContractsGrantsInvoiceDocument.class);
+                    cgInvoiceDocument = (ContractsGrantsInvoiceDocument) documentService.getNewDocument(
+                            ContractsGrantsInvoiceDocument.class);
+                    // Set description to the document created.
+                    
                     // setup several Default Values for CGInvoice document which extends from Customer Invoice Document
 
                     // a) set billing org and chart code
@@ -271,9 +300,11 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                     cgInvoiceDocument.setBilledByOrganizationCode(organizationCode);
 
                     // b) set processing org and chart code
-                    List<String> procCodes = getContractsGrantsInvoiceDocumentService().getProcessingFromBillingCodes(chartOfAccountsCode, organizationCode);
+                    List<String> procCodes = getContractsGrantsInvoiceDocumentService()
+                            .getProcessingFromBillingCodes(chartOfAccountsCode, organizationCode);
 
-                    AccountsReceivableDocumentHeader accountsReceivableDocumentHeader = new AccountsReceivableDocumentHeader();
+                    AccountsReceivableDocumentHeader accountsReceivableDocumentHeader = 
+                            new AccountsReceivableDocumentHeader();
                     accountsReceivableDocumentHeader.setDocumentNumber(cgInvoiceDocument.getDocumentNumber());
 
                     // Set processing chart and org codes
@@ -293,12 +324,15 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
                     cgInvoiceDocument.setAccountsReceivableDocumentHeader(accountsReceivableDocumentHeader);
 
+                    //CUMod: KFSPTS-14970
                     populateInvoiceFromAward(awd, calculatedLastBilledDate, accounts, cgInvoiceDocument, accountDetails, locCreationType);
+                    
                     contractsGrantsInvoiceDocumentService.createSourceAccountingLines(cgInvoiceDocument, accounts);
                     if (ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail().getAward())) {
                         contractsGrantsInvoiceDocumentService.updateSuspensionCategoriesOnDocument(cgInvoiceDocument);
                     }
                     
+                    //CUMod: KFSPTS-12866
                     populateDocumentDescription(cgInvoiceDocument);
                     
                     LOG.info("createCGInvoiceDocumentByAwardInfo: Created Contracts & Grants Invoice Document " + cgInvoiceDocument.getDocumentNumber());
@@ -318,6 +352,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return cgInvoiceDocument;
     }
     
+    /*
+     * CUMod: KFSPTS-14970
+     */
     @Override
     protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award,
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
@@ -326,8 +363,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         populateInvoiceFromAward(award, award.getLastBilledDate(), awardAccounts, document, accountDetails, locCreationType);
     }
   
-    /**
-     *   CU Customization:
+    /*
+     *   CUMod: KFSPTS-14970
      *   Overridden method signature above is from base code interface.
      *   This method is in Cornell's customized interface due to method signature change.
      *   Code being used here is minimally modified base code.
@@ -347,6 +384,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             Timestamp ts = new Timestamp(new java.util.Date().getTime());
             java.sql.Date today = new java.sql.Date(ts.getTime());
             AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
+            //CUMod: KFSPTS-14970
             BillingPeriod billingPeriod = getCuVerifyBillingFrequencyService().getStartDateAndEndDateOfPreviousBillingPeriod(award, calculatedLastBilledDate, currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
             invoiceGeneralDetail.setBillingPeriod(getDateTimeService().toDateString(billingPeriod.getStartDate()) + " to " +
                     getDateTimeService().toDateString(billingPeriod.getEndDate()));
@@ -458,11 +496,14 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             populateContractsGrantsInvoiceDocument(award, document, accountDetails, locCreationType);
         }
         
+        //CUMod: KFSPTS-15342
         getCuContractsGrantsInvoiceDocumentService().setInvoiceDueDateBasedOnNetTermsAndCurrentDate(document);
     }
     
     /*
-     * CU Customization: 
+     * CUMod: KFSPTS-15655 Additional logging
+     * 
+     * CUMod: KFSPTS-14970
      *    When billable amount is 0, allow manually created CINV to be created and saved. 
      *    KFS application user creating CINV edoc will manually change billable amount from 0 to desired value
      *    after edoc is created.
@@ -480,6 +521,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, calculatedLastBilledDate, validAwardAccounts,
                 chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,
                 accountDetails, locCreationType);
+        
         if (ObjectUtils.isNotNull(cgInvoiceDocument)) {
             
             LOG.info("generateAndSaveContractsAndGrantsInvoiceDocument: Award/Proposal# = " + awd.getProposalNumber() 
@@ -521,6 +563,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         }
     }
     
+    /*
+     * CUMod: KFSPTS-14970
+     */
     private Collection<ContractsAndGrantsBillingAward> setContractGrantInvoiceDocumentCreationProcessTypeCodeOnEachAward(Collection<ContractsAndGrantsBillingAward> awards, String creationProcessTypeCode) {
         for (ContractsAndGrantsBillingAward award : awards) {
             award.setCgInvoiceDocumentCreationProcessTypeCode(creationProcessTypeCode);
@@ -528,11 +573,16 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         return awards;
     }
     
+    /*
+     * CUMod: KFSPTS-15655 Additional logging
+     * 
+     * CUMod: KFSPTS-14970 Setting creationProcessTypeCode on each award.
+     */
     @Override
     public Collection<ContractsAndGrantsBillingAward> validateAwards(Collection<ContractsAndGrantsBillingAward> awards,
             Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs,
-            String errOutputFile, String creationProcessTypeCode) {
-        LOG.info("validateAwards: creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(creationProcessTypeCode));
+            String errOutputFile, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+        LOG.info("validateAwards: creationProcessType = " + creationProcessType.getName());
         Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup = new HashMap<>();
         List<ContractsAndGrantsBillingAward> qualifiedAwards = new ArrayList<>();
 
@@ -540,24 +590,30 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             contractsGrantsInvoiceDocumentErrorLogs = new ArrayList<>();
         }
 
-        awards = setContractGrantInvoiceDocumentCreationProcessTypeCodeOnEachAward(awards, creationProcessTypeCode);
+        //CUMod: KFSPTS-14970 Added
+        awards = setContractGrantInvoiceDocumentCreationProcessTypeCodeOnEachAward(awards, creationProcessType.getCode());
         
-        performAwardValidation(awards, invalidGroup, qualifiedAwards, creationProcessTypeCode);
+        performAwardValidation(awards, invalidGroup, qualifiedAwards, creationProcessType);
 
         if (!MapUtils.isEmpty(invalidGroup)) {
             if (StringUtils.isNotBlank(errOutputFile)) {
                 writeErrorToFile(invalidGroup, errOutputFile);
             }
-            storeValidationErrors(invalidGroup, contractsGrantsInvoiceDocumentErrorLogs, creationProcessTypeCode);
+            storeValidationErrors(invalidGroup, contractsGrantsInvoiceDocumentErrorLogs, creationProcessType.getCode());
         }
 
         return qualifiedAwards;
     }
     
+    /*
+     * CUMod: KFSPTS-15655 Additional logging
+     * 
+     * CUMod: KFSPTS-14970 Invoking modification getCuVerifyBillingFrequencyService().validateBillingFrequency
+     */
     @Override
     protected void performAwardValidation(Collection<ContractsAndGrantsBillingAward> awards,
             Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
-            List<ContractsAndGrantsBillingAward> qualifiedAwards, String creationProcessTypeCode) {
+            List<ContractsAndGrantsBillingAward> qualifiedAwards, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         Set<ContractsAndGrantsBillingAward> awardsWithDuplicateAccounts = findAwardsWithDuplicateAccounts(awards);
 
         for (ContractsAndGrantsBillingAward award : awards) {
@@ -568,21 +624,21 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                         ArKeyConstants.CGINVOICE_CREATION_AWARD_EXCLUDED_FROM_INVOICING));
             } else {
                 if (awardsWithDuplicateAccounts.contains(award)) {
-                        errorList.add(configurationService.getPropertyValueAsString(
-                                ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
+                    errorList.add(configurationService.getPropertyValueAsString(
+                            ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
                 }
-                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award) &&
-                        !ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC.getCode()
-                                .equals(creationProcessTypeCode)) {
+                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award)
+                        && ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC != creationProcessType) {
                     errorList.add(configurationService.getPropertyValueAsString(
                             ArKeyConstants.CGINVOICE_CREATION_AWARD_LOCB_BILLING_FREQUENCY));
                 } else {
                     if (award.getAwardBeginningDate() != null) {
                         if (award.getBillingFrequencyCode() != null
                                 && getContractsGrantsBillingAwardVerificationService()
-                                .isValueOfBillingFrequencyValid(award)) {
-                            if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award)) {
-                                validateAward(errorList, award);
+                                    .isValueOfBillingFrequencyValid(award)) {
+                            boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
+                            if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award, checkGracePeriod)) {
+                                validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
                                         ArKeyConstants.CGINVOICE_CREATION_AWARD_INVALID_BILLING_PERIOD));
@@ -597,19 +653,25 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                     }
                 }
             }
+
             if (errorList.size() > 0) {
                 invalidGroup.put(award, errorList);
             } else {
                 qualifiedAwards.add(award);
             }
-
         }
     }
 
+    /*
+     * CUMod: KFSPTS-14929
+     */
     public CuContractsGrantsInvoiceDocumentService getCuContractsGrantsInvoiceDocumentService() {
         return cuContractsGrantsInvoiceDocumentService;
     }
     
+    /*
+     * CUMod: KFSPTS-14929
+     */
     public void setCuContractsGrantsInvoiceDocumentService(
             CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService) {
         this.cuContractsGrantsInvoiceDocumentService = cuContractsGrantsInvoiceDocumentService;
