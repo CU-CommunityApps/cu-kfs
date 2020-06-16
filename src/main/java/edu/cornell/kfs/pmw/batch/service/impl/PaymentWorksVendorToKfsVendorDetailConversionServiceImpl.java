@@ -435,7 +435,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return vendorContactPhoneNumber;
     }
     
-    private int determineTaxRuleToUseForDataPopulation(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
+    protected int determineTaxRuleToUseForDataPopulation(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
         if (isIndividualUsSsn(pmwVendor, pmwVendorFipsTaxCountryCode)) {
             return PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_US_SSN;
         }
