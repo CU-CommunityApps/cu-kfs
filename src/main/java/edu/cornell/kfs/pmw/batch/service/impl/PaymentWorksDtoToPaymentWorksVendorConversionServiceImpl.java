@@ -13,10 +13,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.web.format.FormatException;
 
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.pdp.service.impl.exception.FormatException;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
@@ -26,6 +26,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksAddressBaseDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAccountDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAddressDTO;
@@ -42,6 +43,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
+    protected PaymentWorksFormModeService paymentWorksFormModeService;
     
     @Override
     public PaymentWorksVendor createPaymentWorksVendorFromPaymentWorksNewVendorRequestDetailDTO(PaymentWorksNewVendorRequestDetailDTO pmwNewVendorRequestDetailDTO, PaymentWorksNewVendorRequestsBatchReportData reportData) {
@@ -197,23 +199,47 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
 
     private void processEachPaymentWorksCustomFieldReceived(PaymentWorksVendor stgNewVendor, PaymentWorksNewVendorRequestDetailDTO pmwNewVendorDetailDTO, List<String> customFieldErrors) {
-        Map<String, String> customFieldsDTOMap = createCustomFieldIdCustomFieldValueMapForReceivedPmwVendorData(pmwNewVendorDetailDTO.getCustom_fields());
-        for (String paymentWorksCustomFieldId : customFieldsDTOMap.keySet()) {
-            String customFieldValueFromPaymentWorks = customFieldsDTOMap.get(paymentWorksCustomFieldId);
-            PaymentWorksFieldMapping fieldMapping = findPaymentWorksFieldMapping(paymentWorksCustomFieldId);
+        for (PaymentWorksCustomFieldDTO customField : pmwNewVendorDetailDTO.getCustom_fields().getCustom_fields()) {
+            String customFieldId = customField.getField_id();
+            PaymentWorksFieldMapping fieldMapping = findPaymentWorksFieldMapping(customFieldId);
             if (ObjectUtils.isNotNull(fieldMapping)) {
-                setPaymentWorksVendorCustomFieldAttributeToReceivedValue(stgNewVendor, paymentWorksCustomFieldId, fieldMapping, customFieldsDTOMap, customFieldErrors);
-            } 
-            else {
+                String customFieldValue = findCustomFieldValue(customField, fieldMapping);
+                setPaymentWorksVendorCustomFieldAttributeToReceivedValue(stgNewVendor, customFieldId, customFieldValue, fieldMapping, customFieldErrors);
+            } else {
                 stgNewVendor.setCustomFieldConversionErrors(true);
-                customFieldErrors.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_REQUEST_CUSTOM_FIELD_MISSING_ERROR_MESSAGE), paymentWorksCustomFieldId));
-                LOG.error("processEachPaymentWorksCustomFieldReceived: Unable to find KFS staging table column for PaymentWorks custom field '" + paymentWorksCustomFieldId + "'");
+                customFieldErrors.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(
+                        PaymentWorksKeyConstants.NEW_VENDOR_REQUEST_CUSTOM_FIELD_MISSING_ERROR_MESSAGE), customFieldId));
+                LOG.error("processEachPaymentWorksCustomFieldReceived: Unable to find KFS staging table column for PaymentWorks custom field '" + 
+                        customFieldId + "'");
             }
         }
     }
+
+    protected String findCustomFieldValue(PaymentWorksCustomFieldDTO customField, PaymentWorksFieldMapping fieldMapping) {
+        String customFieldValue;
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            customFieldValue = customField.getField_value();
+        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            customFieldValue = getValueOutOfPaymentWorksCustomFieldDTO(customField, fieldMapping);
+        } else {
+            throw new IllegalArgumentException("Unknown form processing mode.");
+        }
+        return customFieldValue;
+    }
     
-    private void setPaymentWorksVendorCustomFieldAttributeToReceivedValue(PaymentWorksVendor stgNewVendor, String paymentWorksCustomFieldId, PaymentWorksFieldMapping fieldMapping, Map<String, String> customFieldsDTOMap, List<String> customFieldErrors) {
-        Object propertyValueForSetter = convertStringValueToObjectForPropertySetting(customFieldsDTOMap.get(paymentWorksCustomFieldId));
+    protected String getValueOutOfPaymentWorksCustomFieldDTO(PaymentWorksCustomFieldDTO dto, PaymentWorksFieldMapping fieldMapping) {
+        if (StringUtils.equalsIgnoreCase(fieldMapping.getCustomAttributeValueToUse(), PaymentWorksConstants.CustomAttributeValueToUse.FILE)) {
+            return dto.getFile();
+        } else if (StringUtils.equalsIgnoreCase(fieldMapping.getCustomAttributeValueToUse(), PaymentWorksConstants.CustomAttributeValueToUse.FIELD_VALUE)) {
+            return dto.getField_value();
+        } else {
+            throw new IllegalArgumentException("The custom attrbute value to use is not valid: " + fieldMapping.getCustomAttributeValueToUse());
+        }
+    }
+    
+    private void setPaymentWorksVendorCustomFieldAttributeToReceivedValue(PaymentWorksVendor stgNewVendor, String paymentWorksCustomFieldId, String customFieldValue, 
+            PaymentWorksFieldMapping fieldMapping, List<String> customFieldErrors) {
+        Object propertyValueForSetter = convertStringValueToObjectForPropertySetting(customFieldValue);
         if (ObjectUtils.isNotNull(propertyValueForSetter)) {
             try {
                 ObjectUtils.setObjectProperty(stgNewVendor, fieldMapping.getKfsPaymentWorksStagingTableColumn(), propertyValueForSetter);
@@ -271,5 +297,9 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
+        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 }

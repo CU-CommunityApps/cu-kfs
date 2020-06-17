@@ -15,6 +15,7 @@
                 <ref bean="PaymentWorksFieldMapping-paymentWorksFieldId" />
                 <ref bean="PaymentWorksFieldMapping-paymentWorksFieldLabel" />
                 <ref bean="PaymentWorksFieldMapping-kfsPaymentWorksStagingTableColumn" />
+                <ref bean="PaymentWorksFieldMapping-customAttributeValueToUse" />
             </list>
         </property>
     </bean>
@@ -26,6 +27,7 @@
         <property name="shortLabel" value="Id" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="10" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextControlDefinition" p:size="12" />
         </property>
@@ -38,6 +40,7 @@
         <property name="shortLabel" value="PMW Field Id" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="36" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextareaControlDefinition" p:rows="4" p:cols="38" />
         </property>
@@ -50,6 +53,7 @@
         <property name="shortLabel" value="PMW Field Label" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="200" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextareaControlDefinition" p:rows="4" p:cols="50" />
         </property>
@@ -62,11 +66,30 @@
         <property name="shortLabel" value="KFS Stg Table Col" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="200" />
+        <property name="required" value="true" />
         <property name="control">
             <bean parent="TextareaControlDefinition" p:rows="4" p:cols="50" />
         </property>
     </bean>
-
+    
+    <bean id="PaymentWorksFieldMapping-customAttributeValueToUse" parent="PaymentWorksFieldMapping-customAttributeValueToUse-parentBean" />
+    <bean id="PaymentWorksFieldMapping-customAttributeValueToUse-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="customAttributeValueToUse" />
+        <property name="label" value="Custom Attribute XML field to use" />
+        <property name="shortLabel" value="XML Field to use" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="25" />
+        <property name="required" value="true" />
+        <property name="control">
+			<bean parent="SelectControlDefinition"
+				p:valuesFinder-ref="paymentWorksCustomAttributeValueToUseValuesFinder"
+				p:includeKeyInLabel="false" />
+		</property>
+    </bean>
+    
+    <bean id="paymentWorksCustomAttributeValueToUseValuesFinder" 
+    	class="edu.cornell.kfs.pmw.batch.businessobject.options.PaymentWorksCustomAttributeValueToUseValuesFinder"/>
+    
     <bean id="PaymentWorksFieldMapping-lookupDefinition" parent="PaymentWorksFieldMapping-lookupDefinition-parentBean" />
     <bean id="PaymentWorksFieldMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="PaymentWorks Field Mapping Lookup" />
@@ -85,6 +108,7 @@
                 <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldId" />
                 <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldLabel" />
                 <bean parent="FieldDefinition" p:attributeName="kfsPaymentWorksStagingTableColumn" />
+                <bean parent="FieldDefinition" p:attributeName="customAttributeValueToUse" />
             </list>
         </property>
         <property name="resultFields">
@@ -93,6 +117,7 @@
                 <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldId" />
                 <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldLabel" />
                 <bean parent="FieldDefinition" p:attributeName="kfsPaymentWorksStagingTableColumn" />
+                <bean parent="FieldDefinition" p:attributeName="customAttributeValueToUse" />
             </list>
         </property>
     </bean>

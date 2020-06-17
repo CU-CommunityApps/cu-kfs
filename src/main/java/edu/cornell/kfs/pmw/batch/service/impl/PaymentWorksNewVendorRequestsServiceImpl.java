@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
@@ -48,6 +50,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     protected PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
     protected PaymentWorksIsoFipsCountryDao paymentWorksIsoFipsCountryDao;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
+    protected PaymentWorksFormModeService paymentWorksFormModeService;
     
     protected Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap = null; 
     protected Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap = null;
@@ -175,16 +178,36 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         allValidationPassed = validateVendorType(stgNewVendorRequestDetailToProcess.getVendorType(), errorMessages) && allValidationPassed;
         
         allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getMbeCertificationExpirationDate(), 
-                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), errorMessages) 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), 
+                PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY, errorMessages) 
                 && allValidationPassed;
         
         allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getWbeCertificationExpirationDate(), 
-                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION), errorMessages) 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION), 
+                PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY, errorMessages) 
                 && allValidationPassed;
         
         allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), 
-                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages) 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), 
+                PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY, errorMessages) 
                 && allValidationPassed;
+        
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getDateOfBirth())) {
+                allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getDateOfBirth(), 
+                        getConfigurationService().getPropertyValueAsString(
+                                PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION), 
+                        PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_YYYY_SLASH_MM_SLASH_DD, errorMessages) 
+                        && allValidationPassed;
+            }
+            if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getW8SignedDate())) {
+                allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getW8SignedDate(), 
+                        getConfigurationService().getPropertyValueAsString(
+                                PaymentWorksKeyConstants.ERROR_W8_SIGNED_DATE_DESCRIPTION),
+                        PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_YYYY_SLASH_MM_SLASH_DD, errorMessages) 
+                        && allValidationPassed;
+            }
+        }
         
         return allValidationPassed;
     }
@@ -209,10 +232,10 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
     }
     
-    private boolean enteredDateIsFormattedProperly(String dateToValidate, String dateDescriptionForErrorMessage, List<String> errorMessages) {
+    protected boolean enteredDateIsFormattedProperly(String dateToValidate, String dateDescriptionForErrorMessage, Pattern datePattern, List<String> errorMessages) {
         boolean dateIsFormattedCorrectly = true;
         if (ObjectUtils.isNotNull(dateToValidate)) {
-            if (!PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY.matcher(dateToValidate).matches()) {
+            if (!datePattern.matcher(dateToValidate).matches()) {
                 errorMessages.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_DATE_IS_NOT_FORMATTED_CORRECTLY), dateDescriptionForErrorMessage, dateToValidate));
                 dateIsFormattedCorrectly = false;
             }
@@ -500,6 +523,10 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
 
     public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
         this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
+    }
+
+    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
+        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 
 }

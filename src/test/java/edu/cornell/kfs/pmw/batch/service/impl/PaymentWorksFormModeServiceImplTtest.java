@@ -57,6 +57,20 @@ class PaymentWorksFormModeServiceImplTtest {
         assertTrue("Should have caught an exception above", false);
     }
     
+    @Test
+    void testFormModeDescriptionLegacy() {
+        paymentWorksFormModeServiceImpl.setParameterService(buildMockParameterService(
+                StringUtils.lowerCase(PaymentWorksPropertiesConstants.PaymentWorksFromModes.LEGACY_FORM_MODE)));
+        assertEquals("LEGACY", paymentWorksFormModeServiceImpl.getFormModeDescription());
+    }
+    
+    @Test
+    void testFormModeDescriptionForeign() {
+        paymentWorksFormModeServiceImpl.setParameterService(buildMockParameterService(
+                StringUtils.lowerCase(PaymentWorksPropertiesConstants.PaymentWorksFromModes.FOREIGN_FORM_MODE)));
+        assertEquals("FOREIGN", paymentWorksFormModeServiceImpl.getFormModeDescription());
+    }
+    
     private ParameterService buildMockParameterService(String formMode) {
         ParameterService service = Mockito.mock(ParameterService.class);
         Mockito.when(service.getParameterValueAsString(PaymentWorksConstants.PAYMENTWORKS_NAMESPACE_CODE, 

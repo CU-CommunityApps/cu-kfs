@@ -22,6 +22,11 @@ public class PaymentWorksFormModeServiceImpl implements PaymentWorksFormModeServ
         return FormMode.findFormMode(getFormModePerameterValue()).useLegacyVendorForm;
     }
     
+    @Override
+    public String getFormModeDescription() {
+        return FormMode.findFormMode(getFormModePerameterValue()).name();
+    }
+    
     protected String getFormModePerameterValue() {
         return parameterService.getParameterValueAsString(PaymentWorksConstants.PAYMENTWORKS_NAMESPACE_CODE, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, PaymentWorksParameterConstants.PAYMENTWORKS_FORM_PROCESSING_MODE);

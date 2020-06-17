@@ -5,5 +5,7 @@ public interface PaymentWorksFormModeService {
     boolean shouldUseForeignFormProcessingMode();
     
     boolean shouldUseLegacyFormProcessingMode();
+    
+    String getFormModeDescription();
 
 }
