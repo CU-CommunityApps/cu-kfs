@@ -14,12 +14,14 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,6 +34,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Path("api")
+@CrossOrigin
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CuCapAssetApiResource {
@@ -47,6 +50,12 @@ public class CuCapAssetApiResource {
 
     @Context
     protected HttpServletResponse servletResponse;
+
+    @OPTIONS
+    @Path("conditions")
+    public Response options(@Context HttpHeaders headers) {
+        return Response.ok(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_KFS_API_DESCRIPTION).build();
+    }
 
     @GET
     public Response describeCapAssetApiResource() {

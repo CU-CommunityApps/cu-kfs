@@ -3,7 +3,6 @@ package edu.cornell.kfs.module.cam.web.filter;
 import com.google.gson.Gson;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
-import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import javax.servlet.Filter;
@@ -26,7 +25,12 @@ public class CuCapAssetServerAuthFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        this.checkAuthorization((HttpServletRequest) request, (HttpServletResponse) response, chain);
+        HttpServletResponse alteredResponse = (HttpServletResponse) response;
+        alteredResponse.setHeader("Access-Control-Allow-Origin", "*");
+        alteredResponse.setHeader("Access-Control-Allow-Credentials", "true");
+        alteredResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, HEAD, OPTIONS");
+        alteredResponse.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+        this.checkAuthorization((HttpServletRequest) request, alteredResponse, chain);
     }
 
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -39,11 +43,13 @@ public class CuCapAssetServerAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
-                CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
-        String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
-        //todo switch to verify Cognito User Pool Key with public key
-        return !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
+        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key
+        return true;
+        //        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
+        //                CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
+        //        String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
+        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key
+        //        return !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
     }
 
     @Override
