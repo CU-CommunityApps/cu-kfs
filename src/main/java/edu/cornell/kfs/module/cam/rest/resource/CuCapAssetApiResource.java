@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -48,12 +47,6 @@ public class CuCapAssetApiResource {
 
     @Context
     protected HttpServletResponse servletResponse;
-
-    @OPTIONS
-    @Path("conditions")
-    public Response options(@Context HttpHeaders headers) {
-        return Response.ok(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_KFS_API_DESCRIPTION).build();
-    }
 
     @GET
     public Response describeCapAssetApiResource() {
