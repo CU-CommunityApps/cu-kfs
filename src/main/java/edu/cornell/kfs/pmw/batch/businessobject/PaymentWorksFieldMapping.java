@@ -11,6 +11,7 @@ public class PaymentWorksFieldMapping extends PersistableBusinessObjectBase impl
     private String paymentWorksFieldId;
     private String paymentWorksFieldLabel;
     private String kfsPaymentWorksStagingTableColumn;
+    private String customAttributeValueToUse;
 
     public long getPaymentWorksFieldMappingId() {
         return paymentWorksFieldMappingId;
@@ -42,6 +43,14 @@ public class PaymentWorksFieldMapping extends PersistableBusinessObjectBase impl
 
     public void setKfsPaymentWorksStagingTableColumn(String kfsPaymentWorksStagingTableColumn) {
         this.kfsPaymentWorksStagingTableColumn = kfsPaymentWorksStagingTableColumn;
+    }
+
+    public String getCustomAttributeValueToUse() {
+        return customAttributeValueToUse;
+    }
+
+    public void setCustomAttributeValueToUse(String customAttributeValueToUse) {
+        this.customAttributeValueToUse = customAttributeValueToUse;
     }
 
 }
