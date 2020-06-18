@@ -27,8 +27,6 @@ public class CuCapAssetServerAuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse alteredResponse = (HttpServletResponse) response;
         alteredResponse.setHeader("Access-Control-Allow-Origin", "*");
-        alteredResponse.setHeader("Access-Control-Allow-Credentials", "true");
-        alteredResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, HEAD, OPTIONS");
         alteredResponse.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
         this.checkAuthorization((HttpServletRequest) request, alteredResponse, chain);
     }
