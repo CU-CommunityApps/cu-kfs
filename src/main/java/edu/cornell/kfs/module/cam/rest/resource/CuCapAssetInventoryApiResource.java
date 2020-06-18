@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.cam.rest.resource;
 
 import com.google.gson.Gson;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
-import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetDao;
+import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,12 +34,12 @@ import java.util.stream.Collectors;
 @Path("api")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class CuCapAssetApiResource {
+public class CuCapAssetInventoryApiResource {
 
-    private static final Logger LOG = LogManager.getLogger(CuCapAssetApiResource.class);
+    private static final Logger LOG = LogManager.getLogger(CuCapAssetInventoryApiResource.class);
 
     private LookupDao lookupDao;
-    private CuCapAssetDao cuCapAssetDao;
+    private CuCapAssetInventoryDao cuCapAssetInventoryDao;
     private Gson gson = new Gson();
 
     @Context
@@ -59,7 +59,7 @@ public class CuCapAssetApiResource {
         try {
             String queryName = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_NAME);
             String queryCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
-            List<Building> buildings = getCuCapAssetDao().getBuildings(campusCode, queryCode, queryName);
+            List<Building> buildings = getCuCapAssetInventoryDao().getBuildings(campusCode, queryCode, queryName);
             List<Properties> buildingsSerialized = buildings.stream().map(b -> getBuildingProperties(b)).collect(Collectors.toList());
             return Response.ok(gson.toJson(buildingsSerialized)).build();
         } catch (Exception ex) {
@@ -74,7 +74,7 @@ public class CuCapAssetApiResource {
                              @PathParam(CuCamsConstants.CapAssetApi.BUILDING_CODE_PARAMETER) String buildingCode,
                              @Context HttpHeaders headers) {
         try {
-            List<Room> rooms = getCuCapAssetDao().getBuildingRooms(campusCode, buildingCode);
+            List<Room> rooms = getCuCapAssetInventoryDao().getBuildingRooms(campusCode, buildingCode);
             List<String> buildingsSerialized = rooms.stream().map(r -> r.getBuildingRoomNumber()).collect(Collectors.toList());
             return Response.ok(gson.toJson(buildingsSerialized)).build();
         } catch (Exception ex) {
@@ -87,7 +87,7 @@ public class CuCapAssetApiResource {
     @Path("conditions")
     public Response getAssetConditions(@Context HttpHeaders headers) {
         try {
-            List<AssetCondition> conditions = getCuCapAssetDao().getAssetConditions();
+            List<AssetCondition> conditions = getCuCapAssetInventoryDao().getAssetConditions();
             List<String> conditionsSerialized = conditions.stream().map(c -> c.getAssetConditionName()).collect(Collectors.toList());
             return Response.ok(gson.toJson(conditionsSerialized)).build();
         } catch (Exception ex) {
@@ -100,7 +100,7 @@ public class CuCapAssetApiResource {
     @Path("asset/{assetTag}")
     public Response getAsset(@PathParam(CuCamsConstants.CapAssetApi.ASSET_TAG_PARAMETER) String assetTag, @Context HttpHeaders headers) {
         try {
-            Asset asset = getCuCapAssetDao().getAssetByTagNumber(assetTag);
+            Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTag);
             if (ObjectUtils.isNull(asset)) {
                 return respondNotFound();
             }
@@ -162,11 +162,11 @@ public class CuCapAssetApiResource {
         return lookupDao;
     }
 
-    private CuCapAssetDao getCuCapAssetDao() {
-        if (ObjectUtils.isNull(cuCapAssetDao)) {
-            cuCapAssetDao = SpringContext.getBean(CuCapAssetDao.class);
+    private CuCapAssetInventoryDao getCuCapAssetInventoryDao() {
+        if (ObjectUtils.isNull(cuCapAssetInventoryDao)) {
+            cuCapAssetInventoryDao = SpringContext.getBean(CuCapAssetInventoryDao.class);
         }
-        return cuCapAssetDao;
+        return cuCapAssetInventoryDao;
     }
 
 }

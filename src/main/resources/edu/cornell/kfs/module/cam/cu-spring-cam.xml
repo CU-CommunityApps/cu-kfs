@@ -53,7 +53,7 @@
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 	</bean>
 
-    <bean id="capAssetDao" parent="platformAwareDao"
-          class="edu.cornell.kfs.module.cam.dataaccess.impl.CuCapAssetDaoOjb"/>
+    <bean id="capAssetInventoryDao" parent="platformAwareDao"
+          class="edu.cornell.kfs.module.cam.dataaccess.impl.CuCapAssetInventoryDaoOjb"/>
 
 </beans>

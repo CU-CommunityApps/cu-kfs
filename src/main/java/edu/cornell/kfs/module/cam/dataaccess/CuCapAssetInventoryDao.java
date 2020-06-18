@@ -7,7 +7,7 @@ import org.kuali.kfs.sys.businessobject.Room;
 
 import java.util.List;
 
-public interface CuCapAssetDao {
+public interface CuCapAssetInventoryDao {
     List<Building> getBuildings(String campusCode, String queryCode, String queryName);
 
     List<AssetCondition> getAssetConditions();

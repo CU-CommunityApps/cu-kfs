@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.cam.dataaccess.impl;
 
 import edu.cornell.kfs.module.cam.CuCamsConstants;
-import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetDao;
+import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,9 +17,9 @@ import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb
 
 import java.util.List;
 
-public class CuCapAssetDaoOjb extends PlatformAwareDaoBaseOjb implements CuCapAssetDao {
+public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implements CuCapAssetInventoryDao {
 
-    private static final Logger LOG = LogManager.getLogger(CuCapAssetDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger(CuCapAssetInventoryDaoOjb.class);
 
     public List<Building> getBuildings(String campusCode, String queryCode, String queryName) {
         Criteria criteria = new Criteria();

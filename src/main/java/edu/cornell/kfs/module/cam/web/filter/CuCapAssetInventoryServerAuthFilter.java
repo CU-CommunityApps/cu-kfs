@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.cam.web.filter;
 
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -15,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class CuCapAssetServerAuthFilter implements Filter {
+public class CuCapAssetInventoryServerAuthFilter implements Filter {
+    private static final Logger LOG = LogManager.getLogger(CuCapAssetInventoryServerAuthFilter.class);
 
     private WebServiceCredentialService webServiceCredentialService;
 
@@ -33,6 +36,7 @@ public class CuCapAssetServerAuthFilter implements Filter {
 
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (isAuthorized(request)) {
+            LOG.info("CapAssetInventoryApi authorized " + request.getMethod() + " " + request.getPathInfo());
             chain.doFilter(request, response);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
