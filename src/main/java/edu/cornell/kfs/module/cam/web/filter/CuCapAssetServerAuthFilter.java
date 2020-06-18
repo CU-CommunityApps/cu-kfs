@@ -43,11 +43,6 @@ public class CuCapAssetServerAuthFilter implements Filter {
     private boolean isAuthorized(HttpServletRequest request) {
         //todo switch to verify Cognito User Pool Key in request Header with Cognito public key
         return true;
-        //        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
-        //                CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
-        //        String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
-        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key
-        //        return !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
     }
 
     @Override
