@@ -103,7 +103,7 @@
     </filter>
 
     <filter>
-        <filter-name>CuCapAssetServerAuthFilter</filter-name>
+        <filter-name>CuCapAssetInventoryServerAuthFilter</filter-name>
         <filter-class>edu.cornell.kfs.module.cam.web.filter.CuCapAssetInventoryServerAuthFilter</filter-class>
     </filter>
 
@@ -191,7 +191,7 @@
     </filter-mapping>
 
     <filter-mapping>
-        <filter-name>CuCapAssetServerAuthFilter</filter-name>
+        <filter-name>CuCapAssetInventoryServerAuthFilter</filter-name>
         <url-pattern>/ws/capasset/*</url-pattern>
     </filter-mapping>
 

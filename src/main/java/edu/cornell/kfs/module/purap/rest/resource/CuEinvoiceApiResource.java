@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -52,7 +51,6 @@ import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.dataaccess.CuEinvoiceDao;
 import edu.cornell.kfs.module.purap.dataaccess.impl.CuEinvoiceDaoOjb;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Path("api")
 @Consumes(MediaType.APPLICATION_JSON)

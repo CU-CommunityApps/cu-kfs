@@ -13,7 +13,6 @@ public class CuCamsConstants {
         public static final String BAD_REQUEST = "Invalid Request";
         public static final String CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME = "capital_asset_scanning_api_key";
         public static final String CAPITAL_ASSET_KFS_API_DESCRIPTION = "The Cornell Capital Asset website uses this resource to scan capital assets data.";
-        public static final String CAPITAL_ASSET_BAD_REQUEST = "Invalid Request";
         public static final String BUILDING_NAME = "building_name";
         public static final String BUILDING_CODE = "building_code";
         public static final String AMOUNT = "amount";

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.cam.web.filter;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
@@ -45,8 +46,11 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key
-        return true;
+        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key, below is temporary
+        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
+                CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
+        String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
+        return !StringUtils.isEmpty(correctApiKey) && !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
     }
 
     @Override
