@@ -37,6 +37,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorSupplierDiversityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
@@ -51,6 +52,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected BusinessObjectService businessObjectService;
     protected PaymentWorksFormModeService paymentWorksFormModeService;
+    protected PaymentWorksVendorSupplierDiversityService paymentWorksVendorSupplierDiversityService;
             
     @Override
     public KfsVendorDataWrapper createKfsVendorDetailFromPmwVendor(PaymentWorksVendor pmwVendor,
@@ -685,23 +687,19 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private List<VendorSupplierDiversity> buildVendorDiversities(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
         List<VendorSupplierDiversity> kfsVendorSupplierDiversities = new ArrayList<VendorSupplierDiversity>();
         if (pmwVendor.isDiverseBusiness()) {
-            List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForCheckBoxes = new ArrayList<VendorSupplierDiversity>();
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForCheckBoxes = new ArrayList<VendorSupplierDiversity>();
                 kfsVendorSupplierDiversitiesForCheckBoxes = buildVendorDiversitiesFromPmwFormCheckboxes(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForCheckBoxes);
-            } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-                kfsVendorSupplierDiversities = buildVendorDiversitiesFromPmwNewFormCheckBoxes(pmwVendor, paymentWorksToKfsDiversityMap);
-            }
-            if (!kfsVendorSupplierDiversitiesForCheckBoxes.isEmpty()){
-                kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForCheckBoxes);
-            }
-            List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForDropDowns = new ArrayList<VendorSupplierDiversity>();
-            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                if (!kfsVendorSupplierDiversitiesForCheckBoxes.isEmpty()){
+                    kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForCheckBoxes);
+                }
+                List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForDropDowns = new ArrayList<VendorSupplierDiversity>();
                 kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForDropDowns);
+                if (!kfsVendorSupplierDiversitiesForDropDowns.isEmpty()){
+                    kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForDropDowns);
+                }
             } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-                kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromNewPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap);
-            }
-            if (!kfsVendorSupplierDiversitiesForDropDowns.isEmpty()){
-                kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForDropDowns);
+                kfsVendorSupplierDiversities.addAll(paymentWorksVendorSupplierDiversityService.buildSuppplierDivsersityListFromPaymentWorksVendor(pmwVendor));
             }
         }
         return kfsVendorSupplierDiversities;
@@ -917,6 +915,10 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
 
     public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
         this.paymentWorksFormModeService = paymentWorksFormModeService;
+    }
+
+    public void setPaymentWorksVendorSupplierDiversityService(PaymentWorksVendorSupplierDiversityService paymentWorksVendorSupplierDiversityService) {
+        this.paymentWorksVendorSupplierDiversityService = paymentWorksVendorSupplierDiversityService;
     }
 
 }

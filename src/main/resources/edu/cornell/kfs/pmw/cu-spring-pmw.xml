@@ -110,6 +110,12 @@
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService" />
+        <property name="paymentWorksVendorSupplierDiversityService" ref="paymentWorksVendorSupplierDiversityService" />
+    </bean>
+    
+    <bean id="paymentWorksVendorSupplierDiversityService" parent="paymentWorksVendorSupplierDiversityService-parentBean" />
+    <bean id="paymentWorksVendorSupplierDiversityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorSupplierDiversityServiceImpl" abstract="true">
+        <property name="kfsSupplierDiversityDao" ref="kfsSupplierDiversityDao" />
     </bean>
     
     <bean id="paymentWorksFormModeService" parent="paymentWorksFormModeService-parentBean" />
