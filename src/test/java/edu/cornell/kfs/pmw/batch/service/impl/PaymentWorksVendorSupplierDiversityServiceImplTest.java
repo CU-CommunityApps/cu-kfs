@@ -3,9 +3,7 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -13,7 +11,6 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.mockito.Mockito;
 

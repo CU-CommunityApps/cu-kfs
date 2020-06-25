@@ -4,17 +4,13 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 
 import edu.cornell.kfs.pmw.batch.businessobject.KfsToPMWSupplierDiversityDTO;
