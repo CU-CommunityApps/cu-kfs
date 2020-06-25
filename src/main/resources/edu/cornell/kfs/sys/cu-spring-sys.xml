@@ -370,5 +370,11 @@
           p:businessObjectService-ref="businessObjectService"
           p:parameterService-ref="parameterService"> 
     </bean>
-
+    
+    <bean id="excludeSubmitterSeparationOfDutiesRoleTypeService"
+          parent="excludeSubmitterSeparationOfDutiesRoleTypeService-parentBean"/>
+    <bean id="excludeSubmitterSeparationOfDutiesRoleTypeService-parentBean" abstract="true"
+          class="edu.cornell.kfs.sys.identity.ExcludeSubmitterSeparationOfDutiesRoleTypeService"
+          p:workflowDocumentService-ref="rice.kew.workflowDocumentService"/>
+    <import resource="cu-spring-sys-bus-exports.xml"/>
 </beans>
