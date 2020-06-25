@@ -1,9 +1,13 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +17,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 
+import edu.cornell.kfs.pmw.batch.businessobject.KfsToPMWSupplierDiversityDTO;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.KfsSupplierDiversityDao;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorSupplierDiversityService;
@@ -25,32 +30,29 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
 
     @Override
     public List<VendorSupplierDiversity> buildSuppplierDivsersityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor) {
-        Map<String, SupplierDiversity> diversityMap = kfsSupplierDiversityDao.buildPmwToKfsSupplierDiversityMap();
-        
         List<VendorSupplierDiversity> diversities = new ArrayList<VendorSupplierDiversity>();
         List<String> vendorDiversityCodesAlreadyAdded = new ArrayList<String>();
-        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getFederalDivsersityClassifications(), diversityMap, 
+        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getFederalDivsersityClassifications(), 
+                kfsSupplierDiversityDao.buildPmwToKfsFederalSupplierDiversityMapForForeignForm(), 
                 vendorDiversityCodesAlreadyAdded));
-        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getStateDivsersityClassifications(), diversityMap, 
+        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getStateDivsersityClassifications(), 
+                kfsSupplierDiversityDao.buildPmwToKfsNewYorkSupplierDiversityMapForForeignForm(), 
                 vendorDiversityCodesAlreadyAdded));
-        
         return diversities;
     }
     
-    protected List<VendorSupplierDiversity> buildDiversityListFromClassifications(String classifications, Map<String, SupplierDiversity> diversityMap, 
+    protected List<VendorSupplierDiversity> buildDiversityListFromClassifications(String classifications, List<KfsToPMWSupplierDiversityDTO> diversityMap, 
             List<String> vendorDiversityCodesAlreadyAdded) {
         List<VendorSupplierDiversity> diversities = new ArrayList<VendorSupplierDiversity>();
         if (StringUtils.isNotBlank(classifications)) {
             for (String diversityClass : StringUtils.split(classifications, KFSConstants.COMMA)) {
-                SupplierDiversity diversity = findSupplierDiversityInMap(StringUtils.trim(diversityClass), diversityMap);
-                if (ObjectUtils.isNotNull(diversity)) {
-                    if (!vendorDiversityCodesAlreadyAdded.contains(diversity.getVendorSupplierDiversityCode())) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("buildDiversityListFromClassifications, found a classification: " + diversityClass + 
-                                    " diversity.getVendorSupplierDiversityCode(): '" + diversity.getVendorSupplierDiversityCode() + "'");
+                List<KfsToPMWSupplierDiversityDTO> diversityList = findSupplierDiversityInMap(StringUtils.trim(diversityClass), diversityMap);
+                if (CollectionUtils.isNotEmpty(diversityList)) {
+                    for (KfsToPMWSupplierDiversityDTO dto : diversityList) {
+                        if (!vendorDiversityCodesAlreadyAdded.contains(dto.getKfsSuppliertDiversityCode())) {
+                            vendorDiversityCodesAlreadyAdded.add(dto.getKfsSuppliertDiversityCode());
+                            diversities.add(buildVendorSupplierDiversity(dto.getKfsSuppliertDiversityCode()));
                         }
-                        vendorDiversityCodesAlreadyAdded.add(diversity.getVendorSupplierDiversityCode());
-                        diversities.add(buildVendorSupplierDiversity(diversity.getVendorSupplierDiversityCode()));
                     }
                 } else {
                     LOG.error("buildDiversityListFromClassifications, no active supplier diversity for divsersity classification " + diversityClass);
@@ -62,12 +64,10 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
         return diversities;
     }
     
-    protected SupplierDiversity findSupplierDiversityInMap(String classification, Map<String, SupplierDiversity> diversityMap) {
-        SupplierDiversity diversity = null;
-        if (MapUtils.isNotEmpty(diversityMap) && diversityMap.containsKey(classification)) {
-            diversity = diversityMap.get(classification);
-        }
-        return diversity;
+    protected List<KfsToPMWSupplierDiversityDTO> findSupplierDiversityInMap(String classification, List<KfsToPMWSupplierDiversityDTO> diversityList) {
+        return diversityList.stream()
+                .filter(dto -> StringUtils.equalsIgnoreCase(classification, dto.getPaymentWorksSuppliertDiversityDescription()))
+                .collect(Collectors.toList());
         
     }
     
@@ -77,6 +77,13 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
         vendorSupplierDiversity.setActive(true);
         CuVendorSupplierDiversityExtension diversityExtension = new CuVendorSupplierDiversityExtension();
         diversityExtension.setVendorSupplierDiversityCode(vendorSupplierDiversityCode);
+        /*
+         * @todo do something real here
+         */
+        Date vendorSupplierDiversityExpirationDate = new Date(Calendar.getInstance().getTimeInMillis());
+        vendorSupplierDiversityExpirationDate.setYear(vendorSupplierDiversityExpirationDate.getYear() + 1);
+        diversityExtension.setVendorSupplierDiversityExpirationDate(vendorSupplierDiversityExpirationDate);
+        
         vendorSupplierDiversity.setExtension(diversityExtension);
         return vendorSupplierDiversity;
     }
