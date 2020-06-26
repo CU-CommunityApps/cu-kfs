@@ -2,7 +2,9 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -133,6 +135,25 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
         assertEquals(EIGHTA_CODE, diversity.getVendorSupplierDiversityCode());
         CuVendorSupplierDiversityExtension diversityExtension = (CuVendorSupplierDiversityExtension) diversity.getExtension();
         assertEquals(EIGHTA_CODE, diversityExtension.getVendorSupplierDiversityCode());
+    }
+    
+    @Test
+    public void testBuildSuppplierDivsersityListFromPaymentWorksVendorWithCaseDifference() {
+        pmwVendor.setFederalDivsersityClassifications("8(A) AFRICAN AMERICAN");
+        pmwVendor.setStateDivsersityClassifications(StringUtils.EMPTY);
+        
+        List<VendorSupplierDiversity> actualDiversities = supplierSerivce.buildSuppplierDivsersityListFromPaymentWorksVendor(pmwVendor);
+        assertEquals(1, actualDiversities.size());
+    }
+    
+    @Test
+    public void testBuildDateOneYearFromToday() {
+        Date actualDate = supplierSerivce.buildDateOneYearFromToday();
+        
+        Date expectedDate = new Date(Calendar.getInstance().getTimeInMillis());
+        expectedDate.setYear(expectedDate.getYear() + 1);
+        
+        assertEquals(expectedDate, actualDate);
     }
 
 }

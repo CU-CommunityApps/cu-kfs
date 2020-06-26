@@ -3,6 +3,7 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,21 +68,25 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
         
     }
     
-    private VendorSupplierDiversity buildVendorSupplierDiversity(String vendorSupplierDiversityCode) {
+    protected VendorSupplierDiversity buildVendorSupplierDiversity(String vendorSupplierDiversityCode) {
         VendorSupplierDiversity vendorSupplierDiversity = new VendorSupplierDiversity();
         vendorSupplierDiversity.setVendorSupplierDiversityCode(vendorSupplierDiversityCode);
         vendorSupplierDiversity.setActive(true);
+        
         CuVendorSupplierDiversityExtension diversityExtension = new CuVendorSupplierDiversityExtension();
         diversityExtension.setVendorSupplierDiversityCode(vendorSupplierDiversityCode);
-        /*
-         * @todo do something real here
-         */
-        Date vendorSupplierDiversityExpirationDate = new Date(Calendar.getInstance().getTimeInMillis());
-        vendorSupplierDiversityExpirationDate.setYear(vendorSupplierDiversityExpirationDate.getYear() + 1);
-        diversityExtension.setVendorSupplierDiversityExpirationDate(vendorSupplierDiversityExpirationDate);
+        diversityExtension.setVendorSupplierDiversityExpirationDate(buildDateOneYearFromToday());
         
         vendorSupplierDiversity.setExtension(diversityExtension);
         return vendorSupplierDiversity;
+    }
+    
+    protected Date buildDateOneYearFromToday() {
+        GregorianCalendar calendarDateWithYearAdded = new GregorianCalendar();
+        calendarDateWithYearAdded.clear();
+        calendarDateWithYearAdded.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
+        calendarDateWithYearAdded.add(GregorianCalendar.YEAR, 1);
+        return new Date(calendarDateWithYearAdded.getTimeInMillis());
     }
 
     public void setKfsSupplierDiversityDao(KfsSupplierDiversityDao kfsSupplierDiversityDao) {
