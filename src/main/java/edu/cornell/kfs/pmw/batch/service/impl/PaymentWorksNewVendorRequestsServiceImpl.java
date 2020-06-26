@@ -113,7 +113,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     }
     
     private boolean pmwNewVendorRequestProcessingIntoKfsWasSuccessful(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
-        if (getPaymentWorksVendorDataProcessingIntoKfsService().createValidateAndRouteKFSVendor(savedStgNewVendorRequestDetailToProcess, getPaymentWorksIsoToFipsCountryMap(), getPaymentWorksToKfsDiversityMap(), reportData)) { 
+        if (getPaymentWorksVendorDataProcessingIntoKfsService().createValidateAndRouteOrSaveKFSVendor(savedStgNewVendorRequestDetailToProcess, getPaymentWorksIsoToFipsCountryMap(), getPaymentWorksToKfsDiversityMap(), reportData)) { 
             updatePmwNewVendorStagingTableBasedOnSuccessfulCreateVendorProcessing(savedStgNewVendorRequestDetailToProcess);
             updatePmwNewVendorReportBasedOnSuccessfulCreateVendorProcessing(savedStgNewVendorRequestDetailToProcess, reportData);
             return true;
