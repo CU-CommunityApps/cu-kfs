@@ -67,4 +67,7 @@
         </property>
     </bean>
 
+    <bean id="documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
+          class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>
+
 </beans>

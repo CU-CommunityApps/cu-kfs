@@ -1,6 +1,6 @@
 package edu.cornell.kfs.web.filter;
 
-import edu.cornell.cynergy.service.impl.CUWebAuthAuthenticationService;
+import edu.cornell.kfs.kim.impl.identity.CUWebAuthAuthenticationService;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
