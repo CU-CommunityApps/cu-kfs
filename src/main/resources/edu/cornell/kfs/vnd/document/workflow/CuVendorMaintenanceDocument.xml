@@ -31,15 +31,12 @@
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         <role name="Submitter">
-          <!--<ruleTemplate>KualiVendorDocumentTypeTemplate</ruleTemplate>-->
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
         </role>
         <role name="Management">
-          <!--<ruleTemplate>KualiVendorDocumentTypeTemplate</ruleTemplate>-->
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
         </role>
         <role name="Initiator">
-          <!--<ruleTemplate>KualiVendorNotificationTemplate</ruleTemplate>-->
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
         </role>
         <join name="Join" />

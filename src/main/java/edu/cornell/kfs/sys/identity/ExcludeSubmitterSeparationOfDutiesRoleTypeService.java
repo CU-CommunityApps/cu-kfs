@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.identity;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.identity.ExclusionRoleTypeServiceBase;
 import org.kuali.rice.kew.api.action.ActionTaken;
@@ -33,7 +34,7 @@ public class ExcludeSubmitterSeparationOfDutiesRoleTypeService extends Exclusion
         String principalId = workflowDocumentService.getRoutedByPrincipalIdByDocumentId(documentId);
         List<ActionTaken> actionTakenDTOs = workflowDocumentService.getActionsTaken(documentId);
         for (ActionTaken actionTaken : actionTakenDTOs) {
-            if (principalId.equals(actionTaken.getPrincipalId())) {
+            if (StringUtils.equals(principalId, actionTaken.getPrincipalId())) {
                 submitterPrincipalId = principalId;
             }
         }
