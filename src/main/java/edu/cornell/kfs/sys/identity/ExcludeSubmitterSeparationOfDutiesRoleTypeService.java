@@ -28,17 +28,17 @@ public class ExcludeSubmitterSeparationOfDutiesRoleTypeService extends Exclusion
     }
 
     private String getSubmitter(String documentId) {
-        String approverOrInitiatorPrincipalId = null;
+        String submitterPrincipalId = null;
 
         String principalId = workflowDocumentService.getRoutedByPrincipalIdByDocumentId(documentId);
         List<ActionTaken> actionTakenDTOs = workflowDocumentService.getActionsTaken(documentId);
         for (ActionTaken actionTaken : actionTakenDTOs) {
             if (principalId.equals(actionTaken.getPrincipalId())) {
-                approverOrInitiatorPrincipalId = principalId;
+                submitterPrincipalId = principalId;
             }
         }
 
-        return approverOrInitiatorPrincipalId;
+        return submitterPrincipalId;
     }
 
     public void setWorkflowDocumentService(WorkflowDocumentService workflowDocumentService) {
