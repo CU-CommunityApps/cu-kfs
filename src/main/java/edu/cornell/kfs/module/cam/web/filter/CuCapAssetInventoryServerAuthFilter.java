@@ -29,10 +29,16 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse alteredResponse = (HttpServletResponse) response;
-        alteredResponse.setHeader("Access-Control-Allow-Origin", "*");
-        alteredResponse.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-        this.checkAuthorization((HttpServletRequest) request, alteredResponse, chain);
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", "DELETE, PUT, POST, GET, OPTIONS");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Authorization, Access-Control-Request-Method, Access-Control-Request-Headers, capital_asset_scanning_api_key");
+        if (httpServletRequest.getMethod().equalsIgnoreCase("options")) {
+            chain.doFilter(request, response);
+        } else {
+            this.checkAuthorization(httpServletRequest, httpServletResponse, chain);
+        }
     }
 
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -46,7 +52,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key, below is temporary
+        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key
         String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
                 CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
         String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
