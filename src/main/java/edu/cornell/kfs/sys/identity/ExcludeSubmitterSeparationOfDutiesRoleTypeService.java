@@ -3,7 +3,7 @@ package edu.cornell.kfs.sys.identity;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.identity.ExclusionRoleTypeServiceBase;
 import org.kuali.rice.kew.api.action.ActionTaken;
