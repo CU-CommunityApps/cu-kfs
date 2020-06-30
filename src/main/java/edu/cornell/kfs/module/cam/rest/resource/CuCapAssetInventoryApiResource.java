@@ -122,11 +122,11 @@ public class CuCapAssetInventoryApiResource {
         return assetProperties;
     }
 
-    private Properties getBuildingProperties(Building b) {
+    private Properties getBuildingProperties(Building buillding) {
         Properties buildingProperties = new Properties();
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CAMPUS_CODE, b.getCampusCode());
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, b.getBuildingCode());
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_NAME, b.getBuildingName());
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CAMPUS_CODE, buillding.getCampusCode());
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, buillding.getBuildingCode());
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_NAME, buillding.getBuildingName());
         return buildingProperties;
     }
 

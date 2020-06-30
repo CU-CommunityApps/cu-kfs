@@ -11,6 +11,7 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetCondition;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
@@ -25,9 +26,9 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
         Criteria criteria = new Criteria();
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_CODE_PARAMETER, campusCode);
         if (StringUtils.isNotEmpty(queryName)) {
-            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + "buildingName" + ")", "%" + queryName.toUpperCase() + "%");
+            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_NAME + ")", "%" + queryName.toUpperCase() + "%");
         } else if (StringUtils.isNotEmpty(queryCode)) {
-            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + "buildingCode" + ")", "%" + queryCode.toUpperCase() + "%");
+            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_CODE + ")", "%" + queryCode.toUpperCase() + "%");
         }
 
         Query query = QueryFactory.newQuery(Building.class, criteria);
