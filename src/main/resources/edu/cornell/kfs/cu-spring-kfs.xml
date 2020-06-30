@@ -9,6 +9,7 @@
 	
 	<bean id="rice.kew.documentProcessingQueue" p:serviceName="rice.kew.documentProcessingQueue" parent="grlBeanImporter" />
 	
+	<import resource="cu-kfs-cache-config.xml" />
 	<import resource="kim/cu-spring-kim.xml" />
 	<import resource="sys/cu-spring-sys.xml" />
 	<import resource="coa/cu-spring-coa.xml" />

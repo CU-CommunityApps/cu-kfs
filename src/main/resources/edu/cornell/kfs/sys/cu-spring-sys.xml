@@ -181,9 +181,9 @@
 				<prop key="db-url0">${edw.datasource.url}</prop>
 				<prop key="db-username0">${edw.datasource.username}</prop>
 				<prop key="db-password0">${edw.datasource.password}</prop>
-				<prop key="db-url1">${rice.datasource.url}</prop>
-				<prop key="db-username1">${rice.datasource.username}</prop>
-				<prop key="db-password1">${rice.datasource.password}</prop>
+				<prop key="db-url1">${kfs.datasource.url}</prop>
+				<prop key="db-username1">${kfs.datasource.username}</prop>
+				<prop key="db-password1">${kfs.datasource.password}</prop>
 			</props>
 		</property>
 	</bean>

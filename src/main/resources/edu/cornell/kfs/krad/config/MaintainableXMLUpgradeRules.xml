@@ -332,10 +332,6 @@
         <pattern>
             <class>org.kuali.kfs.coa.businessobject.Account</class>
             <pattern>
-                <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
-                <replacement>org.kuali.rice.kim.impl.identity.PersonImpl</replacement>
-            </pattern>
-            <pattern>
                 <match>indirectCostRcvyFinCoaCode</match>
                 <replacement/>
             </pattern>
@@ -417,41 +413,6 @@
             <pattern>
                 <match>laborBenefitRateCategoryCode</match>
                 <replacement>(MOVE_NODES_TO_PARENT)</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>org.kuali.rice.kim.impl.identity.PersonImpl</class>
-            <pattern>
-                <match>address</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>addressLine1</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>addressLine2</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>addressLine3</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>addressCityName</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>addressStateCode</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>addressPostalCode</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>addressCountryCode</match>
-                <replacement/>
             </pattern>
         </pattern>
         <!-- ==== CU Customization ==== -->
@@ -579,7 +540,15 @@
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
-                <replacement>org.kuali.rice.kim.impl.identity.PersonImpl</replacement>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.impl.identity.PersonImpl</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.identity.PersonImpl</match>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>org.kuali.kfs.fp.businessobject.WireCharge</match>
@@ -614,6 +583,10 @@
                 <replacement>org.kuali.kfs.krad.bo.AdHocRoutePerson</replacement>
             </pattern>
             <pattern>
+                <match>org.kuali.rice.krad.bo.AdHocRouteWorkgroup</match>
+                <replacement>org.kuali.kfs.krad.bo.AdHocRouteWorkgroup</replacement>
+            </pattern>
+            <pattern>
                 <match>boNotes</match>
                 <replacement>(CONVERT_LEGACY_NOTES)</replacement>
             </pattern>
@@ -633,10 +606,6 @@
         <!-- KDO-873 -->
         <pattern>
             <class>organizationOwnerAccount</class>
-            <pattern>
-                <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
-                <replacement>org.kuali.rice.kim.impl.identity.PersonImpl</replacement>
-            </pattern>
             <pattern>
                 <match>indirectCostRcvyFinCoaCode</match>
                 <replacement/>
@@ -717,6 +686,13 @@
             <pattern>
                 <match>lastUpdate</match>
                 <replacement>lastUpdatedTimestamp</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.krad.bo.AdHocRouteWorkgroup</class>
+            <pattern>
+                <match>group</match>
+                <replacement/>
             </pattern>
         </pattern>
         <!-- ==== End CU Customization ==== -->
