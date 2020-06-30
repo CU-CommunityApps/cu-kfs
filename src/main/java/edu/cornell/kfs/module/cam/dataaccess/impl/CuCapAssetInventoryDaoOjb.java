@@ -38,7 +38,7 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
     public List<Room> getBuildingRooms(String campusCode, String buildingCode) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_CODE_PARAMETER, campusCode);
-        criteria.addEqualTo("buildingCode", buildingCode);
+        criteria.addEqualTo(KFSPropertyConstants.BUILDING_CODE, buildingCode);
         Query query = QueryFactory.newQuery(Room.class, criteria);
         return (List<Room>) getPersistenceBrokerTemplate().getCollectionByQuery(query);
     }
