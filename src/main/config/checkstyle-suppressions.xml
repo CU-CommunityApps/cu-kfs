@@ -50,6 +50,8 @@
     <suppress checks=".*" files="src[\\/]test[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]resources[\\/].*" />
     <suppress checks="AvoidStaticImport" files="[\\/]src[\\/]test[\\/].*" />
+    <suppress checks="IllegalToken" files="UiDocumentServiceImpl" />
+    <suppress checks="InnerAssignment" files="IdentityArchiveServiceImpl" />
     <suppress checks="ModifiedControlVariable"
               files="ComponentServiceImpl|LookupableImpl|MaintainableXMLConversionServiceImpl|OrgReviewRoleServiceImpl|RichTable" />
     <suppress checks="NestedIfDepth"

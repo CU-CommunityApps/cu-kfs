@@ -60,7 +60,7 @@
                   p:webUILeaveFieldFunction="onblur_federalPassThroughAgencyNumber"/>
             <bean parent="MaintainableFieldDefinition" p:name="federalPassThroughAgency.fullName"
                   p:unconditionallyReadOnly="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="cfdaNumber"/>
+            <bean parent="MaintainableFieldDefinition" p:name="cfdaNumber" p:newLookup="true"/>
             <bean parent="MaintainableFieldDefinition" p:name="proposalFellowName"/>
             <bean parent="MaintainableFieldDefinition" p:name="proposalDueDate"/>
             <bean parent="MaintainableFieldDefinition" p:name="proposalRejectedDate"/>
