@@ -20,14 +20,15 @@ public class ExcludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService exten
             List<RoleMembership> roleMemberList) {
         List<RoleMembership> membershipInfos = super.getMatchingRoleMemberships(qualification, roleMemberList);
         String documentId = qualification.get(KimConstants.AttributeConstants.DOCUMENT_NUMBER);
-        String approverOrInitiator = getApproverOrInitiator(documentId);
-        if (ObjectUtils.isNotNull(approverOrInitiator)) {
-            membershipInfos = excludePrincipalAsNeeded(approverOrInitiator, qualification, membershipInfos);
-        }
         
         String submitter = getSubmitter(documentId);
         if (ObjectUtils.isNotNull(submitter)) {
             membershipInfos = excludePrincipalAsNeeded(submitter, qualification, membershipInfos);
+        }
+        
+        String approverOrInitiator = getApproverOrInitiator(documentId);
+        if (ObjectUtils.isNotNull(approverOrInitiator)) {
+            membershipInfos = excludePrincipalAsNeeded(approverOrInitiator, qualification, membershipInfos);
         }
 
         return membershipInfos;
