@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -13,7 +15,6 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksTaxClassification;
 import edu.cornell.kfs.pmw.batch.TaxRule;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
@@ -22,6 +23,8 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksTaxRuleDependencyService;
 
 public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTaxRuleDependencyService {
+    private static final Logger LOG = LogManager.getLogger(PaymentWorksTaxRuleDependencyServiceImpl.class);
+    
     protected DateTimeService dateTimeService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected ConfigurationService configurationService;
@@ -30,6 +33,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     @Override
     public KfsVendorDataWrapper populateTaxRuleDependentAttributes(PaymentWorksVendor pmwVendor,
             Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
+        LOG.info("populateTaxRuleDependentAttributes, entering");
         KfsVendorDataWrapper vendorDataWrapper = new KfsVendorDataWrapper();
         addVendorHeaderToKfsVendorDataWrapper(pmwVendor, paymentWorksIsoToFipsCountryMap, vendorDataWrapper);
         return vendorDataWrapper;
@@ -47,8 +51,8 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         if (StringUtils.isNotBlank(taxRule.ownershipTypeCode)) {
             vendorHeader.setVendorOwnershipCode(taxRule.ownershipTypeCode);
         } else {
-            PaymentWorksTaxClassification classfication = PaymentWorksTaxClassification.findPaymentWorksTaxClassification(
-                    pmwVendor.getRequestingCompanyTaxClassificationCode());
+            PaymentWorksConstants.PaymentWorksTaxClassification classfication = PaymentWorksConstants.PaymentWorksTaxClassification.
+                    findPaymentWorksTaxClassification(pmwVendor.getRequestingCompanyTaxClassificationCode());
             vendorHeader.setVendorOwnershipCode(classfication.translationToKfsOwnershipTypeCode);
         }
         vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
@@ -75,7 +79,8 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         } else if (isNotIndividualUs(pmwVendor, pmwVendorFipsTaxCountryCode)) {
             return TaxRule.NOT_INDIVIDUAL_US;
         } else {
-            throw new IllegalArgumentException();
+            LOG.error("determineTaxRuleToUseForDataPopulation, unknown tax rule for request " + pmwVendor.getId());
+            return TaxRule.OTHER;
         }
     }
     

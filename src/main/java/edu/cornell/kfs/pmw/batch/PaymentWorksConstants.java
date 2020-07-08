@@ -210,6 +210,40 @@ public class PaymentWorksConstants {
     public static final int LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR  = 6;
     public static final int LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR  = 7;
     public static final int OTHER_TAX_CLASSIFICATION_INDICATOR  = 8;
+    public enum PaymentWorksTaxClassification {
+        INDIVIDUAL_SOLE_PROPRIETOR(INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR, "Individual/sole proprietor or single-member LLC", "ID"),
+        C_CORPORATION(C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "C Corporation", "CP"),
+        S_CORPORATION(S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "S Corporation", "SC"),
+        PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", "PT"),
+        TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", "ET"), 
+        LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", "CP"),
+        LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", "SC"),
+        LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", "PT"),
+        OTHER(OTHER_TAX_CLASSIFICATION_INDICATOR, "Other", "OT");
+        
+        public final int pmwCode;
+        public final String pmwDescription;
+        public final String translationToKfsOwnershipTypeCode;
+        
+        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String translationToKfsOwnershipTypeCode) {
+            this.pmwCode = pmwCode;
+            this.pmwDescription = pmwDescription;
+            this.translationToKfsOwnershipTypeCode = translationToKfsOwnershipTypeCode;
+        }
+        
+        public String getTranslationToKfsOwnershipTypeCode() {
+            return translationToKfsOwnershipTypeCode;
+        }
+        
+        public static PaymentWorksTaxClassification findPaymentWorksTaxClassification(int requestingCompanyTaxClassificationCode) {
+            for (PaymentWorksTaxClassification classification : PaymentWorksTaxClassification.values()) {
+                if (classification.pmwCode == requestingCompanyTaxClassificationCode) {
+                    return classification;
+                }
+            }
+            throw new IllegalArgumentException("Unable to find a tax classficaiton for code " + requestingCompanyTaxClassificationCode);
+        }
+    }
     
     public enum PaymentWorksGoodsVsServicesOptions {
         GOODS("Goods"),
