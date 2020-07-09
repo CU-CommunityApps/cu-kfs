@@ -117,6 +117,8 @@
     <bean id="paymentWorksVendorSupplierDiversityService" parent="paymentWorksVendorSupplierDiversityService-parentBean" />
     <bean id="paymentWorksVendorSupplierDiversityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorSupplierDiversityServiceImpl" abstract="true">
         <property name="kfsSupplierDiversityDao" ref="kfsSupplierDiversityDao" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
     
     <bean id="paymentWorksTaxRuleDependencyService" parent="paymentWorksTaxRuleDependencyService-parentBean" />

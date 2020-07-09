@@ -72,16 +72,18 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     }
     
     private TaxRule determineTaxRuleToUseForDataPopulation(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
+        TaxRule foundRule = TaxRule.OTHER;
         if (isIndividualUsSsn(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            return TaxRule.INDIVIDUAL_US_SSN;
+            foundRule = TaxRule.INDIVIDUAL_US_SSN;
         }  else if (isIndividualUsEin(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            return TaxRule.INDIVIDUAL_US_EIN;
+            foundRule = TaxRule.INDIVIDUAL_US_EIN;
         } else if (isNotIndividualUs(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            return TaxRule.NOT_INDIVIDUAL_US;
+            foundRule = TaxRule.NOT_INDIVIDUAL_US;
         } else {
             LOG.error("determineTaxRuleToUseForDataPopulation, unknown tax rule for request " + pmwVendor.getId());
-            return TaxRule.OTHER;
+            foundRule = TaxRule.OTHER;
         }
+        return foundRule;
     }
     
     private boolean isIndividualUsSsn(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {

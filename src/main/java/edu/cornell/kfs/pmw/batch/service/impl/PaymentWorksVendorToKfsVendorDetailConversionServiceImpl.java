@@ -77,6 +77,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         if (ObjectUtils.isNotNull(kfsVendorDataWrapper.getVendorDetail())) {
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTypeCode(determineKfsVendorTypeCodeBasedOnPmwVendorType(pmwVendor.getVendorType()));
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
+            if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode() && pmwVendor.isDiverseBusiness()) {
+                paymentWorksVendorSupplierDiversityService.addDiversityCerticationNotes(kfsVendorDataWrapper, pmwVendor);
+            }
             kfsVendorDataWrapper.getVendorDetail().setVendorDunsNumber(pmwVendor.getRequestingCompanyDuns());
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
                 kfsVendorDataWrapper.getVendorDetail().setVendorCreditCardIndicator(new Boolean(pmwVendor.isAcceptCreditCards()));

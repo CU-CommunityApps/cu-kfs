@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.sql.Date;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -13,10 +14,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsToPMWSupplierDiversityDTO;
+import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.KfsSupplierDiversityDao;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorSupplierDiversityService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 
@@ -24,6 +30,33 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
     private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorSupplierDiversityServiceImpl.class);
     
     protected KfsSupplierDiversityDao kfsSupplierDiversityDao;
+    protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
+    protected ConfigurationService configurationService;
+    
+    @Override
+    public void addDiversityCerticationNotes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {
+        LOG.debug("addDiversityCerticationNotes, entering");
+        StringBuilder noteText = new StringBuilder();
+        boolean foundCertifcates = false;
+        if (StringUtils.isNotBlank(pmwVendor.getNewYorkDiversityCertificates())) {
+            String note = MessageFormat.format(configurationService.getPropertyValueAsString(
+                    PaymentWorksKeyConstants.MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS), 
+                    PaymentWorksConstants.DIVERSITY_CERTIFICATES_NEW_YORK);
+            noteText.append(note).append(KFSConstants.NEWLINE);
+            foundCertifcates = true;
+        }
+        if (StringUtils.isNotBlank(pmwVendor.getFederalDivsersityCertificates())) {
+            String note = MessageFormat.format(configurationService.getPropertyValueAsString(
+                    PaymentWorksKeyConstants.MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS), 
+                    PaymentWorksConstants.DIVERSITY_CERTIFICATES_FEDERAL);
+            noteText.append(note);
+            foundCertifcates = true;
+        }
+        if (foundCertifcates) {
+            paymentWorksBatchUtilityService.createNoteRecordingAnyErrors(kfsVendorDataWrapper, noteText.toString(), 
+                    PaymentWorksConstants.DIVERSITY_CERTIFICATION_NOTE_ERROR_DESCRIPTION);
+        }
+    }
 
     @Override
     public List<VendorSupplierDiversity> buildSuppplierDivsersityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor) {
@@ -52,7 +85,7 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
                         }
                     }
                 } else {
-                    LOG.error("buildDiversityListFromClassifications, no active supplier diversity for divsersity classification " + diversityClass);
+                    LOG.error("buildDiversityListFromClassifications, no active supplier diversity for classification " + diversityClass);
                 }
             }
         } else if (LOG.isDebugEnabled()) {
@@ -91,6 +124,14 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
 
     public void setKfsSupplierDiversityDao(KfsSupplierDiversityDao kfsSupplierDiversityDao) {
         this.kfsSupplierDiversityDao = kfsSupplierDiversityDao;
+    }
+
+    public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
+        this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }
