@@ -32,6 +32,9 @@ public class PaymentWorksConstants {
     public static final String DIVERSITY_CERTIFICATES_FEDERAL = "Federal";
     public static final String DIVERSITY_CERTIFICATION_NOTE_ERROR_DESCRIPTION = "Diversity certifications in PMW";
     
+    public static final String SUPPLIER_CATEGORY_FOREIGN_INDIVIDUAL = "Foreign Individual";
+    public static final String SUPPLIER_CATEGORY_FOREIGN_ENTITY = "Foreign Entity";
+    
     public static final class PaymentWorksCustomFieldBooleanPrimitive {
         public static final String YES = "YES";
         public static final String NO = "NO";

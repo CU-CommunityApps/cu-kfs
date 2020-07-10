@@ -8,6 +8,8 @@ public enum TaxRule {
     INDIVIDUAL_US_EIN(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(),
             PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), true, false, true), 
     NOT_INDIVIDUAL_US(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(), StringUtils.EMPTY, true, false, true),
+    FOREIGN_INDIVIDUAL(StringUtils.EMPTY, StringUtils.EMPTY, false, false, false),
+    FOREIGN_ENTITY(StringUtils.EMPTY, StringUtils.EMPTY, false, false, false),
     OTHER(StringUtils.EMPTY, StringUtils.EMPTY, false, false, false);
 
     public final String taxTypeCode;
@@ -23,4 +25,6 @@ public enum TaxRule {
         this.populateFirstLastLegalName = populateFirstLastLegalName;
         this.populateBusinessLegalName = populateBusinessLegalName;
     }
+    
+
 }

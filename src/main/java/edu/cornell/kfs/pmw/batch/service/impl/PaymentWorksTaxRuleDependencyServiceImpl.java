@@ -71,7 +71,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         }
     }
     
-    private TaxRule determineTaxRuleToUseForDataPopulation(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
+    protected TaxRule determineTaxRuleToUseForDataPopulation(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
         TaxRule foundRule = TaxRule.OTHER;
         if (isIndividualUsSsn(pmwVendor, pmwVendorFipsTaxCountryCode)) {
             foundRule = TaxRule.INDIVIDUAL_US_SSN;
@@ -79,9 +79,12 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             foundRule = TaxRule.INDIVIDUAL_US_EIN;
         } else if (isNotIndividualUs(pmwVendor, pmwVendorFipsTaxCountryCode)) {
             foundRule = TaxRule.NOT_INDIVIDUAL_US;
+        } else if (isForeignIndividual(pmwVendor, pmwVendorFipsTaxCountryCode)) {
+            foundRule = TaxRule.FOREIGN_INDIVIDUAL;
+        } else if (isForeignEntity(pmwVendor, pmwVendorFipsTaxCountryCode)) {
+            foundRule = TaxRule.FOREIGN_ENTITY;
         } else {
             LOG.error("determineTaxRuleToUseForDataPopulation, unknown tax rule for request " + pmwVendor.getId());
-            foundRule = TaxRule.OTHER;
         }
         return foundRule;
     }
@@ -101,6 +104,14 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     private boolean isNotIndividualUs(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
         return (isNotPmwVendorIndividualSolePropriatorSingleMemberLlc(pmwVendor) && 
                 isUnitedStatesFipsCountryCode(pmwVendorFipsTaxCountryCode));
+    }
+    
+    private boolean isForeignIndividual(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
+        return StringUtils.equalsIgnoreCase(PaymentWorksConstants.SUPPLIER_CATEGORY_FOREIGN_INDIVIDUAL, pmwVendor.getSupplierCategory());
+    }
+    
+    private boolean isForeignEntity(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
+        return StringUtils.equalsIgnoreCase(PaymentWorksConstants.SUPPLIER_CATEGORY_FOREIGN_ENTITY, pmwVendor.getSupplierCategory());
     }
     
     private void populateW9Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {
@@ -158,8 +169,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     }
     
     private boolean isTinTypeSsn(String tinTypeCode) {
-        return (StringUtils.isNotBlank(tinTypeCode) &&
-                StringUtils.equalsIgnoreCase(tinTypeCode, PaymentWorksConstants.PaymentWorksTinType.SSN.getPmwCodeAsString()));
+        return StringUtils.equalsIgnoreCase(tinTypeCode, PaymentWorksConstants.PaymentWorksTinType.SSN.getPmwCodeAsString());
     }
     
     private boolean isTinTypeEin(String tinTypeCode) {
