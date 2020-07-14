@@ -232,6 +232,10 @@
                             <groupId>org.kuali.kfs</groupId>
                             <artifactId>kfs-web</artifactId>
                             <filtered>false</filtered>
+                            <excludes>
+                            	<exclude>WEB-INF/lib/log4j-*-2.11.*.jar</exclude>  
+                            	<exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>                     	
+                           	</excludes>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -886,6 +890,11 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
