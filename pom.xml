@@ -61,7 +61,7 @@
         <plugin.surefire.version>2.22.2</plugin.surefire.version>
         <plugin.dependency.version>3.1.2</plugin.dependency.version>
         <plugin.war.version>3.2.2</plugin.war.version>
-        <log4j.version>2.11.0</log4j.version>
+        <log4j.version>2.13.3</log4j.version>
         <javax.activation.version>1.1.1</javax.activation.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
     </properties>
@@ -232,6 +232,10 @@
                             <groupId>org.kuali.kfs</groupId>
                             <artifactId>kfs-web</artifactId>
                             <filtered>false</filtered>
+                            <excludes>
+                            	<exclude>WEB-INF/lib/log4j-*-2.11.*.jar</exclude>  
+                            	<exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>
+                            </excludes>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -860,7 +864,37 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jul</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
