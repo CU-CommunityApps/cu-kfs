@@ -234,8 +234,8 @@
                             <filtered>false</filtered>
                             <excludes>
                             	<exclude>WEB-INF/lib/log4j-*-2.11.*.jar</exclude>  
-                            	<exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>                     	
-                           	</excludes>
+                            	<exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>
+                            </excludes>
                         </overlay>
                     </overlays>
                 </configuration>
