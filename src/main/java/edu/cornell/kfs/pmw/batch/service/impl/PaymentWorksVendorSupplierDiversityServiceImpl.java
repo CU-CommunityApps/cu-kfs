@@ -32,31 +32,6 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
     protected KfsSupplierDiversityDao kfsSupplierDiversityDao;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected ConfigurationService configurationService;
-    
-    @Override
-    public void addDiversityCerticationNotes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {
-        LOG.debug("addDiversityCerticationNotes, entering");
-        StringBuilder noteText = new StringBuilder();
-        boolean foundCertifcates = false;
-        if (StringUtils.isNotBlank(pmwVendor.getNewYorkDiversityCertificates())) {
-            String note = MessageFormat.format(configurationService.getPropertyValueAsString(
-                    PaymentWorksKeyConstants.MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS), 
-                    PaymentWorksConstants.DIVERSITY_CERTIFICATES_NEW_YORK);
-            noteText.append(note).append(KFSConstants.NEWLINE);
-            foundCertifcates = true;
-        }
-        if (StringUtils.isNotBlank(pmwVendor.getFederalDivsersityCertificates())) {
-            String note = MessageFormat.format(configurationService.getPropertyValueAsString(
-                    PaymentWorksKeyConstants.MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS), 
-                    PaymentWorksConstants.DIVERSITY_CERTIFICATES_FEDERAL);
-            noteText.append(note);
-            foundCertifcates = true;
-        }
-        if (foundCertifcates) {
-            paymentWorksBatchUtilityService.createNoteRecordingAnyErrors(kfsVendorDataWrapper, noteText.toString(), 
-                    PaymentWorksConstants.DIVERSITY_CERTIFICATION_NOTE_ERROR_DESCRIPTION);
-        }
-    }
 
     @Override
     public List<VendorSupplierDiversity> buildSuppplierDivsersityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor) {

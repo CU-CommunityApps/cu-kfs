@@ -4,6 +4,7 @@ public class PaymentWorksKeyConstants {
 
     //Boiler plate for PaymentWorks generated KFS Notes
     public static final String NOTES_INITIATOR_LABEL = "note.label.paymentworks.initiator";
+    public static final String NEW_VENDOR_PVEN_NOTES_W8_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w8.exists";
     public static final String NEW_VENDOR_PVEN_NOTES_W9_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w9.exists";
     public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_PROVIDED_LABEL = "note.label.paymentworks.pven.goods.services.provided";
     public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_CURRENT_PAYROLL_PAID_LABEL = "note.label.paymentworks.pven.goods.services.provider.currently.payroll.paid";

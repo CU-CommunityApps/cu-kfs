@@ -1,14 +1,20 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.vnd.businessobject.Chapter3Status;
+import org.kuali.kfs.vnd.businessobject.Chapter4Status;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -21,6 +27,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksTaxRuleDependencyService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTaxRuleDependencyService {
     private static final Logger LOG = LogManager.getLogger(PaymentWorksTaxRuleDependencyServiceImpl.class);
@@ -28,6 +35,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     protected DateTimeService dateTimeService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected ConfigurationService configurationService;
+    private DateTimeFormatter dateTimeFormatter;
     
 
     @Override
@@ -47,7 +55,25 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         VendorHeader vendorHeader = new VendorHeader();
         vendorHeader.setVendorForeignIndicator(!isUnitedStatesFipsCountryCode(vendorFipsCountryCode));
         vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
-        vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+        
+        LOG.info("addVendorHeaderToKfsVendorDataWrapper, vendor request " + pmwVendor.getPmwVendorRequestId() + " tax rule" + taxRule);
+        
+        if (taxRule.foreign) {
+            if (StringUtils.isNotBlank(pmwVendor.getRequestingCompanyTin())) {
+                vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+            }
+            vendorHeader.setVendorChapter3StatusCode(pmwVendor.getChapter3StatusCode());
+            vendorHeader.setVendorChapter4StatusCode(pmwVendor.getChapter4StatusCode());
+            vendorHeader.setVendorGIIN(pmwVendor.getGiinCode());
+            populateW8Attributes(vendorDataWrapper, pmwVendor);
+            if (taxRule.dateOfBirth && StringUtils.isNoneEmpty(pmwVendor.getDateOfBirth())) {
+                Date dob = new Date(getDateTimeFormatter().parseDateTime(pmwVendor.getDateOfBirth()).getMillis());
+                vendorHeader.setVendorDOB(dob);
+            }
+        } else {
+            vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+        }
+        
         if (StringUtils.isNotBlank(taxRule.ownershipTypeCode)) {
             vendorHeader.setVendorOwnershipCode(taxRule.ownershipTypeCode);
         } else {
@@ -122,6 +148,20 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
                 PaymentWorksConstants.ErrorDescriptorForBadKfsNote.W9.getNoteDescriptionString());
     }
     
+    private void populateW8Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {
+        if (StringUtils.isNotBlank(pmwVendor.getW8SignedDate())) {
+            kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW8SignedDate(buildDateFromString(pmwVendor));
+            kfsVendorDataWrapper = paymentWorksBatchUtilityService.createNoteRecordingAnyErrors(kfsVendorDataWrapper, 
+                    configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_W8_URL_EXISTS_MESSAGE), 
+                    PaymentWorksConstants.ErrorDescriptorForBadKfsNote.W8.getNoteDescriptionString());
+        }
+    }
+
+    protected Date buildDateFromString(PaymentWorksVendor pmwVendor) {
+        Date w8Date = new Date(getDateTimeFormatter().parseDateTime(pmwVendor.getW8SignedDate()).getMillis());
+        return w8Date;
+    }
+    
     private void populateFirstLastLegalName(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstLastNameIndicator(true);
         String vendorLastName = truncateValueToMaxLength(pmwVendor.getRequestingCompanyLegalLastName(), VendorConstants.MAX_VENDOR_NAME_LENGTH);
@@ -192,6 +232,13 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        if (dateTimeFormatter == null) {
+            dateTimeFormatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_YYYY_HYPHEN_MM_HYPHEN_DD);
+        }
+        return dateTimeFormatter;
     }
     
 }

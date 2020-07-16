@@ -271,6 +271,7 @@ public class PaymentWorksConstants {
     public static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
     
     public enum ErrorDescriptorForBadKfsNote {
+        W8("W8"),
         W9("W9"),
         GOODS_AND_SERVICES("Goods and Services"),
         INITIATOR("Initiator"),
@@ -359,6 +360,7 @@ public class PaymentWorksConstants {
     //vendors are implemented to deal with converting this mixed case string to a FIPS country code.
     public static final String FIPS_COUNTRY_CODE_CANADA = "CA";
     public static final String FIPS_COUNTRY_CODE_AUSTRALIA = "AS";
+    public static final String PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER = "Other";
     public enum PaymentWorksPurchaseOrderCountryFipsOption {
         UNITED_STATES("US", "US"),
         CANADA("Canada", "CA"),

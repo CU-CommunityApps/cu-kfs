@@ -2,6 +2,11 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.sql.Date;
+import java.util.Calendar;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,9 +14,11 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.TaxRule;
+import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 class PaymentWorksTaxRuleDependencyServiceImplTest {
+    private static final Logger LOG = LogManager.getLogger(PaymentWorksTaxRuleDependencyServiceImplTest.class);
     
     private PaymentWorksTaxRuleDependencyServiceImpl taxRuleService;
 
@@ -72,6 +79,29 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
         pmwVendor.setSupplierCategory("Foreign Entity");
         TaxRule actualResults = taxRuleService.determineTaxRuleToUseForDataPopulation(pmwVendor, "CA");
         assertEquals(TaxRule.FOREIGN_ENTITY, actualResults);
+    }
+    
+    @Test
+    void testBuildDateFromString() {
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setW8SignedDate("2020-07-01");
+        Date actualDate = taxRuleService.buildDateFromString(pmwVendor);
+        
+        Calendar cal = Calendar.getInstance();
+        cal.clear();
+        cal.set(2020, Calendar.JULY, 01, 0, 0);
+        Date expectedDate = new Date(cal.getTimeInMillis());
+        
+        assertEquals(expectedDate, actualDate);
+        
+    }
+    
+    @Test
+    void testTaxRuleToString() {
+        for (TaxRule rule : TaxRule.values()) {
+            LOG.info("testTaxRuleToString, " + rule.toString());
+            
+        }
     }
 
 }

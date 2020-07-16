@@ -182,6 +182,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private boolean cornellProvidedTrainingOrEquipmentRequired;
     private boolean informalMarketing;
     private boolean servicesProvidedWithoutInsurance;
+    
 
     public Integer getId() {
         return id;

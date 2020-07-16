@@ -77,9 +77,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         if (ObjectUtils.isNotNull(kfsVendorDataWrapper.getVendorDetail())) {
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTypeCode(determineKfsVendorTypeCodeBasedOnPmwVendorType(pmwVendor.getVendorType()));
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
-            if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode() && pmwVendor.isDiverseBusiness()) {
-                paymentWorksVendorSupplierDiversityService.addDiversityCerticationNotes(kfsVendorDataWrapper, pmwVendor);
-            }
             kfsVendorDataWrapper.getVendorDetail().setVendorDunsNumber(pmwVendor.getRequestingCompanyDuns());
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
                 kfsVendorDataWrapper.getVendorDetail().setVendorCreditCardIndicator(new Boolean(pmwVendor.isAcceptCreditCards()));
@@ -277,7 +274,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         VendorAddress poAddress = buildBaseAddress(VendorConstants.AddressTypes.PURCHASE_ORDER,
                                                    pmwVendor.getPoAddress1(), pmwVendor.getPoAddress2(),
                                                    pmwVendor.getPoCity(), pmwVendor.getPoPostalCode(),
-                                                   convertFipsPoCountryOptionToFipsCountryCode(pmwVendor.getPoCountry()));
+                                                   convertFipsPoCountryOptionToFipsCountryCode(findPoCountryToUse(pmwVendor)));
         poAddress = assignPoStateOrProvinceBasedOnCountryCode(poAddress, pmwVendor);
         poAddress = assignMethodOfPoTransmission(poAddress, pmwVendor);
         poAddress.setVendorAttentionName(pmwVendor.getPoAttention());
@@ -378,15 +375,25 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorContacts.add(buildVendorInformationFormContact(pmwVendor));
         
         if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
-            vendorContacts.add(buildInsuranceContact(pmwVendor));
-            vendorContacts.add(buildSalesContact(pmwVendor));
-            vendorContacts.add(buildAccountsReceivableContact(pmwVendor));
+            if (shouldCreateContact(pmwVendor.getInsuranceContactName())) {
+                vendorContacts.add(buildInsuranceContact(pmwVendor));
+            }
+            if (shouldCreateContact(pmwVendor.getSalesContactName())) {
+                vendorContacts.add(buildSalesContact(pmwVendor));
+            }
+            if (shouldCreateContact(pmwVendor.getAccountsReceivableContactName())) {
+                vendorContacts.add(buildAccountsReceivableContact(pmwVendor));
+            }
             
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() && pmwVendor.isInvoicing()) {
                 vendorContacts.add(buildEinvoicingContact(pmwVendor));
             }
         }
         return vendorContacts;
+    }
+    
+    protected boolean shouldCreateContact(String contactName) {
+        return paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() || StringUtils.isNotBlank(contactName);
     }
     
     private VendorContact buildVendorInformationFormContact(PaymentWorksVendor pmwVendor) {
@@ -570,8 +577,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private boolean isPurchaseOrderCountryNotUnitedStatesFipsCountryCodeOption(PaymentWorksVendor pmwVendor) {
-        return (StringUtils.isNotBlank(pmwVendor.getPoCountry())
-                && !StringUtils.equalsIgnoreCase(pmwVendor.getPoCountry(), PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString()));
+        String poCountryToUse = findPoCountryToUse(pmwVendor);
+        return (StringUtils.isNotBlank(poCountryToUse)
+                && !StringUtils.equalsIgnoreCase(poCountryToUse, PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString()));
     }
 
     private boolean isTinTypeSsn(String tinTypeCode) {
@@ -789,13 +797,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return kfsVendorSupplierDiversities;
     }
     
-    private List<VendorSupplierDiversity> buildVendorDiversitiesFromPmwNewFormCheckBoxes(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
-        //This function should be implemented using the new supplier diversity fields on the new PMW form
-        LOG.info("buildVendorDiversitiesFromPmwNewFormCheckBoxes, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
-        List<VendorSupplierDiversity> supolierDiversity = new ArrayList<VendorSupplierDiversity>();
-        return supolierDiversity;
-    }
-    
     private VendorSupplierDiversity buildVendorSupplierDiversity(String vendorSupplierDiversityCode, java.sql.Date vendorSupplierDiversityExpirationDate) {
         VendorSupplierDiversity vendorSupplierDiversity = new VendorSupplierDiversity();
         vendorSupplierDiversity.setVendorSupplierDiversityCode(vendorSupplierDiversityCode);
@@ -889,6 +890,17 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                     PaymentWorksConstants.ErrorDescriptorForBadKfsNote.INSURANCE_CERTIFICATE.getNoteDescriptionString());
         }
         return kfsVendorDataWrapper;
+    }
+    
+    protected String findPoCountryToUse(PaymentWorksVendor pmwVendor) {
+        String poCountryToUse = pmwVendor.getPoCountry();
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            if (!StringUtils.equalsIgnoreCase(PaymentWorksConstants.PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER, 
+                    pmwVendor.getPoCountryUsCanadaAustraliaOther())) {
+                poCountryToUse = pmwVendor.getPoCountryUsCanadaAustraliaOther();
+            }
+        } 
+        return poCountryToUse;
     }
 
     public DateTimeService getDateTimeService() {

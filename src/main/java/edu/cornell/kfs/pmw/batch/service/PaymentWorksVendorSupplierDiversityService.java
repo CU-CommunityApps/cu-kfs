@@ -11,6 +11,4 @@ public interface PaymentWorksVendorSupplierDiversityService {
     
     List<VendorSupplierDiversity> buildSuppplierDivsersityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor);
     
-    void addDiversityCerticationNotes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor);
-
 }
