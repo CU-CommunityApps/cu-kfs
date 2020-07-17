@@ -894,11 +894,10 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     
     protected String findPoCountryToUse(PaymentWorksVendor pmwVendor) {
         String poCountryToUse = pmwVendor.getPoCountry();
-        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            if (!StringUtils.equalsIgnoreCase(PaymentWorksConstants.PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER, 
-                    pmwVendor.getPoCountryUsCanadaAustraliaOther())) {
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode() 
+                && !StringUtils.equalsIgnoreCase(PaymentWorksConstants.PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER,
+                        pmwVendor.getPoCountryUsCanadaAustraliaOther())) {
                 poCountryToUse = pmwVendor.getPoCountryUsCanadaAustraliaOther();
-            }
         } 
         return poCountryToUse;
     }

@@ -1,7 +1,6 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +12,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
-import org.kuali.kfs.vnd.businessobject.Chapter3Status;
-import org.kuali.kfs.vnd.businessobject.Chapter4Status;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -59,28 +56,12 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         LOG.info("addVendorHeaderToKfsVendorDataWrapper, vendor request " + pmwVendor.getPmwVendorRequestId() + " tax rule" + taxRule);
         
         if (taxRule.foreign) {
-            if (StringUtils.isNotBlank(pmwVendor.getRequestingCompanyTin())) {
-                vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
-            }
-            vendorHeader.setVendorChapter3StatusCode(pmwVendor.getChapter3StatusCode());
-            vendorHeader.setVendorChapter4StatusCode(pmwVendor.getChapter4StatusCode());
-            vendorHeader.setVendorGIIN(pmwVendor.getGiinCode());
-            populateW8Attributes(vendorDataWrapper, pmwVendor);
-            if (taxRule.dateOfBirth && StringUtils.isNoneEmpty(pmwVendor.getDateOfBirth())) {
-                Date dob = new Date(getDateTimeFormatter().parseDateTime(pmwVendor.getDateOfBirth()).getMillis());
-                vendorHeader.setVendorDOB(dob);
-            }
+            poulateForeignVendorValues(pmwVendor, vendorDataWrapper, taxRule, vendorHeader);
         } else {
             vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
         }
         
-        if (StringUtils.isNotBlank(taxRule.ownershipTypeCode)) {
-            vendorHeader.setVendorOwnershipCode(taxRule.ownershipTypeCode);
-        } else {
-            PaymentWorksConstants.PaymentWorksTaxClassification classfication = PaymentWorksConstants.PaymentWorksTaxClassification.
-                    findPaymentWorksTaxClassification(pmwVendor.getRequestingCompanyTaxClassificationCode());
-            vendorHeader.setVendorOwnershipCode(classfication.translationToKfsOwnershipTypeCode);
-        }
+        populateOwernshipCode(pmwVendor, taxRule, vendorHeader);
         vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
         vendorDataWrapper.getVendorDetail().setVendorHeader(vendorHeader);
         
@@ -114,7 +95,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         }
         return foundRule;
     }
-    
+
     private boolean isIndividualUsSsn(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
         return (isPmwVendorIndividualSolePropriatorSingleMemberLlc(pmwVendor) && 
                 isUnitedStatesFipsCountryCode(pmwVendorFipsTaxCountryCode) &&
@@ -138,6 +119,31 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     
     private boolean isForeignEntity(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
         return StringUtils.equalsIgnoreCase(PaymentWorksConstants.SUPPLIER_CATEGORY_FOREIGN_ENTITY, pmwVendor.getSupplierCategory());
+    }
+    
+    protected void poulateForeignVendorValues(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper vendorDataWrapper, TaxRule taxRule,
+            VendorHeader vendorHeader) {
+        if (StringUtils.isNotBlank(pmwVendor.getRequestingCompanyTin())) {
+            vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+        }
+        vendorHeader.setVendorChapter3StatusCode(pmwVendor.getChapter3StatusCode());
+        vendorHeader.setVendorChapter4StatusCode(pmwVendor.getChapter4StatusCode());
+        vendorHeader.setVendorGIIN(pmwVendor.getGiinCode());
+        populateW8Attributes(vendorDataWrapper, pmwVendor);
+        if (taxRule.dateOfBirth && StringUtils.isNoneEmpty(pmwVendor.getDateOfBirth())) {
+            Date dob = new Date(getDateTimeFormatter().parseDateTime(pmwVendor.getDateOfBirth()).getMillis());
+            vendorHeader.setVendorDOB(dob);
+        }
+    }
+    
+    protected void populateOwernshipCode(PaymentWorksVendor pmwVendor, TaxRule taxRule, VendorHeader vendorHeader) {
+        if (StringUtils.isNotBlank(taxRule.ownershipTypeCode)) {
+            vendorHeader.setVendorOwnershipCode(taxRule.ownershipTypeCode);
+        } else {
+            PaymentWorksConstants.PaymentWorksTaxClassification classfication = PaymentWorksConstants.PaymentWorksTaxClassification.
+                    findPaymentWorksTaxClassification(pmwVendor.getRequestingCompanyTaxClassificationCode());
+            vendorHeader.setVendorOwnershipCode(classfication.translationToKfsOwnershipTypeCode);
+        }
     }
     
     private void populateW9Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {
@@ -193,7 +199,6 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         else 
             return truncateValueToMaxLength(legalFirstName, maxAllowedLengthOfFirstName);
     }
-    
     
     private boolean isUnitedStatesFipsCountryCode (String countryCode) {
         return StringUtils.equalsIgnoreCase(countryCode, KFSConstants.COUNTRY_CODE_UNITED_STATES);

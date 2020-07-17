@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Date;
 import java.util.Calendar;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,12 +12,9 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.TaxRule;
-import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 class PaymentWorksTaxRuleDependencyServiceImplTest {
-    private static final Logger LOG = LogManager.getLogger(PaymentWorksTaxRuleDependencyServiceImplTest.class);
-    
     private PaymentWorksTaxRuleDependencyServiceImpl taxRuleService;
 
     @BeforeEach
@@ -94,14 +89,6 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
         
         assertEquals(expectedDate, actualDate);
         
-    }
-    
-    @Test
-    void testTaxRuleToString() {
-        for (TaxRule rule : TaxRule.values()) {
-            LOG.info("testTaxRuleToString, " + rule.toString());
-            
-        }
     }
 
 }

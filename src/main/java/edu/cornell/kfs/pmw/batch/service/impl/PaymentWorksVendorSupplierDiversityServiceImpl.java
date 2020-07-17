@@ -1,7 +1,6 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.sql.Date;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -16,10 +15,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsToPMWSupplierDiversityDTO;
-import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.KfsSupplierDiversityDao;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
@@ -63,8 +59,6 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
                     LOG.error("buildDiversityListFromClassifications, no active supplier diversity for classification " + diversityClass);
                 }
             }
-        } else if (LOG.isDebugEnabled()) {
-            LOG.debug("buildDiversityListFromClassifications, the diversity classification list was empty.");
         }
         return diversities;
     }
@@ -73,7 +67,6 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
         return diversityList.stream()
                 .filter(dto -> StringUtils.equalsIgnoreCase(classification, dto.getPaymentWorksSuppliertDiversityDescription()))
                 .collect(Collectors.toList());
-        
     }
     
     protected VendorSupplierDiversity buildVendorSupplierDiversity(String vendorSupplierDiversityCode) {
