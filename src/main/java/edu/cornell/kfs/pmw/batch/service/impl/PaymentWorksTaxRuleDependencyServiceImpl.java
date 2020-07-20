@@ -51,7 +51,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         
         VendorHeader vendorHeader = new VendorHeader();
         vendorHeader.setVendorForeignIndicator(!isUnitedStatesFipsCountryCode(vendorFipsCountryCode));
-        vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
+        
         
         LOG.info("addVendorHeaderToKfsVendorDataWrapper, vendor request " + pmwVendor.getPmwVendorRequestId() + " tax rule" + taxRule);
         
@@ -59,6 +59,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             poulateForeignVendorValues(pmwVendor, vendorDataWrapper, taxRule, vendorHeader);
         } else {
             vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+            vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         }
         
         populateOwernshipCode(pmwVendor, taxRule, vendorHeader);
@@ -124,8 +125,12 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     protected void poulateForeignVendorValues(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper vendorDataWrapper, TaxRule taxRule,
             VendorHeader vendorHeader) {
         if (StringUtils.isNotBlank(pmwVendor.getRequestingCompanyTin())) {
-            vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+            vendorHeader.setVendorForeignTaxId(pmwVendor.getRequestingCompanyTin());
         }
+        
+        vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+        vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
+        
         vendorHeader.setVendorChapter3StatusCode(pmwVendor.getChapter3StatusCode());
         vendorHeader.setVendorChapter4StatusCode(pmwVendor.getChapter4StatusCode());
         vendorHeader.setVendorGIIN(pmwVendor.getGiinCode());

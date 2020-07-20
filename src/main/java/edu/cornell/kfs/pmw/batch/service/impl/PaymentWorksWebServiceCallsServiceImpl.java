@@ -174,14 +174,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
     
     private void updateNewVendorStatusInPaymentWorks(String jsonString) {
-        /*
-         * #TODO re enable this 
-         * 
-         */
-        
-        LOG.info("updateNewVendorStatusInPaymentworks, disabling updating status in PMW: the json was: " + jsonString );
-        
-        /*
         URI statusUpdateURI = buildPaymentWorksNewVendorUpdateStatusURI();
         Response updateResponse = null;
         try{
@@ -191,7 +183,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         } finally {
             CURestClientUtils.closeQuietly(updateResponse);
         }
-        */
     }
     
     private String buildPaymentWorksNewVendorUpdateStatusJson(String vendorId, String statusCode) {

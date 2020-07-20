@@ -3,6 +3,8 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        Configurator.setLevel(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class.getName(), Level.DEBUG);
         conversionService = new PaymentWorksVendorToKfsVendorDetailConversionServiceImpl();
         pmwVendor = new PaymentWorksVendor();
     }
@@ -114,6 +117,50 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false, true));
         String contactName = StringUtils.EMPTY;
         assertFalse(conversionService.shouldCreateContact(contactName));
+    }
+    
+    @Test
+    void testFormatFaxNumberPaymentWorksExample() {
+        String actual = conversionService.formatFaxNumber("+14053000111");
+        String expected = "405-300-0111";
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    void testFormatFaxNumberSimple() {
+        String actual = conversionService.formatFaxNumber("1234567890");
+        String expected = "123-456-7890";
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    void testFormatFaxNumberNull() {
+        String actual = conversionService.formatFaxNumber(null);
+        String expected = null;
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    void testFormatFaxNumberEmptyString() {
+        String actual = conversionService.formatFaxNumber(StringUtils.EMPTY);
+        String expected = StringUtils.EMPTY;
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    void testFormatFaxNumberEmptyNoFormatNeeded() {
+        String goodFormat = "607-255=2047";
+        String actual = conversionService.formatFaxNumber(goodFormat);
+        String expected = goodFormat;
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    void testFormatFaxNumberEmptyUnexpected() {
+        String unexpectedFormat = "607*255zåå2047";
+        String actual = conversionService.formatFaxNumber(unexpectedFormat);
+        String expected = unexpectedFormat;
+        assertEquals(expected, actual);
     }
 
 }
