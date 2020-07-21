@@ -78,9 +78,7 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
     
     @Test
     void testBuildDateFromString() {
-        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setW8SignedDate("2020-07-01");
-        Date actualDate = taxRuleService.buildDateFromString(pmwVendor);
+        Date actualDate = taxRuleService.buildDateFromString("2020-07-01");
         
         Calendar cal = Calendar.getInstance();
         cal.clear();
