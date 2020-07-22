@@ -76,7 +76,7 @@
 	              					not empty KualiForm.document.dvPayeeDetail.disbVchrPayeeIdNumber}">
 					<c:set var="employeePrincipalId" value="${KualiForm.document.dvPayeeDetail.employeePrincipalId}"/>
 	              	<c:if test="${not empty employeePrincipalId}">
-		        	  <kul:inquiry boClassName="org.kuali.rice.kim.api.identity.Person"
+		        	  <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.PersonImpl"
 		               	keyValues="principalId=${employeePrincipalId}"
 		               	render="true">
 		                <kul:htmlControlAttribute

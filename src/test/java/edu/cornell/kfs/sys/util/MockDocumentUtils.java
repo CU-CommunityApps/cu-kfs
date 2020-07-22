@@ -16,7 +16,7 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
-import org.kuali.rice.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.PersonImpl;
 import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;

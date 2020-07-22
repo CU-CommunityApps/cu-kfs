@@ -13,7 +13,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.rice.kim.api.services.IdentityManagementService;
 import org.kuali.kfs.kns.inquiry.InquiryPresentationControllerBase;
 import org.kuali.kfs.krad.UserSession;

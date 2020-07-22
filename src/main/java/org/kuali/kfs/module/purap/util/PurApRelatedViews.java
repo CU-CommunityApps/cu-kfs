@@ -45,7 +45,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.rice.kim.api.services.IdentityManagementService;
 
 import java.util.ArrayList;

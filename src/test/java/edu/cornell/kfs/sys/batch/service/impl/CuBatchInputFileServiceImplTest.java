@@ -19,7 +19,7 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.PersonImpl;
 
 import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;
 import edu.cornell.kfs.vnd.batch.VendorInactivateConvertBatchCsvInputFileType;
