@@ -404,7 +404,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             ContractsAndGrantsBillingAgency agency = award.getAgency();
             if (ObjectUtils.isNotNull(agency)) {
                 final List<InvoiceAddressDetail> invoiceAddressDetails =
-                        buildInvoiceAddressDetailsFromAgency(agency, document);
+                        buildInvoiceAddressDetails(award, document);
                 document.getInvoiceAddressDetails().addAll(invoiceAddressDetails);
             }
 

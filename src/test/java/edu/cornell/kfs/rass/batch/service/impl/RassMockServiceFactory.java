@@ -47,7 +47,7 @@ import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 import org.kuali.rice.kim.api.role.RoleService;
-import org.kuali.rice.kim.impl.role.RoleBo;
+import org.kuali.kfs.kim.impl.role.RoleBo;
 
 
 public class RassMockServiceFactory {

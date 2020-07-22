@@ -20,7 +20,7 @@ import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.encryption.EncryptionService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.impl.KIMPropertyConstants;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kns.lookup.LookupUtils;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;

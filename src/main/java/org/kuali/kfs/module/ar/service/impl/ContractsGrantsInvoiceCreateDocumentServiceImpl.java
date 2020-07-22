@@ -1,4 +1,4 @@
-//KualiCo Patch Release 2020-02-13
+//KualiCo Patch Release 2020-03-19
 //FINP-4769 FK-117 changes applied from KualiCo Path Release 2020-04-23
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
@@ -29,6 +29,7 @@ import org.kuali.kfs.coa.businessobject.ObjectType;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAgency;
@@ -38,7 +39,6 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleBillingService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsOrganization;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.util.ErrorMessage;
@@ -63,6 +63,7 @@ import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditRevie
 import org.kuali.kfs.module.ar.businessobject.CostCategory;
 import org.kuali.kfs.module.ar.businessobject.Customer;
 import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
+import org.kuali.kfs.module.ar.businessobject.CustomerAddressEmail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAddressDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceBill;
@@ -75,6 +76,7 @@ import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.AccountsReceivableDocumentHeaderService;
 import org.kuali.kfs.module.ar.document.service.ContractsGrantsBillingAwardVerificationService;
 import org.kuali.kfs.module.ar.document.service.ContractsGrantsInvoiceDocumentService;
+import org.kuali.kfs.module.ar.document.service.CustomerAddressService;
 import org.kuali.kfs.module.ar.document.service.CustomerService;
 import org.kuali.kfs.module.ar.service.ContractsGrantsBillingUtilityService;
 import org.kuali.kfs.module.ar.service.ContractsGrantsInvoiceCreateDocumentService;
@@ -115,6 +117,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -148,6 +151,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     protected UniversityDateService universityDateService;
     protected OptionsService optionsService;
     protected FinancialSystemUserService financialSystemUserService;
+    private CustomerAddressService customerAddressService;
 
     public static final String REPORT_LINE_DIVIDER = "--------------------------------------------------------------------------------------------------------------";
 
@@ -571,7 +575,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             ContractsAndGrantsBillingAgency agency = award.getAgency();
             if (ObjectUtils.isNotNull(agency)) {
                 final List<InvoiceAddressDetail> invoiceAddressDetails =
-                        buildInvoiceAddressDetailsFromAgency(agency, document);
+                        buildInvoiceAddressDetails(award, document);
                 document.getInvoiceAddressDetails().addAll(invoiceAddressDetails);
             }
 
@@ -881,54 +885,81 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     }
 
     /**
-     * Builds a list of InvoiceAddressDetails based on the customer associated with an Agency
+     * Builds a list of InvoiceAddressDetails based on the customer associated with the Award
      *
-     * @param agency   the agency associated with the proposal we're building a CINV document for
+     * @param award    the award associated with the proposal we're building a CINV document for
      * @param document the CINV document we're creating
      * @return a List of the generated invoice address details
      */
-    protected List<InvoiceAddressDetail> buildInvoiceAddressDetailsFromAgency(ContractsAndGrantsBillingAgency agency,
+    protected List<InvoiceAddressDetail> buildInvoiceAddressDetails(ContractsAndGrantsBillingAward award,
             ContractsGrantsInvoiceDocument document) {
-        Map<String, Object> mapKey = new HashMap<>();
-        mapKey.put(KFSPropertyConstants.CUSTOMER_NUMBER, agency.getCustomerNumber());
-        final List<CustomerAddress> customerAddresses =
-                (List<CustomerAddress>) businessObjectService.findMatching(CustomerAddress.class, mapKey);
+        CustomerAddress customerAddress = null;
+        if (ObjectUtils.isNotNull(award.getCustomerAddressIdentifier())) {
+            customerAddress = customerAddressService.getByPrimaryKey(award.getCustomerNumber(),
+                    award.getCustomerAddressIdentifier());
+        }
+        if (customerAddress == null) {
+            customerAddress = customerAddressService.getPrimaryAddress(award.getCustomerNumber());
+        }
+
         String documentNumber = document.getDocumentNumber();
 
         List<InvoiceAddressDetail> invoiceAddressDetails = new ArrayList<>();
-        for (CustomerAddress customerAddress : customerAddresses) {
-            if (StringUtils.equalsIgnoreCase(ArKeyConstants.CustomerConstants.CUSTOMER_ADDRESS_TYPE_CODE_PRIMARY,
-                    customerAddress.getCustomerAddressTypeCode())) {
-                document.setCustomerBillToAddressOnInvoice(customerAddress);
-            }
-            InvoiceAddressDetail invoiceAddressDetail = new InvoiceAddressDetail();
-            invoiceAddressDetail.setCustomerNumber(customerAddress.getCustomerNumber());
-            invoiceAddressDetail.setDocumentNumber(documentNumber);
-            invoiceAddressDetail.setCustomerAddressIdentifier(customerAddress.getCustomerAddressIdentifier());
-            invoiceAddressDetail.setCustomerAddressTypeCode(customerAddress.getCustomerAddressTypeCode());
-            invoiceAddressDetail.setCustomerAddressName(customerAddress.getCustomerAddressName());
-            invoiceAddressDetail.setInvoiceTransmissionMethodCode(customerAddress.getInvoiceTransmissionMethodCode());
-            invoiceAddressDetail.setCustomerEmailAddress(customerAddress.getCustomerEmailAddress());
-            invoiceAddressDetail.setCustomerLine1StreetAddress(customerAddress.getCustomerLine1StreetAddress());
-            invoiceAddressDetail.setCustomerLine2StreetAddress(customerAddress.getCustomerLine2StreetAddress());
-            invoiceAddressDetail.setCustomerCityName(customerAddress.getCustomerCityName());
-            invoiceAddressDetail.setCustomerStateCode(customerAddress.getCustomerStateCode());
-            invoiceAddressDetail.setCustomerZipCode(customerAddress.getCustomerZipCode());
-            invoiceAddressDetail.setCustomerCountryCode(customerAddress.getCustomerCountryCode());
-            invoiceAddressDetail.setCustomerInternationalMailCode(customerAddress.getCustomerInternationalMailCode());
-            invoiceAddressDetail.setCustomerAddressInternationalProvinceName(
-                    customerAddress.getCustomerAddressInternationalProvinceName());
-            if (StringUtils.isNotBlank(customerAddress.getCustomerInvoiceTemplateCode())) {
-                invoiceAddressDetail.setCustomerInvoiceTemplateCode(customerAddress.getCustomerInvoiceTemplateCode());
-            } else {
-                AccountsReceivableCustomer customer = agency.getCustomer();
-                if (ObjectUtils.isNotNull(customer)
-                        && StringUtils.isNotBlank(customer.getCustomerInvoiceTemplateCode())) {
-                    invoiceAddressDetail.setCustomerInvoiceTemplateCode(customer.getCustomerInvoiceTemplateCode());
-                }
-            }
-            invoiceAddressDetails.add(invoiceAddressDetail);
+        AtomicInteger detailNumber = new AtomicInteger(1);
+        if (StringUtils.equalsIgnoreCase(ArKeyConstants.CustomerConstants.CUSTOMER_ADDRESS_TYPE_CODE_PRIMARY,
+                customerAddress.getCustomerAddressTypeCode())) {
+            document.setCustomerBillToAddressOnInvoice(customerAddress);
         }
+        InvoiceAddressDetail invoiceAddressDetail = new InvoiceAddressDetail();
+        invoiceAddressDetail.setCustomerNumber(customerAddress.getCustomerNumber());
+        invoiceAddressDetail.setDocumentNumber(documentNumber);
+        invoiceAddressDetail.setCustomerAddressIdentifier(customerAddress.getCustomerAddressIdentifier());
+        invoiceAddressDetail.setDetailNumber(detailNumber.getAndIncrement());
+        invoiceAddressDetail.setCustomerAddressTypeCode(customerAddress.getCustomerAddressTypeCode());
+        invoiceAddressDetail.setCustomerAddressName(customerAddress.getCustomerAddressName());
+        invoiceAddressDetail.setInvoiceTransmissionMethodCode(ArConstants.InvoiceTransmissionMethod.MAIL);
+        invoiceAddressDetail.setCustomerLine1StreetAddress(customerAddress.getCustomerLine1StreetAddress());
+        invoiceAddressDetail.setCustomerLine2StreetAddress(customerAddress.getCustomerLine2StreetAddress());
+        invoiceAddressDetail.setCustomerCityName(customerAddress.getCustomerCityName());
+        invoiceAddressDetail.setCustomerStateCode(customerAddress.getCustomerStateCode());
+        invoiceAddressDetail.setCustomerZipCode(customerAddress.getCustomerZipCode());
+        invoiceAddressDetail.setCustomerCountryCode(customerAddress.getCustomerCountryCode());
+        invoiceAddressDetail.setCustomerInternationalMailCode(customerAddress.getCustomerInternationalMailCode());
+        invoiceAddressDetail.setCustomerAddressInternationalProvinceName(
+                customerAddress.getCustomerAddressInternationalProvinceName());
+        if (StringUtils.isNotBlank(customerAddress.getCustomerInvoiceTemplateCode())) {
+            invoiceAddressDetail.setCustomerInvoiceTemplateCode(customerAddress.getCustomerInvoiceTemplateCode());
+        } else {
+            AccountsReceivableCustomer customer = award.getAgency().getCustomer();
+            if (ObjectUtils.isNotNull(customer)
+                    && StringUtils.isNotBlank(customer.getCustomerInvoiceTemplateCode())) {
+                invoiceAddressDetail.setCustomerInvoiceTemplateCode(customer.getCustomerInvoiceTemplateCode());
+            }
+        }
+        if (ArConstants.InvoiceTransmissionMethod.MAIL.equals(customerAddress.getInvoiceTransmissionMethodCode())) {
+            invoiceAddressDetail.setSendIndicator(true);
+        }
+        invoiceAddressDetails.add(invoiceAddressDetail);
+
+        CustomerAddress finalCustomerAddress = customerAddress;
+        customerAddress.getCustomerAddressEmails().stream()
+                .filter(CustomerAddressEmail::isActive)
+                .forEach(email -> {
+                    InvoiceAddressDetail invoiceAddressDetailWithEmail = new InvoiceAddressDetail();
+                    invoiceAddressDetailWithEmail.setCustomerNumber(finalCustomerAddress.getCustomerNumber());
+                    invoiceAddressDetailWithEmail.setDocumentNumber(documentNumber);
+                    invoiceAddressDetailWithEmail.setCustomerAddressIdentifier(
+                            finalCustomerAddress.getCustomerAddressIdentifier());
+                    invoiceAddressDetailWithEmail.setDetailNumber(detailNumber.getAndIncrement());
+                    invoiceAddressDetailWithEmail.setCustomerEmailAddress(email.getCustomerEmailAddress());
+                    invoiceAddressDetailWithEmail.setInvoiceTransmissionMethodCode(
+                            ArConstants.InvoiceTransmissionMethod.EMAIL);
+                    if (ArConstants.InvoiceTransmissionMethod.EMAIL.equals(
+                            finalCustomerAddress.getInvoiceTransmissionMethodCode())) {
+                        invoiceAddressDetailWithEmail.setSendIndicator(true);
+                    }
+                    invoiceAddressDetails.add(invoiceAddressDetailWithEmail);
+                });
         return invoiceAddressDetails;
     }
 
@@ -1072,6 +1103,27 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
         invoiceGeneralDetail.setTotalPreviouslyBilled(contractsGrantsInvoiceDocumentService
                 .getAwardBilledToDateAmount(award.getProposalNumber()));
+        ContractsAndGrantsBillingAgency agency = award.getAgency();
+        if (ObjectUtils.isNotNull(agency)) {
+            String customerNumber = agency.getCustomerNumber();
+            // default to primary of the customer
+            CustomerAddress customerAddress = customerAddressService.getPrimaryAddress(customerNumber);
+            // if award has customer address identifier - use it for population
+            if (ObjectUtils.isNotNull(award.getCustomerAddressIdentifier())) {
+                customerAddress = customerAddressService.getByPrimaryKey(customerNumber, award.getCustomerAddressIdentifier());
+            }
+
+            if (StringUtils.isNotBlank(customerAddress.getCustomerInvoiceTemplateCode())) {
+                invoiceGeneralDetail.setCustomerInvoiceTemplateCode(customerAddress.getCustomerInvoiceTemplateCode());
+            } else {
+                AccountsReceivableCustomer customer = agency.getCustomer();
+                if (ObjectUtils.isNotNull(customer) && StringUtils.isNotBlank(customer.getCustomerInvoiceTemplateCode())) {
+                    invoiceGeneralDetail.setCustomerInvoiceTemplateCode(customer.getCustomerInvoiceTemplateCode());
+                }
+            }
+            invoiceGeneralDetail.setCustomerNumber(customerNumber);
+            invoiceGeneralDetail.setCustomerAddressIdentifier(customerAddress.getCustomerAddressIdentifier());
+        }
     }
 
     /**
@@ -2372,5 +2424,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     public void setFinancialSystemUserService(FinancialSystemUserService financialSystemUserService) {
         this.financialSystemUserService = financialSystemUserService;
+    }
+
+    public void setCustomerAddressService(CustomerAddressService customerAddressService) {
+        this.customerAddressService = customerAddressService;
     }
 }

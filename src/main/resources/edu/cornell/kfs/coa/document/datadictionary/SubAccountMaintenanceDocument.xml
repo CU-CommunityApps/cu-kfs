@@ -64,7 +64,10 @@
     <property name="maintainableItems">
       <list>
         <!-- Note: Since we're explicitly redefining the order, we'll need to update this if new fields are added to Sub-Account in the Foundation code base! -->
-        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition"
+                      p:name="chartOfAccountsCode"
+                      p:noLookup="true"
+                      p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:webUILeaveFieldFunction="onblur_accountNumberPK"/>
         <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="subAccountName" p:required="true"/>
@@ -79,7 +82,15 @@
     <property name="maintainableItems">
       <list>
         <!-- Note: Since we're explicitly redefining the order, we'll need to update this if new fields are added to Sub-Account in the Foundation code base! -->
-        <bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.financialIcrSeriesIdentifier" p:overrideFieldConversions="financialIcrSeriesIdentifier:a21SubAccount.financialIcrSeriesIdentifier" p:overrideLookupClass="org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail"/><bean parent="MaintainableFieldDefinition" p:name="a21SubAccount.indirectCostRecoveryTypeCode"/>
+        <bean parent="MaintainableFieldDefinition"
+              p:name="a21SubAccount.financialIcrSeriesIdentifier"
+              p:overrideFieldConversions="financialIcrSeriesIdentifier:a21SubAccount.financialIcrSeriesIdentifier"
+              p:overrideLookupClass="org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail"
+              p:overrideLookupParameter="financialIcrSeriesIdentifier"
+              p:newLookup="true"/>
+        <bean parent="MaintainableFieldDefinition"
+              p:name="a21SubAccount.indirectCostRecoveryTypeCode"
+              p:noLookup="true"/>
       </list>
     </property>
   </bean>

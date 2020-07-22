@@ -115,7 +115,6 @@ public class ScrubberProcessImpl implements ScrubberProcess {
     private static final String COST_SHARE_ENC_BAL_TYP_CODES = "COST_SHARE_ENCUMBRANCE_BALANCE_TYPES";
     private static final String COST_SHARE_ENC_FISCAL_PERIOD_CODES = "COST_SHARE_ENCUMBRANCE_FISCAL_PERIODS";
     private static final String COST_SHARE_FISCAL_PERIOD_CODES = "COST_SHARE_FISCAL_PERIODS";
-    private static final String COST_SHARE_OBJECT_CODE = "COST_SHARE_OBJECT_CODE";
     private static final String COST_SHARE_OBJ_TYPE_CODES = "COST_SHARE_OBJECT_TYPES";
     private static final String LIABILITY_CHART_CODES = "LIABILITY_CHARTS";
     private static final String LIABILITY_DOC_TYPE_CODES = "LIABILITY_DOCUMENT_TYPES";
@@ -127,12 +126,15 @@ public class ScrubberProcessImpl implements ScrubberProcess {
     private static final String LIABILITY_SUB_FUND_GROUP_CODES = "LIABILITY_SUB_FUND_GROUPS";
     private static final String PLANT_FUND_CAMPUS_OBJECT_SUB_TYPE_CODES = "PLANT_FUND_CAMPUS_OBJECT_SUB_TYPES";
     private static final String PLANT_FUND_ORG_OBJECT_SUB_TYPE_CODES = "PLANT_FUND_ORGANIZATION_OBJECT_SUB_TYPES";
-    private static final String PLANT_INDEBTEDNESS_IND = "PLANT_INDEBTEDNESS_IND";
     private static final String PLANT_INDEBTEDNESS_OBJ_SUB_TYPE_CODES = "PLANT_INDEBTEDNESS_OBJECT_SUB_TYPES";
     private static final String PLANT_INDEBTEDNESS_OFFSET_CODE = "PLANT_INDEBTEDNESS_OFFSET_CODE";
     private static final String PLANT_INDEBTEDNESS_SUB_FUND_GROUP_CODES = "PLANT_INDEBTEDNESS_SUB_FUND_GROUPS";
     private static final String TRANSACTION_DATE_BYPASS_ORIGINATIONS = "TRANSACTION_DATE_BYPASS_ORIGINATIONS";
 
+    protected static final String COST_SHARE_CODE = "CSHR";
+    protected static final String COST_SHARE_OBJECT_CODE = "COST_SHARE_OBJECT_CODE";
+    protected static final String COST_SHARE_TRANSFER_ENTRY_IND = "***";
+    protected static final String PLANT_INDEBTEDNESS_IND = "PLANT_INDEBTEDNESS_IND";
     protected static final String TRANSACTION_TYPE_COST_SHARE_ENCUMBRANCE = "CE";
     protected static final String TRANSACTION_TYPE_OFFSET = "O";
     protected static final String TRANSACTION_TYPE_CAPITALIZATION = "C";
@@ -140,9 +142,6 @@ public class ScrubberProcessImpl implements ScrubberProcess {
     protected static final String TRANSACTION_TYPE_TRANSFER = "T";
     protected static final String TRANSACTION_TYPE_COST_SHARE = "CS";
     protected static final String TRANSACTION_TYPE_OTHER = "X";
-
-    protected static final String COST_SHARE_CODE = "CSHR";
-    protected static final String COST_SHARE_TRANSFER_ENTRY_IND = "***";
 
     // These lengths are different then database field lengths, hence they are not from the DD
     protected static final int COST_SHARE_ENCUMBRANCE_ENTRY_MAXLENGTH = 28;

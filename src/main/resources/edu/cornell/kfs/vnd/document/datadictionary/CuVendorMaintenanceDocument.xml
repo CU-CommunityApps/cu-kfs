@@ -104,7 +104,10 @@
               <bean parent="MaintainableFieldDefinition" p:name="vendorStateCode"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorZipCode"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorAddressInternationalProvinceName"/>
-              <bean parent="MaintainableFieldDefinition" p:name="vendorCountryCode" p:required="true" p:noLookup="true"/>
+              <bean parent="MaintainableFieldDefinition"
+                    p:name="vendorCountryCode"
+                    p:noLookup="true"
+                    p:required="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorAttentionName"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorBusinessToBusinessUrlAddress"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorFaxNumber"/>
@@ -130,7 +133,10 @@
                 </property>
                 <property name="maintainableFields">
                   <list>
-                    <bean parent="MaintainableFieldDefinition" p:name="vendorCampusCode" p:required="true"/>
+                    <bean parent="MaintainableFieldDefinition"
+                          p:name="vendorCampusCode"
+                          p:noLookup="true"
+                          p:required="true"/>
                     <bean parent="MaintainableFieldDefinition" p:name="vendorAddressGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
                     <bean parent="MaintainableFieldDefinition" p:name="vendorDefaultAddressGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
                     <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
@@ -160,7 +166,10 @@
           </property>
           <property name="maintainableFields">
             <list>
-              <bean parent="MaintainableFieldDefinition" p:name="vendorSupplierDiversityCode" p:required="true"/>
+              <bean parent="MaintainableFieldDefinition"
+                    p:name="vendorSupplierDiversityCode"
+                    p:noLookup="true"
+                    p:required="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="extension.vendorSupplierDiversityExpirationDate" p:required="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="vendorHeaderGeneratedIdentifier" p:unconditionallyReadOnly="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>

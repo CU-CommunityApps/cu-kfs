@@ -602,35 +602,6 @@
       <newCollectionRecord>false</newCollectionRecord>
 
       <vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
-    <vendorRestrictedPerson class="org.kuali.rice.kim.impl.identity.PersonImpl">
-      <firstName/>
-      <middleName/>
-      <lastName/>
-      <name/>
-
-
-
-
-
-
-
-      <emailAddress/>
-      <phoneNumber/>
-      <suppressName>false</suppressName>
-      <suppressAddress>false</suppressAddress>
-      <suppressPhone>false</suppressPhone>
-      <suppressPersonal>false</suppressPersonal>
-      <suppressEmail>false</suppressEmail>
-      <campusCode/>
-      <employeeStatusCode/>
-      <employeeTypeCode/>
-      <primaryDepartmentCode/>
-      <employeeId/>
-      <baseSalaryAmount>
-        <value>0.00</value>
-      </baseSalaryAmount>
-      <active>true</active>
-    </vendorRestrictedPerson>
     <vendorParentName>Avis Budget Group Inc</vendorParentName>
 
 
@@ -793,35 +764,6 @@
       <newCollectionRecord>false</newCollectionRecord>
 
       <vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
-    <vendorRestrictedPerson class="org.kuali.rice.kim.impl.identity.PersonImpl">
-      <firstName/>
-      <middleName/>
-      <lastName/>
-      <name/>
-
-
-
-
-
-
-
-      <emailAddress/>
-      <phoneNumber/>
-      <suppressName>false</suppressName>
-      <suppressAddress>false</suppressAddress>
-      <suppressPhone>false</suppressPhone>
-      <suppressPersonal>false</suppressPersonal>
-      <suppressEmail>false</suppressEmail>
-      <campusCode/>
-      <employeeStatusCode/>
-      <employeeTypeCode/>
-      <primaryDepartmentCode/>
-      <employeeId/>
-      <baseSalaryAmount>
-        <value>0.00</value>
-      </baseSalaryAmount>
-      <active>true</active>
-    </vendorRestrictedPerson>
     <vendorParentName>Avis Budget Group Inc</vendorParentName>
 
 

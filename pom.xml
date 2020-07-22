@@ -24,13 +24,14 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2020-02-13</kfs.version>
+        <kfs.version>2020-03-19</kfs.version>
         <rice.version>2.7.0</rice.version>
-        <cynergy.version>2.7.0.j11</cynergy.version>
+        <cynergy.version>2.7.2</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
 
         <aws-java-sdk-dynamodb.version>1.11.18</aws-java-sdk-dynamodb.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
+        <gson.version>2.8.2</gson.version>
         <hibernate-validator-annotation-processor.version>5.4.1.Final</hibernate-validator-annotation-processor.version>
         <httpclient.version>4.5.5</httpclient.version>
         <jasperreports.version>2.0.4</jasperreports.version>
@@ -51,7 +52,7 @@
         <java.version>1.8</java.version>
         <maven.compiler.version>3.3</maven.compiler.version>
         <project.java.version>1.8</project.java.version>
-        <unpack.includes>org/kuali/rice/**/*.class,org/kuali/rice/**/*.properties,META-INF/**</unpack.includes>
+        <unpack.includes>org/kuali/rice/**/*.class,org/kuali/rice/**/*.properties,META-INF/**,org/kuali/kfs/kim/impl/role/*.xml</unpack.includes>
         <unpack.meta.excludes>META-INF/maven/**,META-INF/MANIFEST.MF,META-INF/*weaving.xml</unpack.meta.excludes>
         <unpack.cynergy.excludes>**/*Cynergy*.class,**/*Dummy*.class</unpack.cynergy.excludes>
         <unpack.excludes>org/kuali/rice/db/**,${unpack.meta.excludes},${unpack.cynergy.excludes}</unpack.excludes>
@@ -908,6 +909,11 @@
                     <artifactId>eclipselink</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
         </dependency>
     </dependencies>
 
