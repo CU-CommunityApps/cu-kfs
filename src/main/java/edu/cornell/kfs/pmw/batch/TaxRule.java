@@ -11,9 +11,12 @@ public enum TaxRule {
             PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), true, false, true), 
     NOT_INDIVIDUAL_US(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(), StringUtils.EMPTY, true, false, true),
     FOREIGN_INDIVIDUAL(PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString(), 
-            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), false, true, false, true, true),
-    FOREIGN_ENTITY(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(), StringUtils.EMPTY, false, false, true, true, false),
-    OTHER(StringUtils.EMPTY, StringUtils.EMPTY, false, false, false, false, false);
+            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), false, true, false, 
+            true, true, "BN"),
+    FOREIGN_ENTITY(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(), 
+            PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.getTranslationToKfsOwnershipTypeCode(), false, false, true, true, false,
+            "BE"),
+    OTHER(StringUtils.EMPTY, StringUtils.EMPTY, false, false, false, false, false, StringUtils.EMPTY);
 
     public final String taxTypeCode;
     public final String ownershipTypeCode;
@@ -22,14 +25,15 @@ public enum TaxRule {
     public final boolean populateBusinessLegalName;
     public final boolean foreign;
     public final boolean dateOfBirth;
+    public final String w8TypeCode;
     
     private TaxRule(String taxTypeCode, String ownershipTypeCode, boolean populateW9Attributes, boolean populateFirstLastLegalName, 
             boolean populateBusinessLegalName) {
-        this(taxTypeCode, ownershipTypeCode, populateW9Attributes, populateFirstLastLegalName, populateBusinessLegalName, false, false);
+        this(taxTypeCode, ownershipTypeCode, populateW9Attributes, populateFirstLastLegalName, populateBusinessLegalName, false, false, StringUtils.EMPTY);
     }
     
     private TaxRule(String taxTypeCode, String ownershipTypeCode, boolean populateW9Attributes, boolean populateFirstLastLegalName, 
-            boolean populateBusinessLegalName, boolean foreign, boolean dateOfBirth) {
+            boolean populateBusinessLegalName, boolean foreign, boolean dateOfBirth, String w8TypeCode) {
         this.taxTypeCode = taxTypeCode;
         this.ownershipTypeCode = ownershipTypeCode;
         this.populateW9Attributes = populateW9Attributes;
@@ -37,6 +41,7 @@ public enum TaxRule {
         this.populateBusinessLegalName = populateBusinessLegalName;
         this.foreign = foreign;
         this.dateOfBirth = dateOfBirth;
+        this.w8TypeCode = w8TypeCode;
     }
     
     public String toString() {

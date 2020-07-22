@@ -119,48 +119,4 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         assertFalse(conversionService.shouldCreateContact(contactName));
     }
     
-    @Test
-    void testFormatFaxNumberPaymentWorksExample() {
-        String actual = conversionService.formatFaxNumber("+14053000111");
-        String expected = "405-300-0111";
-        assertEquals(expected, actual);
-    }
-    
-    @Test
-    void testFormatFaxNumberSimple() {
-        String actual = conversionService.formatFaxNumber("1234567890");
-        String expected = "123-456-7890";
-        assertEquals(expected, actual);
-    }
-    
-    @Test
-    void testFormatFaxNumberNull() {
-        String actual = conversionService.formatFaxNumber(null);
-        String expected = null;
-        assertEquals(expected, actual);
-    }
-    
-    @Test
-    void testFormatFaxNumberEmptyString() {
-        String actual = conversionService.formatFaxNumber(StringUtils.EMPTY);
-        String expected = StringUtils.EMPTY;
-        assertEquals(expected, actual);
-    }
-    
-    @Test
-    void testFormatFaxNumberEmptyNoFormatNeeded() {
-        String goodFormat = "607-255=2047";
-        String actual = conversionService.formatFaxNumber(goodFormat);
-        String expected = goodFormat;
-        assertEquals(expected, actual);
-    }
-    
-    @Test
-    void testFormatFaxNumberEmptyUnexpected() {
-        String unexpectedFormat = "607*255zåå2047";
-        String actual = conversionService.formatFaxNumber(unexpectedFormat);
-        String expected = unexpectedFormat;
-        assertEquals(expected, actual);
-    }
-
 }

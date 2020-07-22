@@ -134,7 +134,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorChapter3StatusCode(pmwVendor.getChapter3StatusCode());
         vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorChapter4StatusCode(pmwVendor.getChapter4StatusCode());
         vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorGIIN(pmwVendor.getGiinCode());
-        populateW8Attributes(vendorDataWrapper, pmwVendor);
+        populateW8Attributes(vendorDataWrapper, pmwVendor, taxRule);
         if (taxRule.dateOfBirth && StringUtils.isNoneEmpty(pmwVendor.getDateOfBirth())) {
             Date dob = new Date(getDateTimeFormatter().parseDateTime(pmwVendor.getDateOfBirth()).getMillis());
             vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorDOB(dob);
@@ -159,17 +159,17 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
                 PaymentWorksConstants.ErrorDescriptorForBadKfsNote.W9.getNoteDescriptionString());
     }
     
-    private void populateW8Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {
+    private void populateW8Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor, TaxRule taxRule) {
         if (StringUtils.isNotBlank(pmwVendor.getW8SignedDate())) {
-            LOG.info("populateW8Attributes, setting W8 values");
+            LOG.debug("populateW8Attributes, setting W8 values");
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW8BenReceivedIndicator(true);
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW8SignedDate(buildDateFromString(pmwVendor.getW8SignedDate()));
-            kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW8TypeCode("0");
+            kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW8TypeCode(taxRule.w8TypeCode);
             paymentWorksBatchUtilityService.createNoteRecordingAnyErrors(kfsVendorDataWrapper, 
                     configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_W8_URL_EXISTS_MESSAGE), 
                     PaymentWorksConstants.ErrorDescriptorForBadKfsNote.W8.getNoteDescriptionString());
         } else {
-            LOG.info("populateW8Attributes, NOT setting W8 values");
+            LOG.debug("populateW8Attributes, NOT setting W8 values");
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW8BenReceivedIndicator(false);
         }
     }
