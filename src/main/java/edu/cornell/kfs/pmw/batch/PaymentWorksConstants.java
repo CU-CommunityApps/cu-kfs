@@ -28,10 +28,6 @@ public class PaymentWorksConstants {
     
     public static final String FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE = "PMW foreign mode processing not implemented yet.";
     
-    public static final String DIVERSITY_CERTIFICATES_NEW_YORK = "New York";
-    public static final String DIVERSITY_CERTIFICATES_FEDERAL = "Federal";
-    public static final String DIVERSITY_CERTIFICATION_NOTE_ERROR_DESCRIPTION = "Diversity certifications in PMW";
-    
     public static final String SUPPLIER_CATEGORY_FOREIGN_INDIVIDUAL = "Foreign Individual";
     public static final String SUPPLIER_CATEGORY_FOREIGN_ENTITY = "Foreign Entity";
     
