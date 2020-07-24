@@ -15,6 +15,7 @@
  */
 package edu.cornell.kfs.sys;
 
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
@@ -78,4 +79,8 @@ public class CUKFSPropertyConstants {
     public static final String LOOKUP_RESULT_ACTION_LABEL = "label";
     public static final String LOOKUP_RESULT_ACTION_URL = "url";
     public static final String LOOKUP_RESULT_ACTION_METHOD = "method";
+
+    public static final String PROFILE_USER = "profileUser";
+    public static final String PROFILE_USER_PRINCIPAL_NAME =
+            PROFILE_USER + KFSConstants.DELIMITER + KIMPropertyConstants.Principal.PRINCIPAL_NAME;
 }

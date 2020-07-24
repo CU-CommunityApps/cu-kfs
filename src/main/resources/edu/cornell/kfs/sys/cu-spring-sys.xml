@@ -209,8 +209,10 @@
 		<property name="userProcurementProfileValidationService">
 			<ref bean="userProcurementProfileValidationService" />
 		</property>
+		<property name="identityService" ref="identityService"/>
     </bean>
-	    <bean id="userProfileLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+
+	<bean id="userProfileLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
         <property name="lookupableHelperService">
             <ref bean="userProcurementProfileLookupableHelperService" />
         </property>

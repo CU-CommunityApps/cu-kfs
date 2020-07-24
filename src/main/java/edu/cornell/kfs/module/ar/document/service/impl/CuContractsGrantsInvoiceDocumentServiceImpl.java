@@ -626,7 +626,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 BigDecimal largestAmount = BigDecimal.ZERO;
                 for (ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
                     BigDecimal newValue = invD.getInvoiceAmount().bigDecimalValue().multiply(percentage);
-                    KualiDecimal newKualiDecimalValue = new KualiDecimal(newValue.setScale(2, RoundingMode.HALF_DOWN));
+                    KualiDecimal newKualiDecimalValue = new KualiDecimal(newValue.setScale(2, RoundingMode.DOWN));
                     invD.setInvoiceAmount(newKualiDecimalValue);
                     amountToBill = amountToBill.add(newKualiDecimalValue);
                     if (newValue.compareTo(largestAmount) > 0) {
