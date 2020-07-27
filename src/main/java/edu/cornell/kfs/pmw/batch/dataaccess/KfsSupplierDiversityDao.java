@@ -12,8 +12,8 @@ public interface KfsSupplierDiversityDao {
 
     Map<String, SupplierDiversity> buildPmwToKfsSupplierDiversityMap();
     
-    List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsFederalSupplierDiversityMapForForeignForm();
+    List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsFederalSupplierDiversityListForForeignForm();
     
-    List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsNewYorkSupplierDiversityMapForForeignForm();
+    List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsNewYorkSupplierDiversityListForForeignForm();
 
 }

@@ -26,10 +26,10 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
     private static final String KFS_SUPP_DVRST_CD_COL = "kfs_supp_dvrst_cd";
     private static final String KFS_SUPP_DVRST_DESC_COL = "kfs_supp_dvrst_desc";
     private static final String PMW_SUPP_DVRST_DESC_COL = "pmw_supp_dvrst_desc";
-    private static final String SELECT_BASE = "SELECT DVRST.VNDR_SUPP_DVRST_CD AS KFS_SUPP_DVRST_CD, DVRST.VNDR_SUPP_DVRST_DESC KFS_SUPP_DVRST_DESC, PMW_MAP.PMW_SUPP_DVRST_DESC PMW_SUPP_DVRST_DESC FROM KFS.PUR_SUPP_DVRST_T DVRST, KFS.CU_PMW_SUPP_DVRST_MAP_T PMW_MAP WHERE DVRST.VNDR_SUPP_DVRST_DESC = PMW_MAP.VNDR_SUPP_DVRST_DESC AND DVRST.DOBJ_MAINT_CD_ACTV_IND = 'Y'";
-    private static final String KFS_SUPPLIER_DIVERSITY_SQL_FOR_LEGACY_FORM =           SELECT_BASE + " AND PMW_MAP.PMW_FORM_MODE = 'L' ORDER BY DVRST.VNDR_SUPP_DVRST_DESC";
-    private static final String KFS_FEDERAL_SUPPLIER_DIVERSITY_SQL_FOR_FOREIGN_FORM =  SELECT_BASE + " AND PMW_MAP.PMW_FORM_MODE = 'F' AND PMW_MAP.FED_STATE_FLAG = 'F' ORDER BY DVRST.VNDR_SUPP_DVRST_DESC";
-    private static final String KFS_NEW_YORK_SUPPLIER_DIVERSITY_SQL_FOR_FOREIGN_FORM = SELECT_BASE + " AND PMW_MAP.PMW_FORM_MODE = 'F' AND PMW_MAP.FED_STATE_FLAG = 'N' ORDER BY DVRST.VNDR_SUPP_DVRST_DESC";
+    private static final String KFS_SUPPLIER_DIVERSITY_SELECT_BASE = "SELECT DVRST.VNDR_SUPP_DVRST_CD AS KFS_SUPP_DVRST_CD, DVRST.VNDR_SUPP_DVRST_DESC KFS_SUPP_DVRST_DESC, PMW_MAP.PMW_SUPP_DVRST_DESC PMW_SUPP_DVRST_DESC FROM KFS.PUR_SUPP_DVRST_T DVRST, KFS.CU_PMW_SUPP_DVRST_MAP_T PMW_MAP WHERE DVRST.VNDR_SUPP_DVRST_DESC = PMW_MAP.VNDR_SUPP_DVRST_DESC AND DVRST.DOBJ_MAINT_CD_ACTV_IND = 'Y'";
+    private static final String KFS_SUPPLIER_DIVERSITY_SQL_FOR_LEGACY_FORM =           KFS_SUPPLIER_DIVERSITY_SELECT_BASE + " AND PMW_MAP.PMW_FORM_MODE = 'L' ORDER BY DVRST.VNDR_SUPP_DVRST_DESC";
+    private static final String KFS_FEDERAL_SUPPLIER_DIVERSITY_SQL_FOR_FOREIGN_FORM =  KFS_SUPPLIER_DIVERSITY_SELECT_BASE + " AND PMW_MAP.PMW_FORM_MODE = 'F' AND PMW_MAP.FED_STATE_FLAG = 'F' ORDER BY DVRST.VNDR_SUPP_DVRST_DESC";
+    private static final String KFS_NEW_YORK_SUPPLIER_DIVERSITY_SQL_FOR_FOREIGN_FORM = KFS_SUPPLIER_DIVERSITY_SELECT_BASE + " AND PMW_MAP.PMW_FORM_MODE = 'F' AND PMW_MAP.FED_STATE_FLAG = 'N' ORDER BY DVRST.VNDR_SUPP_DVRST_DESC";
 
     @Override
     public Map<String, SupplierDiversity> buildPmwToKfsSupplierDiversityMap() {
@@ -58,12 +58,12 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
     }
     
     @Override
-    public List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsFederalSupplierDiversityMapForForeignForm() {
+    public List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsFederalSupplierDiversityListForForeignForm() {
         return buildPmwToKfsSupplierDiversityList(KFS_FEDERAL_SUPPLIER_DIVERSITY_SQL_FOR_FOREIGN_FORM);
     }
     
     @Override
-    public List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsNewYorkSupplierDiversityMapForForeignForm() {
+    public List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsNewYorkSupplierDiversityListForForeignForm() {
         return buildPmwToKfsSupplierDiversityList(KFS_NEW_YORK_SUPPLIER_DIVERSITY_SQL_FOR_FOREIGN_FORM);
     }
     
@@ -75,8 +75,10 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
                 supplierList.add(new KfsToPMWSupplierDiversityDTO(row.getKfsSupplierDiversityCode(), 
                         row.getKfsSupplierDiversityDescription(), row.getPmwSupplierDiversityDescription()));
             }
-            for (KfsToPMWSupplierDiversityDTO dto : supplierList) {
-                LOG.info("buildPmwToKfsSupplierDiversityList, KfsToPMWSupplierDiversityDTO: " + dto.toString());
+            if (LOG.isDebugEnabled()) {
+                for (KfsToPMWSupplierDiversityDTO dto : supplierList) {
+                    LOG.debug("buildPmwToKfsSupplierDiversityList, KfsToPMWSupplierDiversityDTO: " + dto.toString());
+                }
             }
         }
         return supplierList;

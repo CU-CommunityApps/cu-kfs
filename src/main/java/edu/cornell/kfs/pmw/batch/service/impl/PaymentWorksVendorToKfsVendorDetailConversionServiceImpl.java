@@ -68,12 +68,15 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                                                       Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap, 
                                                       Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = null;
+        KfsVendorDataWrapper kfsVendorDataWrapper;
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
             kfsVendorDataWrapper = populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             kfsVendorDataWrapper = paymentWorksTaxRuleDependencyService.populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
+        } else {
+            throw new IllegalStateException("Invalid form processing mode, can not continue");
         }
+        
         if (ObjectUtils.isNotNull(kfsVendorDataWrapper.getVendorDetail())) {
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTypeCode(determineKfsVendorTypeCodeBasedOnPmwVendorType(pmwVendor.getVendorType()));
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));

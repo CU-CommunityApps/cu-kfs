@@ -24,9 +24,9 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 class PaymentWorksVendorSupplierDiversityServiceImplTest {
     private static final String DAV_DESCRIPTION = "Disabled Veteran Owned Business";
     private static final String DAV_NY_CODE = "NV";
-    private static final String EIGHTA_CODE = "8(A)";
-    private static final String EIGHTA_DESCRIPTION_AFRICAN_AMERICAN = "8(A) African American";
-    private static final String EIGHTA_DESCRIPTION_HISPANIC_AMERICAN = "8(A) Hispanic American";
+    private static final String EIGHT_A_CODE = "8(A)";
+    private static final String EIGHT_A_DESCRIPTION_AFRICAN_AMERICAN = "8(A) African American";
+    private static final String EIGHT_A_DESCRIPTION_HISPANIC_AMERICAN = "8(A) Hispanic American";
     private static final String MBE_CODE = "MBE";
     private static final String MBE_DESCRIPTION = "MBE (Minority Business Enterprise)";
     private static final String MBE_NY_CODE = "NM";
@@ -58,19 +58,19 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     private KfsSupplierDiversityDao buildMockKfsSupplierDiversityDao() {
         KfsSupplierDiversityDao dao = Mockito.mock(KfsSupplierDiversityDao.class);
         List<KfsToPMWSupplierDiversityDTO> federalSuppliers = new ArrayList<KfsToPMWSupplierDiversityDTO>();
-        addSUpplierDiversityToMap(federalSuppliers, EIGHTA_CODE, EIGHTA_DESCRIPTION_AFRICAN_AMERICAN);
-        addSUpplierDiversityToMap(federalSuppliers, EIGHTA_CODE, EIGHTA_DESCRIPTION_HISPANIC_AMERICAN);
+        addSUpplierDiversityToMap(federalSuppliers, EIGHT_A_CODE, EIGHT_A_DESCRIPTION_AFRICAN_AMERICAN);
+        addSUpplierDiversityToMap(federalSuppliers, EIGHT_A_CODE, EIGHT_A_DESCRIPTION_HISPANIC_AMERICAN);
         addSUpplierDiversityToMap(federalSuppliers, MBE_CODE, MBE_DESCRIPTION);
         String DV_CODE = "DV";
         addSUpplierDiversityToMap(federalSuppliers, DV_CODE, SDVOSB_DESCRIPTION);
         addSUpplierDiversityToMap(federalSuppliers, SB_CODE, SDVOSB_DESCRIPTION);
-        Mockito.when(dao.buildPmwToKfsFederalSupplierDiversityMapForForeignForm()).thenReturn(federalSuppliers);
+        Mockito.when(dao.buildPmwToKfsFederalSupplierDiversityListForForeignForm()).thenReturn(federalSuppliers);
         
         List<KfsToPMWSupplierDiversityDTO> newYorksuppliers = new ArrayList<KfsToPMWSupplierDiversityDTO>();
         addSUpplierDiversityToMap(newYorksuppliers, MBE_NY_CODE, MBE_DESCRIPTION);
         addSUpplierDiversityToMap(newYorksuppliers, WBE_NY_CODE, WBE_DESCRIPTION);
         addSUpplierDiversityToMap(newYorksuppliers, DAV_NY_CODE, DAV_DESCRIPTION);
-        Mockito.when(dao.buildPmwToKfsNewYorkSupplierDiversityMapForForeignForm()).thenReturn(newYorksuppliers);
+        Mockito.when(dao.buildPmwToKfsNewYorkSupplierDiversityListForForeignForm()).thenReturn(newYorksuppliers);
         return dao;
     }
     
@@ -108,7 +108,7 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     
     @Test
     public void testBuildSuppplierDivsersityListFromPaymentWorksVendorWithNoCommas() {
-        pmwVendor.setFederalDivsersityClassifications(EIGHTA_DESCRIPTION_AFRICAN_AMERICAN);
+        pmwVendor.setFederalDivsersityClassifications(EIGHT_A_DESCRIPTION_AFRICAN_AMERICAN);
         pmwVendor.setStateDivsersityClassifications(WBE_DESCRIPTION);
         
         List<VendorSupplierDiversity> actualDiversities = supplierSerivce.buildSuppplierDivsersityListFromPaymentWorksVendor(pmwVendor);
@@ -126,15 +126,15 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     
     @Test
     public void testBuildSuppplierDivsersityListFromPaymentWorksVendorWithOneFederalClass() {
-        pmwVendor.setFederalDivsersityClassifications(EIGHTA_DESCRIPTION_AFRICAN_AMERICAN);
+        pmwVendor.setFederalDivsersityClassifications(EIGHT_A_DESCRIPTION_AFRICAN_AMERICAN);
         pmwVendor.setStateDivsersityClassifications(StringUtils.EMPTY);
         
         List<VendorSupplierDiversity> actualDiversities = supplierSerivce.buildSuppplierDivsersityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(1, actualDiversities.size());
         VendorSupplierDiversity diversity = actualDiversities.get(0);
-        assertEquals(EIGHTA_CODE, diversity.getVendorSupplierDiversityCode());
+        assertEquals(EIGHT_A_CODE, diversity.getVendorSupplierDiversityCode());
         CuVendorSupplierDiversityExtension diversityExtension = (CuVendorSupplierDiversityExtension) diversity.getExtension();
-        assertEquals(EIGHTA_CODE, diversityExtension.getVendorSupplierDiversityCode());
+        assertEquals(EIGHT_A_CODE, diversityExtension.getVendorSupplierDiversityCode());
     }
     
     @Test

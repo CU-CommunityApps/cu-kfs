@@ -40,29 +40,29 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         LOG.info("populateTaxRuleDependentAttributes, entering");
         KfsVendorDataWrapper vendorDataWrapper = new KfsVendorDataWrapper();
-        addVendorHeaderToKfsVendorDataWrapper(pmwVendor, paymentWorksIsoToFipsCountryMap, vendorDataWrapper);
+        populateVendorHeaderOnKfsVendorDataWrapper(pmwVendor, paymentWorksIsoToFipsCountryMap, vendorDataWrapper);
         return vendorDataWrapper;
     }
 
-    protected void addVendorHeaderToKfsVendorDataWrapper(PaymentWorksVendor pmwVendor,
+    protected void populateVendorHeaderOnKfsVendorDataWrapper(PaymentWorksVendor pmwVendor,
             Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap, KfsVendorDataWrapper vendorDataWrapper) {
         String vendorFipsCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
         TaxRule taxRule = determineTaxRuleToUseForDataPopulation(pmwVendor, vendorFipsCountryCode);
         
-        vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorForeignIndicator(!isUnitedStatesFipsCountryCode(vendorFipsCountryCode));
+        VendorHeader vendorHeader = vendorDataWrapper.getVendorDetail().getVendorHeader();
+        vendorHeader.setVendorForeignIndicator(!isUnitedStatesFipsCountryCode(vendorFipsCountryCode));
         
+        LOG.info("populateVendorHeaderOnKfsVendorDataWrapper, vendor request " + pmwVendor.getPmwVendorRequestId() + " tax rule" + taxRule);
         
-        LOG.info("addVendorHeaderToKfsVendorDataWrapper, vendor request " + pmwVendor.getPmwVendorRequestId() + " tax rule" + taxRule);
-        
-        if (taxRule.foreign) {
+        if (taxRule.isForeign) {
             poulateForeignVendorValues(pmwVendor, vendorDataWrapper, taxRule);
         } else {
-            vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTaxTypeCode(taxRule.taxTypeCode);
-            vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
+            vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+            vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         }
         
-        populateOwernshipCode(pmwVendor, taxRule, vendorDataWrapper.getVendorDetail().getVendorHeader());
-        vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
+        populateOwernshipCode(pmwVendor, taxRule, vendorHeader);
+        vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
         
         if (taxRule.populateW9Attributes) {
             populateW9Attributes(vendorDataWrapper, pmwVendor);
@@ -78,21 +78,21 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     }
     
     protected TaxRule determineTaxRuleToUseForDataPopulation(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
-        TaxRule foundRule = TaxRule.OTHER;
+        TaxRule taxRule = TaxRule.OTHER;
         if (isIndividualUsSsn(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            foundRule = TaxRule.INDIVIDUAL_US_SSN;
+            taxRule = TaxRule.INDIVIDUAL_US_SSN;
         }  else if (isIndividualUsEin(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            foundRule = TaxRule.INDIVIDUAL_US_EIN;
+            taxRule = TaxRule.INDIVIDUAL_US_EIN;
         } else if (isNotIndividualUs(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            foundRule = TaxRule.NOT_INDIVIDUAL_US;
+            taxRule = TaxRule.NOT_INDIVIDUAL_US;
         } else if (isForeignIndividual(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            foundRule = TaxRule.FOREIGN_INDIVIDUAL;
+            taxRule = TaxRule.FOREIGN_INDIVIDUAL;
         } else if (isForeignEntity(pmwVendor, pmwVendorFipsTaxCountryCode)) {
-            foundRule = TaxRule.FOREIGN_ENTITY;
+            taxRule = TaxRule.FOREIGN_ENTITY;
         } else {
             LOG.error("determineTaxRuleToUseForDataPopulation, unknown tax rule for request " + pmwVendor.getId());
         }
-        return foundRule;
+        return taxRule;
     }
 
     private boolean isIndividualUsSsn(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
@@ -135,7 +135,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorChapter4StatusCode(pmwVendor.getChapter4StatusCode());
         vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorGIIN(pmwVendor.getGiinCode());
         populateW8Attributes(vendorDataWrapper, pmwVendor, taxRule);
-        if (taxRule.dateOfBirth && StringUtils.isNoneEmpty(pmwVendor.getDateOfBirth())) {
+        if (taxRule.populateDateOfBirth && StringUtils.isNoneEmpty(pmwVendor.getDateOfBirth())) {
             Date dob = new Date(getDateTimeFormatter().parseDateTime(pmwVendor.getDateOfBirth()).getMillis());
             vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorDOB(dob);
         }
@@ -195,15 +195,11 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         return kfsVendorDataWrapper;
     }
     
-    protected static String truncateValueToMaxLength(String inputValue, int maxLength) {
-        if (StringUtils.length(inputValue) <= maxLength) {
-            return inputValue;
-        } else {
-            return inputValue.substring(0, maxLength);
-        }
+    protected String truncateValueToMaxLength(String inputValue, int maxLength) {
+        return StringUtils.substring(inputValue, 0, maxLength);
     }
     
-    protected static String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName, String delim, int maxLength) {
+    protected String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName, String delim, int maxLength) {
         int maxAllowedLengthOfFirstName = maxLength - delim.length() - legalLastName.length();
         
         if (maxAllowedLengthOfFirstName <= 0)
@@ -253,7 +249,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
 
     public DateTimeFormatter getDateTimeFormatter() {
         if (dateTimeFormatter == null) {
-            dateTimeFormatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_YYYY_HYPHEN_MM_HYPHEN_DD);
+            dateTimeFormatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
         }
         return dateTimeFormatter;
     }

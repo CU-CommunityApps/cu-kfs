@@ -23,8 +23,8 @@ public enum TaxRule {
     public final boolean populateW9Attributes;
     public final boolean populateFirstLastLegalName;
     public final boolean populateBusinessLegalName;
-    public final boolean foreign;
-    public final boolean dateOfBirth;
+    public final boolean isForeign;
+    public final boolean populateDateOfBirth;
     public final String w8TypeCode;
     
     private TaxRule(String taxTypeCode, String ownershipTypeCode, boolean populateW9Attributes, boolean populateFirstLastLegalName, 
@@ -33,14 +33,14 @@ public enum TaxRule {
     }
     
     private TaxRule(String taxTypeCode, String ownershipTypeCode, boolean populateW9Attributes, boolean populateFirstLastLegalName, 
-            boolean populateBusinessLegalName, boolean foreign, boolean dateOfBirth, String w8TypeCode) {
+            boolean populateBusinessLegalName, boolean isForeign, boolean populateDateOfBirth, String w8TypeCode) {
         this.taxTypeCode = taxTypeCode;
         this.ownershipTypeCode = ownershipTypeCode;
         this.populateW9Attributes = populateW9Attributes;
         this.populateFirstLastLegalName = populateFirstLastLegalName;
         this.populateBusinessLegalName = populateBusinessLegalName;
-        this.foreign = foreign;
-        this.dateOfBirth = dateOfBirth;
+        this.isForeign = isForeign;
+        this.populateDateOfBirth = populateDateOfBirth;
         this.w8TypeCode = w8TypeCode;
     }
     

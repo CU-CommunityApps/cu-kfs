@@ -34,16 +34,16 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor = null;
     }
     
-    private PaymentWorksFormModeService buildMockPaymentWorksFormModeService(boolean useLegacy, boolean useForeign) {
+    private PaymentWorksFormModeService buildMockPaymentWorksFormModeService(boolean useForeign) {
         PaymentWorksFormModeService service = Mockito.mock(PaymentWorksFormModeService.class);
         Mockito.when(service.shouldUseForeignFormProcessingMode()).thenReturn(useForeign);
-        Mockito.when(service.shouldUseLegacyFormProcessingMode()).thenReturn(useLegacy);
+        Mockito.when(service.shouldUseLegacyFormProcessingMode()).thenReturn(!useForeign);
         return service;
     }
 
     @Test
     void testFindPoCountryToUseLegacy() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true, false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
         pmwVendor.setPoCountry(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         String actual = conversionService.findPoCountryToUse(pmwVendor);
@@ -52,7 +52,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testFindPoCountryToUseForeignUS() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false, true));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         pmwVendor.setPoCountry(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         String actual = conversionService.findPoCountryToUse(pmwVendor);
@@ -61,7 +61,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testFindPoCountryToUseForeignAustralia() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false, true));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         pmwVendor.setPoCountry(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.FIPS_COUNTRY_CODE_AUSTRALIA);
         String actual = conversionService.findPoCountryToUse(pmwVendor);
@@ -70,7 +70,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testFindPoCountryToUseForeignOther() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false, true));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         pmwVendor.setPoCountry(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(StringUtils.upperCase(PaymentWorksConstants.PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER));
         String actual = conversionService.findPoCountryToUse(pmwVendor);
@@ -79,42 +79,42 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testShouldCreateContactLegacyGoodContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true, false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
         String contactName = "foo";
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
     void testShouldCreateContactLegacyNullContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true, false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
         String contactName = null;
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
     void testShouldCreateContactLegacyEmptyContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true, false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
         String contactName = StringUtils.EMPTY;
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
     void testShouldCreateContactForeignGoodContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false, true));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         String contactName = "foo";
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
     void testShouldCreateContactForeignNullContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false, true));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         String contactName = null;
         assertFalse(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
     void testShouldCreateContactForeignEmptyContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false, true));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         String contactName = StringUtils.EMPTY;
         assertFalse(conversionService.shouldCreateContact(contactName));
     }

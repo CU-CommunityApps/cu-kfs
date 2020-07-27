@@ -5,32 +5,32 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class KfsToPMWSupplierDiversityDTO {
     
-    private String kfsSuppliertDiversityCode;
-    private String kfsSuppliertDiversityDescription;
+    private String kfsSupplierDiversityCode;
+    private String kfsSupplierDiversityDescription;
     private String paymentWorksSuppliertDiversityDescription;
     
-    public KfsToPMWSupplierDiversityDTO(String kfsSuppliertDiversityCode, String kfsSuppliertDiversityDescription,
+    public KfsToPMWSupplierDiversityDTO(String kfsSupplierDiversityCode, String kfsSupplierDiversityDescription,
             String paymentWorksSuppliertDiversityDescription) {
         super();
-        this.kfsSuppliertDiversityCode = kfsSuppliertDiversityCode;
-        this.kfsSuppliertDiversityDescription = kfsSuppliertDiversityDescription;
+        this.kfsSupplierDiversityCode = kfsSupplierDiversityCode;
+        this.kfsSupplierDiversityDescription = kfsSupplierDiversityDescription;
         this.paymentWorksSuppliertDiversityDescription = paymentWorksSuppliertDiversityDescription;
     }
 
-    public String getKfsSuppliertDiversityCode() {
-        return kfsSuppliertDiversityCode;
+    public String getKfsSupplierDiversityCode() {
+        return kfsSupplierDiversityCode;
     }
 
-    public void setKfsSuppliertDiversityCode(String kfsSuppliertDiversityCode) {
-        this.kfsSuppliertDiversityCode = kfsSuppliertDiversityCode;
+    public void setKfsSupplierDiversityCode(String kfsSupplierDiversityCode) {
+        this.kfsSupplierDiversityCode = kfsSupplierDiversityCode;
     }
 
-    public String getKfsSuppliertDiversityDescription() {
-        return kfsSuppliertDiversityDescription;
+    public String getKfsSupplierDiversityDescription() {
+        return kfsSupplierDiversityDescription;
     }
 
-    public void setKfsSuppliertDiversityDescription(String kfsSuppliertDiversityDescription) {
-        this.kfsSuppliertDiversityDescription = kfsSuppliertDiversityDescription;
+    public void setKfsSupplierDiversityDescription(String kfsSupplierDiversityDescription) {
+        this.kfsSupplierDiversityDescription = kfsSupplierDiversityDescription;
     }
 
     public String getPaymentWorksSuppliertDiversityDescription() {

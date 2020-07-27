@@ -34,10 +34,10 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
         List<VendorSupplierDiversity> diversities = new ArrayList<VendorSupplierDiversity>();
         List<String> vendorDiversityCodesAlreadyAdded = new ArrayList<String>();
         diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getFederalDivsersityClassifications(), 
-                kfsSupplierDiversityDao.buildPmwToKfsFederalSupplierDiversityMapForForeignForm(), 
+                kfsSupplierDiversityDao.buildPmwToKfsFederalSupplierDiversityListForForeignForm(), 
                 vendorDiversityCodesAlreadyAdded));
         diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getStateDivsersityClassifications(), 
-                kfsSupplierDiversityDao.buildPmwToKfsNewYorkSupplierDiversityMapForForeignForm(), 
+                kfsSupplierDiversityDao.buildPmwToKfsNewYorkSupplierDiversityListForForeignForm(), 
                 vendorDiversityCodesAlreadyAdded));
         return diversities;
     }
@@ -50,9 +50,9 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
                 List<KfsToPMWSupplierDiversityDTO> diversityList = findSupplierDiversityInMap(StringUtils.trim(diversityClass), diversityMap);
                 if (CollectionUtils.isNotEmpty(diversityList)) {
                     for (KfsToPMWSupplierDiversityDTO dto : diversityList) {
-                        if (!vendorDiversityCodesAlreadyAdded.contains(dto.getKfsSuppliertDiversityCode())) {
-                            vendorDiversityCodesAlreadyAdded.add(dto.getKfsSuppliertDiversityCode());
-                            diversities.add(buildVendorSupplierDiversity(dto.getKfsSuppliertDiversityCode()));
+                        if (!vendorDiversityCodesAlreadyAdded.contains(dto.getKfsSupplierDiversityCode())) {
+                            vendorDiversityCodesAlreadyAdded.add(dto.getKfsSupplierDiversityCode());
+                            diversities.add(buildVendorSupplierDiversity(dto.getKfsSupplierDiversityCode()));
                         }
                     }
                 } else {
