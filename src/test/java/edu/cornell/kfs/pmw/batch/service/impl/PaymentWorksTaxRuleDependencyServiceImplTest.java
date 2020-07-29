@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Date;
 import java.util.Calendar;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        Configurator.setLevel(PaymentWorksTaxRuleDependencyServiceImpl.class.getName(), Level.DEBUG);
         taxRuleService = new PaymentWorksTaxRuleDependencyServiceImpl();
     }
 
@@ -80,14 +82,9 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
     @Test
     void testBuildDateFromString() {
         Date actualDate = taxRuleService.buildDateFromString("2020-07-01");
-        
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-        cal.set(2020, Calendar.JULY, 01, 0, 0);
-        Date expectedDate = new Date(cal.getTimeInMillis());
+        Date expectedDate = PaymentWorksVendorSupplierDiversityServiceImplTest.createCalendar(2020, Calendar.JULY, 1);
         
         assertEquals(expectedDate, actualDate);
-        
     }
 
 }

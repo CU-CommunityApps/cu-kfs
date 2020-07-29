@@ -46,11 +46,9 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorCorpCitizenCode(vendorFipsCountryCode);
         
         TaxRule taxRule = determineTaxRuleToUseForDataPopulation(pmwVendor, vendorFipsCountryCode);
-        
         LOG.info("buildKfsVendorDataWrapper, vendor request " + pmwVendor.getPmwVendorRequestId() + " tax rule" + taxRule);
         
         populateTaxRuleDependentAttributes(pmwVendor, vendorDataWrapper, taxRule);
-        
         return vendorDataWrapper;
     }
     
@@ -192,7 +190,9 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     
     protected Date buildDateFromString(String  dateString) {
         Date w8Date = new Date(getDateTimeFormatter().parseDateTime(dateString).getMillis());
-        LOG.info("buildDateFromString, w8Date: " + w8Date);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildDateFromString, dateString: " + dateString + " w8Date: " + w8Date);
+        }
         return w8Date;
     }
     

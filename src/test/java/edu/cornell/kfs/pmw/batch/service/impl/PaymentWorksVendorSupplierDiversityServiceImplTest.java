@@ -146,19 +146,21 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
         assertEquals(1, actualDiversities.size());
     }
     
-    @Test void testCreateDateOneYearFromDateBasicDate() {
+    @Test 
+    void testCreateDateOneYearFromDateBasicDate() {
         Date expectedDate = createCalendar(2021, Calendar.JANUARY, 31);
         Date actualDate = supplierSerivce.createDateOneYearFromDate(createCalendar(2020, Calendar.JANUARY, 31));
         assertEquals(expectedDate, actualDate);
     }
     
-    @Test void testCreateDateOneYearFromDateLeapYear() {
+    @Test 
+    void testCreateDateOneYearFromDateLeapYear() {
         Date expectedDate = createCalendar(2021, Calendar.FEBRUARY, 28);
         Date actualDate = supplierSerivce.createDateOneYearFromDate(createCalendar(2020, Calendar.FEBRUARY, 29));
         assertEquals(expectedDate, actualDate);
     }
     
-    private Date createCalendar(int year, int month, int date) {
+    public static Date createCalendar(int year, int month, int date) {
         Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.set(year, month, date);
