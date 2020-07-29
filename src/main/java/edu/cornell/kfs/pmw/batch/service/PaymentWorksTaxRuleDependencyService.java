@@ -8,6 +8,6 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public interface PaymentWorksTaxRuleDependencyService {
-    KfsVendorDataWrapper populateTaxRuleDependentAttributes(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap);
+    KfsVendorDataWrapper buildKfsVendorDataWrapper(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap);
 
 }

@@ -72,7 +72,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
             kfsVendorDataWrapper = populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            kfsVendorDataWrapper = paymentWorksTaxRuleDependencyService.populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
+            kfsVendorDataWrapper = paymentWorksTaxRuleDependencyService.buildKfsVendorDataWrapper(pmwVendor, paymentWorksIsoToFipsCountryMap);
         } else {
             throw new IllegalStateException("Invalid form processing mode, can not continue");
         }
@@ -918,7 +918,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected String findPoCountryToUse(PaymentWorksVendor pmwVendor) {
         String poCountryToUse = pmwVendor.getPoCountry();
         if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode() 
-                && !StringUtils.equalsIgnoreCase(PaymentWorksConstants.PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER,
+                && !StringUtils.equalsIgnoreCase(PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER,
                         pmwVendor.getPoCountryUsCanadaAustraliaOther())) {
                 poCountryToUse = pmwVendor.getPoCountryUsCanadaAustraliaOther();
         } 

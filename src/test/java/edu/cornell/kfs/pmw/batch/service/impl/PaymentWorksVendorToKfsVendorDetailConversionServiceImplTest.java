@@ -72,7 +72,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testFindPoCountryToUseForeignOther() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         pmwVendor.setPoCountry(LEGACY_PO_COUNTRY);
-        pmwVendor.setPoCountryUsCanadaAustraliaOther(StringUtils.upperCase(PaymentWorksConstants.PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER));
+        pmwVendor.setPoCountryUsCanadaAustraliaOther(StringUtils.upperCase(PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER));
         String actual = conversionService.findPoCountryToUse(pmwVendor);
         assertEquals(LEGACY_PO_COUNTRY, actual);
     }

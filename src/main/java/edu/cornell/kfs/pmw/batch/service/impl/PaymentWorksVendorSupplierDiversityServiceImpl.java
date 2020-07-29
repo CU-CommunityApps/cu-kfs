@@ -83,9 +83,13 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
     }
     
     protected Date buildDateOneYearFromToday() {
+        return createDateOneYearFromDate(new Date(Calendar.getInstance().getTimeInMillis()));
+    }
+    
+    protected Date createDateOneYearFromDate(Date inputDate) {
         GregorianCalendar calendarDateWithYearAdded = new GregorianCalendar();
         calendarDateWithYearAdded.clear();
-        calendarDateWithYearAdded.setTimeInMillis(Calendar.getInstance().getTimeInMillis());
+        calendarDateWithYearAdded.setTimeInMillis(inputDate.getTime());
         calendarDateWithYearAdded.add(GregorianCalendar.YEAR, 1);
         return new Date(calendarDateWithYearAdded.getTimeInMillis());
     }

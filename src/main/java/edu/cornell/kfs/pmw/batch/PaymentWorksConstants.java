@@ -356,7 +356,7 @@ public class PaymentWorksConstants {
     //vendors are implemented to deal with converting this mixed case string to a FIPS country code.
     public static final String FIPS_COUNTRY_CODE_CANADA = "CA";
     public static final String FIPS_COUNTRY_CODE_AUSTRALIA = "AS";
-    public static final String PO_COUNTRY_US_CANADA_AUSTRALIA_OTHER_VALUE_OTHER = "Other";
+    public static final String PO_ADDRESS_COUNTRY_OTHER = "Other";
     public enum PaymentWorksPurchaseOrderCountryFipsOption {
         UNITED_STATES("US", "US"),
         CANADA("Canada", "CA"),
