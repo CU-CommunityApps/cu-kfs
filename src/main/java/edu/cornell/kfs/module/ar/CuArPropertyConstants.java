@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.ar;
 
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -28,6 +29,12 @@ public class CuArPropertyConstants {
         public static final String CONTRACT_CONTROL_ACCOUNT_NUMBER = ArPropertyConstants.ACCOUNT_DETAILS
                 + KFSConstants.DELIMITER + KFSPropertyConstants.ACCOUNT
                 + KFSConstants.DELIMITER + KFSPropertyConstants.CONTRACT_CONTROL_ACCOUNT_NUMBER;
+    }
+
+    public static class InvoiceRecurrenceFields {
+        public static final String DOCUMENT_INITIATOR_USER = "documentInitiatorUser";
+        public static final String DOCUMENT_INITIATOR_USER_PRINCIPAL_NAME = DOCUMENT_INITIATOR_USER
+                + KFSConstants.DELIMITER + KIMPropertyConstants.Principal.PRINCIPAL_NAME;
     }
 
 }
