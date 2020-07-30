@@ -9,21 +9,27 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kns.lookup.HtmlData;
-import org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl;
-import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.krad.bo.BusinessObject;
 
+import edu.cornell.kfs.kns.lookup.PrincipalNameHandlingLookupableHelperServiceBase;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 
 @SuppressWarnings("deprecation")
-public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
+public class UserProcurementProfileLookupableHelperServiceImpl
+        extends PrincipalNameHandlingLookupableHelperServiceBase {
 
 	private static final long serialVersionUID = 1L;
+	private static final Map<String, String> PRINCIPAL_MAPPINGS = Collections.singletonMap(
+			CUKFSPropertyConstants.PROFILE_USER_PRINCIPAL_NAME, KIMPropertyConstants.Principal.PRINCIPAL_ID);
+
 	private UserProcurementProfileValidationService userProcurementProfileValidationService;
 
 	@Override
@@ -128,6 +134,11 @@ public class UserProcurementProfileLookupableHelperServiceImpl extends KualiLook
 		}
 		return actions;
 	}
+
+    @Override
+    public Map<String, String> getMappingsFromPrincipalNameFieldsToPrincipalIdFields() {
+        return PRINCIPAL_MAPPINGS;
+    }
 
 	public void setUserProcurementProfileValidationService(
 			UserProcurementProfileValidationService userProcurementProfileValidationService) {

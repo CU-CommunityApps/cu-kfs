@@ -90,5 +90,16 @@
           p:businessObjectService-ref="businessObjectService"
           p:accountingPeriodService-ref="accountingPeriodService"
           p:dateTimeService-ref="dateTimeService" />
-          
+
+    <bean id="invoiceRecurrenceLookupableHelperService"
+          parent="invoiceRecurrenceLookupableHelperService-parentBean" scope="prototype"/>
+    <bean id="invoiceRecurrenceLookupableHelperService-parentBean"
+          class="edu.cornell.kfs.module.ar.businessobject.lookup.InvoiceRecurrenceLookupableHelperServiceImpl"
+          parent="cf.lookupableHelperService" abstract="true" p:identityService-ref="identityService"/>
+
+    <bean id="invoiceRecurrenceLookupable"
+          parent="invoiceRecurrenceLookupable-parentBean" scope="prototype"/>
+    <bean id="invoiceRecurrenceLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          abstract="true" p:lookupableHelperService-ref="invoiceRecurrenceLookupableHelperService"/>
+
 </beans>
