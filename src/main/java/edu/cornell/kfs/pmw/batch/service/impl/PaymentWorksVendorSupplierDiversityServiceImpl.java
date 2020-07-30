@@ -65,7 +65,7 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
     
     protected List<KfsToPMWSupplierDiversityDTO> findSupplierDiversityInMap(String classification, List<KfsToPMWSupplierDiversityDTO> diversityList) {
         return diversityList.stream()
-                .filter(dto -> StringUtils.equalsIgnoreCase(classification, dto.getPaymentWorksSuppliertDiversityDescription()))
+                .filter(dto -> StringUtils.equalsIgnoreCase(classification, dto.getPaymentWorksSupplierDiversityDescription()))
                 .collect(Collectors.toList());
     }
     

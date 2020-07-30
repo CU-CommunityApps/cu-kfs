@@ -7,14 +7,14 @@ public class KfsToPMWSupplierDiversityDTO {
     
     private String kfsSupplierDiversityCode;
     private String kfsSupplierDiversityDescription;
-    private String paymentWorksSuppliertDiversityDescription;
+    private String paymentWorksSupplierDiversityDescription;
     
     public KfsToPMWSupplierDiversityDTO(String kfsSupplierDiversityCode, String kfsSupplierDiversityDescription,
-            String paymentWorksSuppliertDiversityDescription) {
+            String paymentWorksSupplierDiversityDescription) {
         super();
         this.kfsSupplierDiversityCode = kfsSupplierDiversityCode;
         this.kfsSupplierDiversityDescription = kfsSupplierDiversityDescription;
-        this.paymentWorksSuppliertDiversityDescription = paymentWorksSuppliertDiversityDescription;
+        this.paymentWorksSupplierDiversityDescription = paymentWorksSupplierDiversityDescription;
     }
 
     public String getKfsSupplierDiversityCode() {
@@ -33,12 +33,12 @@ public class KfsToPMWSupplierDiversityDTO {
         this.kfsSupplierDiversityDescription = kfsSupplierDiversityDescription;
     }
 
-    public String getPaymentWorksSuppliertDiversityDescription() {
-        return paymentWorksSuppliertDiversityDescription;
+    public String getPaymentWorksSupplierDiversityDescription() {
+        return paymentWorksSupplierDiversityDescription;
     }
 
-    public void setPaymentWorksSuppliertDiversityDescription(String paymentWorksSuppliertDiversityDescription) {
-        this.paymentWorksSuppliertDiversityDescription = paymentWorksSuppliertDiversityDescription;
+    public void setPaymentWorksSupplierDiversityDescription(String paymentWorksSupplierDiversityDescription) {
+        this.paymentWorksSupplierDiversityDescription = paymentWorksSupplierDiversityDescription;
     }
     
     @Override

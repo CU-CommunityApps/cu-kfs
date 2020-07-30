@@ -34,7 +34,7 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
     @Override
     public Map<String, SupplierDiversity> buildPmwToKfsSupplierDiversityMap() {
         Map<String, SupplierDiversity> pmwToKfsDiversityMap = new HashMap<String, SupplierDiversity>();
-        List<PaymentWorksSupplierDiversityMapDatabaseRow> pmwToKfsDiversityDatabaseRows = findActiveSupplierDiversitiesForMap(KFS_SUPPLIER_DIVERSITY_SQL_FOR_LEGACY_FORM);
+        List<PaymentWorksSupplierDiversityMapDatabaseRow> pmwToKfsDiversityDatabaseRows = findActiveSupplierDiversitiesList(KFS_SUPPLIER_DIVERSITY_SQL_FOR_LEGACY_FORM);
         
         if (ObjectUtils.isNotNull(pmwToKfsDiversityDatabaseRows) && !pmwToKfsDiversityDatabaseRows.isEmpty()) {
             ListIterator <PaymentWorksSupplierDiversityMapDatabaseRow> kfsDiversityValueDatabaseRowsIterator =  pmwToKfsDiversityDatabaseRows.listIterator();
@@ -69,7 +69,7 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
     
     private List<KfsToPMWSupplierDiversityDTO> buildPmwToKfsSupplierDiversityList(String sqlToRun) {
         List<KfsToPMWSupplierDiversityDTO> supplierList = new ArrayList<KfsToPMWSupplierDiversityDTO>();
-        List<PaymentWorksSupplierDiversityMapDatabaseRow> pmwToKfsDiversityDatabaseRows = findActiveSupplierDiversitiesForMap(sqlToRun);
+        List<PaymentWorksSupplierDiversityMapDatabaseRow> pmwToKfsDiversityDatabaseRows = findActiveSupplierDiversitiesList(sqlToRun);
         if (ObjectUtils.isNotNull(pmwToKfsDiversityDatabaseRows) && !pmwToKfsDiversityDatabaseRows.isEmpty()) {
             for (PaymentWorksSupplierDiversityMapDatabaseRow row : pmwToKfsDiversityDatabaseRows) {
                 supplierList.add(new KfsToPMWSupplierDiversityDTO(row.getKfsSupplierDiversityCode(), 
@@ -84,7 +84,7 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
         return supplierList;
     }
     
-    private List<PaymentWorksSupplierDiversityMapDatabaseRow> findActiveSupplierDiversitiesForMap(String sqlToRun) {
+    private List<PaymentWorksSupplierDiversityMapDatabaseRow> findActiveSupplierDiversitiesList(String sqlToRun) {
         try {
             RowMapper<PaymentWorksSupplierDiversityMapDatabaseRow> mapRow = new RowMapper<PaymentWorksSupplierDiversityMapDatabaseRow>() {
                 public PaymentWorksSupplierDiversityMapDatabaseRow mapRow(ResultSet resultSet, int rowNumber) throws SQLException {

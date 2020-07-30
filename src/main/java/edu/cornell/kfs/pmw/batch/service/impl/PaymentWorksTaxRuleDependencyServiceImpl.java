@@ -40,10 +40,11 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         LOG.info("buildKfsVendorDataWrapper, entering");
         KfsVendorDataWrapper vendorDataWrapper = new KfsVendorDataWrapper();
+        VendorHeader vendorHeader = vendorDataWrapper.getVendorDetail().getVendorHeader();
         
         String vendorFipsCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
-        vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorForeignIndicator(!isUnitedStatesFipsCountryCode(vendorFipsCountryCode));
-        vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorCorpCitizenCode(vendorFipsCountryCode);
+        vendorHeader.setVendorForeignIndicator(!isUnitedStatesFipsCountryCode(vendorFipsCountryCode));
+        vendorHeader.setVendorCorpCitizenCode(vendorFipsCountryCode);
         
         TaxRule taxRule = determineTaxRuleToUseForDataPopulation(pmwVendor, vendorFipsCountryCode);
         LOG.info("buildKfsVendorDataWrapper, vendor request " + pmwVendor.getPmwVendorRequestId() + " tax rule" + taxRule);
@@ -71,25 +72,27 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     }
     
     protected void populateTaxRuleDependentAttributes(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper vendorDataWrapper, TaxRule taxRule) {
+        VendorDetail vendorDetail = vendorDataWrapper.getVendorDetail();
+        VendorHeader vendorHeader = vendorDetail.getVendorHeader();
         if (taxRule.isForeign) {
             poulateForeignVendorValues(pmwVendor, vendorDataWrapper, taxRule);
         } else {
-            vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTaxTypeCode(taxRule.taxTypeCode);
-            vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
+            vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
+            vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         }
         
-        populateOwernshipCode(pmwVendor, taxRule, vendorDataWrapper.getVendorDetail().getVendorHeader());
+        populateOwernshipCode(pmwVendor, taxRule, vendorHeader);
         
         if (taxRule.populateW9Attributes) {
             populateW9Attributes(vendorDataWrapper, pmwVendor);
         }
         
         if (taxRule.populateFirstLastLegalName) {
-            populateFirstLastLegalName(pmwVendor, vendorDataWrapper.getVendorDetail());
+            populateFirstLastLegalName(pmwVendor, vendorDetail);
         }
         
         if (taxRule.populateBusinessLegalName) {
-            populateBusinessLegalName(pmwVendor, vendorDataWrapper.getVendorDetail());
+            populateBusinessLegalName(pmwVendor, vendorDetail);
         }
     }
     
@@ -98,12 +101,6 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         if (StringUtils.isNotBlank(pmwVendor.getRequestingCompanyTin())) {
             vendorHeader.setVendorForeignTaxId(pmwVendor.getRequestingCompanyTin());
         }
-        
-        /*
-         * @todo do this correctly when PaymentWorks includes a US Tax payer ID for foreign vendors field
-         */
-        //vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTaxTypeCode(taxRule.taxTypeCode);
-        //vendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         
         vendorHeader.setVendorChapter3StatusCode(pmwVendor.getChapter3StatusCode());
         vendorHeader.setVendorChapter4StatusCode(pmwVendor.getChapter4StatusCode());
