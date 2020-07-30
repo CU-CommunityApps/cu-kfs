@@ -1,20 +1,35 @@
 package edu.cornell.kfs.kns.lookup;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
+import org.kuali.rice.krad.bo.BusinessObject;
 
-public interface LookupableHelperServiceWithPrincipalNameHandling extends LookupableHelperService {
+public interface PrincipalNameHandlingLookupableHelperService extends LookupableHelperService {
 
-    default Map<String, String> convertPrincipalNameFieldValuesIfPresent(Map<String, String> fieldValues) {
+    default List<? extends BusinessObject> getSearchResultsWithPrincipalNameHandling(
+            Map<String, String> fieldValues,
+            Function<Map<String, String>, List<? extends BusinessObject>> actualSearchMethod) {
+        return buildCriteriaWithMatchableConvertedPrincipalValues(fieldValues)
+                .map(actualSearchMethod)
+                .orElseGet(Collections::emptyList);
+    }
+
+    default Optional<Map<String, String>> buildCriteriaWithMatchableConvertedPrincipalValues(
+            Map<String, String> fieldValues) {
         Map<String, String> newFieldValues = new HashMap<>(fieldValues);
         Map<String, String> fieldMappings = getMappingsFromPrincipalNameFieldsToPrincipalIdFields();
         IdentityService identityService = getIdentityService();
+        boolean allPrincipalNamesHaveMatches = true;
         
         for (Map.Entry<String, String> fieldMapping : fieldMappings.entrySet()) {
             String principalNameField = fieldMapping.getKey();
@@ -25,11 +40,14 @@ public interface LookupableHelperServiceWithPrincipalNameHandling extends Lookup
                     Principal principal = identityService.getPrincipalByPrincipalName(principalName);
                     if (ObjectUtils.isNotNull(principal)) {
                         newFieldValues.put(principalIdField, principal.getPrincipalId());
+                    } else {
+                        allPrincipalNamesHaveMatches = false;
                     }
                 }
             }
         }
-        return newFieldValues;
+        
+        return allPrincipalNamesHaveMatches ? Optional.of(newFieldValues) : Optional.empty();
     }
 
     Map<String, String> getMappingsFromPrincipalNameFieldsToPrincipalIdFields();
