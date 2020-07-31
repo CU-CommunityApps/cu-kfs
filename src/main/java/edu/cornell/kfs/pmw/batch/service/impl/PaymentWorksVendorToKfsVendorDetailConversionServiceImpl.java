@@ -292,18 +292,14 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private void setVendorFaxNumberValue(VendorAddress vendorAddress, String vendorFaxNumber) {
-    	vendorAddress.setVendorFaxNumber(StringUtils.EMPTY);
-    	
-            Class type;
-            try {
-                type = ObjectUtils.easyGetPropertyType(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER);
-                ObjectUtils.setObjectProperty(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER, type, vendorFaxNumber);
-            }
-            catch (FormatException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e);
-                e.printStackTrace();           
-            }
-        
+        try {
+            Class type = ObjectUtils.easyGetPropertyType(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER);
+            ObjectUtils.setObjectProperty(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER, type, vendorFaxNumber);
+        } catch (FormatException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            vendorAddress.setVendorFaxNumber(null);
+            LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e);
+            e.printStackTrace();
+        }
     }
 
     private VendorAddress buildBaseAddress(String addressType, String line1, String line2, String city, String zip, String fipsCountryCode) {
