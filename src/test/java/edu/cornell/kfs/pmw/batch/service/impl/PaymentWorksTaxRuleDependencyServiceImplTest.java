@@ -67,8 +67,18 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
     void testDetermineTaxRuleToUseForDataPopulationForeignIndividual() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setSupplierCategory("Foreign Individual");
+        pmwVendor.setRequestingCompanyTinType(PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getPmwCodeAsString());
         TaxRule actualResults = taxRuleService.determineTaxRuleToUseForDataPopulation(pmwVendor, "CA");
         assertEquals(TaxRule.FOREIGN_INDIVIDUAL, actualResults);
+    }
+    
+    @Test
+    void testDetermineTaxRuleToUseForDataPopulationForeignIndividualUsTaxPayerId() {
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setSupplierCategory("Foreign Individual");
+        pmwVendor.setRequestingCompanyTinType(PaymentWorksConstants.PaymentWorksTinType.SSN.getPmwCodeAsString());
+        TaxRule actualResults = taxRuleService.determineTaxRuleToUseForDataPopulation(pmwVendor, "CA");
+        assertEquals(TaxRule.FOREIGN_INDIVIDUAL_US_TAX_PAYER, actualResults);
     }
     
     @Test

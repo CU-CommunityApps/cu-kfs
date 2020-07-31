@@ -173,7 +173,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     private boolean isForeignIndividualWithSSN(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
         return  isForeignIndividual(pmwVendor, pmwVendorFipsTaxCountryCode) 
                 && StringUtils.equalsAnyIgnoreCase(pmwVendor.getRequestingCompanyTinType(), 
-                        PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString());
+                        PaymentWorksConstants.PaymentWorksTinType.SSN.getPmwCodeAsString());
     }
     
     private boolean isForeignIndividual(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
