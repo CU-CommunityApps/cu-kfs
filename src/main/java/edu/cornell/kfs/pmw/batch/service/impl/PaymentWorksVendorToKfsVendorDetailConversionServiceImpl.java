@@ -1,5 +1,6 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.web.format.FormatException;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
@@ -291,13 +293,17 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     
     private void setVendorFaxNumberValue(VendorAddress vendorAddress, String vendorFaxNumber) {
     	vendorAddress.setVendorFaxNumber(StringUtils.EMPTY);
-    	try {
-            Class type = ObjectUtils.easyGetPropertyType(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER);
-            ObjectUtils.setObjectProperty(VendorAddress.class, VendorPropertyConstants.VENDOR_FAX_NUMBER, type, vendorFaxNumber);
-        } catch (Exception e) {
-            LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e);
-            e.printStackTrace();           
-        }
+    	
+            Class type;
+            try {
+                type = ObjectUtils.easyGetPropertyType(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER);
+                ObjectUtils.setObjectProperty(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER, type, vendorFaxNumber);
+            }
+            catch (FormatException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e);
+                e.printStackTrace();           
+            }
+        
     }
 
     private VendorAddress buildBaseAddress(String addressType, String line1, String line2, String city, String zip, String fipsCountryCode) {
