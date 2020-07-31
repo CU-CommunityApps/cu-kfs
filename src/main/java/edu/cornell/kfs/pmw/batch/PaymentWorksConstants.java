@@ -28,8 +28,8 @@ public class PaymentWorksConstants {
     
     public static final String FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE = "PMW foreign mode processing not implemented yet.";
     
-    public static final String SUPPLIER_CATEGORY_FOREIGN_INDIVIDUAL = "Foreign Individual";
-    public static final String SUPPLIER_CATEGORY_FOREIGN_ENTITY = "Foreign Entity";
+    public static final String SUPPLIER_CATEGORY_INDIVIDUAL = "Individual";
+    public static final String SUPPLIER_CATEGORY_ENTITY = "Entity";
     
     public static final class PaymentWorksCustomFieldBooleanPrimitive {
         public static final String YES = "YES";
