@@ -274,10 +274,17 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
 
     private VendorAddress buildPurchaseOrderAddressFromFipsData(PaymentWorksVendor pmwVendor) {
+        String paymentWorksVendorCountryCode = findPoCountryToUse(pmwVendor);
+        String fipsCountryCode = convertFipsPoCountryOptionToFipsCountryCode(paymentWorksVendorCountryCode);
+        
+        if (StringUtils.isBlank(fipsCountryCode)) {
+            LOG.error("buildPurchaseOrderAddressFromFipsData, unable to find a FIPS country code for " + paymentWorksVendorCountryCode);
+        }
+        
         VendorAddress poAddress = buildBaseAddress(VendorConstants.AddressTypes.PURCHASE_ORDER,
                                                    pmwVendor.getPoAddress1(), pmwVendor.getPoAddress2(),
                                                    pmwVendor.getPoCity(), pmwVendor.getPoPostalCode(),
-                                                   convertFipsPoCountryOptionToFipsCountryCode(findPoCountryToUse(pmwVendor)));
+                                                   fipsCountryCode);
         poAddress = assignPoStateOrProvinceBasedOnCountryCode(poAddress, pmwVendor);
         poAddress = assignMethodOfPoTransmission(poAddress, pmwVendor);
         poAddress.setVendorAttentionName(pmwVendor.getPoAttention());
