@@ -13,13 +13,12 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.State;
-import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
@@ -281,13 +280,24 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         }
         else if (StringUtils.equalsIgnoreCase(pmwVendor.getPoTransmissionMethod(), PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.FAX.getPmwPoTransmissionMethodAsText())) {
             poAddressExtension.setPurchaseOrderTransmissionMethodCode(PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.FAX.getKfsPoTransmissionMethodCode());
-            poAddress.setVendorFaxNumber(pmwVendor.getPoFaxNumber());
+            setVendorFaxNumberValue(poAddress, pmwVendor.getPoFaxNumber());           
         }
         else if (StringUtils.equalsIgnoreCase(pmwVendor.getPoTransmissionMethod(), PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.US_MAIL.getPmwPoTransmissionMethodAsText())) {
             poAddressExtension.setPurchaseOrderTransmissionMethodCode(PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.US_MAIL.getKfsPoTransmissionMethodCode());
         }
         poAddress.setExtension(poAddressExtension);
         return poAddress;
+    }
+    
+    private void setVendorFaxNumberValue(VendorAddress vendorAddress, String vendorFaxNumber) {
+    	vendorAddress.setVendorFaxNumber(StringUtils.EMPTY);
+    	try {
+            Class type = ObjectUtils.easyGetPropertyType(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER);
+            ObjectUtils.setObjectProperty(VendorAddress.class, VendorPropertyConstants.VENDOR_FAX_NUMBER, type, vendorFaxNumber);
+        } catch (Exception e) {
+            LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e);
+            e.printStackTrace();           
+        }
     }
 
     private VendorAddress buildBaseAddress(String addressType, String line1, String line2, String city, String zip, String fipsCountryCode) {

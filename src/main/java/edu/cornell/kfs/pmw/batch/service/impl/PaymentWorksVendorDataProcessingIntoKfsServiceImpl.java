@@ -110,8 +110,8 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
             PaymentWorksNewVendorRequestsBatchReportData reportData, PaymentWorksVendor pmwVendor, KualiDocumentEvent documentEvent) {
         boolean documentValidated = false;
         try {
-            vendorMaintenceDoc.validateBusinessRules(documentEvent);
             LOG.info("kfsVendorMaintenanceDocumentValidatedForEvent: vendorMaintenceDoc validate.");
+            vendorMaintenceDoc.validateBusinessRules(documentEvent);           
             documentValidated = true;
         } catch (ValidationException ve) {
             List<String> validationErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
