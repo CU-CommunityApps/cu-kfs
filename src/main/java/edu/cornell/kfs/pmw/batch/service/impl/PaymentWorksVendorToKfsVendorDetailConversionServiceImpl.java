@@ -297,8 +297,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             ObjectUtils.setObjectProperty(vendorAddress, VendorPropertyConstants.VENDOR_FAX_NUMBER, type, vendorFaxNumber);
         } catch (FormatException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             vendorAddress.setVendorFaxNumber(null);
-            LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e);
-            e.printStackTrace();
+            LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e.getMessage(), e);
         }
     }
 
