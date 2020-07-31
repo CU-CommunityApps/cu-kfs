@@ -312,26 +312,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             LOG.error("setVendorFaxNumberValue: Vendor Fax Number cannot be set due to exception: " + e.getMessage(), e);
         }
     }
-    /*
-     * PaymentWorks prepends phone number with a plus sign and a number
-     * KFS requires the fax number to be in the format of XXX-XXX-XXXX
-     */
-    protected String formatFaxNumber(String faxNumber) {
-        String formattedFaxNumber = StringUtils.remove(faxNumber, "+1");
-        
-        if (StringUtils.isNumeric(formattedFaxNumber) && StringUtils.length(formattedFaxNumber) == 10) {
-            formattedFaxNumber = StringUtils.substring(formattedFaxNumber, 0, 3)  + KFSConstants.DASH + 
-                    StringUtils.substring(formattedFaxNumber, 3, 6) + KFSConstants.DASH + StringUtils.substring(formattedFaxNumber, 6);
-        } else {
-            LOG.debug("formatFaxNumber, the formatted fax number is not in the expected format to add hyphens: " + formattedFaxNumber);
-        }
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("formatFaxNumber, the input string was '" + faxNumber + "' and the return string is '" + formattedFaxNumber + "'");
-        }
-        return formattedFaxNumber;
-        
-    }
 
     private VendorAddress buildBaseAddress(String addressType, String line1, String line2, String city, String zip, String fipsCountryCode) {
         VendorAddress baseAddress = new VendorAddress();
