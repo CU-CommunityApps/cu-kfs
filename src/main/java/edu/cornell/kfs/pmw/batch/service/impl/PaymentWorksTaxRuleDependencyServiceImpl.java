@@ -80,8 +80,8 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             poulateForeignVendorValues(pmwVendor, vendorDataWrapper, taxRule);
         } else {
             vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
+            vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
         }
-        vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
         
         populateOwernshipCode(pmwVendor, taxRule, vendorHeader);
         
@@ -104,6 +104,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             if (taxRule.populateForeignSSN) {
                 vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
                 vendorHeader.setVendorForeignTaxId(StringUtils.EMPTY);
+                vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
             } else {
                 vendorHeader.setVendorForeignTaxId(pmwVendor.getRequestingCompanyTin());
                 vendorHeader.setVendorTaxNumber(StringUtils.EMPTY);
@@ -172,7 +173,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
     private boolean isForeignIndividualWithSSN(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
         return  isForeignIndividual(pmwVendor, pmwVendorFipsTaxCountryCode) 
                 && StringUtils.equalsAnyIgnoreCase(pmwVendor.getRequestingCompanyTinType(), 
-                        PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getKfsTaxTypeCodeAsString());
+                        PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString());
     }
     
     private boolean isForeignIndividual(PaymentWorksVendor pmwVendor, String pmwVendorFipsTaxCountryCode) {
