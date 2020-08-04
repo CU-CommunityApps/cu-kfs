@@ -3,10 +3,10 @@ package edu.cornell.kfs.module.cam.rest.resource;
 import com.google.gson.Gson;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
+import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.dao.LookupDao;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetCondition;
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -38,9 +40,9 @@ public class CuCapAssetInventoryApiResource {
 
     private static final Logger LOG = LogManager.getLogger(CuCapAssetInventoryApiResource.class);
 
-    private LookupDao lookupDao;
     private CuCapAssetInventoryDao cuCapAssetInventoryDao;
     private Gson gson = new Gson();
+    private CuAssetServiceImpl cuAssetService;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -88,7 +90,7 @@ public class CuCapAssetInventoryApiResource {
     public Response getAssetConditions(@Context HttpHeaders headers) {
         try {
             List<AssetCondition> conditions = getCuCapAssetInventoryDao().getAssetConditions();
-            List<String> conditionsSerialized = conditions.stream().map(c -> c.getAssetConditionName()).collect(Collectors.toList());
+            List<Properties> conditionsSerialized = conditions.stream().map(c -> getAssetConditionProperties(c)).collect(Collectors.toList());
             return Response.ok(gson.toJson(conditionsSerialized)).build();
         } catch (Exception ex) {
             LOG.error("getAssetConditions", ex);
@@ -112,8 +114,41 @@ public class CuCapAssetInventoryApiResource {
         }
     }
 
+    @PUT
+    @Path("asset/inventory/{capital_asset_number}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateAsset(@PathParam(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER) String capitalAssetNumber, @Context HttpHeaders headers) {
+        try {
+            if (!validateUpdateAssetQueryParameters()) {
+                LOG.warn("Bad Request for Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
+                return respondBadRequest();
+            }
+
+            LOG.info("Requesting Capital Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
+            String conditionCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.CONDITION_CODE);
+            String buildingCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
+            String roomNumber = servletRequest.getParameter(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
+            Asset asset = getCuAssetService().updateAssetInventory(capitalAssetNumber, conditionCode, buildingCode, roomNumber);
+            LOG.info("Updated Capital Asset Inventory #" + capitalAssetNumber + " " + asset.getLastInventoryDate().toString());
+
+            Properties properties = getAssetProperties(asset);
+            return Response.ok(gson.toJson(properties)).build();
+        } catch (Exception ex) {
+            LOG.error("updateAsset", ex);
+            return ex instanceof BadRequestException ? respondBadRequest() : respondInternalServerError(ex);
+        }
+    }
+
+    private boolean validateUpdateAssetQueryParameters() {
+        List<String> paramNames = Collections.list(servletRequest.getParameterNames());
+        return paramNames.contains(CuCamsConstants.CapAssetApi.CONDITION_CODE) &&
+                paramNames.contains(CuCamsConstants.CapAssetApi.BUILDING_CODE) &&
+                paramNames.contains(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
+    }
+
     private Properties getAssetProperties(Asset asset) {
         Properties assetProperties = new Properties();
+        assetProperties.put(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER, asset.getCapitalAssetNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.ORGANIZATION_INVENTORY_NAME, asset.getOrganizationInventoryName());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.SERIAL_NUMBER, asset.getSerialNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAPITAL_ASSET_DESCRIPTION, asset.getCapitalAssetDescription());
@@ -122,11 +157,18 @@ public class CuCapAssetInventoryApiResource {
         return assetProperties;
     }
 
-    private Properties getBuildingProperties(Building buillding) {
+    private Properties getBuildingProperties(Building building) {
         Properties buildingProperties = new Properties();
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CAMPUS_CODE, buillding.getCampusCode());
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, buillding.getBuildingCode());
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_NAME, buillding.getBuildingName());
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CAMPUS_CODE, building.getCampusCode());
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, building.getBuildingCode());
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_NAME, building.getBuildingName());
+        return buildingProperties;
+    }
+
+    private Properties getAssetConditionProperties(AssetCondition condition) {
+        Properties buildingProperties = new Properties();
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CONDITION_CODE, condition.getAssetConditionCode());
+        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CONDITION_NAME, condition.getAssetConditionName());
         return buildingProperties;
     }
 
@@ -155,18 +197,18 @@ public class CuCapAssetInventoryApiResource {
         return Response.status(500).entity(responseBody).build();
     }
 
-    private LookupDao getLookupDao() {
-        if (ObjectUtils.isNull(lookupDao)) {
-            lookupDao = SpringContext.getBean(LookupDao.class);
-        }
-        return lookupDao;
-    }
-
     private CuCapAssetInventoryDao getCuCapAssetInventoryDao() {
         if (ObjectUtils.isNull(cuCapAssetInventoryDao)) {
             cuCapAssetInventoryDao = SpringContext.getBean(CuCapAssetInventoryDao.class);
         }
         return cuCapAssetInventoryDao;
+    }
+
+    private CuAssetServiceImpl getCuAssetService() {
+        if (ObjectUtils.isNull(cuAssetService)) {
+            cuAssetService = SpringContext.getBean(CuAssetServiceImpl.class);
+        }
+        return cuAssetService;
     }
 
 }

@@ -43,9 +43,9 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
 
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (isAuthorized(request)) {
-            LOG.info("CapAssetInventoryApi authorized " + request.getMethod() + " " + request.getPathInfo());
             chain.doFilter(request, response);
         } else {
+            LOG.warn("CapAssetInventoryApi unauthorized " + request.getMethod() + " " + request.getPathInfo());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println(new Gson().toJson(CuCamsConstants.CapAssetApi.UNAUTHORIZED));
         }

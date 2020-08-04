@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.cam.document.service.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,6 +35,16 @@ public class CuAssetServiceImpl extends AssetServiceImpl {
             }
         }
         return activeMatches;
+    }
+
+    public Asset updateAssetInventory(String capitalAssetNumber, String conditionCode, String buildingCode, String roomNumber) {
+        Asset asset = businessObjectService.findBySinglePrimaryKey(Asset.class, capitalAssetNumber);
+        asset.setConditionCode(conditionCode);
+        asset.setBuildingCode(buildingCode);
+        asset.setBuildingRoomNumber(roomNumber);
+        asset.setLastInventoryDate(new Timestamp(System.currentTimeMillis()));
+        businessObjectService.save(asset);
+        return asset;
     }
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
