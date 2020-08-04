@@ -24,10 +24,10 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorAchDataProcessingIntoKfsService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 
 public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNewVendorPayeeAchService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksNewVendorPayeeAchServiceImpl.class);
@@ -40,7 +40,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     protected PaymentWorksNewVendorPayeeAchReportService paymentWorksNewVendorPayeeAchReportService;
     protected PaymentWorksVendorAchDataProcessingIntoKfsService paymentWorksVendorAchDataProcessingIntoKfsService;
     protected PaymentWorksVendorDao paymentWorksVendorDao;
-    protected PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
+    protected PaymentWorksFormModeService paymentWorksFormModeService;
     
     @Override
     public void processKfsPayeeAchAccountsForApprovedAndDisapprovedPmwNewVendors() {
@@ -121,11 +121,10 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         if (ObjectUtils.isNull(kfsApprovedPmwVendors) || kfsApprovedPmwVendors.isEmpty()) {
             LOG.info("createKfsPayeeAchAccountsForKfsApprovedPmwNewVendors: No KFS Approved PMW New Vendors with outstanding ACH data found to process.");
             approvedDataFoundToProcess = false;
-        } 
-        else {
+        } else {
             LOG.info("createKfsPayeeAchAccountsForKfsApprovedPmwNewVendors: Found " + kfsApprovedPmwVendors.size() + " KFS Approved PMW New Vendors to attempt ACH processing for.");
-            for (int i=0; i < kfsApprovedPmwVendors.size(); i++) {
-                LOG.info("createKfsPayeeAchAccountsForKfsApprovedPmwNewVendors: PMW-Vendor-id=" + kfsApprovedPmwVendors.get(i).getId());
+            for (PaymentWorksVendor pmwVendor : kfsApprovedPmwVendors) {
+                LOG.info("createKfsPayeeAchAccountsForKfsApprovedPmwNewVendors: PMW-Vendor-id=" + pmwVendor.getId());
             }
             processEachPaymentWorksNewVendorPayeeAchIntoKFS(kfsApprovedPmwVendors, reportData);
             approvedDataFoundToProcess = true;
@@ -135,7 +134,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     }
     
     private List<PaymentWorksVendor> findAllKfsApprovedPmwNewVendorsWithUnprocessedPmwAchData() {
-        Map searchCriteria = new HashMap();
+        Map<String, String> searchCriteria = new HashMap<String, String>();
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_REQUEST_STATUS, PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_TRANSACTION_TYPE, PaymentWorksConstants.PaymentWorksTransactionType.NEW_VENDOR);
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.KFS_VENDOR_PROCESSING_STATUS, PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_APPROVED);
@@ -153,11 +152,13 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                 if (kfsVendorIdentifiersExist(pmwVendor, reportData)) {
                     if (allPmwEnteredKfsPayeeAchAccountDataExists(pmwVendor, reportData)) {
                         if (allKfsPayeeAchAccountDataIsValid(pmwVendor, reportData)) {
-                            pmwVendor = setStatusValuesForPaymentWorksNewVendorAchRequestedInKfs(pmwVendor);
-                            if (getPaymentWorksVendorAchDataProcessingIntoKfsService().createValidateAndRouteKfsPayeeAch(pmwVendor, reportData)) {
-                                performProcessingForSuccessfulKfsPaatDocumentCreation(pmwVendor, reportData);
-                            } else {
-                                performProcessingForFailedKfsPaatDocumentCreation(pmwVendor, reportData);
+                            if (isUsAchBank(pmwVendor, reportData)) {
+                                pmwVendor = setStatusValuesForPaymentWorksNewVendorAchRequestedInKfs(pmwVendor);
+                                if (getPaymentWorksVendorAchDataProcessingIntoKfsService().createValidateAndRouteKfsPayeeAch(pmwVendor, reportData)) {
+                                    performProcessingForSuccessfulKfsPaatDocumentCreation(pmwVendor, reportData);
+                                } else {
+                                    performProcessingForFailedKfsPaatDocumentCreation(pmwVendor, reportData);
+                                }
                             }
                         } else {
                             performProcessingWhenInvalidAchAccountDataIsProvidedForApprovedKfsVendor(pmwVendor);
@@ -243,6 +244,29 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         }
     }
     
+    protected boolean isUsAchBank(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
+        boolean usAchBank = true;
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            String bankCountry = pmwVendor.getBankAddressCountry();
+            if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
+                    bankCountry)) {
+                LOG.info("isUsAchBank, found an ACH record that has a US country, it is OK to proceed.");
+            } else {
+                LOG.info("isUsAchBank, the bank has a country of " + bankCountry + " so can NOT create an ACH record.");
+                reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+                List<String> errorMessages = new ArrayList<String>();
+                errorMessages.add(MessageFormat.format(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_BANK_NOT_US), 
+                        bankCountry));
+                reportData.addPmwVendorAchThatCouldNotBeProcessed(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                        errorMessages));
+                usAchBank = false;
+            }
+        } else {
+            LOG.info("isUsAchBank, not in foreign form mode, so just return true.");
+        }
+        return usAchBank;
+    }
+    
     private PaymentWorksVendor setStatusValuesForPaymentWorksNewVendorAchRequestedInKfs(PaymentWorksVendor pmwVendor) {
         pmwVendor.setKfsAchProcessingStatus(PaymentWorksConstants.KFSAchProcessingStatus.ACH_REQUESTED);
         return pmwVendor;
@@ -283,12 +307,10 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     
     private void performProcessingWhenInvalidAchAccountDataIsProvidedForApprovedKfsVendor(PaymentWorksVendor pmwVendor) {
         updatePmwStagingTableWithKfsAchProcessingStatusForPmwProcessedKfsApprovedVendor(pmwVendor, PaymentWorksConstants.KFSAchProcessingStatus.ACH_REJECTED);
-        //Intentionally not making web service call to PMW as it is valid to have a KFS approved vendor with bad ACH data since ACH data is optional.
     }
     
     private void performProcessingWhenAchAccountDataNotProvidedForApprovedKfsVendor(PaymentWorksVendor pmwVendor) {
         updatePmwStagingTableWithKfsAchProcessingStatusForPmwProcessedKfsApprovedVendor(pmwVendor, PaymentWorksConstants.KFSAchProcessingStatus.NO_ACH_DATA);
-        //Intentionally not making web service call to PMW as it is valid for a vendor to not provide optional bank data.
     }
 
     private void performProcessingWhenNoKfsVendorIdentifiersFoundForKfsApprovedVendor(PaymentWorksVendor pmwVendor) {
@@ -466,20 +488,16 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         this.paymentWorksVendorDao = paymentWorksVendorDao;
     }
 
-    public PaymentWorksWebServiceCallsService getPaymentWorksWebServiceCallsService() {
-        return paymentWorksWebServiceCallsService;
-    }
-
-    public void setPaymentWorksWebServiceCallsService(PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService) {
-        this.paymentWorksWebServiceCallsService = paymentWorksWebServiceCallsService;
-    }
-
     public PaymentWorksNewVendorPayeeAchReportService getPaymentWorksNewVendorPayeeAchReportService() {
         return paymentWorksNewVendorPayeeAchReportService;
     }
 
     public void setPaymentWorksNewVendorPayeeAchReportService(PaymentWorksNewVendorPayeeAchReportService paymentWorksNewVendorPayeeAchReportService) {
         this.paymentWorksNewVendorPayeeAchReportService = paymentWorksNewVendorPayeeAchReportService;
+    }
+
+    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
+        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 
 }
