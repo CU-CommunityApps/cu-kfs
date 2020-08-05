@@ -42,7 +42,9 @@ public class CuAssetServiceImpl extends AssetServiceImpl {
         asset.setConditionCode(conditionCode);
         asset.setBuildingCode(buildingCode);
         asset.setBuildingRoomNumber(roomNumber);
-        asset.setLastInventoryDate(new Timestamp(System.currentTimeMillis()));
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        asset.setLastInventoryDate(currentTimestamp);
+        asset.setLastUpdatedTimestamp(currentTimestamp);
         businessObjectService.save(asset);
         return asset;
     }

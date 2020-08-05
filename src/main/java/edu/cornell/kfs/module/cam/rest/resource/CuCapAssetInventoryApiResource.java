@@ -149,6 +149,9 @@ public class CuCapAssetInventoryApiResource {
     private Properties getAssetProperties(Asset asset) {
         Properties assetProperties = new Properties();
         assetProperties.put(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER, asset.getCapitalAssetNumber());
+        safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAMPUS_TAG_NUMBER_ATTRIBUTE, asset.getCampusTagNumber());
+        safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, asset.getBuildingCode());
+        safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.ROOM_NUMBER, asset.getBuildingRoomNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.ORGANIZATION_INVENTORY_NAME, asset.getOrganizationInventoryName());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.SERIAL_NUMBER, asset.getSerialNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAPITAL_ASSET_DESCRIPTION, asset.getCapitalAssetDescription());

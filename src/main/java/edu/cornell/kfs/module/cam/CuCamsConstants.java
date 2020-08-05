@@ -21,6 +21,7 @@ public class CuCamsConstants {
         public static final String AMOUNT = "amount";
         public static final String NULL = "null";
         public static final String CAMPUS_TAG_NUMBER = "campusTagNumber";
+        public static final String CAMPUS_TAG_NUMBER_ATTRIBUTE = "campus_tag_number";
         public static final String ACTIVE = "active";
         public static final String YES = "Y";
         public static final String CAMPUS_CODE = "campus_code";
@@ -33,5 +34,6 @@ public class CuCamsConstants {
         public static final String LAST_INVENTORY_DATE = "last_inventory_date";
         public static final String ORGANIZATION_INVENTORY_NAME = "organization_inventory_name";
         public static final String CAPITAL_ASSET_NUMBER = "capital_asset_number";
+        public static final String ASSET_TAG = "asset_tag_number";
     }
 }
