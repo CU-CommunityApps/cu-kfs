@@ -87,7 +87,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     }
 
     private List<PaymentWorksVendor> findAllKfsDisapprovedPmwNewVendorsWithUnprocessedPmwAchData() {
-        Map searchCriteria = new HashMap();
+        Map<String, String> searchCriteria = new HashMap<String, String>();
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_REQUEST_STATUS, PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_TRANSACTION_TYPE, PaymentWorksConstants.PaymentWorksTransactionType.NEW_VENDOR);
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.KFS_VENDOR_PROCESSING_STATUS, PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_DISAPPROVED);
@@ -152,13 +152,11 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                 if (kfsVendorIdentifiersExist(pmwVendor, reportData)) {
                     if (allPmwEnteredKfsPayeeAchAccountDataExists(pmwVendor, reportData)) {
                         if (allKfsPayeeAchAccountDataIsValid(pmwVendor, reportData)) {
-                            if (isUsAchBank(pmwVendor, reportData)) {
-                                pmwVendor = setStatusValuesForPaymentWorksNewVendorAchRequestedInKfs(pmwVendor);
-                                if (getPaymentWorksVendorAchDataProcessingIntoKfsService().createValidateAndRouteKfsPayeeAch(pmwVendor, reportData)) {
-                                    performProcessingForSuccessfulKfsPaatDocumentCreation(pmwVendor, reportData);
-                                } else {
-                                    performProcessingForFailedKfsPaatDocumentCreation(pmwVendor, reportData);
-                                }
+                            pmwVendor = setStatusValuesForPaymentWorksNewVendorAchRequestedInKfs(pmwVendor);
+                            if (getPaymentWorksVendorAchDataProcessingIntoKfsService().createValidateAndRouteKfsPayeeAch(pmwVendor, reportData)) {
+                                performProcessingForSuccessfulKfsPaatDocumentCreation(pmwVendor, reportData);
+                            } else {
+                                performProcessingForFailedKfsPaatDocumentCreation(pmwVendor, reportData);
                             }
                         } else {
                             performProcessingWhenInvalidAchAccountDataIsProvidedForApprovedKfsVendor(pmwVendor);
@@ -233,7 +231,8 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         List<String> errorMessages = new ArrayList<String>();
         if (pmwBankRoutingNumberIsValid(pmwVendor, errorMessages) 
             && pmwBankAccountNumberIsValid(pmwVendor, errorMessages)
-            && pmwBankAccountTypeIsValid(pmwVendor, errorMessages)) {
+            && pmwBankAccountTypeIsValid(pmwVendor, errorMessages)
+            && isUsAchBank(pmwVendor, reportData)) {
             return true;
         } else {
             if (!errorMessages.isEmpty()){
@@ -242,29 +241,6 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
             }
             return false;
         }
-    }
-    
-    protected boolean isUsAchBank(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
-        boolean usAchBank = true;
-        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            String bankCountry = pmwVendor.getBankAddressCountry();
-            if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
-                    bankCountry)) {
-                LOG.info("isUsAchBank, found an ACH record that has a US country, it is OK to proceed.");
-            } else {
-                LOG.info("isUsAchBank, the bank has a country of " + bankCountry + " so can NOT create an ACH record.");
-                reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
-                List<String> errorMessages = new ArrayList<String>();
-                errorMessages.add(MessageFormat.format(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_BANK_NOT_US), 
-                        bankCountry));
-                reportData.addPmwVendorAchThatCouldNotBeProcessed(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
-                        errorMessages));
-                usAchBank = false;
-            }
-        } else {
-            LOG.info("isUsAchBank, not in foreign form mode, so just return true.");
-        }
-        return usAchBank;
     }
     
     private PaymentWorksVendor setStatusValuesForPaymentWorksNewVendorAchRequestedInKfs(PaymentWorksVendor pmwVendor) {
@@ -298,6 +274,29 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
             errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_BANK_ACCOUNT_TYPE_INVALID));
             return false;
         }
+    }
+    
+    protected boolean isUsAchBank(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
+        boolean usAchBank = true;
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            String bankCountry = pmwVendor.getBankAddressCountry();
+            if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
+                    bankCountry)) {
+                LOG.debug("isUsAchBank, found an ACH record that has a US country, it is OK to proceed.");
+            } else {
+                LOG.info("isUsAchBank, the bank has a country of " + bankCountry + " so can NOT create an ACH record.");
+                reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+                List<String> errorMessages = new ArrayList<String>();
+                errorMessages.add(MessageFormat.format(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_BANK_NOT_US), 
+                        bankCountry));
+                reportData.addPmwVendorAchThatCouldNotBeProcessed(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                        errorMessages));
+                usAchBank = false;
+            }
+        } else {
+            LOG.debug("isUsAchBank, not in foreign form mode, so just return true.");
+        }
+        return usAchBank;
     }
     
     private boolean pmwBankAccountTypeIsDefinedInKfs(String pmwBankAccountTypeToVerify) {
