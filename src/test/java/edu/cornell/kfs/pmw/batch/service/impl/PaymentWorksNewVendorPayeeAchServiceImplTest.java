@@ -2,6 +2,8 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        Configurator.setLevel(PaymentWorksNewVendorPayeeAchServiceImpl.class.getName(), Level.DEBUG);
         achService = new PaymentWorksNewVendorPayeeAchServiceImpl();
         achService.setConfigurationService(buildMockConfigurationService());
         achService.setPaymentWorksNewVendorPayeeAchReportService(new PaymentWorksNewVendorPayeeAchReportServiceImpl());
@@ -60,9 +63,13 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     void testIsUsAchBankForeignFormCanadaBank() {
         achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         pmwVendor.setBankAddressCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getPmwCountryOptionAsString());
-        boolean actualResults = achService.isUsAchBank(pmwVendor, reportData);
-        assertFalse(actualResults);
+        boolean actualIsUsBankAccount = achService.isUsAchBank(pmwVendor, reportData);
+        assertFalse(actualIsUsBankAccount);
         assertEquals(1, reportData.getRecordsThatCouldNotBeProcessedSummary().getRecordCount());
+        assertEquals(1, reportData.getPmwVendorAchsThatCouldNotBeProcessed().size());
+        assertEquals(1, reportData.getPmwVendorAchsThatCouldNotBeProcessed().get(0).getErrorMessages().size());
+        String actualErrorMmessage = reportData.getPmwVendorAchsThatCouldNotBeProcessed().get(0).getErrorMessages().get(0);
+        assertEquals("The bank has a country code of Canada.  We can only create ACH records for banks that have a US address", actualErrorMmessage);
     }
     
     private PaymentWorksFormModeService buildMockPaymentWorksFormModeService(boolean shouldUseForeignForm) {
