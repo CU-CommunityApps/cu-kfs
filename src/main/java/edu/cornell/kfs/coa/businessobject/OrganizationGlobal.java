@@ -2,9 +2,7 @@ package edu.cornell.kfs.coa.businessobject;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Organization;
@@ -17,13 +15,11 @@ import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.KualiModuleService;
-import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
-import org.kuali.rice.location.api.LocationConstants;
-import org.kuali.rice.location.framework.campus.CampusEbo;
-import org.kuali.rice.location.framework.country.CountryEbo;
-import org.kuali.rice.location.framework.postalcode.PostalCodeEbo;
+import org.kuali.kfs.sys.businessobject.Campus;
+import org.kuali.kfs.sys.businessobject.Country;
+import org.kuali.kfs.sys.businessobject.PostalCode;
+
 
 /**
  * Primary BO for the Organization Global document.
@@ -48,9 +44,9 @@ public class OrganizationGlobal extends PersistableBusinessObjectBase implements
 
     protected DocumentHeader financialDocument;
     protected Person organizationManagerUniversal;
-    protected CampusEbo organizationPhysicalCampus;
-    protected PostalCodeEbo postalZip;
-    protected CountryEbo organizationCountry;
+    protected Campus organizationPhysicalCampus;
+    protected PostalCode postalZip;
+    protected Country organizationCountry;
 
 
 
@@ -257,44 +253,27 @@ public class OrganizationGlobal extends PersistableBusinessObjectBase implements
         this.organizationManagerUniversal = organizationManagerUniversal;
     }
 
-    public CampusEbo getOrganizationPhysicalCampus() {
+    public Campus getOrganizationPhysicalCampus() {
         return organizationPhysicalCampus;
     }
 
-    public void setOrganizationPhysicalCampus(CampusEbo organizationPhysicalCampus) {
+    public void setOrganizationPhysicalCampus(Campus organizationPhysicalCampus) {
         this.organizationPhysicalCampus = organizationPhysicalCampus;
     }
 
-    public PostalCodeEbo getPostalZip() {
-        // Copied zip-code-updating logic from Organization BO.
-        if (StringUtils.isBlank(organizationZipCode) || StringUtils.isBlank(organizationCountryCode)) {
-            postalZip = null;
-        } else {
-            if (postalZip == null || !StringUtils.equals(postalZip.getCode(), organizationZipCode)
-                    || !StringUtils.equals(postalZip.getCountryCode(), organizationCountryCode)) {
-                ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(PostalCodeEbo.class);
-                if (moduleService != null) {
-                    Map<String,Object> keys = new HashMap<String, Object>(2);
-                    keys.put(LocationConstants.PrimaryKeyConstants.COUNTRY_CODE, organizationCountryCode);
-                    keys.put(LocationConstants.PrimaryKeyConstants.CODE, organizationZipCode);
-                    postalZip = moduleService.getExternalizableBusinessObject(PostalCodeEbo.class, keys);
-                } else {
-                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed.");
-                }
-            }
-        }
+    public PostalCode getPostalZip() {
         return postalZip;
     }
 
-    public void setPostalZip(PostalCodeEbo postalZip) {
+    public void setPostalZip(PostalCode postalZip) {
         this.postalZip = postalZip;
     }
 
-    public CountryEbo getOrganizationCountry() {
+    public Country getOrganizationCountry() {
         return organizationCountry;
     }
 
-    public void setOrganizationCountry(CountryEbo organizationCountry) {
+    public void setOrganizationCountry(Country organizationCountry) {
         this.organizationCountry = organizationCountry;
     }
 
