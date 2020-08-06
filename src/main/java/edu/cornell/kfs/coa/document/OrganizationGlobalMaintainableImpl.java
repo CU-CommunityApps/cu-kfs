@@ -15,7 +15,7 @@ import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.rice.location.framework.postalcode.PostalCodeEbo;
+import org.kuali.kfs.sys.businessobject.PostalCode;
 
 import edu.cornell.kfs.coa.businessobject.OrganizationGlobal;
 import edu.cornell.kfs.coa.businessobject.OrganizationGlobalDetail;
@@ -76,7 +76,7 @@ public class OrganizationGlobalMaintainableImpl extends FinancialSystemGlobalMai
         OrganizationGlobal orgGlobal = (OrganizationGlobal) getBusinessObject();
         
         // Forcibly set city name and state code if valid zip code is given, otherwise clear them.
-        PostalCodeEbo zipCode = orgGlobal.getPostalZip();
+        PostalCode zipCode = orgGlobal.getPostalZip();
         if (ObjectUtils.isNotNull(zipCode)) {
             // Valid zip-and-country combination is given; update city and state with corresponding values.
             orgGlobal.setOrganizationCityName(zipCode.getCityName());
