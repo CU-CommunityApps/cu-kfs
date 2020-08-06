@@ -78,4 +78,7 @@
         </property>
     </bean>
 
+    <bean id="cf.businessObjectAuthorizationService"
+          class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"/>
+
 </beans>
