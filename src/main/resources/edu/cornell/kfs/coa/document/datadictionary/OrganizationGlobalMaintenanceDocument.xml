@@ -13,7 +13,6 @@
     </property>
     <property name="defaultExistenceChecks">
       <list>
-        <bean parent="ReferenceDefinition" p:attributeName="organizationManagerUniversal" p:attributeToHighlightOnFail="organizationManagerUniversal.principalName"/>
         <bean parent="ReferenceDefinition" p:attributeName="organizationPhysicalCampus" p:attributeToHighlightOnFail="organizationPhysicalCampusCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="postalZip" p:attributeToHighlightOnFail="organizationZipCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="organizationCountry" p:attributeToHighlightOnFail="organizationCountryCode"/>
@@ -60,7 +59,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="organizationStateCode" p:unconditionallyReadOnly="true"/>
         <!-- This definition uses the lookup override properties so that the city name and state code will also be updated when the lookup returns. -->
         <bean parent="MaintainableFieldDefinition" p:name="organizationZipCode" p:webUILeaveFieldCallbackFunction="updateLocationByPostalCode_Callback" p:webUILeaveFieldFunction="updateOrgGlobalLocationByPostalCode"
-            p:overrideLookupClass="org.kuali.rice.location.framework.postalcode.PostalCodeEbo" p:overrideFieldConversions="code:organizationZipCode,stateCode:organizationStateCode,cityName:organizationCityName"/>
+            p:overrideLookupClass="org.kuali.kfs.sys.businessobject.PostalCode" p:overrideFieldConversions="code:organizationZipCode,stateCode:organizationStateCode,cityName:organizationCityName"/>
         <bean parent="MaintainableFieldDefinition" p:name="organizationCountryCode" p:webUILeaveFieldCallbackFunction="updateLocationByCountryCode_Callback" p:webUILeaveFieldFunction="updateOrgGlobalLocationByCountryCode"/>
       </list>
     </property>
