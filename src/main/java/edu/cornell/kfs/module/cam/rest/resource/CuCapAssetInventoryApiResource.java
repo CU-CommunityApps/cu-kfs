@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.cam.rest.resource;
 import com.google.gson.Gson;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
+import edu.cornell.kfs.module.cam.document.service.CuAssetService;
 import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +43,7 @@ public class CuCapAssetInventoryApiResource {
 
     private CuCapAssetInventoryDao cuCapAssetInventoryDao;
     private Gson gson = new Gson();
-    private CuAssetServiceImpl cuAssetService;
+    private CuAssetService cuAssetService;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -90,7 +91,7 @@ public class CuCapAssetInventoryApiResource {
     public Response getAssetConditions(@Context HttpHeaders headers) {
         try {
             List<AssetCondition> conditions = getCuCapAssetInventoryDao().getAssetConditions();
-            List<Properties> conditionsSerialized = conditions.stream().map(c -> getAssetConditionProperties(c)).collect(Collectors.toList());
+            List<Properties> conditionsSerialized = conditions.stream().map(c -> buildAssetConditionProperties(c)).collect(Collectors.toList());
             return Response.ok(gson.toJson(conditionsSerialized)).build();
         } catch (Exception ex) {
             LOG.error("getAssetConditions", ex);
@@ -120,16 +121,20 @@ public class CuCapAssetInventoryApiResource {
     public Response updateAsset(@PathParam(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER) String capitalAssetNumber, @Context HttpHeaders headers) {
         try {
             if (!validateUpdateAssetQueryParameters()) {
-                LOG.warn("Bad Request for Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
+                LOG.error("updateAsset: Bad Request for Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
                 return respondBadRequest();
             }
 
-            LOG.info("Requesting Capital Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
+            LOG.info("updateAsset: Requesting Capital Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
             String conditionCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.CONDITION_CODE);
             String buildingCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
             String roomNumber = servletRequest.getParameter(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
             Asset asset = getCuAssetService().updateAssetInventory(capitalAssetNumber, conditionCode, buildingCode, roomNumber);
-            LOG.info("Updated Capital Asset Inventory #" + capitalAssetNumber + " " + asset.getLastInventoryDate().toString());
+            if (asset == null) {
+                LOG.error("updateAsset: Asset Inventory #" + capitalAssetNumber + " Not Found");
+                return respondNotFound();
+            }
+            LOG.info("updateAsset: Updated Capital Asset Inventory #" + capitalAssetNumber + " " + asset.getLastInventoryDate().toString());
 
             Properties properties = getAssetProperties(asset);
             return Response.ok(gson.toJson(properties)).build();
@@ -168,7 +173,7 @@ public class CuCapAssetInventoryApiResource {
         return buildingProperties;
     }
 
-    private Properties getAssetConditionProperties(AssetCondition condition) {
+    private Properties buildAssetConditionProperties(AssetCondition condition) {
         Properties buildingProperties = new Properties();
         safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CONDITION_CODE, condition.getAssetConditionCode());
         safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CONDITION_NAME, condition.getAssetConditionName());
@@ -207,7 +212,7 @@ public class CuCapAssetInventoryApiResource {
         return cuCapAssetInventoryDao;
     }
 
-    private CuAssetServiceImpl getCuAssetService() {
+    private CuAssetService getCuAssetService() {
         if (ObjectUtils.isNull(cuAssetService)) {
             cuAssetService = SpringContext.getBean(CuAssetServiceImpl.class);
         }

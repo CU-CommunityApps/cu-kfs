@@ -34,6 +34,5 @@ public class CuCamsConstants {
         public static final String LAST_INVENTORY_DATE = "last_inventory_date";
         public static final String ORGANIZATION_INVENTORY_NAME = "organization_inventory_name";
         public static final String CAPITAL_ASSET_NUMBER = "capital_asset_number";
-        public static final String ASSET_TAG = "asset_tag_number";
     }
 }
