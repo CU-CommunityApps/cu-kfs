@@ -88,4 +88,6 @@ public class CUKFSPropertyConstants {
     public static final String PROJECT_MANAGER_UNIVERSAL_PRINCIPAL_NAME =
             KFSPropertyConstants.PROJECT_MANAGER_UNIVERSAL + KFSConstants.DELIMITER
                     + KIMPropertyConstants.Principal.PRINCIPAL_NAME;
+
+    public static final String UNMASKED_PROPERTY_SUFFIX = "Unmasked";
 }
