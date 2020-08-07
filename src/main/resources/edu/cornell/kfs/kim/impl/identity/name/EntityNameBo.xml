@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans         
+            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="EntityNameBo" parent="EntityNameBo-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="EntityNameBo-firstNameUnmasked"/>
+                <ref bean="EntityNameBo-middleNameUnmasked"/>
+                <ref bean="EntityNameBo-lastNameUnmasked"/>
+                <ref bean="EntityNameBo-namePrefixUnmasked"/>
+                <ref bean="EntityNameBo-nameSuffixUnmasked"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="EntityNameBo-firstNameUnmasked" parent="EntityNameBo-firstNameUnmasked-parentBean"/>
+    <bean id="EntityNameBo-firstNameUnmasked-parentBean" abstract="true" parent="EntityNameBo-firstName"
+          p:name="firstNameUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityNameBo-middleNameUnmasked" parent="EntityNameBo-middleNameUnmasked-parentBean"/>
+    <bean id="EntityNameBo-middleNameUnmasked-parentBean" abstract="true" parent="EntityNameBo-middleName"
+          p:name="middleNameUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityNameBo-lastNameUnmasked" parent="EntityNameBo-lastNameUnmasked-parentBean"/>
+    <bean id="EntityNameBo-lastNameUnmasked-parentBean" abstract="true" parent="EntityNameBo-lastName"
+          p:name="lastNameUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityNameBo-namePrefixUnmasked" parent="EntityNameBo-namePrefixUnmasked-parentBean"/>
+    <bean id="EntityNameBo-namePrefixUnmasked-parentBean" abstract="true" parent="EntityNameBo-namePrefix"
+          p:name="namePrefixUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityNameBo-nameSuffixUnmasked" parent="EntityNameBo-nameSuffixUnmasked-parentBean"/>
+    <bean id="EntityNameBo-nameSuffixUnmasked-parentBean" abstract="true" parent="EntityNameBo-nameSuffix"
+          p:name="nameSuffixUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+</beans>
