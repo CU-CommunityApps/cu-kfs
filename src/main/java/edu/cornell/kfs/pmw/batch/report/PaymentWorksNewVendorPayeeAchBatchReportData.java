@@ -12,23 +12,25 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
     
     private PaymentWorksBatchReportSummaryItem disapprovedVendorsSummary;
     private PaymentWorksBatchReportSummaryItem noAchDataProvidedVendorsSummary;
+    private PaymentWorksBatchReportSummaryItem recordsWithForeignAchSummary;
+    
     private List<PaymentWorksBatchReportVendorItem> disapprovedVendors;
     private List<PaymentWorksBatchReportVendorItem> noAchDataProvidedVendors;
     private List<PaymentWorksBatchReportVendorItem> pmwVendorAchsThatCouldNotBeProcessed;
     private List<PaymentWorksBatchReportVendorItem> recordsGeneratingException;
-    private PaymentWorksBatchReportSummaryItem recordsWithForeignAchSummary;
     private List<PaymentWorksBatchReportVendorItem> foreignAchItems;
     
     public PaymentWorksNewVendorPayeeAchBatchReportData() {
         super();
         this.disapprovedVendorsSummary = new PaymentWorksBatchReportSummaryItem();
         this.noAchDataProvidedVendorsSummary = new PaymentWorksBatchReportSummaryItem();
+        this.recordsWithForeignAchSummary = new PaymentWorksBatchReportSummaryItem();
+        
         this.noAchDataProvidedVendors = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.pmwVendorAchsThatCouldNotBeProcessed = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.disapprovedVendors = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.recordsGeneratingException = new ArrayList<PaymentWorksBatchReportVendorItem>();
-        recordsWithForeignAchSummary = new PaymentWorksBatchReportSummaryItem();
-        foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();;
+        this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();;
     }
 
     public PaymentWorksBatchReportSummaryItem getDisapprovedVendorsSummary() {
@@ -148,11 +150,11 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
         this.foreignAchItems = foreignAchItems;
     }
     
-    public void addForeignAchItem(PaymentWorksBatchReportVendorItem foreignEachItem) {
+    public void addForeignAchItem(PaymentWorksBatchReportVendorItem foreignAchItem) {
         if (this.foreignAchItems == null) {
             this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
         }
-        this.foreignAchItems.add(foreignEachItem);
+        this.foreignAchItems.add(foreignAchItem);
     }
     
 }
