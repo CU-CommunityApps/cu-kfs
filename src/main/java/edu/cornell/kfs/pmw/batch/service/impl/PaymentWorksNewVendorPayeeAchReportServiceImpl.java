@@ -324,8 +324,8 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
     }
 
     public String getRecordsForeignAchBankSubTitle() {
-        if (StringUtils.isBlank(recordsForeignAchBankSubTitle)) {
-            setRecordsGeneratingExceptionSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+        if (ObjectUtils.isNull(recordsForeignAchBankSubTitle)) {
+            setRecordsForeignAchBankSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
                     PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FOREIGN_ACH_BANK_SUB_TITLE));
         }
         return recordsForeignAchBankSubTitle;
