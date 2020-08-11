@@ -2,6 +2,8 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
@@ -13,6 +15,7 @@ import org.mockito.Mockito;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 
@@ -65,10 +68,17 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
         pmwVendor.setBankAddressCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getPmwCountryOptionAsString());
         boolean actualIsUsBankAccount = achService.isUsAchBank(pmwVendor, reportData);
         assertFalse(actualIsUsBankAccount);
-        assertEquals(1, reportData.getRecordsThatCouldNotBeProcessedSummary().getRecordCount());
-        assertEquals(1, reportData.getPmwVendorAchsThatCouldNotBeProcessed().size());
-        assertEquals(1, reportData.getPmwVendorAchsThatCouldNotBeProcessed().get(0).getErrorMessages().size());
-        String actualErrorMmessage = reportData.getPmwVendorAchsThatCouldNotBeProcessed().get(0).getErrorMessages().get(0);
+        
+        assertEquals(0, reportData.getRecordsThatCouldNotBeProcessedSummary().getRecordCount());
+        assertEquals(0, reportData.getPmwVendorAchsThatCouldNotBeProcessed().size());
+        
+        assertEquals(1, reportData.getRecordsWithForeignAchSummary().getRecordCount());
+        List<PaymentWorksBatchReportVendorItem> foreignAchItems = reportData.getForeignAchItems();
+        assertEquals(1, foreignAchItems.size());
+        List<String> foreignAchErrorMessages = foreignAchItems.get(0).getErrorMessages();
+        assertEquals(1, foreignAchErrorMessages.size());
+        
+        String actualErrorMmessage = foreignAchErrorMessages.get(0);
         assertEquals("The bank has a country code of Canada.  We can only create ACH records for banks that have a US address", actualErrorMmessage);
     }
     
