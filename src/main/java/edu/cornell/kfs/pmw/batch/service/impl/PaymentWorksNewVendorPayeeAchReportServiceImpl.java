@@ -32,6 +32,7 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
     private String disapprovedVendorsSubTitle;
     private String noAchDataProvidedVendorsSubTitle;
     private String recordsGeneratingExceptionSubTitle;
+    private String recordsForeignAchBankSubTitle;
 
     @Override
     public void generateAndEmailProcessingReport(PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
@@ -51,6 +52,7 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         writeProcessingSubReport(reportData.getDisapprovedVendors(), getDisapprovedVendorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_DISAPPROVED_VENDORS_WITH_PENDING_ACH_DATA_MESSAGE));
         writeProcessingSubReport(reportData.getNoAchDataProvidedVendors(), getNoAchDataProvidedVendorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_VENDORS_WITHOUT_ACH_DATA_MESSAGE));
         writeProcessingSubReport(reportData.getRecordsGeneratingException(), getRecordsGeneratingExceptionSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE));
+        writeProcessingSubReport(reportData.getForeignAchItems(), getRecordsForeignAchBankSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_FOREIGN_ACH_BANK));
         finalizeReport();
         return getReportWriterService().getReportFile();
     }
@@ -106,6 +108,7 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getDisapprovedVendorsSummary().getItemLabel(), reportData.getDisapprovedVendorsSummary().getRecordCount());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getNoAchDataProvidedVendorsSummary().getItemLabel(), reportData.getNoAchDataProvidedVendorsSummary().getRecordCount());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsGeneratingExceptionSummary().getItemLabel(), reportData.getRecordsGeneratingExceptionSummary().getRecordCount());
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsWithForeignAchSummary().getItemLabel(), reportData.getRecordsWithForeignAchSummary().getRecordCount());
         getReportWriterService().writeNewLines(4);
     }
     
@@ -165,6 +168,8 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         setSummaryItemLabelToDefaultWhenBlank(reportData.getDisapprovedVendorsSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_DISAPPROVED_VENDORS_WITH_PENDING_ACH_FOUND_LABEL);
         setSummaryItemLabelToDefaultWhenBlank(reportData.getNoAchDataProvidedVendorsSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_VENDORS_WITH_NO_PENDING_ACH_DATA_FOUND_LABEL);
         setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsGeneratingExceptionSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_GENERATING_EXCEPTIONS_LABEL);
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsWithForeignAchSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FOREIGN_ACH_BANK);
+        
     }
     
     private void setSummaryItemLabelToDefaultWhenBlank(PaymentWorksBatchReportSummaryItem summaryItem, String defaultLabelParameterKey) {
@@ -308,6 +313,18 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
 
     public void setRecordsGeneratingExceptionSubTitle(String recordsGeneratingExceptionSubTitle) {
         this.recordsGeneratingExceptionSubTitle = recordsGeneratingExceptionSubTitle;
+    }
+
+    public String getRecordsForeignAchBankSubTitle() {
+        if (StringUtils.isBlank(recordsForeignAchBankSubTitle)) {
+            setRecordsGeneratingExceptionSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FOREIGN_ACH_BANK_SUB_TITLE));
+        }
+        return recordsForeignAchBankSubTitle;
+    }
+
+    public void setRecordsForeignAchBankSubTitle(String recordsForeignAchBankSubTitle) {
+        this.recordsForeignAchBankSubTitle = recordsForeignAchBankSubTitle;
     }
 
     public ReportWriterService getReportWriterService() {

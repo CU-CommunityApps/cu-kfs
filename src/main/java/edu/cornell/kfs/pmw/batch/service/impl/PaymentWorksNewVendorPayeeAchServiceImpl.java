@@ -285,11 +285,11 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                 LOG.debug("isUsAchBank, found an ACH record that has a US country, it is OK to proceed.");
             } else {
                 LOG.info("isUsAchBank, the bank has a country of " + bankCountry + " so can NOT create an ACH record.");
-                reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+                reportData.getRecordsWithForeignAchSummary().incrementRecordCount();
                 List<String> errorMessages = new ArrayList<String>();
                 errorMessages.add(MessageFormat.format(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_BANK_NOT_US), 
                         bankCountry));
-                reportData.addPmwVendorAchThatCouldNotBeProcessed(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                reportData.addForeignAchItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
                         errorMessages));
                 usAchBank = false;
             }
