@@ -17,6 +17,7 @@ import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportSummaryItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksReportEmailService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
@@ -26,6 +27,7 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
 
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected PaymentWorksReportEmailService paymentWorksReportEmailService;
+    protected PaymentWorksFormModeService paymentWorksFormModeService;
 
     private String kfsAchDocumentNumberLabel;
     private String bankAcctNameOnAccountLabel;
@@ -52,7 +54,9 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         writeProcessingSubReport(reportData.getDisapprovedVendors(), getDisapprovedVendorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_DISAPPROVED_VENDORS_WITH_PENDING_ACH_DATA_MESSAGE));
         writeProcessingSubReport(reportData.getNoAchDataProvidedVendors(), getNoAchDataProvidedVendorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_VENDORS_WITHOUT_ACH_DATA_MESSAGE));
         writeProcessingSubReport(reportData.getRecordsGeneratingException(), getRecordsGeneratingExceptionSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE));
-        writeProcessingSubReport(reportData.getForeignAchItems(), getRecordsForeignAchBankSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_FOREIGN_ACH_BANK));
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            writeProcessingSubReport(reportData.getForeignAchItems(), getRecordsForeignAchBankSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_FOREIGN_ACH_BANK));
+        }
         finalizeReport();
         return getReportWriterService().getReportFile();
     }
@@ -108,7 +112,9 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getDisapprovedVendorsSummary().getItemLabel(), reportData.getDisapprovedVendorsSummary().getRecordCount());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getNoAchDataProvidedVendorsSummary().getItemLabel(), reportData.getNoAchDataProvidedVendorsSummary().getRecordCount());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsGeneratingExceptionSummary().getItemLabel(), reportData.getRecordsGeneratingExceptionSummary().getRecordCount());
-        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsWithForeignAchSummary().getItemLabel(), reportData.getRecordsWithForeignAchSummary().getRecordCount());
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsWithForeignAchSummary().getItemLabel(), reportData.getRecordsWithForeignAchSummary().getRecordCount());
+        }
         getReportWriterService().writeNewLines(4);
     }
     
@@ -168,7 +174,9 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         setSummaryItemLabelToDefaultWhenBlank(reportData.getDisapprovedVendorsSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_DISAPPROVED_VENDORS_WITH_PENDING_ACH_FOUND_LABEL);
         setSummaryItemLabelToDefaultWhenBlank(reportData.getNoAchDataProvidedVendorsSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_VENDORS_WITH_NO_PENDING_ACH_DATA_FOUND_LABEL);
         setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsGeneratingExceptionSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_GENERATING_EXCEPTIONS_LABEL);
-        setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsWithForeignAchSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FOREIGN_ACH_BANK);
+        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsWithForeignAchSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FOREIGN_ACH_BANK);
+        }
         
     }
     
@@ -341,5 +349,9 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
     
     public void setConfigurationService(ConfigurationService configurationService) {
         super.configurationService = configurationService;
+    }
+
+    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
+        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 }
