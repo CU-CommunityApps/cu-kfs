@@ -253,6 +253,7 @@ public class LookupResource {
                 if (valuesFinder == null) {
                     continue;
                 }
+                // CU Customization: keyValues list now comes from the helper method below.
                 List<KeyValue> keyValues = getKeyValuesForLookup(valuesFinder);
                 valuesMap.put(singleAttributeName, keyValues);
             }
@@ -260,6 +261,10 @@ public class LookupResource {
         return valuesMap;
     }
 
+    /*
+     * CU Customization: Added this method and the one right below it,
+     * to forcibly add a blank key-value entry if the values finder does not return one.
+     */
     private List<KeyValue> getKeyValuesForLookup(KeyValuesFinder valuesFinder) {
         List<KeyValue> keyValues = valuesFinder.getKeyValues();
         if (hasEntryForBlankKey(keyValues)) {
