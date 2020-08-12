@@ -366,6 +366,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         super.doRouteStatusChange(statusChangeEvent);
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
             setIfRolesEditable();
+            // CU Customization: Added group-editable flag updates.
             setIfGroupsEditable();
             KIMServiceLocatorInternal.getUiDocumentService().saveEntityPerson(this);
         }
@@ -566,6 +567,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         }
     }
 
+    // CU Customization: Added method for setting group-editable flags.
     public void setIfGroupsEditable() {
         if (CollectionUtils.isNotEmpty(getGroups())) {
             for (PersonDocumentGroup group : getGroups()) {
@@ -589,6 +591,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return rulePassed;
     }
 
+    // CU Customization: Added method for checking group editability.
     public boolean validAssignGroup(PersonDocumentGroup group) {
         boolean rulePassed = true;
         if (StringUtils.isNotEmpty(group.getNamespaceCode())) {

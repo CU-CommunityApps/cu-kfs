@@ -67,6 +67,7 @@ public class PersonDocumentGroup extends KimDocumentBoActivatableToFromEditableB
     @Transient
     protected String kimTypeId;
 
+    // CU Customization: Added "editable" flag.
     @Transient
     protected boolean editable = true;
 
@@ -135,6 +136,7 @@ public class PersonDocumentGroup extends KimDocumentBoActivatableToFromEditableB
         this.namespaceCode = namespaceCode;
     }
 
+    // CU Customization: Added getters and setters for new "editable" flag.
     public boolean isEditable() {
         return this.editable;
     }

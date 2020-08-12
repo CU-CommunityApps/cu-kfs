@@ -94,6 +94,7 @@
             </tr>
         </c:if>
         <c:forEach var="group" items="${KualiForm.document.groups}" varStatus="status">
+            <%-- CU Customization: Added flag for tracking group editability. --%>
             <c:set var="readOnlyGroup" scope="request" value="${!group.editable || readOnly}" />
             <tr>
                 <th class="infoline">
@@ -106,6 +107,7 @@
                 <kim:cell inquiry="${inquiry}" valign="middle" cellClass="infoline" textAlign="center" property="document.groups[${status.index}].activeFromDate"  attributeEntry="${docGroupAttributes.activeFromDate}" datePicker="true" readOnly="${readOnly}" />
                 <kim:cell inquiry="${inquiry}" valign="middle" cellClass="infoline" textAlign="center" property="document.groups[${status.index}].activeToDate"  attributeEntry="${docGroupAttributes.activeToDate}" datePicker="true" readOnly="${readOnly}" />
 
+                <%-- CU Customization: Updated condition to take new readOnlyGroup flag into account. --%>
                 <c:if test="${not inquiry && not readOnlyGroup}">                        
                     <td>
                         <div align=center>&nbsp;            

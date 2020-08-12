@@ -169,6 +169,7 @@ public class IdentityManagementPersonDocumentAction extends IdentityManagementDo
             populateRoleInformation(personDocumentForm.getPersonDocument());
             if (personDocumentForm.getPersonDocument() != null) {
                 personDocumentForm.getPersonDocument().setIfRolesEditable();
+                // CU Customization: Added setup of group-editable flags.
                 personDocumentForm.getPersonDocument().setIfGroupsEditable();
             }
         }
