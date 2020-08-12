@@ -12,42 +12,25 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
     
     private PaymentWorksBatchReportSummaryItem disapprovedVendorsSummary;
     private PaymentWorksBatchReportSummaryItem noAchDataProvidedVendorsSummary;
+    private PaymentWorksBatchReportSummaryItem recordsWithForeignAchSummary;
+    
     private List<PaymentWorksBatchReportVendorItem> disapprovedVendors;
     private List<PaymentWorksBatchReportVendorItem> noAchDataProvidedVendors;
     private List<PaymentWorksBatchReportVendorItem> pmwVendorAchsThatCouldNotBeProcessed;
     private List<PaymentWorksBatchReportVendorItem> recordsGeneratingException;
+    private List<PaymentWorksBatchReportVendorItem> foreignAchItems;
     
     public PaymentWorksNewVendorPayeeAchBatchReportData() {
         super();
         this.disapprovedVendorsSummary = new PaymentWorksBatchReportSummaryItem();
         this.noAchDataProvidedVendorsSummary = new PaymentWorksBatchReportSummaryItem();
+        this.recordsWithForeignAchSummary = new PaymentWorksBatchReportSummaryItem();
+        
         this.noAchDataProvidedVendors = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.pmwVendorAchsThatCouldNotBeProcessed = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.disapprovedVendors = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.recordsGeneratingException = new ArrayList<PaymentWorksBatchReportVendorItem>();
-    }
-    
-    public PaymentWorksNewVendorPayeeAchBatchReportData (PaymentWorksBatchReportSummaryItem recordsFoundToProcessSummary,
-           PaymentWorksBatchReportSummaryItem recordsThatCouldNotBeProcessedSummary,
-           PaymentWorksBatchReportSummaryItem recordsProcessedSummary,
-           PaymentWorksBatchReportSummaryItem recordsWithProcessingErrorsSummary,
-           PaymentWorksBatchReportSummaryItem disapprovedVendorsSummary,
-           PaymentWorksBatchReportSummaryItem noAchDataProvidedVendorsSummary,
-           PaymentWorksBatchReportSummaryItem recordsGeneratingExceptionSummary,
-           List<PaymentWorksBatchReportVendorItem> noAchDataProvidedVendors,
-           List<PaymentWorksBatchReportVendorItem> pmwVendorAchsThatCouldNotBeProcessed,
-           List<PaymentWorksBatchReportVendorItem> recordsProcessed,
-           List<PaymentWorksBatchReportVendorItem> recordsWithErrorsWhenProcessingAttempted, 
-           List<PaymentWorksBatchReportVendorItem> disapprovedVendors, 
-           List<PaymentWorksBatchReportVendorItem> recordsGeneratingException) {
-        super(recordsFoundToProcessSummary, recordsThatCouldNotBeProcessedSummary, recordsProcessedSummary, 
-              recordsWithProcessingErrorsSummary, recordsGeneratingExceptionSummary, recordsProcessed, recordsWithErrorsWhenProcessingAttempted);
-        this.disapprovedVendorsSummary = disapprovedVendorsSummary;
-        this.noAchDataProvidedVendorsSummary = noAchDataProvidedVendorsSummary;
-        this.noAchDataProvidedVendors = noAchDataProvidedVendors;
-        this.pmwVendorAchsThatCouldNotBeProcessed = pmwVendorAchsThatCouldNotBeProcessed;
-        this.disapprovedVendors = disapprovedVendors;
-        this.recordsGeneratingException = recordsGeneratingException;
+        this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();;
     }
 
     public PaymentWorksBatchReportSummaryItem getDisapprovedVendorsSummary() {
@@ -125,6 +108,7 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
         }
         this.recordsGeneratingException.add(recordGeneratingException);
     }
+    
     @Override
     public String retrieveReportName() {
         return PaymentWorksConstants.PaymentWorksBatchReportNames.NEW_VENDOR_REQUESTS_PAYEE_ACH_REPORT_NAME;
@@ -148,6 +132,29 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
     
     public List<PaymentWorksBatchReportVendorItem> retrievePaymentWorksVendorsWithUnprocessablePayeeAchs() {
         return this.getPmwVendorAchsThatCouldNotBeProcessed();
+    }
+    
+    public PaymentWorksBatchReportSummaryItem getRecordsWithForeignAchSummary() {
+        return recordsWithForeignAchSummary;
+    }
+
+    public void setRecordsWithForeignAchSummary(PaymentWorksBatchReportSummaryItem recordsWithForeignAchSummary) {
+        this.recordsWithForeignAchSummary = recordsWithForeignAchSummary;
+    }
+
+    public List<PaymentWorksBatchReportVendorItem> getForeignAchItems() {
+        return foreignAchItems;
+    }
+
+    public void setForeignAchItems(List<PaymentWorksBatchReportVendorItem> foreignAchItems) {
+        this.foreignAchItems = foreignAchItems;
+    }
+    
+    public void addForeignAchItem(PaymentWorksBatchReportVendorItem foreignAchItem) {
+        if (this.foreignAchItems == null) {
+            this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
+        }
+        this.foreignAchItems.add(foreignAchItem);
     }
     
 }
