@@ -10,7 +10,7 @@
                 <value>principalName</value>
             </list>
         </property> 
-   </bean> 
+    </bean> 
    
     <bean id="PersonImpl-FieldOverrideForInquirySectionReplace"
           abstract="true" parent="FieldOverrideForListElementReplace"
