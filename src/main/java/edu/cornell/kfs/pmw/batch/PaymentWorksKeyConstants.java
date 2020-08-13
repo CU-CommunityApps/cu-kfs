@@ -4,7 +4,6 @@ public class PaymentWorksKeyConstants {
 
     //Boiler plate for PaymentWorks generated KFS Notes
     public static final String NOTES_INITIATOR_LABEL = "note.label.paymentworks.initiator";
-    public static final String NEW_VENDOR_PVEN_NOTES_W8_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w8.exists";
     public static final String NEW_VENDOR_PVEN_NOTES_W9_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w9.exists";
     public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_PROVIDED_LABEL = "note.label.paymentworks.pven.goods.services.provided";
     public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_CURRENT_PAYROLL_PAID_LABEL = "note.label.paymentworks.pven.goods.services.provider.currently.payroll.paid";
@@ -81,6 +80,5 @@ public class PaymentWorksKeyConstants {
     public final static String NO_ACH_DATA_PROVIDED_BY_VENDOR_MESSAGE = "message.paymentworks.no.ach.data.provided";
     public static final String ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION = "error.paymentworks.date.of.birth.description";
     public static final String ERROR_W8_SIGNED_DATE_DESCRIPTION = "error.paymentworks.w8.signed.date.description";
-    public static final String MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS = "message.paymentworks.diversity.certifications.in.paymentworks";
 
 }

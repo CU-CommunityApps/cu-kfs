@@ -37,8 +37,6 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksTaxRuleDependencyService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorSupplierDiversityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
@@ -53,8 +51,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected BusinessObjectService businessObjectService;
     protected PaymentWorksFormModeService paymentWorksFormModeService;
-    protected PaymentWorksVendorSupplierDiversityService paymentWorksVendorSupplierDiversityService;
-    protected PaymentWorksTaxRuleDependencyService paymentWorksTaxRuleDependencyService;
             
     @Override
     public KfsVendorDataWrapper createKfsVendorDetailFromPmwVendor(PaymentWorksVendor pmwVendor,
@@ -68,15 +64,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                                                       Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap, 
                                                       Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
         
-        KfsVendorDataWrapper kfsVendorDataWrapper;
-        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            kfsVendorDataWrapper = populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
-        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            kfsVendorDataWrapper = paymentWorksTaxRuleDependencyService.buildKfsVendorDataWrapper(pmwVendor, paymentWorksIsoToFipsCountryMap);
-        } else {
-            throw new IllegalStateException("Invalid form processing mode, can not continue");
-        }
-        
+        KfsVendorDataWrapper kfsVendorDataWrapper = populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
         if (ObjectUtils.isNotNull(kfsVendorDataWrapper.getVendorDetail())) {
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorTypeCode(determineKfsVendorTypeCodeBasedOnPmwVendorType(pmwVendor.getVendorType()));
             kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorSupplierDiversities(buildVendorDiversities(pmwVendor, paymentWorksToKfsDiversityMap));
@@ -274,17 +262,10 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
 
     private VendorAddress buildPurchaseOrderAddressFromFipsData(PaymentWorksVendor pmwVendor) {
-        String paymentWorksVendorCountryCode = findPoCountryToUse(pmwVendor);
-        String fipsCountryCode = convertFipsPoCountryOptionToFipsCountryCode(paymentWorksVendorCountryCode);
-        
-        if (StringUtils.isBlank(fipsCountryCode)) {
-            LOG.error("buildPurchaseOrderAddressFromFipsData, unable to find a FIPS country code for " + paymentWorksVendorCountryCode);
-        }
-        
         VendorAddress poAddress = buildBaseAddress(VendorConstants.AddressTypes.PURCHASE_ORDER,
                                                    pmwVendor.getPoAddress1(), pmwVendor.getPoAddress2(),
                                                    pmwVendor.getPoCity(), pmwVendor.getPoPostalCode(),
-                                                   fipsCountryCode);
+                                                   convertFipsPoCountryOptionToFipsCountryCode(pmwVendor.getPoCountry()));
         poAddress = assignPoStateOrProvinceBasedOnCountryCode(poAddress, pmwVendor);
         poAddress = assignMethodOfPoTransmission(poAddress, pmwVendor);
         poAddress.setVendorAttentionName(pmwVendor.getPoAttention());
@@ -385,25 +366,15 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorContacts.add(buildVendorInformationFormContact(pmwVendor));
         
         if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
-            if (shouldCreateContact(pmwVendor.getInsuranceContactName())) {
-                vendorContacts.add(buildInsuranceContact(pmwVendor));
-            }
-            if (shouldCreateContact(pmwVendor.getSalesContactName())) {
-                vendorContacts.add(buildSalesContact(pmwVendor));
-            }
-            if (shouldCreateContact(pmwVendor.getAccountsReceivableContactName())) {
-                vendorContacts.add(buildAccountsReceivableContact(pmwVendor));
-            }
+            vendorContacts.add(buildInsuranceContact(pmwVendor));
+            vendorContacts.add(buildSalesContact(pmwVendor));
+            vendorContacts.add(buildAccountsReceivableContact(pmwVendor));
             
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() && pmwVendor.isInvoicing()) {
                 vendorContacts.add(buildEinvoicingContact(pmwVendor));
             }
         }
         return vendorContacts;
-    }
-    
-    protected boolean shouldCreateContact(String contactName) {
-        return paymentWorksFormModeService.shouldUseLegacyFormProcessingMode() || StringUtils.isNotBlank(contactName);
     }
     
     private VendorContact buildVendorInformationFormContact(PaymentWorksVendor pmwVendor) {
@@ -587,9 +558,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private boolean isPurchaseOrderCountryNotUnitedStatesFipsCountryCodeOption(PaymentWorksVendor pmwVendor) {
-        String poCountryToUse = findPoCountryToUse(pmwVendor);
-        return (StringUtils.isNotBlank(poCountryToUse)
-                && !StringUtils.equalsIgnoreCase(poCountryToUse, PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString()));
+        return (StringUtils.isNotBlank(pmwVendor.getPoCountry())
+                && !StringUtils.equalsIgnoreCase(pmwVendor.getPoCountry(), PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString()));
     }
 
     private boolean isTinTypeSsn(String tinTypeCode) {
@@ -715,19 +685,23 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private List<VendorSupplierDiversity> buildVendorDiversities(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
         List<VendorSupplierDiversity> kfsVendorSupplierDiversities = new ArrayList<VendorSupplierDiversity>();
         if (pmwVendor.isDiverseBusiness()) {
+            List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForCheckBoxes = new ArrayList<VendorSupplierDiversity>();
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-                List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForCheckBoxes = new ArrayList<VendorSupplierDiversity>();
                 kfsVendorSupplierDiversitiesForCheckBoxes = buildVendorDiversitiesFromPmwFormCheckboxes(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForCheckBoxes);
-                if (!kfsVendorSupplierDiversitiesForCheckBoxes.isEmpty()){
-                    kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForCheckBoxes);
-                }
-                List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForDropDowns = new ArrayList<VendorSupplierDiversity>();
-                kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForDropDowns);
-                if (!kfsVendorSupplierDiversitiesForDropDowns.isEmpty()){
-                    kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForDropDowns);
-                }
             } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-                kfsVendorSupplierDiversities.addAll(paymentWorksVendorSupplierDiversityService.buildSuppplierDivsersityListFromPaymentWorksVendor(pmwVendor));
+                kfsVendorSupplierDiversities = buildVendorDiversitiesFromPmwNewFormCheckBoxes(pmwVendor, paymentWorksToKfsDiversityMap);
+            }
+            if (!kfsVendorSupplierDiversitiesForCheckBoxes.isEmpty()){
+                kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForCheckBoxes);
+            }
+            List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForDropDowns = new ArrayList<VendorSupplierDiversity>();
+            if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+                kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForDropDowns);
+            } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+                kfsVendorSupplierDiversitiesForDropDowns = buildVendorDiversitiesFromNewPmwFormDropDownLists(pmwVendor, paymentWorksToKfsDiversityMap);
+            }
+            if (!kfsVendorSupplierDiversitiesForDropDowns.isEmpty()){
+                kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForDropDowns);
             }
         }
         return kfsVendorSupplierDiversities;
@@ -805,6 +779,13 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             }
         }
         return kfsVendorSupplierDiversities;
+    }
+    
+    private List<VendorSupplierDiversity> buildVendorDiversitiesFromPmwNewFormCheckBoxes(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
+        //This function should be implemented using the new supplier diversity fields on the new PMW form
+        LOG.info("buildVendorDiversitiesFromPmwNewFormCheckBoxes, " + PaymentWorksConstants.FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE);
+        List<VendorSupplierDiversity> supolierDiversity = new ArrayList<VendorSupplierDiversity>();
+        return supolierDiversity;
     }
     
     private VendorSupplierDiversity buildVendorSupplierDiversity(String vendorSupplierDiversityCode, java.sql.Date vendorSupplierDiversityExpirationDate) {
@@ -901,16 +882,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         }
         return kfsVendorDataWrapper;
     }
-    
-    protected String findPoCountryToUse(PaymentWorksVendor pmwVendor) {
-        String poCountryToUse = pmwVendor.getPoCountry();
-        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode() 
-                && !StringUtils.equalsIgnoreCase(PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER,
-                        pmwVendor.getPoCountryUsCanadaAustraliaOther())) {
-                poCountryToUse = pmwVendor.getPoCountryUsCanadaAustraliaOther();
-        } 
-        return poCountryToUse;
-    }
 
     public DateTimeService getDateTimeService() {
         return dateTimeService;
@@ -946,14 +917,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
 
     public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
         this.paymentWorksFormModeService = paymentWorksFormModeService;
-    }
-
-    public void setPaymentWorksVendorSupplierDiversityService(PaymentWorksVendorSupplierDiversityService paymentWorksVendorSupplierDiversityService) {
-        this.paymentWorksVendorSupplierDiversityService = paymentWorksVendorSupplierDiversityService;
-    }
-
-    public void setPaymentWorksTaxRuleDependencyService(PaymentWorksTaxRuleDependencyService paymentWorksTaxRuleDependencyService) {
-        this.paymentWorksTaxRuleDependencyService = paymentWorksTaxRuleDependencyService;
     }
 
 }
