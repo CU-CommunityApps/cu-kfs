@@ -107,7 +107,10 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             } else {
                 LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
             }
-            getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
+            /*
+             * @todo re-enable this
+             */
+            //getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
         }
         getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
     }
