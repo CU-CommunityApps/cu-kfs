@@ -52,7 +52,6 @@ public class PaymentWorksKeyConstants {
     public static final String NO_DISAPPROVED_VENDORS_WITH_PENDING_ACH_DATA_MESSAGE = "message.paymentworks.no.disapproved.vendors.with.pending.ach.data";
     public static final String NO_VENDORS_WITHOUT_ACH_DATA_MESSAGE = "message.paymentworks.no.vendors.without.ach.data";
     public static final String NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE = "message.paymentworks.no.records.generating.exceptions";
-    public static final String NO_RECORDS_FOREIGN_ACH_BANK = "message.oaymentworks.no.records.foreign.ach.bank";
     
     //PaymentWorks Business Rule Failure Messages
     public static final String ERROR_LEGAL_NAME_TOO_LONG_FOR_KFS = "error.paymentworks.legel.name.too.long";
@@ -83,6 +82,5 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION = "error.paymentworks.date.of.birth.description";
     public static final String ERROR_W8_SIGNED_DATE_DESCRIPTION = "error.paymentworks.w8.signed.date.description";
     public static final String MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS = "message.paymentworks.diversity.certifications.in.paymentworks";
-    public static final String ERROR_PAYMENTWORKS_BANK_NOT_US = "error.paymentworks.bank.not.us";
 
 }
