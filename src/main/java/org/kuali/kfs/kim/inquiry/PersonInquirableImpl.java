@@ -62,16 +62,20 @@ public class PersonInquirableImpl extends KualiInquirableImpl {
 
     @Override
     public BusinessObject getBusinessObject(Map fieldValues) {
-        Person person = getPersonService().getPerson(fieldValues.get("principalId").toString());
-        // KFSPTS-19308 CU customization to allow inquiry by prinicpalName
+        // KFSPTS-19308 CU customization to allow inquiry by principalName
+        Person person = null;
+        if (fieldValues.containsKey("principalId")) {
+            person = getPersonService().getPerson(fieldValues.get("principalId").toString());
+        }
+
         if (person == null && fieldValues.containsKey("principalName")) {
             String principalName = fieldValues.get("principalName").toString();
             if (StringUtils.isNotBlank(principalName)) {
                 person = getPersonService().getPersonByPrincipalName(principalName);
             }
         }
-        
-        if (person instanceof PersonImpl) {
+
+        if (person != null && person instanceof PersonImpl) {
             ((PersonImpl) person).populateMembers();
         }
         return person;
@@ -82,8 +86,6 @@ public class PersonInquirableImpl extends KualiInquirableImpl {
     public HtmlData getInquiryUrl(BusinessObject businessObject, String attributeName, boolean forceInquiry) {
         List<String> primaryKeys = new ArrayList<>();
         primaryKeys.add("principalId");
-        //KFSPTS-19308 CU customization to allow inquiry by prinicpalName
-        primaryKeys.add("principalName");
         return getInquiryUrlForPrimaryKeys(PersonImpl.class, businessObject, primaryKeys, null);
     }
 
