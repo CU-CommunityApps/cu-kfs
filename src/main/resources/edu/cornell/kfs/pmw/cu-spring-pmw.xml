@@ -110,6 +110,22 @@
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService" />
+        <property name="paymentWorksVendorSupplierDiversityService" ref="paymentWorksVendorSupplierDiversityService" />
+        <property name="paymentWorksTaxRuleDependencyService" ref="paymentWorksTaxRuleDependencyService" />
+    </bean>
+    
+    <bean id="paymentWorksVendorSupplierDiversityService" parent="paymentWorksVendorSupplierDiversityService-parentBean" />
+    <bean id="paymentWorksVendorSupplierDiversityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorSupplierDiversityServiceImpl" abstract="true">
+        <property name="kfsSupplierDiversityDao" ref="kfsSupplierDiversityDao" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="configurationService" ref="configurationService" />
+    </bean>
+    
+    <bean id="paymentWorksTaxRuleDependencyService" parent="paymentWorksTaxRuleDependencyService-parentBean" />
+    <bean id="paymentWorksTaxRuleDependencyService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksTaxRuleDependencyServiceImpl" abstract="true">
+        <property name="configurationService" ref="configurationService"/>
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
     </bean>
     
     <bean id="paymentWorksFormModeService" parent="paymentWorksFormModeService-parentBean" />

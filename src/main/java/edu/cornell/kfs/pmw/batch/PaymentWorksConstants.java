@@ -28,6 +28,9 @@ public class PaymentWorksConstants {
     
     public static final String FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE = "PMW foreign mode processing not implemented yet.";
     
+    public static final String SUPPLIER_CATEGORY_INDIVIDUAL = "Individual";
+    public static final String SUPPLIER_CATEGORY_ENTITY = "Entity";
+    
     public static final class PaymentWorksCustomFieldBooleanPrimitive {
         public static final String YES = "YES";
         public static final String NO = "NO";
@@ -234,6 +237,15 @@ public class PaymentWorksConstants {
         public String getTranslationToKfsOwnershipTypeCode() {
             return translationToKfsOwnershipTypeCode;
         }
+        
+        public static PaymentWorksTaxClassification findPaymentWorksTaxClassification(int requestingCompanyTaxClassificationCode) {
+            for (PaymentWorksTaxClassification classification : PaymentWorksTaxClassification.values()) {
+                if (classification.pmwCode == requestingCompanyTaxClassificationCode) {
+                    return classification;
+                }
+            }
+            throw new IllegalArgumentException("Unable to find a tax classficaiton for code " + requestingCompanyTaxClassificationCode);
+        }
     }
     
     public enum PaymentWorksGoodsVsServicesOptions {
@@ -255,6 +267,7 @@ public class PaymentWorksConstants {
     public static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
     
     public enum ErrorDescriptorForBadKfsNote {
+        W8("W8"),
         W9("W9"),
         GOODS_AND_SERVICES("Goods and Services"),
         INITIATOR("Initiator"),
@@ -343,6 +356,7 @@ public class PaymentWorksConstants {
     //vendors are implemented to deal with converting this mixed case string to a FIPS country code.
     public static final String FIPS_COUNTRY_CODE_CANADA = "CA";
     public static final String FIPS_COUNTRY_CODE_AUSTRALIA = "AS";
+    public static final String PO_ADDRESS_COUNTRY_OTHER = "Other";
     public enum PaymentWorksPurchaseOrderCountryFipsOption {
         UNITED_STATES("US", "US"),
         CANADA("Canada", "CA"),
