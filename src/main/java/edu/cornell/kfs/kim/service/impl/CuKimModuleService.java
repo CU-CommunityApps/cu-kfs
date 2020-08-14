@@ -11,10 +11,12 @@ public class CuKimModuleService extends KimModuleService {
     @Override
     public List<List<String>> listAlternatePrimaryKeyFieldNames(Class businessObjectInterfaceClass) {
         List<List<String>> alternateKeyList = super.listAlternatePrimaryKeyFieldNames(businessObjectInterfaceClass);
-        if (alternateKeyList == null) {
-            alternateKeyList = new ArrayList<List<String>>();
-        }
+
         if (PersonImpl.class.isAssignableFrom(businessObjectInterfaceClass)) {
+            if (alternateKeyList == null) {
+                alternateKeyList = new ArrayList<List<String>>();
+            }
+
             ArrayList<String> keyList = new ArrayList<String>();
             keyList.add("principalName");
             alternateKeyList.add(keyList);
