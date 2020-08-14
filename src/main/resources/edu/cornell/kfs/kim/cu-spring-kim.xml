@@ -54,5 +54,7 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="kimModule" parent="kimModule-parentBean" class="edu.cornell.kfs.kim.service.impl.CuKimModuleService"/>
 
 </beans>
