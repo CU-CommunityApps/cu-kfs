@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans         
+            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="EntityPhoneBo" parent="EntityPhoneBo-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="EntityPhoneBo-phoneNumberUnmasked"/>
+                <ref bean="EntityPhoneBo-extensionNumberUnmasked"/>
+                <ref bean="EntityPhoneBo-countryCodeUnmasked"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="EntityPhoneBo-phoneNumberUnmasked" parent="EntityPhoneBo-phoneNumberUnmasked-parentBean"/>
+    <bean id="EntityPhoneBo-phoneNumberUnmasked-parentBean" abstract="true" parent="EntityPhoneBo-phoneNumber"
+          p:name="phoneNumberUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-PhoneAttributeSecurity"/>
+
+    <bean id="EntityPhoneBo-extensionNumberUnmasked" parent="EntityPhoneBo-extensionNumberUnmasked-parentBean"/>
+    <bean id="EntityPhoneBo-extensionNumberUnmasked-parentBean" abstract="true" parent="EntityPhoneBo-extensionNumber"
+          p:name="extensionNumberUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityPhoneBo-countryCodeUnmasked" parent="EntityPhoneBo-countryCodeUnmasked-parentBean"/>
+    <bean id="EntityPhoneBo-countryCodeUnmasked-parentBean" abstract="true" parent="EntityPhoneBo-countryCode"
+          p:name="countryCodeUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-CodeAttributeSecurity"/>
+
+</beans>

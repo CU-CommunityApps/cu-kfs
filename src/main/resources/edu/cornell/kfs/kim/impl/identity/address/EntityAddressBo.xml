@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans         
+            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="EntityAddressBo" parent="EntityAddressBo-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="EntityAddressBo-line1Unmasked"/>
+                <ref bean="EntityAddressBo-line2Unmasked"/>
+                <ref bean="EntityAddressBo-line3Unmasked"/>
+                <ref bean="EntityAddressBo-cityUnmasked"/>
+                <ref bean="EntityAddressBo-stateProvinceCodeUnmasked"/>
+                <ref bean="EntityAddressBo-postalCodeUnmasked"/>
+                <ref bean="EntityAddressBo-countryCodeUnmasked"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="EntityAddressBo-line1Unmasked" parent="EntityAddressBo-line1Unmasked-parentBean"/>
+    <bean id="EntityAddressBo-line1Unmasked-parentBean" abstract="true" parent="EntityAddressBo-line1"
+          p:name="line1Unmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityAddressBo-line2Unmasked" parent="EntityAddressBo-line2Unmasked-parentBean"/>
+    <bean id="EntityAddressBo-line2Unmasked-parentBean" abstract="true" parent="EntityAddressBo-line2"
+          p:name="line2Unmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityAddressBo-line3Unmasked" parent="EntityAddressBo-line3Unmasked-parentBean"/>
+    <bean id="EntityAddressBo-line3Unmasked-parentBean" abstract="true" parent="EntityAddressBo-line3"
+          p:name="line3Unmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityAddressBo-cityUnmasked" parent="EntityAddressBo-cityUnmasked-parentBean"/>
+    <bean id="EntityAddressBo-cityUnmasked-parentBean" abstract="true" parent="EntityAddressBo-city"
+          p:name="cityUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
+
+    <bean id="EntityAddressBo-stateProvinceCodeUnmasked"
+          parent="EntityAddressBo-stateProvinceCodeUnmasked-parentBean"/>
+    <bean id="EntityAddressBo-stateProvinceCodeUnmasked-parentBean"
+          abstract="true" parent="EntityAddressBo-stateProvinceCode"
+          p:name="stateProvinceCodeUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-CodeAttributeSecurity"/>
+
+    <bean id="EntityAddressBo-postalCodeUnmasked" parent="EntityAddressBo-postalCodeUnmasked-parentBean"/>
+    <bean id="EntityAddressBo-postalCodeUnmasked-parentBean" abstract="true" parent="EntityAddressBo-postalCode"
+          p:name="postalCodeUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-ZipAttributeSecurity"/>
+
+    <bean id="EntityAddressBo-countryCodeUnmasked" parent="EntityAddressBo-countryCodeUnmasked-parentBean"/>
+    <bean id="EntityAddressBo-countryCodeUnmasked-parentBean" abstract="true" parent="EntityAddressBo-countryCode"
+          p:name="countryCodeUnmasked"
+          p:attributeSecurity-ref="CuKimBaseBeans-CodeAttributeSecurity"/>
+
+</beans>
