@@ -10,6 +10,7 @@ import java.util.Map;
 import edu.cornell.kfs.module.cam.document.service.CuAssetService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
@@ -42,7 +43,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
 
     public Asset updateAssetInventory(String capitalAssetNumber, String conditionCode, String buildingCode, String roomNumber) {
         Asset asset = businessObjectService.findBySinglePrimaryKey(Asset.class, capitalAssetNumber);
-        if (asset == null) {
+        if (ObjectUtils.isNull(asset)) {
             return null;
         }
 

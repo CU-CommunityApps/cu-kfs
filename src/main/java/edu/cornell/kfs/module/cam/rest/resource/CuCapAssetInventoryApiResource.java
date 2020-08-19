@@ -130,7 +130,7 @@ public class CuCapAssetInventoryApiResource {
             String buildingCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
             String roomNumber = servletRequest.getParameter(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
             Asset asset = getCuAssetService().updateAssetInventory(capitalAssetNumber, conditionCode, buildingCode, roomNumber);
-            if (asset == null) {
+            if (ObjectUtils.isNull(asset)) {
                 LOG.error("updateAsset: Asset Inventory #" + capitalAssetNumber + " Not Found");
                 return respondNotFound();
             }
