@@ -153,7 +153,7 @@ public class CuCapAssetInventoryApiResource {
 
     private Properties getAssetProperties(Asset asset) {
         Properties assetProperties = new Properties();
-        assetProperties.put(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER, asset.getCapitalAssetNumber());
+        safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER, asset.getCapitalAssetNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.CAMPUS_TAG_NUMBER_ATTRIBUTE, asset.getCampusTagNumber());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, asset.getBuildingCode());
         safelyAddProperty(assetProperties, CuCamsConstants.CapAssetApi.ROOM_NUMBER, asset.getBuildingRoomNumber());
@@ -178,6 +178,10 @@ public class CuCapAssetInventoryApiResource {
         safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_CODE, condition.getAssetConditionCode());
         safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_NAME, condition.getAssetConditionName());
         return assetConditionProperties;
+    }
+
+    private void safelyAddProperty(Properties properties, String key, Long value) {
+        properties.put(key, ObjectUtils.isNotNull(value) ? value : 0);
     }
 
     private void safelyAddProperty(Properties properties, String key, String value) {
