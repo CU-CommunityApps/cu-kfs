@@ -174,10 +174,10 @@ public class CuCapAssetInventoryApiResource {
     }
 
     private Properties buildAssetConditionProperties(AssetCondition condition) {
-        Properties buildingProperties = new Properties();
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CONDITION_CODE, condition.getAssetConditionCode());
-        safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.CONDITION_NAME, condition.getAssetConditionName());
-        return buildingProperties;
+        Properties assetConditionProperties = new Properties();
+        safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_CODE, condition.getAssetConditionCode());
+        safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_NAME, condition.getAssetConditionName());
+        return assetConditionProperties;
     }
 
     private void safelyAddProperty(Properties properties, String key, String value) {

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.krad.util.ObjectUtils; 
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -45,7 +46,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         if (isAuthorized(request)) {
             chain.doFilter(request, response);
         } else {
-            LOG.warn("CapAssetInventoryApi unauthorized " + request.getMethod() + " " + request.getPathInfo());
+            LOG.warn("CapAssetInventoryApi checkAuthorization unauthorized " + request.getMethod() + " " + request.getPathInfo());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println(new Gson().toJson(CuCamsConstants.CapAssetApi.UNAUTHORIZED));
         }
@@ -64,7 +65,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     }
 
     protected WebServiceCredentialService getWebServiceCredentialService() {
-        if (this.webServiceCredentialService == null) {
+        if (ObjectUtils.isNull(this.webServiceCredentialService)) {
             this.webServiceCredentialService = SpringContext.getBean(WebServiceCredentialService.class);
         }
 
