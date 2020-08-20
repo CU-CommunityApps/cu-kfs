@@ -15,9 +15,13 @@ public class CuCamsConstants {
         public static final String CAPITAL_ASSET_KFS_API_DESCRIPTION = "The Cornell Capital Asset website uses this resource to scan capital assets data.";
         public static final String BUILDING_NAME = "building_name";
         public static final String BUILDING_CODE = "building_code";
+        public static final String CONDITION_CODE = "condition_code";
+        public static final String CONDITION_NAME = "condition_name";
+        public static final String ROOM_NUMBER = "room_number";
         public static final String AMOUNT = "amount";
         public static final String NULL = "null";
         public static final String CAMPUS_TAG_NUMBER = "campusTagNumber";
+        public static final String CAMPUS_TAG_NUMBER_ATTRIBUTE = "campus_tag_number";
         public static final String ACTIVE = "active";
         public static final String YES = "Y";
         public static final String CAMPUS_CODE = "campus_code";
@@ -29,5 +33,6 @@ public class CuCamsConstants {
         public static final String LAST_UPDATED = "last_updated";
         public static final String LAST_INVENTORY_DATE = "last_inventory_date";
         public static final String ORGANIZATION_INVENTORY_NAME = "organization_inventory_name";
+        public static final String CAPITAL_ASSET_NUMBER = "capital_asset_number";
     }
 }
