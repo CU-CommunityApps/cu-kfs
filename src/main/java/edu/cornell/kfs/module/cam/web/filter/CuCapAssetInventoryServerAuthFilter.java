@@ -6,8 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.krad.util.ObjectUtils;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
