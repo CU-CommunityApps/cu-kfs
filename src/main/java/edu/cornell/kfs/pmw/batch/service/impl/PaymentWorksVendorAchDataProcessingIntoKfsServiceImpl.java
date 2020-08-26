@@ -105,7 +105,9 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
     private boolean kfsPayeeAchMaintenceDocumentRouted(MaintenanceDocument paatMaintenceDoc, PaymentWorksNewVendorPayeeAchBatchReportData reportData, PaymentWorksVendor pmwVendor) {
         boolean documentRouted = false;
         try {
-            getDocumentService().routeDocument(paatMaintenceDoc, PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_ACH_CREATE_ROUTE_ANNOTATION, null);
+            String annotationMessage = PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_ACH_CREATE_ROUTE_ANNOTATION + 
+                    pmwVendor.getPmwVendorRequestId();
+            getDocumentService().routeDocument(paatMaintenceDoc, annotationMessage, null);
             LOG.info("kfsPayeeAchMaintenceDocumentRouted: paatMaintenceDoc routed.");
             documentRouted = true;
         } catch (WorkflowException we) {
