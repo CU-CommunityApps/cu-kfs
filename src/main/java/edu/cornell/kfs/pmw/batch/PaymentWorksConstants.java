@@ -139,6 +139,11 @@ public class PaymentWorksConstants {
         public static final String FIELD_VALUE = "field_value";
     }
     
+    public static final class W8TypeCodes {
+        public static final String BN = "BN";
+        public static final String BE = "BE";
+    }
+    
     public enum PaymentWorksNewVendorRequestStatusType {
         APPROVED(1, "1", "Approved"),
         PROCESSED(2, "2", "Processed"),

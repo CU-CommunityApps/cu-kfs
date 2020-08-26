@@ -73,11 +73,11 @@ public class TaxRuleTest {
         assertFalse(rule.populateBusinessLegalName);
         assertTrue(rule.isForeign);
         assertTrue(rule.populateDateOfBirth);
-        assertEquals("BN", rule.w8TypeCode);
+        assertEquals(PaymentWorksConstants.W8TypeCodes.BN, rule.w8TypeCode);
     }
     
     @Test
-    void testForeignEntityl() {
+    void testForeignEntity() {
         TaxRule rule = TaxRule.FOREIGN_ENTITY;
         assertEquals(PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getKfsTaxTypeCodeAsString(), rule.taxTypeCode);
         assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.getTranslationToKfsOwnershipTypeCode(), 
@@ -87,7 +87,7 @@ public class TaxRuleTest {
         assertTrue(rule.populateBusinessLegalName);
         assertTrue(rule.isForeign);
         assertFalse(rule.populateDateOfBirth);
-        assertEquals("BE", rule.w8TypeCode);
+        assertEquals(PaymentWorksConstants.W8TypeCodes.BE, rule.w8TypeCode);
         assertFalse(rule.populateForeignSSN);
     }
 

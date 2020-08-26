@@ -30,7 +30,7 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
         this.pmwVendorAchsThatCouldNotBeProcessed = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.disapprovedVendors = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.recordsGeneratingException = new ArrayList<PaymentWorksBatchReportVendorItem>();
-        this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();;
+        this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
     }
 
     public PaymentWorksBatchReportSummaryItem getDisapprovedVendorsSummary() {

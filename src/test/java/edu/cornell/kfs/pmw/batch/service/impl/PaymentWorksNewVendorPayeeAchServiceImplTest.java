@@ -46,7 +46,7 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
 
     @Test
-    void testIsUsAchBankLegayForm() {
+    void testIsUsAchBankLegacyForm() {
         achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
         boolean actualResults = achService.isUsAchBank(pmwVendor, reportData);
         assertTrue(actualResults);
@@ -78,8 +78,8 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
         List<String> foreignAchErrorMessages = foreignAchItems.get(0).getErrorMessages();
         assertEquals(1, foreignAchErrorMessages.size());
         
-        String actualErrorMmessage = foreignAchErrorMessages.get(0);
-        assertEquals("The bank has a country code of Canada.  We can only create ACH records for banks that have a US address", actualErrorMmessage);
+        String actualErrorMessage = foreignAchErrorMessages.get(0);
+        assertEquals("The bank has a country code of Canada.  We can only create ACH records for banks that have a US address", actualErrorMessage);
     }
     
     private PaymentWorksFormModeService buildMockPaymentWorksFormModeService(boolean shouldUseForeignForm) {
