@@ -142,7 +142,9 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
                 getDocumentService().saveDocument(vendorMaintenceDoc);
                 LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc saved.");
             } else if (DocumentAction.ROUTE.equals(documentAction)) {
-                getDocumentService().routeDocument(vendorMaintenceDoc, PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_CREATE_ROUTE_ANNOTATION, null);
+                String annotationMessage = PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_CREATE_ROUTE_ANNOTATION + 
+                        pmwVendor.getPmwVendorRequestId();
+                getDocumentService().routeDocument(vendorMaintenceDoc, annotationMessage, null);
                 LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc routed.");
             } else {
                 LOG.info("kfsVendorMaintenceDocumentActionProcessed: document action not supported.");
