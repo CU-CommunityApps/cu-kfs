@@ -34,7 +34,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "DELETE, PUT, POST, GET, OPTIONS");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Authorization, Access-Control-Request-Method, Access-Control-Request-Headers, capital_asset_scanning_api_key");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "cognito_id_token, capital_asset_scanning_api_key, Origin, Accept, X-Requested-With, Content-Type, Authorization, Access-Control-Request-Method, Access-Control-Request-Headers");
         if (httpServletRequest.getMethod().equalsIgnoreCase("options")) {
             chain.doFilter(request, response);
         } else {
@@ -53,7 +53,8 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        //todo switch to verify Cognito User Pool Key in request Header with Cognito public key
+        String cognitoIdToken = request.getHeader(CuCamsConstants.CapAssetApi.COGNITO_ID_TOKEN);
+        LOG.info(cognitoIdToken);
         String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
                 CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
         String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
