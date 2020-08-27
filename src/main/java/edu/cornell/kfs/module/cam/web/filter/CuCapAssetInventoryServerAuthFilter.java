@@ -18,6 +18,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class CuCapAssetInventoryServerAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger(CuCapAssetInventoryServerAuthFilter.class);
@@ -43,18 +45,27 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     }
 
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (isAuthorized(request)) {
-            chain.doFilter(request, response);
-        } else {
-            LOG.warn("CapAssetInventoryApi checkAuthorization unauthorized " + request.getMethod() + " " + request.getPathInfo());
+        try {
+            if (isAuthorized(request)) {
+                chain.doFilter(request, response);
+            } else {
+                LOG.warn("CapAssetInventoryApi checkAuthorization unauthorized " + request.getMethod() + " " + request.getPathInfo());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().println(new Gson().toJson(CuCamsConstants.CapAssetApi.UNAUTHORIZED));
+            }
+        } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println(new Gson().toJson(CuCamsConstants.CapAssetApi.UNAUTHORIZED));
         }
     }
 
-    private boolean isAuthorized(HttpServletRequest request) {
+    private boolean isAuthorized(HttpServletRequest request) throws IOException {
         String cognitoIdToken = request.getHeader(CuCamsConstants.CapAssetApi.COGNITO_ID_TOKEN);
         LOG.info(cognitoIdToken);
+        String cognitoPublicKeyPath = CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH;
+        String fileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
+        LOG.info(fileContents);
+
         String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
                 CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
         String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
