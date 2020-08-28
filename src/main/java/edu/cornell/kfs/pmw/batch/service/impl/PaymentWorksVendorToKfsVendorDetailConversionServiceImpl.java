@@ -903,10 +903,10 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     protected String findPoCountryToUse(PaymentWorksVendor pmwVendor) {
-        String poCountry = pmwVendor.getPoCountry();
         String poCountryUsCanadaAustraliaOther = pmwVendor.getPoCountryUsCanadaAustraliaOther();
         String poCountryToUse;
         if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            String poCountry = pmwVendor.getPoCountry();
             if (StringUtils.equalsIgnoreCase(poCountryUsCanadaAustraliaOther, PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER) ||
                     StringUtils.isBlank(poCountryUsCanadaAustraliaOther)) {
                 poCountryToUse = poCountry;
@@ -914,6 +914,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                 poCountryToUse = poCountryUsCanadaAustraliaOther;
             }
         } else {
+            String poCountry = pmwVendor.getPoCountryLegacy();
             if (StringUtils.isNotBlank(poCountry)) {
                 poCountryToUse = poCountry;
             } else {
