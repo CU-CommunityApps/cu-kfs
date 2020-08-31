@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.cam.web.filter;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,8 +20,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 
 public class CuCapAssetInventoryServerAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger(CuCapAssetInventoryServerAuthFilter.class);
@@ -59,12 +68,43 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         }
     }
 
-    private boolean isAuthorized(HttpServletRequest request) throws IOException {
+    private boolean isAuthorized(HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String cognitoIdToken = request.getHeader(CuCamsConstants.CapAssetApi.COGNITO_ID_TOKEN);
         LOG.info(cognitoIdToken);
         String cognitoPublicKeyPath = CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH;
         String fileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
         LOG.info(fileContents);
+
+        Gson gson = new Gson();
+        JsonElement jsonElement = gson.fromJson(fileContents, JsonElement.class);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        LOG.info(jsonObject);
+
+        String keyId = jsonObject.get("kid").getAsString();
+        String keyAlg = jsonObject.get("alg").getAsString();
+        String keyType = jsonObject.get("kty").getAsString();
+        String keyN = jsonObject.get("n").getAsString();
+        String keyE = jsonObject.get("e").getAsString();
+        LOG.info(keyId);
+        LOG.info(keyAlg);
+        LOG.info(keyType);
+
+        //decode keyN
+        Base64.Decoder decoder = keyN.endsWith("=") || keyN.contains("+") || keyN.contains("/") ? Base64.getDecoder() : Base64.getUrlDecoder();
+        byte[] keyNDecoded = decoder.decode(keyN);
+
+        BigInteger modulus = new BigInteger(1, keyNDecoded);
+
+        //decode keyE
+        Base64.Decoder decoder2 = keyE.endsWith("=") || keyE.contains("+") || keyE.contains("/") ? Base64.getDecoder() : Base64.getUrlDecoder();
+        byte[] keyEDecoded = decoder2.decode(keyE);
+
+        BigInteger publicExponent = new BigInteger(1, keyEDecoded);
+
+        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+        LOG.info(publicKey.toString());
 
         String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
                 CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
