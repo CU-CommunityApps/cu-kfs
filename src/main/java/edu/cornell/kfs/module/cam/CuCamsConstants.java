@@ -6,6 +6,7 @@ public class CuCamsConstants {
     }
 
     public static final class CapAssetApi {
+        public static final String COGNITO_USER_POOL_ISSUER_URL = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_PF3qpyCGu";
         public static final String OBJECT_NOT_FOUND = "Object not found";
         public static final String ERROR = "error";
         public static final String CAPITAL_ASSET_CREDENTIAL_GROUP_CODE = "ASSETSCAN";

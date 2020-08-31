@@ -7,7 +7,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
@@ -75,58 +74,44 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
 
     private boolean isAuthorized(HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         String cognitoIdToken = request.getHeader(CuCamsConstants.CapAssetApi.COGNITO_ID_TOKEN);
-        LOG.info(cognitoIdToken);
-        String cognitoPublicKeyPath = CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH;
-        String fileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
-        LOG.info(fileContents);
 
-        Gson gson = new Gson();
-        JsonElement jsonElement = gson.fromJson(fileContents, JsonElement.class);
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-        LOG.info(jsonObject);
-
-        String keyId = jsonObject.get("kid").getAsString();
-        String keyAlg = jsonObject.get("alg").getAsString();
-        String keyType = jsonObject.get("kty").getAsString();
-        String keyN = jsonObject.get("n").getAsString();
-        String keyE = jsonObject.get("e").getAsString();
-        LOG.info(keyId);
-        LOG.info(keyAlg);
-        LOG.info(keyType);
-
-        //decode keyN
-        Base64.Decoder decoder = keyN.endsWith("=") || keyN.contains("+") || keyN.contains("/") ? Base64.getDecoder() : Base64.getUrlDecoder();
-        byte[] keyNDecoded = decoder.decode(keyN);
-
-        BigInteger modulus = new BigInteger(1, keyNDecoded);
-
-        //decode keyE
-        Base64.Decoder decoder2 = keyE.endsWith("=") || keyE.contains("+") || keyE.contains("/") ? Base64.getDecoder() : Base64.getUrlDecoder();
-        byte[] keyEDecoded = decoder2.decode(keyE);
-
-        BigInteger publicExponent = new BigInteger(1, keyEDecoded);
-
-        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-        LOG.info(publicKey.toString());
-
-        Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) publicKey, null);
-        String iss = String.format("https://cognito-idp.%s.amazonaws.com/%s", "us-east-1", "us-east-1_PF3qpyCGu");
+        PublicKey cognitoUserPoolPublicKey = getPublicKeyFromFile();
+        Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) cognitoUserPoolPublicKey, null);
 
         JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(iss)
+                .withIssuer(CuCamsConstants.CapAssetApi.COGNITO_USER_POOL_ISSUER_URL)
                 .withClaim("token_use", "id")
                 .build();
 
         DecodedJWT jwt = verifier.verify(cognitoIdToken);
         String email = jwt.getClaim("email").asString();
-        LOG.info("CapAssetInventory Authorized %s", email);
+        LOG.info("CapAssetInventory Authorized {}", email);
+        return true;
+    }
 
-        String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
-                CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
-        String submittedApiKey = request.getHeader(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
-        return !StringUtils.isEmpty(correctApiKey) && !StringUtils.isEmpty(submittedApiKey) && submittedApiKey.equals(correctApiKey);
+    private PublicKey getPublicKeyFromFile() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        String cognitoPublicKeyPath = CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH;
+        String cognitoPublicKeyFileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
+        JsonObject publicKeyJson = getPublicKeyJson(cognitoPublicKeyFileContents);
+
+        String keyAlgorithm = publicKeyJson.get("kty").getAsString();
+        String keyN = publicKeyJson.get("n").getAsString();
+        String keyE = publicKeyJson.get("e").getAsString();
+
+        Base64.Decoder decoder = keyN.endsWith("=") || keyN.contains("+") || keyN.contains("/") ? Base64.getDecoder() : Base64.getUrlDecoder();
+        BigInteger modulus = new BigInteger(1, decoder.decode(keyN));
+        BigInteger publicExponent = new BigInteger(1, decoder.decode(keyE));
+
+        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
+        KeyFactory keyFactory = KeyFactory.getInstance(keyAlgorithm);
+        PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+        return publicKey;
+    }
+
+    private JsonObject getPublicKeyJson(String rawPublicKey) {
+        Gson gson = new Gson();
+        JsonElement jsonElement = gson.fromJson(rawPublicKey, JsonElement.class);
+        return jsonElement.getAsJsonObject();
     }
 
     @Override
