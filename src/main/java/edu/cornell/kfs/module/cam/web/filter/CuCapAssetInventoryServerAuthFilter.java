@@ -1,5 +1,9 @@
 package edu.cornell.kfs.module.cam.web.filter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,6 +30,7 @@ import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
@@ -105,6 +110,18 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
         LOG.info(publicKey.toString());
+
+        Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) publicKey, null);
+        String iss = String.format("https://cognito-idp.%s.amazonaws.com/%s", "us-east-1", "us-east-1_PF3qpyCGu");
+
+        JWTVerifier verifier = JWT.require(algorithm)
+                .withIssuer(iss)
+                .withClaim("token_use", "id")
+                .build();
+
+        DecodedJWT jwt = verifier.verify(cognitoIdToken);
+        String email = jwt.getClaim("email").asString();
+        LOG.info("CapAssetInventory Authorized %s", email);
 
         String correctApiKey = getWebServiceCredentialService().getWebServiceCredentialValue(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_CREDENTIAL_GROUP_CODE,
                 CuCamsConstants.CapAssetApi.CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME);
