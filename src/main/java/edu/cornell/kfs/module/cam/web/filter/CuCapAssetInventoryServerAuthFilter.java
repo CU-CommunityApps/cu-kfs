@@ -57,27 +57,30 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         }
     }
 
-    private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
         try {
             if (isAuthorized(request)) {
                 chain.doFilter(request, response);
             } else {
-                LOG.warn("CapAssetInventoryApi checkAuthorization unauthorized " + request.getMethod() + " " + request.getPathInfo());
+                LOG.warn("checkAuthorization unauthorized {} {}", request.getMethod(), request.getPathInfo());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().println(new Gson().toJson(CuCamsConstants.CapAssetApi.UNAUTHORIZED));
             }
         } catch (Exception ex) {
+            LOG.error("checkAuthorization", ex);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println(new Gson().toJson(CuCamsConstants.CapAssetApi.UNAUTHORIZED));
         }
     }
 
-    private boolean isAuthorized(HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private boolean isAuthorized(HttpServletRequest request) {
         String cognitoIdToken = request.getHeader(CuCamsConstants.CapAssetApi.COGNITO_ID_TOKEN);
-
         PublicKey cognitoUserPoolPublicKey = getPublicKeyFromFile();
-        Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) cognitoUserPoolPublicKey, null);
+        if (ObjectUtils.isNull(cognitoUserPoolPublicKey)) {
+            return false;
+        }
 
+        Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) cognitoUserPoolPublicKey, null);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(CuCamsConstants.CapAssetApi.COGNITO_USER_POOL_ISSUER_URL)
                 .withClaim("token_use", "id")
@@ -89,12 +92,25 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         return true;
     }
 
-    private PublicKey getPublicKeyFromFile() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        String cognitoPublicKeyPath = CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH;
-        String cognitoPublicKeyFileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
-        JsonObject publicKeyJson = getPublicKeyJson(cognitoPublicKeyFileContents);
+    private PublicKey getPublicKeyFromFile() {
+        try {
+            String cognitoPublicKeyPath = CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH;
+            String cognitoPublicKeyFileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
+            JsonObject publicKeyJson = parsePublicKeyFile(cognitoPublicKeyFileContents);
+            return decodePublicKey(publicKeyJson);
+        } catch (IOException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
+            LOG.error("getPublicKeyFromFile", ex);
+        }
+        return null;
+    }
 
-        String keyAlgorithm = publicKeyJson.get("kty").getAsString();
+    private JsonObject parsePublicKeyFile(String rawPublicKey) {
+        Gson gson = new Gson();
+        JsonElement jsonElement = gson.fromJson(rawPublicKey, JsonElement.class);
+        return jsonElement.getAsJsonObject();
+    }
+
+    private PublicKey decodePublicKey(JsonObject publicKeyJson) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String keyN = publicKeyJson.get("n").getAsString();
         String keyE = publicKeyJson.get("e").getAsString();
 
@@ -103,15 +119,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         BigInteger publicExponent = new BigInteger(1, decoder.decode(keyE));
 
         RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
-        KeyFactory keyFactory = KeyFactory.getInstance(keyAlgorithm);
-        PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-        return publicKey;
-    }
-
-    private JsonObject getPublicKeyJson(String rawPublicKey) {
-        Gson gson = new Gson();
-        JsonElement jsonElement = gson.fromJson(rawPublicKey, JsonElement.class);
-        return jsonElement.getAsJsonObject();
+        return KeyFactory.getInstance("RSA").generatePublic(publicKeySpec);
     }
 
     @Override
