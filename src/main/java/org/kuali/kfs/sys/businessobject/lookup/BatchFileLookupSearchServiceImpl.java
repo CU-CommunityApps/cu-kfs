@@ -29,12 +29,17 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.kuali.kfs.datadictionary.BusinessObjectAdminService;
+import org.kuali.kfs.kns.datadictionary.EntityNotFoundException;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
+import org.kuali.kfs.krad.exception.AuthorizationException;
 import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.util.DateRangeUtil;
 
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +66,27 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
                 sortAscending, stream);
 
         return Pair.of(sortedAndSliced, allFiles.size());
+    }
+
+    @Override
+    public Object find(Class<? extends BusinessObjectBase> businessObjectClass, String id) {
+        BusinessObjectAdminService batchFileAdminService = getBusinessObjectDictionaryService()
+                .getBusinessObjectAdminService(businessObjectClass);
+
+        if (!batchFileAdminService.allowsDownload(null, null)) {
+            LOG.debug("Requested BO does not support download : bo={}; batchFileAdminServiceName={}",
+                    businessObjectClass.getSimpleName(), batchFileAdminService.getClass().getSimpleName());
+            throw new NotAllowedException("The requested business object does not support GETs with the supplied " +
+                    "media type.");
+        }
+
+        try {
+            return batchFileAdminService.download(id);
+        } catch (AuthorizationException ae) {
+            throw new ForbiddenException();
+        } catch (EntityNotFoundException e) {
+            return null;
+        }
     }
 
     private List<BatchFile> getFiles(MultivaluedMap<String, String> fieldValues) {
@@ -110,11 +136,11 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
         }
     }
 
-	/*
-	 * Cornell customization: changed access level to protected on this method so
-	 * that it can be overridden in unit test
-	 * 
-	 */
+    /*
+     * Cornell customization: changed access level to protected on this method so
+     * that it can be overridden in unit test
+     * 
+     */
     protected List<File> getDirectoriesToSearch(List<String> selectedPaths) {
         List<String> searchPaths = getPathsToSearch(selectedPaths);
 

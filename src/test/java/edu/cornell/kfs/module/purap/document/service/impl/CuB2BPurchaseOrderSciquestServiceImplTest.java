@@ -2,20 +2,20 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.B2BPurchaseOrderService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.IntegTestUtils;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
 
 @ConfigureContext(session = UserNameFixture.ccs1)
-public class CuB2BPurchaseOrderSciquestServiceImplTest extends KualiTestBase {
+public class CuB2BPurchaseOrderSciquestServiceImplTest extends KualiIntegTestBase {
 	
 	private static final Logger LOG = LogManager.getLogger(CuB2BPurchaseOrderSciquestServiceImplTest.class);
 
@@ -28,7 +28,7 @@ public class CuB2BPurchaseOrderSciquestServiceImplTest extends KualiTestBase {
 		super.setUp();
 
 		b2bPurchaseOrderService = SpringContext.getBean(B2BPurchaseOrderService.class);
-		cuB2BPurchaseOrderSciquestServiceImpl = (CuB2BPurchaseOrderSciquestServiceImpl)TestUtils.getUnproxiedService("b2bPurchaseOrderService");
+		cuB2BPurchaseOrderSciquestServiceImpl = (CuB2BPurchaseOrderSciquestServiceImpl)IntegTestUtils.getUnproxiedService("b2bPurchaseOrderService");
 		documentService = SpringContext.getBean(DocumentService.class);
 
 	}

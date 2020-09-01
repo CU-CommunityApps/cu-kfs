@@ -21,7 +21,7 @@ package org.kuali.kfs.kim.api.identity.name;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.identity.CodedAttribute;
+import org.kuali.kfs.kim.api.identity.CodedAttribute;
 import org.kuali.rice.core.api.CoreConstants;
 import org.kuali.rice.core.api.mo.AbstractDataTransferObject;
 import org.kuali.rice.core.api.mo.ModelBuilder;

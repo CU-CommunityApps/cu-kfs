@@ -1,7 +1,7 @@
 package edu.cornell.kfs.coa.fixture;
 
-import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.sys.context.IntegTestUtils;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 
@@ -23,7 +23,7 @@ public enum AccountReversionFixture {
             String budgetReversionChartOfAccountsCode, String budgetReversionAccountNumber, boolean carryForwardByObjectCodeIndicator,
             String cashReversionFinancialChartOfAccountsCode, String cashReversionAccountNumber) {
         this.accountNumber = accountNumber;
-        this.universityFiscalYear = Integer.parseInt(TestUtils.getParameterService().getParameterValueAsString("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR"));;
+        this.universityFiscalYear = Integer.parseInt(IntegTestUtils.getParameterService().getParameterValueAsString("KFS-COA", "Reversion", "ACCOUNT_REVERSION_FISCAL_YEAR"));;
         this.chartOfAccountsCode = chartOfAccountsCode;
         this.budgetReversionChartOfAccountsCode = budgetReversionChartOfAccountsCode;
         this.budgetReversionAccountNumber = budgetReversionAccountNumber;

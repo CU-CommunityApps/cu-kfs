@@ -7,25 +7,25 @@ import java.io.FileWriter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.purap.batch.ElectronicInvoiceInputFileType;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoad;
 import org.kuali.kfs.module.purap.document.ElectronicInvoiceRejectDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.IntegTestUtils;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.module.purap.fixture.CuElectronicInvoiceHelperServiceFixture;
 import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
 import edu.cornell.kfs.module.purap.fixture.RequisitionFixture;
 
 @ConfigureContext(session = UserNameFixture.kfs)
-public class CuElectronicInvoiceHelperServiceImplTest extends KualiTestBase {
+public class CuElectronicInvoiceHelperServiceImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceHelperServiceImplTest.class);
 
@@ -37,7 +37,7 @@ public class CuElectronicInvoiceHelperServiceImplTest extends KualiTestBase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        cuElectronicInvoiceHelperService = (CuElectronicInvoiceHelperServiceImpl) TestUtils.getUnproxiedService("electronicInvoiceHelperService");
+        cuElectronicInvoiceHelperService = (CuElectronicInvoiceHelperServiceImpl) IntegTestUtils.getUnproxiedService("electronicInvoiceHelperService");
         documentService = SpringContext.getBean(DocumentService.class);
         electronicInvoiceInputFileType = SpringContext.getBean(ElectronicInvoiceInputFileType.class);
 

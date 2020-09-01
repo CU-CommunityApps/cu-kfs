@@ -8,13 +8,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.identity.PurapKimAttributes;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.TestUtils;
+import org.kuali.kfs.sys.context.IntegTestUtils;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.kim.api.role.RoleMembership;
 
 @ConfigureContext(session = UserNameFixture.ccs1)
-public class CuRelatedDocumentDerivedRoleTypeServiceImplTest extends KualiTestBase {
+public class CuRelatedDocumentDerivedRoleTypeServiceImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(CuRelatedDocumentDerivedRoleTypeServiceImplTest.class);
 
@@ -24,7 +24,7 @@ public class CuRelatedDocumentDerivedRoleTypeServiceImplTest extends KualiTestBa
     protected void setUp() throws Exception {
         super.setUp();
 
-        cuRelatedDocumentDerivedRoleTypeServiceImpl = (CuRelatedDocumentDerivedRoleTypeServiceImpl) TestUtils.getUnproxiedService("relatedDocumentDerivedRoleTypeService");
+        cuRelatedDocumentDerivedRoleTypeServiceImpl = (CuRelatedDocumentDerivedRoleTypeServiceImpl) IntegTestUtils.getUnproxiedService("relatedDocumentDerivedRoleTypeService");
 
     }
 

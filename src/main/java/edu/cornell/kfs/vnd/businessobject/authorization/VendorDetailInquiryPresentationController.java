@@ -14,8 +14,6 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.services.IdentityManagementService;
-import org.kuali.kfs.kns.inquiry.InquiryPresentationControllerBase;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Note;
@@ -26,15 +24,16 @@ import org.kuali.kfs.krad.util.KRADConstants;
  * @author kwk43
  *
  */
+// TODO: For 04/30/2020 patch, replace this with a different setup, such as hidden field AttributeSecurity.
 @SuppressWarnings("deprecation")
-public class VendorDetailInquiryPresentationController extends InquiryPresentationControllerBase {
+public class VendorDetailInquiryPresentationController /*extends InquiryPresentationControllerBase*/ {
 
 	/**
 	 * Implement this method to hide fields based on specific data in the record being inquired into
 	 * 
 	 * @return Set of property names that should be hidden
 	 */
-	@Override
+	/*@Override
 	public Set<String> getConditionallyHiddenPropertyNames(BusinessObject businessObject) {
 		Set<String> retVal = new HashSet<String>();
 		
@@ -56,6 +55,6 @@ public class VendorDetailInquiryPresentationController extends InquiryPresentati
 			
 		}
 		return retVal;
-	}
+	}*/
 	
 }
