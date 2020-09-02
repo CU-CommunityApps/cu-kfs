@@ -83,11 +83,11 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) cognitoUserPoolPublicKey, null);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(CuCamsConstants.CapAssetApi.COGNITO_USER_POOL_ISSUER_URL)
-                .withClaim("token_use", "id")
+                .withClaim(CuCamsConstants.CapAssetApi.TOKEN_USE, CuCamsConstants.CapAssetApi.ID)
                 .build();
 
         DecodedJWT jwt = verifier.verify(cognitoIdToken);
-        String email = jwt.getClaim("email").asString();
+        String email = jwt.getClaim(CuCamsConstants.CapAssetApi.EMAIL).asString();
         LOG.info("CapAssetInventory Authorized {}", email);
         return true;
     }
@@ -119,7 +119,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         BigInteger publicExponent = new BigInteger(1, decoder.decode(keyE));
 
         RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
-        return KeyFactory.getInstance("RSA").generatePublic(publicKeySpec);
+        return KeyFactory.getInstance(CuCamsConstants.CapAssetApi.RSA).generatePublic(publicKeySpec);
     }
 
     @Override

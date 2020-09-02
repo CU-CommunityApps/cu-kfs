@@ -9,10 +9,8 @@ public class CuCamsConstants {
         public static final String COGNITO_USER_POOL_ISSUER_URL = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_PF3qpyCGu";
         public static final String OBJECT_NOT_FOUND = "Object not found";
         public static final String ERROR = "error";
-        public static final String CAPITAL_ASSET_CREDENTIAL_GROUP_CODE = "ASSETSCAN";
         public static final String UNAUTHORIZED = "Unauthorized";
         public static final String BAD_REQUEST = "Invalid Request";
-        public static final String CAPITAL_ASSET_API_KEY_CREDENTIAL_NAME = "capital_asset_scanning_api_key";
         public static final String COGNITO_ID_TOKEN = "cognito_id_token";
         public static final String COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH = "../webapps/kfs/WEB-INF/classes/edu/cornell/kfs/module/cam/capital_asset_inventory_cognito_public_key.json";
         public static final String CAPITAL_ASSET_KFS_API_DESCRIPTION = "The Cornell Capital Asset website uses this resource to scan capital assets data.";
@@ -27,6 +25,10 @@ public class CuCamsConstants {
         public static final String CAMPUS_TAG_NUMBER_ATTRIBUTE = "campus_tag_number";
         public static final String ACTIVE = "active";
         public static final String YES = "Y";
+        public static final String RSA = "RSA";
+        public static final String TOKEN_USE = "token_use";
+        public static final String ID = "id";
+        public static final String EMAIL = "email";
         public static final String CAMPUS_CODE = "campus_code";
         public static final String CAMPUS_CODE_PARAMETER = "campusCode";
         public static final String BUILDING_CODE_PARAMETER = "buildingCode";
