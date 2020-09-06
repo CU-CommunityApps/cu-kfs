@@ -180,7 +180,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             for (PurApItem item : document.getItems()) {
                 boolean rulePassed = true;
                 // check any business rules
-                rulePassed &= kualiRuleService.applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
+                rulePassed &= getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
 
                 if (rulePassed) {
                     updatePreqProportionalItemAccountAmounts(item);
@@ -195,7 +195,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             for (PurApItem item : document.getItems()) {
                 boolean rulePassed = true;
                 // check any business rules
-                rulePassed &= kualiRuleService.applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
+                rulePassed &= getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
 
                 return;
             }
@@ -206,7 +206,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             for (PurApItem item : document.getItems()) {
                 boolean rulePassed = true;
                 // check any business rules
-                rulePassed &= kualiRuleService.applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
+                rulePassed &= getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
 
                 if (rulePassed) {
                     updateItemAccountAmounts(item);

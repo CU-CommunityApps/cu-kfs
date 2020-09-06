@@ -134,6 +134,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     private String invoicingOptionCode;
     private String customerNumber;
     private Integer customerAddressIdentifier;
+    private String removeAddressButton;
 
     private KualiDecimal minInvoiceAmount = KualiDecimal.ZERO;
 
@@ -1206,6 +1207,25 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     public void setScheduleInquiryTitle(String scheduleInquiryTitle) {
         this.scheduleInquiryTitle = scheduleInquiryTitle;
+    }
+
+    public String getRemoveAddressButton() {
+        return removeAddressButton;
+    }
+
+    public void setRemoveAddressButton(String removeAddressButton) {
+        this.removeAddressButton = removeAddressButton;
+    }
+
+    public void clearCustomerAddressIfNecessary() {
+        String originalAgencyNumber = ObjectUtils.isNull(agency) ? null : getAgency().getAgencyNumber();
+
+        if (!StringUtils.equals(agencyNumber, originalAgencyNumber)) {
+            customerAddressIdentifier = null;
+            customerAddress = null;
+            refreshReferenceObject("agency");
+            customerNumber = ObjectUtils.isNull(agency) ? null : getAgency().getCustomerNumber();
+        }
     }
 
     // CU Customization: Added getters and setters for new Award fields.

@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -24,7 +24,7 @@ import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
 
 @ConfigureContext(session = ccs1)
-public class ezraUpdateAwardImplTest extends KualiTestBase {
+public class ezraUpdateAwardImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(ezraUpdateAwardImplTest.class);
     private EzraService ezraService;    

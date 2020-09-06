@@ -598,7 +598,7 @@ abstract class RoleServiceBase {
                     && (roleQualifier == null || roleQualifier.isEmpty())) {
                 return true;
             } else {
-                return qualifier != null && roleQualifier != null && qualifier.equals(roleQualifier);
+                return qualifier != null && qualifier.equals(roleQualifier);
             }
         }
         return false;
@@ -613,7 +613,7 @@ abstract class RoleServiceBase {
     protected RoleTypeService getRoleTypeServiceByName(String serviceName) {
         try {
             KimTypeService service = GlobalResourceLoader.getService(QName.valueOf(serviceName));
-            if (service != null && service instanceof RoleTypeService) {
+            if (service instanceof RoleTypeService) {
                 return (RoleTypeService) service;
             }
             return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");
@@ -645,7 +645,7 @@ abstract class RoleServiceBase {
         if (serviceName != null) {
             try {
                 KimTypeService service = GlobalResourceLoader.getService(QName.valueOf(serviceName));
-                if (service != null && service instanceof RoleTypeService) {
+                if (service instanceof RoleTypeService) {
                     return (RoleTypeService) service;
                 }
                 return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");

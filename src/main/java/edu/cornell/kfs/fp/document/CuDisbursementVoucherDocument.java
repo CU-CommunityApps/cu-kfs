@@ -31,7 +31,6 @@ import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.WireCharge;
-import org.kuali.kfs.sys.businessobject.options.PaymentDocumentationLocationValuesFinder;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.service.BankService;
@@ -86,8 +85,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     protected static final String OBJECT_CODES_REQUIRING_TRAVEL_REVIEW = "OBJECT_CODES_REQUIRING_TRAVEL_REVIEW";
     
     protected static final String DISAPPROVE_ANNOTATION_REASON_STARTER = "Disapproval reason - ";
-    
-    protected static final String PAYMENT_DOCUMENTATION_LOCATION_VALUES_FINDER_BEAN_NAME = "paymentDocumentationLocationValuesFinder";
     
     protected CuDisbursementVoucherPayeeDetail dvPayeeDetail;
 
@@ -953,22 +950,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
 
         return false;
-    }
-
-    /*
-     * Overridden to implement a custom variation of the FINP-6585 fix from the 2020-03-26 financials patch,
-     * which we have updated for compatibility with financials releases prior to 2020-02-27.
-     * This customization should be removed when we upgrade to the 2020-03-26 patch or later.
-     */
-    @Override
-    public String getDisbursementVoucherDocumentationLocationName() {
-        return getPaymentDocumentationLocationValuesFinder()
-                .getKeyLabel(disbursementVoucherDocumentationLocationCode);
-    }
-
-    protected PaymentDocumentationLocationValuesFinder getPaymentDocumentationLocationValuesFinder() {
-        return (PaymentDocumentationLocationValuesFinder) getDataDictionaryService()
-                .getDictionaryObject(PAYMENT_DOCUMENTATION_LOCATION_VALUES_FINDER_BEAN_NAME);
     }
 
     protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {

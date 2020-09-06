@@ -31,6 +31,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
@@ -40,6 +41,7 @@ import org.kuali.kfs.module.ar.businessobject.InvoicePaidApplied;
 import org.kuali.kfs.module.ar.businessobject.NonAppliedHolding;
 import org.kuali.kfs.module.ar.businessobject.NonInvoiced;
 import org.kuali.kfs.module.ar.document.CustomerInvoiceDocument;
+import org.kuali.kfs.module.ar.document.PaymentApplicationAdjustmentDocument;
 import org.kuali.kfs.module.ar.document.PaymentApplicationDocument;
 import org.kuali.kfs.module.ar.document.service.AccountsReceivableDocumentHeaderService;
 import org.kuali.kfs.module.ar.document.service.CustomerInvoiceDetailService;
@@ -68,9 +70,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * CU Customization (KFSPTS-13246): Added the ability to delete lines
+ * from the "Summary of Applied Funds" section.
+ */
 public class PaymentApplicationAction extends FinancialSystemTransactionalDocumentActionBase {
 
-    private static final Logger LOG = LogManager.getLogger(PaymentApplicationAction.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected BusinessObjectService businessObjectService;
     protected DocumentService documentService;
@@ -78,6 +84,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     protected CustomerInvoiceDocumentService customerInvoiceDocumentService;
     protected CustomerInvoiceDetailService customerInvoiceDetailService;
     protected NonAppliedHoldingService nonAppliedHoldingService;
+    // CU Customization: Part of invoice-paid-applied deletion enhancement.
     protected InvoicePaidAppliedDao invoicePaidAppliedDao;
 
     public PaymentApplicationAction() {
@@ -88,7 +95,43 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         customerInvoiceDocumentService = SpringContext.getBean(CustomerInvoiceDocumentService.class);
         customerInvoiceDetailService = SpringContext.getBean(CustomerInvoiceDetailService.class);
         nonAppliedHoldingService = SpringContext.getBean(NonAppliedHoldingService.class);
+        // CU Customization: Part of invoice-paid-applied deletion enhancement.
         invoicePaidAppliedDao = SpringContext.getBean(InvoicePaidAppliedDao.class);
+    }
+
+    /**
+     * Invoked when the "Adjust" button is selected.
+     *   * Copy the APP doc as an APPA doc
+     *
+     * TODO: Continue evolving this description
+     */
+    public ActionForward adjust(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+
+        final PaymentApplicationDocument applicationDocument =
+                (PaymentApplicationDocument) kualiDocumentFormBase.getDocument();
+
+        final PaymentApplicationAdjustmentDocument appAdjustDocument =
+                SpringContext.getBean(PaymentApplicationDocumentService.class)
+                        .createPaymentApplicationAdjustment(applicationDocument);
+
+        kualiDocumentFormBase.setDocument(appAdjustDocument);
+
+        return createActionForward((KualiDocumentFormBase) form);
+    }
+
+    private ActionForward createActionForward(final KualiDocumentFormBase form) {
+        final String docNum = form.getDocument().getDocumentNumber();
+
+        final Map<String, String> parameters = new HashMap<>(4);
+        parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "docHandler");
+        parameters.put(KRADConstants.PARAMETER_COMMAND, "displayDocSearchView");
+        parameters.put(KRADConstants.PARAMETER_DOC_ID, docNum);
+
+        final String baseUrl = getApplicationBaseUrl() + "/arPaymentApplicationAdjustment.do";
+        final String url = UrlFactory.parameterizeUrl(baseUrl, parameters);
+        return new ActionForward(url, true);
     }
 
     @Override
@@ -108,6 +151,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         doApplicationOfFunds((PaymentApplicationForm) form);
+        // CU Customization: Part of invoice-paid-applied deletion enhancement.
         manuallyAddressInvoicePaidAppliedDeletions((PaymentApplicationForm) form);
         return super.route(mapping, form, request, response);
     }
@@ -116,6 +160,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         doApplicationOfFunds((PaymentApplicationForm) form);
+        // CU Customization: Part of invoice-paid-applied deletion enhancement.
         manuallyAddressInvoicePaidAppliedDeletions((PaymentApplicationForm) form);
         return super.save(mapping, form, request, response);
     }
@@ -871,6 +916,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                 "document.hiddenFieldForErrors");
     }
 
+    // CU Customization: Added several helper methods for invoice-paid-applied deletion enhancement.
     public ActionForward deleteInvoicePaidApplied(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PaymentApplicationForm paymentApplicationForm = (PaymentApplicationForm) form;
         paymentApplicationForm.setManualInvoicePaidAppliedDatabaseDeletionRequired(true);
@@ -951,6 +997,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
             paymentApplicationForm.setManualInvoicePaidAppliedDatabaseDeletionRequired(false);
         }
     }
+    // End CU Customization
     
     /**
      * An inner class to point to a specific entry in a group

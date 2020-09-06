@@ -29,11 +29,6 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
  * Cornell's implementation of ScrubberProcess that extends from the KFS-delivered ScrubberProcessImpl.
- * 
- * NOTE: Because ScrubberProcessImpl declares an internal ScrubberProcessTransactionError class with default (package-private)
- * visibility, this subclass has to be in the same package as ScrubberProcessImpl in order to use that
- * internal class. If future versions of KFS update that class with a higher visibility, then move
- * this subclass into a more appropriate package.
  */
 public class CuScrubberProcessImpl extends ScrubberProcessImpl {
     private static final Logger LOG = LogManager.getLogger(CuScrubberProcessImpl.class);
@@ -324,7 +319,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
         // Make sure plant indebtedness processing is enabled.
         if (parameterService.getParameterValueAsBoolean(ScrubberStep.class, PLANT_INDEBTEDNESS_IND, Boolean.FALSE).booleanValue()) {
             // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
-            ParameterEvaluator plantIndebtednessDocTypes = parameterEvaluatorService.getParameterEvaluator(ScrubberStep.class,
+            ParameterEvaluator plantIndebtednessDocTypes = getParameterEvaluatorService().getParameterEvaluator(ScrubberStep.class,
                     CuGeneralLedgerConstants.CuGlScrubberGroupRules.PLANT_INDEBTEDNESS_DOC_TYPE_CODES, scrubbedEntry.getFinancialDocumentTypeCode());
             if (plantIndebtednessDocTypes.evaluationSucceeds()) {
                 return super.processPlantIndebtedness(scrubbedEntry, scrubberReport);

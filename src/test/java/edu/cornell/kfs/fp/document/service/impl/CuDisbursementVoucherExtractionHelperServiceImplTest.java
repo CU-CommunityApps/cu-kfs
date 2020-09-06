@@ -4,12 +4,15 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
 import java.sql.Date;
 
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.dataaccess.DisbursementVoucherDao;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.PaymentSourceHelperService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
@@ -19,16 +22,13 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 
 @ConfigureContext(session = ccs1)
-public class CuDisbursementVoucherExtractionHelperServiceImplTest extends KualiTestBase {
+public class CuDisbursementVoucherExtractionHelperServiceImplTest extends KualiIntegTestBase {
 	private DocumentService documentService;
 	private CuDisbursementVoucherExtractionHelperServiceImpl cuDisbursementVoucherExtractionHelperService;
 	

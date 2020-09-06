@@ -34,7 +34,8 @@ public class CuBalanceServiceImpl extends BalanceServiceImpl implements CuBalanc
         boolean moreParams = true;
         while (moreParams) {
             if (parameterService.parameterExists(Reversion.class, PARAMETER_PREFIX + i)) {
-                ParameterEvaluator parameterEvaluator = parameterEvaluatorService.getParameterEvaluator(Reversion.class, PARAMETER_PREFIX + i);
+                ParameterEvaluator parameterEvaluator = getParameterEvaluatorService().getParameterEvaluator(
+                        Reversion.class, PARAMETER_PREFIX + i);
                 parameterEvaluators.add(parameterEvaluator);
             } else {
                 moreParams = false;

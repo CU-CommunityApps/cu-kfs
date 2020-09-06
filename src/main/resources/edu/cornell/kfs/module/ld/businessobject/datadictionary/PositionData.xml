@@ -95,29 +95,29 @@
                    </property>
                </bean>
                <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="lookupAttributeDefinitions" />
+                   <property name="propertyName" value="formAttributeDefinitions" />
                    <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
-                       <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                       <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                                parent="PositionData-departmentId"/>
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                           <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                                    parent="PositionData-extension-orgCode"/>
                        </list>
                    </property>
                </bean>
                <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="lookupResultAttributeDefinitions" />
+                   <property name="propertyName" value="displayAttributeDefinitions" />
                    <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
-                       <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                       <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                                parent="PositionData-departmentId"/>
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                           <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                                    parent="PositionData-extension-orgCode"/>
                        </list>
                    </property>

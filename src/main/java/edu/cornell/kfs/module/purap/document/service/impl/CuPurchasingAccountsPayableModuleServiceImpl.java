@@ -21,13 +21,13 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
     * @see org.kuali.kfs.integration.pdp.service.PurchasingAccountsPayableModuleService#handlePurchasingBatchCancels(java.lang.String)
     */
    public void handlePurchasingBatchCancels(String documentNumber, String documentTypeCode, boolean primaryCancel, boolean disbursedPayment, boolean crCancel) {
-       String preqCancelNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+       String preqCancelNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
                PurapParameterConstants.PURAP_PDP_PREQ_CANCEL_NOTE);
-       String preqResetNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+       String preqResetNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
                PurapParameterConstants.PURAP_PDP_PREQ_RESET_NOTE);
-       String cmCancelNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class,
+       String cmCancelNote = getParameterService().getParameterValueAsString(VendorCreditMemoDocument.class,
                PurapParameterConstants.PURAP_PDP_CM_CANCEL_NOTE);
-       String cmResetNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class,
+       String cmResetNote = getParameterService().getParameterValueAsString(VendorCreditMemoDocument.class,
                PurapParameterConstants.PURAP_PDP_CM_RESET_NOTE);
        
        if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(documentTypeCode)) {
@@ -47,15 +47,15 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
            }
        }
        else if (PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(documentTypeCode)) {
-           VendorCreditMemoDocument cm = creditMemoService.getCreditMemoByDocumentNumber(documentNumber);
+           VendorCreditMemoDocument cm = getCreditMemoService().getCreditMemoByDocumentNumber(documentNumber);
            if (cm != null) {
                if (disbursedPayment || primaryCancel || crCancel) {
                    if (!crCancel) {
-                       creditMemoService.cancelExtractedCreditMemo(cm, cmCancelNote);
+                       getCreditMemoService().cancelExtractedCreditMemo(cm, cmCancelNote);
                    }
                }
                else {
-                   creditMemoService.resetExtractedCreditMemo(cm, cmResetNote);
+                   getCreditMemoService().resetExtractedCreditMemo(cm, cmResetNote);
                }
            }
            else {

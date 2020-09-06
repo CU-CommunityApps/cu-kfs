@@ -47,6 +47,7 @@
 <%@ attribute name="renderInnerDiv" required="false"%>
 <%@ attribute name="openNav" required="false"%>
 <%@ attribute name="placeFocus" required="false" description="A way to prevent the body onLoad placeFocus() from executing" %>
+<%@ attribute name="additionalBodyClass" required="false" description="Additional css class to add to the body tag."%>
 
 <%-- Is the screen an inquiry? --%>
 <c:set var="_isInquiry" value="${requestScope[Constants.PARAM_MAINTENANCE_VIEW_MODE] eq Constants.PARAM_MAINTENANCE_VIEW_MODE_INQUIRY}" />
@@ -154,7 +155,8 @@
 				  headerMenuBar="${headerMenuBar}" headerTabActive="${headerTabActive}" alternativeHelp="${alternativeHelp}"
 				  feedbackKey="${feedbackKey}" errorKey="${errorKey}" auditCount="${auditCount}"
 				  documentWebScope="${documentWebScope}" maintenanceDocument="${maintenanceDocument}"
-				  renderInnerDiv="${renderInnerDiv}" cachingTimestamp="${cachingTimestamp}" openNav="${openNav}">
+				  renderInnerDiv="${renderInnerDiv}" cachingTimestamp="${cachingTimestamp}" openNav="${openNav}"
+				  additionalBodyClass="${additionalBodyClass}">
 
 			<div id="page-content">
                 <jsp:doBody/>

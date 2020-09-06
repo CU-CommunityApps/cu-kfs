@@ -1101,7 +1101,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
             Map<String, String> qualification, boolean checkDelegations) {
         /*
          * This method uses a multi-phase approach to determining if the given principal of any of the roles given
-         * based on the qualification map that is pased.
+         * based on the qualification map that is passed.
          *
          * Phase 1: Check the cache to find if it's already been determined that the principal is a member of any of
          *          the roles with the given ids.
@@ -1283,8 +1283,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                         }
                     } else {
                         if (!checkDelegations) {
-                            putPrincipalHasRoleInCache(false, principalId, role.getId(), qualification,
-                                    checkDelegations);
+                            putPrincipalHasRoleInCache(false, principalId, role.getId(), qualification, false);
                         }
                     }
                 } catch (Exception ex) {
@@ -1549,7 +1548,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
             }
             // If we've found a matching delegation skip processing the rest of the roles
             if (matchesOnRoleDelegation) {
-                return matchesOnRoleDelegation;
+                return true;
             }
         }
         // If we get here we didn't find a matching delegation so return false
@@ -1612,7 +1611,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         KimType delegationType = KimApiServiceLocator.getKimTypeInfoService().getKimType(delegateBo.getKimTypeId());
         if (delegationType != null) {
             KimTypeService tempService = KimFrameworkServiceLocator.getKimTypeService(delegationType);
-            if (tempService != null && tempService instanceof DelegationTypeService) {
+            if (tempService instanceof DelegationTypeService) {
                 service = (DelegationTypeService) tempService;
             } else {
                 LOG.error("Service returned for type " + delegationType + "(" + delegationType.getName() +
@@ -1622,7 +1621,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         } else {
             // delegateBo has no type - default to role type if possible
             RoleTypeService roleTypeService = getRoleTypeService(delegateBo.getRoleId());
-            if (roleTypeService != null && roleTypeService instanceof DelegationTypeService) {
+            if (roleTypeService instanceof DelegationTypeService) {
                 service = (DelegationTypeService) roleTypeService;
             }
         }

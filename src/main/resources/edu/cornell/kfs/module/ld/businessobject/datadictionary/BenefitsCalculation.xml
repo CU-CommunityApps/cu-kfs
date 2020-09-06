@@ -13,51 +13,51 @@
   <bean id="BenefitsCalculation-lookupDefinition" parent="BenefitsCalculation-lookupDefinition-parentBean"/>
   <bean id="BenefitsCalculation-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
         p:title="Labor Benefits Calculation Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
-      <property name="lookupAttributeDefinitions">
+      <property name="formAttributeDefinitions">
           <list>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-universityFiscalYear" p:disableLookup="true"
                     p:defaultValueFinder-ref="fiscalYearFinder"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-chartOfAccountsCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-positionBenefitTypeCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-laborBenefitRateCategoryCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-positionFringeBenefitObjectCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-positionFringeBenefitPercent"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-accountCodeOffset"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                     parent="BenefitsCalculation-objectCodeOffset"/>
-              <ref bean="activeIndicatorLookupAttributeDefinition"/>
+              <ref bean="activeIndicatorFormAttributeDefinition"/>
           </list>
       </property>
-      <property name="lookupResultAttributeDefinitions">
+      <property name="displayAttributeDefinitions">
           <list>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-universityFiscalYear"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-chartOfAccountsCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-positionBenefitTypeCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-laborBenefitRateCategoryCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-positionFringeBenefitObjectCode"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-accountCodeOffset"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-objectCodeOffset"/>
-              <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+              <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                     parent="BenefitsCalculation-positionFringeBenefitPercent">
                   <property name="validationPattern">
                       <bean parent="FixedPointValidationPattern" p:scale="2" p:precision="7" />
                   </property>
               </bean>
-              <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
+              <ref bean="activeIndicatorDisplayAttributeDefinition"/>
           </list>
       </property>
       <property name="lookupFields">
