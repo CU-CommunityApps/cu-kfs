@@ -17,10 +17,12 @@ public class CuAwardMaintainableImpl extends AwardMaintainableImpl {
      *
      * @param refreshFromLookup
      */
+    @Override
     protected void refreshAward(boolean refreshFromLookup) {       
         Award award = getAward();
         Proposal tempProposal = getAward().getProposal();
         award.setProposal(tempProposal);
+        award.clearCustomerAddressIfNecessary();
         
         getNewCollectionLine(KFSPropertyConstants.AWARD_SUBCONTRACTORS).refreshNonUpdateableReferences();
         getNewCollectionLine(KFSPropertyConstants.AWARD_PROJECT_DIRECTORS).refreshNonUpdateableReferences();

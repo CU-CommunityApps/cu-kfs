@@ -1016,6 +1016,8 @@
 			column="FIN_OBJ_SUB_TYP_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="historicalFinancialObjectCode"
 			column="HIST_FIN_OBJECT_CD" jdbc-type="VARCHAR" />
+		<field-descriptor name="objectId"
+			column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="active" column="FIN_OBJ_ACTIVE_CD"
 			jdbc-type="VARCHAR"
 			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
