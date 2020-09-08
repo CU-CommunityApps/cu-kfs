@@ -3,6 +3,7 @@ package edu.cornell.kfs.kns.service.impl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kim.document.IdentityManagementKimDocument;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kim.impl.identity.address.EntityAddressBo;
 import org.kuali.kfs.kim.impl.identity.email.EntityEmailBo;
@@ -19,7 +21,9 @@ import org.kuali.kfs.kim.impl.identity.phone.EntityPhoneBo;
 import org.kuali.kfs.kim.service.KIMServiceLocatorInternal;
 import org.kuali.kfs.kim.service.UiDocumentService;
 import org.kuali.kfs.kns.service.impl.BusinessObjectAuthorizationServiceImpl;
+import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.document.DocumentAuthorizer;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.Person;
@@ -113,6 +117,24 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
             entityId = null;
         }
         return entityId;
+    }
+    
+    @Override
+    protected DocumentAuthorizer findDocumentAuthorizerForBusinessObject(BusinessObject businessObject) {
+        if (objectRepresentsKimDocumentPotentiallyOpenedInInquiryMode(businessObject)) {
+            return null;
+        }
+        return super.findDocumentAuthorizerForBusinessObject(businessObject);
+    }
+
+    private boolean objectRepresentsKimDocumentPotentiallyOpenedInInquiryMode(BusinessObject businessObject) {
+        if (businessObject instanceof IdentityManagementKimDocument) {
+            IdentityManagementKimDocument kimDocument = (IdentityManagementKimDocument) businessObject;
+            Optional<DocumentHeader> docHeader = Optional.ofNullable(kimDocument.getDocumentHeader());
+            Optional<DocumentHeader> workflowDocument = docHeader.filter(DocumentHeader::hasWorkflowDocument);
+            return workflowDocument.isEmpty();
+        }
+        return false;
     }
 
     private IdentityService getIdentityService() {
