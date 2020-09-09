@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 <!--
  Copyright 2006-2009 The Kuali Foundation
  
@@ -19,54 +24,21 @@
         <property name="businessRulesClass" value="edu.cornell.kfs.module.cg.document.validation.impl.CuProposalRule"/>
     </bean>
 
-    <bean id="ProposalMaintenanceDocument-ProposalMaintenance" parent="ProposalMaintenanceDocument-ProposalMaintenance-parentBean">
-        <property name="maintainableItems">
-          <list>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalNumber" p:unconditionallyReadOnly="true"
-                  p:required="true" p:defaultValueFinder-ref="nextProposalNumberFinder"/>
-            <bean parent="MaintainableFieldDefinition"
-                  p:defaultValue="P"
-                  p:name="proposalStatusCode"
-                  p:noLookup="true"
-                  p:required="true"
-                  p:webUILeaveFieldFunction="onblur_proposalStatusCode"/>
-            <bean parent="MaintainableFieldDefinition" p:name="agencyNumber" p:required="true"
-                  p:webUILeaveFieldFunction="onblur_agencyNumber"/>
-            <bean parent="MaintainableFieldDefinition" p:name="agency.fullName" p:unconditionallyReadOnly="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalProjectTitle" p:required="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalBeginningDate" p:required="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalEndingDate" p:required="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalDirectCostAmount" p:required="true"
-                  p:webUILeaveFieldFunction="onblur_proposalDirectCostAmount"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalIndirectCostAmount" p:required="true"
-                  p:webUILeaveFieldFunction="onblur_proposalIndirectCostAmount"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalTotalAmount"
-                  p:unconditionallyReadOnly="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalSubmissionDate" p:required="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalClosingDate"
-                  p:unconditionallyReadOnly="true"/>
-            <bean parent="MaintainableFieldDefinition"
-                  p:defaultValue="N"
-                  p:name="proposalAwardTypeCode"
-                  p:noLookup="true"
-                  p:required="true"/>
-            <bean parent="MaintainableFieldDefinition"
-                  p:name="proposalPurposeCode"
-                  p:noLookup="true"
-                  p:required="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="grantNumber"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalFederalPassThroughIndicator"/>
-            <bean parent="MaintainableFieldDefinition" p:name="federalPassThroughAgencyNumber"
-                  p:webUILeaveFieldFunction="onblur_federalPassThroughAgencyNumber"/>
-            <bean parent="MaintainableFieldDefinition" p:name="federalPassThroughAgency.fullName"
-                  p:unconditionallyReadOnly="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="cfdaNumber" p:newLookup="true"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalFellowName"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalDueDate"/>
-            <bean parent="MaintainableFieldDefinition" p:name="proposalRejectedDate"/>
-            <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
-          </list>
+    <bean parent="DataDictionaryBeanOverride" p:beanName="ProposalMaintenanceDocument-ProposalMaintenance">
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementReplace" p:propertyName="maintainableItems">
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="proposalNumber"
+                              p:unconditionallyReadOnly="true" p:required="true"
+                              p:defaultValueFinder-ref="nextProposalNumberFinder"/>
+                    </property>
+                    <property name="replaceWith">
+                        <bean parent="MaintainableFieldDefinition" p:name="proposalNumber" p:required="true"/>
+                    </property>
+                </bean>
+            </list>
         </property>
     </bean>
-  
+
 </beans>
