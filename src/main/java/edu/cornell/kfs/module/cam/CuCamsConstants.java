@@ -6,13 +6,13 @@ public class CuCamsConstants {
     }
 
     public static final class CapAssetApi {
-        public static final String COGNITO_USER_POOL_ISSUER_URL = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_PF3qpyCGu";
         public static final String OBJECT_NOT_FOUND = "Object not found";
         public static final String ERROR = "error";
+        public static final String N = "n";
+        public static final String E = "e";
         public static final String UNAUTHORIZED = "Unauthorized";
         public static final String BAD_REQUEST = "Invalid Request";
         public static final String COGNITO_ID_TOKEN = "cognito_id_token";
-        public static final String COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH = "../webapps/kfs/WEB-INF/classes/edu/cornell/kfs/module/cam/capital_asset_inventory_cognito_public_key.json";
         public static final String CAPITAL_ASSET_KFS_API_DESCRIPTION = "The Cornell Capital Asset website uses this resource to scan capital assets data.";
         public static final String BUILDING_NAME = "building_name";
         public static final String BUILDING_CODE = "building_code";

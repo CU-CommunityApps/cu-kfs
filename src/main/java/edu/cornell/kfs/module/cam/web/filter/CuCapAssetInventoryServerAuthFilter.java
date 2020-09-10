@@ -7,12 +7,14 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,6 +40,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger(CuCapAssetInventoryServerAuthFilter.class);
 
     private WebServiceCredentialService webServiceCredentialService;
+    private ConfigurationService configurationService;
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -80,9 +83,10 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
             return false;
         }
 
+        String cognitoUserPoolIssuerUrl = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_USER_POOL_ISSUER_URL);
         Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) cognitoUserPoolPublicKey, null);
         JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(CuCamsConstants.CapAssetApi.COGNITO_USER_POOL_ISSUER_URL)
+                .withIssuer(cognitoUserPoolIssuerUrl)
                 .withClaim(CuCamsConstants.CapAssetApi.TOKEN_USE, CuCamsConstants.CapAssetApi.ID)
                 .build();
 
@@ -94,7 +98,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
 
     private PublicKey getPublicKeyFromFile() {
         try {
-            String cognitoPublicKeyPath = CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH;
+            String cognitoPublicKeyPath = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH);
             String cognitoPublicKeyFileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
             JsonObject publicKeyJson = parsePublicKeyFile(cognitoPublicKeyFileContents);
             return decodePublicKey(publicKeyJson);
@@ -111,10 +115,10 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     }
 
     private PublicKey decodePublicKey(JsonObject publicKeyJson) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String keyN = publicKeyJson.get("n").getAsString();
-        String keyE = publicKeyJson.get("e").getAsString();
+        String keyN = publicKeyJson.get(CuCamsConstants.CapAssetApi.N).getAsString();
+        String keyE = publicKeyJson.get(CuCamsConstants.CapAssetApi.E).getAsString();
 
-        Base64.Decoder decoder = keyN.endsWith("=") || keyN.contains("+") || keyN.contains("/") ? Base64.getDecoder() : Base64.getUrlDecoder();
+        Base64.Decoder decoder = Base64.getUrlDecoder();
         BigInteger modulus = new BigInteger(1, decoder.decode(keyN));
         BigInteger publicExponent = new BigInteger(1, decoder.decode(keyE));
 
@@ -132,6 +136,13 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         }
 
         return this.webServiceCredentialService;
+    }
+
+    protected ConfigurationService getConfigurationService() {
+        if (ObjectUtils.isNull(this.configurationService)) {
+            this.configurationService = SpringContext.getBean(ConfigurationService.class);
+        }
+        return this.configurationService;
     }
 
 }
