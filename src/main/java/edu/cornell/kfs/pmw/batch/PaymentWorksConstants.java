@@ -1,14 +1,12 @@
 package edu.cornell.kfs.pmw.batch;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
