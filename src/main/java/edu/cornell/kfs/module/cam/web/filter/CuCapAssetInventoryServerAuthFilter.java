@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -98,11 +96,10 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
 
     private PublicKey getPublicKeyFromFile() {
         try {
-            String cognitoPublicKeyPath = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_PUBLIC_KEY_FILE_RELATIVE_PATH);
-            String cognitoPublicKeyFileContents = new String(Files.readAllBytes(Paths.get(cognitoPublicKeyPath)));
-            JsonObject publicKeyJson = parsePublicKeyFile(cognitoPublicKeyFileContents);
+            String cognitoPublicKey = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_PUBLIC_KEY_JSON);
+            JsonObject publicKeyJson = parsePublicKeyFile(cognitoPublicKey);
             return decodePublicKey(publicKeyJson);
-        } catch (IOException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {
             LOG.error("getPublicKeyFromFile", ex);
         }
         return null;
