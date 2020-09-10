@@ -97,7 +97,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     private PublicKey getPublicKeyFromFile() {
         try {
             String cognitoPublicKey = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_PUBLIC_KEY_JSON);
-            JsonObject publicKeyJson = parsePublicKeyFile(cognitoPublicKey);
+            JsonObject publicKeyJson = parsePublicKeyJson(cognitoPublicKey);
             return decodePublicKey(publicKeyJson);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {
             LOG.error("getPublicKeyFromFile", ex);
@@ -105,7 +105,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         return null;
     }
 
-    private JsonObject parsePublicKeyFile(String rawPublicKey) {
+    private JsonObject parsePublicKeyJson(String rawPublicKey) {
         Gson gson = new Gson();
         JsonElement jsonElement = gson.fromJson(rawPublicKey, JsonElement.class);
         return jsonElement.getAsJsonObject();
