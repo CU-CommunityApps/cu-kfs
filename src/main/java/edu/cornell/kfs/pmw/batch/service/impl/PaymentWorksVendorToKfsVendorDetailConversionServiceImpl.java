@@ -294,12 +294,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             String paymentWorksVendorCountryCode = findPoCountryToUse(pmwVendor);
             fipsCountryCode = convertFipsPoCountryOptionToFipsCountryCode(paymentWorksVendorCountryCode);
             if (StringUtils.isBlank(fipsCountryCode)) {
-                LOG.error("buildPOFipsCountryCode, unable to find a FIPS country code for " + paymentWorksVendorCountryCode);
+                LOG.error("buildPOFipsCountryCode, unable to find LEGACY FIPS country code for " + paymentWorksVendorCountryCode);
             }
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             PaymentWorksPurchaseOrderCountryFipsOption option = PaymentWorksPurchaseOrderCountryFipsOption.findPaymentWorksPurchaseOrderCountryFipsOption(pmwVendor.getPoCountryUsCanadaAustraliaOther());
             if (LOG.isDebugEnabled()) {
-                LOG.debug("buildPOFipsCountryCode, FIP country code option: " + option.toString());
+                LOG.debug("buildPOFipsCountryCode, new foreign form FIPS country code option: " + option.toString());
             }
             if (StringUtils.isNotBlank(option.fipsCountryCode)) {
                 fipsCountryCode = option.fipsCountryCode;
@@ -311,7 +311,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                 }
             }
             if (StringUtils.isBlank(fipsCountryCode)) {
-                LOG.error("buildPOFipsCountryCode, unable to find a FIPS country code for country code" + pmwVendor.getPoCountry());
+                LOG.error("buildPOFipsCountryCode, unable to find new foreign form FIPS country code for country code" + pmwVendor.getPoCountry());
             }
         } else {
             throw new IllegalStateException("unknown form mode");
