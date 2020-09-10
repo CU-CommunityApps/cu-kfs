@@ -289,7 +289,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
 
     protected String buildPOFipsCountryCode(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
-        String fipsCountryCode;
+        String fipsCountryCode = StringUtils.EMPTY;
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
             String paymentWorksVendorCountryCode = findPoCountryToUse(pmwVendor);
             fipsCountryCode = convertFipsPoCountryOptionToFipsCountryCode(paymentWorksVendorCountryCode);
@@ -307,14 +307,13 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                 try {
                     fipsCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getPoCountry(), paymentWorksIsoToFipsCountryMap);
                 } catch (NullPointerException npe) {
+                    LOG.error("buildPOFipsCountryCode, had and error converting '" + pmwVendor.getPoCountry() + "' to a FIPS code.", npe);
                     fipsCountryCode = StringUtils.EMPTY;
                 }
             }
             if (StringUtils.isBlank(fipsCountryCode)) {
-                LOG.error("buildPOFipsCountryCode, unable to find new foreign form FIPS country code for country code" + pmwVendor.getPoCountry());
+                LOG.error("buildPOFipsCountryCode, unable to find new foreign form FIPS country code for country code " + pmwVendor.getPoCountry());
             }
-        } else {
-            throw new IllegalStateException("unknown form mode");
         }
         return fipsCountryCode;
     }
