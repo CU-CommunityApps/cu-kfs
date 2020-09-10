@@ -76,7 +76,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
 
     private boolean isAuthorized(HttpServletRequest request) {
         String cognitoIdToken = request.getHeader(CuCamsConstants.CapAssetApi.COGNITO_ID_TOKEN);
-        PublicKey cognitoUserPoolPublicKey = getPublicKeyFromFile();
+        PublicKey cognitoUserPoolPublicKey = getCognitoUserPoolPublicKey();
         if (ObjectUtils.isNull(cognitoUserPoolPublicKey)) {
             return false;
         }
@@ -94,13 +94,13 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         return true;
     }
 
-    private PublicKey getPublicKeyFromFile() {
+    private PublicKey getCognitoUserPoolPublicKey() {
         try {
             String cognitoPublicKey = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_PUBLIC_KEY_JSON);
             JsonObject publicKeyJson = parsePublicKeyJson(cognitoPublicKey);
             return decodePublicKey(publicKeyJson);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {
-            LOG.error("getPublicKeyFromFile", ex);
+            LOG.error("getCognitoUserPoolPublicKey", ex);
         }
         return null;
     }
