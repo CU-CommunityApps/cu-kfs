@@ -11,12 +11,16 @@
                 </tr>
             </kul:displayIfErrors>
             <tr>
-                <td colspan="4" height="30" class="neutral"
-                    style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
-                    <b>NOTE:</b> If someone needs to complete this form or approvals are required prior to submitting to
-                    your Service Center for processing, please list the individual's net id below and click the save
-                    button. If no additional approvals are needed please click the submit button to route to your
-                    service center.
+                <td class="neutral" colspan="4" height="30" 
+                    style="color: blue;font-family: Verdana , Verdana , serif;font-size: 12.0px;font-style: italic;">
+                    <p>
+                        <strong>NOTE:</strong>
+                    </p>
+                    <ul>
+                        <li>Do not enter your Net ID in the box below.</li>
+                        <li>If additional approvals are required prior to submitting to your Service Center for processing, please list the individual's Net ID below.</li>
+                        <li>Please click the <strong>Submit</strong> button to route to the named approver or your Service Center.</li>
+                    </ul>
                 </td>
             </tr>
         </table>
