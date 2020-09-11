@@ -307,7 +307,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                 try {
                     fipsCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getPoCountry(), paymentWorksIsoToFipsCountryMap);
                 } catch (NullPointerException npe) {
-                    LOG.error("buildPOFipsCountryCode, had and error converting '" + pmwVendor.getPoCountry() + "' to a FIPS code.", npe);
+                    LOG.error("buildPOFipsCountryCode, had an error converting '" + pmwVendor.getPoCountry() + "' to a FIPS code.", npe);
                     fipsCountryCode = StringUtils.EMPTY;
                 }
             }

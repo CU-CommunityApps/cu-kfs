@@ -24,7 +24,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     private static final String LEGACY_PO_COUNTRY = "legacy po country";
-    private static final String FOREGIN_PO_COUNTRY = "foreign po country";
+    private static final String FOREIGN_PO_COUNTRY = "foreign po country";
     private static final String ARUBA_ISO_CODE = "AW";
     private static final String ARUBA_FIPS_CODE = "AA";
     private PaymentWorksVendorToKfsVendorDetailConversionServiceImpl conversionService;
@@ -90,10 +90,10 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testFindPoCountryToUseForeignOther() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         pmwVendor.setPoCountryLegacy(LEGACY_PO_COUNTRY);
-        pmwVendor.setPoCountry(FOREGIN_PO_COUNTRY);
+        pmwVendor.setPoCountry(FOREIGN_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(StringUtils.upperCase(PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER));
         String actual = conversionService.findPoCountryToUse(pmwVendor);
-        assertEquals(FOREGIN_PO_COUNTRY, actual);
+        assertEquals(FOREIGN_PO_COUNTRY, actual);
     }
     
     @Test
