@@ -7,7 +7,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
@@ -81,7 +80,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
             return false;
         }
 
-        String cognitoUserPoolIssuerUrl = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_USER_POOL_ISSUER_URL);
+        String cognitoUserPoolIssuerUrl = getConfigurationService().getPropertyValueAsString(CuCamsConstants.CapAssetApi.ConfigurationProperties.COGNITO_USER_POOL_ISSUER_URL);
         Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) cognitoUserPoolPublicKey, null);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(cognitoUserPoolIssuerUrl)
@@ -96,7 +95,7 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
 
     private PublicKey getCognitoUserPoolPublicKey() {
         try {
-            String cognitoPublicKey = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.InventoryApi.COGNITO_PUBLIC_KEY_JSON);
+            String cognitoPublicKey = getConfigurationService().getPropertyValueAsString(CuCamsConstants.CapAssetApi.ConfigurationProperties.COGNITO_PUBLIC_KEY_JSON);
             JsonObject publicKeyJson = parsePublicKeyJson(cognitoPublicKey);
             return decodePublicKey(publicKeyJson);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {
@@ -112,12 +111,12 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
     }
 
     private PublicKey decodePublicKey(JsonObject publicKeyJson) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String keyN = publicKeyJson.get(CuCamsConstants.CapAssetApi.N).getAsString();
-        String keyE = publicKeyJson.get(CuCamsConstants.CapAssetApi.E).getAsString();
+        String keyModuloN = publicKeyJson.get(CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_MODULO).getAsString();
+        String keyExponentE = publicKeyJson.get(CuCamsConstants.CapAssetApi.COGNITO_PUBLIC_KEY_EXPONENT).getAsString();
 
         Base64.Decoder decoder = Base64.getUrlDecoder();
-        BigInteger modulus = new BigInteger(1, decoder.decode(keyN));
-        BigInteger publicExponent = new BigInteger(1, decoder.decode(keyE));
+        BigInteger modulus = new BigInteger(1, decoder.decode(keyModuloN));
+        BigInteger publicExponent = new BigInteger(1, decoder.decode(keyExponentE));
 
         RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
         return KeyFactory.getInstance(CuCamsConstants.CapAssetApi.RSA).generatePublic(publicKeySpec);

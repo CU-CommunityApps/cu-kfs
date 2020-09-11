@@ -8,8 +8,8 @@ public class CuCamsConstants {
     public static final class CapAssetApi {
         public static final String OBJECT_NOT_FOUND = "Object not found";
         public static final String ERROR = "error";
-        public static final String N = "n";
-        public static final String E = "e";
+        public static final String COGNITO_PUBLIC_KEY_MODULO = "n";
+        public static final String COGNITO_PUBLIC_KEY_EXPONENT = "e";
         public static final String UNAUTHORIZED = "Unauthorized";
         public static final String BAD_REQUEST = "Invalid Request";
         public static final String COGNITO_ID_TOKEN = "cognito_id_token";
@@ -39,5 +39,10 @@ public class CuCamsConstants {
         public static final String LAST_INVENTORY_DATE = "last_inventory_date";
         public static final String ORGANIZATION_INVENTORY_NAME = "organization_inventory_name";
         public static final String CAPITAL_ASSET_NUMBER = "capital_asset_number";
+
+        public static final class ConfigurationProperties {
+            public static final String COGNITO_USER_POOL_ISSUER_URL = "cu.kfs.cams.api.cognito.user.pool.url";
+            public static final String COGNITO_PUBLIC_KEY_JSON = "cu.kfs.cams.api.public.key.json";
+        }
     }
 }
