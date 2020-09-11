@@ -106,7 +106,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String insuranceContactPhoneExtension;
     private String insuranceContactEmail;
     
-    private String poCountry;
+    private String poCountryLegacy;
     private String poUsState;
     private String poAustralianProvince;
     private String poCanadianProvince;
@@ -149,6 +149,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String stateDivsersityClassifications;
     private String federalDivsersityClassifications;
     private String poCountryUsCanadaAustraliaOther;
+    private String poCountry;
     
     
     /*
@@ -901,12 +902,12 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.eInvoiceEmail = eInvoiceEmail;
     }
 
-    public String getPoCountry() {
-        return poCountry;
+    public String getPoCountryLegacy() {
+        return poCountryLegacy;
     }
 
-    public void setPoCountry(String poCountry) {
-        this.poCountry = poCountry;
+    public void setPoCountryLegacy(String poCountryLegacy) {
+        this.poCountryLegacy = poCountryLegacy;
     }
 
     public String getPoUsState() {
@@ -1256,6 +1257,14 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.poCountryUsCanadaAustraliaOther = poCountryUsCanadaAustraliaOther;
     }
 
+    public String getPoCountry() {
+        return poCountry;
+    }
+
+    public void setPoCountry(String poCountry) {
+        this.poCountry = poCountry;
+    }
+
     @Override
     public String toString() {
         if (getPaymentWorksFormModeService().shouldUseForeignFormProcessingMode()) {
@@ -1363,7 +1372,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         sb.append("eInvoicePhoneExtension: ").append(eInvoicePhoneExtension).append(System.lineSeparator());
         sb.append("eInvoiceEmail: ").append(eInvoiceEmail).append(System.lineSeparator());
         
-        sb.append("poCountry: ").append(poCountry).append(System.lineSeparator());
+        sb.append("poCountryLegacy: ").append(poCountryLegacy).append(System.lineSeparator());
         sb.append("poUsState: ").append(poUsState).append(System.lineSeparator());
         sb.append("poAustralianProvince: ").append(poAustralianProvince).append(System.lineSeparator());
         sb.append("poCanadianProvince: ").append(poCanadianProvince).append(System.lineSeparator());

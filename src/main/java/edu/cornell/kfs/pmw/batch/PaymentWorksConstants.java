@@ -1,10 +1,12 @@
 package edu.cornell.kfs.pmw.batch;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
-import org.kuali.kfs.sys.KFSConstants;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
@@ -382,6 +384,19 @@ public class PaymentWorksConstants {
 
         public String getFipsCountryCode() {
             return fipsCountryCode;
+        }
+        
+        public static PaymentWorksPurchaseOrderCountryFipsOption findPaymentWorksPurchaseOrderCountryFipsOption(String pmwCountryOptionAsString) {
+            for (PaymentWorksPurchaseOrderCountryFipsOption option : PaymentWorksPurchaseOrderCountryFipsOption.values()) {
+                if (StringUtils.equalsIgnoreCase(option.pmwCountryOptionAsString, pmwCountryOptionAsString)) {
+                    return option;
+                }
+            }
+            return PaymentWorksPurchaseOrderCountryFipsOption.OTHER;
+        }
+        
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         }
     }
 

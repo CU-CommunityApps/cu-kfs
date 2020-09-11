@@ -126,7 +126,7 @@
     <field-descriptor name="eInvoicePhoneExtension" column="INV_CNTCT_PHN_EXTNS_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="eInvoiceEmail" column="INV_CNTCT_EMAIL" jdbc-type="VARCHAR" />
     
-    <field-descriptor name="poCountry" column="PO_CNTRY_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="poCountryLegacy" column="PO_CNTRY_CD_LEGACY" jdbc-type="VARCHAR" />
     <field-descriptor name="poUsState" column="PO_ST_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="poAustralianProvince" column="PO_AUST_PROVINCE" jdbc-type="VARCHAR" />
     <field-descriptor name="poCanadianProvince" column="PO_CAN_PRVN" jdbc-type="VARCHAR" />
@@ -174,6 +174,7 @@
     <field-descriptor name="federalDivsersityClassifications" column="FED_DIV_CLASS" jdbc-type="VARCHAR" />
     <field-descriptor name="stateDivsersityClassifications" column="STAT_DIV_CLASS" jdbc-type="VARCHAR" />
     <field-descriptor name="poCountryUsCanadaAustraliaOther" column="PO_CNTRY_US_CA_AUS_OTH" jdbc-type="VARCHAR" />
+    <field-descriptor name="poCountry" column="PO_CNTRY_CD" jdbc-type="VARCHAR" />
     
 </class-descriptor>
 
