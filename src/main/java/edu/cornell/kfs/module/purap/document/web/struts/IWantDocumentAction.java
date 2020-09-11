@@ -12,7 +12,7 @@ import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 import edu.cornell.kfs.module.purap.util.PurApFavoriteAccountLineBuilderForIWantDocument;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -610,12 +610,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
-    /**
-     * Prevent IWNT document creator/initator from entering their own NetID 
-     * as the "Approver's NetID" when performing Submit.
-     * 
-     * @return
-     */
     private boolean initiatorEnteredOwnNetidAsApprover(ActionForm form) {
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         String enteredApproverNetID = iWantDocForm.getNewAdHocRoutePerson().getId();
@@ -630,12 +624,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return false;
     }
     
-    /**
-     * Prevent IWNT document approver from entering their own NetID 
-     * as the "Approver's NetID" when performing Approve.
-     * 
-     * @return
-     */
     private boolean approverEnteredOwnNetidAsApprover(ActionForm form) {
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         String enteredApproverNetID = iWantDocForm.getNewAdHocRoutePersonNetId();
@@ -665,8 +653,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
         boolean added = true;
         
-        //Prevent IWNT document creator/initator from entering their 
-        //own NetID as the "Approver's NetID" when Submitting.
         if (initiatorEnteredOwnNetidAsApprover(form)) {
             return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
@@ -791,8 +777,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         
-        //Prevent IWNT document approver from entering their own NetID 
-        //as the "Approver's NetID" when performing Approve.
         if (approverEnteredOwnNetidAsApprover(form)) {
             return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
