@@ -12,13 +12,13 @@ public enum TaxRule {
     NOT_INDIVIDUAL_US(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(), StringUtils.EMPTY, true, false, true),
     FOREIGN_INDIVIDUAL_US_TAX_PAYER(PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString(), 
             PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), false, true, false, 
-            true, true, "BN", true),
+            true, true, PaymentWorksConstants.W8TypeCodes.BN, true),
     FOREIGN_INDIVIDUAL(PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getKfsTaxTypeCodeAsString(), 
             PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), false, true, false, 
-            true, true, "BN", false),
+            true, true, PaymentWorksConstants.W8TypeCodes.BN, false),
     FOREIGN_ENTITY(PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getKfsTaxTypeCodeAsString(), 
             PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.getTranslationToKfsOwnershipTypeCode(), false, false, true, true, false,
-            "BE", false),
+            PaymentWorksConstants.W8TypeCodes.BE, false),
     OTHER(StringUtils.EMPTY, StringUtils.EMPTY, false, false, false, false, false, StringUtils.EMPTY, false);
 
     public final String taxTypeCode;
