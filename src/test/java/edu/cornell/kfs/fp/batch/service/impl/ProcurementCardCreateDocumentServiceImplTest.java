@@ -10,13 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 @ConfigureContext(session = kfs)
-public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase {
+public class ProcurementCardCreateDocumentServiceImplTest extends KualiIntegTestBase {
 
     private ProcurementCardLoadFlatTransactionsServiceImpl procurementCardLoadFlatTransactionsService;
     private ProcurementCardCreateDocumentService procurementCardCreateDocumentService;

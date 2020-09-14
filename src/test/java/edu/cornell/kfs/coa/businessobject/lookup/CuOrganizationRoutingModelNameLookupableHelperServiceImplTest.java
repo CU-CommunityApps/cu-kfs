@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.AccountDelegateModel;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.kns.document.authorization.BusinessObjectRestrictionsBase;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 
 @SuppressWarnings("deprecation")
 @ConfigureContext
-public class CuOrganizationRoutingModelNameLookupableHelperServiceImplTest extends KualiTestBase {
+public class CuOrganizationRoutingModelNameLookupableHelperServiceImplTest extends KualiIntegTestBase {
 
     private LookupableHelperService lookupableHelperServiceImpl;
     

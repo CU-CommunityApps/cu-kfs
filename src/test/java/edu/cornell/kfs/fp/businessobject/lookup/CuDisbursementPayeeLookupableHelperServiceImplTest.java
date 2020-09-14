@@ -1,19 +1,6 @@
 package edu.cornell.kfs.fp.businessobject.lookup;
 
-import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.kfs.krad.exception.ValidationException;
+import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,10 +8,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
+import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.bo.BusinessObject;
+
+import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 
 @ConfigureContext(session = ccs1)
-public class CuDisbursementPayeeLookupableHelperServiceImplTest extends KualiTestBase {
+public class CuDisbursementPayeeLookupableHelperServiceImplTest extends KualiIntegTestBase {
 
 	private PersonService personService;
 	private UnitTestSqlDao unitTestSqlDao;

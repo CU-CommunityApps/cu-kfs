@@ -6,14 +6,14 @@ import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetGlobal;
 import org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.cam.fixture.AssetGlobalDetailFixture;
 import edu.cornell.kfs.module.cam.fixture.AssetGlobalFixture;
 
 @ConfigureContext
-public class CuAssetGlobalServiceImplTest extends KualiTestBase {
+public class CuAssetGlobalServiceImplTest extends KualiIntegTestBase {
 	
 	private CuAssetGlobalServiceImpl assetGlobalService;
 	

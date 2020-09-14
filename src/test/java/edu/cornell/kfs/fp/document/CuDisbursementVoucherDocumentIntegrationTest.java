@@ -1,5 +1,10 @@
 package edu.cornell.kfs.fp.document;
 
+import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
+
+import java.sql.Date;
+import java.util.Calendar;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
@@ -9,7 +14,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -18,13 +23,8 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
-import java.sql.Date;
-import java.util.Calendar;
-
-import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
-
 @ConfigureContext(session = ccs1)
-public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase {
+public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTestBase {
 
     private CuDisbursementVoucherDocument cuDisbursementVoucherDocument;
     private DateTimeService dateTimeService;
