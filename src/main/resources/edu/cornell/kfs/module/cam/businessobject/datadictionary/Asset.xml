@@ -25,8 +25,12 @@
 </bean>
 
   <bean id="Asset-assetLocations.assetLocationTypeCode" parent="Asset-assetLocations.assetLocationTypeCode-parentBean"/>
-  <bean id="Asset-assetLocations.assetLocationTypeCode-parentBean" abstract="true" parent="AssetLocationType-assetLocationTypeCode">
-    <property name="name" value="assetLocations.assetLocationTypeCode"/>
+  <bean id="Asset-assetLocations.assetLocationTypeCode-parentBean" abstract="true" parent="AttributeDefinition"
+        p:name="assetLocations.assetLocationTypeCode" p:forceUppercase="true" p:label="Asset Location Type Code"
+        p:shortLabel="Code" p:maxLength="2" p:validationPattern-ref="AnyCharacterValidation">
+      <property name="control">
+          <bean parent="SelectControlDefinition" p:valuesFinder-ref="cuAssetLocationTypeValuesFinder"/>
+      </property>
   </bean>
 
   <bean id="Asset-extension-serviceRateIndicator" parent="Asset-extension-serviceRateIndicator-parentBean"/>
@@ -91,5 +95,8 @@
            </list>
       </property>
   </bean>
+
+  <bean id="cuAssetLocationTypeValuesFinder"
+        class="edu.cornell.kfs.module.cam.businessobject.options.CuAssetLocationTypeValuesFinder"/>
 
 </beans>

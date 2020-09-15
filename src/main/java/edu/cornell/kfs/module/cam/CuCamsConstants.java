@@ -45,4 +45,11 @@ public class CuCamsConstants {
             public static final String COGNITO_PUBLIC_KEY_JSON = "cu.kfs.cams.api.public.key.json";
         }
     }
+
+    public static final class AssetLocationTypeLabel {
+        public static final String OFF_CAMPUS = "Off-Campus";
+        public static final String BORROWER = "Borrower";
+        public static final String BORROWER_STORAGE = "Borrower Storage";
+        public static final String RETIREMENT = "Retirement";
+    }
 }
