@@ -152,15 +152,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         }
         return StringUtils.EMPTY;
     }
-    
-    public String getNewAdHocRoutePersonNetId() {
-        if (getNewAdHocRoutePerson() != null) {
-            if (StringUtils.isNotBlank(getNewAdHocRoutePerson().getId())) {
-                return getNewAdHocRoutePerson().getId();
-            }
-        }
-        return StringUtils.EMPTY;
-    }
 
     /**
      * This overridden method ...
