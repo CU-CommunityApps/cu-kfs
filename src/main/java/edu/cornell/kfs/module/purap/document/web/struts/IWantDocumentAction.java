@@ -11,7 +11,8 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 import edu.cornell.kfs.module.purap.util.PurApFavoriteAccountLineBuilderForIWantDocument;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -608,7 +609,35 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
+    
+    private boolean initiatorEnteredOwnNetidAsApprover(ActionForm form) {
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        String enteredApproverNetID = iWantDocForm.getNewAdHocRoutePerson().getId();
+        
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        String initiatorNetID = iWantDocument.getInitiatorNetID();
 
+        if (StringUtils.equalsIgnoreCase(initiatorNetID, enteredApproverNetID)) {
+            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_IWNT_CREATOR_CANNOT_ROUTE_TO_SELF);
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean approverEnteredOwnNetidAsApprover(ActionForm form) {
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        String enteredApproverNetID = iWantDocForm.getNewAdHocRoutePersonNetId();
+        
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+        String currentUserNetID = currentUser.getPrincipalName();
+
+        if (StringUtils.equalsIgnoreCase(currentUserNetID, enteredApproverNetID)) {
+            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_IWNT_APPROVER_CANNOT_ROUTE_TO_SELF);
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * 
      * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#route(org.apache.struts.action.ActionMapping,
@@ -623,6 +652,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
         IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
         boolean added = true;
+        
+        if (initiatorEnteredOwnNetidAsApprover(form)) {
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        }
         
         //add new item and new accounting line if not empty
         IWantItem item = iWantDocForm.getNewIWantItemLine();
@@ -743,14 +776,16 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     @Override
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        
+        if (approverEnteredOwnNetidAsApprover(form)) {
+            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        }
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
-
         //insert adhoc route person first and then approve
         if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
         }
-
         return super.approve(mapping, form, request, response);
     }
     
