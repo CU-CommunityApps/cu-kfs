@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.businessobject.VendorContact;
+import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
@@ -27,6 +30,10 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     private static final String FOREIGN_PO_COUNTRY = "foreign po country";
     private static final String ARUBA_ISO_CODE = "AW";
     private static final String ARUBA_FIPS_CODE = "AA";
+    private static final String CONTACT_NAME = "Jane Doe";
+    private static final String CONTACT_EMAIL_ADDRESS  = "tester@cornell.edu";
+    private static final String CONTACT_PHONE_NUMBER = "111-222-3333";
+    private static final String CONTACT_PHONE_NUMBER_EXTENSION = "987";
     private PaymentWorksVendorToKfsVendorDetailConversionServiceImpl conversionService;
     private PaymentWorksVendor pmwVendor;
 
@@ -212,6 +219,57 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         items.add(arubaItem);
         countryMap.put(ARUBA_ISO_CODE, items);
         return countryMap;
+    }
+    
+    @Test
+    void testBuildContactWithPhone() {
+        VendorContact actualContact = conversionService.buildContact(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING, 
+                PaymentWorksConstants.KFSVendorContactPhoneTypes.E_INVOICING, CONTACT_NAME, CONTACT_EMAIL_ADDRESS, 
+                CONTACT_PHONE_NUMBER, CONTACT_PHONE_NUMBER_EXTENSION);
+        assertBaseContactDetails(actualContact);
+        assertEquals(1, CollectionUtils.size(actualContact.getVendorContactPhoneNumbers()));
+        
+        VendorContactPhoneNumber actualPhoneContact = actualContact.getVendorContactPhoneNumbers().get(0);
+        assertEquals(PaymentWorksConstants.KFSVendorContactPhoneTypes.E_INVOICING, actualPhoneContact.getVendorPhoneTypeCode());
+        assertEquals(CONTACT_PHONE_NUMBER, actualPhoneContact.getVendorPhoneNumber());
+        assertEquals(CONTACT_PHONE_NUMBER_EXTENSION, actualPhoneContact.getVendorPhoneExtensionNumber());
+    }
+    @Test
+    void testBuildContactWithPhoneNoExtension() {
+        VendorContact actualContact = conversionService.buildContact(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING, 
+                PaymentWorksConstants.KFSVendorContactPhoneTypes.E_INVOICING, CONTACT_NAME, CONTACT_EMAIL_ADDRESS, 
+                CONTACT_PHONE_NUMBER, StringUtils.EMPTY);
+        assertBaseContactDetails(actualContact);
+        assertEquals(1, CollectionUtils.size(actualContact.getVendorContactPhoneNumbers()));
+        
+        VendorContactPhoneNumber actualPhoneContact = actualContact.getVendorContactPhoneNumbers().get(0);
+        assertEquals(PaymentWorksConstants.KFSVendorContactPhoneTypes.E_INVOICING, actualPhoneContact.getVendorPhoneTypeCode());
+        assertEquals(CONTACT_PHONE_NUMBER, actualPhoneContact.getVendorPhoneNumber());
+        assertEquals(null, actualPhoneContact.getVendorPhoneExtensionNumber());
+    }
+    
+    @Test
+    void testBuildContactWithEmptyPhone() {
+        VendorContact actualContact = conversionService.buildContact(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING, 
+                PaymentWorksConstants.KFSVendorContactPhoneTypes.E_INVOICING, CONTACT_NAME, CONTACT_EMAIL_ADDRESS, 
+                StringUtils.EMPTY, StringUtils.EMPTY);
+        assertBaseContactDetails(actualContact);
+        assertEquals(0, CollectionUtils.size(actualContact.getVendorContactPhoneNumbers()));
+    }
+    
+    @Test
+    void testBuildContactWithNullPhone() {
+        VendorContact actualContact = conversionService.buildContact(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING, 
+                PaymentWorksConstants.KFSVendorContactPhoneTypes.E_INVOICING, CONTACT_NAME, CONTACT_EMAIL_ADDRESS, 
+                null, null);
+        assertBaseContactDetails(actualContact);
+        assertEquals(0, CollectionUtils.size(actualContact.getVendorContactPhoneNumbers()));
+    }
+    
+    void assertBaseContactDetails(VendorContact actualContact) {
+        assertEquals(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING, actualContact.getVendorContactTypeCode());
+        assertEquals(CONTACT_NAME, actualContact.getVendorContactName());
+        assertEquals(CONTACT_EMAIL_ADDRESS, actualContact.getVendorContactEmailAddress());
     }
     
 }

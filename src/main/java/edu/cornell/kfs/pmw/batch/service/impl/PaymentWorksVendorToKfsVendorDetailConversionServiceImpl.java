@@ -467,9 +467,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                             pmwVendor.geteInvoiceContactPhoneNumber(), pmwVendor.geteInvoicePhoneExtension());
     }
 
-    private VendorContact buildContact(String contactType, String contactPhoneType, String contactName, String contactEmailAddress, String contactPhoneNumber, String contactPhoneExtension) {
+    protected VendorContact buildContact(String contactType, String contactPhoneType, String contactName, String contactEmailAddress, String contactPhoneNumber, String contactPhoneExtension) {
         List<VendorContactPhoneNumber> vendorContactPhoneNumbers = new ArrayList<VendorContactPhoneNumber>();
-        vendorContactPhoneNumbers.add(buildContactPhoneNumber(contactPhoneType, contactPhoneNumber, contactPhoneExtension));
+        if (StringUtils.isNotBlank(contactPhoneNumber)) {
+            LOG.debug("buildContact, there is a phone number, so add a VendorContactPhoneNumber");
+            vendorContactPhoneNumbers.add(buildContactPhoneNumber(contactPhoneType, contactPhoneNumber, contactPhoneExtension));
+        }
         VendorContact contact = new VendorContact();
         contact.setVendorContactPhoneNumbers(vendorContactPhoneNumbers);
         contact.setVendorContactTypeCode(contactType);
