@@ -294,7 +294,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testbuildVendorDetailExtensionForeignFormCheck() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Check.paymentWorksPaymmentMethod);
         VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
@@ -303,7 +303,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testbuildVendorDetailExtensionForeignFormAch() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.ACH.paymentWorksPaymmentMethod);
         VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
@@ -312,7 +312,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testbuildVendorDetailExtensionForeignFormWire() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Wire.paymentWorksPaymmentMethod);
         VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
@@ -321,7 +321,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     @Test
     void testbuildVendorDetailExtensionForeignFormEmpty() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
         try {

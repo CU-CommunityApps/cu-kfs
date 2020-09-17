@@ -735,18 +735,16 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
-        LOG.info("buildVendorDetailExtension, entering");
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            LOG.info("buildVendorDetailExtension, legacy mode");
+            LOG.debug("buildVendorDetailExtension, legacy mode");
             vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            LOG.info("buildVendorDetailExtension, setting default payment method based off of new form");
+            LOG.debug("buildVendorDetailExtension, foreign mode");
             PaymentWorksPaymentMethodToKfsPaymentMethod paymentMethod = PaymentWorksPaymentMethodToKfsPaymentMethod.
                     findPaymentWorksPaymentMethodToKfsPaymentMethodFromPaymentWorksPaymentMethod(pmwVendor.getPaymentMethod());
             vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod.kfsPaymentMethod);
         } else {
-            LOG.error("buildVendorDetailExtension, invalid form processing mode");
             throw new IllegalStateException("Invalid form processing mode.");
         }
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
