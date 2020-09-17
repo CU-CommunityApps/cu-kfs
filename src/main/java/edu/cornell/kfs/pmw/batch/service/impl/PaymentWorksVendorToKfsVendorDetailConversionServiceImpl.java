@@ -31,6 +31,7 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.web.format.FormatException;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
@@ -733,9 +734,21 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return kfsVendorDataWrapper;
     }
     
-    private VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
+    protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
+        LOG.info("buildVendorDetailExtension, entering");
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
-        vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            LOG.info("buildVendorDetailExtension, legacy mode");
+            vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            LOG.info("buildVendorDetailExtension, setting default payment method based off of new form");
+            PaymentWorksPaymentMethodToKfsPaymentMethod paymentMethod = PaymentWorksPaymentMethodToKfsPaymentMethod.
+                    findPaymentWorksPaymentMethodToKfsPaymentMethodFromPaymentWorksPaymentMethod(pmwVendor.getPaymentMethod());
+            vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod.kfsPaymentMethod);
+        } else {
+            LOG.error("buildVendorDetailExtension, invalid form processing mode");
+            throw new IllegalStateException("Invalid form processing mode.");
+        }
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(getDateTimeService().getCurrentTimestamp());
         return vendorDetailExtension;

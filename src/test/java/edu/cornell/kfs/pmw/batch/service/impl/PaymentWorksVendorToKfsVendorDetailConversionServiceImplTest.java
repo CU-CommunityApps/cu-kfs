@@ -17,12 +17,14 @@ import org.junit.jupiter.api.Test;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
+import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
@@ -41,6 +43,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void setUp() throws Exception {
         Configurator.setLevel(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class.getName(), Level.DEBUG);
         conversionService = new PaymentWorksVendorToKfsVendorDetailConversionServiceImpl();
+        conversionService.setDateTimeService(new DateTimeServiceImpl());
         pmwVendor = new PaymentWorksVendor();
     }
 
@@ -270,6 +273,65 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         assertEquals(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING, actualContact.getVendorContactTypeCode());
         assertEquals(CONTACT_NAME, actualContact.getVendorContactName());
         assertEquals(CONTACT_EMAIL_ADDRESS, actualContact.getVendorContactEmailAddress());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionLegacyForm() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionLegacyFormWire() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Wire.paymentWorksPaymmentMethod);
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionForeignFormCheck() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Check.paymentWorksPaymmentMethod);
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionForeignFormAch() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.ACH.paymentWorksPaymmentMethod);
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionForeignFormWire() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Wire.paymentWorksPaymmentMethod);
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, actualDetail.getDefaultB2BPaymentMethodCode());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionForeignFormEmpty() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setPaymentMethod(StringUtils.EMPTY);
+        try {
+            VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        } catch (IllegalArgumentException iae) {
+            iae.printStackTrace();
+            assertTrue(true);
+            return;
+        }
+        assertTrue(false, "should have caught an illegal argument exception.");
     }
     
 }
