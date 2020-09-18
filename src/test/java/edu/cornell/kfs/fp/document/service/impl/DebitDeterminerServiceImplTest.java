@@ -5,23 +5,23 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 import java.util.List;
 
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl;
 
 @ConfigureContext(session = ccs1)
-public class DebitDeterminerServiceImplTest extends KualiTestBase {
+public class DebitDeterminerServiceImplTest extends KualiIntegTestBase {
 	private SubmitTripWebServiceImpl submitTripWebService;
 	private DocumentService documentService;
 	private DebitDeterminerServiceImpl debitDeterminerService;

@@ -19,13 +19,13 @@ import org.kuali.kfs.module.ld.batch.service.FileEnterpriseFeederHelperService;
 import org.kuali.kfs.module.ld.report.EnterpriseFeederReportData;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.Message;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl;
 
 @ConfigureContext
-public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiTestBase {
+public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiIntegTestBase {
 	private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederHelperServiceImplTest.class);
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
     private static final String RECON_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.recon";

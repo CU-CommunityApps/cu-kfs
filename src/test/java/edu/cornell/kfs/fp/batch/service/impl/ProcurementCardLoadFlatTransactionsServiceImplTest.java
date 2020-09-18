@@ -9,16 +9,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
-
 
 @ConfigureContext(session = ccs1)
-public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTestBase {
+public class ProcurementCardLoadFlatTransactionsServiceImplTest extends KualiIntegTestBase {
 
     private ProcurementCardLoadFlatTransactionsServiceImpl procurementCardLoadFlatTransactionsService;
     private ConfigurationService  kualiConfigurationService;

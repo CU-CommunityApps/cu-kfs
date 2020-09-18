@@ -6,21 +6,21 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 
 @ConfigureContext(session = ccs1)
-public class CuDisbursementVoucherPayeeServiceImplTest extends KualiTestBase {
+public class CuDisbursementVoucherPayeeServiceImplTest extends KualiIntegTestBase {
 	private PersonService personService;
     private CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService;
     private UnitTestSqlDao unitTestSqlDao;

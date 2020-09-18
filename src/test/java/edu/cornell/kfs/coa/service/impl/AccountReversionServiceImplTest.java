@@ -3,10 +3,10 @@ package edu.cornell.kfs.coa.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;
@@ -16,7 +16,7 @@ import edu.cornell.kfs.coa.service.AccountReversionService;
 import edu.cornell.kfs.gl.batch.service.ReversionCategoryLogic;
 
 @ConfigureContext
-public class AccountReversionServiceImplTest extends KualiTestBase {
+public class AccountReversionServiceImplTest extends KualiIntegTestBase {
 	private static final String GOOD_CATEGORY_CODE = "A1";
 	private static final String GOOD_CATEGORY_NAME = "Reversion";
 	private static final String NOT_VALID = "NOTVALID";

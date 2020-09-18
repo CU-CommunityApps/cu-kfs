@@ -18,19 +18,4 @@
         </property>
     </bean>
 
-    <bean parent="DataDictionaryBeanOverride">
-        <property name="beanName"><idref bean="DocEmploymentInfo-lookupDefinition"/></property>
-        <property name="fieldOverrides">
-            <list>
-                <bean parent="FieldOverrideForListElementDelete">
-                    <property name="propertyName" value="lookupFields"/>
-                    <property name="propertyNameForElementCompare" value="attributeName"/>
-                    <property name="element">
-                        <bean parent="FieldDefinition" p:attributeName="baseSalaryAmount"/>
-                    </property>
-                </bean>
-             </list>
-        </property>
-    </bean>
-
 </beans>

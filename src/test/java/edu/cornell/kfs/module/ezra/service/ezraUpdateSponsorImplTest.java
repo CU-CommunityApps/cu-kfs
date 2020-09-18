@@ -2,30 +2,27 @@ package edu.cornell.kfs.module.ezra.service;
 
 import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.sql.Date;
-import java.util.Calendar;
-
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.module.cg.businessobject.Agency;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 
-import edu.cornell.kfs.module.ezra.dataaccess.SponsorDao;
 import edu.cornell.kfs.module.ezra.businessobject.Sponsor;
-import edu.cornell.kfs.module.ezra.service.EzraService;
+import edu.cornell.kfs.module.ezra.dataaccess.SponsorDao;
 
 @ConfigureContext(session = ccs1)
-public class ezraUpdateSponsorImplTest extends KualiTestBase {
+public class ezraUpdateSponsorImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(ezraUpdateSponsorImplTest.class);
     private EzraService ezraService;    

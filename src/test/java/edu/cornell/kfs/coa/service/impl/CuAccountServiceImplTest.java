@@ -2,11 +2,11 @@ package edu.cornell.kfs.coa.service.impl;
 
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 
 @ConfigureContext
-public class CuAccountServiceImplTest extends KualiTestBase {
+public class CuAccountServiceImplTest extends KualiIntegTestBase {
 
 	private AccountService accountService;
 	

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.integration.cg.CGIntegrationConstants;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -699,10 +700,10 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      */
     @Override
     protected CustomerInvoiceDetail createSourceAccountingLinesByContractControlAccount(
-            ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
-            final OrganizationAccountingDefault organizationAccountingDefault) {
+            ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         String coaCode = null;
         String accountNumber = null;
+        SubFundGroup subFundGroup = null;
 
         List<InvoiceAccountDetail> accountDetails = contractsGrantsInvoiceDocument.getAccountDetails();
         if (CollectionUtils.isNotEmpty(accountDetails)) {
@@ -710,13 +711,16 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             if (ObjectUtils.isNotNull(contractControlAccount)) {
                 coaCode = contractControlAccount.getChartOfAccountsCode();
                 accountNumber = contractControlAccount.getAccountNumber();
+                subFundGroup = contractControlAccount.getSubFundGroup();
+                if (ObjectUtils.isNull(subFundGroup)) {
+                    contractControlAccount.refreshReferenceObject(KFSPropertyConstants.SUB_FUND_GROUP);
+                    subFundGroup = contractControlAccount.getSubFundGroup();
+                }
             }
         }
 
-        String objectCode = organizationAccountingDefault.getDefaultInvoiceFinancialObjectCode();
-
         return createSourceAccountingLine(contractsGrantsInvoiceDocument.getDocumentNumber(),
-                coaCode, accountNumber, objectCode, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
+                coaCode, accountNumber, subFundGroup, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
     }
 
     /*

@@ -596,7 +596,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     	Set<String> documentIds = new HashSet<String>();
         
         DocumentSearchCriteria.Builder criteria = DocumentSearchCriteria.Builder.create();
-        criteria.setDocumentTypeName(dataDictionaryService.getDocumentTypeNameByClass(document));
+        criteria.setDocumentTypeName(getDataDictionaryService().getDocumentTypeNameByClass(document));
         criteria.setDocumentStatuses(Collections.singletonList(DocumentStatus.fromCode(statusCode)));
 
         DocumentSearchCriteria crit = criteria.build();
@@ -780,7 +780,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setBank(defaultBank);
         }
 
-        RequisitionDocument reqDoc = requisitionService.getRequisitionById(poDoc.getRequisitionIdentifier());
+        RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
         String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {
             Person user = KimApiServiceLocator.getPersonService().getPerson(reqDocInitiator);
@@ -794,7 +794,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             return null;
         }
 
-        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = accountsPayableService.expiredOrClosedAccountsList(poDoc);
+        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = getAccountsPayableService().expiredOrClosedAccountsList(poDoc);
         if (expiredOrClosedAccountList == null) {
             expiredOrClosedAccountList = new HashMap();
         }
@@ -1040,7 +1040,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                
 			                LOG.info("Saving Load Summary for DUNS '" + dunsNumber + "'");
-			                businessObjectService.save(loadSummary);
+			                getBusinessObjectService().save(loadSummary);
 			                updateSummaryCounts(REJECT);
 			            } else {
 			                
@@ -1060,7 +1060,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                    
 				                LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
-				                businessObjectService.save(loadSummary);
+				                getBusinessObjectService().save(loadSummary);
 				                updateSummaryCounts(REJECT);
 			                } else {
 			                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
@@ -1068,7 +1068,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 
 			                    LOG.info("Saving Load Summary for DUNS '" + eInvoice.getDunsNumber() + "'");
-				                businessObjectService.save(loadSummary);
+				                getBusinessObjectService().save(loadSummary);
 				                updateSummaryCounts(ACCEPT);
 			                }
 			                
@@ -1178,7 +1178,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         // get note text max length from DD
         int noteTextMaxLength = NOTE_TEXT_DEFAULT_MAX_LENGTH;
 
-        Integer noteTextLength = dataDictionaryService.getAttributeMaxLength(Note.class, KRADConstants.NOTE_TEXT_PROPERTY_NAME);
+        Integer noteTextLength = getDataDictionaryService().getAttributeMaxLength(Note.class, KRADConstants.NOTE_TEXT_PROPERTY_NAME);
         if (noteTextLength != null) {
         	noteTextMaxLength = noteTextLength.intValue();
         }        

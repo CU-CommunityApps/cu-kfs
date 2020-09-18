@@ -219,7 +219,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         cxml.append("    <MessageId>KFS_cXML_PO</MessageId>\n");
 
         // Timestamp - it doesn't matter what's in the timezone, just that it's there (need "T" space between date/time)
-        Date currentDate = dateTimeService.getCurrentDate();
+        Date currentDate = getDateTimeService().getCurrentDate();
         SimpleDateFormat dateFormat = PurApDateFormatUtils.getSimpleDateFormat(
                 PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
         SimpleDateFormat timeFormat = PurApDateFormatUtils.getSimpleDateFormat(

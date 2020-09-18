@@ -30,11 +30,11 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
     public boolean canDownload(BatchFile batchFile, Person user) {
         boolean isAuthorized = false;
         if (batchFile.getFileName().indexOf(PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX) >= 0) {
-            isAuthorized = getIdentityManagementService().hasPermissionByTemplateName(user.getPrincipalId(),
+            isAuthorized = getPermissionService().hasPermissionByTemplate(user.getPrincipalId(),
                     KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
                     generatePermissionDetails(batchFile));
         } else {
-            isAuthorized = getIdentityManagementService().isAuthorizedByTemplateName(user.getPrincipalId(),
+            isAuthorized = getPermissionService().isAuthorizedByTemplate(user.getPrincipalId(),
                     KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
                     generatePermissionDetails(batchFile), new HashMap<>());
         }

@@ -237,44 +237,44 @@
 				</property>
 			</bean>
 		</property>
-        <property name="lookupAttributeDefinitions">
+        <property name="formAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-subFundGroupCode" />
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-subFundGroupDescription" />
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-extension-subFundGroupDetailedDescr" />
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-subFundGroupTypeCode" />
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-fundGroupCode" />
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-subFundGroupWagesIndicator" p:defaultValue=""
                       p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" />
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
-                <ref bean="activeIndicatorLookupAttributeDefinition"/>
+                <ref bean="activeIndicatorFormAttributeDefinition"/>
             </list>
         </property>
-        <property name="lookupResultAttributeDefinitions">
+        <property name="displayAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-subFundGroupCode" />
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-subFundGroupDescription" />
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-extension-subFundGroupDetailedDescr" />
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-subFundGroupTypeCode" />
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-fundGroupCode" />
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-subFundGroupWagesIndicator" />
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
-                <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <ref bean="activeIndicatorDisplayAttributeDefinition"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-fundGroupBudgetAdjustmentRestrictionLevelCode" />
             </list>
         </property>

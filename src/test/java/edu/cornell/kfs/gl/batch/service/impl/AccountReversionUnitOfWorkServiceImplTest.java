@@ -3,14 +3,14 @@ package edu.cornell.kfs.gl.batch.service.impl;
 import java.util.List;
 
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 
 import edu.cornell.kfs.gl.batch.service.ReversionUnitOfWorkService;
 
 @ConfigureContext
-public class AccountReversionUnitOfWorkServiceImplTest extends KualiTestBase {
+public class AccountReversionUnitOfWorkServiceImplTest extends KualiIntegTestBase {
 	private ReversionUnitOfWorkService accountReversionUnitOfWorkService;
 	private UnitTestSqlDao unitTestSqlDao;
 	

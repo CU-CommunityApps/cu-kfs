@@ -259,7 +259,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 
     public String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation) {
         StringBuffer cxml = new StringBuffer();
-        Date currentDate = dateTimeService.getCurrentDate();
+        Date currentDate = getDateTimeService().getCurrentDate();
         SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
         SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
 

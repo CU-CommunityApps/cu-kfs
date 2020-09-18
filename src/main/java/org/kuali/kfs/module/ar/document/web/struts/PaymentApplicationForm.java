@@ -19,10 +19,16 @@
 package org.kuali.kfs.module.ar.document.web.struts;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.kfs.kns.service.DocumentHelperService;
+import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
@@ -38,13 +44,15 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.rice.kim.api.identity.Person;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,7 +62,9 @@ import java.util.Map;
 
 public class PaymentApplicationForm extends FinancialSystemTransactionalDocumentFormBase {
 
-    protected static Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PaymentApplicationForm.class);
+    protected static Logger LOG = LogManager.getLogger();
+
+    private static final String ADJUST_BUTTON_EXTRA_BUTTON_PROPERTY = "methodToCall.adjust";
 
     protected String selectedInvoiceDocumentNumber;
     protected String enteredInvoiceDocumentNumber;
@@ -74,6 +84,70 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     protected List<NonAppliedHolding> nonAppliedControlHoldings = new ArrayList<>();
     protected Map<String, KualiDecimal> nonAppliedControlAllocations = new HashMap<>();
     protected Map<String, KualiDecimal> distributionsFromControlDocs = new HashMap<>();
+
+    @Override
+    public List<ExtraButton> getExtraButtons() {
+        // We are depending on a side-affect here.
+        super.getExtraButtons();
+
+        if (canAdjust()) {
+            final Map<String, ExtraButton> buttonsMap = createButtonsMap();
+            extraButtons.add(buttonsMap.get(ADJUST_BUTTON_EXTRA_BUTTON_PROPERTY));
+        }
+
+        return extraButtons;
+    }
+
+    /**
+     * Creates a Map of all the buttons to appear on the Payment Application Form.
+     *
+     * @return A {@code Map} whose keys are the extraButtonProperty and whose values are @{code ExtraButton}s.
+     */
+    protected static Map<String, ExtraButton> createButtonsMap() {
+
+        final ExtraButton adjustButton = new ExtraButton();
+        adjustButton.setExtraButtonProperty(ADJUST_BUTTON_EXTRA_BUTTON_PROPERTY);
+        // TODO: Where does .gif come from?
+        final String extraButtonSource =
+                "${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_adjust.gif";
+        adjustButton.setExtraButtonSource(extraButtonSource);
+        adjustButton.setExtraButtonAltText("Adjust");
+
+        return Collections.singletonMap(ADJUST_BUTTON_EXTRA_BUTTON_PROPERTY, adjustButton);
+    }
+
+    /**
+     * A Payment Application document can be adjusted if:
+     * - The user has permission to initiate an APPA document.
+     * - The Payment Application document does not have any pending adjustments & has not been previously adjusted.
+     * - The Cash Controls are Final & Process.
+     *
+     * @return {@code true} if the document can be adjusted; otherwise, {@code false}.
+     */
+    protected boolean canAdjust() {
+        if (!userCanInitiateAppAdjustment()) {
+            return false;
+        }
+        return !(hasPendingAdjustmentsOrHasBeenPreviouslyAdjusted() || cashControlIsFinalAndProcessed());
+    }
+
+    protected boolean hasPendingAdjustmentsOrHasBeenPreviouslyAdjusted() {
+        return false;
+    }
+
+    private boolean cashControlIsFinalAndProcessed() {
+        final WorkflowDocument cashContorlWorkflowDocument =
+                getPaymentApplicationDocument().getCashControlDocument().getDocumentHeader().getWorkflowDocument();
+        return cashContorlWorkflowDocument.isFinal() && cashContorlWorkflowDocument.isProcessed();
+    }
+
+    private boolean userCanInitiateAppAdjustment() {
+        final Document document = getDocument();
+        final DocumentAuthorizer documentAuthorizer =
+                SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(document);
+        final Person person = GlobalVariables.getUserSession().getPerson();
+        return documentAuthorizer.canInitiate(ArConstants.PAYMENT_APPLICATION_ADJUSTMENT_DOCUMENT_TYPE_CODE, person);
+    }
 
     @Override
     protected String getDefaultDocumentTypeName() {
@@ -624,6 +698,8 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         }
     }
 
+    // CU Customization (KFSPTS-13246): Add helper property for invoice-paid-applied deletion enhancement.
+
     //Used to prevent optimistic lock exception generation for table AR_INV_PD_APLD_T
     //when user has previously saved the edoc but subsequently deletes one or more
     //invoicePaidApplieds items and attempts a save or submit/route.
@@ -633,9 +709,12 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         return manualInvoicePaidAppliedDatabaseDeletionRequired;
     }
 
-    public void setManualInvoicePaidAppliedDatabaseDeletionRequired(boolean manualInvoicePaidAppliedDatabaseDeletionRequired) {
+    public void setManualInvoicePaidAppliedDatabaseDeletionRequired(
+            boolean manualInvoicePaidAppliedDatabaseDeletionRequired) {
         this.manualInvoicePaidAppliedDatabaseDeletionRequired = manualInvoicePaidAppliedDatabaseDeletionRequired;
     }
+
+    // End CU Customization
 
     /**
      * An inner class to point to a specific entry in a group

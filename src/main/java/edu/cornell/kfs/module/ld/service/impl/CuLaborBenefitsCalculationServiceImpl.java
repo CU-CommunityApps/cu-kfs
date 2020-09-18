@@ -27,9 +27,9 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
             LOG.info("Sub Account Number was filled in. Checking to see if it is a Cost Sharing Sub Account.");
 
             //make sure the system parameter exists
-            if (parameterService.parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND")) {
+            if (getParameterService().parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND")) {
                 //parameter exists, determine the value of the parameter
-                String sysParam2 = parameterService.getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND");
+                String sysParam2 = getParameterService().getParameterValueAsString(KfsParameterConstants.FINANCIAL_SYSTEM_ALL.class, "USE_COST_SHARE_SOURCE_ACCOUNT_BENEFIT_RATE_IND");
                 LOG.debug("sysParam2: " + sysParam2);
 
                 //if sysParam2 == Y then check to see if it's a cost sharing sub account
@@ -43,7 +43,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
                     LOG.info("Looking for a cost sharing sub account for sub account number " + subAccountNumber);
 
                     //perform the lookup
-                    List<A21SubAccount> subAccountList = (List<A21SubAccount>) businessObjectService.findMatching(A21SubAccount.class, subFieldValues);
+                    List<A21SubAccount> subAccountList = (List<A21SubAccount>) getBusinessObjectService().findMatching(A21SubAccount.class, subFieldValues);
                     //check to see if the lookup returns an empty list
                     if (subAccountList.size() > 0) {
                         LOG.info("Found A21 Sub Account. Retrieving source account number for cost sharing.");
@@ -66,7 +66,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
 
         LOG.info("Looking up Account {" + chartOfAccountsCode + "," + accountNumber + "}");
         //lookup the account from the db based off the account code and the account number
-        Account account = accountService.getByPrimaryId(chartOfAccountsCode, accountNumber);
+        Account account = getAccountService().getByPrimaryId(chartOfAccountsCode, accountNumber);
 
         String laborBenefitRateCategoryCode = null;
         if (account == null) {
@@ -79,7 +79,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
         if(StringUtils.isBlank(laborBenefitRateCategoryCode)){
             LOG.info("The Account did not have a Labor Benefit Rate Category Code. Will use the system parameter default.");
             //The system parameter does not exist. Using a blank Labor Benefit Rate Category Code
-            laborBenefitRateCategoryCode = StringUtils.defaultString(parameterService.getParameterValueAsString(Account.class, LaborConstants.BenefitCalculation.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_PARAMETER));
+            laborBenefitRateCategoryCode = StringUtils.defaultString(getParameterService().getParameterValueAsString(Account.class, LaborConstants.BenefitCalculation.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_PARAMETER));
         }else{
             LOG.debug("Labor Benefit Rate Category Code for Account " + accountNumber + " is " + laborBenefitRateCategoryCode);
         }

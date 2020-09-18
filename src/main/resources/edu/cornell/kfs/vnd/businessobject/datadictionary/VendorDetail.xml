@@ -389,8 +389,6 @@
  
 	<bean id="VendorDetail-inquiryDefinition" parent="VendorDetail-inquiryDefinition-parentBean" >
 
-		<property name="presentationControllerClass"
-			value="edu.cornell.kfs.vnd.businessobject.authorization.VendorDetailInquiryPresentationController" />
 		<property name="inquirySections">
 			<list>
 				<ref bean="VendorDetail-inquirySectionDefinition-vendorDetail" />

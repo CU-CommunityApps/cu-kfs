@@ -49,7 +49,7 @@
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]module[\\/]receiptProcessing[\\/].*" />
     <suppress checks=".*" files="src[\\/]test[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]resources[\\/].*" />
-    <suppress checks="AvoidStaticImport" files="[\\/]src[\\/]test[\\/].*" />
+    <suppress checks="AvoidStaticImport" files="[\\/]src[\\/](integration-)?test[\\/].*" />
     <suppress checks="IllegalToken" files="UiDocumentServiceImpl" />
     <suppress checks="InnerAssignment" files="IdentityArchiveServiceImpl" />
     <suppress checks="ModifiedControlVariable"

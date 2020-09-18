@@ -45,6 +45,11 @@ public class MockObjectCodeService implements ObjectCodeService {
     }
 
     @Override
+    public ObjectCode getByPrimaryIdForLatestValidYear(String chartOfAccountsCode, String financialObjectCode) {
+        return null;
+    }
+
+    @Override
     public String getObjectCodeNamesByCharts(Integer universityFiscalYear, String[] chartOfAccountCodes, String financialObjectCode) {
         return null;
     }

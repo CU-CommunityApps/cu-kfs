@@ -25,7 +25,7 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
         PurchaseOrderDocument poaDocument = (PurchaseOrderDocument) event.getDocument();
         List<PurApItem> items = poaDocument.getItemsActiveOnly();
 
-        PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(poaDocument.getPurapDocumentIdentifier());
+        PurchaseOrderDocument po = getPurchaseOrderService().getCurrentPurchaseOrder(poaDocument.getPurapDocumentIdentifier());
         List<PurApItem> poItems = po.getItems();
 
         for (PurApItem item : items) {

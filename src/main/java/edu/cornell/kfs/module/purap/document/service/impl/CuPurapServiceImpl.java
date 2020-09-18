@@ -290,7 +290,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
     }
 
     protected boolean evaluateCostSourceAgainstParameter(String purchaseOrderCostSourceCode, String parameterName) {
-        ParameterEvaluator evaluator = parameterEvaluatorService.getParameterEvaluator(
+        ParameterEvaluator evaluator = getParameterEvaluatorService().getParameterEvaluator(
                 RequisitionDocument.class, parameterName, purchaseOrderCostSourceCode);
         return evaluator.evaluationSucceeds();
     }

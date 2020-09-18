@@ -3,17 +3,17 @@ package edu.cornell.kfs.sys.service.impl;
 import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.sys.service.CUBankService;
 
 @ConfigureContext(session = ccs1)
-public class CuBankServiceImplTest extends KualiTestBase {
+public class CuBankServiceImplTest extends KualiIntegTestBase {
     private CUBankService cUBankService;
     private ParameterService parameterService;
     private String bankCodesMap;

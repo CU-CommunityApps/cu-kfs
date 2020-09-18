@@ -1,12 +1,12 @@
 package edu.cornell.kfs.coa.service.impl;
 
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 
 import edu.cornell.kfs.coa.service.AccountVerificationWebService;
 
 @ConfigureContext
-public class AccountVerificationWebServiceImplTest extends KualiTestBase {
+public class AccountVerificationWebServiceImplTest extends KualiIntegTestBase {
     private AccountVerificationWebService accountVerificationWebService;
     
     @Override

@@ -122,28 +122,28 @@
         <property name="sortAscending" value="false"/>
       </bean>
     </property>
-    <property name="lookupAttributeDefinitions">
+    <property name="formAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="ContractGrantReportingCode-chartOfAccountsCode"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="ContractGrantReportingCode-code"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="ContractGrantReportingCode-name"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="ContractGrantReportingCode-active"
                 p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" p:defaultValue="Y"/>
       </list>
     </property>
-    <property name="lookupResultAttributeDefinitions">
+    <property name="displayAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="ContractGrantReportingCode-chartOfAccountsCode"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="ContractGrantReportingCode-code"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="ContractGrantReportingCode-name"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="ContractGrantReportingCode-active"/>
       </list>
     </property>

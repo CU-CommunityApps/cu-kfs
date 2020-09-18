@@ -5,15 +5,15 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.TestUtils;
+import org.kuali.kfs.sys.context.IntegTestUtils;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 
 @ConfigureContext(session = UserNameFixture.mo14)
-public class CuPurchasingAccountsPayableModuleServiceImplTest extends KualiTestBase {
+public class CuPurchasingAccountsPayableModuleServiceImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(CuPurchasingAccountsPayableModuleServiceImplTest.class);
 
@@ -23,7 +23,7 @@ public class CuPurchasingAccountsPayableModuleServiceImplTest extends KualiTestB
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		accountsPayableModuleServiceImpl = (CuPurchasingAccountsPayableModuleServiceImpl) TestUtils.getUnproxiedService("purchasingAccountsPayableModuleService");
+		accountsPayableModuleServiceImpl = (CuPurchasingAccountsPayableModuleServiceImpl) IntegTestUtils.getUnproxiedService("purchasingAccountsPayableModuleService");
 
 	}
 	

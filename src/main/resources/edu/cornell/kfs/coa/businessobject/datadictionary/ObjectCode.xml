@@ -252,59 +252,59 @@
                 </property>
             </bean>
         </property>
-        <property name="lookupAttributeDefinitions">
+        <property name="formAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-universityFiscalYear" p:disableLookup="true"
                       p:defaultValueFinder-ref="fiscalYearFinder"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-chartOfAccountsCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialObjectCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialObjectCodeName"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialObjectCodeShortName"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialObjectLevelCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialObjectTypeCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialObjectSubTypeCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-extension-sunyObjectCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-extension-financialObjectCodeDescr"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-historicalFinancialObjectCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialBudgetAggregationCd"/>
-                <ref bean="activeIndicatorLookupAttributeDefinition"/>
+                <ref bean="activeIndicatorFormAttributeDefinition"/>
             </list>
         </property>
-        <property name="lookupResultAttributeDefinitions">
+        <property name="displayAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-universityFiscalYear"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-chartOfAccountsCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-financialObjectCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-financialObjectCodeName"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-financialObjectLevelCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-financialObjectTypeCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-extension-sunyObjectCode"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-extension-financialObjectCodeDescr"/>
-                <ref bean="activeIndicatorLookupResultAttributeDefinition"/>
+                <ref bean="activeIndicatorDisplayAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupFields">

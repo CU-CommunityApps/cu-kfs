@@ -5,20 +5,20 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 import java.util.List;
 
 import org.kuali.kfs.fp.document.IndirectCostAdjustmentDocument;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
-import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
+import org.kuali.kfs.sys.fixture.UserNameFixture;
 
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 import edu.cornell.kfs.sys.service.impl.fixture.IndirectCostAdjustmentDocumentFixture;
 
 @ConfigureContext(session = ccs1)
-public class CuFinancialSystemDocumentServiceImplTest extends KualiTestBase {
+public class CuFinancialSystemDocumentServiceImplTest extends KualiIntegTestBase {
     private CUFinancialSystemDocumentService cUFinancialSystemDocumentService;
     IndirectCostAdjustmentDocument icaDocument;
     IndirectCostAdjustmentDocument copied;   

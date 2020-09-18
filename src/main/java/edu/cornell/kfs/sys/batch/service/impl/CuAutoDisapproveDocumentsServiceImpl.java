@@ -117,9 +117,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     	headerBuilder.append(TAB);
     	headerBuilder.append(document.getDocumentHeader().getDocumentDescription());
     	headerBuilder.append(TAB);
-    	headerBuilder.append(personService.getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getPrincipalName());
+    	headerBuilder.append(getPersonService().getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getPrincipalName());
     	headerBuilder.append(TAB);
-    	headerBuilder.append(personService.getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getName());
+    	headerBuilder.append(getPersonService().getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getName());
     	headerBuilder.append(TAB);
     	headerBuilder.append(document.getDocumentHeader().getWorkflowDocument().getDateCreated());
     	headerBuilder.append(TAB);
@@ -150,10 +150,10 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
 		}
 
-		headerBuilder.append(personService.getPerson(max.getPrincipalId())
+		headerBuilder.append(getPersonService().getPerson(max.getPrincipalId())
 				.getPrincipalName());
 		headerBuilder.append(TAB);
-		headerBuilder.append(personService.getPerson(max.getPrincipalId()).getName());
+		headerBuilder.append(getPersonService().getPerson(max.getPrincipalId()).getName());
 		headerBuilder.append(TAB);
 		headerBuilder.append(max.getActionDate());
 		headerBuilder.append(TAB);
@@ -304,16 +304,16 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
     protected void autoDisapprovalYearEndDocument(Document document,
             String annotationForAutoDisapprovalDocument)  throws Exception {
-        Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
+        Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
         
-        Note approveNote = noteService.createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
+        Note approveNote = getNoteService().createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
         approveNote.setNoteText(annotationForAutoDisapprovalDocument);
 
         approveNote.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
         
         approveNote.setNotePostedTimestampToCurrent();
         
-        noteService.save(approveNote);
+        getNoteService().save(approveNote);
         
         document.addNote(approveNote);
         

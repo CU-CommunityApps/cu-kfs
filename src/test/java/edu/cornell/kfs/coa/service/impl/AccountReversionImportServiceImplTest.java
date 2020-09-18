@@ -4,16 +4,16 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.fixture.AccountReversionFixture;
 import edu.cornell.kfs.coa.service.AccountReversionImportService;
 
-public class AccountReversionImportServiceImplTest extends KualiTestBase {
+public class AccountReversionImportServiceImplTest extends KualiIntegTestBase {
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/coa/fixture/AccountReversion.csv";
 
     private AccountReversionImportService accountReversionImportService;
