@@ -83,24 +83,24 @@
     <bean id="CreateDoneBatchFile-lookupDefinition" parent="CreateDoneBatchFile-lookupDefinition-parentBean"/>
     <bean id="CreateDoneBatchFile-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
           p:title="Create Done Batch File Lookup" p:lookupSearchService-ref="createDoneBatchFileLookupSearchService">
-        <property name="lookupAttributeDefinitions">
+        <property name="formAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition" parent="CreateDoneBatchFile-path"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition" parent="CreateDoneBatchFile-path"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="CreateDoneBatchFile-fileName"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="CreateDoneBatchFile-lastModifiedDate"/>
             </list>
         </property>
-        <property name="lookupResultAttributeDefinitions">
+        <property name="displayAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="CreateDoneBatchFile-path"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="CreateDoneBatchFile-fileName"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="CreateDoneBatchFile-lastModifiedDate"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="CreateDoneBatchFile-fileSize"/>
             </list>
         </property>

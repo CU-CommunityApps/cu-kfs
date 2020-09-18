@@ -84,23 +84,23 @@
                 </property>
              </bean>
         </property>
-        <property name="lookupAttributeDefinitions">
+        <property name="formAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-code"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-name"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition" parent="AgencyOrigin-code"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition" parent="AgencyOrigin-name"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                         parent="AgencyOrigin-active" p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
                         p:defaultValue="Y"/>
             </list>
         </property>
-        <property name="LookupResultAttributeDefinitions">
+        <property name="displayAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                         parent="AgencyOrigin-code"
                         p:disableInquiry="true"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                         parent="AgencyOrigin-name"/>
-                <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                         parent="AgencyOrigin-active"/>
             </list>
         </property>

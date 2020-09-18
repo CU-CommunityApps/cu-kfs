@@ -155,7 +155,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
              * If exists in param, create reject reason.
              * If not exists, continue with UOM and unit price match.
              */
-            String reqSourceRequiringCatalogMatch = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.REQUISITION_SOURCES_REQUIRING_CATALOG_MATCHING);
+            String reqSourceRequiringCatalogMatch = getParameterService().getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.REQUISITION_SOURCES_REQUIRING_CATALOG_MATCHING);
             String requisitionSourceCodeInPO = orderHolder.getPurchaseOrderDocument().getRequisitionSourceCode();
 
             if (StringUtils.isNotEmpty(reqSourceRequiringCatalogMatch)){

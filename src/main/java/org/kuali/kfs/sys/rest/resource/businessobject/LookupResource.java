@@ -23,18 +23,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.BusinessObjectAdminService;
 import org.kuali.kfs.datadictionary.Control;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
+import org.kuali.kfs.datadictionary.FormAttribute;
 import org.kuali.kfs.datadictionary.LookupDictionary;
-import org.kuali.kfs.kns.datadictionary.control.MultiselectControlDefinition;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.kns.service.BusinessObjectMetaDataService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.bo.DataObjectRelationship;
-import org.kuali.kfs.datadictionary.LookupAttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.RelationshipDefinition;
-import org.kuali.kfs.kns.datadictionary.control.ControlDefinition;
 import org.kuali.kfs.krad.exception.AuthorizationException;
 import org.kuali.kfs.krad.keyvalues.HierarchicalControlValuesFinder;
 import org.kuali.kfs.krad.keyvalues.HierarchicalData;
@@ -50,7 +49,6 @@ import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.permission.PermissionService;
 
@@ -116,10 +114,9 @@ public class LookupResource {
             throw new ForbiddenException(responseBuilder.build());
         }
 
-        List<LookupAttributeDefinition> lookupAttributeDefns = getLookupAttributeDefinitionsForClass(classForType);
-
-        for (LookupAttributeDefinition lookupAttributeDefn : lookupAttributeDefns) {
-            setNestedLookupFields(lookupAttributeDefn, classForType);
+        List<FormAttribute> lookupAttributes = getLookupAttributeForClass(classForType);
+        for (FormAttribute lookupAttribute : lookupAttributes) {
+            setNestedLookupFields(lookupAttribute, classForType);
         }
 
         String title = getLookupDictionary().getLookupTitle(classForType);
@@ -143,7 +140,7 @@ public class LookupResource {
         if (shouldCreateNewUrlBeIncluded(classForType)) {
             responseData.put("create", getCreateBlock(classForType));
         }
-        responseData.put("form", lookupAttributeDefns);
+        responseData.put("form", lookupAttributes);
         responseData.put("results", resultsList);
 
         return Response.ok(responseData).build();
@@ -162,7 +159,7 @@ public class LookupResource {
         Map<String, Object> controlValuesMap = buildLookupControlValuesMap(businessObjectEntry);
         Object value = controlValuesMap.get(attrDefnName);
         if (value == null) {
-            if (attrDefnName != null && !doesAttrDefnWithGivenNameExistForClass(businessObjectEntry, attrDefnName)) {
+            if (attrDefnName != null && !doesAttrWithGivenNameExistForClass(businessObjectEntry, attrDefnName)) {
                 throw new NotFoundException("Could not find the " + attrDefnName + " attribute for the "
                                 + businessObjectEntry.getName() + " business object.");
             }
@@ -171,10 +168,10 @@ public class LookupResource {
         return Response.ok(value).build();
     }
 
-    protected void setNestedLookupFields(LookupAttributeDefinition lookupAttributeDefn, Class boClass) {
-        String attributeName = lookupAttributeDefn.getName();
+    protected void setNestedLookupFields(FormAttribute lookupAttribute, Class boClass) {
+        String attributeName = lookupAttribute.getName();
 
-        boolean disableLookup = lookupAttributeDefn.getDisableLookup();
+        boolean disableLookup = lookupAttribute.getDisableLookup();
 
         DataObjectRelationship relationship;
 
@@ -183,10 +180,10 @@ public class LookupResource {
                     attributeName, "", false);
 
             if (relationship == null) {
-                Class c = ObjectUtils.getPropertyType(businessObjectEntry, lookupAttributeDefn.getName(),
+                Class c = ObjectUtils.getPropertyType(businessObjectEntry, lookupAttribute.getName(),
                         getPersistenceStructureService());
                 if (c != null) {
-                    if (lookupAttributeDefn.getName().contains(".")) {
+                    if (lookupAttribute.getName().contains(".")) {
                         attributeName = StringUtils.substringBeforeLast(attributeName, ".");
                     }
 
@@ -198,19 +195,19 @@ public class LookupResource {
             }
 
             if (relationship != null) {
-                lookupAttributeDefn.setCanLookup(true);
+                lookupAttribute.setCanLookup(true);
                 String lookupClassName = relationship.getRelatedClass().getSimpleName();
-                lookupAttributeDefn.setLookupClassName(lookupClassName);
-                lookupAttributeDefn.setLookupRelationshipMappings(relationship.getParentToChildReferences());
+                lookupAttribute.setLookupClassName(lookupClassName);
+                lookupAttribute.setLookupRelationshipMappings(relationship.getParentToChildReferences());
             }
         }
     }
 
-    private boolean doesAttrDefnWithGivenNameExistForClass(BusinessObjectEntry businessObjectEntry, String attrDefnName) {
+    private boolean doesAttrWithGivenNameExistForClass(BusinessObjectEntry businessObjectEntry, String attributeName) {
         Class boClass = businessObjectEntry.getBusinessObjectClass();
-        List<LookupAttributeDefinition> attributeDefinitions = getLookupAttributeDefinitionsForClass(boClass);
-        for (LookupAttributeDefinition attributeDefn : attributeDefinitions) {
-            if (attributeDefn.getName().equalsIgnoreCase(attrDefnName)) {
+        List<FormAttribute> attributeDefinitions = getLookupAttributeForClass(boClass);
+        for (FormAttribute attributeDefn : attributeDefinitions) {
+            if (attributeDefn.getName().equalsIgnoreCase(attributeName)) {
                 return true;
             }
         }
@@ -224,9 +221,13 @@ public class LookupResource {
         }
 
         Map<String, Object> valuesMap = new LinkedHashMap<>();
-        List<LookupAttributeDefinition> attributes = getLookupAttributeDefinitionsForClass(classForType);
-        for (LookupAttributeDefinition attribute: attributes) {
-            Control control = attribute.getControlNew();
+        List<FormAttribute> attributes = getLookupAttributeForClass(classForType);
+        for (FormAttribute attribute: attributes) {
+            Control control = attribute.getControl();
+            if (control == null) {
+                continue;
+            }
+
             String singleAttributeName = attribute.getName();
 
             if (control.getType() == Control.Type.TREE) {
@@ -308,21 +309,22 @@ public class LookupResource {
         return adminService.allowsNew(classForType, person) && adminService.allowsCreate(classForType, person);
     }
 
-    private boolean isHierarchical(ControlDefinition controlDefn) {
-        return controlDefn instanceof MultiselectControlDefinition &&
-                ((MultiselectControlDefinition) controlDefn).isHierarchical();
-    }
-
-    protected List<LookupAttributeDefinition> getLookupAttributeDefinitionsForClass(Class classForType) {
-        List<LookupAttributeDefinition> attributeDefinitions = getLookupDictionary().getLookupAttributes(classForType);
-        attributeDefinitions.forEach(attributeDefinition -> {
-            DefaultValueFinder defaultValueFinder = attributeDefinition.getDefaultValueFinder();
+    // todo move this to converter code
+    protected List<FormAttribute> getLookupAttributeForClass(Class classForType) {
+        List<FormAttribute> attributes = getLookupDictionary().getLookupAttributes(classForType);
+        attributes.forEach(attribute -> {
+            final DefaultValueFinder defaultValueFinder = getDefaultValueFinderIfItExists(attribute);
             if (defaultValueFinder != null) {
                 String defaultValue = defaultValueFinder.getDefaultValue();
-                attributeDefinition.setDefaultValue(defaultValue);
+                attribute.setDefaultValue(defaultValue);
             }
         });
-        return attributeDefinitions;
+        return attributes;
+    }
+
+    private DefaultValueFinder getDefaultValueFinderIfItExists(final FormAttribute formAttribute) {
+        final Control control = formAttribute.getControl();
+        return control == null ? null : control.getDefaultValueFinder();
     }
 
     private boolean isAuthorizedForLookup(Class boClass) {

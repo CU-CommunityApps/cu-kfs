@@ -22,7 +22,7 @@ import org.kuali.kfs.fp.businessobject.VoucherSourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
-import org.kuali.kfs.sys.context.TestUtils;
+import org.kuali.kfs.sys.context.IntegTestUtils;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -52,7 +52,7 @@ public enum CuAccountingLineFixture {
 
     CuAccountingLineFixture(Integer sequenceNumber, String chartOfAccountsCode, String accountNumber, String balanceTypeCode, String subAccountNumber, String financialObjectCode, String financialSubObjectCode, String projectCode, String encumbranceUpdateCode, String organizationReferenceId, String referenceOriginCode, String referenceNumber, String referenceTypeCode, String debitCreditCode, String amount) {
 
-        this.postingYear = TestUtils.getFiscalYearForTesting();
+        this.postingYear = IntegTestUtils.getFiscalYearForTesting();
         this.sequenceNumber = sequenceNumber;
         this.accountNumber = accountNumber;
         this.balanceTypeCode = balanceTypeCode;

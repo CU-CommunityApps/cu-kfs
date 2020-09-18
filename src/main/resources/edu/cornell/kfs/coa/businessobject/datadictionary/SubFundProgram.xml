@@ -156,32 +156,32 @@
         <property name="sortAscending" value="false"/>
       </bean>
     </property>
-    <property name="lookupAttributeDefinitions">
+    <property name="formAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="SubFundProgram-programCode"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="SubFundProgram-programName"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="SubFundProgram-subFundGroupCode"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="SubFundProgram-programDescription"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                 parent="SubFundProgram-active" p:defaultValue="Y"
                 p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"/>
       </list>
     </property>
-    <property name="lookupResultAttributeDefinitions">
+    <property name="displayAttributeDefinitions">
       <list>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="SubFundProgram-programCode"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="SubFundProgram-programName"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="SubFundProgram-subFundGroupCode"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="SubFundProgram-programDescription"/>
-        <bean class="org.kuali.kfs.datadictionary.LookupResultAttributeDefinition"
+        <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                 parent="SubFundProgram-active"/>
       </list>
     </property>

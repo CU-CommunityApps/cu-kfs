@@ -3,14 +3,13 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -19,7 +18,7 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.fixture.IWantDocumentFixture;
 
 @ConfigureContext(session = UserNameFixture.ccs1)
-public class IWantDocumentServiceImplTest extends KualiTestBase {
+public class IWantDocumentServiceImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(IWantDocumentServiceImpl.class);
 	

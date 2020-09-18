@@ -14,7 +14,6 @@ import org.apache.commons.io.IOUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.ld.service.LaborLedgerEnterpriseFeedService;

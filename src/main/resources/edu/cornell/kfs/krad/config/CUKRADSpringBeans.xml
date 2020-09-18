@@ -70,14 +70,6 @@
     <bean id="documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>
 
-    <bean id="cf.dataDictionaryService" parent="cf.dataDictionaryService-parent">
-        <property name="baselinePackages">
-            <list merge="true">
-                <value>classpath:edu/cornell/kfs/coreservice/web/parameter/Parameter.xml</value>
-            </list>
-        </property>
-    </bean>
-
     <bean id="cf.businessObjectAuthorizationService"
           class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"/>
 

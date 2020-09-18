@@ -4,23 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.kns.lookup.CollectionIncomplete;
-
-import edu.cornell.kfs.module.ezra.service.EzraService;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 
 @ConfigureContext
-public class CuAssetLookupableHelperServiceImplTest extends KualiTestBase {
+public class CuAssetLookupableHelperServiceImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(CuAssetLookupableHelperServiceImplTest.class);
 	private CuAssetLookupableHelperServiceImpl cuAssetLookupableHelperServiceImpl;

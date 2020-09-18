@@ -1,9 +1,9 @@
 package edu.cornell.kfs.coa.service.impl;
 
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.AccountReversionDetail;
@@ -11,7 +11,7 @@ import edu.cornell.kfs.coa.fixture.AccountReversionFixture;
 import edu.cornell.kfs.coa.service.AccountReversionDetailTrickleDownInactivationService;
 
 @ConfigureContext
-public class AccountReversionDetailTrickleDownInactivationServiceImplTest extends KualiTestBase {
+public class AccountReversionDetailTrickleDownInactivationServiceImplTest extends KualiIntegTestBase {
 
     private AccountReversionDetailTrickleDownInactivationService accountReversionDetailTrickleDownInactivationService;
     private BusinessObjectService businessObjectService;

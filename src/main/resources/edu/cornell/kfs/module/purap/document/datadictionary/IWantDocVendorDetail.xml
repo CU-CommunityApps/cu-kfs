@@ -863,7 +863,6 @@
   <bean id="IWantDocVendorDetail-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
     <property name="title" value="Vendor Inquiry"/>
 
-	<property name="presentationControllerClass" value="edu.cornell.kfs.vnd.businessobject.authorization.VendorDetailInquiryPresentationController"/>
     <property name="inquirySections">
       <list>
         <bean parent="InquirySectionDefinition">

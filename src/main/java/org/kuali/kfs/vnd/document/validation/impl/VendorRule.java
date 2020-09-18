@@ -186,9 +186,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * refactor it or move it to a superclass or elsewhere as you see appropriate.
      *
      * @param theClass The Class name of the object whose objects references list are extracted
-     * @return List a List of attributes of the class
+     * @return a List of attributes of the class
      */
-    private List getObjectReferencesListFromBOClass(Class theClass) {
+    private List<String> getObjectReferencesListFromBOClass(Class theClass) {
         List<String> results = new ArrayList<>();
         for (Field theField : theClass.getDeclaredFields()) {
             // only get persistable business object references
@@ -619,7 +619,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * Validates that the minimum order amount is less than the maximum allowed amount.
      *
      * @param vendorDetail The VendorDetail object to be validated
-     *  @return true if the vendorMinimumOrderAmount is less than the maximum allowed amount.
+     * @return true if the vendorMinimumOrderAmount is less than the maximum allowed amount.
      */
     private boolean validateMinimumOrderAmount(VendorDetail vendorDetail) {
         boolean valid = true;
@@ -1103,7 +1103,6 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     /**
      * A stub method as placeholder for future Contact Validation
      *
-     * @param document MaintenanceDocument instance
      * @return boolean false or true
      */
     private boolean processContactValidation() {
@@ -1239,7 +1238,6 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         return valid;
-
     }
 
     /**
@@ -1743,8 +1741,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     public void setPersistenceService(PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
-    
-    //CU customization change access level from private to protected
+
+    // access relaxed for Cornell
     protected PostalCodeValidationService getPostalCodeValidationService() {
         if (postalCodeValidationService == null) {
             postalCodeValidationService = SpringContext.getBean(PostalCodeValidationService.class);

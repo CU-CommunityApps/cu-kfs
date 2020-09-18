@@ -135,7 +135,7 @@ public class IdentityManagementPersonDocumentAction extends IdentityManagementDo
     protected void populateRoleInformation(IdentityManagementPersonDocument personDoc) {
         for (PersonDocumentRole role : personDoc.getRoles()) {
             KimType type = KimApiServiceLocator.getKimTypeInfoService().getKimType(role.getKimTypeId());
-            KimTypeService kimTypeService = null;
+            KimTypeService kimTypeService;
             if (StringUtils.isNotBlank(type.getServiceName())) {
                 kimTypeService = (KimTypeService) KimImplServiceLocator.getBean(type.getServiceName());
             } else {
@@ -325,7 +325,7 @@ public class IdentityManagementPersonDocumentAction extends IdentityManagementDo
             Group tempGroup = KimApiServiceLocator.getGroupService().getGroup(newGroup.getGroupId());
             if (tempGroup == null) {
                 GlobalVariables.getMessageMap().putError("newGroup.groupId",
-                        RiceKeyConstants.ERROR_ASSIGN_GROUP_INVALID, new String[]{newGroup.getGroupId(), ""});
+                        RiceKeyConstants.ERROR_ASSIGN_GROUP_INVALID, newGroup.getGroupId(), "");
                 return mapping.findForward(RiceConstants.MAPPING_BASIC);
             }
             newGroup.setGroupName(tempGroup.getName());
@@ -335,7 +335,7 @@ public class IdentityManagementPersonDocumentAction extends IdentityManagementDo
                 || StringUtils.isBlank(newGroup.getNamespaceCode())) {
             GlobalVariables.getMessageMap().putError("newGroup.groupName",
                     RiceKeyConstants.ERROR_ASSIGN_GROUP_INVALID,
-                    new String[]{newGroup.getNamespaceCode(), newGroup.getGroupName()});
+                    newGroup.getNamespaceCode(), newGroup.getGroupName());
             return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
         Group tempGroup = KimApiServiceLocator.getGroupService().getGroupByNamespaceCodeAndName(
@@ -343,7 +343,7 @@ public class IdentityManagementPersonDocumentAction extends IdentityManagementDo
         if (tempGroup == null) {
             GlobalVariables.getMessageMap().putError("newGroup.groupName",
                     RiceKeyConstants.ERROR_ASSIGN_GROUP_INVALID,
-                    new String[]{newGroup.getNamespaceCode(), newGroup.getGroupName()});
+                    newGroup.getNamespaceCode(), newGroup.getGroupName());
             return mapping.findForward(RiceConstants.MAPPING_BASIC);
         }
         newGroup.setGroupId(tempGroup.getId());
@@ -425,9 +425,8 @@ public class IdentityManagementPersonDocumentAction extends IdentityManagementDo
     protected boolean validateRoleAssignment(IdentityManagementPersonDocument document, PersonDocumentRole newRole) {
         boolean rulePassed = true;
         if (!document.validAssignRole(newRole)) {
-            GlobalVariables.getMessageMap().putError("newRole.roleId",
-                    RiceKeyConstants.ERROR_ASSIGN_ROLE,
-                    new String[]{newRole.getNamespaceCode(), newRole.getRoleName()});
+            GlobalVariables.getMessageMap().putError("newRole.roleId", RiceKeyConstants.ERROR_ASSIGN_ROLE,
+                    newRole.getNamespaceCode(), newRole.getRoleName());
             rulePassed = false;
         }
         return rulePassed;

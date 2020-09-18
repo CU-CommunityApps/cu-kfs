@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 
 @ConfigureContext
 @SuppressWarnings("deprecation")
-public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTestBase {
+public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiIntegTestBase {
 
     private LookupableHelperService lookupableHelperServiceImpl;
     private Map<String, String> fieldValues;

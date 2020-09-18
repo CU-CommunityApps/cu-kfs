@@ -35,4 +35,11 @@ public class CuCamsConstants {
         public static final String ORGANIZATION_INVENTORY_NAME = "organization_inventory_name";
         public static final String CAPITAL_ASSET_NUMBER = "capital_asset_number";
     }
+
+    public static final class AssetLocationTypeLabel {
+        public static final String OFF_CAMPUS = "Off-Campus";
+        public static final String BORROWER = "Borrower";
+        public static final String BORROWER_STORAGE = "Borrower Storage";
+        public static final String RETIREMENT = "Retirement";
+    }
 }

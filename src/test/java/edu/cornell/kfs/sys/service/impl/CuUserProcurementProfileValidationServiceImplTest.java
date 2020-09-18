@@ -6,18 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 
 @ConfigureContext(session = mgw3)
-public class CuUserProcurementProfileValidationServiceImplTest extends KualiTestBase {
+public class CuUserProcurementProfileValidationServiceImplTest extends KualiIntegTestBase {
     // TODO : validateBo is not referenced; so it can be removed from service
     // validateAccount : only referenced by validateAccounts in this service, so it should not be a published method. it 
     // should be removed to service amd make it private

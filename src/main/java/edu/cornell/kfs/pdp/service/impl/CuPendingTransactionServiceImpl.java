@@ -162,9 +162,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             glPendingTransaction.setFinancialBalanceTypeCode(org.kuali.kfs.sys.KFSConstants.BALANCE_TYPE_ACTUAL);
 
-            Date transactionTimestamp = new Date(dateTimeService.getCurrentDate().getTime());
+            Date transactionTimestamp = new Date(getDateTimeService().getCurrentDate().getTime());
             glPendingTransaction.setTransactionDt(transactionTimestamp);
-            AccountingPeriod fiscalPeriod = accountingPeriodService.getByDate(new java.sql.Date(transactionTimestamp.getTime()));
+            AccountingPeriod fiscalPeriod = getAccountingPeriodService().getByDate(new java.sql.Date(transactionTimestamp.getTime()));
             glPendingTransaction.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
             glPendingTransaction.setUnivFiscalPrdCd(fiscalPeriod.getUniversityFiscalPeriodCode());
 
@@ -222,7 +222,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             CustomerProfile customerProfile = paymentGroup.getBatch().getCustomerProfile();
 
             // KFSUPGRADE-973 
-            if (researchParticipantPaymentValidationService.isResearchParticipantPayment(customerProfile)) {
+            if (getResearchParticipantPaymentValidationService().isResearchParticipantPayment(customerProfile)) {
                 BusinessObjectEntry businessObjectEntry = businessObjectDictionaryService.getBusinessObjectEntry(PaymentDetail.class.getName());
                 AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition("paymentGroup.payeeName");
                 AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
@@ -263,11 +263,11 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // update the offset account if necessary
             SpringContext.getBean(FlexibleOffsetAccountService.class).updateOffset(glPendingTransaction);
 
-            this.businessObjectService.save(glPendingTransaction);
+            this.getBusinessObjectService().save(glPendingTransaction);
 
             sequenceHelper.increment();
 
-            if (bankService.isBankSpecificationEnabled()) {
+            if (getBankService().isBankSpecificationEnabled()) {
                 this.populateBankOffsetEntry(paymentGroup, glPendingTransaction, sequenceHelper);
             }
         }
@@ -389,7 +389,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         Map<String, KualiInteger> fieldValues = new HashMap<String, KualiInteger>();
         fieldValues.put("checkNumber", crCheckNbr);
 
-        Collection<CheckReconciliation> crEntries = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
+        Collection<CheckReconciliation> crEntries = getBusinessObjectService().findMatching(CheckReconciliation.class, fieldValues);
         if (crEntries != null && crEntries.size() > 0) {
             CheckReconciliation crEntry = crEntries.iterator().next();
             crCancelMaintDocNbr = crEntry.getCancelDocHdrId();
@@ -423,13 +423,13 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 }
                 glpe.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
                 sequenceHelper.increment();
-                Date transactionTimestamp = new Date(dateTimeService.getCurrentDate().getTime());
+                Date transactionTimestamp = new Date(getDateTimeService().getCurrentDate().getTime());
 
-                AccountingPeriod fiscalPeriod = accountingPeriodService.getByDate(new java.sql.Date(transactionTimestamp.getTime()));
+                AccountingPeriod fiscalPeriod = getAccountingPeriodService().getByDate(new java.sql.Date(transactionTimestamp.getTime()));
                 glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
                 glpe.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
                 glpe.setUniversityFiscalPeriodCode(fiscalPeriod.getUniversityFiscalPeriodCode());
-                businessObjectService.save(glpe);
+                getBusinessObjectService().save(glpe);
 
             }
         }
@@ -515,7 +515,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
       
         }
 
-        businessObjectService.save(cm.getGeneralLedgerPendingEntries());
+        getBusinessObjectService().save(cm.getGeneralLedgerPendingEntries());
 
     }
     
@@ -972,7 +972,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         
         // Manually save GL entries for Payment Request and encumbrances
         LOG.debug("saveGLEntries() started");
-        businessObjectService.save(preq.getGeneralLedgerPendingEntries());
+        getBusinessObjectService().save(preq.getGeneralLedgerPendingEntries());
 
         return success;
     }
@@ -988,7 +988,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         Map fieldValues = new HashMap();
         fieldValues.put("financialSystemOriginationCode", PURAP_ORIGIN_CODE);
         fieldValues.put("documentNumber", documentNumber);
-        int count = businessObjectService.countMatching(GeneralLedgerPendingEntry.class, fieldValues);
+        int count = getBusinessObjectService().countMatching(GeneralLedgerPendingEntry.class, fieldValues);
         return count + 1;
     }
     

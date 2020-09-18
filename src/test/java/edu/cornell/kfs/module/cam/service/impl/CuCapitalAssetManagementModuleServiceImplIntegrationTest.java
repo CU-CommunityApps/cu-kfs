@@ -1,21 +1,22 @@
 package edu.cornell.kfs.module.cam.service.impl;
 
-import edu.cornell.kfs.module.cam.fixture.AccountingDocumentFixture;
-import edu.cornell.kfs.module.cam.fixture.CapitalAssetInformationFixture;
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.service.impl.CapitalAssetManagementModuleServiceImpl;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 
-import java.util.ArrayList;
-import java.util.List;
+import edu.cornell.kfs.module.cam.fixture.AccountingDocumentFixture;
+import edu.cornell.kfs.module.cam.fixture.CapitalAssetInformationFixture;
+import junit.framework.TestCase;
 
 @ConfigureContext
-public class CuCapitalAssetManagementModuleServiceImplIntegrationTest extends KualiTestBase {
+public class CuCapitalAssetManagementModuleServiceImplIntegrationTest extends KualiIntegTestBase {
 	
 	private CapitalAssetManagementModuleServiceImpl capitalAssetManagementModuleService;
 

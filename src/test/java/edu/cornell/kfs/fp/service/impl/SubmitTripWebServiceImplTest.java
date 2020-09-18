@@ -1,20 +1,16 @@
 package edu.cornell.kfs.fp.service.impl;
 
-import java.lang.reflect.Constructor;
-import java.util.List;
-
 import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl;
 
 @ConfigureContext(session = ccs1)
-public class SubmitTripWebServiceImplTest extends KualiTestBase {
+public class SubmitTripWebServiceImplTest extends KualiIntegTestBase {
 	private SubmitTripWebServiceImpl submitTripWebService;
 	private DocumentService documentService;
 

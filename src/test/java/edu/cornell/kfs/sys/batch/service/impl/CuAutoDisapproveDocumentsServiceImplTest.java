@@ -7,24 +7,20 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
-import org.kuali.kfs.sys.batch.BatchSpringContext;
-import org.kuali.kfs.kns.bo.Step;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.ProxyUtils;
+import org.kuali.kfs.sys.context.IntegTestUtils;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.doctype.DocumentType;
 import org.kuali.rice.kew.api.doctype.DocumentTypeService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.springframework.aop.support.AopUtils;
 
 @ConfigureContext(session = kfs)
-public class CuAutoDisapproveDocumentsServiceImplTest extends KualiTestBase {
+public class CuAutoDisapproveDocumentsServiceImplTest extends KualiIntegTestBase {
     private CuAutoDisapproveDocumentsServiceImpl autoDisapproveDocumentsService;
     private DateTimeService dateTimeService;
     private ParameterService parameterService;
@@ -34,7 +30,7 @@ public class CuAutoDisapproveDocumentsServiceImplTest extends KualiTestBase {
     protected void setUp() throws Exception {
         // TODO Auto-generated method stub
         super.setUp();
-        autoDisapproveDocumentsService = (CuAutoDisapproveDocumentsServiceImpl) TestUtils.getUnproxiedService("sysMockAutoDisapproveDocumentsService");
+        autoDisapproveDocumentsService = (CuAutoDisapproveDocumentsServiceImpl) IntegTestUtils.getUnproxiedService("sysMockAutoDisapproveDocumentsService");
         dateTimeService = SpringContext.getBean(DateTimeService.class);
         parameterService = SpringContext.getBean(ParameterService.class);
         documentTypeService = SpringContext.getBean(DocumentTypeService.class);

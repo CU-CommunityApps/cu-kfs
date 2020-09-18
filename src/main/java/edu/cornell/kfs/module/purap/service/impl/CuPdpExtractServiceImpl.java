@@ -30,7 +30,7 @@ public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
         try {
             PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
             doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
-            purapService.saveDocumentNoValidation(doc);
+            getPurapService().saveDocumentNoValidation(doc);
             
             //RICE20 replaced searchableAttributeProcessingService.indexDocument with DocumentAttributeIndexingQueue.indexDocument
             DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());

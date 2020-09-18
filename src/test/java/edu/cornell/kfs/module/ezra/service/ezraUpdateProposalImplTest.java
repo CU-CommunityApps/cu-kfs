@@ -8,16 +8,16 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
 
 @ConfigureContext(session = ccs1)
-public class ezraUpdateProposalImplTest extends KualiTestBase {
+public class ezraUpdateProposalImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(ezraUpdateProposalImplTest.class);
 	private EzraService ezraService;	

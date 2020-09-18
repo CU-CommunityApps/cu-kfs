@@ -6,19 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
+import org.kuali.kfs.sys.context.KualiIntegTestBase;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 
 @ConfigureContext(session = mgw3)
-public class CuUserProcurementProfileLookupableHelperServiceImplTest extends KualiTestBase {
+public class CuUserProcurementProfileLookupableHelperServiceImplTest extends KualiIntegTestBase {
 
     private LookupableHelperService lookupableHelperServiceImpl;
     private Map<String, String> fieldValues;
