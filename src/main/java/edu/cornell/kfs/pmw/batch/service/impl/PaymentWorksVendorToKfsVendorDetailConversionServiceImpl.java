@@ -31,7 +31,6 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.web.format.FormatException;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
@@ -90,7 +89,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             kfsVendorDataWrapper.getVendorDetail().setVendorUrlAddress(pmwVendor.getRequestingCompanyUrl());
             kfsVendorDataWrapper.getVendorDetail().setVendorAddresses(buildVendorAddresses(pmwVendor, paymentWorksIsoToFipsCountryMap));
             kfsVendorDataWrapper.getVendorDetail().setVendorContacts(buildVendorContacts(pmwVendor));
-            kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor));
+            kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor, paymentWorksIsoToFipsCountryMap));
             kfsVendorDataWrapper.getVendorDetail().setVendorParentIndicator(true);
             if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
                 kfsVendorDataWrapper.getVendorDetail().setVendorPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.PAYMENT_TERMS_NET_60_DAYS_CODE);
@@ -734,22 +733,33 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return kfsVendorDataWrapper;
     }
     
-    protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
+    protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            LOG.debug("buildVendorDetailExtension, legacy mode");
             vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            LOG.debug("buildVendorDetailExtension, foreign mode");
-            PaymentWorksPaymentMethodToKfsPaymentMethod paymentMethod = PaymentWorksPaymentMethodToKfsPaymentMethod.
-                    findPaymentWorksPaymentMethodToKfsPaymentMethodFromPaymentWorksPaymentMethod(pmwVendor.getPaymentMethod());
-            vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod.kfsPaymentMethod);
+            vendorDetailExtension.setDefaultB2BPaymentMethodCode(buildKFSPaymentMethod(pmwVendor, paymentWorksIsoToFipsCountryMap));
         } else {
             throw new IllegalStateException("Invalid form processing mode.");
         }
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(getDateTimeService().getCurrentTimestamp());
         return vendorDetailExtension;
+    }
+    
+    protected String buildKFSPaymentMethod(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
+        String vendorCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
+        if (isUnitedStatesFipsCountryCode(vendorCountryCode)) {
+            LOG.info("buildKFSPaymentMethod, Domestic Vendor");
+            return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
+        } else {
+            LOG.info("buildKFSPaymentMethod, Foreign Vendor");
+            if (StringUtils.equalsIgnoreCase("Wire", pmwVendor.getPaymentMethod())) {
+                return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE;
+            } else {
+                return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
+            }
+        }
     }
     
     private List<VendorSupplierDiversity> buildVendorDiversities(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {

@@ -216,12 +216,17 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
     private Map<String, List<PaymentWorksIsoFipsCountryItem>> buildPaymentWorksIsoToFipsCountryMap() {
         Map<String, List<PaymentWorksIsoFipsCountryItem>> countryMap = new HashMap<String, List<PaymentWorksIsoFipsCountryItem>>();
-        PaymentWorksIsoFipsCountryItem arubaItem = new PaymentWorksIsoFipsCountryItem();
-        arubaItem.setFipsCountryCode(ARUBA_FIPS_CODE);
-        List<PaymentWorksIsoFipsCountryItem> items = new ArrayList<PaymentWorksIsoFipsCountryItem>();
-        items.add(arubaItem);
-        countryMap.put(ARUBA_ISO_CODE, items);
+        countryMap.put(ARUBA_ISO_CODE, buildPaymentWorksIsoFipsCountryItems(ARUBA_FIPS_CODE));
+        countryMap.put(KFSConstants.COUNTRY_CODE_UNITED_STATES, buildPaymentWorksIsoFipsCountryItems(KFSConstants.COUNTRY_CODE_UNITED_STATES));
         return countryMap;
+    }
+    
+    private List<PaymentWorksIsoFipsCountryItem> buildPaymentWorksIsoFipsCountryItems(String fipsCode) {
+        List<PaymentWorksIsoFipsCountryItem> itemList = new ArrayList<PaymentWorksIsoFipsCountryItem>();
+        PaymentWorksIsoFipsCountryItem item = new PaymentWorksIsoFipsCountryItem();
+        item.setFipsCountryCode(fipsCode);
+        itemList.add(item);
+        return itemList;
     }
     
     @Test
@@ -279,34 +284,37 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testbuildVendorDetailExtensionLegacyForm() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
         assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
     }
     
     @Test
-    void testbuildVendorDetailExtensionLegacyFormWire() {
+    void testbuildVendorDetailExtensionLegacyFormForeignWire() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Wire.paymentWorksPaymmentMethod);
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        pmwVendor.setPaymentMethod("Wire");
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
         assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
     }
-    
+
     @Test
-    void testbuildVendorDetailExtensionForeignFormCheck() {
+    void testbuildVendorDetailExtensionForeignFormForeignCheck() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Check.paymentWorksPaymmentMethod);
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
+        pmwVendor.setPaymentMethod("Check");
+        
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
         assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
     }
-    
+
     @Test
-    void testbuildVendorDetailExtensionForeignFormAch() {
+    void testbuildVendorDetailExtensionForeignFormForeignAch() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.ACH.paymentWorksPaymmentMethod);
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
+        pmwVendor.setPaymentMethod("ACH");
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
         assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
     }
     
@@ -314,24 +322,43 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testbuildVendorDetailExtensionForeignFormWire() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethodToKfsPaymentMethod.Wire.paymentWorksPaymmentMethod);
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
+        pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
+        pmwVendor.setPaymentMethod("Wire");
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor,  buildPaymentWorksIsoToFipsCountryMap());
         assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, actualDetail.getDefaultB2BPaymentMethodCode());
     }
     
     @Test
-    void testbuildVendorDetailExtensionForeignFormEmpty() {
+    void testbuildVendorDetailExtensionForeignFormDomesticCheck() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setPaymentMethod(StringUtils.EMPTY);
-        try {
-            VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
-        } catch (IllegalArgumentException iae) {
-            iae.printStackTrace();
-            assertTrue(true);
-            return;
-        }
-        assertTrue(false, "should have caught an illegal argument exception.");
+        pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        pmwVendor.setPaymentMethod("Check");
+        
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionForeignFormDomesticAch() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        pmwVendor.setPaymentMethod("ACH");
+        
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
+    }
+    
+    @Test
+    void testbuildVendorDetailExtensionForeignFormDomesticWire() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        pmwVendor.setPaymentMethod("Wire");
+        
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
     }
     
 }

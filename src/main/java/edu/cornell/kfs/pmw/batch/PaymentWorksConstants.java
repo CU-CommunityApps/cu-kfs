@@ -423,30 +423,5 @@ public class PaymentWorksConstants {
         }
         
     }
-    
-    public enum PaymentWorksPaymentMethodToKfsPaymentMethod {
-        ACH("ACH", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK),
-        Check("Check", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK),
-        Wire("Wire", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE);
-        
-        public final String paymentWorksPaymmentMethod;
-        public final String kfsPaymentMethod;
-        
-        private PaymentWorksPaymentMethodToKfsPaymentMethod(String paymentWorksPaymmentMethod, String kfsPaymentMethod) {
-            this.paymentWorksPaymmentMethod = paymentWorksPaymmentMethod;
-            this.kfsPaymentMethod = kfsPaymentMethod;
-        }
-        
-        public static PaymentWorksPaymentMethodToKfsPaymentMethod findPaymentWorksPaymentMethodToKfsPaymentMethodFromPaymentWorksPaymentMethod(
-                String paymentWorksPaymmentMethod) {
-            for (PaymentWorksPaymentMethodToKfsPaymentMethod method : PaymentWorksPaymentMethodToKfsPaymentMethod.values()) {
-                if (StringUtils.equalsIgnoreCase(method.paymentWorksPaymmentMethod, paymentWorksPaymmentMethod)) {
-                    return method;
-                }
-            }
-            throw new IllegalArgumentException("Unable to find PaymentWorksPaymentMethodToKfsPaymentMethod from paymentWorksPaymmentMethod: " + 
-                    paymentWorksPaymmentMethod);
-        }
-    }
 
 }
