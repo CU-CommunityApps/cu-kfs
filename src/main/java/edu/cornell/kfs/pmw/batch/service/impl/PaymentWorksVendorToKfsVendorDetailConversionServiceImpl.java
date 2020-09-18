@@ -736,6 +736,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            LOG.debug("buildVendorDetailExtension, legacy form setting payment method to check");
             vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             vendorDetailExtension.setDefaultB2BPaymentMethodCode(buildKFSPaymentMethod(pmwVendor, paymentWorksIsoToFipsCountryMap));
@@ -750,14 +751,17 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected String buildKFSPaymentMethod(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         String vendorCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
         if (isUnitedStatesFipsCountryCode(vendorCountryCode)) {
-            LOG.info("buildKFSPaymentMethod, Domestic Vendor");
+            LOG.debug("buildKFSPaymentMethod, Domestic Vendor");
             return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         } else {
-            LOG.info("buildKFSPaymentMethod, Foreign Vendor");
-            if (StringUtils.equalsIgnoreCase("Wire", pmwVendor.getPaymentMethod())) {
+            LOG.debug("buildKFSPaymentMethod, Foreign Vendor");
+            if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE, pmwVendor.getPaymentMethod())) {
                 return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE;
-            } else {
+            } else if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK, pmwVendor.getPaymentMethod()) ||
+                    StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH, pmwVendor.getPaymentMethod())) {
                 return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
+            } else {
+                throw new IllegalArgumentException("Invalid payment method: " + pmwVendor.getPaymentMethod());
             }
         }
     }

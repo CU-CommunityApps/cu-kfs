@@ -423,5 +423,11 @@ public class PaymentWorksConstants {
         }
         
     }
+    
+    public final class PaymentWorksPaymentMethods {
+        public static final String ACH = "ACH";
+        public static final String WIRE = "Wire";
+        public static final String CHECK = "Check";
+    }
 
 }
