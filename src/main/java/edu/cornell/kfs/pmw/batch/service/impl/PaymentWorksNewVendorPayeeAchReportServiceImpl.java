@@ -35,6 +35,8 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
     private String noAchDataProvidedVendorsSubTitle;
     private String recordsGeneratingExceptionSubTitle;
     private String recordsForeignAchBankSubTitle;
+    private String recordsForeignWireSubtitle;
+    private String recordsDomesticWireSubtitle;
 
     @Override
     public void generateAndEmailProcessingReport(PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
@@ -56,6 +58,8 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         writeProcessingSubReport(reportData.getRecordsGeneratingException(), getRecordsGeneratingExceptionSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE));
         if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             writeProcessingSubReport(reportData.getForeignAchItems(), getRecordsForeignAchBankSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_FOREIGN_ACH_BANK));
+            writeProcessingSubReport(reportData.getPaymentMethodWireDomsticItems(), getRecordsDomesticWireSubtitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_DOMESTIC_WIRE_WITH_ACH));
+            writeProcessingSubReport(reportData.getPaymentMethodWireForeignItems(), getRecordsForeignWireSubtitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_FOREIGN_WIRE_WITH_ACH));
         }
         finalizeReport();
         return getReportWriterService().getReportFile();
@@ -114,6 +118,8 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsGeneratingExceptionSummary().getItemLabel(), reportData.getRecordsGeneratingExceptionSummary().getRecordCount());
         if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsWithForeignAchSummary().getItemLabel(), reportData.getRecordsWithForeignAchSummary().getRecordCount());
+            getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsWithPaymentMethodWireDomesticSummary().getItemLabel(), reportData.getRecordsWithPaymentMethodWireDomesticSummary().getRecordCount());
+            getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsWithPaymentMethodWireForeignSummary().getItemLabel(), reportData.getRecordsWithPaymentMethodWireForeignSummary().getRecordCount());
         }
         getReportWriterService().writeNewLines(4);
     }
@@ -176,6 +182,8 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsGeneratingExceptionSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_GENERATING_EXCEPTIONS_LABEL);
         if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsWithForeignAchSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FOREIGN_ACH_BANK);
+            setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsWithPaymentMethodWireDomesticSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_DOMESTIC_WIRE_WITH_ACH);
+            setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsWithPaymentMethodWireForeignSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_FOREIGN_WIRE_WITH_ACH);
         }
         
     }
@@ -333,6 +341,28 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
 
     public void setRecordsForeignAchBankSubTitle(String recordsForeignAchBankSubTitle) {
         this.recordsForeignAchBankSubTitle = recordsForeignAchBankSubTitle;
+    }
+
+    public String getRecordsForeignWireSubtitle() {
+        if (ObjectUtils.isNull(recordsForeignWireSubtitle)) {
+            setRecordsForeignWireSubtitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_FOREIGN_WIRE_WITH_ACH_SUB_TITLE));
+        }
+        return recordsForeignWireSubtitle;
+    }
+
+    public void setRecordsForeignWireSubtitle(String recordsForeignWireSubtitle) {
+        this.recordsForeignWireSubtitle = recordsForeignWireSubtitle;
+    }
+
+    public String getRecordsDomesticWireSubtitle() {
+        if (ObjectUtils.isNull(recordsForeignWireSubtitle)) {
+            setRecordsDomesticWireSubtitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_DOMESTIC_WIRE_WITH_ACH_SUB_TITLE));
+        }
+        return recordsDomesticWireSubtitle;
+    }
+
+    public void setRecordsDomesticWireSubtitle(String recordsDomesticWireSubtitle) {
+        this.recordsDomesticWireSubtitle = recordsDomesticWireSubtitle;
     }
 
     public ReportWriterService getReportWriterService() {

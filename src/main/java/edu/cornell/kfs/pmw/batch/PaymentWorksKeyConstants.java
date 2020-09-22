@@ -53,6 +53,8 @@ public class PaymentWorksKeyConstants {
     public static final String NO_VENDORS_WITHOUT_ACH_DATA_MESSAGE = "message.paymentworks.no.vendors.without.ach.data";
     public static final String NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE = "message.paymentworks.no.records.generating.exceptions";
     public static final String NO_RECORDS_FOREIGN_ACH_BANK = "message.paymentworks.no.records.foreign.ach.bank";
+    public static final String NO_RECORDS_FOREIGN_WIRE_WITH_ACH = "message.paymentworks.no.records.foreign.wire.with.ach";
+    public static final String NO_RECORDS_DOMESTIC_WIRE_WITH_ACH = "message.paymentworks.no.records.domestic.wire.with.ach";
     
     //PaymentWorks Business Rule Failure Messages
     public static final String ERROR_LEGAL_NAME_TOO_LONG_FOR_KFS = "error.paymentworks.legel.name.too.long";
