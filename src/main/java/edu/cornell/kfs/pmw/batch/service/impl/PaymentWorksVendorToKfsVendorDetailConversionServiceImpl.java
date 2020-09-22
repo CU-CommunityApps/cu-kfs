@@ -736,10 +736,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            LOG.debug("buildVendorDetailExtension, legacy form setting payment method to check");
+            LOG.info("buildVendorDetailExtension, legacy form setting payment method to check");
             vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            vendorDetailExtension.setDefaultB2BPaymentMethodCode(buildKFSPaymentMethod(pmwVendor, paymentWorksIsoToFipsCountryMap));
+            String paymentMethod = buildKFSPaymentMethod(pmwVendor, paymentWorksIsoToFipsCountryMap);
+            LOG.info("buildVendorDetailExtension, foreign mode form setting payment method to " + paymentMethod);
+            vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod);
         } else {
             throw new IllegalStateException("Invalid form processing mode.");
         }
