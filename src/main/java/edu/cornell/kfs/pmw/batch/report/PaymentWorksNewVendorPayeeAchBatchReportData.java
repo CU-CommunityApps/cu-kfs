@@ -37,7 +37,6 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
         this.disapprovedVendors = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.recordsGeneratingException = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
-        this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.paymentMethodWireDomsticItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.paymentMethodWireForeignItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
     }
