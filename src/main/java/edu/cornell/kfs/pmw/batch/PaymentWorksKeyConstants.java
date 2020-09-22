@@ -84,5 +84,7 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_W8_SIGNED_DATE_DESCRIPTION = "error.paymentworks.w8.signed.date.description";
     public static final String MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS = "message.paymentworks.diversity.certifications.in.paymentworks";
     public static final String ERROR_PAYMENTWORKS_BANK_NOT_US = "error.paymentworks.bank.not.us";
+    public static final String ERROR_PAYMENTWORKS_DOMESTIC_WIRE_VENDOR_ACH = "error.paymentworks.domestic.wire.vendor.with.ach";
+    public static final String ERROR_PAYMENTWORKS_FOREIGN_WIRE_VENDOR_ACH = "error.paymentworks.foreign.wire.vendor.with.ach";
 
 }

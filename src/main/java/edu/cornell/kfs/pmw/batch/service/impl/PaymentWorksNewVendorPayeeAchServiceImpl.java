@@ -309,12 +309,26 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                 LOG.debug("isAchPaymentMethod, found an ACH payment method, return true.");
                 return true;
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("isAchPaymentMethod, return false, found a NON ach payment method: " + pmwVendor.getPaymentMethod());
+                if (StringUtils.equalsIgnoreCase(pmwVendor.getPaymentMethod(), PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE)) {
+                    List<String> errorMessages = new ArrayList<String>();
+                    if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
+                            pmwVendor.getRequestingCompanyTaxCountry())) {
+                        LOG.debug("isAchPaymentMethod, found a domestic WIRE payment method, return false.");
+                        reportData.getRecordsWithPaymentMethodWireDomesticSummary().incrementRecordCount();
+                        errorMessages.add(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_DOMESTIC_WIRE_VENDOR_ACH));
+                        reportData.addPaymentWireDomesticItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                                errorMessages));
+                    } else {
+                        LOG.debug("isAchPaymentMethod, found a foreign WIRE payment method, return false.");
+                        reportData.getRecordsWithPaymentMethodWireForeignSummary().incrementRecordCount();
+                        errorMessages.add(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_FOREIGN_WIRE_VENDOR_ACH));
+                        reportData.addPaymentWireForeignItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                                errorMessages));
+                    }
+                } else {
+                    LOG.error("isAchPaymentMethod, We should only see wire or ACH or wire payment methods hitting this function, found an unexpected method: " 
+                            + pmwVendor.getPaymentMethod());
                 }
-                /*
-                 * @todo log in the right place on the report
-                 */
                 return false;
             }
         } else {
