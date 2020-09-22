@@ -232,7 +232,8 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         if (pmwBankRoutingNumberIsValid(pmwVendor, errorMessages) 
             && pmwBankAccountNumberIsValid(pmwVendor, errorMessages)
             && pmwBankAccountTypeIsValid(pmwVendor, errorMessages)
-            && isUsAchBank(pmwVendor, reportData)) {
+            && isUsAchBank(pmwVendor, reportData)
+            && isAchPaymentMethod(pmwVendor, reportData)) {
             return true;
         } else {
             if (!errorMessages.isEmpty()){
@@ -297,6 +298,28 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
             LOG.debug("isUsAchBank, not in foreign form mode, so just return true.");
         }
         return usAchBank;
+    }
+    
+    protected boolean isAchPaymentMethod(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            LOG.debug("isAchPaymentMethod, legacy form mode, just return true");
+            return true;
+        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            if (StringUtils.equalsIgnoreCase(pmwVendor.getPaymentMethod(), PaymentWorksConstants.PaymentWorksPaymentMethods.ACH)) {
+                LOG.debug("isAchPaymentMethod, found an ACH payment method, return true.");
+                return true;
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("isAchPaymentMethod, return false, found a NON ach payment method: " + pmwVendor.getPaymentMethod());
+                }
+                /*
+                 * @todo log in the right place on the report
+                 */
+                return false;
+            }
+        } else {
+            throw new IllegalStateException("Invalid form mode");
+        }
     }
     
     private boolean pmwBankAccountTypeIsDefinedInKfs(String pmwBankAccountTypeToVerify) {
