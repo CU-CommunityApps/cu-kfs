@@ -22,6 +22,7 @@
     <property name="attributes">
       <list merge="true">
         <ref bean="PositionData-extension-orgCode"/>
+        <ref bean="PositionData-extension-inactivationDate"/>
       </list>
     </property>
   </bean>  
@@ -40,6 +41,15 @@
       <ref bean="StandardShortNameTextControl" />
     </property>
   </bean>
+  
+  <bean id="PositionData-extension-inactivationDate" parent="PositionData-extension-inactivationDate-parentBean"/>
+  <bean id="PositionData-extension-inactivationDate-parentBean" abstract="true" parent="AttributeDefinition"
+        p:name="extension.inactivationDate" p:forceUppercase="true" p:label="Inactivation Date" p:shortLabel="Date" p:maxLength="7"
+        p:validationPattern-ref="DateValidation" p:type="DATE_RANGE">
+      <property name="control">
+          <bean parent="TextControlDefinition" p:size="9"/>
+      </property>
+  </bean>
       
   <!-- Business Object Inquiry Definition -->
 
@@ -56,6 +66,26 @@
                   <property name="insertAfter">
                       <list>
                           <bean parent="FieldDefinition" p:attributeName="extension.orgCode" />
+                      </list>
+                  </property>
+              </bean>
+          </list>
+      </property>
+  </bean>
+  
+  <bean parent="DataDictionaryBeanOverride">
+      <property name="beanName" value="PositionData-inquiryDefinition" />
+      <property name="fieldOverrides">
+          <list>
+              <bean parent="FieldOverrideForListElementInsert">
+                  <property name="propertyName" value="inquirySections[0].inquiryFields" />
+                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="element">
+                      <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate" />
+                  </property>
+                  <property name="insertAfter">
+                      <list>
+                          <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate" />
                       </list>
                   </property>
               </bean>
@@ -83,6 +113,19 @@
                    </property>
                </bean>
                <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="lookupFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="FieldDefinition" p:attributeName="effectiveDate" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate" />
+         
+                       </list>
+                   </property>
+               </bean>
+               <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="resultFields" />
                    <property name="propertyNameForElementCompare" value="attributeName" />
                    <property name="element">
@@ -91,6 +134,18 @@
                    <property name="insertAfter">
                        <list>
                            <bean parent="FieldDefinition" p:attributeName="extension.orgCode" />
+                       </list>
+                   </property>
+               </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="resultFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="FieldDefinition" p:attributeName="effectiveDate" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate" />
                        </list>
                    </property>
                </bean>
@@ -109,6 +164,20 @@
                    </property>
                </bean>
                <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="formAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
+                   <property name="element">
+                       <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                               parent="PositionData-effectiveDate"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                                   parent="PositionData-extension-inactivationDate"/>
+                       </list>
+                   </property>
+               </bean>
+               <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="displayAttributeDefinitions" />
                    <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
@@ -119,6 +188,20 @@
                        <list>
                            <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                                    parent="PositionData-extension-orgCode"/>
+                       </list>
+                   </property>
+               </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="displayAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
+                   <property name="element">
+                       <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                               parent="PositionData-effectiveDate"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                                   parent="PositionData-extension-inactivationDate"/>
                        </list>
                    </property>
                </bean>
