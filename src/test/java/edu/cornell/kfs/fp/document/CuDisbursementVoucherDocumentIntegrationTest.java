@@ -49,9 +49,7 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
         assertEquals("Test Document Description", cuDisbursementVoucherDocument.getDocumentHeader().getDocumentDescription());
         assertEquals("Salino, Catherine C.", cuDisbursementVoucherDocument.getDisbVchrContactPersonName());
         assertEquals("IT", cuDisbursementVoucherDocument.getCampusCode());
-        Calendar calendar = dateTimeService.getCurrentCalendar();
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        assertEquals(new Date(calendar.getTimeInMillis()), cuDisbursementVoucherDocument.getDisbursementVoucherDueDate());
+        assertEquals(getCurrentDate(), cuDisbursementVoucherDocument.getDisbursementVoucherDueDate());
         assertEquals("O", cuDisbursementVoucherDocument.getDisbursementVoucherDocumentationLocationCode());
         assertEquals("DISB", cuDisbursementVoucherDocument.getDisbVchrBankCode());
 
@@ -96,6 +94,8 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
         dv.getDocumentHeader().setDocumentDescription("Test Document Description");
         dv.getDocumentHeader().setExplanation("Stuff");
         dv.initiateDocument();
+        
+        dv.setDisbursementVoucherDueDate(getCurrentDate());
 
         VendorDetail vendor = vendorService.getVendorDetail("13366-0");
         VendorAddress vendoraddress = vendorService.getVendorDefaultAddress(
@@ -122,6 +122,12 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
         documentService.saveDocument(dv);
 
         return dv;
+    }
+    
+    private Date getCurrentDate() {
+        Calendar calendar = dateTimeService.getCurrentCalendar();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        return new Date(calendar.getTimeInMillis());
     }
 
 }

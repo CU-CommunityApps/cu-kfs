@@ -30,7 +30,7 @@ import edu.cornell.kfs.module.purap.fixture.PaymentRequestFixture;
 import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
 import edu.cornell.kfs.module.purap.fixture.RequisitionItemFixture;
 
-@ConfigureContext(session = UserNameFixture.mo14)
+@ConfigureContext(session = UserNameFixture.mls398)
 public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(CuPaymentRequestServiceImplTest.class);
