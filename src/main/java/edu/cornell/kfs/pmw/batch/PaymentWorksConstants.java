@@ -7,6 +7,7 @@ import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
@@ -420,6 +421,13 @@ public class PaymentWorksConstants {
         public String getKfsPoTransmissionMethodCode() {
             return kfsPoTransmissionMethodCode;
         }
+        
+    }
+    
+    public final class PaymentWorksPaymentMethods {
+        public static final String ACH = "ACH";
+        public static final String WIRE = "Wire";
+        public static final String CHECK = "Check";
     }
 
 }
