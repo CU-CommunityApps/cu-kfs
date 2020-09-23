@@ -5,6 +5,7 @@
     <field-descriptor name="positionNumber" column="POSITION_NBR" jdbc-type="VARCHAR"  primarykey="true" index="true" />
     <field-descriptor name="effectiveDate" column="EFFDT" jdbc-type="DATE" primarykey="true" index="true" />
     <field-descriptor name="orgCode" column="ORG_CD" jdbc-type="VARCHAR" primarykey="false" index="false" />
+    <field-descriptor name="inactivationDate" column="INACTIVE_DT" jdbc-type="DATE" primarykey="false" index="false" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
 </class-descriptor>
 
