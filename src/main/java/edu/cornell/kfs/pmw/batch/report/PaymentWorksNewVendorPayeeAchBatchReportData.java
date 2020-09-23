@@ -185,15 +185,15 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
         return paymentMethodWireDomesticItems;
     }
 
-    public void setPaymentMethodWireDomesticItems(List<PaymentWorksBatchReportVendorItem> paymentMethodWireDomsticItems) {
-        this.paymentMethodWireDomesticItems = paymentMethodWireDomsticItems;
+    public void setPaymentMethodWireDomesticItems(List<PaymentWorksBatchReportVendorItem> paymentMethodWireDomesticItems) {
+        this.paymentMethodWireDomesticItems = paymentMethodWireDomesticItems;
     }
     
-    public void addPaymentWireDomesticItem(PaymentWorksBatchReportVendorItem paymentMethodWireDomesticItems) {
+    public void addPaymentWireDomesticItem(PaymentWorksBatchReportVendorItem paymentMethodWireDomesticItem) {
         if (this.paymentMethodWireDomesticItems == null) {
             this.paymentMethodWireDomesticItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
         }
-        this.paymentMethodWireDomesticItems.add(paymentMethodWireDomesticItems);
+        this.paymentMethodWireDomesticItems.add(paymentMethodWireDomesticItem);
     }
 
     public List<PaymentWorksBatchReportVendorItem> getPaymentMethodWireForeignItems() {
