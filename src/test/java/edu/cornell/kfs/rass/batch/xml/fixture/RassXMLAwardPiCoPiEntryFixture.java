@@ -10,10 +10,10 @@ public enum RassXMLAwardPiCoPiEntryFixture {
     jdh34_CO_PI(Boolean.FALSE, "jdh34"),
     mgw3_PRIMARY(Boolean.TRUE, "mgw3"),
     mgw3_CO_PI_INACTIVE(Boolean.FALSE, "mgw3", Boolean.FALSE),
-    mo14_PRIMARY(Boolean.TRUE, "mo14"),
-    mo14_CO_PI(Boolean.FALSE, "mo14"),
-    mo14_CO_PI_INACTIVE(Boolean.FALSE, "mo14", Boolean.FALSE),
-    mo14_CO_PI_WITH_NULL_FLAG(null, "mo14"),
+    mls398_PRIMARY(Boolean.TRUE, "mls398"),
+    mls398_CO_PI(Boolean.FALSE, "mls398"),
+    mls398_CO_PI_INACTIVE(Boolean.FALSE, "mls398", Boolean.FALSE),
+    mls398_CO_PI_WITH_NULL_FLAG(null, "mls398"),
     kan2_PRIMARY(Boolean.TRUE, "kan2");
     
     public final Boolean primary;
