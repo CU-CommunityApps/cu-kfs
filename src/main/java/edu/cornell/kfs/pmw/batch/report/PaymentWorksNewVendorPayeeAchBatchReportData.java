@@ -21,7 +21,7 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
     private List<PaymentWorksBatchReportVendorItem> pmwVendorAchsThatCouldNotBeProcessed;
     private List<PaymentWorksBatchReportVendorItem> recordsGeneratingException;
     private List<PaymentWorksBatchReportVendorItem> foreignAchItems;
-    private List<PaymentWorksBatchReportVendorItem> paymentMethodWireDomsticItems;
+    private List<PaymentWorksBatchReportVendorItem> paymentMethodWireDomesticItems;
     private List<PaymentWorksBatchReportVendorItem> paymentMethodWireForeignItems;
     
     public PaymentWorksNewVendorPayeeAchBatchReportData() {
@@ -37,7 +37,7 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
         this.disapprovedVendors = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.recordsGeneratingException = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.foreignAchItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
-        this.paymentMethodWireDomsticItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
+        this.paymentMethodWireDomesticItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
         this.paymentMethodWireForeignItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
     }
 
@@ -181,19 +181,19 @@ public class PaymentWorksNewVendorPayeeAchBatchReportData extends PaymentWorksEm
         this.recordsWithPaymentMethodWireForeignSummary = recordsWithPaymentMethodWireForeignSummary;
     }
     
-    public List<PaymentWorksBatchReportVendorItem> getPaymentMethodWireDomsticItems() {
-        return paymentMethodWireDomsticItems;
+    public List<PaymentWorksBatchReportVendorItem> getPaymentMethodWireDomesticItems() {
+        return paymentMethodWireDomesticItems;
     }
 
-    public void setPaymentMethodWireDomsticItems(List<PaymentWorksBatchReportVendorItem> paymentMethodWireDomsticItems) {
-        this.paymentMethodWireDomsticItems = paymentMethodWireDomsticItems;
+    public void setPaymentMethodWireDomesticItems(List<PaymentWorksBatchReportVendorItem> paymentMethodWireDomsticItems) {
+        this.paymentMethodWireDomesticItems = paymentMethodWireDomsticItems;
     }
     
-    public void addPaymentWireDomesticItem(PaymentWorksBatchReportVendorItem paymentMethodWireDomsticItem) {
-        if (this.paymentMethodWireDomsticItems == null) {
-            this.paymentMethodWireDomsticItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
+    public void addPaymentWireDomesticItem(PaymentWorksBatchReportVendorItem paymentMethodWireDomesticItems) {
+        if (this.paymentMethodWireDomesticItems == null) {
+            this.paymentMethodWireDomesticItems = new ArrayList<PaymentWorksBatchReportVendorItem>();
         }
-        this.paymentMethodWireDomsticItems.add(paymentMethodWireDomsticItem);
+        this.paymentMethodWireDomesticItems.add(paymentMethodWireDomesticItems);
     }
 
     public List<PaymentWorksBatchReportVendorItem> getPaymentMethodWireForeignItems() {

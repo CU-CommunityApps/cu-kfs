@@ -17,13 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
+import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
@@ -43,7 +43,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void setUp() throws Exception {
         Configurator.setLevel(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class.getName(), Level.DEBUG);
         conversionService = new PaymentWorksVendorToKfsVendorDetailConversionServiceImpl();
-        conversionService.setDateTimeService(new DateTimeServiceImpl());
+        conversionService.setDateTimeService(new TestDateTimeServiceImpl());
         pmwVendor = new PaymentWorksVendor();
     }
 
@@ -242,6 +242,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         assertEquals(CONTACT_PHONE_NUMBER, actualPhoneContact.getVendorPhoneNumber());
         assertEquals(CONTACT_PHONE_NUMBER_EXTENSION, actualPhoneContact.getVendorPhoneExtensionNumber());
     }
+    
     @Test
     void testBuildContactWithPhoneNoExtension() {
         VendorContact actualContact = conversionService.buildContact(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING, 
@@ -336,11 +337,10 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
         try {
             conversionService.buildVendorDetailExtension(pmwVendor,  buildPaymentWorksIsoToFipsCountryMap());
-        } catch (IllegalArgumentException iae) {
-            assertTrue(true, "expected illegal argument exception");
-            return;
+            fail("With no payment method provided, an Illegal Argument Exception should have been thrown.");
+        } catch (Exception e) {
+            assertEquals(IllegalArgumentException.class, e.getClass());
         }
-        assertTrue(false, "expected illegal argument exception");
     }
     
     @Test

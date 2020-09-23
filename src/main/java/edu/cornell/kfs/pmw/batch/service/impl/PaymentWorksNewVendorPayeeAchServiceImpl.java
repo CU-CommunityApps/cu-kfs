@@ -326,7 +326,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                 errorMessages));
                     }
                 } else {
-                    LOG.error("isAchPaymentMethod, We should only see wire or ACH or wire payment methods hitting this function, found an unexpected method: " 
+                    LOG.error("isAchPaymentMethod, We should only see wire or ACH payment methods hitting this function, found an unexpected method: " 
                             + pmwVendor.getPaymentMethod());
                 }
                 return false;

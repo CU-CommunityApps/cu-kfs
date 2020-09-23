@@ -58,7 +58,7 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         writeProcessingSubReport(reportData.getRecordsGeneratingException(), getRecordsGeneratingExceptionSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE));
         if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             writeProcessingSubReport(reportData.getForeignAchItems(), getRecordsForeignAchBankSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_FOREIGN_ACH_BANK));
-            writeProcessingSubReport(reportData.getPaymentMethodWireDomsticItems(), getRecordsDomesticWireSubtitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_DOMESTIC_WIRE_WITH_ACH));
+            writeProcessingSubReport(reportData.getPaymentMethodWireDomesticItems(), getRecordsDomesticWireSubtitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_DOMESTIC_WIRE_WITH_ACH));
             writeProcessingSubReport(reportData.getPaymentMethodWireForeignItems(), getRecordsForeignWireSubtitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_FOREIGN_WIRE_WITH_ACH));
         }
         finalizeReport();
