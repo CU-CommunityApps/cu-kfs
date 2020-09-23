@@ -19,6 +19,7 @@ public class CuCamsConstants {
         public static final String CONDITION_CODE = "condition_code";
         public static final String CONDITION_NAME = "condition_name";
         public static final String ROOM_NUMBER = "room_number";
+        public static final String NETID = "netid";
         public static final String AMOUNT = "amount";
         public static final String NULL = "null";
         public static final String CAMPUS_TAG_NUMBER = "campusTagNumber";

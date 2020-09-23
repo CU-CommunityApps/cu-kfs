@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
 import edu.cornell.kfs.module.cam.document.service.CuAssetService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -20,6 +23,9 @@ import edu.cornell.kfs.module.cam.CuCamsConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetService {
+
+    private static final Logger LOG = LogManager.getLogger(AssetServiceImpl.class);
+
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
@@ -41,7 +47,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
         return activeMatches;
     }
 
-    public Asset updateAssetInventory(String capitalAssetNumber, String conditionCode, String buildingCode, String roomNumber) {
+    public Asset updateAssetInventory(String capitalAssetNumber, String conditionCode, String buildingCode, String roomNumber, String netid) {
         Asset asset = businessObjectService.findBySinglePrimaryKey(Asset.class, capitalAssetNumber);
         if (ObjectUtils.isNull(asset)) {
             return null;
@@ -53,7 +59,16 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
         Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
         asset.setLastInventoryDate(currentTimestamp);
         asset.setLastUpdatedTimestamp(currentTimestamp);
-        return businessObjectService.save(asset);
+        asset = businessObjectService.save(asset);
+
+        AssetExtension assetExtension = businessObjectService.findBySinglePrimaryKey(AssetExtension.class, capitalAssetNumber);
+        if (ObjectUtils.isNull(asset)) {
+            LOG.error("updateAssetInventory: Asset Extension #[" + capitalAssetNumber + "] not found ");
+            return null;
+        }
+        assetExtension.setLastScannedNetid(netid);
+        businessObjectService.save(assetExtension);
+        return asset;
     }
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
