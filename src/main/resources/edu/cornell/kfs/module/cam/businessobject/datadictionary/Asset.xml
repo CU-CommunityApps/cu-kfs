@@ -11,6 +11,7 @@
       <list  merge="true">
          <ref bean="Asset-assetLocations.assetLocationTypeCode"/>
          <ref bean="Asset-extension-lastScannedNetid"/>
+         <ref bean="Asset-extension-lastScannedDate"/>
          <ref bean="Asset-extension-serviceRateIndicator"/>
       </list>
     </property>
@@ -43,6 +44,11 @@
   <bean id="Asset-extension-lastScannedNetid-parentBean" abstract="true" parent="AssetExtension-lastScannedNetid" >
     <property name="name" value="extension.lastScannedNetid"/>
   </bean>
+
+  <bean id="Asset-extension-lastScannedDate" parent="Asset-extension-lastScannedDate-parentBean"/>
+  <bean id="Asset-extension-lastScannedDate-parentBean" abstract="true" parent="AssetExtension-lastScannedDate" >
+    <property name="name" value="extension.lastScannedDate"/>
+  </bean>
   
   
 <!-- Business Object Inquiry Definition -->
@@ -59,8 +65,9 @@
                   </property>
                   <property name="insertAfter">
                       <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.serviceRateIndicator" />
                           <bean parent="FieldDefinition" p:attributeName="extension.lastScannedNetid" />
+                          <bean parent="FieldDefinition" p:attributeName="extension.lastScannedDate" />
+                          <bean parent="FieldDefinition" p:attributeName="extension.serviceRateIndicator" />
                       </list>
                   </property>
               </bean>

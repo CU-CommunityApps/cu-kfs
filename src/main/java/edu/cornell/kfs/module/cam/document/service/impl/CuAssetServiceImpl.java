@@ -67,6 +67,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
             return null;
         }
         assetExtension.setLastScannedNetid(netid);
+        assetExtension.setLastScannedDate(currentTimestamp);
         businessObjectService.save(assetExtension);
         return asset;
     }
