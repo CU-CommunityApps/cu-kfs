@@ -10,6 +10,7 @@
      <property name="attributes">
       <list  merge="true">
          <ref bean="Asset-assetLocations.assetLocationTypeCode"/>
+         <ref bean="Asset-extension-lastScannedNetid"/>
          <ref bean="Asset-extension-serviceRateIndicator"/>
       </list>
     </property>
@@ -37,6 +38,11 @@
   <bean id="Asset-extension-serviceRateIndicator-parentBean" abstract="true" parent="AssetExtension-serviceRateIndicator" >
     <property name="name" value="extension.serviceRateIndicator"/>
   </bean>
+
+  <bean id="Asset-extension-lastScannedNetid" parent="Asset-extension-lastScannedNetid-parentBean"/>
+  <bean id="Asset-extension-lastScannedNetid-parentBean" abstract="true" parent="AssetExtension-lastScannedNetid" >
+    <property name="name" value="extension.lastScannedNetid"/>
+  </bean>
   
   
 <!-- Business Object Inquiry Definition -->
@@ -54,6 +60,7 @@
                   <property name="insertAfter">
                       <list>
                           <bean parent="FieldDefinition" p:attributeName="extension.serviceRateIndicator" />
+                          <bean parent="FieldDefinition" p:attributeName="extension.lastScannedNetid" />
                       </list>
                   </property>
               </bean>

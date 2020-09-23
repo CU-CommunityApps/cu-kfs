@@ -12,6 +12,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 public class AssetExtension extends PersistableBusinessObjectExtensionBase {
 
     private Long capitalAssetNumber;
+    private String lastScannedNetid;
     private boolean serviceRateIndicator;
 
     /**
@@ -44,4 +45,11 @@ public class AssetExtension extends PersistableBusinessObjectExtensionBase {
         this.serviceRateIndicator = serviceRateIndicator;
     }
     
+    public String getLastScannedNetid() {
+        return lastScannedNetid;
+    }
+
+    public void setLastScannedNetid(String lastScannedNetid) {
+        this.lastScannedNetid = lastScannedNetid;
+    }
 }

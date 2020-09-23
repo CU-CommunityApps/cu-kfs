@@ -10,10 +10,17 @@ http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
   <property name="attributes">
     <list>
       <ref bean="AssetExtension-serviceRateIndicator"/>
+      <ref bean="AssetExtension-lastScannedNetid"/>
       <ref bean="AssetExtension-capitalAssetNumber"/>
     </list>
   </property>
 </bean>
+
+
+  <bean id="AssetExtension-lastScannedNetid" parent="AssetExtension-lastScannedNetid-parentBean"/>
+  <bean id="AssetExtension-lastScannedNetid-parentBean" abstract="true" parent="AttributeDefinition"
+        p:name="lastScannedNetid" p:label="Last Scanned By" p:shortLabel="Last Scanned"
+        p:control-ref="StandardShortNameTextControl" />
 
 <bean id="AssetExtension-serviceRateIndicator" parent="AssetExtension-serviceRateIndicator-parentBean" />
 
