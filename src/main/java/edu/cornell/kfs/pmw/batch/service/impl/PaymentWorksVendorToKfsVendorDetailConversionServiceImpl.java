@@ -89,7 +89,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             kfsVendorDataWrapper.getVendorDetail().setVendorUrlAddress(pmwVendor.getRequestingCompanyUrl());
             kfsVendorDataWrapper.getVendorDetail().setVendorAddresses(buildVendorAddresses(pmwVendor, paymentWorksIsoToFipsCountryMap));
             kfsVendorDataWrapper.getVendorDetail().setVendorContacts(buildVendorContacts(pmwVendor));
-            kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor));
+            kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor, paymentWorksIsoToFipsCountryMap));
             kfsVendorDataWrapper.getVendorDetail().setVendorParentIndicator(true);
             if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
                 kfsVendorDataWrapper.getVendorDetail().setVendorPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.PAYMENT_TERMS_NET_60_DAYS_CODE);
@@ -467,9 +467,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                             pmwVendor.geteInvoiceContactPhoneNumber(), pmwVendor.geteInvoicePhoneExtension());
     }
 
-    private VendorContact buildContact(String contactType, String contactPhoneType, String contactName, String contactEmailAddress, String contactPhoneNumber, String contactPhoneExtension) {
+    protected VendorContact buildContact(String contactType, String contactPhoneType, String contactName, String contactEmailAddress, String contactPhoneNumber, String contactPhoneExtension) {
         List<VendorContactPhoneNumber> vendorContactPhoneNumbers = new ArrayList<VendorContactPhoneNumber>();
-        vendorContactPhoneNumbers.add(buildContactPhoneNumber(contactPhoneType, contactPhoneNumber, contactPhoneExtension));
+        if (StringUtils.isNotBlank(contactPhoneNumber)) {
+            LOG.debug("buildContact, there is a phone number, so add a VendorContactPhoneNumber");
+            vendorContactPhoneNumbers.add(buildContactPhoneNumber(contactPhoneType, contactPhoneNumber, contactPhoneExtension));
+        }
         VendorContact contact = new VendorContact();
         contact.setVendorContactPhoneNumbers(vendorContactPhoneNumbers);
         contact.setVendorContactTypeCode(contactType);
@@ -730,12 +733,39 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return kfsVendorDataWrapper;
     }
     
-    private VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
+    protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
-        vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            LOG.info("buildVendorDetailExtension, legacy form setting payment method to check");
+            vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            String paymentMethod = buildKFSPaymentMethod(pmwVendor, paymentWorksIsoToFipsCountryMap);
+            LOG.info("buildVendorDetailExtension, foreign mode form setting payment method to " + paymentMethod);
+            vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod);
+        } else {
+            throw new IllegalStateException("Invalid form processing mode.");
+        }
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(getDateTimeService().getCurrentTimestamp());
         return vendorDetailExtension;
+    }
+    
+    protected String buildKFSPaymentMethod(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
+        String vendorCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
+        if (isUnitedStatesFipsCountryCode(vendorCountryCode)) {
+            LOG.debug("buildKFSPaymentMethod, Domestic Vendor");
+            return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
+        } else {
+            LOG.debug("buildKFSPaymentMethod, Foreign Vendor");
+            if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE, pmwVendor.getPaymentMethod())) {
+                return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE;
+            } else if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK, pmwVendor.getPaymentMethod()) ||
+                    StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH, pmwVendor.getPaymentMethod())) {
+                return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
+            } else {
+                throw new IllegalArgumentException("Invalid payment method: " + pmwVendor.getPaymentMethod());
+            }
+        }
     }
     
     private List<VendorSupplierDiversity> buildVendorDiversities(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
