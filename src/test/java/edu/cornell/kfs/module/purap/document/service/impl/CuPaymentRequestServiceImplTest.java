@@ -61,7 +61,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_OPEN
                 .createPurchaseOrderdDocument(SpringContext
                         .getBean(DocumentService.class));
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -79,7 +79,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         PurchaseOrderDocument po = PurchaseOrderFixture.PO_NON_B2B_OPEN_TRADE_IN_ITEMS
                 .createPurchaseOrderdDocument(SpringContext
                         .getBean(DocumentService.class));
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -107,7 +107,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -122,7 +122,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
                 "test");
 
         assertTrue(paymentRequestDocument.isHoldIndicator());
-        assertEquals(UserNameFixture.mo14.getPerson().getPrincipalId(),
+        assertEquals(UserNameFixture.mls398.getPerson().getPrincipalId(),
                 paymentRequestDocument.getLastActionPerformedByPersonId());
     }
 
@@ -135,7 +135,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -162,7 +162,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -191,7 +191,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -220,7 +220,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -248,7 +248,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -280,7 +280,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -307,7 +307,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         CuPaymentRequestDocument paymentRequestDocument = (CuPaymentRequestDocument) PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -332,7 +332,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         CuPaymentRequestDocument paymentRequestDocument = (CuPaymentRequestDocument) PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -357,7 +357,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         po.setVendorPaymentTermsCode("00N30");
         po.refreshNonUpdateableReferences();
 
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         CuPaymentRequestDocument paymentRequestDocument = (CuPaymentRequestDocument) PaymentRequestFixture.PAYMENT_REQ_DOC
                 .createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
@@ -445,7 +445,7 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
     protected CuPaymentRequestDocument createPaymentRequestForTestingPOAmountLimit(PurchaseOrderFixture poFixture) throws Exception {
         changeCurrentUser(UserNameFixture.ccs1);
         PurchaseOrderDocument po = poFixture.createPurchaseOrderdDocument(SpringContext.getBean(DocumentService.class));
-        changeCurrentUser(UserNameFixture.mo14);
+        changeCurrentUser(UserNameFixture.mls398);
         PaymentRequestDocument paymentRequestDocument = PaymentRequestFixture.PAYMENT_REQ_DOC.createPaymentRequestDocument(po.getPurapDocumentIdentifier());
         paymentRequestDocument.initiateDocument();
         paymentRequestDocument.populatePaymentRequestFromPurchaseOrder(po);

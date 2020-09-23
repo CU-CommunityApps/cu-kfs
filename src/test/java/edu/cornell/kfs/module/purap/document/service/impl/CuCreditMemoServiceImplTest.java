@@ -60,8 +60,8 @@ public class CuCreditMemoServiceImplTest {
     private PurapService purapService;
     private VendorService vendorService;
     private CuVendorCreditMemoDocument creditMemoDocument;
-    private static Person mo14Person;
-    private static UserSession mo14Session;
+    private static Person mls398Person;
+    private static UserSession mls398Session;
 
     @Before
 	public void setUp() throws Exception {
@@ -90,10 +90,10 @@ public class CuCreditMemoServiceImplTest {
 
 		creditMemoDocument = setupVendorCreditMemoDocument();
 
-		mo14Person = MockPersonUtil.createMockPerson(UserNameFixture.mo14);
-        mo14Session = MockPersonUtil.createMockUserSession(mo14Person);
+		mls398Person = MockPersonUtil.createMockPerson(UserNameFixture.mls398);
+        mls398Session = MockPersonUtil.createMockUserSession(mls398Person);
 
-        GlobalVariables.setUserSession(mo14Session);
+        GlobalVariables.setUserSession(mls398Session);
 	}
     
     private DocumentService buildMockDocumentService() {
@@ -136,7 +136,7 @@ public class CuCreditMemoServiceImplTest {
         creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		Assert.assertTrue(creditMemoDocument.isHoldIndicator());
-		Assert.assertTrue(mo14Person.getPrincipalId().equalsIgnoreCase(creditMemoDocument.getLastActionPerformedByPersonId()));
+		Assert.assertTrue(mls398Person.getPrincipalId().equalsIgnoreCase(creditMemoDocument.getLastActionPerformedByPersonId()));
 	}
 
 	@Test
