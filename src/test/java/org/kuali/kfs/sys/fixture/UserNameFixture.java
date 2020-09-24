@@ -47,8 +47,8 @@ ls35,
 // favorite account manager
 mgw3,
 kan2,
-mo14,
-nja3;
+nja3,
+mls398;
 
 static {
 // Assert.assertEquals(KualiUser.SYSTEM_USER, kuluser.toString());

@@ -78,9 +78,9 @@ public class CuDisbursementVoucherDocumentTest {
 
     private static CuDisbursementVoucherDocument cuDisbursementVoucherDocument;
     private static Person ccs1Person;
-    private static Person mo14Person;
+    private static Person mls398Person;
     private static UserSession ccs1Session;
-    private static UserSession mo14Session;
+    private static UserSession mls398Session;
     private static VendorService vendorService;
     private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
     private static TestDocumentHelperService documentHelperService;
@@ -93,9 +93,9 @@ public class CuDisbursementVoucherDocumentTest {
         PowerMockito.doNothing().when(cuDisbursementVoucherDocument, "clearDvPayeeIdType");
 
         ccs1Person = MockPersonUtil.createMockPerson(UserNameFixture.ccs1);
-        mo14Person = MockPersonUtil.createMockPerson(UserNameFixture.mo14);
+        mls398Person = MockPersonUtil.createMockPerson(UserNameFixture.mls398);
         ccs1Session = MockPersonUtil.createMockUserSession(ccs1Person);
-        mo14Session = MockPersonUtil.createMockUserSession(mo14Person);
+        mls398Session = MockPersonUtil.createMockUserSession(mls398Person);
 
         vendorService = new TestVendorService();
         disbursementVoucherPayeeService = new TestDisbursementVoucherPayeeService();
@@ -242,7 +242,7 @@ public class CuDisbursementVoucherDocumentTest {
         setupPayeeDetail("0", "23456");
         getDetailExtensionFromDv().setPayeeTypeSuffix(VENDOR_PAYEE_TYPE_SUFFIX);
         setupDocumentHelperWithPayeeEditMode(ccs1Person);
-        assertRefreshNotPerformedForUser(mo14Session);
+        assertRefreshNotPerformedForUser(mls398Session);
     }
 
     @Test
