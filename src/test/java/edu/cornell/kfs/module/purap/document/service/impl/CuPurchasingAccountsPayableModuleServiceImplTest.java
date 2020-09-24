@@ -12,7 +12,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 
-@ConfigureContext(session = UserNameFixture.mo14)
+@ConfigureContext(session = UserNameFixture.mls398)
 public class CuPurchasingAccountsPayableModuleServiceImplTest extends KualiIntegTestBase {
 
 	private static final Logger LOG = LogManager.getLogger(CuPurchasingAccountsPayableModuleServiceImplTest.class);

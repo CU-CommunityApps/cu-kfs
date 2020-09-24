@@ -19,21 +19,22 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 
 @ConfigureContext(session = ccs1)
 public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTestBase {
 
     private CuDisbursementVoucherDocument cuDisbursementVoucherDocument;
-    private DateTimeService dateTimeService;
+    private CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
     private DocumentService documentService;
     private VendorService vendorService;
 
     @Override
     public void setUp() throws Exception {
-        dateTimeService = SpringContext.getBean(DateTimeService.class);
+        cuDisbursementVoucherDefaultDueDateService = SpringContext.getBean(CuDisbursementVoucherDefaultDueDateService.class);
         documentService = SpringContext.getBean(DocumentService.class);
         vendorService = SpringContext.getBean(VendorService.class);
         cuDisbursementVoucherDocument = setupCuDisbursementVoucherDocument();
@@ -49,9 +50,7 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
         assertEquals("Test Document Description", cuDisbursementVoucherDocument.getDocumentHeader().getDocumentDescription());
         assertEquals("Salino, Catherine C.", cuDisbursementVoucherDocument.getDisbVchrContactPersonName());
         assertEquals("IT", cuDisbursementVoucherDocument.getCampusCode());
-        Calendar calendar = dateTimeService.getCurrentCalendar();
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        assertEquals(new Date(calendar.getTimeInMillis()), cuDisbursementVoucherDocument.getDisbursementVoucherDueDate());
+        assertEquals(cuDisbursementVoucherDefaultDueDateService.findDefaultDueDate(), cuDisbursementVoucherDocument.getDisbursementVoucherDueDate());
         assertEquals("O", cuDisbursementVoucherDocument.getDisbursementVoucherDocumentationLocationCode());
         assertEquals("DISB", cuDisbursementVoucherDocument.getDisbVchrBankCode());
 
@@ -123,5 +122,6 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
 
         return dv;
     }
+    
 
 }
