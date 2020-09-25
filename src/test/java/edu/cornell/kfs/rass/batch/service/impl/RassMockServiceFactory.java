@@ -21,7 +21,6 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.ProposalMaintainableImpl;
 import org.kuali.kfs.module.cg.service.AgencyService;
-import org.kuali.kfs.module.cg.service.AwardService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -225,19 +224,6 @@ public class RassMockServiceFactory {
                 .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_REPORT_ERROR_HEADER_LINE3);
         
         return configurationService;
-    }
-
-    public AwardService buildMockAwardService() throws Exception {
-        AwardService awardService = Mockito.mock(AwardService.class);
-        
-        Arrays.stream(RassXmlAwardEntryFixture.values())
-                .filter(fixture -> fixture.awardExistsByDefaultForSearching)
-                .forEach(fixture -> {
-                    Mockito.when(awardService.getByPrimaryId(fixture.proposalNumber))
-                            .thenReturn(fixture.toAward());
-                });
-        
-        return awardService;
     }
 
     public PersonService buildMockPersonService() throws Exception {

@@ -35,7 +35,6 @@ import org.kuali.kfs.module.cg.businessobject.Primaryable;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.service.AgencyService;
-import org.kuali.kfs.module.cg.service.AwardService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
@@ -68,7 +67,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
     private AgencyService mockAgencyService;
     private BusinessObjectService mockBusinessObjectService;
-    private AwardService mockAwardService;
     private RassServiceImpl rassService;
     private TestRassUpdateServiceImpl rassUpdateService;
 
@@ -89,7 +87,6 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         awardUpdates = new HashMap<>();
         mockAgencyService = springContext.getBean(RassTestConstants.AGENCY_SERVICE_BEAN_NAME, AgencyService.class);
         mockBusinessObjectService = springContext.getBean(RassTestConstants.BUSINESS_OBJECT_SERVICE_BEAN_NAME, BusinessObjectService.class);
-        mockAwardService = springContext.getBean(RassTestConstants.AWARD_SERVICE_BEAN_NAME, AwardService.class);
         
         rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, RassServiceImpl.class);
         rassService.setParsedObjectTypeProcessingWatcher(this::handleStartOfFileProcessing);
@@ -1314,8 +1311,10 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         Award award = (Award) awardMaintainable.getDataObject();
         String proposalNumber = award.getProposalNumber();
         awardUpdatesForCurrentFile.add(awardMaintainable);
+        Map<String, Object> awardPrimaryKeys = Collections.singletonMap(
+                KFSPropertyConstants.PROPOSAL_NUMBER, award.getProposalNumber());
         Mockito.doReturn(award)
-                .when(mockAwardService).getByPrimaryId(proposalNumber);
+                .when(mockBusinessObjectService).findByPrimaryKey(Award.class, awardPrimaryKeys);
     }
 
     private void overrideStatusesReturnedByRouteHeaderService(int documentNumberAsInt, String... routeStatuses) {
