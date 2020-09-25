@@ -59,16 +59,15 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
         Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
         asset.setLastInventoryDate(currentTimestamp);
         asset.setLastUpdatedTimestamp(currentTimestamp);
-        asset = businessObjectService.save(asset);
 
-        AssetExtension assetExtension = businessObjectService.findBySinglePrimaryKey(AssetExtension.class, capitalAssetNumber);
-        if (ObjectUtils.isNull(asset)) {
-            LOG.error("updateAssetInventory: Asset Extension #[" + capitalAssetNumber + "] not found ");
-            return null;
+        AssetExtension assetExtension = (AssetExtension) asset.getExtension();
+        if (ObjectUtils.isNull(assetExtension)) {
+            assetExtension = new AssetExtension();
+            asset.setExtension(assetExtension);
         }
         assetExtension.setLastScannedNetid(netid);
         assetExtension.setLastScannedDate(currentTimestamp);
-        businessObjectService.save(assetExtension);
+        asset = businessObjectService.save(asset);
         return asset;
     }
 
