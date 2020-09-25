@@ -8,13 +8,20 @@ import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetCondition;
+import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
+import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +36,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -44,6 +52,8 @@ public class CuCapAssetInventoryApiResource {
     private CuCapAssetInventoryDao cuCapAssetInventoryDao;
     private Gson gson = new Gson();
     private CuAssetService cuAssetService;
+    private DocumentService documentService;
+    private DateTimeService dateTimeService;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -132,6 +142,7 @@ public class CuCapAssetInventoryApiResource {
             Asset asset = getCuAssetService().updateAssetInventory(capitalAssetNumber, conditionCode, buildingCode, roomNumber);
             if (ObjectUtils.isNull(asset)) {
                 LOG.error("updateAsset: Asset Inventory #" + capitalAssetNumber + " Not Found");
+                createCapitalAssetErrorDocument(netid, capitalAssetNumber, assetTag, conditionCode, buildingCode, roomNumber);
                 return respondNotFound();
             }
             LOG.info("updateAsset: Updated Capital Asset Inventory #" + capitalAssetNumber + " " + asset.getLastInventoryDate().toString());
@@ -142,6 +153,39 @@ public class CuCapAssetInventoryApiResource {
             LOG.error("updateAsset", ex);
             return ex instanceof BadRequestException ? respondBadRequest() : respondInternalServerError(ex);
         }
+    }
+
+    private void createCapitalAssetErrorDocument(String netid, String capitalAssetNumber, String assetTag, String condition, String buildingCode, String roomNumber) {
+        try {
+            BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
+
+            document.getDocumentHeader().setExplanation("BARCODE ERROR INVENTORY");
+            document.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
+            String errorDescription = "Error Scanning asset Tag #" + assetTag + " Asset #" + capitalAssetNumber;
+            document.getDocumentHeader().setDocumentDescription(errorDescription);
+            document.setUploaderUniversalIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
+            List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
+            barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
+            document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
+            getDocumentService().saveDocument(document);
+            //getDocumentService().routeDocument(document);
+        } catch (Exception ex) {
+            LOG.error("createCapitalAssetErrorDocument", ex);
+        }
+    }
+
+    private BarcodeInventoryErrorDetail getErrorDetail(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
+        BarcodeInventoryErrorDetail barcodeInventoryErrorDetail = new BarcodeInventoryErrorDetail();
+        barcodeInventoryErrorDetail.setCampusCode("IT");
+        barcodeInventoryErrorDetail.setAssetTagNumber(assetTag);
+        barcodeInventoryErrorDetail.setUploadScanIndicator(true);
+        barcodeInventoryErrorDetail.setUploadScanTimestamp(getDateTimeService().getCurrentTimestamp());
+        barcodeInventoryErrorDetail.setBuildingCode(buildingCode);
+        barcodeInventoryErrorDetail.setBuildingRoomNumber(roomNumber);
+        barcodeInventoryErrorDetail.setAssetConditionCode(condition);
+        barcodeInventoryErrorDetail.setErrorCorrectionStatusCode(CamsConstants.BarCodeInventoryError.STATUS_CODE_ERROR);
+        barcodeInventoryErrorDetail.setCorrectorUniversalIdentifier(netid);
+        return barcodeInventoryErrorDetail;
     }
 
     private boolean validateUpdateAssetQueryParameters() {
@@ -221,6 +265,20 @@ public class CuCapAssetInventoryApiResource {
             cuAssetService = SpringContext.getBean(CuAssetServiceImpl.class);
         }
         return cuAssetService;
+    }
+
+    private DateTimeService getDateTimeService() {
+        if (ObjectUtils.isNull(dateTimeService)) {
+            dateTimeService = SpringContext.getBean(DateTimeService.class);
+        }
+        return dateTimeService;
+    }
+
+    private DocumentService getDocumentService() {
+        if (ObjectUtils.isNull(documentService)) {
+            documentService = SpringContext.getBean(DocumentService.class);
+        }
+        return documentService;
     }
 
 }
