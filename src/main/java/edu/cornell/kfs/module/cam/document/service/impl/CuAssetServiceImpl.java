@@ -12,6 +12,7 @@ import edu.cornell.kfs.module.cam.document.service.CuAssetService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kim.impl.identity.PersonServiceImpl;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
@@ -21,6 +22,7 @@ import org.kuali.kfs.module.cam.document.service.impl.AssetServiceImpl;
 
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.kim.api.identity.Person;
 
 public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetService {
 
@@ -29,6 +31,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
+    private PersonServiceImpl personService;
 
     public List<Asset> findActiveAssetsMatchingTagNumber(String campusTagNumber) {
         List<Asset> activeMatches = new ArrayList<>();
@@ -65,7 +68,9 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
             assetExtension = new AssetExtension();
             asset.setExtension(assetExtension);
         }
-        assetExtension.setLastScannedNetid(netid);
+        Person person = personService.getPersonByPrincipalName(netid);
+        String lastScannedBy = person.getFirstName() + " " + person.getLastName() + " (" + netid + ")";
+        assetExtension.setLastScannedNetid(lastScannedBy);
         assetExtension.setLastScannedDate(currentTimestamp);
         asset = businessObjectService.save(asset);
         return asset;
@@ -83,6 +88,10 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
 
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
+    }
+
+    public void setPersonService(PersonServiceImpl personService) {
+        this.personService = personService;
     }
 
 }

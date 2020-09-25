@@ -47,6 +47,7 @@
  	<bean id="assetService"  parent="assetService-parentBean"
  	     class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl">
 		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="personService" ref="personService" />
 	</bean>
 
 	<bean id="capitalAssetManagementModuleService" parent="capitalAssetManagementModuleService-parentBean" class="edu.cornell.kfs.module.cam.service.impl.CuCapitalAssetManagementModuleServiceImpl" />
