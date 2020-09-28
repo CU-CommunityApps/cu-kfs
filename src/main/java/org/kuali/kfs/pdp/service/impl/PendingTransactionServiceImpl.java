@@ -418,6 +418,11 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         return businessObjectDictionaryService;
     }
 
+    public void setBusinessObjectDictionaryService(
+            BusinessObjectDictionaryService businessObjectDictionaryService) {
+        this.businessObjectDictionaryService = businessObjectDictionaryService;
+    }
+
     // known user: UCI
     protected BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
