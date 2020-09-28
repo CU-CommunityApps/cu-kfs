@@ -39,5 +39,43 @@
             </list>
        </property>
    </bean>
+
+     <bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="AssetMaintenanceDocument-AssetDetailInformation" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="financialDocumentPostingPeriodCode" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                          <bean parent="MaintainableFieldDefinition" p:name="extension.lastScannedDate" p:unconditionallyReadOnly="true" />
+                       </list>
+                   </property>
+               </bean>
+            </list>
+       </property>
+   </bean>
+
+     <bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="AssetMaintenanceDocument-AssetDetailInformation" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="maintainableItems" />
+                   <property name="element">
+                           <bean parent="MaintainableFieldDefinition" p:name="financialDocumentPostingPeriodCode" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                          <bean parent="MaintainableFieldDefinition" p:name="extension.lastScannedBy" p:unconditionallyReadOnly="true" />
+                       </list>
+                   </property>
+               </bean>
+            </list>
+       </property>
+   </bean>
   
  </beans>
