@@ -126,27 +126,29 @@ public class CuCapAssetInventoryApiResource {
     }
 
     @PUT
-    @Path("asset/inventory/{capital_asset_number}")
+    @Path("asset/inventory/{assetTag}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateAsset(@PathParam(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_NUMBER) String capitalAssetNumber, @Context HttpHeaders headers) {
+    public Response updateAsset(@PathParam(CuCamsConstants.CapAssetApi.ASSET_TAG_PARAMETER) String assetTag, @Context HttpHeaders headers) {
         try {
             if (!validateUpdateAssetQueryParameters()) {
-                LOG.error("updateAsset: Bad Request for Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
+                LOG.error("updateAsset: Bad Request for Asset Tag #" + assetTag + " " + servletRequest.getQueryString());
                 return respondBadRequest();
             }
 
-            LOG.info("updateAsset: Requesting Capital Asset Inventory #" + capitalAssetNumber + " " + servletRequest.getQueryString());
+            LOG.info("updateAsset: Requesting Capital Asset Tag #" + assetTag + " " + servletRequest.getQueryString());
             String conditionCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.CONDITION_CODE);
             String buildingCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
             String roomNumber = servletRequest.getParameter(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
-            Asset asset = getCuAssetService().updateAssetInventory(capitalAssetNumber, conditionCode, buildingCode, roomNumber);
+            String netid = "ajd299";
+            Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTag);
             if (ObjectUtils.isNull(asset)) {
-                LOG.error("updateAsset: Asset Inventory #" + capitalAssetNumber + " Not Found");
-                createCapitalAssetErrorDocument(netid, capitalAssetNumber, assetTag, conditionCode, buildingCode, roomNumber);
+                LOG.error("updateAsset: Asset Inventory Tag #" + assetTag + " Not Found");
+                createCapitalAssetErrorDocument(netid, assetTag, conditionCode, buildingCode, roomNumber);
                 return respondNotFound();
             }
-            LOG.info("updateAsset: Updated Capital Asset Inventory #" + capitalAssetNumber + " " + asset.getLastInventoryDate().toString());
+            asset = getCuAssetService().updateAssetInventory(asset, conditionCode, buildingCode, roomNumber);
 
+            LOG.info("updateAsset: Updated Capital Asset Inventory Tag #" + assetTag + " " + asset.getLastInventoryDate().toString());
             Properties properties = getAssetProperties(asset);
             return Response.ok(gson.toJson(properties)).build();
         } catch (Exception ex) {
@@ -155,13 +157,13 @@ public class CuCapAssetInventoryApiResource {
         }
     }
 
-    private void createCapitalAssetErrorDocument(String netid, String capitalAssetNumber, String assetTag, String condition, String buildingCode, String roomNumber) {
+    private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         try {
             BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
 
             document.getDocumentHeader().setExplanation("BARCODE ERROR INVENTORY");
             document.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
-            String errorDescription = "Error Scanning asset Tag #" + assetTag + " Asset #" + capitalAssetNumber;
+            String errorDescription = "Error Scanning asset Tag #" + assetTag;
             document.getDocumentHeader().setDocumentDescription(errorDescription);
             document.setUploaderUniversalIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
             List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
