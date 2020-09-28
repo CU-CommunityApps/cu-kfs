@@ -9,8 +9,6 @@ import java.util.Map;
 
 import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
 import edu.cornell.kfs.module.cam.document.service.CuAssetService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kim.impl.identity.PersonServiceImpl;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -25,8 +23,6 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 
 public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetService {
-
-    private static final Logger LOG = LogManager.getLogger(AssetServiceImpl.class);
 
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
