@@ -3,6 +3,8 @@
 	<class-descriptor class="edu.cornell.kfs.module.cam.businessobject.AssetExtension" table="CM_CPTLAST_TX">
 		<field-descriptor name="capitalAssetNumber" column="CPTLAST_NBR" jdbc-type="BIGINT" primarykey="true" index="true" />
 		<field-descriptor name="serviceRateIndicator" column="SRVC_RATE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+		<field-descriptor name="lastScannedBy" column="LAST_SCANNED_BY" jdbc-type="VARCHAR"/>
+		<field-descriptor name="lastScannedDate" column="LAST_SCANNED_DT" jdbc-type="TIMESTAMP"/>
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
 		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 	</class-descriptor>

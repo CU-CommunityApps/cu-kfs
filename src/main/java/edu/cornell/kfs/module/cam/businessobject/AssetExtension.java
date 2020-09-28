@@ -5,6 +5,8 @@ package edu.cornell.kfs.module.cam.businessobject;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
+import java.sql.Timestamp;
+
 /**
  * @author kwk43
  *
@@ -13,6 +15,8 @@ public class AssetExtension extends PersistableBusinessObjectExtensionBase {
 
     private Long capitalAssetNumber;
     private boolean serviceRateIndicator;
+    private String lastScannedBy;
+    private Timestamp lastScannedDate;
 
     /**
      * @return the capitalAssetNumber
@@ -44,4 +48,19 @@ public class AssetExtension extends PersistableBusinessObjectExtensionBase {
         this.serviceRateIndicator = serviceRateIndicator;
     }
     
+    public String getLastScannedBy() {
+        return lastScannedBy;
+    }
+
+    public void setLastScannedBy(String lastScannedBy) {
+        this.lastScannedBy = lastScannedBy;
+    }
+
+    public Timestamp getLastScannedDate() {
+        return lastScannedDate;
+    }
+
+    public void setLastScannedDate(Timestamp lastScannedDate) {
+        this.lastScannedDate = lastScannedDate;
+    }
 }

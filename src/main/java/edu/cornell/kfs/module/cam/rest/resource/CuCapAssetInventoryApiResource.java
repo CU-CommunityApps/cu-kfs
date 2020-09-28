@@ -115,7 +115,8 @@ public class CuCapAssetInventoryApiResource {
             String conditionCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.CONDITION_CODE);
             String buildingCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
             String roomNumber = servletRequest.getParameter(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
-            Asset asset = getCuAssetService().updateAssetInventory(capitalAssetNumber, conditionCode, buildingCode, roomNumber);
+            String netid = servletRequest.getParameter(CuCamsConstants.CapAssetApi.NETID);
+            Asset asset = getCuAssetService().updateAssetInventory(capitalAssetNumber, conditionCode, buildingCode, roomNumber, netid);
             if (ObjectUtils.isNull(asset)) {
                 LOG.error("updateAsset: Asset Inventory #" + capitalAssetNumber + " Not Found");
                 return respondNotFound();
