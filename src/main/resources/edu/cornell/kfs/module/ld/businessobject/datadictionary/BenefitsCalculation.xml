@@ -11,8 +11,11 @@
   <!-- Business Object Lookup Definition -->
 
   <bean id="BenefitsCalculation-lookupDefinition" parent="BenefitsCalculation-lookupDefinition-parentBean"/>
-  <bean id="BenefitsCalculation-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
-        p:title="Labor Benefits Calculation Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+    <bean abstract="true"
+          id="BenefitsCalculation-lookupDefinition-parentBean"
+          parent="LookupDefinition"
+          p:lookupSearchService-ref="defaultLookupSearchService"
+          p:title="Labor Benefits Calculation Lookup">
       <property name="formAttributeDefinitions">
           <list>
               <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
@@ -58,33 +61,6 @@
                   </property>
               </bean>
               <ref bean="activeIndicatorDisplayAttributeDefinition"/>
-          </list>
-      </property>
-      <property name="lookupFields">
-          <list>
-              <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
-              <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-              <bean parent="FieldDefinition" p:attributeName="positionBenefitTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="laborBenefitRateCategoryCode"/>
-              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitObjectCode"/>
-              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitPercent"/>
-              <bean parent="FieldDefinition" p:attributeName="accountCodeOffset"/>
-              <bean parent="FieldDefinition" p:attributeName="objectCodeOffset"/>
-              <bean parent="FieldDefinition" p:attributeName="active"/>
-          </list>
-      </property>
-      <property name="resultFields">
-          <list>
-              <bean parent="FieldDefinition" p:attributeName="laborBenefitsCalculationViewer"/>
-              <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
-              <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-              <bean parent="FieldDefinition" p:attributeName="positionBenefitTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="laborBenefitRateCategoryCode"/>
-              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitObjectCode"/>
-              <bean parent="FieldDefinition" p:attributeName="accountCodeOffset"/>
-              <bean parent="FieldDefinition" p:attributeName="objectCodeOffset"/>
-              <bean parent="FieldDefinition" p:attributeName="positionFringeBenefitPercent"/>
-              <bean parent="FieldDefinition" p:attributeName="active"/>
           </list>
       </property>
   </bean>

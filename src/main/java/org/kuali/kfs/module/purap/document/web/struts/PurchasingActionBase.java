@@ -81,7 +81,6 @@ import org.kuali.kfs.module.purap.document.validation.event.AttributedUpdateCams
 import org.kuali.kfs.module.purap.exception.ItemParserException;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.util.ItemParser;
-import org.kuali.kfs.module.purap.util.PurApArrayList;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -646,12 +645,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
 
         PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
-
-        if (!purDocument.getPurchasingCapitalAssetItems().isEmpty()) {
-            purDocument.setPurchasingCapitalAssetItems(new PurApArrayList(
-                    purDocument.getPurchasingCapitalAssetItemClass()));
-            SpringContext.getBean(PurapService.class).saveDocumentNoValidation(purDocument);
-        }
 
         purDocument.deleteItem(getSelectedLine(request));
 

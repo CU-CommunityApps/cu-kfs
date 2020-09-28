@@ -75,7 +75,6 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -291,8 +290,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     /**
-     * Iterates through the purchasingCapitalAssetItems of the document and returns the purchasingCapitalAssetItem with
-     * the item id equal to the number given, or null if a match is not found.
+     * Iterates through the purchasingCapitalAssetItems of the document and returns the purchasingCapitalAssetItem
+     * with the item id equal to the number given, or null if a match is not found.
      *
      * @param itemIdentifier item id to match on.
      * @return the PurchasingCapitalAssetItem if a match is found, else null.
@@ -1514,23 +1513,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         managedLists.add(getDeletionAwareAccountingLines());
         managedLists.add(getDeletionAwareUseTaxItems());
         if (allowDeleteAwareCollection) {
-            List assetLists = new ArrayList<>();
-            if (StringUtils.equals(getCapitalAssetSystemTypeCode(),
-                    PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                for (PurchasingCapitalAssetItem capitalAssetItem : getPurchasingCapitalAssetItems()) {
-                    CapitalAssetSystem system = capitalAssetItem.getPurchasingCapitalAssetSystem();
-                    if (ObjectUtils.isNotNull(system)) {
-                        assetLists.addAll(system.getItemCapitalAssets());
-                        assetLists.addAll(system.getCapitalAssetLocations());
-                    }
-                }
-            } else {
-                for (CapitalAssetSystem system : getPurchasingCapitalAssetSystems()) {
-                    assetLists.addAll(system.getItemCapitalAssets());
-                    assetLists.addAll(system.getCapitalAssetLocations());
-                }
-            }
-            managedLists.add(assetLists);
             managedLists.add(getPurchasingCapitalAssetSystems());
             managedLists.add(getPurchasingCapitalAssetItems());
             managedLists.add(getItems());
@@ -1606,7 +1588,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         this.setCapitalAssetSystemTypeCode(null);
         this.setCapitalAssetSystemState(null);
         this.setCapitalAssetSystemType(null);
-
     }
 
     public boolean getPaymentRequestPositiveApprovalIndicatorForSearching() {

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,6 @@ import org.kuali.kfs.module.ar.businessobject.OrganizationAccountingDefault;
 import org.kuali.kfs.module.ar.businessobject.SystemInformation;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
-import org.kuali.kfs.module.ar.report.PdfFormattingMap;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -54,16 +54,16 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     protected Map<String, String> getTemplateParameterList(ContractsGrantsInvoiceDocument document) {
         Map<String, String> templateParameters = super.getTemplateParameterList(document);
         
-        Map<String, Object> localParameterMap = getInstitutionTemplateParameters(document);
+        Map<String, String> localParameterMap = getInstitutionTemplateParameters(document);
         
         if(!localParameterMap.isEmpty()) {
-            templateParameters.putAll(new PdfFormattingMap(localParameterMap));
+            templateParameters.putAll(localParameterMap);
         }
               
         return templateParameters;
     }
 
-    protected Map<String, Object> getInstitutionTemplateParameters(ContractsGrantsInvoiceDocument document) {
+    protected Map<String, String> getInstitutionTemplateParameters(ContractsGrantsInvoiceDocument document) {
         Map<String, Object> localParameterMap =  new HashMap<String, Object>();
         
         if (document.getInvoiceGeneralDetail().isFinalBillIndicator()) {
@@ -88,7 +88,8 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             LOG.debug("getInstitutionTemplateParameters, there were local parameters, these will be in the returned map.");
         }
         
-        return localParameterMap;
+        return localParameterMap.keySet().stream()
+                .collect(Collectors.toMap(key -> key, key -> stringifyValue(localParameterMap.get(key)), (a, b) -> b));
     }
     
     protected void setAwardExtendedAttributeValuesInParameterMap(ContractsGrantsInvoiceDocument document, Map<String, Object> localParameterMap) {
