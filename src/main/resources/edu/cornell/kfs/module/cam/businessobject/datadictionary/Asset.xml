@@ -10,7 +10,7 @@
      <property name="attributes">
       <list  merge="true">
          <ref bean="Asset-assetLocations.assetLocationTypeCode"/>
-         <ref bean="Asset-extension-lastScannedNetid"/>
+         <ref bean="Asset-extension-lastScannedBy"/>
          <ref bean="Asset-extension-lastScannedDate"/>
           <ref bean="Asset-extension-serviceRateIndicator"/>
       </list>
@@ -40,9 +40,9 @@
     <property name="name" value="extension.serviceRateIndicator"/>
   </bean>
 
-  <bean id="Asset-extension-lastScannedNetid" parent="Asset-extension-lastScannedNetid-parentBean"/>
-  <bean id="Asset-extension-lastScannedNetid-parentBean" abstract="true" parent="AssetExtension-lastScannedNetid" >
-    <property name="name" value="extension.lastScannedNetid"/>
+  <bean id="Asset-extension-lastScannedBy" parent="Asset-extension-lastScannedBy-parentBean"/>
+  <bean id="Asset-extension-lastScannedBy-parentBean" abstract="true" parent="AssetExtension-lastScannedBy" >
+    <property name="name" value="extension.lastScannedBy"/>
   </bean>
 
   <bean id="Asset-extension-lastScannedDate" parent="Asset-extension-lastScannedDate-parentBean"/>
@@ -65,7 +65,7 @@
                   </property>
                   <property name="insertAfter">
                       <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.lastScannedNetid" />
+                          <bean parent="FieldDefinition" p:attributeName="extension.lastScannedBy" />
                           <bean parent="FieldDefinition" p:attributeName="extension.lastScannedDate" />
                           <bean parent="FieldDefinition" p:attributeName="extension.serviceRateIndicator" />
                       </list>

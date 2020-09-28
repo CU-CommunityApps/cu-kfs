@@ -15,7 +15,7 @@ public class AssetExtension extends PersistableBusinessObjectExtensionBase {
 
     private Long capitalAssetNumber;
     private boolean serviceRateIndicator;
-    private String lastScannedNetid;
+    private String lastScannedBy;
     private Timestamp lastScannedDate;
 
     /**
@@ -48,12 +48,12 @@ public class AssetExtension extends PersistableBusinessObjectExtensionBase {
         this.serviceRateIndicator = serviceRateIndicator;
     }
     
-    public String getLastScannedNetid() {
-        return lastScannedNetid;
+    public String getLastScannedBy() {
+        return lastScannedBy;
     }
 
-    public void setLastScannedNetid(String lastScannedNetid) {
-        this.lastScannedNetid = lastScannedNetid;
+    public void setLastScannedBy(String lastScannedBy) {
+        this.lastScannedBy = lastScannedBy;
     }
 
     public Timestamp getLastScannedDate() {
