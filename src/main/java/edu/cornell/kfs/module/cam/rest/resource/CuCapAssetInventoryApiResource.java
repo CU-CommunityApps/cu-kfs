@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.businessobject.Asset;
-import org.kuali.kfs.module.cam.businessobject.AssetCondition;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
@@ -82,19 +81,6 @@ public class CuCapAssetInventoryApiResource {
             return Response.ok(gson.toJson(buildingsSerialized)).build();
         } catch (Exception ex) {
             LOG.error("getBuildings", ex);
-            return ex instanceof BadRequestException ? respondBadRequest() : respondInternalServerError(ex);
-        }
-    }
-
-    @GET
-    @Path("conditions")
-    public Response getAssetConditions(@Context HttpHeaders headers) {
-        try {
-            List<AssetCondition> conditions = getCuCapAssetInventoryDao().getAssetConditions();
-            List<Properties> conditionsSerialized = conditions.stream().map(c -> buildAssetConditionProperties(c)).collect(Collectors.toList());
-            return Response.ok(gson.toJson(conditionsSerialized)).build();
-        } catch (Exception ex) {
-            LOG.error("getAssetConditions", ex);
             return ex instanceof BadRequestException ? respondBadRequest() : respondInternalServerError(ex);
         }
     }
@@ -172,13 +158,6 @@ public class CuCapAssetInventoryApiResource {
         safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, building.getBuildingCode());
         safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_NAME, building.getBuildingName());
         return buildingProperties;
-    }
-
-    private Properties buildAssetConditionProperties(AssetCondition condition) {
-        Properties assetConditionProperties = new Properties();
-        safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_CODE, condition.getAssetConditionCode());
-        safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_NAME, condition.getAssetConditionName());
-        return assetConditionProperties;
     }
 
     private void safelyAddProperty(Properties properties, String key, Long value) {
