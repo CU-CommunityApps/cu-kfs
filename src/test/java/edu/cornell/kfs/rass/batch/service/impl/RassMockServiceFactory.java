@@ -175,6 +175,15 @@ public class RassMockServiceFactory {
                             .thenReturn(fixture.toProposal());
                 });
         
+        Arrays.stream(RassXmlAwardEntryFixture.values())
+        .filter(fixture -> fixture.awardExistsByDefaultForSearching)
+        .forEach(fixture -> {
+            Map<String, Object> awardPrimaryKeys = Collections.singletonMap(
+                    KFSPropertyConstants.PROPOSAL_NUMBER, fixture.proposalNumber);
+            Mockito.when(businessObjectService.findByPrimaryKey(Award.class, awardPrimaryKeys))
+                    .thenReturn(fixture.toAward());
+        });
+        
         return businessObjectService;
     }
 
