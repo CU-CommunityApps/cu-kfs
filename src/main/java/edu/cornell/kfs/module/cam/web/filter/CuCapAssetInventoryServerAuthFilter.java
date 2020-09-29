@@ -49,7 +49,8 @@ public class CuCapAssetInventoryServerAuthFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "DELETE, PUT, POST, GET, OPTIONS");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", "cognito_id_token, Origin, Accept, X-Requested-With, Content-Type, Authorization, Access-Control-Request-Method, Access-Control-Request-Headers");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "cognito_id_token, cognito_access_token, Origin, Accept, X-Requested-With, Content-Type, Authorization, Access-Control-Request-Method, Access-Control-Request-Headers");
+        
         if (httpServletRequest.getMethod().equalsIgnoreCase("options")) {
             chain.doFilter(request, response);
         } else {
