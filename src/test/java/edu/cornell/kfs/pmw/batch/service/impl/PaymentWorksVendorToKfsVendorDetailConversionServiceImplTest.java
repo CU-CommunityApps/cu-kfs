@@ -28,6 +28,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     
+    private static final String DIVERSITY_TEST_VALUE = "diversity test";
     private static final String LEGACY_PO_COUNTRY = "legacy po country";
     private static final String FOREIGN_PO_COUNTRY = "foreign po country";
     private static final String ARUBA_ISO_CODE = "AW";
@@ -109,7 +110,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     @Test
     void testShouldCreateContactLegacyGoodContact() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        String contactName = "foo";
+        String contactName = DIVERSITY_TEST_VALUE;
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
@@ -130,7 +131,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     @Test
     void testShouldCreateContactForeignGoodContact() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
-        String contactName = "foo";
+        String contactName = DIVERSITY_TEST_VALUE;
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
@@ -208,8 +209,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testBuildPOFipsCountryCodeBadCountryForeignMode() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         String expectedPoCountry = StringUtils.EMPTY;
-        pmwVendor.setPoCountryUsCanadaAustraliaOther("foo");
-        pmwVendor.setPoCountry("foo");
+        pmwVendor.setPoCountryUsCanadaAustraliaOther(DIVERSITY_TEST_VALUE);
+        pmwVendor.setPoCountry(DIVERSITY_TEST_VALUE);
         String actualPoCountry = conversionService.buildPOFipsCountryCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
         assertEquals(expectedPoCountry, actualPoCountry);
     }
@@ -408,7 +409,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
-        pmwVendor.setStateDivsersityClassifications("foo");
+        pmwVendor.setStateDivsersityClassifications(DIVERSITY_TEST_VALUE);
         assertTrue(conversionService.isDiverseBusiness(pmwVendor));
     }
     
@@ -417,8 +418,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
-        pmwVendor.setStateDivsersityClassifications("foo");
-        pmwVendor.setFederalDivsersityClassifications("foo");
+        pmwVendor.setStateDivsersityClassifications(DIVERSITY_TEST_VALUE);
+        pmwVendor.setFederalDivsersityClassifications(DIVERSITY_TEST_VALUE);
         assertTrue(conversionService.isDiverseBusiness(pmwVendor));
     }
     
@@ -427,7 +428,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
-        pmwVendor.setFederalDivsersityClassifications("foo");
+        pmwVendor.setFederalDivsersityClassifications(DIVERSITY_TEST_VALUE);
         assertTrue(conversionService.isDiverseBusiness(pmwVendor));
     }
     
