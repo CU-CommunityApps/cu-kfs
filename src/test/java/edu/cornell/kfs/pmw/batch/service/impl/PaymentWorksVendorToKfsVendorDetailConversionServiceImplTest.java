@@ -387,4 +387,56 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
     }
     
+    @Test
+    void testIsDiverseLegacyDiverseYes() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setDiverseBusiness(true);
+        assertTrue(conversionService.isDiverseBusiness(pmwVendor));
+    }
+    
+    @Test
+    void testIsDiverseLegacyDiverseNo() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setDiverseBusiness(false);
+        assertFalse(conversionService.isDiverseBusiness(pmwVendor));
+    }
+    
+    @Test
+    void testIsDiverseForeignDiverseState() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setDiverseBusiness(false);
+        pmwVendor.setStateDivsersityClassifications("foo");
+        assertTrue(conversionService.isDiverseBusiness(pmwVendor));
+    }
+    
+    @Test
+    void testIsDiverseForeignDiverseStateFed() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setDiverseBusiness(false);
+        pmwVendor.setStateDivsersityClassifications("foo");
+        pmwVendor.setFederalDivsersityClassifications("foo");
+        assertTrue(conversionService.isDiverseBusiness(pmwVendor));
+    }
+    
+    @Test
+    void testIsDiverseForeignDiverseFed() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setDiverseBusiness(false);
+        pmwVendor.setFederalDivsersityClassifications("foo");
+        assertTrue(conversionService.isDiverseBusiness(pmwVendor));
+    }
+    
+    @Test
+    void testIsDiverseForeignDiverseNone() {
+        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setDiverseBusiness(false);
+        assertFalse(conversionService.isDiverseBusiness(pmwVendor));
+    }
+    
 }

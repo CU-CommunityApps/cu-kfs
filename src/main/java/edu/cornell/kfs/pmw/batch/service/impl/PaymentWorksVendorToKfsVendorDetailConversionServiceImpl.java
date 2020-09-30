@@ -770,7 +770,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     
     private List<VendorSupplierDiversity> buildVendorDiversities(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
         List<VendorSupplierDiversity> kfsVendorSupplierDiversities = new ArrayList<VendorSupplierDiversity>();
-        if (pmwVendor.isDiverseBusiness()) {
+        if (isDiverseBusiness(pmwVendor)) {
             if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
                 List<VendorSupplierDiversity> kfsVendorSupplierDiversitiesForCheckBoxes = new ArrayList<VendorSupplierDiversity>();
                 kfsVendorSupplierDiversitiesForCheckBoxes = buildVendorDiversitiesFromPmwFormCheckboxes(pmwVendor, paymentWorksToKfsDiversityMap, kfsVendorSupplierDiversitiesForCheckBoxes);
@@ -787,6 +787,18 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             }
         }
         return kfsVendorSupplierDiversities;
+    }
+    
+    protected boolean isDiverseBusiness(PaymentWorksVendor pmwVendor) {
+        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
+            return pmwVendor.isDiverseBusiness();
+        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
+            return pmwVendor.isDiverseBusiness() || 
+                    StringUtils.isNotBlank(pmwVendor.getFederalDivsersityClassifications()) || 
+                    StringUtils.isNotBlank(pmwVendor.getStateDivsersityClassifications());
+        } else {
+            throw new IllegalStateException("invalid form mode service");
+        }
     }
     
     private List<VendorSupplierDiversity> buildVendorDiversitiesFromPmwFormDropDownLists(PaymentWorksVendor pmwVendor, Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, List<VendorSupplierDiversity> kfsVendorSupplierDiversities) {

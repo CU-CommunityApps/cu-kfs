@@ -138,6 +138,15 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     }
     
     @Test
+    public void testBuildSuppplierDivsersityListFromPaymentWorksVendorWittOneStateClass() {
+        pmwVendor.setFederalDivsersityClassifications(StringUtils.EMPTY);
+        pmwVendor.setStateDivsersityClassifications(WBE_DESCRIPTION);
+        
+        List<VendorSupplierDiversity> actualDiversities = supplierSerivce.buildSuppplierDivsersityListFromPaymentWorksVendor(pmwVendor);
+        assertEquals(1, actualDiversities.size());
+    }
+    
+    @Test
     public void testBuildSuppplierDivsersityListFromPaymentWorksVendorWithCaseDifference() {
         pmwVendor.setFederalDivsersityClassifications("8(A) AFRICAN AMERICAN");
         pmwVendor.setStateDivsersityClassifications(StringUtils.EMPTY);

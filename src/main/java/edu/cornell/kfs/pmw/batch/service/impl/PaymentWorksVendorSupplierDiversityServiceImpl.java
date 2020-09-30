@@ -33,6 +33,12 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
     public List<VendorSupplierDiversity> buildSuppplierDivsersityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor) {
         List<VendorSupplierDiversity> diversities = new ArrayList<VendorSupplierDiversity>();
         List<String> vendorDiversityCodesAlreadyAdded = new ArrayList<String>();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("buildSuppplierDivsersityListFromPaymentWorksVendor, federal diversity options " +  
+                    pmwVendor.getFederalDivsersityClassifications());
+            LOG.info("buildSuppplierDivsersityListFromPaymentWorksVendor, state diversity options " +  
+                    pmwVendor.getStateDivsersityClassifications());
+        }
         diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getFederalDivsersityClassifications(), 
                 kfsSupplierDiversityDao.buildPmwToKfsFederalSupplierDiversityListForForeignForm(), 
                 vendorDiversityCodesAlreadyAdded));
