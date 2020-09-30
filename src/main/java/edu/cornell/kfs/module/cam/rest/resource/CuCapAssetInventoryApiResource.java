@@ -165,6 +165,7 @@ public class CuCapAssetInventoryApiResource {
 
     private BarcodeInventoryErrorDetail getErrorDetail(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         BarcodeInventoryErrorDetail barcodeInventoryErrorDetail = new BarcodeInventoryErrorDetail();
+        barcodeInventoryErrorDetail.setUploadRowNumber(1L);
         barcodeInventoryErrorDetail.setCampusCode("IT");
         barcodeInventoryErrorDetail.setAssetTagNumber(assetTag);
         barcodeInventoryErrorDetail.setUploadScanIndicator(true);
