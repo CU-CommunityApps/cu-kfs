@@ -13,7 +13,6 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
-import org.kuali.kfs.module.cam.businessobject.AssetCondition;
 import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
 import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -97,19 +96,6 @@ public class CuCapAssetInventoryApiResource {
     }
 
     @GET
-    @Path("conditions")
-    public Response getAssetConditions(@Context HttpHeaders headers) {
-        try {
-            List<AssetCondition> conditions = getCuCapAssetInventoryDao().getAssetConditions();
-            List<Properties> conditionsSerialized = conditions.stream().map(c -> buildAssetConditionProperties(c)).collect(Collectors.toList());
-            return Response.ok(gson.toJson(conditionsSerialized)).build();
-        } catch (Exception ex) {
-            LOG.error("getAssetConditions", ex);
-            return ex instanceof BadRequestException ? respondBadRequest() : respondInternalServerError(ex);
-        }
-    }
-
-    @GET
     @Path("asset/{assetTag}")
     public Response getAsset(@PathParam(CuCamsConstants.CapAssetApi.ASSET_TAG_PARAMETER) String assetTag, @Context HttpHeaders headers) {
         try {
@@ -139,15 +125,16 @@ public class CuCapAssetInventoryApiResource {
             String conditionCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.CONDITION_CODE);
             String buildingCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
             String roomNumber = servletRequest.getParameter(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
-            String netid = "ajd299";
+            String netid = servletRequest.getParameter(CuCamsConstants.CapAssetApi.NETID);
+
             Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTag);
             if (ObjectUtils.isNull(asset)) {
                 LOG.error("updateAsset: Asset Inventory Tag #" + assetTag + " Not Found");
                 createCapitalAssetErrorDocument(netid, assetTag, conditionCode, buildingCode, roomNumber);
                 return respondNotFound();
             }
-            asset = getCuAssetService().updateAssetInventory(asset, conditionCode, buildingCode, roomNumber);
 
+            asset = getCuAssetService().updateAssetInventory(asset, conditionCode, buildingCode, roomNumber, netid);
             LOG.info("updateAsset: Updated Capital Asset Inventory Tag #" + assetTag + " " + asset.getLastInventoryDate().toString());
             Properties properties = getAssetProperties(asset);
             return Response.ok(gson.toJson(properties)).build();
@@ -217,13 +204,6 @@ public class CuCapAssetInventoryApiResource {
         safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_CODE, building.getBuildingCode());
         safelyAddProperty(buildingProperties, CuCamsConstants.CapAssetApi.BUILDING_NAME, building.getBuildingName());
         return buildingProperties;
-    }
-
-    private Properties buildAssetConditionProperties(AssetCondition condition) {
-        Properties assetConditionProperties = new Properties();
-        safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_CODE, condition.getAssetConditionCode());
-        safelyAddProperty(assetConditionProperties, CuCamsConstants.CapAssetApi.CONDITION_NAME, condition.getAssetConditionName());
-        return assetConditionProperties;
     }
 
     private void safelyAddProperty(Properties properties, String key, Long value) {
