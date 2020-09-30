@@ -110,7 +110,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     @Test
     void testShouldCreateContactLegacyGoodContact() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        String contactName = DIVERSITY_TEST_VALUE;
+        String contactName = "foo";
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
@@ -131,7 +131,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     @Test
     void testShouldCreateContactForeignGoodContact() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
-        String contactName = DIVERSITY_TEST_VALUE;
+        String contactName = "foo";
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
@@ -209,8 +209,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testBuildPOFipsCountryCodeBadCountryForeignMode() {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         String expectedPoCountry = StringUtils.EMPTY;
-        pmwVendor.setPoCountryUsCanadaAustraliaOther(DIVERSITY_TEST_VALUE);
-        pmwVendor.setPoCountry(DIVERSITY_TEST_VALUE);
+        pmwVendor.setPoCountryUsCanadaAustraliaOther("foo");
+        pmwVendor.setPoCountry("foo");
         String actualPoCountry = conversionService.buildPOFipsCountryCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
         assertEquals(expectedPoCountry, actualPoCountry);
     }
