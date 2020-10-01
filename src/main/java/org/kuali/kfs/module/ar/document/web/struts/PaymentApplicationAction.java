@@ -83,18 +83,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     private CustomerInvoiceDetailService customerInvoiceDetailService;
     private NonAppliedHoldingService nonAppliedHoldingService;
     // CU Customization: Part of invoice-paid-applied deletion enhancement.
-    protected InvoicePaidAppliedDao invoicePaidAppliedDao;
-
-    public PaymentApplicationAction() {
-        super();
-        businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-        paymentApplicationDocumentService = SpringContext.getBean(PaymentApplicationDocumentService.class);
-        customerInvoiceDocumentService = SpringContext.getBean(CustomerInvoiceDocumentService.class);
-        customerInvoiceDetailService = SpringContext.getBean(CustomerInvoiceDetailService.class);
-        nonAppliedHoldingService = SpringContext.getBean(NonAppliedHoldingService.class);
-        // CU Customization: Part of invoice-paid-applied deletion enhancement.
-        invoicePaidAppliedDao = SpringContext.getBean(InvoicePaidAppliedDao.class);
-    }
+    private InvoicePaidAppliedDao invoicePaidAppliedDao;
 
     /**
      * Invoked when the "Adjust" button is selected.
@@ -994,7 +983,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     protected void manuallyAddressInvoicePaidAppliedDeletions(PaymentApplicationForm paymentApplicationForm) {
         if (paymentApplicationForm.isManualInvoicePaidAppliedDatabaseDeletionRequired()) {
             PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
-            invoicePaidAppliedDao.deleteAllInvoicePaidApplieds(paymentApplicationDocument.getDocumentNumber());
+            getInvoicePaidAppliedDao().deleteAllInvoicePaidApplieds(paymentApplicationDocument.getDocumentNumber());
             paymentApplicationForm.setManualInvoicePaidAppliedDatabaseDeletionRequired(false);
         }
     }
@@ -1058,6 +1047,15 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         }
         return businessObjectService;
     }
+    
+    // CU Customization: Part of invoice-paid-applied deletion enhancement.
+    protected InvoicePaidAppliedDao getInvoicePaidAppliedDao() {
+        if (invoicePaidAppliedDao == null) {
+            invoicePaidAppliedDao = SpringContext.getBean(InvoicePaidAppliedDao.class);
+        }
+        return invoicePaidAppliedDao;
+    }
+
 
     /**
      * An inner class to point to a specific entry in a group

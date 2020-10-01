@@ -52,7 +52,8 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      */
     @Override
     protected Map<String, String> getTemplateParameterList(ContractsGrantsInvoiceDocument document) {
-        Map<String, String> templateParameters = super.getTemplateParameterList(document);
+        Map<String, String> templateParameters = new HashMap<String, String>();
+        templateParameters.putAll(super.getTemplateParameterList(document));
         
         Map<String, String> localParameterMap = getInstitutionTemplateParameters(document);
         

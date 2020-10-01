@@ -37,7 +37,7 @@ public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider
         List<Action> actionLinks = new LinkedList<>();
 
         if (canCreateDoneFile(batchFile, user)) {
-            actionLinks.add(new Action("Create Done", "GET", getCreateDoneUrl(batchFile)));
+            actionLinks.add(new Action("Create Done", "GET", KRAD_URL_PREFIX + getCreateDoneUrl(batchFile)));
         }
 
         return actionLinks;
