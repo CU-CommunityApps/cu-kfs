@@ -44,6 +44,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.util.UUID;
 
+/*
+ * Backported KualiCo fix:
+ * Added the FINP-7046 fix from the 2020-09-10 financials patch. This can be removed once we upgrade to this release.
+ */
 public abstract class LoginFilterBase implements Filter {
 
     private static final String MDC_USER = "user";

@@ -23,6 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Optional;
 
+/*
+ * Backported KualiCo fix:
+ * Added the FINP-7046 fix from the 2020-09-10 financials patch. This can be removed once we upgrade to this release.
+ */
 public class CookieUtils {
 
     public static final String AUTH_TOKEN_COOKIE_NAME = "authToken";
