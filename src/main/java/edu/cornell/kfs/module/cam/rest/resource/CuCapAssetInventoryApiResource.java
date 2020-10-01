@@ -152,12 +152,14 @@ public class CuCapAssetInventoryApiResource {
             document.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
             String errorDescription = "Error Scanning asset Tag #" + assetTag;
             document.getDocumentHeader().setDocumentDescription(errorDescription);
+            String principleId = GlobalVariables.getUserSession().getPerson().getPrincipalId();
+            LOG.info("GlobalVariables.getUserSession " + principleId);
             document.setUploaderUniversalIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
             List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
             barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
             document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
             getDocumentService().saveDocument(document);
-            //getDocumentService().routeDocument(document);
+            getDocumentService().routeDocument(document, "", new ArrayList<>());
         } catch (Exception ex) {
             LOG.error("createCapitalAssetErrorDocument", ex);
         }

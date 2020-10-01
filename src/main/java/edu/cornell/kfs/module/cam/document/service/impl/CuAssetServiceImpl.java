@@ -59,6 +59,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
             assetExtension = new AssetExtension();
             asset.setExtension(assetExtension);
         }
+
         Person person = personService.getPersonByPrincipalName(netid);
         String lastScannedBy = person.getFirstName() + " " + person.getLastName() + " (" + netid + ")";
         assetExtension.setLastScannedBy(lastScannedBy);
