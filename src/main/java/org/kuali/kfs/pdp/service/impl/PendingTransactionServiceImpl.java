@@ -67,17 +67,17 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
     public static final String REF_FDOC_TYP_CD_LIABILITY_CHECK = "PO";
 
-    // CU Customization: Change appropriate service variables from private to protected.
     private PendingTransactionDao glPendingTransactionDao;
     private AccountingPeriodService accountingPeriodService;
     private DateTimeService dateTimeService;
     private ConfigurationService kualiConfigurationService;
-    protected BusinessObjectDictionaryService businessObjectDictionaryService;
+    private BusinessObjectDictionaryService businessObjectDictionaryService;
     private BusinessObjectService businessObjectService;
     private BankService bankService;
     protected DataDictionaryService dataDictionaryService;
     protected ParameterService parameterService;
     private ResearchParticipantPaymentValidationService researchParticipantPaymentValidationService;
+    // CU Customization: Change pdpUtilService service variable from private to protected.
     protected PdpUtilService pdpUtilService;
     private OffsetDefinitionService offsetDefinitionService;
     private FlexibleOffsetAccountService flexibleOffsetAccountService;
@@ -411,6 +411,11 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
     public void setConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
+    }
+
+    // known user: Cornell
+    protected BusinessObjectDictionaryService getBusinessObjectDictionaryService() {
+        return businessObjectDictionaryService;
     }
 
     public void setBusinessObjectDictionaryService(

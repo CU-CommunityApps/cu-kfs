@@ -9,13 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardFundManager;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
-import org.kuali.kfs.module.cg.service.AwardService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -30,12 +30,12 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class AwardTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAwardEntry, Award> {
     private static final Logger LOG = LogManager.getLogger(AwardTranslationDefinition.class);
 
-    private AwardService awardService;
+    private BusinessObjectService businessObjectService;
     private DateTimeService dateTimeService;
     private ParameterService parameterService;
 
-    public void setAwardService(AwardService awardService) {
-        this.awardService = awardService;
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
     public void setDateTimeService(DateTimeService dateTimeService) {
@@ -173,7 +173,9 @@ public class AwardTranslationDefinition extends RassObjectTranslationDefinition<
 
     @Override
     public Award findExistingObject(RassXmlAwardEntry xmlAward) {
-        return awardService.getByPrimaryId(xmlAward.getProposalNumber());
+        Map<String, String> primaryKeys = new HashMap<String, String>();
+        primaryKeys.put(KFSPropertyConstants.PROPOSAL_NUMBER, xmlAward.getProposalNumber());
+        return businessObjectService.findByPrimaryKey(Award.class, primaryKeys);
     }
 
     @Override

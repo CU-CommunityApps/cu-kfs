@@ -47,6 +47,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.rest.resource.responses.LookupResponse;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.kim.api.identity.Person;
@@ -103,7 +104,7 @@ public class LookupResource {
     }
 
     @GET
-    public Response getLookupForm() {
+    public Response getLookup() {
         Class classForType = businessObjectEntry.getBusinessObjectClass();
         if (!isAuthorizedForLookup(classForType)) {
             Person user = KRADUtils.getUserSessionFromRequest(this.servletRequest).getPerson();
@@ -130,20 +131,16 @@ public class LookupResource {
             throw new InternalServerErrorException("The requested lookup is currently unavailable.");
         }
 
-        Map<String, Object> resultsList = new LinkedHashMap<>();
-        resultsList.put("fields", searchService.getSearchResultsAttributes(classForType));
-        resultsList.put("defaultSortFields",
-                getBusinessObjectDictionaryService().getLookupDefaultSortFieldNames(classForType));
-
-        Map<String, Object> responseData = new LinkedHashMap<>();
-        responseData.put("title", title);
+        LookupResponse.Create create = null;
         if (shouldCreateNewUrlBeIncluded(classForType)) {
-            responseData.put("create", getCreateBlock(classForType));
+            create = getCreateBlock(classForType);
         }
-        responseData.put("form", lookupAttributes);
-        responseData.put("results", resultsList);
 
-        return Response.ok(responseData).build();
+        LookupResponse.Results results = new LookupResponse.Results(
+                searchService.getSearchResultsAttributes(classForType),
+                getBusinessObjectDictionaryService().getLookupDefaultSortFieldNames(classForType));
+        LookupResponse lookupResponse = new LookupResponse(title, lookupAttributes, create, results);
+        return Response.ok(lookupResponse).build();
     }
 
     @GET
@@ -262,6 +259,11 @@ public class LookupResource {
         return valuesMap;
     }
 
+    private LookupResponse.Create getCreateBlock(Class classForType) {
+        String url = getCreateNewUrl(classForType);
+        return new LookupResponse.Create("kr/" + url, "Create New");
+    }
+
     /*
      * CU Customization: Added this method and the one right below it,
      * to forcibly add a blank key-value entry if the values finder does not return one.
@@ -280,14 +282,6 @@ public class LookupResource {
     private boolean hasEntryForBlankKey(List<KeyValue> keyValues) {
         return keyValues.stream()
                 .anyMatch(keyValue -> StringUtils.isBlank(keyValue.getKey()));
-    }
-
-    private Map<String, String> getCreateBlock(Class classForType) {
-        String url = getCreateNewUrl(classForType);
-        Map<String, String> createBlock = new LinkedHashMap<>();
-        createBlock.put("url", "kr/" + url);
-        createBlock.put("label", "Create New");
-        return createBlock;
     }
 
     private String getCreateNewUrl(Class<? extends BusinessObjectBase> classForType) {
