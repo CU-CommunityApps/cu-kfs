@@ -146,8 +146,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String dateOfBirth;
     private String newYorkCertfiedBusiness;
     private String newYorkDiversityCertificates;
-    private String stateDivsersityClassifications;
-    private String federalDivsersityClassifications;
+    private String stateDiversityClassifications;
+    private String federalDiversityClassifications;
     private String poCountryUsCanadaAustraliaOther;
     private String poCountry;
     
@@ -1233,20 +1233,20 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.newYorkDiversityCertificates = newYorkDiversityCertificates;
     }
 
-    public String getFederalDivsersityClassifications() {
-        return federalDivsersityClassifications;
+    public String getFederalDiversityClassifications() {
+        return federalDiversityClassifications;
     }
 
-    public void setFederalDivsersityClassifications(String federalDivsersityClassifications) {
-        this.federalDivsersityClassifications = federalDivsersityClassifications;
+    public void setFederalDiversityClassifications(String federalDivsersityClassifications) {
+        this.federalDiversityClassifications = federalDivsersityClassifications;
     }
 
-    public String getStateDivsersityClassifications() {
-        return stateDivsersityClassifications;
+    public String getStateDiversityClassifications() {
+        return stateDiversityClassifications;
     }
 
-    public void setStateDivsersityClassifications(String stateDivsersityClassifications) {
-        this.stateDivsersityClassifications = stateDivsersityClassifications;
+    public void setStateDiversityClassifications(String stateDiversityClassifications) {
+        this.stateDiversityClassifications = stateDiversityClassifications;
     }
 
     public String getPoCountryUsCanadaAustraliaOther() {

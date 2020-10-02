@@ -409,7 +409,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
-        pmwVendor.setStateDivsersityClassifications(DIVERSITY_TEST_VALUE);
+        pmwVendor.setStateDiversityClassifications(DIVERSITY_TEST_VALUE);
         assertTrue(conversionService.isDiverseBusiness(pmwVendor));
     }
     
@@ -418,8 +418,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
-        pmwVendor.setStateDivsersityClassifications(DIVERSITY_TEST_VALUE);
-        pmwVendor.setFederalDivsersityClassifications(DIVERSITY_TEST_VALUE);
+        pmwVendor.setStateDiversityClassifications(DIVERSITY_TEST_VALUE);
+        pmwVendor.setFederalDiversityClassifications(DIVERSITY_TEST_VALUE);
         assertTrue(conversionService.isDiverseBusiness(pmwVendor));
     }
     
@@ -428,7 +428,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
-        pmwVendor.setFederalDivsersityClassifications(DIVERSITY_TEST_VALUE);
+        pmwVendor.setFederalDiversityClassifications(DIVERSITY_TEST_VALUE);
         assertTrue(conversionService.isDiverseBusiness(pmwVendor));
     }
     

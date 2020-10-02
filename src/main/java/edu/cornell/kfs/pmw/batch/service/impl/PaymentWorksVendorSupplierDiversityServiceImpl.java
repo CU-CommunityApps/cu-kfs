@@ -30,13 +30,13 @@ public class PaymentWorksVendorSupplierDiversityServiceImpl implements PaymentWo
     protected ConfigurationService configurationService;
 
     @Override
-    public List<VendorSupplierDiversity> buildSuppplierDivsersityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor) {
+    public List<VendorSupplierDiversity> buildSuppplierDiversityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor) {
         List<VendorSupplierDiversity> diversities = new ArrayList<VendorSupplierDiversity>();
         List<String> vendorDiversityCodesAlreadyAdded = new ArrayList<String>();
-        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getFederalDivsersityClassifications(), 
+        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getFederalDiversityClassifications(), 
                 kfsSupplierDiversityDao.buildPmwToKfsFederalSupplierDiversityListForForeignForm(), 
                 vendorDiversityCodesAlreadyAdded));
-        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getStateDivsersityClassifications(), 
+        diversities.addAll(buildDiversityListFromClassifications(pmwVendor.getStateDiversityClassifications(), 
                 kfsSupplierDiversityDao.buildPmwToKfsNewYorkSupplierDiversityListForForeignForm(), 
                 vendorDiversityCodesAlreadyAdded));
         return diversities;

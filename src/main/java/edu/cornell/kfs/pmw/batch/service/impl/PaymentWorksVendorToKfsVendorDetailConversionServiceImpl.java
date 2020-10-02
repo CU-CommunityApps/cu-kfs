@@ -783,7 +783,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                     kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForDropDowns);
                 }
             } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-                kfsVendorSupplierDiversities.addAll(paymentWorksVendorSupplierDiversityService.buildSuppplierDivsersityListFromPaymentWorksVendor(pmwVendor));
+                kfsVendorSupplierDiversities.addAll(paymentWorksVendorSupplierDiversityService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor));
             }
         }
         return kfsVendorSupplierDiversities;
@@ -794,8 +794,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             return pmwVendor.isDiverseBusiness();
         } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
             return pmwVendor.isDiverseBusiness() || 
-                    StringUtils.isNotBlank(pmwVendor.getFederalDivsersityClassifications()) || 
-                    StringUtils.isNotBlank(pmwVendor.getStateDivsersityClassifications());
+                    StringUtils.isNotBlank(pmwVendor.getFederalDiversityClassifications()) || 
+                    StringUtils.isNotBlank(pmwVendor.getStateDiversityClassifications());
         } else {
             throw new IllegalStateException("invalid form mode service");
         }
