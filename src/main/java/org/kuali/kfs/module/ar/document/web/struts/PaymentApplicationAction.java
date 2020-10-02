@@ -27,7 +27,6 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -78,26 +77,13 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
     private static final Logger LOG = LogManager.getLogger();
 
-    protected BusinessObjectService businessObjectService;
-    protected DocumentService documentService;
-    protected PaymentApplicationDocumentService paymentApplicationDocumentService;
-    protected CustomerInvoiceDocumentService customerInvoiceDocumentService;
-    protected CustomerInvoiceDetailService customerInvoiceDetailService;
-    protected NonAppliedHoldingService nonAppliedHoldingService;
+    private BusinessObjectService businessObjectService;
+    private PaymentApplicationDocumentService paymentApplicationDocumentService;
+    private CustomerInvoiceDocumentService customerInvoiceDocumentService;
+    private CustomerInvoiceDetailService customerInvoiceDetailService;
+    private NonAppliedHoldingService nonAppliedHoldingService;
     // CU Customization: Part of invoice-paid-applied deletion enhancement.
-    protected InvoicePaidAppliedDao invoicePaidAppliedDao;
-
-    public PaymentApplicationAction() {
-        super();
-        businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-        documentService = SpringContext.getBean(DocumentService.class);
-        paymentApplicationDocumentService = SpringContext.getBean(PaymentApplicationDocumentService.class);
-        customerInvoiceDocumentService = SpringContext.getBean(CustomerInvoiceDocumentService.class);
-        customerInvoiceDetailService = SpringContext.getBean(CustomerInvoiceDetailService.class);
-        nonAppliedHoldingService = SpringContext.getBean(NonAppliedHoldingService.class);
-        // CU Customization: Part of invoice-paid-applied deletion enhancement.
-        invoicePaidAppliedDao = SpringContext.getBean(InvoicePaidAppliedDao.class);
-    }
+    private InvoicePaidAppliedDao invoicePaidAppliedDao;
 
     /**
      * Invoked when the "Adjust" button is selected.
@@ -113,8 +99,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                 (PaymentApplicationDocument) kualiDocumentFormBase.getDocument();
 
         final PaymentApplicationAdjustmentDocument appAdjustDocument =
-                SpringContext.getBean(PaymentApplicationDocumentService.class)
-                        .createPaymentApplicationAdjustment(applicationDocument);
+                getPaymentApplicationDocumentService().createPaymentApplicationAdjustment(applicationDocument);
 
         kualiDocumentFormBase.setDocument(appAdjustDocument);
 
@@ -378,7 +363,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         String currentInvoiceNumber = paymentApplicationForm.getEnteredInvoiceDocumentNumber();
         // Invoice number entered, but no customer number entered
         if (StringUtils.isBlank(customerNumber) && StringUtils.isNotBlank(currentInvoiceNumber) && validInvoice) {
-            Customer customer = customerInvoiceDocumentService.getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
+            Customer customer = getCustomerInvoiceDocumentService().getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
             customerNumber = customer.getCustomerNumber();
         }
         return customerNumber;
@@ -393,7 +378,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     protected boolean isValidInvoice(PaymentApplicationForm paymentApplicationForm) {
         boolean validInvoice = true;
         if (StringUtils.isNotBlank(paymentApplicationForm.getEnteredInvoiceDocumentNumber())) {
-            if (!SpringContext.getBean(CustomerInvoiceDocumentService.class)
+            if (!getCustomerInvoiceDocumentService()
                     .checkIfInvoiceNumberIsFinal(paymentApplicationForm.getEnteredInvoiceDocumentNumber())) {
                 validInvoice = false;
             }
@@ -540,7 +525,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
             Map<String, String> pkMap = new HashMap<>();
             pkMap.put(ArPropertyConstants.CustomerFields.CUSTOMER_NUMBER,
                     payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase());
-            int found = businessObjectService.countMatching(Customer.class, pkMap);
+            int found = getBusinessObjectService().countMatching(Customer.class, pkMap);
             if (found == 0) {
                 addFieldError(KFSConstants.PaymentApplicationTabErrorCodes.UNAPPLIED_TAB,
                         ArPropertyConstants.PaymentApplicationDocumentFields.UNAPPLIED_CUSTOMER_NUMBER,
@@ -621,7 +606,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         if (StringUtils.isNotBlank(payAppForm.getSelectedCustomerNumber())) {
             Map<String, String> pkMap = new HashMap<>();
             pkMap.put(ArPropertyConstants.CustomerFields.CUSTOMER_NUMBER, payAppForm.getSelectedCustomerNumber());
-            int found = businessObjectService.countMatching(Customer.class, pkMap);
+            int found = getBusinessObjectService().countMatching(Customer.class, pkMap);
             if (found == 0) {
                 addFieldError(KFSConstants.PaymentApplicationTabErrorCodes.APPLY_TO_INVOICE_DETAIL_TAB,
                         ArPropertyConstants.PaymentApplicationDocumentFields.ENTERED_INVOICE_CUSTOMER_NUMBER,
@@ -655,7 +640,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
         // Invoice number entered, but no customer number entered
         if (StringUtils.isBlank(customerNumber) && StringUtils.isNotBlank(currentInvoiceNumber) && validInvoice) {
-            Customer customer = customerInvoiceDocumentService.getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
+            Customer customer = getCustomerInvoiceDocumentService().getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
             customerNumber = customer.getCustomerNumber();
             payAppDoc.getAccountsReceivableDocumentHeader().setCustomerNumber(customerNumber);
         }
@@ -675,8 +660,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     // otherwise, we pull all available non-zero non-applied holdings for
                     // this customer, and make the associated docs and non-applied holdings available
                     // retrieve the set of available non-applied holdings for this customer
-                    NonAppliedHoldingService nonAppliedHoldingService = SpringContext.getBean(NonAppliedHoldingService.class);
-                    nonAppliedControlHoldings.addAll(nonAppliedHoldingService.getNonAppliedHoldingsForCustomer(customerNumber));
+                    nonAppliedControlHoldings.addAll(getNonAppliedHoldingService().getNonAppliedHoldingsForCustomer(customerNumber));
 
                     // get the parent list of payapp documents that they come from
                     List<String> controlDocNumbers = new ArrayList<>();
@@ -689,7 +673,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     // only try to retrieve docs if we have any to retrieve
                     if (!controlDocNumbers.isEmpty()) {
                         try {
-                            List<Document> docs = documentService.getDocumentsByListOfDocumentHeaderIds(
+                            List<Document> docs = getDocumentService().getDocumentsByListOfDocumentHeaderIds(
                                     PaymentApplicationDocument.class, controlDocNumbers);
                             for (Document doc : docs) {
                                 nonAppliedControlDocs.add((PaymentApplicationDocument) doc);
@@ -718,7 +702,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
             if (payAppDoc.isFinal()) {
                 openInvoicesForCustomer = payAppDoc.getInvoicesPaidAgainst();
             } else {
-                openInvoicesForCustomer = customerInvoiceDocumentService.getOpenInvoiceDocumentsByCustomerNumber(
+                openInvoicesForCustomer = getCustomerInvoiceDocumentService().getOpenInvoiceDocumentsByCustomerNumber(
                         customerNumber);
             }
             payAppForm.setInvoices(new ArrayList<>(openInvoicesForCustomer));
@@ -740,31 +724,9 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
             payAppForm.setEnteredInvoiceDocumentNumber(currentInvoiceNumber);
         }
 
-        // make sure all paidApplieds are synched with the PaymentApplicationInvoiceApply and
-        // PaymentApplicationInvoiceDetailApply objects, so that the form reflects how it was left pre-save.
-        // This is only necessary when the doc is saved, and then re-opened, as the invoice-detail wrappers
-        // will no longer hold the state info. I know this is a monstrosity. Get over it.
-        for (InvoicePaidApplied paidApplied : payAppDoc.getInvoicePaidApplieds()) {
-            for (PaymentApplicationInvoiceApply invoiceApplication : payAppForm.getInvoiceApplications()) {
-                if (paidApplied.getFinancialDocumentReferenceInvoiceNumber().equalsIgnoreCase(
-                        invoiceApplication.getDocumentNumber())) {
-                    for (PaymentApplicationInvoiceDetailApply detailApplication :
-                            invoiceApplication.getDetailApplications()) {
-                        if (paidApplied.getInvoiceItemNumber().equals(detailApplication.getSequenceNumber())) {
-                            // if the amount applieds dont match, then have the paidApplied fill in the applied
-                            // amounts for the invoiceApplication details
-                            if (!paidApplied.getInvoiceItemAppliedAmount().equals(
-                                    detailApplication.getAmountApplied())) {
-                                detailApplication.setAmountApplied(paidApplied.getInvoiceItemAppliedAmount());
-                                if (paidApplied.getInvoiceItemAppliedAmount().equals(
-                                        detailApplication.getAmountOpen())) {
-                                    detailApplication.setFullApply(true);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        // Make sure the invoice applies state are up to date
+        for (PaymentApplicationInvoiceApply invoiceApplication : payAppForm.getInvoiceApplications()) {
+            updateInvoiceApplication(payAppDoc, invoiceApplication);
         }
 
         // clear any NonInvoiced add line information from the form vars
@@ -782,6 +744,34 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
         //Presort this list to not reload in the jsp - https://jira.kuali.org/browse/KFSCNTRB-1377
         payAppForm.setInvoiceApplications(sortInvoiceApplications(payAppForm.getInvoiceApplications()));
+    }
+
+    protected void updateInvoiceApplication(PaymentApplicationDocument payAppDoc,
+                                            PaymentApplicationInvoiceApply invoiceApplication) {
+        // make sure all paidApplieds are synched with the PaymentApplicationInvoiceApply and
+        // PaymentApplicationInvoiceDetailApply objects, so that the form reflects how it was left pre-save.
+        // This is only necessary when the doc is saved, and then re-opened, as the invoice-detail wrappers
+        // will no longer hold the state info. This could be done much better.
+        for (InvoicePaidApplied paidApplied : payAppDoc.getInvoicePaidApplieds()) {
+            if (paidApplied.getFinancialDocumentReferenceInvoiceNumber().equalsIgnoreCase(
+                    invoiceApplication.getDocumentNumber())) {
+                for (PaymentApplicationInvoiceDetailApply detailApplication :
+                        invoiceApplication.getDetailApplications()) {
+                    if (paidApplied.getInvoiceItemNumber().equals(detailApplication.getSequenceNumber())) {
+                        // if the amount applieds dont match, then have the paidApplied fill in the applied
+                        // amounts for the invoiceApplication details
+                        if (!paidApplied.getInvoiceItemAppliedAmount().equals(
+                                detailApplication.getAmountApplied())) {
+                            detailApplication.setAmountApplied(paidApplied.getInvoiceItemAppliedAmount());
+                            if (paidApplied.getInvoiceItemAppliedAmount().equals(
+                                    detailApplication.getAmountOpen())) {
+                                detailApplication.setFullApply(true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected List<PaymentApplicationInvoiceApply> sortInvoiceApplications(
@@ -993,12 +983,80 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     protected void manuallyAddressInvoicePaidAppliedDeletions(PaymentApplicationForm paymentApplicationForm) {
         if (paymentApplicationForm.isManualInvoicePaidAppliedDatabaseDeletionRequired()) {
             PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
-            invoicePaidAppliedDao.deleteAllInvoicePaidApplieds(paymentApplicationDocument.getDocumentNumber());
+            getInvoicePaidAppliedDao().deleteAllInvoicePaidApplieds(paymentApplicationDocument.getDocumentNumber());
             paymentApplicationForm.setManualInvoicePaidAppliedDatabaseDeletionRequired(false);
         }
     }
     // End CU Customization
     
+    /*
+     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
+     * actually use Spring. This way, PowerMock is not necessary.
+     */
+    NonAppliedHoldingService getNonAppliedHoldingService() {
+        if (nonAppliedHoldingService == null) {
+            nonAppliedHoldingService = SpringContext.getBean(NonAppliedHoldingService.class);
+        }
+        return nonAppliedHoldingService;
+    }
+
+    /*
+     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
+     * actually use Spring. This way, PowerMock is not necessary.
+     */
+    CustomerInvoiceDetailService getCustomerInvoiceDetailService() {
+        if (customerInvoiceDetailService == null) {
+            customerInvoiceDetailService = SpringContext.getBean(CustomerInvoiceDetailService.class);
+        }
+        return customerInvoiceDetailService;
+    }
+
+    /*
+     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
+     * actually use Spring. This way, PowerMock is not necessary.
+     */
+    CustomerInvoiceDocumentService getCustomerInvoiceDocumentService() {
+        if (customerInvoiceDocumentService == null) {
+            customerInvoiceDocumentService = SpringContext.getBean(CustomerInvoiceDocumentService.class);
+        }
+        return customerInvoiceDocumentService;
+    }
+
+    /*
+     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
+     * actually use Spring. This way, PowerMock is not necessary.
+     */
+    PaymentApplicationDocumentService getPaymentApplicationDocumentService() {
+        if (paymentApplicationDocumentService == null) {
+            paymentApplicationDocumentService = SpringContext.getBean(PaymentApplicationDocumentService.class);
+        }
+        return paymentApplicationDocumentService;
+    }
+
+    /*
+     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
+     * actually use Spring. This way, PowerMock is not necessary.
+     *
+     * TODO: Is this doing the same thing as the overridden method in KualiDocumentActionBase? If so, this can be
+     *       removed.
+     */
+    @Override
+    protected BusinessObjectService getBusinessObjectService() {
+        if (businessObjectService == null) {
+            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        }
+        return businessObjectService;
+    }
+    
+    // CU Customization: Part of invoice-paid-applied deletion enhancement.
+    protected InvoicePaidAppliedDao getInvoicePaidAppliedDao() {
+        if (invoicePaidAppliedDao == null) {
+            invoicePaidAppliedDao = SpringContext.getBean(InvoicePaidAppliedDao.class);
+        }
+        return invoicePaidAppliedDao;
+    }
+
+
     /**
      * An inner class to point to a specific entry in a group
      */

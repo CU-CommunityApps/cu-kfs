@@ -251,7 +251,7 @@
 
 	<bean id="awardDefinition" parent="awardDefinition-parentBean"/>
 	<bean id="awardDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.AwardTranslationDefinition"
-			p:awardService-ref="awardService"
+			p:businessObjectService-ref="businessObjectService"
 			p:dateTimeService-ref="dateTimeService"
 			p:parameterService-ref="parameterService"
 			p:rootXmlObjectListPropertyName="awards"

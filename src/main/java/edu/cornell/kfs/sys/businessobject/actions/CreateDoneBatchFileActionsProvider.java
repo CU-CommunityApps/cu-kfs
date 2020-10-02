@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.datadictionary.Action;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
@@ -31,17 +32,12 @@ public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider
     protected CreateDoneBatchFileAuthorizationService createDoneAuthorizationService;
     
     @Override
-    public List<Map<String, Object>> getActionLinks(BusinessObjectBase businessObject, Person user) {
+    public List<Action> getActionLinks(BusinessObjectBase businessObject, Person user) {
         BatchFile batchFile = (BatchFile) businessObject;
-        List<Map<String, Object>> actionLinks = new LinkedList<>();
+        List<Action> actionLinks = new LinkedList<>();
 
         if (canCreateDoneFile(batchFile, user)) {
-            Map<String, Object> createDoneLink = new LinkedHashMap<>();
-            createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_LABEL, "Create Done");
-            createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_URL,
-                    KRAD_URL_PREFIX + getCreateDoneUrl(batchFile));
-            createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_METHOD, "GET");
-            actionLinks.add(createDoneLink);
+            actionLinks.add(new Action("Create Done", "GET", KRAD_URL_PREFIX + getCreateDoneUrl(batchFile)));
         }
 
         return actionLinks;

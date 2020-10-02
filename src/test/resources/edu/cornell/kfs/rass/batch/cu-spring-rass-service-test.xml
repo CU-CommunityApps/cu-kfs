@@ -49,8 +49,6 @@
     
     <bean id="businessObjectService" factory-bean="testServiceFactory" factory-method="buildMockBusinessObjectService"/>
 
-    <bean id="awardService" factory-bean="testServiceFactory" factory-method="buildMockAwardService"/>
-
     <bean id="personService" factory-bean="testServiceFactory" factory-method="buildMockPersonService"/>
     
     <bean id="kimRoleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
@@ -115,7 +113,6 @@
                 <idref bean="dateTimeService"/>
                 <idref bean="parameterService"/>
                 <idref bean="configurationService"/>
-                <idref bean="awardService"/>
                 <idref bean="personService"/>
                 <idref bean="kimRoleService"/>
                 <idref bean="rice.kew.documentProcessingQueue"/>
