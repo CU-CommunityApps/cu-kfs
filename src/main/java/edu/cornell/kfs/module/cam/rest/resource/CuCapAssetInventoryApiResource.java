@@ -5,6 +5,7 @@ import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
 import edu.cornell.kfs.module.cam.document.service.CuAssetService;
 import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
+import edu.cornell.kfs.module.cam.document.validation.event.CuValidateBarcodeInventoryEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +20,6 @@ import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
 import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
-import org.kuali.kfs.module.cam.document.validation.event.ValidateBarcodeInventoryEvent;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
@@ -168,7 +168,7 @@ public class CuCapAssetInventoryApiResource {
             List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
             barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
             document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
-            getKualiRuleService().applyRules(new ValidateBarcodeInventoryEvent("", document, true));
+            getKualiRuleService().applyRules(new CuValidateBarcodeInventoryEvent("", document, true));
             getDocumentService().saveDocument(document);
 
             List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
