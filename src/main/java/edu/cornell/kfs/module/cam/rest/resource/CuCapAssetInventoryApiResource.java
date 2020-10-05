@@ -5,7 +5,6 @@ import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
 import edu.cornell.kfs.module.cam.document.service.CuAssetService;
 import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
-import edu.cornell.kfs.module.cam.document.validation.event.CuValidateBarcodeInventoryEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -154,21 +153,19 @@ public class CuCapAssetInventoryApiResource {
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         try {
-            // is this needed?
             GlobalVariables.clear();
 
             GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
             BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
 
-            document.getDocumentHeader().setExplanation("BARCODE ERROR INVENTORY");
             document.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
-            String errorDescription = "Error Scanning Barcode for Inventory: Asset Tag #" + assetTag + " Not Found.";
+            String errorDescription = "Error Scanning Asset Tag #" + assetTag;
+            document.getDocumentHeader().setExplanation(errorDescription + ". Asset Tag Not Found");
             document.getDocumentHeader().setDocumentDescription(errorDescription);
             document.setUploaderUniversalIdentifier(netid);
             List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
             barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
             document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
-            getKualiRuleService().applyRules(new CuValidateBarcodeInventoryEvent("", document, true));
             getDocumentService().saveDocument(document);
 
             List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
