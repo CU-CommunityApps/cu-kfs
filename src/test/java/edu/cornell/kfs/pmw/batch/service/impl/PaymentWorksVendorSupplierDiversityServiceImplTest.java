@@ -138,7 +138,7 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     }
     
     @Test
-    public void testBuildSupplierDiversityListFromPaymentWorksVendorWittOneStateClass() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithOneStateClass() {
         pmwVendor.setFederalDiversityClassifications(StringUtils.EMPTY);
         pmwVendor.setStateDiversityClassifications(WBE_DESCRIPTION);
         
