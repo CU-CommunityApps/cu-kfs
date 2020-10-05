@@ -155,7 +155,7 @@ public class CuCapAssetInventoryApiResource {
         try {
             GlobalVariables.clear();
 
-            GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
+            GlobalVariables.setUserSession(new UserSession("kp378"));
             BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
 
             document.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
