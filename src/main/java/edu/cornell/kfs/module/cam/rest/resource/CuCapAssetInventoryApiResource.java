@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
@@ -56,7 +55,6 @@ public class CuCapAssetInventoryApiResource {
     private CuAssetService cuAssetService;
     private DocumentService documentService;
     private DateTimeService dateTimeService;
-    private KualiRuleService kualiRuleService;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -271,13 +269,6 @@ public class CuCapAssetInventoryApiResource {
             documentService = SpringContext.getBean(DocumentService.class);
         }
         return documentService;
-    }
-
-    private KualiRuleService getKualiRuleService() {
-        if (ObjectUtils.isNull(kualiRuleService)) {
-            kualiRuleService = SpringContext.getBean(KualiRuleService.class);
-        }
-        return kualiRuleService;
     }
 
 }
