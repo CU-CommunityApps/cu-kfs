@@ -171,8 +171,8 @@
     <field-descriptor name="dateOfBirth" column="DOB" jdbc-type="VARCHAR" />
     <field-descriptor name="newYorkCertfiedBusiness" column="NY_CERT_BSNS" jdbc-type="VARCHAR" />
     <field-descriptor name="newYorkDiversityCertificates" column="NY_DIV_CERT" jdbc-type="VARCHAR" />
-    <field-descriptor name="federalDivsersityClassifications" column="FED_DIV_CLASS" jdbc-type="VARCHAR" />
-    <field-descriptor name="stateDivsersityClassifications" column="STAT_DIV_CLASS" jdbc-type="VARCHAR" />
+    <field-descriptor name="federalDiversityClassifications" column="FED_DIV_CLASS" jdbc-type="VARCHAR" />
+    <field-descriptor name="stateDiversityClassifications" column="STAT_DIV_CLASS" jdbc-type="VARCHAR" />
     <field-descriptor name="poCountryUsCanadaAustraliaOther" column="PO_CNTRY_US_CA_AUS_OTH" jdbc-type="VARCHAR" />
     <field-descriptor name="poCountry" column="PO_CNTRY_CD" jdbc-type="VARCHAR" />
     

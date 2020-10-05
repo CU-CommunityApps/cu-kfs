@@ -136,9 +136,12 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     }
 
     private boolean cashControlIsFinalAndProcessed() {
-        final WorkflowDocument cashContorlWorkflowDocument =
-                getPaymentApplicationDocument().getCashControlDocument().getDocumentHeader().getWorkflowDocument();
-        return cashContorlWorkflowDocument.isFinal() && cashContorlWorkflowDocument.isProcessed();
+        if (getPaymentApplicationDocument().hasCashControlDetail()) {
+            final WorkflowDocument cashContorlWorkflowDocument =
+                    getPaymentApplicationDocument().getCashControlDocument().getDocumentHeader().getWorkflowDocument();
+            return cashContorlWorkflowDocument.isFinal() && cashContorlWorkflowDocument.isProcessed();
+        }
+        return true;
     }
 
     private boolean userCanInitiateAppAdjustment() {
