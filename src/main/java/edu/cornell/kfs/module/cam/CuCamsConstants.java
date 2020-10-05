@@ -6,7 +6,7 @@ public class CuCamsConstants {
     }
 
     public static final class CapAssetApi {
-        public static final String OBJECT_NOT_FOUND = "Object not found";
+        public static final String ASSET_TAG_NOT_FOUND = "Asset Tag not found";
         public static final String ERROR = "error";
         public static final String COGNITO_PUBLIC_KEY_MODULO = "n";
         public static final String COGNITO_PUBLIC_KEY_EXPONENT = "e";

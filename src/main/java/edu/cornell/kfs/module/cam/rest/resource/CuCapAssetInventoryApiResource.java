@@ -8,19 +8,25 @@ import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.BarcodeInventoryErrorDetail;
 import org.kuali.kfs.module.cam.document.BarcodeInventoryErrorDocument;
+import org.kuali.kfs.module.cam.document.validation.event.ValidateBarcodeInventoryEvent;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.springframework.util.AutoPopulatingList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +44,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -53,6 +60,7 @@ public class CuCapAssetInventoryApiResource {
     private CuAssetService cuAssetService;
     private DocumentService documentService;
     private DateTimeService dateTimeService;
+    private KualiRuleService kualiRuleService;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -101,7 +109,7 @@ public class CuCapAssetInventoryApiResource {
         try {
             Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTag);
             if (ObjectUtils.isNull(asset)) {
-                return respondNotFound();
+                return respondAssetNotFound();
             }
             Properties properties = getAssetProperties(asset);
             return Response.ok(gson.toJson(properties)).build();
@@ -131,7 +139,7 @@ public class CuCapAssetInventoryApiResource {
             if (ObjectUtils.isNull(asset)) {
                 LOG.error("updateAsset: Asset Inventory Tag #" + assetTag + " Not Found");
                 createCapitalAssetErrorDocument(netid, assetTag, conditionCode, buildingCode, roomNumber);
-                return respondNotFound();
+                return respondAssetNotFound();
             }
 
             asset = getCuAssetService().updateAssetInventory(asset, conditionCode, buildingCode, roomNumber, netid);
@@ -146,21 +154,37 @@ public class CuCapAssetInventoryApiResource {
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         try {
+            // is this needed?
+            GlobalVariables.clear();
+
+            GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
             BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
 
             document.getDocumentHeader().setExplanation("BARCODE ERROR INVENTORY");
             document.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
-            String errorDescription = "Error Scanning asset Tag #" + assetTag;
+            String errorDescription = "Error Scanning Barcode for Inventory: Asset Tag #" + assetTag + " Not Found.";
             document.getDocumentHeader().setDocumentDescription(errorDescription);
-            String principleId = GlobalVariables.getUserSession().getPerson().getPrincipalId();
-            LOG.info("GlobalVariables.getUserSession " + principleId);
-            document.setUploaderUniversalIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
+            document.setUploaderUniversalIdentifier(netid);
             List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
             barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
             document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
+            getKualiRuleService().applyRules(new ValidateBarcodeInventoryEvent("", document, true));
             getDocumentService().saveDocument(document);
-            getDocumentService().routeDocument(document, "", new ArrayList<>());
+
+            List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
+            getDocumentService().routeDocument(document, "Capital Asset Inventory Error Asset Not Found", adHocRecipients);
         } catch (Exception ex) {
+            if (GlobalVariables.getMessageMap().hasErrors()) {
+                Map<String, AutoPopulatingList<ErrorMessage>> errors = GlobalVariables.getMessageMap().getErrorMessages();
+                for (Object errorKeyAsObject : errors.keySet()) {
+                    String errorKey = errorKeyAsObject.toString();
+                    LOG.error(errorKey);
+                    AutoPopulatingList<ErrorMessage> error = errors.get(errorKey);
+                    ErrorMessage errorMessage = error.get(0);
+                    LOG.error(errorMessage.toString());
+                }
+
+            }
             LOG.error("createCapitalAssetErrorDocument", ex);
         }
     }
@@ -228,8 +252,8 @@ public class CuCapAssetInventoryApiResource {
         return Response.status(400).entity(responseBody).build();
     }
 
-    private Response respondNotFound() {
-        String responseBody = getSimpleJsonObject(CuCamsConstants.CapAssetApi.ERROR, CuCamsConstants.CapAssetApi.OBJECT_NOT_FOUND);
+    private Response respondAssetNotFound() {
+        String responseBody = getSimpleJsonObject(CuCamsConstants.CapAssetApi.ERROR, CuCamsConstants.CapAssetApi.ASSET_TAG_NOT_FOUND);
         return Response.status(404).entity(responseBody).build();
     }
 
@@ -264,6 +288,13 @@ public class CuCapAssetInventoryApiResource {
             documentService = SpringContext.getBean(DocumentService.class);
         }
         return documentService;
+    }
+
+    private KualiRuleService getKualiRuleService() {
+        if (ObjectUtils.isNull(kualiRuleService)) {
+            kualiRuleService = SpringContext.getBean(KualiRuleService.class);
+        }
+        return kualiRuleService;
     }
 
 }
