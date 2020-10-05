@@ -80,56 +80,56 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     }
 
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWithRealExamples() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithRealExamples() {
         pmwVendor.setFederalDiversityClassifications(FEDERAL_CLASSIFICAITONS);
         pmwVendor.setStateDiversityClassifications(STATE_CLASSIFICAITONS);
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(7, actualDiversities.size());
     }
     
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWithNulls() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithNulls() {
         pmwVendor.setFederalDiversityClassifications(null);
         pmwVendor.setStateDiversityClassifications(null);
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(0, actualDiversities.size());
     }
     
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWithEmptyStrings() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithEmptyStrings() {
         pmwVendor.setFederalDiversityClassifications(StringUtils.EMPTY);
         pmwVendor.setStateDiversityClassifications(StringUtils.EMPTY);
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(0, actualDiversities.size());
     }
     
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWithNoCommas() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithNoCommas() {
         pmwVendor.setFederalDiversityClassifications(EIGHT_A_DESCRIPTION_AFRICAN_AMERICAN);
         pmwVendor.setStateDiversityClassifications(WBE_DESCRIPTION);
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(2, actualDiversities.size());
     }
     
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWithInvalidOptions() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithInvalidOptions() {
         pmwVendor.setFederalDiversityClassifications("foo");
         pmwVendor.setStateDiversityClassifications("bar");
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(0, actualDiversities.size());
     }
     
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWithOneFederalClass() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithOneFederalClass() {
         pmwVendor.setFederalDiversityClassifications(EIGHT_A_DESCRIPTION_AFRICAN_AMERICAN);
         pmwVendor.setStateDiversityClassifications(StringUtils.EMPTY);
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(1, actualDiversities.size());
         VendorSupplierDiversity diversity = actualDiversities.get(0);
         assertEquals(EIGHT_A_CODE, diversity.getVendorSupplierDiversityCode());
@@ -138,20 +138,20 @@ class PaymentWorksVendorSupplierDiversityServiceImplTest {
     }
     
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWittOneStateClass() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWittOneStateClass() {
         pmwVendor.setFederalDiversityClassifications(StringUtils.EMPTY);
         pmwVendor.setStateDiversityClassifications(WBE_DESCRIPTION);
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(1, actualDiversities.size());
     }
     
     @Test
-    public void testBuildSuppplierDiversityListFromPaymentWorksVendorWithCaseDifference() {
+    public void testBuildSupplierDiversityListFromPaymentWorksVendorWithCaseDifference() {
         pmwVendor.setFederalDiversityClassifications("8(A) AFRICAN AMERICAN");
         pmwVendor.setStateDiversityClassifications(StringUtils.EMPTY);
         
-        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor);
+        List<VendorSupplierDiversity> actualDiversities = supplierService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor);
         assertEquals(1, actualDiversities.size());
     }
     

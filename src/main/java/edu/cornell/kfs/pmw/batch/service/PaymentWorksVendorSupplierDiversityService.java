@@ -8,6 +8,6 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public interface PaymentWorksVendorSupplierDiversityService {
     
-    List<VendorSupplierDiversity> buildSuppplierDiversityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor);
+    List<VendorSupplierDiversity> buildSupplierDiversityListFromPaymentWorksVendor(PaymentWorksVendor pmwVendor);
     
 }

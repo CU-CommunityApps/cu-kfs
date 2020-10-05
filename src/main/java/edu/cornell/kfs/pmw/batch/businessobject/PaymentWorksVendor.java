@@ -1237,8 +1237,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         return federalDiversityClassifications;
     }
 
-    public void setFederalDiversityClassifications(String federalDivsersityClassifications) {
-        this.federalDiversityClassifications = federalDivsersityClassifications;
+    public void setFederalDiversityClassifications(String federalDiversityClassifications) {
+        this.federalDiversityClassifications = federalDiversityClassifications;
     }
 
     public String getStateDiversityClassifications() {

@@ -783,7 +783,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                     kfsVendorSupplierDiversities.addAll(kfsVendorSupplierDiversitiesForDropDowns);
                 }
             } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-                kfsVendorSupplierDiversities.addAll(paymentWorksVendorSupplierDiversityService.buildSuppplierDiversityListFromPaymentWorksVendor(pmwVendor));
+                kfsVendorSupplierDiversities.addAll(paymentWorksVendorSupplierDiversityService.buildSupplierDiversityListFromPaymentWorksVendor(pmwVendor));
             }
         }
         return kfsVendorSupplierDiversities;
