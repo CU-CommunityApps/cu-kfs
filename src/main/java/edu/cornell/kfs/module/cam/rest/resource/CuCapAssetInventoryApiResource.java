@@ -12,7 +12,6 @@ import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
@@ -25,7 +24,6 @@ import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.springframework.util.AutoPopulatingList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +41,6 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -171,17 +168,6 @@ public class CuCapAssetInventoryApiResource {
             List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
             getDocumentService().routeDocument(document, "Capital Asset Inventory Error Asset Not Found", adHocRecipients);
         } catch (Exception ex) {
-            if (GlobalVariables.getMessageMap().hasErrors()) {
-                Map<String, AutoPopulatingList<ErrorMessage>> errors = GlobalVariables.getMessageMap().getErrorMessages();
-                for (Object errorKeyAsObject : errors.keySet()) {
-                    String errorKey = errorKeyAsObject.toString();
-                    LOG.error(errorKey);
-                    AutoPopulatingList<ErrorMessage> error = errors.get(errorKey);
-                    ErrorMessage errorMessage = error.get(0);
-                    LOG.error(errorMessage.toString());
-                }
-
-            }
             LOG.error("createCapitalAssetErrorDocument", ex);
         }
     }
