@@ -222,7 +222,7 @@ public class PaymentWorksConstants {
     public static final int LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR  = 7;
     public static final int OTHER_TAX_CLASSIFICATION_INDICATOR  = 8;
     
-    public static final class VendorOwnershipCodes {
+    public static final class VendorOwnershipTypeCodes {
     	public static final String PARTNERSHIP = "PT";
     	public static final String CORPORATION = "CP";
     	public static final String S_CORPORATION = "SC";
@@ -232,17 +232,17 @@ public class PaymentWorksConstants {
     
     public enum PaymentWorksTaxClassification {
         INDIVIDUAL_SOLE_PROPRIETOR(INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR, "Individual/sole proprietor or single-member LLC", 
-        		VendorOwnershipCodes.INDIVIDUAL),
-        C_CORPORATION(C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "C Corporation", VendorOwnershipCodes.CORPORATION),
-        S_CORPORATION(S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "S Corporation", VendorOwnershipCodes.S_CORPORATION),
-        PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", VendorOwnershipCodes.PARTNERSHIP),
-        TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", VendorOwnershipCodes.ESTATE_TRUST), 
+        		VendorOwnershipTypeCodes.INDIVIDUAL),
+        C_CORPORATION(C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "C Corporation", VendorOwnershipTypeCodes.CORPORATION),
+        S_CORPORATION(S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "S Corporation", VendorOwnershipTypeCodes.S_CORPORATION),
+        PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", VendorOwnershipTypeCodes.PARTNERSHIP),
+        TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", VendorOwnershipTypeCodes.ESTATE_TRUST), 
         LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", 
-        		VendorOwnershipCodes.CORPORATION, VendorOwnershipCodes.PARTNERSHIP) ,
+        		VendorOwnershipTypeCodes.CORPORATION, VendorOwnershipTypeCodes.PARTNERSHIP) ,
         LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", 
-        		VendorOwnershipCodes.S_CORPORATION, VendorOwnershipCodes.PARTNERSHIP),
+        		VendorOwnershipTypeCodes.S_CORPORATION, VendorOwnershipTypeCodes.PARTNERSHIP),
         LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", 
-        		VendorOwnershipCodes.PARTNERSHIP, VendorOwnershipCodes.PARTNERSHIP),
+        		VendorOwnershipTypeCodes.PARTNERSHIP, VendorOwnershipTypeCodes.PARTNERSHIP),
         OTHER(OTHER_TAX_CLASSIFICATION_INDICATOR, "Other", "OT");
         
         public final int pmwCode;
