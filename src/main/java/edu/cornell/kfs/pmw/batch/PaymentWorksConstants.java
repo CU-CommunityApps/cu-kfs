@@ -221,29 +221,48 @@ public class PaymentWorksConstants {
     public static final int LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR  = 6;
     public static final int LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR  = 7;
     public static final int OTHER_TAX_CLASSIFICATION_INDICATOR  = 8;
+    
+    public static final class VendorOwnershipTypeCodes {
+    	public static final String PARTNERSHIP = "PT";
+    	public static final String C_CORPORATION = "CP";
+    	public static final String S_CORPORATION = "SC";
+    	public static final String ESTATE_TRUST = "ET";
+    	public static final String INDIVIDUAL = "ID";
+    }
+    
     public enum PaymentWorksTaxClassification {
-        INDIVIDUAL_SOLE_PROPRIETOR(INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR, "Individual/sole proprietor or single-member LLC", "ID"),
-        C_CORPORATION(C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "C Corporation", "CP"),
-        S_CORPORATION(S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "S Corporation", "SC"),
-        PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", "PT"),
-        TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", "ET"), 
-        LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", "CP"),
-        LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", "SC"),
-        LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", "PT"),
+        INDIVIDUAL_SOLE_PROPRIETOR(INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR, "Individual/sole proprietor or single-member LLC", 
+        		VendorOwnershipTypeCodes.INDIVIDUAL),
+        C_CORPORATION(C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "C Corporation", VendorOwnershipTypeCodes.C_CORPORATION),
+        S_CORPORATION(S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "S Corporation", VendorOwnershipTypeCodes.S_CORPORATION),
+        PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", VendorOwnershipTypeCodes.PARTNERSHIP),
+        TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", VendorOwnershipTypeCodes.ESTATE_TRUST), 
+        LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", 
+        		VendorOwnershipTypeCodes.C_CORPORATION, VendorOwnershipTypeCodes.PARTNERSHIP) ,
+        LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", 
+        		VendorOwnershipTypeCodes.S_CORPORATION, VendorOwnershipTypeCodes.PARTNERSHIP),
+        LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", 
+        		VendorOwnershipTypeCodes.PARTNERSHIP, VendorOwnershipTypeCodes.PARTNERSHIP),
         OTHER(OTHER_TAX_CLASSIFICATION_INDICATOR, "Other", "OT");
         
         public final int pmwCode;
         public final String pmwDescription;
-        public final String translationToKfsOwnershipTypeCode;
+        public final String legacyFormTranslationToKfsOwnershipTypeCode;
+        public final String foreignFormTranslationToKfsOwnershipTypeCode;
         
-        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String translationToKfsOwnershipTypeCode) {
+        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String legacyFormTranslationToKfsOwnershipTypeCode) {
             this.pmwCode = pmwCode;
             this.pmwDescription = pmwDescription;
-            this.translationToKfsOwnershipTypeCode = translationToKfsOwnershipTypeCode;
+            this.legacyFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
+            this.foreignFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
         }
         
-        public String getTranslationToKfsOwnershipTypeCode() {
-            return translationToKfsOwnershipTypeCode;
+        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String legacyFormTranslationToKfsOwnershipTypeCode, 
+        		String foreignFormTranslationToKfsOwnershipTypeCode) {
+            this.pmwCode = pmwCode;
+            this.pmwDescription = pmwDescription;
+            this.legacyFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
+            this.foreignFormTranslationToKfsOwnershipTypeCode = foreignFormTranslationToKfsOwnershipTypeCode;
         }
         
         public static PaymentWorksTaxClassification findPaymentWorksTaxClassification(int requestingCompanyTaxClassificationCode) {
