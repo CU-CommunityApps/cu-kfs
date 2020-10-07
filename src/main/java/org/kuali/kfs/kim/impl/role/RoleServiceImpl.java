@@ -82,6 +82,8 @@ import org.springframework.cache.support.NoOpCacheManager;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static java.util.Map.entry;
+
 /**
  * CU Customization:
  * Updated the member-removal methods to properly convert the qualifiers where needed,
@@ -100,11 +102,12 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     private static Map<String, RoleDaoAction> populateMemberTypeToRoleDaoActionMap() {
-        Map<String, RoleDaoAction> map = new HashMap<>();
-        map.put(MemberType.GROUP.getCode(), RoleDaoAction.ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS);
-        map.put(MemberType.PRINCIPAL.getCode(), RoleDaoAction.ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS);
-        map.put(MemberType.ROLE.getCode(), RoleDaoAction.ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS);
-        return Collections.unmodifiableMap(map);
+        // TODO: Consider making this a constant field.
+        return Map.ofEntries(
+                entry(MemberType.GROUP.getCode(), RoleDaoAction.ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS),
+                entry(MemberType.PRINCIPAL.getCode(), RoleDaoAction.ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS),
+                entry(MemberType.ROLE.getCode(), RoleDaoAction.ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS)
+        );
     }
 
     @Override

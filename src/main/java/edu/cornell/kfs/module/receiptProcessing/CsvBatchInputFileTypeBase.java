@@ -18,7 +18,19 @@
  */
 package edu.cornell.kfs.module.receiptProcessing;
 
-import com.opencsv.CSVReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -26,17 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.opencsv.CSVReader;
 
 /**
  * Base class for BatchInputFileType implementations that validate using an Enum class (use as the CSV file header)
@@ -80,7 +82,9 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
             validateCSVFileInput(headerList, validateFileContents);
 
             //use csv reader to parse the csv content
-            CSVReader csvReader = new CSVReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent)),',','"','|');
+            CSVReader csvReader = new CSVReader(
+                    new InputStreamReader(new ByteArrayInputStream(fileByteContent), StandardCharsets.UTF_8),
+                    ',', '"', '|');
             List<String[]> dataList = csvReader.readAll();
 
             //remove first header line
@@ -121,7 +125,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
     protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws
             IOException {
         //use csv reader to parse the csv content
-        CSVReader csvReader = new CSVReader(new InputStreamReader(fileContents));
+        CSVReader csvReader = new CSVReader(new InputStreamReader(fileContents, StandardCharsets.UTF_8));
         List<String> inputHeaderList = Arrays.asList(csvReader.readNext());
 
         String errorMessage;
