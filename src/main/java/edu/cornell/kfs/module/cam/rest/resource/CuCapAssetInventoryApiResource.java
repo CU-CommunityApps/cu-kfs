@@ -171,7 +171,7 @@ public class CuCapAssetInventoryApiResource {
     private List<AdHocRouteRecipient> buildAdHocRecipients() {
         List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
         AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
-        adHocRoutePerson.setActionRequested(KewApiConstants.ACTION_REQUEST_FYI_REQ);
+        adHocRoutePerson.setActionRequested(KewApiConstants.ACTION_REQUEST_APPROVE_REQ);
         adHocRoutePerson.setId("kp378");
         adHocRecipients.add(adHocRoutePerson);
         return adHocRecipients;
@@ -189,6 +189,7 @@ public class CuCapAssetInventoryApiResource {
         barcodeInventoryErrorDetail.setAssetConditionCode(condition);
         barcodeInventoryErrorDetail.setErrorCorrectionStatusCode(CamsConstants.BarCodeInventoryError.STATUS_CODE_ERROR);
         barcodeInventoryErrorDetail.setCorrectorUniversalIdentifier(netid);
+        barcodeInventoryErrorDetail.setErrorDescription("Asset Tag Not Found");
         return barcodeInventoryErrorDetail;
     }
 
