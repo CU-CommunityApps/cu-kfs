@@ -242,10 +242,6 @@ public class PaymentWorksConstants {
             this.translationToKfsOwnershipTypeCode = translationToKfsOwnershipTypeCode;
         }
         
-        public String getTranslationToKfsOwnershipTypeCode() {
-            return translationToKfsOwnershipTypeCode;
-        }
-        
         public static PaymentWorksTaxClassification findPaymentWorksTaxClassification(int requestingCompanyTaxClassificationCode) {
             for (PaymentWorksTaxClassification classification : PaymentWorksTaxClassification.values()) {
                 if (classification.pmwCode == requestingCompanyTaxClassificationCode) {

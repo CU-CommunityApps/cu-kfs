@@ -11,7 +11,7 @@ public class TaxRuleTest {
     void testIndividualSSN() {
         TaxRule rule = TaxRule.INDIVIDUAL_US_SSN;
         assertEquals(PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString(), rule.taxTypeCode);
-        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), 
+        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.translationToKfsOwnershipTypeCode, 
                 rule.ownershipTypeCode);
         assertTrue(rule.populateW9Attributes);
         assertTrue(rule.populateFirstLastLegalName);
@@ -23,7 +23,7 @@ public class TaxRuleTest {
     void testIndividualEIN() {
         TaxRule rule = TaxRule.INDIVIDUAL_US_EIN;
         assertEquals(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(), rule.taxTypeCode);
-        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), 
+        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.translationToKfsOwnershipTypeCode, 
                 rule.ownershipTypeCode);
         assertTrue(rule.populateW9Attributes);
         assertFalse(rule.populateFirstLastLegalName);
@@ -66,7 +66,7 @@ public class TaxRuleTest {
     }
 
     protected void assertStandardForeignIndividualValues(TaxRule rule) {
-        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode(), 
+        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.translationToKfsOwnershipTypeCode, 
                 rule.ownershipTypeCode);
         assertFalse(rule.populateW9Attributes);
         assertTrue(rule.populateFirstLastLegalName);
@@ -80,7 +80,7 @@ public class TaxRuleTest {
     void testForeignEntity() {
         TaxRule rule = TaxRule.FOREIGN_ENTITY;
         assertEquals(PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getKfsTaxTypeCodeAsString(), rule.taxTypeCode);
-        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.getTranslationToKfsOwnershipTypeCode(), 
+        assertEquals(PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.translationToKfsOwnershipTypeCode, 
                 rule.ownershipTypeCode);
         assertFalse(rule.populateW9Attributes);
         assertFalse(rule.populateFirstLastLegalName);
