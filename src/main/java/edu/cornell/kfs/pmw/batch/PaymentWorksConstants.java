@@ -231,7 +231,8 @@ public class PaymentWorksConstants {
     }
     
     public enum PaymentWorksTaxClassification {
-        INDIVIDUAL_SOLE_PROPRIETOR(INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR, "Individual/sole proprietor or single-member LLC", VendorOwnershipCodes.INDIVIDUAL),
+        INDIVIDUAL_SOLE_PROPRIETOR(INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR, "Individual/sole proprietor or single-member LLC", 
+        		VendorOwnershipCodes.INDIVIDUAL),
         C_CORPORATION(C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "C Corporation", VendorOwnershipCodes.CORPORATION),
         S_CORPORATION(S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "S Corporation", VendorOwnershipCodes.S_CORPORATION),
         PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", VendorOwnershipCodes.PARTNERSHIP),
