@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -22,6 +23,7 @@ import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.kew.api.KewApiConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -147,7 +149,7 @@ public class CuCapAssetInventoryApiResource {
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         try {
-            GlobalVariables.setUserSession(new UserSession("kp378"));
+            GlobalVariables.setUserSession(new UserSession("kfs"));
             BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
 
             String errorDescription = CuCamsConstants.CapAssetApi.ASSET_NOT_FOUND_ERROR + assetTag;
@@ -159,11 +161,20 @@ public class CuCapAssetInventoryApiResource {
             document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
             getDocumentService().saveDocument(document);
 
-            List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
+            List<AdHocRouteRecipient> adHocRecipients = buildAdHocRecipients();
             getDocumentService().routeDocument(document, "Capital Asset Inventory Error Asset Not Found", adHocRecipients);
         } catch (Exception ex) {
             LOG.error("createCapitalAssetErrorDocument", ex);
         }
+    }
+
+    private List<AdHocRouteRecipient> buildAdHocRecipients() {
+        List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
+        AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
+        adHocRoutePerson.setActionRequested(KewApiConstants.ACTION_REQUEST_FYI_REQ);
+        adHocRoutePerson.setId("kp378");
+        adHocRecipients.add(adHocRoutePerson);
+        return adHocRecipients;
     }
 
     private BarcodeInventoryErrorDetail getErrorDetail(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
