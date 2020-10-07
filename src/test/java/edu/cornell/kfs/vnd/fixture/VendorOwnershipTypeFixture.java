@@ -1,9 +1,10 @@
 package edu.cornell.kfs.vnd.fixture;
 
 import org.kuali.kfs.vnd.businessobject.OwnershipType;
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 
 public enum VendorOwnershipTypeFixture {
-	ONE(true, "CP", "CORPORATION", true);
+	ONE(true, PaymentWorksConstants.VendorOwnershipCodes.CORPORATION, "CORPORATION", true);
 	
 	public final boolean active;
 	public final String vendorOwnershipCode;
