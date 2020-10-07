@@ -227,19 +227,29 @@ public class PaymentWorksConstants {
         S_CORPORATION(S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "S Corporation", "SC"),
         PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", "PT"),
         TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", "ET"), 
-        LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", "CP"),
-        LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", "SC"),
-        LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", "PT"),
+        LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", "CP", "PT"),
+        LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", "SC", "PT"),
+        LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", "PT", "PT"),
         OTHER(OTHER_TAX_CLASSIFICATION_INDICATOR, "Other", "OT");
         
         public final int pmwCode;
         public final String pmwDescription;
-        public final String translationToKfsOwnershipTypeCode;
+        public final String legacyTranslationToKfsOwnershipTypeCode;
+        public final String foreignTranslationToKfsOwnershipTypeCode;
         
         private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String translationToKfsOwnershipTypeCode) {
             this.pmwCode = pmwCode;
             this.pmwDescription = pmwDescription;
-            this.translationToKfsOwnershipTypeCode = translationToKfsOwnershipTypeCode;
+            this.legacyTranslationToKfsOwnershipTypeCode = translationToKfsOwnershipTypeCode;
+            this.foreignTranslationToKfsOwnershipTypeCode = translationToKfsOwnershipTypeCode;
+        }
+        
+        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String translationToKfsOwnershipTypeCode, 
+        		String foreignTranslationToKfsOwnershipTypeCode) {
+            this.pmwCode = pmwCode;
+            this.pmwDescription = pmwDescription;
+            this.legacyTranslationToKfsOwnershipTypeCode = translationToKfsOwnershipTypeCode;
+            this.foreignTranslationToKfsOwnershipTypeCode = foreignTranslationToKfsOwnershipTypeCode;
         }
         
         public static PaymentWorksTaxClassification findPaymentWorksTaxClassification(int requestingCompanyTaxClassificationCode) {
