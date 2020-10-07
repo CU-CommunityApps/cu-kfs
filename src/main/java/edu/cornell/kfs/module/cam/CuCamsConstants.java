@@ -40,6 +40,9 @@ public class CuCamsConstants {
         public static final String LAST_INVENTORY_DATE = "last_inventory_date";
         public static final String ORGANIZATION_INVENTORY_NAME = "organization_inventory_name";
         public static final String CAPITAL_ASSET_NUMBER = "capital_asset_number";
+        public static final String ASSET_NOT_FOUND_ERROR = "Error Scanning Asset Tag #";
+        public static final long UPLOAD_ROW_NUMBER = 1L;
+        public static final String CAMPUS_CODE_VALUE = "IT";
 
         public static final class ConfigurationProperties {
             public static final String COGNITO_USER_POOL_ISSUER_URL = "cu.kfs.cams.api.cognito.user.pool.url";

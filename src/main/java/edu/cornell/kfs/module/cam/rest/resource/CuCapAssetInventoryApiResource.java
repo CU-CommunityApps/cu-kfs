@@ -22,7 +22,6 @@ import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -148,13 +147,10 @@ public class CuCapAssetInventoryApiResource {
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         try {
-            GlobalVariables.clear();
-
             GlobalVariables.setUserSession(new UserSession("kp378"));
             BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
 
-            document.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(KualiDecimal.ZERO);
-            String errorDescription = "Error Scanning Asset Tag #" + assetTag;
+            String errorDescription = CuCamsConstants.CapAssetApi.ASSET_NOT_FOUND_ERROR + assetTag;
             document.getDocumentHeader().setExplanation(errorDescription + ". Asset Tag Not Found");
             document.getDocumentHeader().setDocumentDescription(errorDescription);
             document.setUploaderUniversalIdentifier(netid);
@@ -172,8 +168,8 @@ public class CuCapAssetInventoryApiResource {
 
     private BarcodeInventoryErrorDetail getErrorDetail(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         BarcodeInventoryErrorDetail barcodeInventoryErrorDetail = new BarcodeInventoryErrorDetail();
-        barcodeInventoryErrorDetail.setUploadRowNumber(1L);
-        barcodeInventoryErrorDetail.setCampusCode("IT");
+        barcodeInventoryErrorDetail.setUploadRowNumber(CuCamsConstants.CapAssetApi.UPLOAD_ROW_NUMBER);
+        barcodeInventoryErrorDetail.setCampusCode(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE);
         barcodeInventoryErrorDetail.setAssetTagNumber(assetTag);
         barcodeInventoryErrorDetail.setUploadScanIndicator(true);
         barcodeInventoryErrorDetail.setUploadScanTimestamp(getDateTimeService().getCurrentTimestamp());
