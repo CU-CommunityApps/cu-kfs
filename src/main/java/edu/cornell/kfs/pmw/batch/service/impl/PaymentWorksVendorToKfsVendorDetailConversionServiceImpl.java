@@ -176,7 +176,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorHeader.setVendorForeignIndicator(new Boolean(false));
         vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString());
-        vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode());
+        vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.legacyFormTranslationToKfsOwnershipTypeCode);
         vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap)); 
         kfsVendorDataWrapper.getVendorDetail().setVendorHeader(vendorHeader);
         kfsVendorDataWrapper = populateW9Attributes(kfsVendorDataWrapper, pmwVendor);
@@ -189,7 +189,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorHeader.setVendorForeignIndicator(new Boolean(false));
         vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString());
-        vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode());
+        vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.legacyFormTranslationToKfsOwnershipTypeCode);
         vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
         kfsVendorDataWrapper.getVendorDetail().setVendorHeader(vendorHeader);
         kfsVendorDataWrapper = populateW9Attributes(kfsVendorDataWrapper, pmwVendor);
@@ -660,31 +660,31 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         
         switch (pmwVendor.getRequestingCompanyTaxClassificationCode().intValue()) {
             case PaymentWorksConstants.INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR : 
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.C_CORPORATION_TAX_CLASSIFICATION_INDICATOR:
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.S_CORPORATION_TAX_CLASSIFICATION_INDICATOR :
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.S_CORPORATION.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.S_CORPORATION.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR : 
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.PARTNERSHIP.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.PARTNERSHIP.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR : 
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.TRUST_ESTATE.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.TRUST_ESTATE.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR : 
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.LLC_TAXED_AS_C_CORPORATION.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.LLC_TAXED_AS_C_CORPORATION.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR : 
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.LLC_TAXED_AS_S_CORPORATION.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.LLC_TAXED_AS_S_CORPORATION.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR: 
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.LLC_TAXED_AS_PARTNERSHIP.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.LLC_TAXED_AS_PARTNERSHIP.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             case PaymentWorksConstants.OTHER_TAX_CLASSIFICATION_INDICATOR: 
-                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.OTHER.getTranslationToKfsOwnershipTypeCode();
+                kfsOwnsershipTypeCode = PaymentWorksConstants.PaymentWorksTaxClassification.OTHER.legacyFormTranslationToKfsOwnershipTypeCode;
                 break;
             default: break;
         }
