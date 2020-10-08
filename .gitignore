@@ -10,6 +10,7 @@ overlays/
 .settings/
 *.iml
 .idea/
+.project
 
 # Other junk
 .DS_Store
