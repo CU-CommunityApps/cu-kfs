@@ -172,7 +172,7 @@ public class CuCapAssetInventoryApiResource {
         List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
         AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
         adHocRoutePerson.setActionRequested(KewApiConstants.ACTION_REQUEST_APPROVE_REQ);
-        adHocRoutePerson.setId("kp378");
+        adHocRoutePerson.setId("ga.distribution.uco-capasset");
         adHocRecipients.add(adHocRoutePerson);
         return adHocRecipients;
     }
