@@ -354,6 +354,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -361,6 +367,12 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -368,6 +380,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -375,6 +393,12 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -382,6 +406,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -389,6 +419,12 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -396,6 +432,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -403,6 +445,12 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -410,6 +458,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -417,6 +471,12 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -424,6 +484,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -431,6 +497,12 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -438,6 +510,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -445,12 +523,24 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
             <artifactId>kfs-web</artifactId>
             <version>${kfs.version}</version>
             <type>war</type>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -458,6 +548,12 @@
             <version>${kfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xml-apis</groupId>
+            		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
