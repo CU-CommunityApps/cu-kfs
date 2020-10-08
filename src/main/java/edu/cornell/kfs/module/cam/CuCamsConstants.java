@@ -43,6 +43,7 @@ public class CuCamsConstants {
         public static final String ASSET_NOT_FOUND_ERROR = "Error Scanning Asset Tag #";
         public static final long UPLOAD_ROW_NUMBER = 1L;
         public static final String CAMPUS_CODE_VALUE = "IT";
+        public static final String KFS_SYSTEM_USER = "KFS";
 
         public static final class ConfigurationProperties {
             public static final String COGNITO_USER_POOL_ISSUER_URL = "cu.kfs.cams.api.cognito.user.pool.url";
