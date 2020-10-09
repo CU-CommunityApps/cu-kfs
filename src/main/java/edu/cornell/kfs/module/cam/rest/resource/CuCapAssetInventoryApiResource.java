@@ -146,19 +146,28 @@ public class CuCapAssetInventoryApiResource {
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
         try {
-            GlobalVariables.setUserSession(new UserSession(CuCamsConstants.CapAssetApi.KFS_SYSTEM_USER));
-            BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
+            GlobalVariables.doInNewGlobalVariables(new UserSession(CuCamsConstants.CapAssetApi.KFS_SYSTEM_USER),
+                () -> {
+                    try {
+                        BarcodeInventoryErrorDocument document = (BarcodeInventoryErrorDocument) getDocumentService().getNewDocument(BarcodeInventoryErrorDocument.class);
 
-            String errorDescription = CuCamsConstants.CapAssetApi.ASSET_NOT_FOUND_ERROR + assetTag;
-            document.getDocumentHeader().setExplanation(errorDescription + ". Asset Tag Not Found");
-            document.getDocumentHeader().setDocumentDescription(errorDescription);
-            document.setUploaderUniversalIdentifier(netid);
-            List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
-            barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
-            document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
-            getDocumentService().saveDocument(document);
+                        String errorDescription = CuCamsConstants.CapAssetApi.ASSET_NOT_FOUND_ERROR + assetTag;
+                        document.getDocumentHeader().setExplanation(errorDescription + ". Asset Tag Not Found");
+                        document.getDocumentHeader().setDocumentDescription(errorDescription);
+                        document.setUploaderUniversalIdentifier(netid);
+                        List<BarcodeInventoryErrorDetail> barcodeInventoryErrorDetails = new ArrayList<>();
+                        barcodeInventoryErrorDetails.add(getErrorDetail(netid, assetTag, condition, buildingCode, roomNumber));
+                        document.setBarcodeInventoryErrorDetail(barcodeInventoryErrorDetails);
+                        getDocumentService().saveDocument(document);
 
-            getDocumentService().routeDocument(document, "Capital Asset Inventory Error Asset Not Found", new ArrayList<>());
+                        getDocumentService().routeDocument(document, "Capital Asset Inventory Error Asset Not Found", new ArrayList<>());
+                        return true;
+                    } catch (Exception ex) {
+                        LOG.error("createCapitalAssetErrorDocument", ex);
+                    }
+                    return false;
+                }
+            );
         } catch (Exception ex) {
             LOG.error("createCapitalAssetErrorDocument", ex);
         }
