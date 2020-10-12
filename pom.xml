@@ -155,6 +155,7 @@
                 <version>${maven.compiler.version}</version>
                 <configuration>
                     <release>11</release>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
             <plugin>

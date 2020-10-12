@@ -65,7 +65,7 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
         
         for (CuObjectCodeGlobalDetail detail : objectCodeGlobalDetails) {
             if (!getPersistenceStructureService().hasPrimaryKeyFieldValues(detail)) {
-                LOG.error("isPersistable, detail doesn't have primary keys set: " + detail.toString());
+                LOG.error("isPersistable, detail doesn’t have primary keys set: " + detail.toString());
                 return false;
             }
         }

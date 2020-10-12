@@ -171,7 +171,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
                         KFSKeyConstants.ERROR_CUSTOM, "Fiscal Year must be a four-digit number");
             } catch (Exception e) {
                 GlobalVariables.getMessageMap().putError(KFSConstants.DOCUMENT_ERRORS, KFSKeyConstants.ERROR_CUSTOM,
-                        "Please report the server error.>>");
+                        "Please report the server error.≥");
                 LOG.error("Application Errors", e);
             }
         }
