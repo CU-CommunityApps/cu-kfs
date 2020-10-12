@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -130,6 +131,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	private FinancialSystemDocumentService financialSystemDocumentService;
 	private CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService;
 
+	@Override
     public ElectronicInvoiceLoad loadElectronicInvoices() {
         LOG.debug("loadElectronicInvoices() started");
 
@@ -271,6 +273,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		return description.toString();
 	}
 
+	@Override
 	protected void processAboveTheLineItem(PaymentRequestItem purapItem, ElectronicInvoiceOrderHolder orderHolder) {
 		LOG.info("Processing above the line item");
 
@@ -304,6 +307,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		}
 	}
 
+	@Override
 	protected void processItemsForDiscount(PaymentRequestDocument preqDocument, ElectronicInvoiceOrderHolder orderHolder) {
 		LOG.info("Processing payment request items for discount");
 
@@ -393,6 +397,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		LOG.info("Completed processing payment request items for discount");
 	}
 
+	@Override
     protected void removeEmptyItems(List<PurApItem> preqItems) {
         for(int i=preqItems.size()-1; i >= 0; i--) {
             PurApItem item = preqItems.get(i);
@@ -405,7 +410,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
     }
 
-
+    @Override
     protected void setVendorDetails(ElectronicInvoice eInvoice) {
     	// based on code found in this class
     	// Marcia mentioned that each einvoice just for one po.
@@ -441,6 +446,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
     }
 
+    @Override
     protected void validateVendorDetails(ElectronicInvoiceRejectDocument rejectDocument) {
 
         boolean vendorFound = false;
@@ -478,6 +484,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         rejectDocument.getDocumentHeader().setDocumentDescription(newDocumentDesc);
     }
 
+    @Override
     protected void setProcessingCampus(PaymentRequestDocument preqDoc, String initiatorCampusCode) {
         String campusCode = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
                 PurapParameterConstants.ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS);
@@ -623,8 +630,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         return documentIds;
     }
     
+    @Override
     protected StringBuffer saveLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
-    	NumberFormat twoDecForm = DecimalFormat.getCurrencyInstance();
+    	NumberFormat twoDecForm = DecimalFormat.getCurrencyInstance(Locale.US);
     	
         Map<String, ElectronicInvoiceLoadSummary> savedLoadSummariesMap = new HashMap<String, ElectronicInvoiceLoadSummary>();
 
@@ -697,6 +705,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
     }
 
+    @Override
     protected PaymentRequestDocument createPaymentRequest(ElectronicInvoiceOrderHolder orderHolder) {
         LOG.info("Creating Payment Request document");
 
@@ -918,6 +927,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     // KFSUPGRADE-480/KFSUPGRADE-484
     
     @Transactional
+    @Override
     protected boolean processElectronicInvoice(ElectronicInvoiceLoad eInvoiceLoad, File invoiceFile, byte[] xmlAsBytes) {
 
         // Checks parameter to see if files should be moved to the accept/reject folders after load
@@ -1143,6 +1153,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     	return false;
     }
     
+    @Override
 	public ElectronicInvoiceRejectDocument createRejectDocument(ElectronicInvoice eInvoice,
 			ElectronicInvoiceOrder electronicInvoiceOrder, ElectronicInvoiceLoad eInvoiceLoad) {
 		LOG.info("Creating reject document [DUNS=" + eInvoice.getDunsNumber() + ",POID="
@@ -1301,6 +1312,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
     }
 
+    @Override
     protected void attachInvoiceXMLWithRejectDoc(ElectronicInvoiceRejectDocument eInvoiceRejectDocument, File attachmentFile, String noteText) {
         Note note = null;
         try {
@@ -1604,6 +1616,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         
     }
 
+    @Override
     protected void processInvoiceItem(PaymentRequestItem preqItem, ElectronicInvoiceOrderHolder orderHolder){
     	// TODO : 'no qty' po line item may have 'qty inv item'
     	// force it to match like qty item.
@@ -1659,6 +1672,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
     }
 
+    @Override
     protected void processTaxItem (PaymentRequestItem preqItem, ElectronicInvoiceOrderHolder orderHolder){
 
         if (LOG.isInfoEnabled()){
@@ -1680,7 +1694,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
 
     }
-   
+
+    @Override
     protected void addRejectReasonsToNote(String rejectReasons, ElectronicInvoiceRejectDocument eInvoiceRejectDocument){
 
         try {
@@ -1779,7 +1794,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     protected boolean isUnsupportedXmlnsAttribute(Attr attribute) {
-        String attributeName = StringUtils.lowerCase(attribute.getName());
+        String attributeName = StringUtils.lowerCase(attribute.getName(), Locale.US);
         return StringUtils.startsWith(attributeName, XMLNS_ATTRIBUTE_PREFIX)
                 && !ALLOWED_XMLNS_ATTRIBUTES_PATTERN.matcher(attributeName).matches();
     }

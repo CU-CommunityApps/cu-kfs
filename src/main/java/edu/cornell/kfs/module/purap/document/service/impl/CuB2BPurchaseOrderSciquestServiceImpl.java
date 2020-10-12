@@ -8,11 +8,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -25,22 +31,14 @@ import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;
 import org.kuali.kfs.module.purap.util.cxml.PurchaseOrderResponse;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.ContractManager;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
@@ -73,6 +71,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     private PurchaseOrderService purchaseOrderService;
     private VendorService vendorService;
     
+    @Override
     public String sendPurchaseOrder(PurchaseOrderDocument purchaseOrder) {
         /*
          * IMPORTANT DESIGN NOTE: We need the contract manager's name, phone number, and e-mail address. B2B orders that don't
@@ -174,7 +173,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         return transmitErrors.toString();
     }
 
-
+    @Override
     public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorPrincipalId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns, boolean includeNewFields) {
     	WorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentTypeName();
@@ -265,7 +264,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         }
         cxml.append("      <PONumber>").append(purchaseOrder.getPurapDocumentIdentifier()).append("</PONumber>\n");
         cxml.append("      <Requestor>\n");
-        cxml.append("        <UserProfile username=\"").append(requisitionInitiatorPrincipalId.toUpperCase()).append("\">\n");
+        cxml.append("        <UserProfile username=\"").append(requisitionInitiatorPrincipalId.toUpperCase(Locale.US)).append("\">\n");
         cxml.append("        </UserProfile>\n");
         cxml.append("      </Requestor>\n");
         cxml.append("      <Priority>High</Priority>\n");
@@ -746,6 +745,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         return cxml.toString();
     }
 
+    @Override
     public String verifyCxmlPOData(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorPrincipalId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {
         StringBuffer errors = new StringBuffer();
 

@@ -8,12 +8,14 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.PosterIndirectCostRecoveryEntriesStep;
 import org.kuali.kfs.gl.batch.service.PosterService;
@@ -23,15 +25,13 @@ import org.kuali.kfs.gl.businessobject.ExpenditureTransaction;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.gl.businessobject.OriginEntryInformation;
 import org.kuali.kfs.gl.businessobject.Transaction;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.exception.InvalidFlexibleOffsetException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.util.ObjectUtils;
-
-import org.kuali.kfs.gl.GLParameterConstants;
 
 public class CuPosterServiceImpl extends PosterServiceImpl implements PosterService {
     private static final Logger LOG = LogManager.getLogger(CuPosterServiceImpl.class);
@@ -95,7 +95,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
 
         e.setFinancialDocumentTypeCode(parameterService.getParameterValueAsString(PosterIndirectCostRecoveryEntriesStep.class, GL_INDIRECT_COST_RECOVERY));
         e.setFinancialSystemOriginationCode(parameterService.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.GL_ORIGINATION_CODE));
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING, Locale.US);
         /*CUMod - start*/
         StringBuffer docNbr = new StringBuffer(ICR_EDOC_PREFIX);
         docNbr.append(sdf.format(runDate));

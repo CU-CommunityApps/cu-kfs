@@ -27,7 +27,7 @@
                       parent="PaymentTermType-vendorNetDueNumber"/>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="PaymentTermType-vendorNetDueTypeDescription"/>
-                <ref bean="activeIndicatorFormAttributeDefinition"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
         <property name="displayAttributeDefinitions">
@@ -50,7 +50,7 @@
                       parent="PaymentTermType-vendorNetDueNumber"/>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="PaymentTermType-vendorNetDueTypeDescription"/>
-                <ref bean="activeIndicatorDisplayAttributeDefinition"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupFields">

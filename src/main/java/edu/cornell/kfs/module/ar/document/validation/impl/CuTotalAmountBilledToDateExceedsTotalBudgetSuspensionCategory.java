@@ -10,8 +10,8 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
-public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extends TotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory {
-    private static final Logger LOG = LogManager.getLogger(CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory.class);
+public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory extends TotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory {
+    private static final Logger LOG = LogManager.getLogger(CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory.class);
     
     @Override
     public boolean shouldSuspend(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {

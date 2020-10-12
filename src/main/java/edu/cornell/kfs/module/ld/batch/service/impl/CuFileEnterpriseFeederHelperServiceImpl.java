@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,7 +57,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
         ReconciliationBlock reconciliationBlock = null;
         Reader reconReader = null;
         try {
-            reconReader = new FileReader(reconFile);
+            reconReader = new FileReader(reconFile, StandardCharsets.UTF_8);
             reconciliationBlock = reconciliationParserService.parseReconciliationBlock(reconReader, reconciliationTableId);
         }
         catch (IOException e) {
@@ -89,7 +90,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 errorMessages.add(new Message("Unable to parse reconciliation file.", Message.TYPE_FATAL));
             }
             else {
-                dataFileReader = new BufferedReader(new FileReader(dataFile));
+                dataFileReader = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
                 Iterator<LaborOriginEntry> fileIterator = new LaborOriginEntryFileIterator(dataFileReader, false);
                 reconciliationService.reconcile(fileIterator, reconciliationBlock, errorMessages);
 
@@ -99,7 +100,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             }
 
             if (reconciliationProcessSucceeded(errorMessages)) {
-                dataFileReader = new BufferedReader(new FileReader(dataFile));
+                dataFileReader = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
                 String line;
                 int count = 0;
                     
