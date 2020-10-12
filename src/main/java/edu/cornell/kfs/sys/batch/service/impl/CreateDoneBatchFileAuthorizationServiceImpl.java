@@ -12,6 +12,7 @@ import org.kuali.kfs.krad.service.KualiModuleService;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 
 public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminAuthorizationService implements CreateDoneBatchFileAuthorizationService {
 	
@@ -21,7 +22,7 @@ public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminA
 	public boolean canCreateDoneFile(BatchFile batchFile, Person user) {
         boolean isAuthorized = false;
 
-            isAuthorized = getPermissionService().isAuthorizedByTemplate(user.getPrincipalId(),
+            isAuthorized = KimApiServiceLocator.getPermissionService().isAuthorizedByTemplate(user.getPrincipalId(),
                 KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.CREATE_DONE_FILE_PERMISSION_TEMPLATE_NAME,
                 generateCreateDoneCheckPermissionDetails(batchFile, user), new HashMap<>());
             
