@@ -52,6 +52,7 @@
 
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <project.java.version>1.11</project.java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <unpack.includes>org/kuali/rice/**/*.class,org/kuali/rice/**/*.properties,META-INF/**,org/kuali/kfs/kim/impl/role/*.xml</unpack.includes>
         <unpack.meta.excludes>META-INF/maven/**,META-INF/MANIFEST.MF,META-INF/*weaving.xml</unpack.meta.excludes>
         <unpack.cynergy.excludes>**/*Cynergy*.class,**/*Dummy*.class</unpack.cynergy.excludes>
@@ -155,7 +156,6 @@
                 <version>${maven.compiler.version}</version>
                 <configuration>
                     <release>11</release>
-                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
