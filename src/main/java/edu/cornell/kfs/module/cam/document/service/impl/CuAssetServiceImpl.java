@@ -46,12 +46,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
         return activeMatches;
     }
 
-    public Asset updateAssetInventory(String capitalAssetNumber, String conditionCode, String buildingCode, String roomNumber, String netid) {
-        Asset asset = businessObjectService.findBySinglePrimaryKey(Asset.class, capitalAssetNumber);
-        if (ObjectUtils.isNull(asset)) {
-            return null;
-        }
-
+    public Asset updateAssetInventory(Asset asset, String conditionCode, String buildingCode, String roomNumber, String netid) {
         asset.setConditionCode(conditionCode);
         asset.setBuildingCode(buildingCode);
         asset.setBuildingRoomNumber(roomNumber);
@@ -64,6 +59,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
             assetExtension = new AssetExtension();
             asset.setExtension(assetExtension);
         }
+
         Person person = personService.getPersonByPrincipalName(netid);
         String lastScannedBy = person.getFirstName() + " " + person.getLastName() + " (" + netid + ")";
         assetExtension.setLastScannedBy(lastScannedBy);
