@@ -42,6 +42,7 @@ import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -205,18 +206,18 @@ public class CuCapAssetInventoryApiResource {
         var fieldsToCheck = Stream.of(
                 CuCamsConstants.CapAssetApi.CONDITION_CODE, CuCamsConstants.CapAssetApi.BUILDING_CODE,
                 CuCamsConstants.CapAssetApi.ROOM_NUMBER, CuCamsConstants.CapAssetApi.NETID);
-        var flattenedMissingFieldNames = fieldsToCheck
+        var missingFieldNamesMessage = fieldsToCheck
                 .filter(fieldName -> StringUtils.isBlank(jsonFields.get(fieldName)))
                 .collect(Collectors.joining(", "));
         var result = true;
         
         if (StringUtils.isBlank(assetTag)) {
-            LOG.error("validateUpdateAssetRequestBody: Update request for Asset does not specify an Asset Tag");
+            LOG.error("validateUpdateAssetRequestBodyAndTag: Update request for Asset does not specify an Asset Tag");
             result = false;
         }
-        if (StringUtils.isNotBlank(flattenedMissingFieldNames)) {
-            LOG.error("validateUpdateAssetRequestBody: Update request for Asset Tag #" + assetTag
-                    + " is missing the following required fields: " + flattenedMissingFieldNames);
+        if (StringUtils.isNotBlank(missingFieldNamesMessage)) {
+            LOG.error("validateUpdateAssetRequestBodyAndTag: Update request for Asset Tag #" + assetTag
+                    + " is missing the following required fields: " + missingFieldNamesMessage);
             result = false;
         }
         return result;
@@ -253,10 +254,10 @@ public class CuCapAssetInventoryApiResource {
     }
 
     private Map<String, String> getShallowJsonFieldMappingsFromCurrentRequest() throws IOException {
-        Map<String, String> fieldMappings = new HashMap<String, String>();
-        JsonNode jsonNode = getJsonContentFromCurrentRequest();
-        Iterable<Map.Entry<String, JsonNode>> jsonFields = jsonNode::fields;
-        for (var jsonField : jsonFields) {
+        var fieldMappings = new HashMap<String, String>();
+        var jsonNode = getJsonContentFromCurrentRequest();
+        for (var jsonFieldIterator = jsonNode.fields(); jsonFieldIterator.hasNext();) {
+            var jsonField = jsonFieldIterator.next();
             fieldMappings.put(jsonField.getKey(), jsonField.getValue().asText());
         }
         return fieldMappings;
@@ -266,7 +267,15 @@ public class CuCapAssetInventoryApiResource {
         try (var requestInputStream = servletRequest.getInputStream();
                 var streamReader = new InputStreamReader(requestInputStream, StandardCharsets.UTF_8)) {
             var objectMapper = new ObjectMapper();
-            return objectMapper.readTree(streamReader);
+            var jsonNode = objectMapper.readTree(streamReader);
+            if (jsonNode == null) {
+                throw new BadRequestException("The request has no content in its JSON payload");
+            } else if (!jsonNode.isObject()) {
+                throw new BadRequestException("The request does not have a JSON object as the root node");
+            }
+            return jsonNode;
+        } catch (JsonProcessingException e) {
+            throw new BadRequestException("The request has malformed JSON content");
         }
     }
 
