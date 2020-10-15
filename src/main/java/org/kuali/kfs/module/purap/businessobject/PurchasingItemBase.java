@@ -26,6 +26,7 @@ import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 public abstract class PurchasingItemBase extends PurApItemBase implements PurchasingItem {
     
@@ -40,16 +41,17 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
  // KFSPTS-2257 : eshop flag enhancement
     // (Product Flags - Controlled Substance, Energy Star, Green, Hazardous Material, Rad Minor, Radioactive, Recycled, Select Agent, Toxin)
 
-     private boolean controlled;
-     private boolean green;
-     private boolean hazardous;
-     private boolean radioactive;
-     private boolean radioactiveMinor;
-     private boolean selectAgent;
-     private boolean toxin;
-     private boolean recycled; // mapped to greenproduct
-     private boolean energyStar;
-     
+    private boolean controlled;
+    private boolean green;
+    private boolean hazardous;
+    private boolean radioactive;
+    private boolean radioactiveMinor;
+    private boolean selectAgent;
+    private boolean toxin;
+    private boolean recycled; // mapped to greenproduct
+    private boolean energyStar;
+
+    @Override
     public boolean isConsideredEntered() {
         if (this instanceof PurchaseOrderItem) {
             // if item is PO item... only validate active items
@@ -114,10 +116,11 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
 
     public void setPurchasingCommodityCode(String purchasingCommodityCode) {
         this.purchasingCommodityCode = StringUtils.isNotBlank(purchasingCommodityCode) ?
-                purchasingCommodityCode.toUpperCase() : purchasingCommodityCode;
+                purchasingCommodityCode.toUpperCase(Locale.US) : purchasingCommodityCode;
     }
-    
-    public PurchasingCapitalAssetItem getPurchasingCapitalAssetItem(){
+
+    @Override
+    public PurchasingCapitalAssetItem getPurchasingCapitalAssetItem() {
         PurchasingDocument pd = this.getPurapDocument();
         if (this.getItemIdentifier() != null) {
             return pd.getPurchasingCapitalAssetItem(this.getItemIdentifier());

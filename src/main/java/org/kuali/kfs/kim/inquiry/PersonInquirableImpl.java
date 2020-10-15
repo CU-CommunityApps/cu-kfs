@@ -21,6 +21,7 @@ package org.kuali.kfs.kim.inquiry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kim.impl.common.attribute.KimAttributeDataBo;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
 import org.kuali.kfs.kim.impl.type.KimTypeAttributeBo;
@@ -28,7 +29,6 @@ import org.kuali.kfs.kns.datadictionary.InquirySectionDefinition;
 import org.kuali.kfs.kns.inquiry.InquiryRestrictions;
 import org.kuali.kfs.kns.inquiry.KualiInquirableImpl;
 import org.kuali.kfs.kns.lookup.HtmlData;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Row;
@@ -40,7 +40,6 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.BusinessObject;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -48,15 +47,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static java.util.Map.entry;
 
 public class PersonInquirableImpl extends KualiInquirableImpl {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final Map<String, String> SUB_SECTION_LABELS = Stream.of(
-            new AbstractMap.SimpleEntry<>("rolesSection", "Role Qualifier"),
-            new AbstractMap.SimpleEntry<>("delegationsSection", "Delegation Member Qualifier"))
-            .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+    private static final Map<String, String> SUB_SECTION_LABELS = Map.ofEntries(
+            entry("rolesSection", "Role Qualifier"),
+            entry("delegationsSection", "Delegation Member Qualifier")
+    );
 
     PersonService personService;
 

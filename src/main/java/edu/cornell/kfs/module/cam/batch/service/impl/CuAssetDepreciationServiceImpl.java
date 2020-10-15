@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +45,7 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
         boolean hasErrors = false;
         Calendar depreciationDate = dateTimeService.getCurrentCalendar();
         String depreciationDateParameter = null;
-        DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY);
+        DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY, Locale.US);
         boolean executeJob = false;
         String errorMessage = kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.DEPRECIATION_ALREADY_RAN_MSG);
 

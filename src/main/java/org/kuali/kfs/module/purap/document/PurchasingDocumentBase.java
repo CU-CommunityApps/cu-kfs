@@ -76,6 +76,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -707,7 +708,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     @Override
     public void setDeliveryBuildingCode(String deliveryBuildingCode) {
-        this.deliveryBuildingCode = deliveryBuildingCode != null ? deliveryBuildingCode.toUpperCase() : null;
+        this.deliveryBuildingCode = deliveryBuildingCode != null ? deliveryBuildingCode.toUpperCase(Locale.US) : null;
     }
 
     @Override

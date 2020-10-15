@@ -30,6 +30,7 @@ import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentStatusBo;
 import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentTypeBo;
 import org.kuali.kfs.kim.impl.identity.name.EntityNameBo;
 import org.kuali.kfs.kim.impl.identity.phone.EntityPhoneBo;
+import org.kuali.kfs.kim.impl.identity.type.EntityTypeContactInfoBo;
 import org.kuali.kfs.kim.impl.role.RoleMemberBo;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -51,12 +52,12 @@ import org.kuali.rice.kim.api.identity.phone.EntityPhoneContract;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.identity.type.EntityTypeContactInfoDefault;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kim.impl.identity.type.EntityTypeContactInfoBo;
 import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /*
@@ -208,7 +209,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
                 middleName = unNullify(entityName.getMiddleNameUnmasked());
                 lastName = unNullify(entityName.getLastNameUnmasked());
                 if (entityTypeCode.equals(KimConstants.EntityTypes.SYSTEM)) {
-                    name = principal.getPrincipalName().toUpperCase();
+                    name = principal.getPrincipalName().toUpperCase(Locale.US);
                 } else {
                     name = unNullify(entityName.getCompositeNameUnmasked());
                     if ("".equals(name) || name == null) {
@@ -219,8 +220,8 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
                 firstName = "";
                 middleName = "";
                 if (entityTypeCode.equals(KimConstants.EntityTypes.SYSTEM)) {
-                    name = principal.getPrincipalName().toUpperCase();
-                    lastName = principal.getPrincipalName().toUpperCase();
+                    name = principal.getPrincipalName().toUpperCase(Locale.US);
+                    lastName = principal.getPrincipalName().toUpperCase(Locale.US);
                 } else {
                     name = "";
                     lastName = "";
@@ -735,6 +736,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         return this.active;
     }
 
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }

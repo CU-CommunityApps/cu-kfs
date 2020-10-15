@@ -120,6 +120,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -972,6 +973,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
                         invoice.getTotalInvoiceAmount().add(sum), AbstractKualiDecimal::add);
     }
 
+    @Override
     public KualiDecimal getAwardBilledToDateAmountExcludingDocument(String proposalNumber, String documentNumber) {
         Map<String, String> fieldValues = new HashMap<>();
         fieldValues.put(ArPropertyConstants.ContractsGrantsInvoiceDocumentFields.PROPOSAL_NUMBER, proposalNumber);
@@ -2285,6 +2287,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
                 : batchJobInitiatorPrincipal;
     }
 
+    @Override
     public void markManuallySent(final ContractsGrantsInvoiceDocument document) {
         try {
             document.getInvoiceAddressDetails().stream().filter(InvoiceAddressDetail::isSendIndicator)
@@ -2299,6 +2302,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
         }
     }
 
+    @Override
     public void queueInvoiceTransmissions(final ContractsGrantsInvoiceDocument document) {
         document.getInvoiceAddressDetails().stream().filter(InvoiceAddressDetail::isSendIndicator)
                 .forEach(detail -> {
@@ -2315,7 +2319,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
         String transmissionNotePattern = getConfigurationService()
                 .getPropertyValueAsString(ArKeyConstants.INVOICE_ADDRESS_TRANSMISSION_NOTE);
         note.setNoteText(MessageFormat.format(transmissionNotePattern,
-                GlobalVariables.getUserSession().getPrincipalName(), invoiceTransmissionMethod.toLowerCase()));
+                GlobalVariables.getUserSession().getPrincipalName(), invoiceTransmissionMethod.toLowerCase(Locale.US)));
         note.setNoteTypeCode(document.getNoteType().getCode());
         Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
         note = noteService.createNote(note, document.getNoteTarget(), systemUser.getPrincipalId());

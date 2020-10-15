@@ -63,8 +63,8 @@
         </property>
     </bean>
 
-	<bean id="totalAmountBilledToDateExceedsAwardTotalSuspensionCategory" parent="totalAmountBilledToDateExceedsAwardTotalSuspensionCategory-parentBean" 
-		class="edu.cornell.kfs.module.ar.document.validation.impl.CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory">
+	<bean id="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory" parent="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory-parentBean" 
+		class="edu.cornell.kfs.module.ar.document.validation.impl.CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory">
 	</bean>
 
     <bean id="firstInvoiceForAwardSuspensionCategory" parent="firstInvoiceForAwardSuspensionCategory-parentBean"/>

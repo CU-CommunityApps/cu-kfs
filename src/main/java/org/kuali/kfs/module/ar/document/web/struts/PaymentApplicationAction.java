@@ -67,6 +67,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /*
@@ -501,7 +502,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         nonInvoiced.setDocumentNumber(applicationDocument.getDocumentNumber());
         nonInvoiced.setFinancialDocumentLineNumber(payAppForm.getNextNonInvoicedLineNumber());
         if (StringUtils.isNotBlank(nonInvoiced.getChartOfAccountsCode())) {
-            nonInvoiced.setChartOfAccountsCode(nonInvoiced.getChartOfAccountsCode().toUpperCase());
+            nonInvoiced.setChartOfAccountsCode(nonInvoiced.getChartOfAccountsCode().toUpperCase(Locale.US));
         }
 
         // run the validations
@@ -524,7 +525,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         if (StringUtils.isNotBlank(payAppForm.getNonAppliedHoldingCustomerNumber())) {
             Map<String, String> pkMap = new HashMap<>();
             pkMap.put(ArPropertyConstants.CustomerFields.CUSTOMER_NUMBER,
-                    payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase());
+                    payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase(Locale.US));
             int found = getBusinessObjectService().countMatching(Customer.class, pkMap);
             if (found == 0) {
                 addFieldError(KFSConstants.PaymentApplicationTabErrorCodes.UNAPPLIED_TAB,
@@ -534,7 +535,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
             }
 
             // force customer number to upper
-            payAppForm.setNonAppliedHoldingCustomerNumber(payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase());
+            payAppForm.setNonAppliedHoldingCustomerNumber(payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase(Locale.US));
         }
 
         // validate the amount in the unapplied
@@ -556,7 +557,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         NonAppliedHolding nonAppliedHolding = payAppDoc.getNonAppliedHolding();
         if (ObjectUtils.isNull(nonAppliedHolding)) {
             nonAppliedHolding = new NonAppliedHolding();
-            nonAppliedHolding.setCustomerNumber(payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase());
+            nonAppliedHolding.setCustomerNumber(payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase(Locale.US));
             nonAppliedHolding.setReferenceFinancialDocumentNumber(payAppDoc.getDocumentNumber());
             payAppDoc.setNonAppliedHolding(nonAppliedHolding);
         }

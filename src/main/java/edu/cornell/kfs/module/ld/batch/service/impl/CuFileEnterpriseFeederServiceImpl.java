@@ -2,9 +2,9 @@ package edu.cornell.kfs.module.ld.batch.service.impl;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +39,9 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 
 			PrintStream enterpriseFeedPs = null;
 			try {
-				enterpriseFeedPs = new PrintStream(enterpriseFeedFile);
+				enterpriseFeedPs = new PrintStream(enterpriseFeedFile, StandardCharsets.UTF_8);
 			}
-			catch (FileNotFoundException e) {
+			catch (IOException e) {
 				LOG.error("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
 				throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
 			}

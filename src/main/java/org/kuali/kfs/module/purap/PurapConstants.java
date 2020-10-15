@@ -34,12 +34,13 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static java.util.Map.entry;
 
 /**
  * Holds constants for PURAP.
@@ -637,11 +638,12 @@ public final class PurapConstants {
          * particular pending transmission type code.
          */
         private static Map<String, String> getStatusesByTransmissionType() {
-            Map<String, String> statusByTrans = new HashMap<>();
-            statusByTrans.put(PurapConstants.POTransmissionMethods.PRINT, APPDOC_PENDING_PRINT);
-            statusByTrans.put(PurapConstants.POTransmissionMethods.ELECTRONIC, APPDOC_PENDING_CXML);
-            statusByTrans.put(PurapConstants.POTransmissionMethods.FAX, APPDOC_PENDING_FAX);
-            return Collections.unmodifiableMap(statusByTrans);
+            // TODO: Consider making this a constant field.
+            return Map.ofEntries(
+                    entry(POTransmissionMethods.PRINT, APPDOC_PENDING_PRINT),
+                    entry(POTransmissionMethods.ELECTRONIC, APPDOC_PENDING_CXML),
+                    entry(POTransmissionMethods.FAX, APPDOC_PENDING_FAX)
+            );
         }
 
     }
@@ -1288,32 +1290,59 @@ public final class PurapConstants {
         public static final Map<String, String> REQUIREDNESS_FIELDS_BY_PARAMETER_NAMES = getRequirednessFieldsByParameterNames();
         
         private static Map<String, String> getRequirednessFieldsByParameterNames() {
-            Map<String, String> fieldsByParameterNames = new HashMap<>();
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_NUMBER_ON_REQUISITION, "itemCapitalAssets.capitalAssetNumber");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TRANSACTION_TYPE_ON_REQUISITION, "capitalAssetTransactionTypeCode");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TYPE_ON_REQUISITION, "capitalAssetTypeCode");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_COMMENTS_ON_REQUISITION, "capitalAssetNoteText");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_DESCRIPTION_ON_REQUISITION, "capitalAssetSystemDescription");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_LOCATIONS_ADDRESS_ON_REQUISITION, "capitalAssetLocations.capitalAssetLine1Address");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_LOCATIONS_QUANTITY_ON_REQUISITION, "capitalAssetLocations.itemQuantity");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MANUFACTURER_ON_REQUISITION, "capitalAssetManufacturerName");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MODEL_ON_REQUISITION, "capitalAssetModelDescription");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_NOT_CURRENT_FISCAL_YEAR_ON_REQUISITION, "capitalAssetNotReceivedCurrentFiscalYearIndicator");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_NUMBER_OF_ASSETS_ON_REQUISITION, "capitalAssetCountAssetNumber");
-
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_NUMBER_ON_PURCHASE_ORDER, "itemCapitalAssets.capitalAssetNumber");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TRANSACTION_TYPE_ON_PURCHASE_ORDER, "capitalAssetTransactionTypeCode");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TYPE_ON_PURCHASE_ORDER, "capitalAssetTypeCode");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_COMMENTS_ON_PURCHASE_ORDER, "capitalAssetNoteText");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_DESCRIPTION_ON_PURCHASE_ORDER, "capitalAssetSystemDescription");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_LOCATIONS_ADDRESS_ON_PURCHASE_ORDER, "capitalAssetLocations.capitalAssetLine1Address");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_LOCATIONS_QUANTITY_ON_PURCHASE_ORDER, "capitalAssetLocations.itemQuantity");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MANUFACTURER_ON_PURCHASE_ORDER, "capitalAssetManufacturerName");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MODEL_ON_PURCHASE_ORDER, "capitalAssetModelDescription");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_NOT_CURRENT_FISCAL_YEAR_ON_PURCHASE_ORDER, "capitalAssetNotReceivedCurrentFiscalYearIndicator");
-            fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_NUMBER_OF_ASSETS_ON_PURCHASE_ORDER, "capitalAssetCountAssetNumber");
-
-            return Collections.unmodifiableMap(fieldsByParameterNames);
+            
+            // TODO: Consider making this a constant field.
+            return Map.ofEntries(
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_NUMBER_ON_REQUISITION,
+                            "itemCapitalAssets.capitalAssetNumber"),
+                    entry(PurapParameterConstants.CapitalAsset.
+                                    CHARTS_REQUIRING_ASSET_TRANSACTION_TYPE_ON_REQUISITION,
+                            "capitalAssetTransactionTypeCode"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TYPE_ON_REQUISITION,
+                            "capitalAssetTypeCode"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_COMMENTS_ON_REQUISITION,
+                            "capitalAssetNoteText"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_DESCRIPTION_ON_REQUISITION,
+                            "capitalAssetSystemDescription"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_LOCATIONS_ADDRESS_ON_REQUISITION,
+                            "capitalAssetLocations.capitalAssetLine1Address"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_LOCATIONS_QUANTITY_ON_REQUISITION,
+                            "capitalAssetLocations.itemQuantity"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MANUFACTURER_ON_REQUISITION,
+                            "capitalAssetManufacturerName"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MODEL_ON_REQUISITION,
+                            "capitalAssetModelDescription"),
+                    entry(PurapParameterConstants.CapitalAsset.
+                                    CHARTS_REQUIRING_NOT_CURRENT_FISCAL_YEAR_ON_REQUISITION,
+                            "capitalAssetNotReceivedCurrentFiscalYearIndicator"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_NUMBER_OF_ASSETS_ON_REQUISITION,
+                            "capitalAssetCountAssetNumber"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_NUMBER_ON_PURCHASE_ORDER,
+                            "itemCapitalAssets.capitalAssetNumber"),
+                    entry(PurapParameterConstants.CapitalAsset.
+                                    CHARTS_REQUIRING_ASSET_TRANSACTION_TYPE_ON_PURCHASE_ORDER,
+                            "capitalAssetTransactionTypeCode"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TYPE_ON_PURCHASE_ORDER,
+                            "capitalAssetTypeCode"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_COMMENTS_ON_PURCHASE_ORDER,
+                            "capitalAssetNoteText"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_DESCRIPTION_ON_PURCHASE_ORDER,
+                            "capitalAssetSystemDescription"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_LOCATIONS_ADDRESS_ON_PURCHASE_ORDER,
+                            "capitalAssetLocations.capitalAssetLine1Address"),
+                    entry(PurapParameterConstants.CapitalAsset.
+                                    CHARTS_REQUIRING_LOCATIONS_QUANTITY_ON_PURCHASE_ORDER,
+                            "capitalAssetLocations.itemQuantity"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MANUFACTURER_ON_PURCHASE_ORDER,
+                            "capitalAssetManufacturerName"),
+                    entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_MODEL_ON_PURCHASE_ORDER,
+                            "capitalAssetModelDescription"),
+                    entry(PurapParameterConstants.CapitalAsset.
+                                    CHARTS_REQUIRING_NOT_CURRENT_FISCAL_YEAR_ON_PURCHASE_ORDER,
+                            "capitalAssetNotReceivedCurrentFiscalYearIndicator"),
+                    entry(PurapParameterConstants.CapitalAsset.
+                                    CHARTS_REQUIRING_NUMBER_OF_ASSETS_ON_PURCHASE_ORDER,
+                            "capitalAssetCountAssetNumber"));
         }
     }
 

@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -370,7 +371,7 @@ public class AssetSeparatePaymentDistributor {
             for (PropertyDescriptor propertyDescriptor : assetPaymentProperties) {
                 Method readMethod = propertyDescriptor.getReadMethod();
                 if (readMethod != null && Pattern.matches(CamsConstants.GET_PERIOD_DEPRECIATION_AMOUNT_REGEX,
-                        readMethod.getName().toLowerCase()) && propertyDescriptor
+                        readMethod.getName().toLowerCase(Locale.US)) && propertyDescriptor
                         .getPropertyType() != null && KualiDecimal.class
                         .isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     KualiDecimal amount = (KualiDecimal) readMethod.invoke(currPayment);

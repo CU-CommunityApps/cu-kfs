@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public abstract class PurApItemBase extends PersistableBusinessObjectBase implements PurApItem {
 
@@ -103,7 +104,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     @Override
     public void setItemUnitOfMeasureCode(String itemUnitOfMeasureCode) {
         this.itemUnitOfMeasureCode = StringUtils.isNotBlank(itemUnitOfMeasureCode) ?
-                itemUnitOfMeasureCode.toUpperCase() : itemUnitOfMeasureCode;
+                itemUnitOfMeasureCode.toUpperCase(Locale.US) : itemUnitOfMeasureCode;
     }
 
     @Override

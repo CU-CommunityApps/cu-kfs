@@ -36,6 +36,7 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 public final class BatchStepRunner {
     private static final Logger LOG = LogManager.getLogger();
@@ -80,7 +81,8 @@ public final class BatchStepRunner {
                     ModuleService module = getModuleService(stepClass);
                     String nestedDiagnosticContext =
                         getReportsDirectory() + File.separator +
-                        StringUtils.substringAfter(module.getModuleConfiguration().getNamespaceCode(), "-").toLowerCase()
+                        StringUtils.substringAfter(module.getModuleConfiguration().getNamespaceCode(), "-").toLowerCase(
+                                Locale.US)
                             + File.separator + step.getName()
                             + "-" + dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate());
                     boolean ndcSet = false;

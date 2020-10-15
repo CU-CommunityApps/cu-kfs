@@ -54,6 +54,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -256,9 +257,8 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             }
         }
 
-        try {
-            FileOutputStream out = new FileOutputStream(filename);
-            PrintStream p = new PrintStream(out);
+        try (FileOutputStream out = new FileOutputStream(filename);
+                PrintStream p = new PrintStream(out, false, StandardCharsets.UTF_8)) {
 
             p.println("<pdp_load_status>");
             p.println("  <input_file_name>" + inputFileName + "</input_file_name>");
@@ -280,8 +280,6 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             }
             p.println("</pdp_load_status>");
 
-            p.close();
-            out.close();
             // creating .done file
             File doneFile = new File(filename.substring(0, filename.lastIndexOf(".")) + ".done");
             doneFile.createNewFile();

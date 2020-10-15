@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,7 +43,6 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
@@ -292,7 +292,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         cxml.append("    </To>\n");
         cxml.append("    <Sender>\n");
         cxml.append("      <Credential domain=\"TOPSNetworkUserId\">\n");
-        cxml.append("        <Identity>").append(user.getPrincipalName().toUpperCase()).append("</Identity>\n");
+        cxml.append("        <Identity>").append(user.getPrincipalName().toUpperCase(Locale.US)).append("</Identity>\n");
         cxml.append("        <SharedSecret>").append(b2bInformation.getPassword()).append("</SharedSecret>\n");
         cxml.append("      </Credential>\n");
         cxml.append("      <UserAgent>").append(b2bInformation.getUserAgent()).append("</UserAgent>\n");
@@ -300,12 +300,12 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         cxml.append("  </Header>\n");
         cxml.append("  <Request deploymentMode=\"").append(b2bInformation.getEnvironment()).append("\">\n");
         cxml.append("    <PunchOutSetupRequest operation=\"create\">\n");
-        cxml.append("      <BuyerCookie>").append(user.getPrincipalName().toUpperCase()).append("</BuyerCookie>\n");
+        cxml.append("      <BuyerCookie>").append(user.getPrincipalName().toUpperCase(Locale.US)).append("</BuyerCookie>\n");
         //cxml.append(" <Extrinsic
         // name=\"UserEmail\">jdoe@TOPS.com</Extrinsic>\n"); // we can't reliably
         // get the e-mail address, so we're leaving it out
         cxml.append("      <Extrinsic name=\"UserEmail\">").append(user.getEmailAddressUnmasked()).append("</Extrinsic>\n"); 
-        cxml.append("      <Extrinsic name=\"UniqueName\">").append(user.getPrincipalName().toUpperCase()).append("</Extrinsic>\n");
+        cxml.append("      <Extrinsic name=\"UniqueName\">").append(user.getPrincipalName().toUpperCase(Locale.US)).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"PhoneNumber\">").append(user.getPhoneNumberUnmasked()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Department\">").append(user.getCampusCode()).append(user.getPrimaryDepartmentCode()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Campus\">").append(user.getCampusCode()).append("</Extrinsic>\n");

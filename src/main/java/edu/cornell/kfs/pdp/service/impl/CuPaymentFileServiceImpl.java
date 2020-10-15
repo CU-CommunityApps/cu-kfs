@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
@@ -32,8 +35,6 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.kfs.krad.util.MessageMap;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
@@ -196,7 +197,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         }
 
         try {   
-            InputStreamReader inputReader = new InputStreamReader(exFileContents);
+            InputStreamReader inputReader = new InputStreamReader(exFileContents, StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(inputReader);
             String line = "";
             boolean found = false;
