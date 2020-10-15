@@ -20,16 +20,16 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ContractsGrantsInvoiceDocument.class})
-public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
+public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
     
-    private CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory suspensionCategory;
+    private CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory suspensionCategory;
     private ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument;
     
     private static final KualiDecimal STANDARD_BUDGET_TOTAL = new KualiDecimal(50);
 
     @Before
     public void setUp() throws Exception {
-        suspensionCategory = new CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory();
+        suspensionCategory = new CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory();
     }
 
     @After

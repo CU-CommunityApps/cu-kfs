@@ -31,6 +31,7 @@ import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.kns.service.BusinessObjectMetaDataService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
+import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.bo.DataObjectRelationship;
 import org.kuali.kfs.krad.datadictionary.RelationshipDefinition;
@@ -44,7 +45,6 @@ import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.rest.resource.responses.LookupResponse;
@@ -65,7 +65,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +106,7 @@ public class LookupResource {
     public Response getLookup() {
         Class classForType = businessObjectEntry.getBusinessObjectClass();
         if (!isAuthorizedForLookup(classForType)) {
-            Person user = KRADUtils.getUserSessionFromRequest(this.servletRequest).getPerson();
+            Person user = getUserSessionFromRequest(this.servletRequest).getPerson();
             AuthorizationException authorizationException = new AuthorizationException(user.getPrincipalName(),
                     "lookup", classForType.getName());
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.FORBIDDEN);
@@ -177,8 +176,7 @@ public class LookupResource {
                     attributeName, "", false);
 
             if (relationship == null) {
-                Class c = ObjectUtils.getPropertyType(businessObjectEntry, lookupAttribute.getName(),
-                        getPersistenceStructureService());
+                Class c = getPropertyType(businessObjectEntry, lookupAttribute.getName(), getPersistenceStructureService());
                 if (c != null) {
                     if (lookupAttribute.getName().contains(".")) {
                         attributeName = StringUtils.substringBeforeLast(attributeName, ".");
@@ -260,8 +258,8 @@ public class LookupResource {
     }
 
     private LookupResponse.Create getCreateBlock(Class classForType) {
-        String url = getCreateNewUrl(classForType);
-        return new LookupResponse.Create("kr/" + url, "Create New");
+        final var actionsProvider = businessObjectEntry.getActionsProvider();
+        return new LookupResponse.Create(actionsProvider.getCreateUrl(classForType), "Create New");
     }
 
     /*
@@ -284,13 +282,6 @@ public class LookupResource {
                 .anyMatch(keyValue -> StringUtils.isBlank(keyValue.getKey()));
     }
 
-    private String getCreateNewUrl(Class<? extends BusinessObjectBase> classForType) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, KRADConstants.MAINTENANCE_NEW_METHOD_TO_CALL);
-        parameters.put(KRADConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, classForType.getName());
-        return UrlFactory.parameterizeUrl(KRADConstants.MAINTENANCE_ACTION, parameters);
-    }
-
     private boolean shouldCreateNewUrlBeIncluded(Class<? extends BusinessObjectBase> classForType) {
         BusinessObjectAdminService adminService = getBusinessObjectDictionaryService().getBusinessObjectAdminService(
                 classForType);
@@ -299,7 +290,7 @@ public class LookupResource {
             return false;
         }
 
-        Person person = KRADUtils.getUserSessionFromRequest(this.servletRequest).getPerson();
+        Person person = getUserSessionFromRequest(this.servletRequest).getPerson();
         return adminService.allowsNew(classForType, person) && adminService.allowsCreate(classForType, person);
     }
 
@@ -324,10 +315,10 @@ public class LookupResource {
     private boolean isAuthorizedForLookup(Class boClass) {
         return getPermissionService().isAuthorizedByTemplate(getPrincipalId(), KRADConstants.KNS_NAMESPACE,
                 KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS,
-                KRADUtils.getNamespaceAndComponentSimpleName(boClass), Collections.emptyMap());
+                getNamespaceAndComponentSimpleName(boClass), Collections.emptyMap());
     }
 
-    private String getPrincipalId() {
+    protected String getPrincipalId() {
         return KRADUtils.getPrincipalIdFromRequest(servletRequest);
     }
 
@@ -397,4 +388,33 @@ public class LookupResource {
     protected void setPersistenceStructureService(PersistenceStructureService persistenceStructureService) {
         this.persistenceStructureService = persistenceStructureService;
     }
+
+    /*
+     * Wrapping static utility class in a method so tests can use a spy to mock this call; this way,
+     * PowerMock is not necessary.
+     */
+    UserSession getUserSessionFromRequest(final HttpServletRequest request) {
+        return KRADUtils.getUserSessionFromRequest(request);
+    }
+
+    /*
+     * Wrapping static utility class in a method so tests can use a spy to mock this call; this way,
+     * PowerMock is not necessary.
+     */
+    Map getNamespaceAndComponentSimpleName(final Class boClass) {
+        return KRADUtils.getNamespaceAndComponentSimpleName(boClass);
+    }
+
+    /*
+     * Wrapping static utility class in a method so tests can use a spy to mock this call; this way,
+     * PowerMock is not necessary.
+     */
+    Class getPropertyType(
+            final BusinessObjectEntry businessObjectEntry,
+            final String attrName,
+            final PersistenceStructureService persistenceStructureService
+    ) {
+        return ObjectUtils.getPropertyType(businessObjectEntry, attrName, getPersistenceStructureService());
+    }
+
 }

@@ -69,6 +69,7 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
      *
      * @see org.kuali.kfs.krad.service.impl.AttachmentServiceImpl#createAttachment(GloballyUnique, String, String, int, InputStream, String)
      */
+    @Override
     public Attachment createAttachment(GloballyUnique parent, String uploadedFileName, String mimeType, int fileSize, InputStream fileContents, String attachmentTypeCode) throws IOException {
         if(parent == null) {
             throw new IllegalArgumentException("invalid (null or uninitialized) document");

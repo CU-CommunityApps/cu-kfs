@@ -254,7 +254,7 @@
                       p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl" />
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
-                <ref bean="activeIndicatorFormAttributeDefinition"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
         <property name="displayAttributeDefinitions">
@@ -273,7 +273,7 @@
                       parent="SubFundGroup-subFundGroupWagesIndicator" />
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-financialReportingSortCode" />
-                <ref bean="activeIndicatorDisplayAttributeDefinition"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="SubFundGroup-fundGroupBudgetAdjustmentRestrictionLevelCode" />
             </list>

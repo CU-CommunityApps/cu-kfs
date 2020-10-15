@@ -122,6 +122,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class PurchaseOrderDocument extends PurchasingDocumentBase implements MultiselectableDocSearchConversion {
@@ -1678,11 +1679,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 purchaseOrderDao.getOldestPurchaseOrderDocumentNumber(this.getPurapDocumentIdentifier()));
 
         //KFSMI-9746: added this for null safe checking.
-        if (oldest != null) {
-            return oldest;
-        }
+        // CU Customization: Use the document itself as the note target, instead of its document header.
+        return Objects.requireNonNullElse(oldest, this);
 
-        return this;
     }
 
     @Override

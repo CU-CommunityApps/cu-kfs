@@ -281,7 +281,7 @@
                       parent="ObjectCode-historicalFinancialObjectCode"/>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
                       parent="ObjectCode-financialBudgetAggregationCd"/>
-                <ref bean="activeIndicatorFormAttributeDefinition"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
         <property name="displayAttributeDefinitions">
@@ -304,7 +304,7 @@
                       parent="ObjectCode-extension-sunyObjectCode"/>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
                       parent="ObjectCode-extension-financialObjectCodeDescr"/>
-                <ref bean="activeIndicatorDisplayAttributeDefinition"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
         <property name="lookupFields">

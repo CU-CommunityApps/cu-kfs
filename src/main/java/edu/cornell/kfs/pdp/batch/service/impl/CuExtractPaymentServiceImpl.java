@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,12 +37,12 @@ import org.kuali.kfs.pdp.businessobject.PaymentProcess;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.sys.businessobject.Country;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
@@ -67,7 +68,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         LOG.debug("MOD - extractAchPayments() started");
 
         Date processDate = dateTimeService.getCurrentDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         PaymentStatus extractedStatus = (PaymentStatus) businessObjectService.findBySinglePrimaryKey(PaymentStatus.class,
                 PdpConstants.PaymentStatusCodes.EXTRACTED);
     
@@ -121,7 +122,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
            Map<String, Integer> unitCounts = new HashMap<String, Integer>();
            Map<String, KualiDecimal> unitTotals = new HashMap<String, KualiDecimal>();
            
-           os = new BufferedWriter(new FileWriter(filename));
+           os = new BufferedWriter(new FileWriter(filename, StandardCharsets.UTF_8));
            os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
            writeOpenTag(os, 0, "achPayments");            
 
@@ -190,7 +191,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     @Override
     protected void writeExtractCheckFile(PaymentStatus extractedStatus, PaymentProcess p, String filename,
             Integer processId) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
         BufferedWriter osI = null;
@@ -253,7 +254,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         isImmediate = group.getProcessImmediate();
                         if (first && !isImmediate) {
                             if (!wroteCheckHeaderRecords) { 
-                                os = new BufferedWriter(new FileWriter(checkFilename));
+                                os = new BufferedWriter(new FileWriter(checkFilename, StandardCharsets.UTF_8));
                                 os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                                 writeOpenTagAttribute(os, 0, "checks", "processId", processId.toString(), "campusCode", p.getCampusCode());
                                 wroteCheckHeaderRecords = true;
@@ -289,7 +290,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         
                         if (first && isImmediate) {
                             if (!wroteImmediateHeaderRecords) {
-                                osI = new BufferedWriter(new FileWriter(immediateFilename));
+                                osI = new BufferedWriter(new FileWriter(immediateFilename, StandardCharsets.UTF_8));
                                 osI.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                                 writeOpenTagAttribute(osI, 0, "checks", "processId", processId.toString(), "campusCode", p.getCampusCode());
                                 wroteImmediateHeaderRecords = true;
@@ -536,10 +537,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     
     // This method is called by the method that generates the XML file for checks to be printed by BNY Mellon
     protected void writeExtractCheckFileMellonBankFastTrack(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId, List<String> notificationEmailAddresses) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
-        SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd"); //Used in the Fast Track file PAY01000 record
-        SimpleDateFormat sdfIDate = new SimpleDateFormat("yyMMdd");    //Used in the issuance file
-        SimpleDateFormat sdfITime = new SimpleDateFormat("HHmm");      //Used in the issuance file (NO SECONDS)
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US); //Used in the Fast Track file HEADER record
+        SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd", Locale.US); //Used in the Fast Track file PAY01000 record
+        SimpleDateFormat sdfIDate = new SimpleDateFormat("yyMMdd", Locale.US);    //Used in the issuance file
+        SimpleDateFormat sdfITime = new SimpleDateFormat("HHmm", Locale.US);      //Used in the issuance file (NO SECONDS)
         Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
         BufferedWriter osI = null;
@@ -832,7 +833,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         if (first && !immediateCheckCode) {
                             if (!wroteMellonFastTrackHeaderRecords) {
                                 //Open the file
-                                os = new BufferedWriter(new FileWriter(ftFilename));
+                                os = new BufferedWriter(new FileWriter(ftFilename, StandardCharsets.UTF_8));
 
                                 //Write the Fast Track header record (FIL00010)
                                 os.write("FIL00010" + cDelim +                // Record Type
@@ -1416,7 +1417,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         if (immediateCheckCode) {
                             if (!wroteMellonIssuanceHeaderRecords) {
                                 // Open the File
-                                osI = new BufferedWriter(new FileWriter(arFilename));
+                                osI = new BufferedWriter(new FileWriter(arFilename, StandardCharsets.UTF_8));
 
                                 //Write the Mellon issuance header record
                                 osI.write("1" +                                 //
@@ -1649,9 +1650,9 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     // payee with multiple payments in the same payment group.
     protected void writeExtractAchFileMellonBankFastTrack(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf, List<String> notificationEmailAddresses) {
         BufferedWriter os = null;
-        sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
+        sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US); //Used in the Fast Track file HEADER record
         Date headerDate = calculateHeaderDate(processDate); //headerDate must be day after processDate to prevent additional cost for same day ACH payments
-        SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd"); //Used in the Fast Track file PAY01000 record
+        SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd", Locale.US); //Used in the Fast Track file PAY01000 record
         String cDelim = "^";  //column delimiter: Per BNY Mellon FastTrack spec, your choices are: "^" or ",".  If you change this make sure you change the associated name on the next line!
         String cDname = "FFCARET";  // column delimiter name: Per BNY Mellon FastTrack spec, your choices are: FFCARET and FFCOMMA for variable record types
         String hdrRecType = "V";    // record type: Per BNY Mellon's FastTrack spec, can be either V for variable or F for fixed.
@@ -1707,7 +1708,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         
                         if (!wroteFastTrackHeaderRecords) {                         
                             // open the file for writing
-                            os = new BufferedWriter(new FileWriter(filename));
+                            os = new BufferedWriter(new FileWriter(filename, StandardCharsets.UTF_8));
 
                             //Write the Fast Track header record (FIL00010) once for each file
                             os.write("FIL00010" + cDelim +                // Record Type

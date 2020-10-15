@@ -4,14 +4,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
-import org.kuali.kfs.module.ar.document.validation.impl.TotalAmountBilledToDateExceedsAwardTotalSuspensionCategory;
+import org.kuali.kfs.module.ar.document.validation.impl.TotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
-public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extends TotalAmountBilledToDateExceedsAwardTotalSuspensionCategory {
-    private static final Logger LOG = LogManager.getLogger(CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory.class);
+public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory extends TotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory {
+    private static final Logger LOG = LogManager.getLogger(CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory.class);
     
     @Override
     public boolean shouldSuspend(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {

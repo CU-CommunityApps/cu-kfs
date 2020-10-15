@@ -27,12 +27,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.integration.purap.CapitalAssetLocation;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.integration.purap.ItemCapitalAsset;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.bo.Note;
@@ -108,6 +108,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -434,7 +435,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     private Building findBuilding(String buildingCode, String campusCode) {
         Building building = new Building();
         building.setCampusCode(campusCode);
-        building.setBuildingCode(buildingCode.toUpperCase());
+        building.setBuildingCode(buildingCode.toUpperCase(Locale.US));
         Map<String, String> keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(building);
         building = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Building.class, keys);
         return building;
