@@ -20,14 +20,14 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
-import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl;
+import org.kuali.kfs.sys.businessobject.service.impl.BatchFileSearchService;
 import org.kuali.rice.kim.api.identity.Person;
 
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.batch.CreateDoneBatchFile;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
 
-public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLookupSearchServiceImpl {
+public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileSearchService {
 	private static final Logger LOG = LogManager.getLogger(CreateDoneBatchFileLookupableHelperServiceImpl.class);
 
 	public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(Class<? extends BusinessObjectBase> businessObjectClass,

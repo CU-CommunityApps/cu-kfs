@@ -40,7 +40,7 @@ import org.kuali.kfs.krad.keyvalues.HierarchicalControlValuesFinder;
 import org.kuali.kfs.krad.keyvalues.HierarchicalData;
 import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.krad.service.LookupSearchService;
+import org.kuali.kfs.sys.businessobject.service.SearchService;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
@@ -123,10 +123,10 @@ public class LookupResource {
         if (StringUtils.isEmpty(title)) {
             title = businessObjectEntry.getObjectLabel() + " Lookup";
         }
-        LookupSearchService searchService = getLookupDictionary().getLookupSearchService(classForType);
+        SearchService searchService = getLookupDictionary().getSearchService(classForType);
         if (searchService == null) {
-            LOG.error(businessObjectEntry.getName() + " seems to be missing a LookupSearchService! A lookup cannot " +
-                    "be queried without a LookupSearchService.");
+            LOG.error(businessObjectEntry.getName() + " seems to be missing a SearchService! A lookup cannot " +
+                    "be queried without a SearchService.");
             throw new InternalServerErrorException("The requested lookup is currently unavailable.");
         }
 

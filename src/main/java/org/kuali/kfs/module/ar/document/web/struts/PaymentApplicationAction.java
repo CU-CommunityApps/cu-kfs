@@ -1034,20 +1034,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return paymentApplicationDocumentService;
     }
 
-    /*
-     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
-     * actually use Spring. This way, PowerMock is not necessary.
-     *
-     * TODO: Is this doing the same thing as the overridden method in KualiDocumentActionBase? If so, this can be
-     *       removed.
-     */
-    @Override
-    protected BusinessObjectService getBusinessObjectService() {
-        if (businessObjectService == null) {
-            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-        }
-        return businessObjectService;
-    }
     
     // CU Customization: Part of invoice-paid-applied deletion enhancement.
     protected InvoicePaidAppliedDao getInvoicePaidAppliedDao() {
