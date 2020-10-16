@@ -52,5 +52,6 @@ public class CUKFSParameterKeyConstants {
         public static final String DEFAULT_NAME_SPACE_CODE = "KFS-SYS";
         public static final String DEFAULT_COMPONENT = "PurgeTablesStep";
         public static final String DEFAULT_PARAMETER_NAME = "DEFAULT_NUMBER_OF_DAYS_OLD";
+        public static final String PS_POSITION_DATA_PARAMETER_NAME = "PS_POSITION_DATA_NUMBER_OF_DAYS_OLD";
     }
 }
