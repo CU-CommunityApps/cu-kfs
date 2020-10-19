@@ -1,10 +1,30 @@
 package edu.cornell.kfs.module.cam.rest.resource;
 
-import com.google.gson.Gson;
-import edu.cornell.kfs.module.cam.CuCamsConstants;
-import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
-import edu.cornell.kfs.module.cam.document.service.CuAssetService;
-import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,24 +42,15 @@ import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
+import edu.cornell.kfs.module.cam.CuCamsConstants;
+import edu.cornell.kfs.module.cam.dataaccess.CuCapAssetInventoryDao;
+import edu.cornell.kfs.module.cam.document.service.CuAssetService;
+import edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl;
 
 @Path("api")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -116,16 +127,18 @@ public class CuCapAssetInventoryApiResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateAsset(@PathParam(CuCamsConstants.CapAssetApi.ASSET_TAG_PARAMETER) String assetTag, @Context HttpHeaders headers) {
         try {
-            if (!validateUpdateAssetQueryParameters()) {
-                LOG.error("updateAsset: Bad Request for Asset Tag #" + assetTag + " " + servletRequest.getQueryString());
+            Map<String, String> jsonFields = getShallowJsonFieldMappingsFromCurrentRequest();
+
+            if (!validateUpdateAssetRequestBodyAndTag(assetTag, jsonFields)) {
+                LOG.error("updateAsset: Bad Request for Asset Tag #" + assetTag + " " + jsonFields);
                 return respondBadRequest();
             }
 
-            LOG.info("updateAsset: Requesting Capital Asset Tag #" + assetTag + " " + servletRequest.getQueryString());
-            String conditionCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.CONDITION_CODE);
-            String buildingCode = servletRequest.getParameter(CuCamsConstants.CapAssetApi.BUILDING_CODE);
-            String roomNumber = servletRequest.getParameter(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
-            String netid = servletRequest.getParameter(CuCamsConstants.CapAssetApi.NETID);
+            LOG.info("updateAsset: Requesting Capital Asset Tag #" + assetTag + " " + jsonFields);
+            String conditionCode = jsonFields.get(CuCamsConstants.CapAssetApi.CONDITION_CODE);
+            String buildingCode = jsonFields.get(CuCamsConstants.CapAssetApi.BUILDING_CODE);
+            String roomNumber = jsonFields.get(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
+            String netid = jsonFields.get(CuCamsConstants.CapAssetApi.NETID);
 
             Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTag);
             if (ObjectUtils.isNull(asset)) {
@@ -189,11 +202,25 @@ public class CuCapAssetInventoryApiResource {
         return barcodeInventoryErrorDetail;
     }
 
-    private boolean validateUpdateAssetQueryParameters() {
-        List<String> paramNames = Collections.list(servletRequest.getParameterNames());
-        return paramNames.contains(CuCamsConstants.CapAssetApi.CONDITION_CODE) &&
-                paramNames.contains(CuCamsConstants.CapAssetApi.BUILDING_CODE) &&
-                paramNames.contains(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
+    private boolean validateUpdateAssetRequestBodyAndTag(String assetTag, Map<String, String> jsonFields) {
+        var fieldsToCheck = Stream.of(
+                CuCamsConstants.CapAssetApi.CONDITION_CODE, CuCamsConstants.CapAssetApi.BUILDING_CODE,
+                CuCamsConstants.CapAssetApi.ROOM_NUMBER, CuCamsConstants.CapAssetApi.NETID);
+        var missingFieldNamesMessage = fieldsToCheck
+                .filter(fieldName -> StringUtils.isBlank(jsonFields.get(fieldName)))
+                .collect(Collectors.joining(", "));
+        var result = true;
+        
+        if (StringUtils.isBlank(assetTag)) {
+            LOG.error("validateUpdateAssetRequestBodyAndTag: Update request for Asset does not specify an Asset Tag");
+            result = false;
+        }
+        if (StringUtils.isNotBlank(missingFieldNamesMessage)) {
+            LOG.error("validateUpdateAssetRequestBodyAndTag: Update request for Asset Tag #" + assetTag
+                    + " is missing the following required fields: " + missingFieldNamesMessage);
+            result = false;
+        }
+        return result;
     }
 
     private Properties getAssetProperties(Asset asset) {
@@ -224,6 +251,32 @@ public class CuCapAssetInventoryApiResource {
 
     private void safelyAddProperty(Properties properties, String key, String value) {
         properties.put(key, StringUtils.defaultIfBlank(value, KFSConstants.EMPTY_STRING));
+    }
+
+    private Map<String, String> getShallowJsonFieldMappingsFromCurrentRequest() throws IOException {
+        var fieldMappings = new HashMap<String, String>();
+        var jsonNode = getJsonContentFromCurrentRequest();
+        for (var jsonFieldIterator = jsonNode.fields(); jsonFieldIterator.hasNext();) {
+            var jsonField = jsonFieldIterator.next();
+            fieldMappings.put(jsonField.getKey(), jsonField.getValue().asText());
+        }
+        return fieldMappings;
+    }
+
+    private JsonNode getJsonContentFromCurrentRequest() throws IOException {
+        try (var requestInputStream = servletRequest.getInputStream();
+                var streamReader = new InputStreamReader(requestInputStream, StandardCharsets.UTF_8)) {
+            var objectMapper = new ObjectMapper();
+            var jsonNode = objectMapper.readTree(streamReader);
+            if (jsonNode == null) {
+                throw new BadRequestException("The request has no content in its JSON payload");
+            } else if (!jsonNode.isObject()) {
+                throw new BadRequestException("The request does not have a JSON object as the root node");
+            }
+            return jsonNode;
+        } catch (JsonProcessingException e) {
+            throw new BadRequestException("The request has malformed JSON content");
+        }
     }
 
     private String getSimpleJsonObject(String key, String value) {
