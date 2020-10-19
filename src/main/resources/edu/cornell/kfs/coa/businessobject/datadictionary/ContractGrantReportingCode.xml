@@ -2,7 +2,8 @@
 
 <bean id="ContractGrantReportingCode" parent="ContractGrantReportingCode-parentBean"/>
 
-    <bean id="ContractGrantReportingCode-parentBean" abstract="true" parent="BusinessObjectEntry">
+    <bean id="ContractGrantReportingCode-parentBean" abstract="true" parent="BusinessObjectEntry"
+    p:searchService-ref="defaultSearchService">
         <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode"/>
         <property name="objectLabel" value="ContractGrantReportingCode"/>
 
@@ -107,8 +108,7 @@
 
   <bean id="ContractGrantReportingCode-lookupDefinition" parent="ContractGrantReportingCode-lookupDefinition-parentBean"/>
 
-  <bean id="ContractGrantReportingCode-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
-          p:lookupSearchService-ref="defaultLookupSearchService">
+  <bean id="ContractGrantReportingCode-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="CG Reporting Code Lookup"/>
     
     <property name="defaultSort">

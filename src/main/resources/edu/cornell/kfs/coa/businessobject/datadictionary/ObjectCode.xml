@@ -29,11 +29,15 @@
 
     <bean id="ObjectCode" parent="ObjectCode-parentBean"/>
     <bean id="ObjectCode-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
-          p:businessObjectClass="org.kuali.kfs.coa.businessobject.ObjectCode" p:name="ObjectCode"
+          p:actionsProvider-ref="businessObjectActionsProvider"
           p:businessObjectAdminService-ref="defaultBoAdminService"
-          p:inquiryDefinition-ref="ObjectCode-inquiryDefinition" p:lookupDefinition-ref="ObjectCode-lookupDefinition"
-          p:actionsProvider-ref="businessObjectActionsProvider" p:titleAttribute="financialObjectCode"
-          p:objectLabel="Object Code">
+          p:businessObjectClass="org.kuali.kfs.coa.businessobject.ObjectCode"
+          p:inquiryDefinition-ref="ObjectCode-inquiryDefinition"
+          p:lookupDefinition-ref="ObjectCode-lookupDefinition"
+          p:name="ObjectCode"
+          p:objectLabel="Object Code"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="financialObjectCode">
         <property name="attributes">
             <list>
                 <ref bean="ObjectCode-universityFiscalYear"/>
@@ -241,8 +245,7 @@
     <bean id="ObjectCode-lookupDefinition-parentBean" abstract="true"
           parent="ObjectCode-lookupDefinition-base-parentBean"/>
     <bean id="ObjectCode-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition"
-          p:title="Object Code Lookup" p:multipleValuesResultSetLimit="-1"
-          p:lookupSearchService-ref="defaultLookupSearchService">
+          p:title="Object Code Lookup" p:multipleValuesResultSetLimit="-1">
         <property name="defaultSort">
             <bean parent="SortDefinition">
                 <property name="attributeNames">

@@ -10,7 +10,7 @@
 
     <bean id="PaymentTermType-lookupDefinition" parent="PaymentTermType-lookupDefinition-parentBean"/>
     <bean id="PaymentTermType-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
-          p:title="Payment Terms Type Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+          p:title="Payment Terms Type Lookup">
         <property name="formAttributeDefinitions">
             <list>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"

@@ -13,6 +13,7 @@
             p:actionsProvider-ref="businessObjectActionsProvider"
             p:objectLabel="Agency Origin"
             p:titleAttribute="Agency Origin"
+            p:searchService-ref="defaultSearchService"
             p:inquiryDefinition-ref="AgencyOrigin-inquiryDefinition"
             p:lookupDefinition-ref="AgencyOrigin-lookupDefinition">
         <property name="attributes">
@@ -73,8 +74,7 @@
 
     <bean id="AgencyOrigin-lookupDefinition" parent="AgencyOrigin-lookupDefinition-parentBean"/>
     <bean id="AgencyOrigin-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
-            p:title="Agency Origin Lookup"
-            p:lookupSearchService-ref="defaultLookupSearchService">
+            p:title="Agency Origin Lookup">
         <property name="defaultSort">
             <bean parent="SortDefinition" p:sortAscending="false">
                 <property name="attributeNames">
