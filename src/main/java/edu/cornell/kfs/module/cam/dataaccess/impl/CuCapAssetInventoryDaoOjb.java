@@ -25,6 +25,7 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
     public List<Building> getBuildings(String campusCode, String queryCode, String queryName) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_CODE_PARAMETER, campusCode);
+        criteria.addEqualTo("active", true);
         if (StringUtils.isNotEmpty(queryName)) {
             criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_NAME + ")", "%" + queryName.toUpperCase() + "%");
         } else if (StringUtils.isNotEmpty(queryCode)) {
