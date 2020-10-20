@@ -10,7 +10,6 @@ import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.module.cam.businessobject.Asset;
-import org.kuali.kfs.module.cam.businessobject.AssetCondition;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
@@ -25,6 +24,7 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
     public List<Building> getBuildings(String campusCode, String queryCode, String queryName) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_CODE_PARAMETER, campusCode);
+        criteria.addEqualTo(CuCamsConstants.CapAssetApi.ACTIVE, true);
         if (StringUtils.isNotEmpty(queryName)) {
             criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_NAME + ")", "%" + queryName.toUpperCase() + "%");
         } else if (StringUtils.isNotEmpty(queryCode)) {
@@ -39,15 +39,9 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
         Criteria criteria = new Criteria();
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_CODE_PARAMETER, campusCode);
         criteria.addEqualTo(KFSPropertyConstants.BUILDING_CODE, buildingCode);
+        criteria.addEqualTo(CuCamsConstants.CapAssetApi.ACTIVE, true);
         Query query = QueryFactory.newQuery(Room.class, criteria);
         return (List<Room>) getPersistenceBrokerTemplate().getCollectionByQuery(query);
-    }
-
-    public List<AssetCondition> getAssetConditions() {
-        Criteria criteria = new Criteria();
-        criteria.addEqualTo(CuCamsConstants.CapAssetApi.ACTIVE, CuCamsConstants.CapAssetApi.YES);
-        Query query = QueryFactory.newQuery(AssetCondition.class, criteria);
-        return (List<AssetCondition>) getPersistenceBrokerTemplate().getCollectionByQuery(query);
     }
 
     public Asset getAssetByTagNumber(String assetTagNumber) {
