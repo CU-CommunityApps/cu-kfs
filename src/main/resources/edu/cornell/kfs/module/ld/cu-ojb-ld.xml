@@ -37,6 +37,29 @@
     
 </class-descriptor>
 
+<class-descriptor class="edu.cornell.kfs.module.ld.businessobject.PositionDataWorkday" table="PS_POSITION_DATA_WD">
+    <field-descriptor name="positionNumber" column="POSITION_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+    <field-descriptor name="effectiveDate" column="EFFDT" jdbc-type="DATE" primarykey="true" index="true"/>
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+    <field-descriptor name="jobCode" column="JOBCODE" jdbc-type="VARCHAR" index="true"/>
+    <field-descriptor name="positionEffectiveStatus" column="POS_EFF_STATUS" jdbc-type="VARCHAR"/>
+    <field-descriptor name="description" column="DESCR" jdbc-type="VARCHAR"/>
+    <field-descriptor name="shortDescription" column="DESCRSHORT" jdbc-type="VARCHAR"/>
+    <field-descriptor name="businessUnit" column="BUSINESS_UNIT" jdbc-type="VARCHAR"/>
+    <field-descriptor name="departmentId" column="DEPTID" jdbc-type="VARCHAR"/>
+    <field-descriptor name="positionStatus" column="POSN_STATUS" jdbc-type="VARCHAR"/>
+    <field-descriptor name="statusDate" column="STATUS_DT" jdbc-type="DATE"/>
+    <field-descriptor name="budgetedPosition" column="BUDGETED_POSN" jdbc-type="VARCHAR"/>
+    <field-descriptor name="standardHoursDefault" column="STD_HRS_DEFAULT" jdbc-type="DECIMAL"/>
+    <field-descriptor name="standardHoursFrequency" column="STD_HRS_FREQUENCY" jdbc-type="VARCHAR"/>
+    <field-descriptor name="positionRegularTemporary" column="POS_REG_TEMP" jdbc-type="VARCHAR"/>
+    <field-descriptor name="positionFullTimeEquivalency" column="POS_FTE" jdbc-type="DECIMAL"/>
+    <field-descriptor name="positionSalaryPlanDefault" column="POS_SAL_PLAN_DFLT" jdbc-type="VARCHAR"/>
+    <field-descriptor name="positionGradeDefault" column="POS_GRADE_DFLT" jdbc-type="VARCHAR"/>
+    <field-descriptor name="inactivationDate" column="INACTIVE_DT" jdbc-type="DATE" primarykey="false" index="false"/>
+</class-descriptor>
+
 <class-descriptor class="org.kuali.kfs.module.ld.businessobject.BenefitsCalculation" table="LD_BENEFITS_CALC_T">
 	<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true" />
 	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
