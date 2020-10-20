@@ -45,13 +45,6 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
         return (List<Room>) getPersistenceBrokerTemplate().getCollectionByQuery(query);
     }
 
-    public List<AssetCondition> getAssetConditions() {
-        Criteria criteria = new Criteria();
-        criteria.addEqualTo(CuCamsConstants.CapAssetApi.ACTIVE, CuCamsConstants.CapAssetApi.YES);
-        Query query = QueryFactory.newQuery(AssetCondition.class, criteria);
-        return (List<AssetCondition>) getPersistenceBrokerTemplate().getCollectionByQuery(query);
-    }
-
     public Asset getAssetByTagNumber(String assetTagNumber) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_TAG_NUMBER, assetTagNumber);
