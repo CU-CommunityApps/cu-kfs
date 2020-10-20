@@ -195,4 +195,13 @@ public class CUKFSConstants {
         public static final String PCARD_BATCH_LOAD_STEP = "ProcurementCardLoadStep";
     }
 
+    public static final class NumericStrings {
+        public static final String ONE_HUNDRED = "100";
+    }
+
+    public static final class WebappPaths {
+        public static final String BASE_PATH = "/webapp";
+        public static final String LOOKUP = BASE_PATH + "/lookup";
+    }
+
 }

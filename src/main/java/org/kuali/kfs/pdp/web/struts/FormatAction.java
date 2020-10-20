@@ -18,6 +18,15 @@
  */
 package org.kuali.kfs.pdp.web.struts;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -44,13 +53,7 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kim.api.identity.Person;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * This class provides actions for the format process
@@ -272,16 +275,12 @@ public class FormatAction extends KualiAction {
     private String buildUrl(String processId) {
         String basePath = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
                 KFSConstants.APPLICATION_URL_KEY);
-
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.SEARCH_METHOD);
-        parameters.put(KFSConstants.BACK_LOCATION, basePath + "/" + KFSConstants.MAPPING_PORTAL + ".do");
-        parameters.put(KRADConstants.DOC_FORM_KEY, "88888888");
-        parameters.put(KFSConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, ProcessSummary.class.getName());
-        parameters.put(KFSConstants.HIDE_LOOKUP_RETURN_LINK, "true");
-        parameters.put(KFSConstants.SUPPRESS_ACTIONS, "false");
-        parameters.put(PdpPropertyConstants.ProcessSummary.PROCESS_SUMMARY_PROCESS_ID, processId);
-
-        return UrlFactory.parameterizeUrl(basePath + "/" + KFSConstants.LOOKUP_ACTION, parameters);
+        String lookupUrl = StringUtils.join(basePath, CUKFSConstants.WebappPaths.LOOKUP,
+                CUKFSConstants.SLASH, ProcessSummary.class.getSimpleName());
+        Map<String, String> parameters = Map.ofEntries(
+                Map.entry(PdpPropertyConstants.ProcessSummary.PROCESS_SUMMARY_PROCESS_ID, processId),
+                Map.entry(KFSConstants.Search.SKIP, KFSConstants.ZERO),
+                Map.entry(KFSConstants.Search.LIMIT, CUKFSConstants.NumericStrings.ONE_HUNDRED));
+        return UrlFactory.parameterizeUrl(lookupUrl, parameters);
     }
 }
