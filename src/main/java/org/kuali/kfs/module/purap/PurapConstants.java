@@ -1458,12 +1458,12 @@ public final class PurapConstants {
             return statuses;
         }
         private static HashSet<String> getPaymentRequestStatusCAMSWarnings() {
-            HashSet<String> statuses = new HashSet<String>();
+            HashSet<String> statuses = new HashSet();
             statuses.add(PaymentRequestStatuses.APPDOC_IN_PROCESS);
             return statuses;
         }
         private static HashSet<String> getCreditMemoStatusCAMSWarnings() {
-            HashSet<String> statuses = new HashSet<String>();
+            HashSet<String> statuses = new HashSet();
             statuses.add(CreditMemoStatuses.APPDOC_IN_PROCESS);
             return statuses;
         }
@@ -1484,14 +1484,6 @@ public final class PurapConstants {
 
     public static final class AccountDistributionMethodCodes {
         public static final String PROPORTIONAL_CODE = "P";
-        public static final String SEQUENTIAL_CODE = "S";
-        public static final String BOTH_WITH_DEFAULT_PROPORTIONAL_CODE = "P;S";
-        public static final String BOTH_WITH_DEFAULT_SEQUENTIAL_CODE = "S;P";
-
-        public static final String PROPORTIONAL_DESCRIPTION = "Proportional";
-        public static final String SEQUENTIAL_DESCRIPTION = "Sequential";
-        public static final String BOTH_WITH_DEFAULT_PROPORTIONAL_DESCRIPTION = "Both, with Proportional as default";
-        public static final String BOTH_WITH_DEFAULT_SEQUENTIAL_DESCRIPTION = "Both, with Sequential as default";
     }
    
 }

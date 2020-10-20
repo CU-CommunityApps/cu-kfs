@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2020 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="ProcessSummary" parent="ProcessSummary-parentBean"/>
+    <bean id="ProcessSummary-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="org.kuali.kfs.pdp.businessobject.ProcessSummary"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="ProcessSummary-inquiryDefinition"
+          p:actionsProvider-ref="businessObjectActionsProvider" p:name="ProcessSummary"
+          p:lookupDefinition-ref="ProcessSummary-lookupDefinition" p:objectLabel="Process Summary">
+        <property name="actions"><null/></property>
+        <property name="attributes">
+            <list>
+                <ref bean="ProcessSummary-id"/>
+                <ref bean="ProcessSummary-customerId"/>
+                <ref bean="ProcessSummary-disbursementTypeCode"/>
+                <ref bean="ProcessSummary-processId"/>
+                <ref bean="ProcessSummary-sortGroupId"/>
+                <ref bean="ProcessSummary-sortGroupName"/>
+                <ref bean="ProcessSummary-beginDisbursementNbr"/>
+                <ref bean="ProcessSummary-endDisbursementNbr"/>
+                <ref bean="ProcessSummary-processTotalAmount"/>
+                <ref bean="ProcessSummary-processTotalCount"/>
+                <ref bean="ProcessSummary-process.campusCode"/>
+                <ref bean="ProcessSummary-process.processTimestamp"/>
+                <ref bean="ProcessSummary-process.processUser.name"/>
+                <ref bean="ProcessSummary-customer.chartCode"/>
+                <ref bean="ProcessSummary-customer.unitCode"/>
+                <ref bean="ProcessSummary-customer.subUnitCode"/>
+                <ref bean="ProcessSummary-customer.customerDescription"/>
+                <ref bean="ProcessSummary-disbursementType.name"/>
+                <ref bean="ProcessSummary-process.extractedInd"/>
+                <ref bean="ProcessSummary-process.formattedIndicator"/>
+                <ref bean="ProcessSummary-process.id"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="ProcessSummary-id" parent="ProcessSummary-id-parentBean"/>
+    <bean id="ProcessSummary-id-parentBean" abstract="true" parent="AttributeDefinition" p:name="id"
+          p:forceUppercase="true" p:label="Process Summary ID" p:shortLabel="Process ID" p:maxLength="7"
+          p:validationPattern-ref="NumericValidation"
+          p:formatterClass="org.kuali.kfs.sys.businessobject.NoCommaCurrencyFormatter">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>
+
+    <bean id="ProcessSummary-customerId" parent="ProcessSummary-customerId-parentBean"/>
+    <bean id="ProcessSummary-customerId-parentBean" abstract="true" parent="CustomerProfile-id" p:name="customerId"/>
+
+    <bean id="ProcessSummary-disbursementTypeCode" parent="ProcessSummary-disbursementTypeCode-parentBean"/>
+    <bean id="ProcessSummary-disbursementTypeCode-parentBean" abstract="true" parent="DisbursementType-code"
+          p:name="disbursementTypeCode"/>
+
+    <bean id="ProcessSummary-processId" parent="ProcessSummary-processId-parentBean"/>
+    <bean id="ProcessSummary-processId-parentBean" abstract="true" parent="PaymentProcess-id" p:name="processId"/>
+
+    <bean id="ProcessSummary-sortGroupId" parent="ProcessSummary-sortGroupId-parentBean"/>
+    <bean id="ProcessSummary-sortGroupId-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="sortGroupId" p:label="Sort Group Id" p:shortLabel="Group Id" p:maxLength="32"
+          p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>
+
+    <bean id="ProcessSummary-sortGroupName" parent="ProcessSummary-sortGroupName-parentBean"/>
+    <bean id="ProcessSummary-sortGroupName-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="sortGroupName" p:label="Sort Group Name" p:shortLabel="Sort Group" p:maxLength="32"
+          p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>
+
+    <bean id="ProcessSummary-beginDisbursementNbr" parent="ProcessSummary-beginDisbursementNbr-parentBean"/>
+    <bean id="ProcessSummary-beginDisbursementNbr-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="beginDisbursementNbr" p:label="Begin Disbursement Number" p:shortLabel="Begin Disbursement Nbr"
+          p:maxLength="9" p:validationPattern-ref="NumericValidation" p:type="INTEGER"
+          p:formatterClass="org.kuali.kfs.sys.businessobject.NoCommaCurrencyFormatter">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>
+
+    <bean id="ProcessSummary-endDisbursementNbr" parent="ProcessSummary-endDisbursementNbr-parentBean"/>
+    <bean id="ProcessSummary-endDisbursementNbr-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="endDisbursementNbr" p:label="End Disbursement Number" p:shortLabel="End Disbursement Nbr"
+          p:maxLength="9" p:validationPattern-ref="NumericValidation" p:type="INTEGER"
+          p:formatterClass="org.kuali.kfs.sys.businessobject.NoCommaCurrencyFormatter">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>
+
+    <bean id="ProcessSummary-processTotalAmount" parent="ProcessSummary-processTotalAmount-parentBean"/>
+    <bean id="ProcessSummary-processTotalAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount"
+          p:name="processTotalAmount" p:label="Process Total Amount" p:type="CURRENCY" />
+
+    <bean id="ProcessSummary-processTotalCount" parent="ProcessSummary-processTotalCount-parentBean"/>
+    <bean id="ProcessSummary-processTotalCount-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="processTotalCount" p:label="Process Total Count" p:shortLabel="Process Total Count" p:maxLength="7"
+          p:validationPattern-ref="NumericValidation" p:type="INTEGER">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>
+
+    <bean id="ProcessSummary-process.campusCode" parent="ProcessSummary-process.campusCode-parentBean"/>
+    <bean id="ProcessSummary-process.campusCode-parentBean" abstract="true" parent="PaymentProcess-campusCode"
+          p:name="process.campusCode" p:label="Campus" p:shortLabel="Campus"/>
+
+    <bean id="ProcessSummary-process.processTimestamp" parent="ProcessSummary-process.processTimestamp-parentBean"/>
+    <bean id="ProcessSummary-process.processTimestamp-parentBean" abstract="true"
+          parent="PaymentProcess-processTimestamp" p:name="process.processTimestamp" p:label="Format Date"
+          p:shortLabel="Format Date" p:type="DATE_RANGE" />
+
+    <bean id="ProcessSummary-process.processUser.name" parent="ProcessSummary-process.processUser.name-parentBean"/>
+    <bean id="ProcessSummary-process.processUser.name-parentBean" abstract="true"
+          parent="PaymentProcess-processUser.name" p:name="process.processUser.name" p:label="Format User"
+          p:shortLabel="Format User"/>
+
+    <bean id="ProcessSummary-customer.chartCode" parent="ProcessSummary-customer.chartCode-parentBean"/>
+    <bean id="ProcessSummary-customer.chartCode-parentBean" abstract="true" parent="CustomerProfile-chartCode"
+          p:name="customer.chartCode"/>
+
+    <bean id="ProcessSummary-customer.unitCode" parent="ProcessSummary-customer.unitCode-parentBean"/>
+    <bean id="ProcessSummary-customer.unitCode-parentBean" abstract="true" parent="CustomerProfile-unitCode"
+          p:name="customer.unitCode"/>
+
+    <bean id="ProcessSummary-customer.subUnitCode" parent="ProcessSummary-customer.subUnitCode-parentBean"/>
+    <bean id="ProcessSummary-customer.subUnitCode-parentBean" abstract="true" parent="CustomerProfile-subUnitCode"
+          p:name="customer.subUnitCode"/>
+
+    <bean id="ProcessSummary-customer.customerDescription"
+          parent="ProcessSummary-customer.customerDescription-parentBean"/>
+    <bean id="ProcessSummary-customer.customerDescription-parentBean" abstract="true"
+          parent="CustomerProfile-customerDescription" p:name="customer.customerDescription"/>
+
+    <bean id="ProcessSummary-disbursementType.name" parent="ProcessSummary-disbursementType.name-parentBean"/>
+    <bean id="ProcessSummary-disbursementType.name-parentBean" abstract="true" parent="DisbursementType-name"
+          p:name="disbursementType.name"/>
+
+    <bean id="ProcessSummary-process.extractedInd" parent="ProcessSummary-process.extractedInd-parentBean"/>
+    <bean id="ProcessSummary-process.extractedInd-parentBean" abstract="true" parent="PaymentProcess-extractedInd"
+          p:name="process.extractedInd" p:type="BOOLEAN"/>
+
+    <bean id="ProcessSummary-process.formattedIndicator"
+          parent="ProcessSummary-process.formattedIndicator-parentBean"/>
+    <bean id="ProcessSummary-process.formattedIndicator-parentBean" abstract="true"
+          parent="PaymentProcess-formattedIndicator" p:name="process.formattedIndicator" p:type="BOOLEAN"/>
+
+    <bean id="ProcessSummary-process.id" parent="ProcessSummary-process.id-parentBean"/>
+    <bean id="ProcessSummary-process.id-parentBean" abstract="true" parent="PaymentProcess-id" p:name="process.id"
+          p:type="INTEGER"/>
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="ProcessSummary-inquiryDefinition" parent="ProcessSummary-inquiryDefinition-parentBean"/>
+    <bean id="ProcessSummary-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Process Summary Inquiry">
+        <property name="inquirySections">
+            <list>
+                <ref bean="ProcessSummary-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ProcessSummary-inquirySectionDefinition" parent="ProcessSummary-inquirySectionDefinition-parentBean"/>
+    <bean id="ProcessSummary-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="sortGroupId"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.chartCode"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.unitCode"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.subUnitCode"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.customerDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="disbursementType.name"/>
+                <bean parent="FieldDefinition" p:attributeName="beginDisbursementNbr"/>
+                <bean parent="FieldDefinition" p:attributeName="endDisbursementNbr"/>
+                <bean parent="FieldDefinition" p:attributeName="processTotalCount"/>
+                <bean parent="FieldDefinition" p:attributeName="processTotalAmount"/>
+                <bean parent="FieldDefinition" p:attributeName="process.id"/>
+                <bean parent="FieldDefinition" p:attributeName="process.extractedInd"/>
+                <bean parent="FieldDefinition" p:attributeName="process.formattedIndicator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="ProcessSummary-lookupDefinition" parent="ProcessSummary-lookupDefinition-parentBean"/>
+    <bean id="ProcessSummary-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Format Summary" p:lookupSearchService-ref="noDbSortLookupSearchService">
+        <property name="defaultSort">
+            <bean parent="SortDefinition" p:sortAscending="true">
+                <property name="attributeNames">
+                    <list>
+                        <value>id</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="ProcessSummary-processId" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="ProcessSummary-process.campusCode" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="ProcessSummary-process.processTimestamp" />
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-sortGroupName" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-customer.chartCode" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-customer.unitCode" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-customer.subUnitCode" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-customer.customerDescription" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-disbursementType.name" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-beginDisbursementNbr" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-endDisbursementNbr" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-processTotalCount" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-processTotalAmount" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-process.id" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-process.extractedInd" />
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="ProcessSummary-process.formattedIndicator" />
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="processId"/>
+                <bean parent="FieldDefinition" p:attributeName="process.campusCode"/>
+                <bean parent="FieldDefinition" p:attributeName="process.processUser.name"/>
+                <bean parent="FieldDefinition" p:attributeName="process.processTimestamp"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="sortGroupName"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.chartCode"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.unitCode"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.subUnitCode"/>
+                <bean parent="FieldDefinition" p:attributeName="customer.customerDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="disbursementType.name"/>
+                <bean parent="FieldDefinition" p:attributeName="beginDisbursementNbr"/>
+                <bean parent="FieldDefinition" p:attributeName="endDisbursementNbr"/>
+                <bean parent="FieldDefinition" p:attributeName="processTotalCount"/>
+                <bean parent="FieldDefinition" p:attributeName="processTotalAmount"/>
+                <bean parent="FieldDefinition" p:attributeName="process.id"/>
+                <bean parent="FieldDefinition" p:attributeName="process.extractedInd"/>
+                <bean parent="FieldDefinition" p:attributeName="process.formattedIndicator"/>
+            </list>
+        </property>
+    </bean>
+</beans>

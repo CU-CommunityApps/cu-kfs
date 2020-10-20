@@ -2163,8 +2163,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     private List<RoleMemberBo> getRoleMembersByDefaultStrategy(String roleId, String memberId, String memberTypeCode,
             Map<String, String> qualifier) {
+        Map<String, String> convertedQualifier = convertQualifierKeys(qualifier);
         List<RoleMemberBo> rms = new ArrayList<>();
-        List<RoleMemberBo> roleMem = getRoleDao().getRoleMembershipsForMemberId(memberTypeCode, memberId, qualifier);
+        List<RoleMemberBo> roleMem = getRoleDao().getRoleMembershipsForMemberId(memberTypeCode, memberId,
+                convertedQualifier);
         for (RoleMemberBo rm : roleMem) {
             if (rm.getRoleId().equals(roleId)) {
                 // if found, remove
