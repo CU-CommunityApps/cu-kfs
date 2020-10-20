@@ -224,10 +224,9 @@
 	<!-- Business Object Lookup Definition -->
 
 
-	<bean id="SubFundGroup-lookupDefinition" parent="SubFundGroup-lookupDefinition-parentBean" />
-
-	<bean id="SubFundGroup-lookupDefinition-parentBean" abstract="true"
-		parent="LookupDefinition">
+    <bean id="SubFundGroup-lookupDefinition" parent="SubFundGroup-lookupDefinition-parentBean"/>
+    <bean id="SubFundGroup-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Sub-Fund Group Lookup">
 		<property name="title" value="Sub-Fund Group Lookup" />
 
 		<property name="defaultSort">

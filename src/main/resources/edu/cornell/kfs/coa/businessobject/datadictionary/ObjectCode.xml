@@ -245,7 +245,8 @@
     <bean id="ObjectCode-lookupDefinition-parentBean" abstract="true"
           parent="ObjectCode-lookupDefinition-base-parentBean"/>
     <bean id="ObjectCode-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition"
-          p:title="Object Code Lookup" p:multipleValuesResultSetLimit="-1">
+          p:multipleValuesResultSetLimit="-1"
+          p:title="Object Code Lookup">
         <property name="defaultSort">
             <bean parent="SortDefinition">
                 <property name="attributeNames">
