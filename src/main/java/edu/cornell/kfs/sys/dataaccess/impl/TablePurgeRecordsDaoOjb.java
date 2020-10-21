@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.lang.String;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
@@ -50,7 +52,7 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
         LOG.info("identifyAndRequestRecordsDeletion: numberOfRecordsBeingPurged = " + numberOfRecordsBeingPurged);
         Collection<?> toBePurgedRecords = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(classForDeleteQuery, lookupCriteria));
         for (Object recordAsObject : toBePurgedRecords) {
-            deleteRecordBasedOnBusinessObject((PersistableBusinessObjectBase)recordAsObject, recordAsObject.toString());
+            deleteRecordBasedOnBusinessObject((PersistableBusinessObjectBase)recordAsObject, ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE));
         }
     }
     

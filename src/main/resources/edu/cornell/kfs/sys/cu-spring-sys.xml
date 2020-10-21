@@ -375,7 +375,7 @@
           p:useDefaultDaysBeforePurgeParameter="false"
           p:nameSpaceCode="KFS-SYS"
           p:component="PurgeTablesStep"
-          p:parameterName="PS_POSITION_DATA_WD_PARAMETER_NAME"
+          p:parameterName="PS_POSITION_DATA_WD_NUMBER_OF_DAYS_OLD"
           p:serviceImplForPurgeTableLookupCriteria-ref="positionDataWorkdayLookupCriteriaPurgeService"/>
 
     <bean id="tablePurgeRecordsDao" parent="tablePurgeRecordsDao-parentBean"/>
