@@ -2163,7 +2163,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     private List<RoleMemberBo> getRoleMembersByDefaultStrategy(String roleId, String memberId, String memberTypeCode,
             Map<String, String> qualifier) {
-        Map<String, String> convertedQualifier = convertQualifierKeys(qualifier);
+        Map<String, String> validAttributeIds = getAttributeNameToAttributeIdMappings(Collections.singleton(roleId), qualifier);
+        Map<String, String> convertedQualifier = convertQualifierKeys(qualifier, validAttributeIds);
         List<RoleMemberBo> rms = new ArrayList<>();
         List<RoleMemberBo> roleMem = getRoleDao().getRoleMembershipsForMemberId(memberTypeCode, memberId,
                 convertedQualifier);

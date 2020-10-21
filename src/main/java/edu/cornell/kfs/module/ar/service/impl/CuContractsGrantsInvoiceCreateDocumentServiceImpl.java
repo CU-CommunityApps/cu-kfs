@@ -622,6 +622,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             if (award.isExcludedFromInvoicing()) {
                 errorList.add(configurationService.getPropertyValueAsString(
                         ArKeyConstants.CGINVOICE_CREATION_AWARD_EXCLUDED_FROM_INVOICING));
+            } else if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType
+                    && StringUtils.equals(award.getBillingFrequencyCode(), ArConstants.BillingFrequencyValues.MANUAL.getCode())) {
+                errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_MANUAL_BILLING_FREQUENCY));
             } else {
                 if (awardsWithDuplicateAccounts.contains(award)) {
                     errorList.add(configurationService.getPropertyValueAsString(

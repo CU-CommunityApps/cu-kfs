@@ -577,10 +577,6 @@
             <version>${rice.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>javax.transaction</groupId>
-                    <artifactId>jta</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>xapool</groupId>
                     <artifactId>xapool</artifactId>
                 </exclusion>

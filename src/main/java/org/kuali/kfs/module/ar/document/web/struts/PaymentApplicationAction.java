@@ -70,6 +70,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static java.util.Map.entry;
+
 /*
  * CU Customization (KFSPTS-13246): Added the ability to delete lines
  * from the "Summary of Applied Funds" section.
