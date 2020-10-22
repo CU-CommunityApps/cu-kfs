@@ -1,5 +1,7 @@
 package edu.cornell.kfs.tax;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Helper class containing various tax-processing-related constants.
  */
@@ -211,6 +213,29 @@ public final class CUTaxConstants {
         private Tax1042SParameterNames() {
             throw new UnsupportedOperationException("do not call Tax1042SParameterNames constructor");
         }
+    }
+    
+    public enum FormTypes1099 {
+    	MISC("MISC", "1099-Misc"),
+    	NEC("NEC", "1099-NEC");
+    	
+    	
+    	public final String formCode;
+    	public final String formDescription;
+    	
+    	private FormTypes1099 (String formCode, String formDescription) {
+    		this.formCode = formCode;
+    		this.formDescription = formDescription;
+    	}
+    	
+    	public final FormTypes1099 findFormTypes1099FromFormCode(String formCode) {
+    		for (FormTypes1099 type : FormTypes1099.values()) {
+    			if (StringUtils.equalsIgnoreCase(type.formCode, formCode)) {
+    				return type;
+    			}
+    		}
+    		throw new IllegalArgumentException("Unable to find a 1099 form type for code " + formCode);
+    	}
     }
 
 

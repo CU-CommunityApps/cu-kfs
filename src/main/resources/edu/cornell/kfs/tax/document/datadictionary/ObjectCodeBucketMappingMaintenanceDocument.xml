@@ -36,6 +36,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="dvPaymentReasonCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="boxNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="formType" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
       </list>
     </property>
