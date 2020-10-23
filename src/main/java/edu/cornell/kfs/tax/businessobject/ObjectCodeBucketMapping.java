@@ -68,12 +68,12 @@ public class ObjectCodeBucketMapping extends PersistableBusinessObjectBase imple
         this.active = active;
     }
 
-	public String getFormType() {
-		return formType;
-	}
+    public String getFormType() {
+      return formType;
+    }
 
-	public void setFormType(String formType) {
-		this.formType = formType;
-	}
+    public void setFormType(String formType) {
+      this.formType = formType;
+    }
 
 }
