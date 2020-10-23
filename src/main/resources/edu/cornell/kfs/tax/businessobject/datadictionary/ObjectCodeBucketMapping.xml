@@ -18,6 +18,7 @@
         <ref bean="ObjectCodeBucketMapping-dvPaymentReasonCode"/>
         <ref bean="ObjectCodeBucketMapping-boxNumber"/>
         <ref bean="ObjectCodeBucketMapping-active" />
+        <ref bean="ObjectCodeBucketMapping-formType" />
       </list>
     </property>
   </bean>
@@ -29,7 +30,6 @@
   <bean id="ObjectCodeBucketMapping-financialObjectCode-parentBean" abstract="true" parent="ObjectCodeAttribute"/>
 
   <bean id="ObjectCodeBucketMapping-dvPaymentReasonCode" parent="ObjectCodeBucketMapping-dvPaymentReasonCode-parentBean"/>
-
   <bean id="ObjectCodeBucketMapping-dvPaymentReasonCode-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="dvPaymentReasonCode"/>
     <property name="label" value="DV Payment Reason Code"/>
@@ -42,9 +42,8 @@
       <bean parent="SelectControlDefinition" p:valuesFinder-ref="taxFpPaymentReasonValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
-
+  
   <bean id="ObjectCodeBucketMapping-boxNumber" parent="ObjectCodeBucketMapping-boxNumber-parentBean"/>
-
   <bean id="ObjectCodeBucketMapping-boxNumber-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="boxNumber"/>
     <property name="label" value="Box Number"/>
@@ -58,9 +57,22 @@
       <bean parent="TextControlDefinition" p:size="5"/>
     </property>
   </bean>
+  
+  <bean id="ObjectCodeBucketMapping-formType" parent="ObjectCodeBucketMapping-formType-parentBean"/>
+  <bean id="ObjectCodeBucketMapping-formType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="formType"/>
+    <property name="label" value="1099 Form Type"/>
+    <property name="shortLabel" value="Form Type"/>
+    <property name="maxLength" value="10"/>
+    <property name="validationPattern">
+      <bean parent="AnyCharacterValidationPattern" />
+    </property>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="formType1099ValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
+  </bean>
 
   <bean id="ObjectCodeBucketMapping-active" parent="ObjectCodeBucketMapping-active-parentBean"/>
-
   <bean id="ObjectCodeBucketMapping-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
     <property name="name" value="active" />
   </bean>
@@ -68,9 +80,7 @@
 
   <!-- Business Object Inquiry Definition -->
 
-
   <bean id="ObjectCodeBucketMapping-inquiryDefinition" parent="ObjectCodeBucketMapping-inquiryDefinition-parentBean"/>
-
   <bean id="ObjectCodeBucketMapping-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
     <property name="title" value="Object Code Bucket Mapping Inquiry"/>
     <property name="inquirySections">
@@ -89,6 +99,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="dvPaymentReasonCode"/>
         <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="formType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
@@ -97,9 +108,7 @@
 
   <!-- Business Object Lookup Definition -->
 
-
   <bean id="ObjectCodeBucketMapping-lookupDefinition" parent="ObjectCodeBucketMapping-lookupDefinition-parentBean"/>
-
   <bean id="ObjectCodeBucketMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="Object Code Bucket Mapping Lookup"/>
     <property name="defaultSort">
@@ -111,6 +120,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="dvPaymentReasonCode"/>
         <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="formType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
@@ -119,6 +129,7 @@
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="dvPaymentReasonCode"/>
         <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="formType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
@@ -127,5 +138,7 @@
   <bean id="taxFpPaymentReasonValuesFinder"
         class="edu.cornell.kfs.tax.businessobject.options.TaxFpPaymentReasonValuesFinder"
         p:keyValuesService-ref="keyValuesService"/>
+        
+  <bean id="formType1099ValuesFinder" class="edu.cornell.kfs.tax.businessobject.options.FormType1099ValuesFinder"/>
 
 </beans>
