@@ -1,14 +1,8 @@
 package edu.cornell.kfs.concur.businessobjects;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.sys.KFSConstants;
-
-import edu.cornell.kfs.concur.ConcurPropertyConstants;
-import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurEventNotification extends PersistableBusinessObjectBase{   
     protected int concurEventNotificationId;
