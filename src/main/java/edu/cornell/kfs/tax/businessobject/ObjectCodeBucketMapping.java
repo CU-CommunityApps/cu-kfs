@@ -16,6 +16,7 @@ public class ObjectCodeBucketMapping extends PersistableBusinessObjectBase imple
     private String dvPaymentReasonCode;
     private String boxNumber;
     private boolean active;
+    private String formType;
 
     public ObjectCodeBucketMapping() {
         super();
@@ -65,6 +66,14 @@ public class ObjectCodeBucketMapping extends PersistableBusinessObjectBase imple
     @Override
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getFormType() {
+        return formType;
+    }
+
+    public void setFormType(String formType) {
+        this.formType = formType;
     }
 
 }
