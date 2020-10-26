@@ -1458,12 +1458,12 @@ public final class PurapConstants {
             return statuses;
         }
         private static HashSet<String> getPaymentRequestStatusCAMSWarnings() {
-            HashSet<String> statuses = new HashSet();
+            HashSet<String> statuses = new HashSet<>();
             statuses.add(PaymentRequestStatuses.APPDOC_IN_PROCESS);
             return statuses;
         }
         private static HashSet<String> getCreditMemoStatusCAMSWarnings() {
-            HashSet<String> statuses = new HashSet();
+            HashSet<String> statuses = new HashSet<>();
             statuses.add(CreditMemoStatuses.APPDOC_IN_PROCESS);
             return statuses;
         }
