@@ -29,12 +29,15 @@
     
 	<bean id="SubFundGroup" parent="SubFundGroup-parentBean" />
     <bean id="SubFundGroup-parentBean" abstract="true" parent="BusinessObjectEntry"
-          p:businessObjectClass="org.kuali.kfs.coa.businessobject.SubFundGroup" p:name="SubFundGroup"
+          p:actionsProvider-ref="businessObjectActionsProvider"
           p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:businessObjectClass="org.kuali.kfs.coa.businessobject.SubFundGroup"
           p:inquiryDefinition-ref="SubFundGroup-inquiryDefinition"
           p:lookupDefinition-ref="SubFundGroup-lookupDefinition"
-          p:actionsProvider-ref="businessObjectActionsProvider" p:titleAttribute="subFundGroupCode"
-          p:objectLabel="Sub-Fund Group">
+          p:name="SubFundGroup"
+          p:objectLabel="Sub-Fund Group"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="subFundGroupCode">
 		<property name="attributes">
 			<list>
 				<ref bean="SubFundGroup-subFundGroupCode" />
@@ -221,13 +224,9 @@
 	<!-- Business Object Lookup Definition -->
 
 
-	<bean id="SubFundGroup-lookupDefinition" parent="SubFundGroup-lookupDefinition-parentBean" />
-
-	<bean id="SubFundGroup-lookupDefinition-parentBean" abstract="true"
-		parent="LookupDefinition">
-		<property name="lookupSearchService" ref="defaultLookupSearchService" />
-		<property name="title" value="Sub-Fund Group Lookup" />
-
+    <bean id="SubFundGroup-lookupDefinition" parent="SubFundGroup-lookupDefinition-parentBean"/>
+    <bean id="SubFundGroup-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Sub-Fund Group Lookup">
 		<property name="defaultSort">
 			<bean parent="SortDefinition">
 				<property name="attributeNames">

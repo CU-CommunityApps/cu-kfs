@@ -14,7 +14,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
-import org.kuali.kfs.krad.service.LookupSearchService;
+import org.kuali.kfs.sys.businessobject.service.SearchService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -51,7 +51,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
-    protected LookupSearchService batchFileLookupableHelperService;
+    protected SearchService batchFileLookupableHelperService;
     protected ConfigurationService configurationService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected OptionsService optionsService;
@@ -191,7 +191,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         this.collectorFlatFileSerializerService = collectorFlatFileSerializerService;
     }
 
-    public void setBatchFileLookupableHelperService(LookupSearchService batchFileLookupableHelperService) {
+    public void setBatchFileLookupableHelperService(SearchService batchFileLookupableHelperService) {
         this.batchFileLookupableHelperService = batchFileLookupableHelperService;
     }
 

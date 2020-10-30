@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kuali.kfs.sys.businessobject.lookup;
+package org.kuali.kfs.sys.businessobject.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,10 +30,12 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.datadictionary.BusinessObjectAdminService;
+import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.kns.datadictionary.EntityNotFoundException;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.exception.AuthorizationException;
-import org.kuali.kfs.krad.service.LookupSearchService;
+import org.kuali.kfs.sys.businessobject.service.SearchService;
+import org.kuali.kfs.sys.businessobject.service.impl.BusinessObjectSorter;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.util.DateRangeUtil;
@@ -50,8 +52,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
+public class BatchFileSearchService extends SearchService {
+
     private static final Logger LOG = LogManager.getLogger();
+
+    private BusinessObjectDictionaryService businessObjectDictionaryService;
 
     @Override
     public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(
@@ -70,7 +75,7 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
 
     @Override
     public Object find(Class<? extends BusinessObjectBase> businessObjectClass, String id) {
-        BusinessObjectAdminService batchFileAdminService = getBusinessObjectDictionaryService()
+        BusinessObjectAdminService batchFileAdminService = businessObjectDictionaryService
                 .getBusinessObjectAdminService(businessObjectClass);
 
         if (!batchFileAdminService.allowsDownload(null, null)) {
@@ -108,7 +113,7 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
 
         List<String> pathPatterns = fieldValues.get("path");
         List<File> directories = getDirectoriesToSearch(pathPatterns);
-        BatchFileLookupSearchServiceImpl.BatchFileFinder finder = new BatchFileLookupSearchServiceImpl.BatchFileFinder(
+        BatchFileSearchService.BatchFileFinder finder = new BatchFileSearchService.BatchFileFinder(
                 results, filter);
         finder.find(directories);
         return results;
@@ -129,7 +134,7 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
         DateRangeUtil dateRange = new DateRangeUtil();
         dateRange.setDateStringWithLongValues(lastModifiedDatePattern);
         if (!dateRange.isEmpty()) {
-            return new BatchFileLookupSearchServiceImpl.LastModifiedDateFileFilter(dateRange.getLowerDate(),
+            return new BatchFileSearchService.LastModifiedDateFileFilter(dateRange.getLowerDate(),
                     dateRange.getUpperDate());
         } else {
             throw new RuntimeException("Unable to perform search using last modified date " + lastModifiedDatePattern);
@@ -174,6 +179,11 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
         });
 
         return searchPaths;
+    }
+
+    public void setBusinessObjectDictionaryService(
+            BusinessObjectDictionaryService businessObjectDictionaryService) {
+        this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
     protected class BatchFileFinder extends DirectoryWalker {

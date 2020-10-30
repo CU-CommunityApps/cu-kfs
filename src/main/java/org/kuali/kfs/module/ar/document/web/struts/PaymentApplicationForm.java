@@ -26,12 +26,15 @@ import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
+import org.kuali.kfs.kns.web.ui.HeaderField;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
+import org.kuali.kfs.module.ar.businessobject.CashControlDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoicePaidApplied;
 import org.kuali.kfs.module.ar.businessobject.NonAppliedHolding;
 import org.kuali.kfs.module.ar.businessobject.NonInvoiced;
@@ -52,14 +55,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 public class PaymentApplicationForm extends FinancialSystemTransactionalDocumentFormBase {
 
@@ -114,35 +118,73 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         adjustButton.setExtraButtonSource(extraButtonSource);
         adjustButton.setExtraButtonAltText("Adjust");
 
-        return Collections.singletonMap(ADJUST_BUTTON_EXTRA_BUTTON_PROPERTY, adjustButton);
+        return Map.of(ADJUST_BUTTON_EXTRA_BUTTON_PROPERTY, adjustButton);
     }
 
     /**
      * A Payment Application document can be adjusted if:
      * - The user has permission to initiate an APPA document.
-     * - The Payment Application document does not have any pending adjustments & has not been previously adjusted.
-     * - The Cash Controls are Final & Process.
+     * - AND the PaymentApplication document does not have any previous OR pending adjustments
+     * - AND all of the following are Processed or Final:
+     *    - the PaymentApplication document
+     *    - the CashControl document associated with the PaymentApplication document, if any
+     *    - other PaymentApplication documents associated with the CashControl document, if any
      *
      * @return {@code true} if the document can be adjusted; otherwise, {@code false}.
      */
     protected boolean canAdjust() {
         if (!userCanInitiateAppAdjustment()) {
+            LOG.debug("canAdjust() - Exit; User does not have permission");
             return false;
         }
-        return !(hasPendingAdjustmentsOrHasBeenPreviouslyAdjusted() || cashControlIsFinalAndProcessed());
+        final boolean canAdjust = noPreviousOrPendingAdjustments() && isFinalOrProcessed();
+        LOG.debug("canAdjust() - Exit : canAdjust={}", canAdjust);
+        return canAdjust;
     }
 
-    protected boolean hasPendingAdjustmentsOrHasBeenPreviouslyAdjusted() {
-        return false;
+    protected boolean noPreviousOrPendingAdjustments() {
+        return getPaymentApplicationDocument().getAdjusterDocumentNumber() == null;
     }
 
-    private boolean cashControlIsFinalAndProcessed() {
-        if (getPaymentApplicationDocument().hasCashControlDetail()) {
-            final WorkflowDocument cashContorlWorkflowDocument =
-                    getPaymentApplicationDocument().getCashControlDocument().getDocumentHeader().getWorkflowDocument();
-            return cashContorlWorkflowDocument.isFinal() && cashContorlWorkflowDocument.isProcessed();
+    private boolean isFinalOrProcessed() {
+        final Collection<WorkflowDocument> workflowDocuments = new LinkedList<>();
+
+        final PaymentApplicationDocument appDocument = getPaymentApplicationDocument();
+
+        // Include this APP
+        final WorkflowDocument appWorkflowDocument = extractWorkFlowDocument(appDocument);
+        workflowDocuments.add(appWorkflowDocument);
+
+        if (appDocument.hasCashControlDetail()) {
+            final CashControlDocument cashControlDocument = appDocument.getCashControlDocument();
+
+            // Include this APP's CashControl
+            final WorkflowDocument ccWorkflowDocument = extractWorkFlowDocument(cashControlDocument);
+            workflowDocuments.add(ccWorkflowDocument);
+
+            // Include any other APPs associated with the CashControl
+            final List<CashControlDetail> cashControlDetails = cashControlDocument.getCashControlDetails();
+            for (final CashControlDetail cashControlDetail : cashControlDetails) {
+                final PaymentApplicationDocument otherAppDocument = cashControlDetail.getReferenceFinancialDocument();
+
+                if (otherAppDocument.getDocumentNumber().equals(appDocument.getDocumentNumber())) {
+                    // Do not add this Document again; it was added above
+                    continue;
+                }
+
+                final WorkflowDocument otherAppWorkflowDocument = extractWorkFlowDocument(otherAppDocument);
+                workflowDocuments.add(otherAppWorkflowDocument);
+            }
         }
-        return true;
+
+        return workflowDocuments
+                .stream()
+                .allMatch(wfDocument -> wfDocument.isFinal() || wfDocument.isProcessed());
+    }
+
+    private static WorkflowDocument extractWorkFlowDocument(final Document document) {
+        final var documentHeader = document.getDocumentHeader();
+        return documentHeader.getWorkflowDocument();
     }
 
     private boolean userCanInitiateAppAdjustment() {
@@ -151,6 +193,43 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
                 SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(document);
         final Person person = GlobalVariables.getUserSession().getPerson();
         return documentAuthorizer.canInitiate(ArConstants.PAYMENT_APPLICATION_ADJUSTMENT_DOCUMENT_TYPE_CODE, person);
+    }
+
+    @Override
+    protected List<HeaderField> getStandardHeaderFields(final WorkflowDocument workflowDocument) {
+        final List<HeaderField> standardHeaderFields = super.getStandardHeaderFields(workflowDocument);
+
+        getAdjusterHeaderField().ifPresent(standardHeaderFields::add);
+
+        return standardHeaderFields;
+    }
+
+    private Optional<HeaderField> getAdjusterHeaderField() {
+        return getDocumentAdjusterDocumentNumber()
+                .map(adjusterDocumentNumber -> {
+                    final String ddAttributeEntryName =
+                            "DataDictionary.PaymentApplicationDocument.attributes.adjusterDocumentNumber";
+                    final String nonLookupValue =
+                            buildHtmlLink(getDocumentHandlerUrl(adjusterDocumentNumber), adjusterDocumentNumber);
+                    return new HeaderField(
+                            KRADConstants.DocumentFormHeaderFieldIds.DOCUMENT_ADJUSTER,
+                            ddAttributeEntryName,
+                            adjusterDocumentNumber,
+                            nonLookupValue
+                    );
+                });
+    }
+
+    // When "adjusting", this method will get called multiple times. Sometimes getDocument() will return the APP being
+    // adjusted, in which case, it's adjusterDocumentNumber shoudl be returned; other times, it will return the newly
+    // created APPA, in which case, returning NULL is fine becuase the APP header isn't going to be displayed anyway.
+    // Something's getting called unnecessaryily...but this is Struts code, so...<shrug>.
+    private Optional<String> getDocumentAdjusterDocumentNumber() {
+        String adjusterDocumentNumber = null;
+        if (getDocument() instanceof PaymentApplicationDocument) {
+            adjusterDocumentNumber = getPaymentApplicationDocument().getAdjusterDocumentNumber();
+        }
+        return Optional.ofNullable(adjusterDocumentNumber);
     }
 
     @Override

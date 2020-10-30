@@ -34,11 +34,11 @@ import org.kuali.kfs.gl.batch.CollectorBatchHeaderFieldUtil;
 import org.kuali.kfs.gl.batch.CollectorBatchTrailerRecordFieldUtil;
 import org.kuali.kfs.gl.businessobject.OriginEntryFieldUtil;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.krad.service.LookupSearchService;
+import org.kuali.kfs.sys.businessobject.service.SearchService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;
-import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl;
+import org.kuali.kfs.sys.businessobject.service.impl.BatchFileSearchService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.invocation.InvocationOnMock;
@@ -200,8 +200,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         return new TestDateTimeServiceImpl();
     }
 
-    protected LookupSearchService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
-    	LookupSearchService lookupableHelperServiceImpl = new TestBatchFileLookupSearchServiceImpl();
+    protected SearchService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
+    	SearchService lookupableHelperServiceImpl = new TestBatchFileLookupSearchServiceImpl();
         return lookupableHelperServiceImpl;
     }
 
@@ -373,7 +373,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     /**
      * Custom batch file lookupable class that uses a pre-defined List of root directories.
      */
-    public static class TestBatchFileLookupSearchServiceImpl extends BatchFileLookupSearchServiceImpl {
+    public static class TestBatchFileLookupSearchServiceImpl extends BatchFileSearchService {
         private static final long serialVersionUID = 1L;
 
         @Override

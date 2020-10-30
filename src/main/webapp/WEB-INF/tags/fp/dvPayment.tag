@@ -322,15 +322,12 @@
               <th  class="bord-l-b"><div align="right">
                 <kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbursementVoucherDocumentationLocationCode}"/></div></th>
               <td  class="datacell">
-                <kul:htmlControlAttribute attributeEntry="${dvAttributes.disbursementVoucherDocumentationLocationCode}"
-                                          property="document.disbursementVoucherDocumentationLocationCode"
-                                          extraReadOnlyProperty="document.disbursementVoucherDocumentationLocationName"
-                                          onchange="documentationMessage(this.value);" readOnly="${!fullEntryMode}"/>
-                <c:if test="${fullEntryMode}">
-              		<kul:lookup boClassName="org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation"
-                                fieldConversions="paymentDocumentationLocationCode:document.disbursementVoucherDocumentationLocationCode"
-              		            lookupParameters="document.disbursementVoucherDocumentationLocationCode:paymentDocumentationLocationCode" />
-              	</c:if>
+                <kul:htmlControlAttribute
+                        attributeEntry="${dvAttributes.disbursementVoucherDocumentationLocationCode}"
+                        property="document.disbursementVoucherDocumentationLocationCode"
+                        extraReadOnlyProperty="document.disbursementVoucherDocumentationLocationName"
+                        onchange="documentationMessage(this.value);"
+                        readOnly="${!fullEntryMode}"/>
               </td>
             </tr>
             

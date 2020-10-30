@@ -87,7 +87,7 @@ abstract class RoleServiceBase {
      * @param validAttributeIds The mapping of attribute names to their matching attribute ids
      * @return Converted Map<String, String> containing ID/value pairs
      */
-    private Map<String, String> convertQualifierKeys(
+    protected Map<String, String> convertQualifierKeys(
             Map<String, String> qualification, Map<String, String> validAttributeIds) {
         Map<String, String> convertedQualification = new HashMap<>();
         if (qualification != null && CollectionUtils.isNotEmpty(qualification.entrySet())) {

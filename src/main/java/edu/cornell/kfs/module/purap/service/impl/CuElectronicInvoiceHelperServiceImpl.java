@@ -210,9 +210,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                     trace.append(e.getMessage());
                 }
                 trace.append("\n");
-                for (int j = 0; j < elements.length; ++j) {
-                    StackTraceElement element = elements[j];
-
+                for (final StackTraceElement element : elements) {
                     trace.append("    at ");
                     trace.append(describeStackTraceElement(element));
                     trace.append("\n");

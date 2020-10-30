@@ -32,7 +32,10 @@
           p:businessObjectClass="edu.cornell.kfs.sys.batch.CreateDoneBatchFile" p:name="CreateDoneBatchFile"
           p:businessObjectAdminService-ref="batchFileAdminService"
           p:lookupDefinition-ref="CreateDoneBatchFile-lookupDefinition"
-          p:actionsProvider-ref="createDoneBatchFileActionsProvider" p:titleAttribute="name" p:objectLabel="Create Done Batch File">
+          p:actionsProvider-ref="createDoneBatchFileActionsProvider" 
+          p:titleAttribute="name" 
+          p:objectLabel="Create Done Batch File"
+          p:searchService-ref="createDoneBatchFileLookupSearchService">
         <property name="attributes">
             <list>
                 <ref bean="CreateDoneBatchFile-path"/>
@@ -82,7 +85,7 @@
 
     <bean id="CreateDoneBatchFile-lookupDefinition" parent="CreateDoneBatchFile-lookupDefinition-parentBean"/>
     <bean id="CreateDoneBatchFile-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
-          p:title="Create Done Batch File Lookup" p:lookupSearchService-ref="createDoneBatchFileLookupSearchService">
+          p:title="Create Done Batch File Lookup">
         <property name="formAttributeDefinitions">
             <list>
                 <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition" parent="CreateDoneBatchFile-path"/>
@@ -113,7 +116,7 @@
 
     <bean id="createDoneBatchFileLookupSearchService"
           class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl"
-          parent="lookupSearchService"/>
+          parent="searchService"/>
           
     <bean id="batchFileAdminService" class="org.kuali.kfs.sys.batch.service.BatchFileAdminService"/>
     

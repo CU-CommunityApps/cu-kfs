@@ -31,7 +31,9 @@
 
     function isWebappLink(url) {
         const webappPath = '/webapp'
-        return url.includes(webappPath) && window.location.pathname.includes(webappPath)
+        // "new" documents handle their own loading modal
+        var isNewDocument = window.documentData;
+        return isNewDocument || (url.includes(webappPath) && window.location.pathname.includes(webappPath))
     }
 
     function goToPage(url) {
@@ -50,28 +52,31 @@
             return
         }
         var href = anchor.attr('href');
+        var isLegacy = !isWebappLink(href);
 
-        if (active) {
-            event.preventDefault();
+        if (isLegacy) {
+            if (active) {
+                event.preventDefault();
 
-            var myModal = $('#remodal');
-            var modalBody = myModal.find('.remodal-content');
-            var html = '<div class="confirm-dialog">';
-            html += '<h3>Discard Changes?</h3>'
-            html += '<div class="message">If you choose to continue, any unsaved changes to this document will be lost.</div>'
-            html += '<div class="button-row">'
-            html += '<button class="btn btn-default" data-remodal-action="close">Cancel</button>'
-            html += '<button class="btn btn-primary" onclick="goToPage(\'' + href + '\')">Continue</button>'
-            html += '</div>'
-            html += '</div>';
-            modalBody.html(html);
-            myModal.remodal();
-            $('.remodal-wrapper').show();
-            setTimeout(function () {
-                $('.remodal-wrapper').find('button').last().focus();
-            });
-        } else if (!isWebappLink(href)) {
-            showLoadingModal()
+                var myModal = $('#remodal');
+                var modalBody = myModal.find('.remodal-content');
+                var html = '<div class="confirm-dialog">';
+                html += '<h3>Discard Changes?</h3>'
+                html += '<div class="message">If you choose to continue, any unsaved changes to this document will be lost.</div>'
+                html += '<div class="button-row">'
+                html += '<button class="btn btn-default" data-remodal-action="close">Cancel</button>'
+                html += '<button class="btn btn-primary" onclick="goToPage(\'' + href + '\')">Continue</button>'
+                html += '</div>'
+                html += '</div>';
+                modalBody.html(html);
+                myModal.remodal();
+                $('.remodal-wrapper').show();
+                setTimeout(function () {
+                    $('.remodal-wrapper').find('button').last().focus();
+                });
+            } else {
+                showLoadingModal()
+            }
         }
     }
 

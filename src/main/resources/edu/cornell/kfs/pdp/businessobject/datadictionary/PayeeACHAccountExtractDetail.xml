@@ -29,6 +29,7 @@
     <bean id="PayeeACHAccountExtractDetail-parentBean" abstract="true" parent="BusinessObjectEntry"
           p:businessObjectClass="edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail"
           p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:searchService-ref="defaultSearchService"
           p:inquiryDefinition-ref="PayeeACHAccountExtractDetail-inquiryDefinition"
           p:lookupDefinition-ref="PayeeACHAccountExtractDetail-lookupDefinition"
           p:objectLabel="Payee ACH Account Extract Detail">
@@ -236,7 +237,7 @@
 
     <bean id="PayeeACHAccountExtractDetail-lookupDefinition" parent="PayeeACHAccountExtractDetail-lookupDefinition-parentBean"/>
     <bean id="PayeeACHAccountExtractDetail-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
-          p:title="Payee ACH Account Extract Detail Lookup" p:lookupSearchService-ref="defaultLookupSearchService">
+          p:title="Payee ACH Account Extract Detail Lookup">
         <property name="defaultSort">
             <bean parent="SortDefinition">
                 <property name="attributeNames">
