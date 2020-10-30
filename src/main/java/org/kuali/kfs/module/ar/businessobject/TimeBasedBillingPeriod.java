@@ -147,6 +147,7 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     protected Integer findPreviousAccountingPeriodCode(Integer currentAccountingPeriodCode) {
         Integer previousAccountingPeriodCode;
         if (ArConstants.BillingFrequencyValues.MONTHLY.equals(billingFrequency) ||
+            ArConstants.BillingFrequencyValues.MANUAL.equals(billingFrequency) ||
             ArConstants.BillingFrequencyValues.MILESTONE.equals(billingFrequency) ||
             ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.equals(billingFrequency)) {
             previousAccountingPeriodCode = calculatePreviousPeriodByFrequency(currentAccountingPeriodCode, 1);

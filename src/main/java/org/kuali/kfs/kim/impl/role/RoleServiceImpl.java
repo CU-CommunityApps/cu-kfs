@@ -2163,8 +2163,11 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     private List<RoleMemberBo> getRoleMembersByDefaultStrategy(String roleId, String memberId, String memberTypeCode,
             Map<String, String> qualifier) {
+        Map<String, String> validAttributeIds = getAttributeNameToAttributeIdMappings(Collections.singleton(roleId), qualifier);
+        Map<String, String> convertedQualifier = convertQualifierKeys(qualifier, validAttributeIds);
         List<RoleMemberBo> rms = new ArrayList<>();
-        List<RoleMemberBo> roleMem = getRoleDao().getRoleMembershipsForMemberId(memberTypeCode, memberId, qualifier);
+        List<RoleMemberBo> roleMem = getRoleDao().getRoleMembershipsForMemberId(memberTypeCode, memberId,
+                convertedQualifier);
         for (RoleMemberBo rm : roleMem) {
             if (rm.getRoleId().equals(roleId)) {
                 // if found, remove
@@ -2199,9 +2202,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         List<RoleMemberBo> rms = getRoleMembersByExactQualifierMatch(role, principalId,
                 memberTypeToRoleDaoActionMap.get(MemberType.PRINCIPAL.getCode()), qualifier);
         if (CollectionUtils.isEmpty(rms)) {
-            Map<String, String> attributeQualifierMap = createQualifierWithAttributeIdsAsKeys(role, qualifier);
-            rms = getRoleMembersByDefaultStrategy(role.getId(), principalId, MemberType.PRINCIPAL.getCode(),
-                    attributeQualifierMap);
+            rms = getRoleMembersByDefaultStrategy(role.getId(), principalId, MemberType.PRINCIPAL.getCode(), qualifier);
         }
         removeRoleMembers(rms);
     }
@@ -2232,9 +2233,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         List<RoleMemberBo> rms = getRoleMembersByExactQualifierMatch(roleBo, groupId,
                 memberTypeToRoleDaoActionMap.get(MemberType.GROUP.getCode()), qualifier);
         if (CollectionUtils.isEmpty(rms)) {
-            Map<String, String> attributeQualifierMap = createQualifierWithAttributeIdsAsKeys(roleBo, qualifier);
-            rms = getRoleMembersByDefaultStrategy(roleBo.getId(), groupId, MemberType.GROUP.getCode(),
-                    attributeQualifierMap);
+            rms = getRoleMembersByDefaultStrategy(roleBo.getId(), groupId, MemberType.GROUP.getCode(), qualifier);
         }
         removeRoleMembers(rms);
     }
@@ -2254,28 +2253,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         List<RoleMemberBo> rms = getRoleMembersByExactQualifierMatch(role, roleId,
                 memberTypeToRoleDaoActionMap.get(MemberType.ROLE.getCode()), qualifier);
         if (CollectionUtils.isEmpty(rms)) {
-            Map<String, String> attributeQualifierMap = createQualifierWithAttributeIdsAsKeys(role, qualifier);
-            rms = getRoleMembersByDefaultStrategy(role.getId(), roleId, MemberType.ROLE.getCode(),
-                    attributeQualifierMap);
+            rms = getRoleMembersByDefaultStrategy(role.getId(), roleId, MemberType.ROLE.getCode(), qualifier);
         }
         removeRoleMembers(rms);
-    }
-
-    /*
-     * CU Customization: Added helper methods for converting the qualifier keys accordingly.
-     * This logic is similar to that from the related fix in Rice's RoleServiceImpl.removePrincipalFromRole() method.
-     */
-    private Map<String, String> createQualifierWithAttributeIdsAsKeys(RoleBoLite role, Map<String, String> qualifier) {
-        String kimTypeId = role.getKimTypeId();
-        return qualifier.entrySet().stream()
-                .collect(Collectors.toMap(
-                        entry -> getKimAttributeId(kimTypeId, entry),
-                        Map.Entry::getValue));
-    }
-
-    private String getKimAttributeId(String kimTypeId, Map.Entry<String, String> qualifierEntry) {
-        String attributeName = qualifierEntry.getKey();
-        return getKimAttributeId(kimTypeId, attributeName);
     }
 
     @Override

@@ -119,8 +119,8 @@
 	</bean>
 	
     <bean id="batchFileLookupSearchService"
-         class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl"
-         parent="lookupSearchService"/>
+         class="org.kuali.kfs.sys.businessobject.service.impl.BatchFileSearchService"
+         parent="searchService"/>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
 	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">

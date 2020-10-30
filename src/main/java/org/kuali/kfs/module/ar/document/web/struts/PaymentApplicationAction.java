@@ -70,6 +70,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static java.util.Map.entry;
+
 /*
  * CU Customization (KFSPTS-13246): Added the ability to delete lines
  * from the "Summary of Applied Funds" section.
@@ -86,14 +88,15 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     // CU Customization: Part of invoice-paid-applied deletion enhancement.
     private InvoicePaidAppliedDao invoicePaidAppliedDao;
 
-    /**
-     * Invoked when the "Adjust" button is selected.
-     *   * Copy the APP doc as an APPA doc
-     *
-     * TODO: Continue evolving this description
-     */
-    public ActionForward adjust(final ActionMapping mapping, final ActionForm form,
-            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ActionForward adjust(
+            final ActionMapping mapping,
+            final ActionForm form,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        // Document could be stale at this point (Submit followed immediately by Adjust); freshen it up
+        super.reload(mapping, form, request, response);
+
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 
         final PaymentApplicationDocument applicationDocument =
@@ -107,16 +110,17 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return createActionForward((KualiDocumentFormBase) form);
     }
 
-    private ActionForward createActionForward(final KualiDocumentFormBase form) {
-        final String docNum = form.getDocument().getDocumentNumber();
-
-        final Map<String, String> parameters = new HashMap<>(4);
-        parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "docHandler");
-        parameters.put(KRADConstants.PARAMETER_COMMAND, "displayDocSearchView");
-        parameters.put(KRADConstants.PARAMETER_DOC_ID, docNum);
-
+    private static ActionForward createActionForward(final KualiDocumentFormBase form) {
         final String baseUrl = getApplicationBaseUrl() + "/arPaymentApplicationAdjustment.do";
+
+        final String docNum = form.getDocument().getDocumentNumber();
+        final Map<String, String> parameters = Map.ofEntries(
+            entry(KRADConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.DOC_HANDLER_METHOD),
+            entry(KRADConstants.PARAMETER_COMMAND, KFSConstants.METHOD_DISPLAY_DOC_SEARCH_VIEW),
+            entry(KRADConstants.PARAMETER_DOC_ID, docNum)
+        );
         final String url = UrlFactory.parameterizeUrl(baseUrl, parameters);
+
         return new ActionForward(url, true);
     }
 
@@ -1005,17 +1009,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
      * actually use Spring. This way, PowerMock is not necessary.
      */
-    CustomerInvoiceDetailService getCustomerInvoiceDetailService() {
-        if (customerInvoiceDetailService == null) {
-            customerInvoiceDetailService = SpringContext.getBean(CustomerInvoiceDetailService.class);
-        }
-        return customerInvoiceDetailService;
-    }
-
-    /*
-     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
-     * actually use Spring. This way, PowerMock is not necessary.
-     */
     CustomerInvoiceDocumentService getCustomerInvoiceDocumentService() {
         if (customerInvoiceDocumentService == null) {
             customerInvoiceDocumentService = SpringContext.getBean(CustomerInvoiceDocumentService.class);
@@ -1034,20 +1027,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return paymentApplicationDocumentService;
     }
 
-    /*
-     * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
-     * actually use Spring. This way, PowerMock is not necessary.
-     *
-     * TODO: Is this doing the same thing as the overridden method in KualiDocumentActionBase? If so, this can be
-     *       removed.
-     */
-    @Override
-    protected BusinessObjectService getBusinessObjectService() {
-        if (businessObjectService == null) {
-            businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-        }
-        return businessObjectService;
-    }
     
     // CU Customization: Part of invoice-paid-applied deletion enhancement.
     protected InvoicePaidAppliedDao getInvoicePaidAppliedDao() {

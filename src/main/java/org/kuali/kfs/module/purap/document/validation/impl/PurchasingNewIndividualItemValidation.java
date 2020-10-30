@@ -89,9 +89,19 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
             BusinessObjectDictionaryService businessObjectDictionaryService) {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
-            
+
+    // known user: CSU
+    protected BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    // known user: CSU
+    protected CapitalAssetManagementModuleService getCapitalAssetManagementModuleService() {
+        return capitalAssetManagementModuleService;
     }
 
     public void setCapitalAssetManagementModuleService(
@@ -99,20 +109,45 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         this.capitalAssetManagementModuleService = capitalAssetManagementModuleService;
     }
 
+    // known user: CSU
+    protected PurchasingUnitOfMeasureValidation getUnitOfMeasureValidation() {
+        return unitOfMeasureValidation;
+    }
+
     public void setUnitOfMeasureValidation(PurchasingUnitOfMeasureValidation unitOfMeasureValidation) {
         this.unitOfMeasureValidation = unitOfMeasureValidation;
+    }
+
+    // known user: CSU
+    protected PurchasingItemUnitPriceValidation getItemUnitPriceValidation() {
+        return itemUnitPriceValidation;
     }
 
     public void setItemUnitPriceValidation(PurchasingItemUnitPriceValidation itemUnitPriceValidation) {
         this.itemUnitPriceValidation = itemUnitPriceValidation;
     }
 
+    // known user: CSU
+    protected PurchasingItemDescriptionValidation getItemDescriptionValidation() {
+        return itemDescriptionValidation;
+    }
+
     public void setItemDescriptionValidation(PurchasingItemDescriptionValidation itemDescriptionValidation) {
         this.itemDescriptionValidation = itemDescriptionValidation;
     }
 
+    // known user: CSU
+    protected PurchasingItemQuantityValidation getItemQuantityValidation() {
+        return itemQuantityValidation;
+    }
+
     public void setItemQuantityValidation(PurchasingItemQuantityValidation itemQuantityValidation) {
         this.itemQuantityValidation = itemQuantityValidation;
+    }
+
+    // known user: CSU
+    protected PurchasingBelowTheLineItemNoUnitCostValidation getBelowTheLineItemNoUnitCostValidation() {
+        return belowTheLineItemNoUnitCostValidation;
     }
 
     public void setBelowTheLineItemNoUnitCostValidation(

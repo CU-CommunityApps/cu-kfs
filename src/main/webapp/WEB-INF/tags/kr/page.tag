@@ -32,6 +32,7 @@
 <%@ attribute name="extraTopButtons" required="false" type="java.util.List" description="A List of org.kuali.kfs.kns.web.ui.ExtraButton objects to display at the top of the page." %>
 <%@ attribute name="headerDispatch" required="false" description="Overrides the header navigation tab buttons to go directly to the action given here." %>
 <%@ attribute name="lookup" required="false" description="indicates whether the lookup page specific page should be shown"%>
+<%@ attribute name="disableLegacyStyles" description="Boolean determining whether the legacy css should be loaded." %>
 
 <%-- for non-lookup pages --%>
 <%@ attribute name="headerTabActive" required="false" description="The name of the active header tab, if header navigation is used." %>
@@ -106,12 +107,14 @@
 				</c:forEach>
 			</c:otherwise>
 		</c:choose>
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+		<c:if test="${not disableLegacyStyles}">
+			<link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+		</c:if>
+		<link href='${pageContext.request.contextPath}/css/lookup.css?${cachingTimestamp}' rel='stylesheet' type='text/css'>
+		<link href='${pageContext.request.contextPath}/css/newPortal.css?${cachingTimestamp}' rel='stylesheet' type='text/css'>
 		<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900' rel='stylesheet'>
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
-		<link href='${pageContext.request.contextPath}/css/newPortal.css?${cachingTimestamp}' rel='stylesheet' type='text/css'>
-		<link href='${pageContext.request.contextPath}/css/lookup.css?${cachingTimestamp}' rel='stylesheet' type='text/css'>
 		<c:if test="${param.mode ne 'modal'}">
 			<script src="${pageContext.request.contextPath}/scripts/jquery.min.js"></script>
 			<script src="${pageContext.request.contextPath}/scripts/bootstrap.min.js"></script>

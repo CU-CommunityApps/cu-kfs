@@ -142,29 +142,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
         }
         document.fixItemReferences();
 
-        // if distribution method is sequential and document is PREQ or VCM then...
-        if (((document instanceof PaymentRequestDocument) || (document instanceof VendorCreditMemoDocument)) && PurapConstants.AccountDistributionMethodCodes.SEQUENTIAL_CODE.equalsIgnoreCase(accountDistributionMethod)) {
-            if (document instanceof VendorCreditMemoDocument) {
-                VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) document;
-                cmDocument.updateExtendedPriceOnItems();
-
-                for (PurApItem item : document.getItems()) {
-                    for (PurApAccountingLine account : item.getSourceAccountingLines()) {
-                        account.setAmount(KualiDecimal.ZERO);
-                    }
-                }
-            }
-
-            // update the accounts amounts for PREQ and distribution method = sequential
-            for (PurApItem item : document.getItems()) {
-                updatePreqItemAccountAmounts(item);
-            }
-
-            return;
-        }
-
-        // if distribution method is proportional and document is PREQ or VCM then...
-        if (((document instanceof PaymentRequestDocument) || (document instanceof VendorCreditMemoDocument)) && PurapConstants.AccountDistributionMethodCodes.PROPORTIONAL_CODE.equalsIgnoreCase(accountDistributionMethod)) {
+        if (document instanceof PaymentRequestDocument || document instanceof VendorCreditMemoDocument) {
             // update the accounts amounts for PREQ and distribution method = sequential
             if (document instanceof VendorCreditMemoDocument) {
                 VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) document;
@@ -178,9 +156,8 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             }
 
             for (PurApItem item : document.getItems()) {
-                boolean rulePassed = true;
-                // check any business rules
-                rulePassed &= getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
+                boolean rulePassed = getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(
+                        document, item));
 
                 if (rulePassed) {
                     updatePreqProportionalItemAccountAmounts(item);
@@ -190,31 +167,15 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             return;
         }
 
-        //No recalculate if the account distribution method code is equal to "S" sequential ON REQ or POs..
-        if (PurapConstants.AccountDistributionMethodCodes.SEQUENTIAL_CODE.equalsIgnoreCase(accountDistributionMethod)) {
-            for (PurApItem item : document.getItems()) {
-                boolean rulePassed = true;
-                // check any business rules
-                rulePassed &= getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
+        for (PurApItem item : document.getItems()) {
+            boolean rulePassed =
+                    getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
 
-                return;
-            }
-        }
-
-        // do recalculate only if the account distribution method code is not equal to "S" sequential method.
-        if (!PurapConstants.AccountDistributionMethodCodes.SEQUENTIAL_CODE.equalsIgnoreCase(accountDistributionMethod)) {
-            for (PurApItem item : document.getItems()) {
-                boolean rulePassed = true;
-                // check any business rules
-                rulePassed &= getKualiRuleService().applyRules(new PurchasingAccountsPayableItemPreCalculateEvent(document, item));
-
-                if (rulePassed) {
-                    updateItemAccountAmounts(item);
-                }
+            if (rulePassed) {
+                updateItemAccountAmounts(item);
             }
         }
     }
-
     /*
      * Updates PREQ accounting line amounts only when Treasury Manager is doing 'calculate'.
      * Currently, the foundation 'updateAccountAmounts' is based on the saved accounting line percentage which is rounded to 2 decimal digits.

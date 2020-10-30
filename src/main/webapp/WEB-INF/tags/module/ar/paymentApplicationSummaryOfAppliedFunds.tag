@@ -26,7 +26,7 @@
 <%@ attribute name="isCustomerSelected" required="true"
     description="Whether or not the customer is set" %>
 <c:set var="docHeaderAttributes" value="${DataDictionary.FinancialSystemDocumentHeader.attributes}" />
-
+<c:set var="invoicePaidAppliedAttributes" value="${DataDictionary.InvoicePaidApplied.attributes}" />
 <kul:tab tabTitle="Summary of Applied Funds"
 	defaultOpen="${isCustomerSelected}"
 	tabErrorKey="${KFSConstants.PAYMENT_APPLICATION_DOCUMENT_ERRORS}">
@@ -74,13 +74,13 @@
 													</a>
 												</td>
 												<td>
-													<c:out value="${invoicePaidApplied.invoiceItemNumber}"/>
+													<kul:htmlControlAttribute attributeEntry="${invoicePaidAppliedAttributes.invoiceItemNumber}" property="document.invoicePaidApplieds[${ctr}].invoiceItemNumber" readOnly="true" />
 												</td>
 												<td>
-													<c:out value="${invoicePaidApplied.invoiceDetail.invoiceItemDescription}" />&nbsp;
+													<kul:htmlControlAttribute attributeEntry="${DataDictionary.CustomerInvoiceDetail.attributes.invoiceItemDescription}" property="document.invoicePaidApplieds[${ctr}].invoiceDetail.invoiceItemDescription" readOnly="true" />
 												</td>
 												<td style="text-align: right;">
-                                                    <fmt:formatNumber value="${invoicePaidApplied.invoiceItemAppliedAmount}" currencySymbol="$" type="currency"/>
+													<kul:htmlControlAttribute attributeEntry="${invoicePaidAppliedAttributes.invoiceItemAppliedAmount}" property="document.invoicePaidApplieds[${ctr}].invoiceItemAppliedAmount" readOnly="true" />
 												</td>
                                                 <c:if test="${readOnly ne true}">
                                                     <td>
@@ -135,23 +135,23 @@
 								    <c:if test="${!showCCAndBtbA}">
 		                        	    <c:if test="${readOnly ne true}">
 											<td style="text-align: right;">
-                                                <fmt:formatNumber value="${KualiForm.totalFromControl}" currencySymbol="$" type="currency"/>
+												<kul:htmlControlAttribute attributeEntry="${docHeaderAttributes.financialDocumentTotalAmount}" property="totalFromControl" readOnly="true" />
 											</td>
 											<td style="text-align: right;">
-                                                <fmt:formatNumber value="${KualiForm.unallocatedBalance}" currencySymbol="$" type="currency"/>
+												<kul:htmlControlAttribute attributeEntry="${docHeaderAttributes.financialDocumentTotalAmount}" property="unallocatedBalance" readOnly="true" />
 											</td>
 										</c:if>
 									</c:if>
 									<c:if test="${showCCAndBtbA}">
 										<td style="text-align: right;">
-                                            <fmt:formatNumber value="${KualiForm.document.documentHeader.financialDocumentTotalAmount}" currencySymbol="$" type="currency"/>
+											 <kul:htmlControlAttribute attributeEntry="${docHeaderAttributes.financialDocumentTotalAmount}" property="document.documentHeader.financialDocumentTotalAmount" readOnly="true" />
 										</td>
 										<td style="text-align: right;">
-                                            <fmt:formatNumber value="${KualiForm.unallocatedBalance}" currencySymbol="$" type="currency"/>
+											<kul:htmlControlAttribute attributeEntry="${docHeaderAttributes.financialDocumentTotalAmount}" property="unallocatedBalance" readOnly="true" />
 										</td>
 									</c:if>
 									<td style="text-align: right;">
-                                        <fmt:formatNumber value="${KualiForm.totalApplied}" currencySymbol="$" type="currency"/>
+										<kul:htmlControlAttribute attributeEntry="${docHeaderAttributes.financialDocumentTotalAmount}" property="totalApplied" readOnly="true" />
 									</td>
 								</tr>
 							</table>
