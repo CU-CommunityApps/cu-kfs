@@ -1,5 +1,7 @@
 package edu.cornell.kfs.tax;
 
+import java.util.regex.Pattern;
+
 /**
  * Helper class containing various tax-processing-related constants.
  */
@@ -68,7 +70,11 @@ public final class CUTaxConstants {
     public static final int DEFAULT_EXTRA_RS_SIZE = 2;
     public static final int VENDOR_ADDRESS_COUNTRY_CODE_PARAM_INDEX = 3;
 
-
+    public static final Pattern TAX_1099_BOX_MAPPING_KEY_PATTERN = Pattern.compile("^(MISC|NEC)\\((\\w+)\\)$");
+    public static final int TAX_1099_BOX_MAPPING_KEY_FORM_TYPE_GROUP = 1;
+    public static final int TAX_1099_BOX_MAPPING_KEY_BOX_NUMBER_GROUP = 2;
+    public static final String TAX_1099_BOX_MAPPING_KEY_FORMAT = "{0}({1})";
+    public static final String NULL_1099_MAPPING = "NULL";
 
     /**
      * Helper subclass containing config-prop-related constants.
@@ -172,6 +178,9 @@ public final class CUTaxConstants {
         public static final String PAYMENT_REASON_TO_TAX_BOX = "1099_PAYMENT_REASON_TO_TAX_BOX";
         public static final String PAYMENT_REASON_TO_NO_TAX_BOX = "1099_PAYMENT_REASON_TO_NO_TAX_BOX";
         public static final String DOCUMENT_TYPE_TO_TAX_BOX = "1099_DOCUMENT_TYPE_TO_TAX_BOX";
+        public static final String TAX_BOX_NUMBER_MAPPINGS = "1099_TAX_BOX_NUMBER_MAPPINGS";
+        public static final String ROYALTIES_REPORTING_MIN_AMOUNT = "1099_ROYALTIES_REPORTING_MIN_AMOUNT";
+        public static final String NONEMPLOYEE_COMPENSATION_REPORTING_MIN_AMOUNT = "1099_NONEMPLOYEE_COMPENSATION_REPORTING_MIN_AMOUNT";
         
         private Tax1099ParameterNames() {
             throw new UnsupportedOperationException("do not call Tax1099ParameterNames constructor");

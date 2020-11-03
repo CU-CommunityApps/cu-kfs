@@ -1,23 +1,28 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.context.SpringContext;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.Tax1099ParameterNames;
 import edu.cornell.kfs.tax.batch.TaxDataRow;
 import edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping;
 import edu.cornell.kfs.tax.businessobject.TransactionOverride;
 import edu.cornell.kfs.tax.service.TaxProcessingService;
+import edu.cornell.kfs.tax.util.TaxUtils;
 
 /**
  * Immutable helper class containing various data to assist with 1099 tax processing.
@@ -26,6 +31,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
 
     private static final int SMALL_KEY_SIZE = 30;
 
+    final Map<String, TaxTableField> boxNumberMappings;
     // Maps object-code-and-DV-payment-reason combos to 1099 tax boxes.
     final Map<String,TaxTableField> objectCodeBucketMappings;
     // Maps date-and-docNumber-and-docLineNumber combos to 1099 tax box overrides.
@@ -66,6 +72,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
     final Map<TaxTableField,Map<String,List<Pattern>>> taxBoxIncludedDvCheckStubTextMaps;
     // Indicates whether the values of the various taxBoxIncludedDvCheckStubTextMaps sub-maps are whitelists (true) or blacklists (false).
     final Map<TaxTableField,Boolean> taxBoxDvCheckStubTextsAreWhitelists;
+    //final Map<>
 
     Transaction1099Summary(int reportYear, java.sql.Date startDate, java.sql.Date endDate, boolean vendorForeign, Map<String,TaxDataRow> dataRows) {
         super(reportYear, startDate, endDate, vendorForeign, CUTaxConstants.TAX_TYPE_1099, CUTaxConstants.TAX_1099_PARM_DETAIL, dataRows);
@@ -81,30 +88,38 @@ class Transaction1099Summary extends TransactionDetailSummary {
         Map<TaxTableField,String> dvCheckStubTextParamNames = new HashMap<TaxTableField,String>();
         
         // Setup temporary map from tax boxes to DV-check-stub-text-patterns parameter names.
-        dvCheckStubTextParamNames.put(derivedValues.box1, Tax1099ParameterNames.RENTS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box2, Tax1099ParameterNames.ROYALTIES_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box3, Tax1099ParameterNames.OTHER_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box4, Tax1099ParameterNames.FED_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box5, Tax1099ParameterNames.FISHING_BOAT_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box6, Tax1099ParameterNames.MEDICAL_HEALTH_CARE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box7, Tax1099ParameterNames.NONEMPLOYEE_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box8, Tax1099ParameterNames.SUBSTITUTE_PAYMENTS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box10, Tax1099ParameterNames.CROP_INSURANCE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box13, Tax1099ParameterNames.GOLDEN_PARACHUTE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box14, Tax1099ParameterNames.ATTORNEY_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box15a, Tax1099ParameterNames.SECTION_409A_DEFERRALS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box15b, Tax1099ParameterNames.SECTION_409A_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box16, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.box18, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscRents, Tax1099ParameterNames.RENTS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscRoyalties, Tax1099ParameterNames.ROYALTIES_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscOtherIncome, Tax1099ParameterNames.OTHER_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscFedIncomeTaxWithheld, Tax1099ParameterNames.FED_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscFishingBoatProceeds, Tax1099ParameterNames.FISHING_BOAT_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscMedicalHealthcarePayments, Tax1099ParameterNames.MEDICAL_HEALTH_CARE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscSubstitutePayments, Tax1099ParameterNames.SUBSTITUTE_PAYMENTS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscCropInsuranceProceeds, Tax1099ParameterNames.CROP_INSURANCE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscGrossProceedsAttorney, Tax1099ParameterNames.ATTORNEY_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscSection409ADeferral, Tax1099ParameterNames.SECTION_409A_DEFERRALS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscGoldenParachute, Tax1099ParameterNames.GOLDEN_PARACHUTE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        // TODO: Do we need a Box 14 parameter mapping?
+        dvCheckStubTextParamNames.put(derivedValues.miscStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.miscStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.necNonEmployeeCompensation, Tax1099ParameterNames.NONEMPLOYEE_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        // TODO: Do we need separate parameters for the 1099-NEC tax fields?
+        dvCheckStubTextParamNames.put(derivedValues.necFedIncomeTaxWithheld, Tax1099ParameterNames.FED_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.necStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.necStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        
+        this.boxNumberMappings = parseBoxNumberMappings(parameterService);
         
         // Construct a Map from object-code-and-DV-payment-reason combos to 1099 tax buckets.
         tempMap = new HashMap<String,TaxTableField>();
         List<ObjectCodeBucketMapping> allBucketMappings = taxProcessingService.getBucketMappings(CUTaxConstants.TAX_TYPE_1099);
         for (ObjectCodeBucketMapping bucketMapping : allBucketMappings) {
+            String boxNumberMappingKey = TaxUtils.build1099BoxNumberMappingKey(
+                    bucketMapping.getFormType(), bucketMapping.getBoxNumber());
             tempMap.put(
                     new StringBuilder().append(bucketMapping.getFinancialObjectCode()).append(';')
                             .append(bucketMapping.getDvPaymentReasonCode()).toString(),
-                    getBoxNumberConstant(bucketMapping.getBoxNumber()));
+                    boxNumberMappings.get(boxNumberMappingKey));
         }
         this.objectCodeBucketMappings = Collections.unmodifiableMap(tempMap);
         
@@ -112,11 +127,13 @@ class Transaction1099Summary extends TransactionDetailSummary {
         tempMap = new HashMap<String,TaxTableField>();
         List<TransactionOverride> overrides = taxProcessingService.getTransactionOverrides(CUTaxConstants.TAX_TYPE_1099, startDate, endDate);
         for (TransactionOverride transactionOverride : overrides) {
+            String boxNumberMappingKey = TaxUtils.build1099BoxNumberMappingKey(
+                    transactionOverride.getFormType(), transactionOverride.getBoxNumber());
             tempMap.put(
                     new StringBuilder(SMALL_KEY_SIZE).append(transactionOverride.getUniversityDate()).append(';')
                             .append(transactionOverride.getDocumentNumber()).append(';')
                             .append(transactionOverride.getFinancialDocumentLineNumber()).toString(),
-                    getBoxNumberConstant(transactionOverride.getBoxNumber()));
+                    boxNumberMappings.get(boxNumberMappingKey));
         }
         this.transactionOverrides = Collections.unmodifiableMap(tempMap);
         
@@ -200,7 +217,40 @@ class Transaction1099Summary extends TransactionDetailSummary {
         this.taxBoxDvCheckStubTextsAreWhitelists = Collections.unmodifiableMap(tempWhitelistFlagsMap);
     }
 
-    protected TaxTableField getBoxNumberConstant(String boxNumber) {
-        return (StringUtils.isNotBlank(boxNumber)) ? derivedValues.fields.get("box" + boxNumber.toLowerCase()) : null;
+    private Map<String, TaxTableField> parseBoxNumberMappings(ParameterService parameterService) {
+        Collection<String> boxNumberMappingsFromParameter = parameterService.getParameterValuesAsString(
+                CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1099_PARM_DETAIL,
+                Tax1099ParameterNames.TAX_BOX_NUMBER_MAPPINGS);
+        return boxNumberMappingsFromParameter.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        this::getTaxBoxMappingKeyFromParameterEntry,
+                        this::getBoxNumberMetadataFromParameterEntry));
     }
+
+    private String getTaxBoxMappingKeyFromParameterEntry(String parameterEntry) {
+        String key = StringUtils.substringBefore(parameterEntry, CUKFSConstants.EQUALS_SIGN);
+        String convertedKey = StringUtils.upperCase(key, Locale.US);
+        if (!TaxUtils.is1099BoxNumberMappingKeyFormattedProperly(convertedKey)) {
+            throw new IllegalStateException("Found a malformed 1099 box mapping key: " + key);
+        }
+        return convertedKey;
+    }
+
+    private TaxTableField getBoxNumberMetadataFromParameterEntry(String parameterEntry) {
+        String fieldName = StringUtils.substringAfter(parameterEntry, CUKFSConstants.EQUALS_SIGN);
+        if (StringUtils.isBlank(fieldName)) {
+            throw new IllegalStateException("Found a 1099 box mapping with a missing field name: " + parameterEntry);
+        }
+        TaxTableField taxField = derivedValues.fields.get(fieldName);
+        if (taxField == null) {
+            throw new IllegalStateException("Could not find 1099 box metadata for field name: " + fieldName);
+        }
+        return taxField;
+    }
+
+    protected TaxTableField getBoxNumberConstant(String boxMappingKey) {
+        return StringUtils.isNotBlank(boxMappingKey)
+                ? boxNumberMappings.get(boxMappingKey.toUpperCase(Locale.US)) : null;
+    }
+
 }
