@@ -150,7 +150,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         pg.setProcessImmediate(document.isImmediatePaymentIndicator());
         pg.setPymtAttachment(document.isDisbVchrAttachmentCode());
         pg.setPymtSpecialHandling(document.isDisbVchrSpecialHandlingCode());
-        pg.setNraPayment(pd.isDisbVchrNonresidentPaymentCode());
+        pg.setNonresidentPayment(pd.isDisbVchrNonresidentPaymentCode());
 
         pg.setBankCode(document.getDisbVchrBankCode());
         pg.setPaymentStatusCode(PdpConstants.PaymentStatusCodes.OPEN);

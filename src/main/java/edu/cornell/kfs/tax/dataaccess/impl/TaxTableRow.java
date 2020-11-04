@@ -307,7 +307,7 @@ abstract class TaxTableRow {
         final TaxTableField disbVchrPayeeLine1Addr;
         final TaxTableField disbVchrPayeeCountryCode;
         final TaxTableField disbursementVoucherPayeeTypeCode;
-        // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonResidentAlienTax)
+        // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonresidentTax)
         final TaxTableField nraDocumentNumber;
         final TaxTableField federalIncomeTaxPercent;
         final TaxTableField incomeClassCode;
