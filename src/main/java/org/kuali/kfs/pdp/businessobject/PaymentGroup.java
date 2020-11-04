@@ -78,7 +78,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     protected Boolean pymtAttachment;
     protected Boolean pymtSpecialHandling;
     protected Boolean taxablePayment;
-    protected Boolean nraPayment;
+    protected Boolean nonresidentPayment;
     protected Boolean processImmediate;
     protected Boolean combineGroups;
     protected String achBankRoutingNbr;
@@ -486,11 +486,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return line4Address;
     }
 
-    /**
-     * @hibernate.property column="NRA_PMT_IND" type="yes_no"
-     */
-    public Boolean getNraPayment() {
-        return nraPayment;
+    public Boolean getNonresidentPayment() {
+        return nonresidentPayment;
     }
 
     /**
@@ -671,8 +668,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         line4Address = string;
     }
 
-    public void setNraPayment(Boolean boolean1) {
-        nraPayment = boolean1;
+    public void setNonresidentPayment(Boolean boolean1) {
+        nonresidentPayment = boolean1;
     }
 
     public void setPayeeId(String string) {
