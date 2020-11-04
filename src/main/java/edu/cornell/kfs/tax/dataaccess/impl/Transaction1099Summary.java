@@ -1,7 +1,9 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -14,10 +16,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.Tax1099ParameterNames;
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.Tax1099FilerAddressField;
 import edu.cornell.kfs.tax.batch.TaxDataRow;
 import edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping;
 import edu.cornell.kfs.tax.businessobject.TransactionOverride;
@@ -32,6 +36,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
     private static final int SMALL_KEY_SIZE = 30;
 
     final Map<String, TaxTableField> boxNumberMappings;
+    final Map<TaxTableField, String> boxNumberReverseMappings;
     // Maps object-code-and-DV-payment-reason combos to 1099 tax boxes.
     final Map<String,TaxTableField> objectCodeBucketMappings;
     // Maps date-and-docNumber-and-docLineNumber combos to 1099 tax box overrides.
@@ -72,7 +77,9 @@ class Transaction1099Summary extends TransactionDetailSummary {
     final Map<TaxTableField,Map<String,List<Pattern>>> taxBoxIncludedDvCheckStubTextMaps;
     // Indicates whether the values of the various taxBoxIncludedDvCheckStubTextMaps sub-maps are whitelists (true) or blacklists (false).
     final Map<TaxTableField,Boolean> taxBoxDvCheckStubTextsAreWhitelists;
-    //final Map<>
+    final BigDecimal defaultMinimumReportingAmount;
+    final BigDecimal royaltiesMinimumReportingAmount;
+    final Map<Tax1099FilerAddressField, String> filerAddressFields;
 
     Transaction1099Summary(int reportYear, java.sql.Date startDate, java.sql.Date endDate, boolean vendorForeign, Map<String,TaxDataRow> dataRows) {
         super(reportYear, startDate, endDate, vendorForeign, CUTaxConstants.TAX_TYPE_1099, CUTaxConstants.TAX_1099_PARM_DETAIL, dataRows);
@@ -99,16 +106,17 @@ class Transaction1099Summary extends TransactionDetailSummary {
         dvCheckStubTextParamNames.put(derivedValues.miscGrossProceedsAttorney, Tax1099ParameterNames.ATTORNEY_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscSection409ADeferral, Tax1099ParameterNames.SECTION_409A_DEFERRALS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscGoldenParachute, Tax1099ParameterNames.GOLDEN_PARACHUTE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        // TODO: Do we need a Box 14 parameter mapping?
+        dvCheckStubTextParamNames.put(derivedValues.miscNonQualifiedDeferredCompensation,
+                Tax1099ParameterNames.NONQUALIFIED_DEFERRED_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necNonEmployeeCompensation, Tax1099ParameterNames.NONEMPLOYEE_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        // TODO: Do we need separate parameters for the 1099-NEC tax fields?
         dvCheckStubTextParamNames.put(derivedValues.necFedIncomeTaxWithheld, Tax1099ParameterNames.FED_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         
         this.boxNumberMappings = parseBoxNumberMappings(parameterService);
+        this.boxNumberReverseMappings = buildBoxNumberReverseMappings(boxNumberMappings);
         
         // Construct a Map from object-code-and-DV-payment-reason combos to 1099 tax buckets.
         tempMap = new HashMap<String,TaxTableField>();
@@ -215,6 +223,46 @@ class Transaction1099Summary extends TransactionDetailSummary {
         
         this.taxBoxIncludedDvCheckStubTextMaps = Collections.unmodifiableMap(tempCheckStubTextMaps);
         this.taxBoxDvCheckStubTextsAreWhitelists = Collections.unmodifiableMap(tempWhitelistFlagsMap);
+        this.defaultMinimumReportingAmount = get1099ParameterValueAsNonNegativeBigDecimal(
+                Tax1099ParameterNames.DEFAULT_REPORTING_MIN_AMOUNT, parameterService);
+        this.royaltiesMinimumReportingAmount = get1099ParameterValueAsNonNegativeBigDecimal(
+                Tax1099ParameterNames.ROYALTIES_REPORTING_MIN_AMOUNT, parameterService);
+        this.filerAddressFields = parseFilerAddressFields(parameterService);
+    }
+
+    private BigDecimal get1099ParameterValueAsNonNegativeBigDecimal(
+            String parameterName, ParameterService parameterService) {
+        String parameterValue = parameterService.getParameterValueAsString(
+                CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1099_PARM_DETAIL, parameterName);
+        if (StringUtils.isBlank(parameterValue)) {
+            return KualiDecimal.ZERO.bigDecimalValue();
+        } else {
+            try {
+                BigDecimal numericValue = new KualiDecimal(parameterValue).bigDecimalValue();
+                if (numericValue.compareTo(KualiDecimal.ZERO.bigDecimalValue()) < 0) {
+                    throw new IllegalStateException("Negative number is not permitted for parameter " + parameterName);
+                }
+                return numericValue;
+            } catch (NumberFormatException e) {
+                throw new IllegalStateException("Invalid number format detected for parameter " + parameterName, e);
+            }
+        }
+    }
+
+    private Map<Tax1099FilerAddressField, String> parseFilerAddressFields(ParameterService parameterService) {
+        Tax1099FilerAddressField[] addressFieldKeys = Tax1099FilerAddressField.values();
+        Collection<String> filerAddressFieldsFromParameter = parameterService.getParameterValuesAsString(
+                CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1099_PARM_DETAIL, Tax1099ParameterNames.FILER_ADDRESS);
+        if (filerAddressFieldsFromParameter.size() != addressFieldKeys.length) {
+            throw new IllegalStateException("The filer address parameter has " + filerAddressFieldsFromParameter.size()
+                    + " sections, but should have had " + addressFieldKeys.length);
+        }
+        String[] addressFieldValues = filerAddressFieldsFromParameter.toArray(String[]::new);
+        Map<Tax1099FilerAddressField, String> addressFields = new EnumMap<>(Tax1099FilerAddressField.class);
+        for (int i = 0; i < addressFieldKeys.length; i++) {
+            addressFields.put(addressFieldKeys[i], addressFieldValues[i]);
+        }
+        return Collections.unmodifiableMap(addressFields);
     }
 
     private Map<String, TaxTableField> parseBoxNumberMappings(ParameterService parameterService) {
@@ -246,6 +294,12 @@ class Transaction1099Summary extends TransactionDetailSummary {
             throw new IllegalStateException("Could not find 1099 box metadata for field name: " + fieldName);
         }
         return taxField;
+    }
+
+    private Map<TaxTableField, String> buildBoxNumberReverseMappings(Map<String, TaxTableField> regularBoxMappings) {
+        return regularBoxMappings.entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        Map.Entry::getValue, Map.Entry::getKey));
     }
 
     protected TaxTableField getBoxNumberConstant(String boxMappingKey) {

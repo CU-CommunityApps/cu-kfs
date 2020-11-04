@@ -648,6 +648,14 @@ abstract class TaxTableRow {
         final TaxTableField boxUnknown1042s;
         final TaxTableField endDate;
         final TaxTableField taxYear;
+        final TaxTableField filerName1;
+        final TaxTableField filerName2;
+        final TaxTableField filerAddress1;
+        final TaxTableField filerAddress2;
+        final TaxTableField filerCity;
+        final TaxTableField filerState;
+        final TaxTableField filerZipCode;
+        final TaxTableField filerPhoneNumber;
         
         DerivedValuesRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields, Integer insertOffset) {
             super(rowId, fields, tables, aliasedFields, insertOffset);
@@ -706,6 +714,14 @@ abstract class TaxTableRow {
             this.boxUnknown1042s = getAliasedField(DerivedFieldNames.BOX_UNKNOWN_1042S);
             this.endDate = getAliasedField(DerivedFieldNames.END_DATE);
             this.taxYear = getAliasedField(DerivedFieldNames.TAX_YEAR);
+            this.filerName1 = getAliasedField(DerivedFieldNames.FILER_NAME_1);
+            this.filerName2 = getAliasedField(DerivedFieldNames.FILER_NAME_2);
+            this.filerAddress1 = getAliasedField(DerivedFieldNames.FILER_ADDRESS_1);
+            this.filerAddress2 = getAliasedField(DerivedFieldNames.FILER_ADDRESS_2);
+            this.filerCity = getAliasedField(DerivedFieldNames.FILER_CITY);
+            this.filerState = getAliasedField(DerivedFieldNames.FILER_STATE);
+            this.filerZipCode = getAliasedField(DerivedFieldNames.FILER_ZIP_CODE);
+            this.filerPhoneNumber = getAliasedField(DerivedFieldNames.FILER_PHONE_NUMBER);
         }
     }
 

@@ -337,23 +337,35 @@
         <field name="stateCode" type="VARCHAR" />
         <field name="dvCheckStubTextWithUpdatedWhitespace" type="VARCHAR" />
         <field name="tabSiteId" type="VARCHAR" />
-        <field name="box1" type="DECIMAL" />
-        <field name="box2" type="DECIMAL" />
-        <field name="box3" type="DECIMAL" />
-        <field name="box4" type="DECIMAL" />
-        <field name="box5" type="DECIMAL" />
-        <field name="box6" type="DECIMAL" />
-        <field name="box7" type="DECIMAL" />
-        <field name="box8" type="DECIMAL" />
-        <field name="box9" type="VARCHAR" />
-        <field name="box10" type="DECIMAL" />
-        <field name="box13" type="DECIMAL" />
-        <field name="box14" type="DECIMAL" />
-        <field name="box15a" type="DECIMAL" />
-        <field name="box15b" type="DECIMAL" />
-        <field name="box16" type="DECIMAL" />
-        <field name="box17" type="VARCHAR" />
-        <field name="box18" type="DECIMAL" />
+        <field name="filerName1" type="VARCHAR" />
+        <field name="filerName2" type="VARCHAR" />
+        <field name="filerAddress1" type="VARCHAR" />
+        <field name="filerAddress2" type="VARCHAR" />
+        <field name="filerCity" type="VARCHAR" />
+        <field name="filerState" type="VARCHAR" />
+        <field name="filerZipCode" type="VARCHAR" />
+        <field name="filerPhoneNumber" type="VARCHAR" />
+        <field name="miscRents" type="DECIMAL" />
+        <field name="miscRoyalties" type="DECIMAL" />
+        <field name="miscOtherIncome" type="DECIMAL" />
+        <field name="miscFedIncomeTaxWithheld" type="DECIMAL" />
+        <field name="miscFishingBoatProceeds" type="DECIMAL" />
+        <field name="miscMedicalHealthcarePayments" type="DECIMAL" />
+        <field name="miscDirectSalesInd" type="VARCHAR" />
+        <field name="miscSubstitutePayments" type="DECIMAL" />
+        <field name="miscCropInsuranceProceeds" type="DECIMAL" />
+        <field name="miscGrossProceedsAttorney" type="DECIMAL" />
+        <field name="miscSection409ADeferral" type="DECIMAL" />
+        <field name="miscGoldenParachute" type="DECIMAL" />
+        <field name="miscNonQualifiedDeferredCompensation" type="DECIMAL" />
+        <field name="miscStateTaxWithheld" type="DECIMAL" />
+        <field name="miscPayerStateNumber" type="VARCHAR" />
+        <field name="miscStateIncome" type="DECIMAL" />
+        <field name="necNonEmployeeCompensation" type="DECIMAL" />
+        <field name="necFedIncomeTaxWithheld" type="DECIMAL" />
+        <field name="necStateTaxWithheld" type="DECIMAL" />
+        <field name="necPayerStateNumber" type="VARCHAR" />
+        <field name="necStateIncome" type="DECIMAL" />
         <field name="box???" type="DECIMAL" />
         <field name="box????" type="DECIMAL" />
         <field name="endDate" type="DATE" />

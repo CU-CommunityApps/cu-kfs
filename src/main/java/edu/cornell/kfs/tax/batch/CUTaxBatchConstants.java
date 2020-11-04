@@ -54,7 +54,16 @@ public final class CUTaxBatchConstants {
         DERIVED;
     }
 
-
+    public enum Tax1099FilerAddressField {
+        NAME1,
+        NAME2,
+        ADDRESS1,
+        ADDRESS2,
+        CITY,
+        STATE,
+        ZIP_CODE,
+        PHONE_NUMBER;
+    }
 
     /**
      * Helper subclass containing aliases for vendor fields used by the tax processing.
@@ -408,6 +417,14 @@ public final class CUTaxBatchConstants {
         public static final String BOX_UNKNOWN_1042S = "box????";
         public static final String END_DATE = "endDate";
         public static final String TAX_YEAR = "taxYear";
+        public static final String FILER_NAME_1 = "filerName1";
+        public static final String FILER_NAME_2 = "filerName2";
+        public static final String FILER_ADDRESS_1 = "filerAddress1";
+        public static final String FILER_ADDRESS_2 = "filerAddress2";
+        public static final String FILER_CITY = "filerCity";
+        public static final String FILER_STATE = "filerState";
+        public static final String FILER_ZIP_CODE = "filerZipCode";
+        public static final String FILER_PHONE_NUMBER = "filerPhoneNumber";
         
         private DerivedFieldNames() {
             throw new UnsupportedOperationException("do not call DerivedFieldNames constructor");

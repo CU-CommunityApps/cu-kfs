@@ -41,7 +41,8 @@ public final class CUTaxConstants {
     public static final int INSERT_BATCH_SIZE = 500;
     public static final int TAX_1099_MAX_BUCKET_LENGTH = 3;
 
-    public static final String TAX_1099_OUTPUT_FILE_PREFIX = "irs_1099_extract_";
+    public static final String TAX_1099_MISC_OUTPUT_FILE_PREFIX = "irs_1099_misc_extract_";
+    public static final String TAX_1099_NEC_OUTPUT_FILE_PREFIX = "irs_1099_nec_extract_";
     public static final String TAX_1099_TRANSACTION_DETAILS_OUTPUT_FILE_PREFIX = "irs_1099_transaction_details_";
     public static final String TAX_1042S_BIO_OUTPUT_FILE_PREFIX = "irs_1042s_biographical_extract_";
     public static final String TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX = "irs_1042s_detail_extract_";
@@ -173,14 +174,17 @@ public final class CUTaxConstants {
                 "1099_SECTION_409A_DEFERRALS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String SECTION_409A_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT =
                 "1099_SECTION_409A_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
+        public static final String NONQUALIFIED_DEFERRED_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT =
+                "1099_NONQUALIFIED_DEFERRED_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT = "1099_STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT = "1099_STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String PAYMENT_REASON_TO_TAX_BOX = "1099_PAYMENT_REASON_TO_TAX_BOX";
         public static final String PAYMENT_REASON_TO_NO_TAX_BOX = "1099_PAYMENT_REASON_TO_NO_TAX_BOX";
         public static final String DOCUMENT_TYPE_TO_TAX_BOX = "1099_DOCUMENT_TYPE_TO_TAX_BOX";
         public static final String TAX_BOX_NUMBER_MAPPINGS = "1099_TAX_BOX_NUMBER_MAPPINGS";
+        public static final String DEFAULT_REPORTING_MIN_AMOUNT = "1099_DEFAULT_REPORTING_MIN_AMOUNT";
         public static final String ROYALTIES_REPORTING_MIN_AMOUNT = "1099_ROYALTIES_REPORTING_MIN_AMOUNT";
-        public static final String NONEMPLOYEE_COMPENSATION_REPORTING_MIN_AMOUNT = "1099_NONEMPLOYEE_COMPENSATION_REPORTING_MIN_AMOUNT";
+        public static final String FILER_ADDRESS = "1099_FILER_ADDRESS";
         
         private Tax1099ParameterNames() {
             throw new UnsupportedOperationException("do not call Tax1099ParameterNames constructor");

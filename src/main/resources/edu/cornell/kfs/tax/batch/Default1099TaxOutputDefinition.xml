@@ -95,8 +95,8 @@
         <field name="TAB_FILER_ADDRESS2" length="40" type="DERIVED" value="filerAddress2"/><!-- Filer's Address 2 -->
         <field name="TAB_FILER_CITY" length="40" type="DERIVED" value="filerCity"/><!-- Filer's City -->
         <field name="TAB_FILER_STATE" length="2" type="DERIVED" value="filerState"/><!-- Filer's State -->
-        <field name="TAB_FILER_ZIP" length="9" type="DERIVED" value="filerZip"/><!-- Filer's Zip Code -->
-        <field name="TAB_FILER_PHONE" length="40" type="DERIVED" value="filerPhone"/><!-- Filer's Phone Number -->
+        <field name="TAB_FILER_ZIP" length="9" type="DERIVED" value="filerZipCode"/><!-- Filer's Zip Code -->
+        <field name="TAB_FILER_PHONE" length="40" type="DERIVED" value="filerPhoneNumber"/><!-- Filer's Phone Number -->
         <field name="TAB_BOX_REC_ID_NBR" length="11" type="DERIVED" value="ssn"/><!-- Tax ID -->
         <field name="TAB_REC_NAME" length="45" type="DETAIL" value="vendorName"/><!-- Name 1 -->
         <field name="TAB_REC_NAME2" length="45" type="DETAIL" value="parentVendorName"/><!-- Name 2 -->
@@ -123,7 +123,7 @@
         <field name="TAB_MISC_BOX4" length="12" type="DERIVED" value="miscFedIncomeTaxWithheld"/><!-- Box 4 :: Federal Income Tax Withheld -->
         <field name="TAB_MISC_BOX5" length="12" type="DERIVED" value="miscFishingBoatProceeds"/><!-- Box 5 :: Fishing Boat Proceeds -->
         <field name="TAB_MISC_BOX6" length="12" type="DERIVED" value="miscMedicalHealthcarePayments"/><!-- Box 6 :: Medical & Health Care Payments -->
-        <field name="TAB_MISC_BOX7" length="1" type="BLANK"/><!-- Box 7 :: Payer Made Direct Sales of $5000 or More of Consumer Products to a Buyer (Recipient) for Resale -->
+        <field name="TAB_MISC_BOX7" length="1" type="DERIVED" value="miscDirectSalesInd"/><!-- Box 7 :: Payer Made Direct Sales of $5000 or More of Consumer Products to a Buyer (Recipient) for Resale -->
         <field name="TAB_MISC_BOX8" length="12" type="DERIVED" value="miscSubstitutePayments"/><!-- Box 8 :: Substitute Payments in Lieu of Dividends or Interest -->
         <field name="TAB_MISC_BOX9" length="1" type="DERIVED" value="miscCropInsuranceProceeds"/><!-- Box 9 :: Crop Insurance Proceeds -->
         <field name="TAB_MISC_BOX10" length="12" type="DERIVED" value="miscGrossProceedsAttorney"/><!-- Box 10 :: Gross Proceeds Paid to an Attorney -->
@@ -131,11 +131,11 @@
         <field name="TAB_MISC_BOX13" length="12" type="DERIVED" value="miscGoldenParachute"/><!-- Box 13 :: Excess Golden Parachute Payments -->
         <field name="TAB_MISC_BOX14" length="12" type="DERIVED" value="miscNonQualifiedDeferredCompensation"/><!-- Box 14 :: Nonqualified Deferred Compensation -->
         <field name="TAB_MISC_BOX15_1" length="12" type="DERIVED" value="miscStateTaxWithheld"/><!-- Box 15 :: State Tax Withheld 1 -->
-        <field name="TAB_MISC_BOX15_2" length="12" type="DERIVED" value="miscStateTaxWithheld"/><!-- Box 15 :: State Tax Withheld 2 -->
-        <field name="TAB_MISC_BOX16_1" length="10" type="BLANK"/><!-- Box 16 :: State/Payer's State No. 1 -->
+        <field name="TAB_MISC_BOX15_2" length="12" type="STATIC" value="0"/><!-- Box 15 :: State Tax Withheld 2 -->
+        <field name="TAB_MISC_BOX16_1" length="10" type="DERIVED" value="miscPayerStateNumber"/><!-- Box 16 :: State/Payer's State No. 1 -->
         <field name="TAB_MISC_BOX16_2" length="10" type="BLANK"/><!-- Box 16 :: State/Payer's State No. 2 -->
         <field name="TAB_MISC_BOX17_1" length="12" type="DERIVED" value="miscStateIncome"/><!-- Box 17 :: State Income 1 -->
-        <field name="TAB_MISC_BOX17_2" length="12" type="DERIVED" value="miscStateIncome"/><!-- Box 17 :: State Income 2 -->
+        <field name="TAB_MISC_BOX17_2" length="12" type="STATIC" value="0"/><!-- Box 17 :: State Income 2 -->
         <field name="TAB_MISC_FATCA_REQ" length="1" type="BLANK"/><!-- FATCA Requirement -->
         <field name="TAB_MISC_2ND_TIN_NOT_IND" length="1" type="BLANK"/><!-- 2nd TIN Not Indicator -->
         <field name="TAB_MISC_1099_YEAR" length="4" type="DERIVED" value="taxYear"/><!-- 1099 Tax Year -->
@@ -149,11 +149,11 @@
         <field name="TAB_NEC_BOX1" length="12" type="DERIVED" value="necNonEmployeeCompensation"/><!-- Box 1 :: Nonemployee Compensation -->
         <field name="TAB_NEC_BOX4" length="12" type="DERIVED" value="necFedIncomeTaxWithheld"/><!-- Box 4 :: Federal Income Tax Withheld -->
         <field name="TAB_NEC_BOX5_1" length="12" type="DERIVED" value="necStateTaxWithheld"/><!-- Box 5 :: State Tax Withheld 1 -->
-        <field name="TAB_NEC_BOX5_2" length="12" type="DERIVED" value="necStateTaxWithheld"/><!-- Box 5 :: State Tax Withheld 2 -->
-        <field name="TAB_NEC_BOX6_1" length="10" type="BLANK"/><!-- Box 6 :: State/Payer's State No. 1 -->
+        <field name="TAB_NEC_BOX5_2" length="12" type="STATIC" value="0"/><!-- Box 5 :: State Tax Withheld 2 -->
+        <field name="TAB_NEC_BOX6_1" length="10" type="DERIVED" value="necPayerStateNumber"/><!-- Box 6 :: State/Payer's State No. 1 -->
         <field name="TAB_NEC_BOX6_2" length="10" type="BLANK"/><!-- Box 6 :: State/Payer's State No. 2 -->
         <field name="TAB_NEC_BOX7_1" length="12" type="DERIVED" value="necStateIncome"/><!-- Box 7 :: State Income 1 -->
-        <field name="TAB_NEC_BOX7_2" length="12" type="DERIVED" value="necStateIncome"/><!-- Box 7 :: State Income 2 -->
+        <field name="TAB_NEC_BOX7_2" length="12" type="STATIC" value="0"/><!-- Box 7 :: State Income 2 -->
         <field name="TAB_NEC_FATCA_REQ" length="1" type="BLANK"/><!-- FATCA Requirement -->
         <field name="TAB_NEC_2ND_TIN_NOT_IND" length="1" type="BLANK"/><!-- 2nd TIN Not Indicator -->
         <field name="TAB_NEC_1099_YEAR" length="4" type="DERIVED" value="taxYear"/><!-- 1099 Tax Year -->
