@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -69,6 +71,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument implements CULegacyTravelIntegrationInterface {
 
     private static final long serialVersionUID = 1L;
+    protected static Logger LOG = LogManager.getLogger();
     protected static final String DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT = "RequiresCampusReview";
     protected static final String DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT = "RequiresAwardReview";
 
@@ -165,7 +168,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                 createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType()));
         this.getDvPayeeDetail().setDisbVchrPayeePersonName(vendor.getVendorName());
 
-        this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
+        this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
 
         if (ObjectUtils.isNotNull(vendorAddress) && ObjectUtils.isNotNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
             this.getDvPayeeDetail().setDisbVchrVendorAddressIdNumber(vendorAddress.getVendorAddressGeneratedIdentifier().toString());
@@ -185,7 +188,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(StringUtils.EMPTY);
         }
 
-        this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
+        this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
         this.getDvPayeeDetail().setDvPayeeSubjectPaymentCode(
                 VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
         this.getDvPayeeDetail().setDisbVchrEmployeePaidOutsidePayrollCode(getVendorService()
@@ -214,7 +217,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         // if vendor is foreign, default alien payment code to true
         if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
-            getDvPayeeDetail().setDisbVchrAlienPaymentCode(true);
+            getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(true);
         }
 
         // KFSPTS-1891
@@ -288,7 +291,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the employee must be foreign
         for (String externalIdentifierTypeCode : employee.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(false);
+                this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if employee is a research subject
@@ -367,7 +370,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the student must be foreign
         for (String externalIdentifierTypeCode : student.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(false);
+                this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if student is a research subject
@@ -448,7 +451,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the alumni must be foreign
         for (String externalIdentifierTypeCode : alumni.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(false);
+                this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if alumni is a research subject
@@ -500,8 +503,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             ((DisbursementVoucherWireTransferExtendedAttribute) wireTransfer.getExtension()).setDocumentNumber(this.documentNumber);
         }
 
-        if (dvNonResidentAlienTax != null) {
-            dvNonResidentAlienTax.setDocumentNumber(this.documentNumber);
+        if (dvNonresidentTax != null) {
+            dvNonresidentTax.setDocumentNumber(this.documentNumber);
         }
 
         dvPayeeDetail.setDocumentNumber(this.documentNumber);

@@ -7,7 +7,7 @@ import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -60,7 +60,7 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
 
         assertEquals(new KualiDecimal(86.00), cuDisbursementVoucherDocument.getDisbVchrCheckTotalAmount());
 
-        DisbursementVoucherNonResidentAlienTax disbursementVoucherNonResidentAlienTax = cuDisbursementVoucherDocument.getDvNonResidentAlienTax();
+        DisbursementVoucherNonresidentTax disbursementVoucherNonResidentAlienTax = cuDisbursementVoucherDocument.getDvNonresidentTax();
         assertNull(disbursementVoucherNonResidentAlienTax.getDocumentNumber());
         assertNull(disbursementVoucherNonResidentAlienTax.getFederalIncomeTaxPercent());
         assertNull(disbursementVoucherNonResidentAlienTax.getStateIncomeTaxPercent());

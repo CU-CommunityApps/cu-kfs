@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -228,9 +228,9 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         nonEmployeeTravel.setDocumentNumber(dv.getDocumentNumber());
         dv.setDvNonEmployeeTravel(nonEmployeeTravel);
 
-        DisbursementVoucherNonResidentAlienTax nonAlienTax = (DisbursementVoucherNonResidentAlienTax) ObjectUtils.deepCopy(recurringDV.getDvNonResidentAlienTax());
+        DisbursementVoucherNonresidentTax nonAlienTax = (DisbursementVoucherNonresidentTax) ObjectUtils.deepCopy(recurringDV.getDvNonresidentTax());
         nonAlienTax.setDocumentNumber(dv.getDocumentNumber());
-        dv.setDvNonResidentAlienTax(nonAlienTax);
+        dv.setDvNonresidentTax(nonAlienTax);
 
         DisbursementVoucherPreConferenceDetail conferenceDetail = (DisbursementVoucherPreConferenceDetail) ObjectUtils.deepCopy(recurringDV.getDvPreConferenceDetail());
         conferenceDetail.setDocumentNumber(dv.getDocumentNumber());
@@ -395,8 +395,8 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         return StringUtils.equals(PdpConstants.PaymentStatusCodes.OPEN, paymentDetailStatus)
                 || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_CD, paymentDetailStatus)
                 || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_EMPLOYEE_CD, paymentDetailStatus)
-                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NRA_CD, paymentDetailStatus)
-                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NRA_EMPL_CD, paymentDetailStatus);
+                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_CD, paymentDetailStatus)
+                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NONRESIDENT_EMPL_CD, paymentDetailStatus);
     }
 
     private void noteChangeOnRecurringDV(RecurringDisbursementVoucherDocument recurringDV, String noteText, Set<String> setOfStrings) {

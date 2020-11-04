@@ -1,17 +1,18 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.FPKeyConstants;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
-import org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent;
+import org.kuali.kfs.fp.businessobject.NonresidentTaxPercent;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherNonResidentAlienInformationValidation;
+import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherNonresidentInformationValidation;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
@@ -22,7 +23,7 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 
-public class CuDisbursementVoucherNonResidentAlienInformationValidation extends DisbursementVoucherNonResidentAlienInformationValidation{
+public class CuDisbursementVoucherNonResidentAlienInformationValidation extends DisbursementVoucherNonresidentInformationValidation{
     
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
 	
@@ -33,20 +34,20 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         LOG.debug("validate start");
 
         DisbursementVoucherDocument document = (DisbursementVoucherDocument) accountingDocumentForValidation;
-        DisbursementVoucherNonResidentAlienTax nonResidentAlienTax = document.getDvNonResidentAlienTax();
+        DisbursementVoucherNonresidentTax nonResidentAlienTax = document.getDvNonresidentTax();
         DisbursementVoucherPayeeDetail payeeDetail = document.getDvPayeeDetail();
 
         Person financialSystemUser = GlobalVariables.getUserSession().getPerson();
 
         List<String> taxEditMode = this.getTaxEditMode();
-        if (!payeeDetail.isDisbVchrAlienPaymentCode()
+        if (!payeeDetail.isDisbVchrNonresidentPaymentCode()
                 || !disbursementVoucherValidationService.hasRequiredEditMode(document, financialSystemUser, taxEditMode)) {
             return true;
         }
 
         MessageMap errors = GlobalVariables.getMessageMap();
         errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
-        errors.addToErrorPath(KFSPropertyConstants.DV_NON_RESIDENT_ALIEN_TAX);
+        errors.addToErrorPath(KFSPropertyConstants.DV_NONRESIDENT_TAX);
 
         // ICC SECTION
 
@@ -59,26 +60,26 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
 
         /* country code required, unless income type is nonreportable */
         if (StringUtils.isBlank(nonResidentAlienTax.getPostalCountryCode())
-                && !DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_NON_REPORTABLE.equals(nonResidentAlienTax.getIncomeClassCode())) {
+                && !DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_NON_REPORTABLE.equals(nonResidentAlienTax.getIncomeClassCode())) {
             errors.putErrorWithoutFullErrorPath("DVNRATaxErrors", KFSKeyConstants.ERROR_REQUIRED,
                     "Country code");
             return false;
         }
 
         // income class is FELLOWSHIP
-        if(nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_FELLOWSHIP) ){
+        if(nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_FELLOWSHIP) ){
             // Place holder for logic related to the ICC
         }
         // income class is INDEPENDENT CONTRACTOR
-        if(nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_INDEPENDENT_CONTRACTOR)){
+        if(nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_INDEPENDENT_CONTRACTOR)){
             // Place holder for logic related to the ICC
         }
         // income class is ROYALTIES
-        if(nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_ROYALTIES)){
+        if(nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_ROYALTIES)){
             // Place holder for logic related to the ICC
         }
         // income class is NON_REPORTABLE
-        if (nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_NON_REPORTABLE)) {
+        if (nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_NON_REPORTABLE)) {
             if ((nonResidentAlienTax.isForeignSourceIncomeCode())
                     || (nonResidentAlienTax.isIncomeTaxTreatyExemptCode())
                     || (nonResidentAlienTax.isTaxOtherExemptIndicator())
@@ -136,8 +137,8 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         /* check tax rates */
         if (((nonResidentAlienTax.getFederalIncomeTaxPercent() == null)
                 || (nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO)))
-                && (nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_NON_REPORTABLE))) {
-            nonResidentAlienTax.setFederalIncomeTaxPercent(KualiDecimal.ZERO);
+                && (nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_NON_REPORTABLE))) {
+            nonResidentAlienTax.setFederalIncomeTaxPercent(BigDecimal.ZERO);
         }
         else {
             if (nonResidentAlienTax.getFederalIncomeTaxPercent() == null) {
@@ -147,12 +148,12 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
             }
             else {
                 // check Federal tax percent is in non-resident alien tax percent table for income class code
-                NonResidentAlienTaxPercent taxPercent = new NonResidentAlienTaxPercent();
+                NonresidentTaxPercent taxPercent = new NonresidentTaxPercent();
                 taxPercent.setIncomeClassCode(nonResidentAlienTax.getIncomeClassCode());
                 taxPercent.setIncomeTaxTypeCode(DisbursementVoucherConstants.FEDERAL_TAX_TYPE_CODE);
                 taxPercent.setIncomeTaxPercent(nonResidentAlienTax.getFederalIncomeTaxPercent());
 
-                NonResidentAlienTaxPercent retrievedPercent = (NonResidentAlienTaxPercent) businessObjectService
+                NonresidentTaxPercent retrievedPercent = (NonresidentTaxPercent) businessObjectService
                         .retrieve(taxPercent);
                 if (retrievedPercent == null) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
@@ -163,8 +164,8 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 }
             }
         }
-        if (((nonResidentAlienTax.getStateIncomeTaxPercent() == null) || (nonResidentAlienTax.getStateIncomeTaxPercent().equals(KualiDecimal.ZERO))) && (nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_NON_REPORTABLE)) ) {
-            nonResidentAlienTax.setStateIncomeTaxPercent(KualiDecimal.ZERO);
+        if (((nonResidentAlienTax.getStateIncomeTaxPercent() == null) || (nonResidentAlienTax.getStateIncomeTaxPercent().equals(KualiDecimal.ZERO))) && (nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_NON_REPORTABLE)) ) {
+            nonResidentAlienTax.setStateIncomeTaxPercent(BigDecimal.ZERO);
         }
         else {
             if (nonResidentAlienTax.getStateIncomeTaxPercent() == null) {
@@ -174,7 +175,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
             }
             else {
                 // check State tax percent is in non-resident alien tax percent table for income class code
-                NonResidentAlienTaxPercent taxPercent = new NonResidentAlienTaxPercent();
+                NonresidentTaxPercent taxPercent = new NonresidentTaxPercent();
                 taxPercent.setIncomeClassCode(nonResidentAlienTax.getIncomeClassCode());
                 taxPercent.setIncomeTaxTypeCode(DisbursementVoucherConstants.STATE_TAX_TYPE_CODE);
                 taxPercent.setIncomeTaxPercent(nonResidentAlienTax.getStateIncomeTaxPercent());
@@ -188,10 +189,10 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                     return false;
                 }
                 else {
-                    if ((!document.getDvNonResidentAlienTax().getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_ROYALTIES)) && (!document.getDvNonResidentAlienTax().getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_INDEPENDENT_CONTRACTOR))) {
+                    if ((!document.getDvNonresidentTax().getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_ROYALTIES)) && (!document.getDvNonresidentTax().getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_INDEPENDENT_CONTRACTOR))) {
                         
                         // If fed tax rate is zero, the state tax rate should be zero.
-                        if ((document.getDvNonResidentAlienTax().getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO)) && (!document.getDvNonResidentAlienTax().getStateIncomeTaxPercent().isZero())) {
+                        if ((document.getDvNonresidentTax().getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO)) && (document.getDvNonresidentTax().getStateIncomeTaxPercent().compareTo(BigDecimal.ZERO) == 0)) {
                                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors", FPKeyConstants.ERROR_DV_STATE_TAX_SHOULD_BE_ZERO );
                                     return false;
                         }
@@ -215,7 +216,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 if ((!nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO))
                         || (!nonResidentAlienTax.getStateIncomeTaxPercent().equals(KualiDecimal.ZERO))) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
                             "Foreign Source");
                     return false;
                 }
@@ -226,7 +227,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                         || (nonResidentAlienTax.getReferenceFinancialDocumentNumber() != null)
                         || (nonResidentAlienTax.getTaxNQIId() != null)) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
                             "Foreign Source", "NQI Id, Reference Doc, USAID Per Diem, or Special W-4 Amount");
                     return false;
                 }
@@ -242,7 +243,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                         || (nonResidentAlienTax.getReferenceFinancialDocumentNumber() != null)
                         || (nonResidentAlienTax.getTaxNQIId() != null)) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
                             "Treaty Exempt", "NQI Id, Reference Doc, USAID Per Diem, or Special W-4 Amount");
                     return false;
                 }
@@ -256,7 +257,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 // already checked in the tax rate section, so no need to re-check
                 if (nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO)) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_FEDERAL_TAX_CANNOT_BE_ZERO,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_FEDERAL_TAX_CANNOT_BE_ZERO,
                             "Gross Up Payment");
                     return false;
                 }
@@ -267,7 +268,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                         || (nonResidentAlienTax.getReferenceFinancialDocumentNumber() != null)
                         || (nonResidentAlienTax.getTaxNQIId() != null)) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
                             "Gross Up Payment", "NQI Id, Reference Doc, USAID Per Diem, or Special W-4 Amount");
                     return false;
                 }
@@ -281,7 +282,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 if (!(nonResidentAlienTax.getStateIncomeTaxPercent().equals(KualiDecimal.ZERO))
                         || !(nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO))) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
                             "Exempt Under Other Code");
                     return false;
                 }
@@ -291,9 +292,9 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
             if (nonResidentAlienTax.isTaxUSAIDPerDiemIndicator()) {
                 // Conditions to be met for "USAID Per Diem" error to be generated
                 // income class code should be fellowship
-                if (!nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_FELLOWSHIP)) {
+                if (!nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_FELLOWSHIP)) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
                             "USAID Per Diem", "Income Class Code : Fellowship");
                     return false;
                 }
@@ -301,7 +302,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 if (!(nonResidentAlienTax.getStateIncomeTaxPercent().equals(KualiDecimal.ZERO))
                         || !(nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO))) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
                             "USAID Per Diem");
                     return false;
                 }
@@ -309,14 +310,14 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 // to mutual exclusiveness
                 if (!nonResidentAlienTax.isTaxOtherExemptIndicator()) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
                             "USAID Per Diem", "Exempt Under Other Code");
                     return false;
                 }
                 // Special W-4 Amount shall have no value
                 if (nonResidentAlienTax.getTaxSpecialW4Amount() != null) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_CANNOT_HAVE_VALUE,
                             "USAID Per Diem", "Special W-4 Amount");
                     return false;
                 }
@@ -326,9 +327,9 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
             if (nonResidentAlienTax.getTaxSpecialW4Amount() != null) {
                 // Conditions to be met for "Special W-4 Amount" error to be generated
                 // income class code should be fellowship
-                if (!nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_FELLOWSHIP)) {
+                if (!nonResidentAlienTax.getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_FELLOWSHIP)) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
                             "Special W-4 Amount", "Income Class Code : Fellowship");
                     return false;
                 }
@@ -336,7 +337,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 if (!(nonResidentAlienTax.getStateIncomeTaxPercent().equals(KualiDecimal.ZERO))
                         || !(nonResidentAlienTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO))) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
                             "Special W-4 Amount");
                     return false;
                 }
@@ -344,7 +345,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 // to mutual exclusiveness
                 if (!nonResidentAlienTax.isTaxOtherExemptIndicator()) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_SHOULD_BE_SELECTED,
                             "Special W-4 Amount", "Exempt Under Other Code");
                     return false;
                 }
@@ -352,7 +353,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 // since this is also ensured by validation on Special W-4 Amount above
                 if (nonResidentAlienTax.isTaxUSAIDPerDiemIndicator()) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
-                            FPKeyConstants.ERROR_DV_NRA_TAX_WHEN_CHECKED_CANNOT_BE_SELECTED,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_CANNOT_BE_SELECTED,
                             "Special W-4 Amount", "USAID Per Diem");
                     return false;
                 }
@@ -363,17 +364,17 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
 
         if (!"GENERATE".equals(validationType)) {
             // verify tax lines have been generated
-            if (nonResidentAlienTax.getFederalIncomeTaxPercent().isNonZero()
-                    || nonResidentAlienTax.getStateIncomeTaxPercent().isNonZero()) {
+            if (nonResidentAlienTax.getFederalIncomeTaxPercent().compareTo(BigDecimal.ZERO) != 0
+                    || nonResidentAlienTax.getStateIncomeTaxPercent().compareTo(BigDecimal.ZERO) != 0) {
                 if (StringUtils.isBlank(nonResidentAlienTax.getFinancialDocumentAccountingLineText())) {
-                    errors.putErrorWithoutFullErrorPath(KFSConstants.GENERAL_NRATAX_TAB_ERRORS,
-                            FPKeyConstants.ERROR_DV_NRA_NO_TAX_LINES_GENERATED);
+                    errors.putErrorWithoutFullErrorPath(KFSConstants.GENERAL_NONRESIDENTTAX_TAB_ERRORS,
+                            FPKeyConstants.ERROR_DV_NONRESIDENT_NO_TAX_LINES_GENERATED);
                     return false;
                 }
             }
         }
 
-        errors.removeFromErrorPath(KFSPropertyConstants.DV_NON_RESIDENT_ALIEN_TAX);
+        errors.removeFromErrorPath(KFSPropertyConstants.DV_NONRESIDENT_TAX);
         errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT);
 
         return true;

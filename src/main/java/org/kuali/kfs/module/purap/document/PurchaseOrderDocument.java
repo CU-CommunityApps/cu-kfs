@@ -1532,7 +1532,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         if (nodeName.equals(PurapWorkflowConstants.BUDGET_REVIEW_REQUIRED)) {
             return isBudgetReviewRequired();
         }
-        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NON_RESIDENT_ALIEN)) {
+        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NONRESIDENT)) {
             return isVendorEmployeeOrNonResidentAlien();
         }
         return super.answerSplitNodeQuestion(nodeName);
