@@ -15,16 +15,17 @@
  */
 package com.rsmart.kuali.kfs.fp.businessobject;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.rice.core.web.format.BooleanFormatter;
 
 
 /**
  * Provides String setter methods for population from XML (batch)
  */
-public class BatchDisbursementVoucherNonResidentAlienTax extends DisbursementVoucherNonResidentAlienTax {
+public class BatchDisbursementVoucherNonResidentAlienTax extends DisbursementVoucherNonresidentTax {
 
     /**
      * Takes a <code>String</code> and attempt to format as <code>KualiDecimal</code> for setting the federalIncomeTaxPercent field
@@ -32,7 +33,7 @@ public class BatchDisbursementVoucherNonResidentAlienTax extends DisbursementVou
      * @param federalIncomeTaxPercent as string
      */
     public void setFederalIncomeTaxPercent(String federalIncomeTaxPercent) {
-        super.setFederalIncomeTaxPercent(new KualiDecimal(federalIncomeTaxPercent));
+        super.setFederalIncomeTaxPercent(new BigDecimal(federalIncomeTaxPercent));
     }
 
     /**
@@ -77,7 +78,7 @@ public class BatchDisbursementVoucherNonResidentAlienTax extends DisbursementVou
      * @param stateIncomeTaxPercent as string
      */
     public void setStateIncomeTaxPercent(String stateIncomeTaxPercent) {
-        super.setStateIncomeTaxPercent(new KualiDecimal(stateIncomeTaxPercent));
+        super.setStateIncomeTaxPercent(new BigDecimal(stateIncomeTaxPercent));
     }
 
 }

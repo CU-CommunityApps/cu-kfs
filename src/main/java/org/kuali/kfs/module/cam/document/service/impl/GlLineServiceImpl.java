@@ -535,7 +535,7 @@ public class GlLineServiceImpl implements GlLineService {
             if (entry.getUniversityFiscalYear().equals(closingYear + 1)) {
                 //default asset global year end accounting period drop down to current period instead of closing
                 // period(period 13)
-                assetGlobal.setUniversityFiscalPeriodName("");
+                assetGlobal.setAccountingPeriodCompositeString("");
             }
         }
 

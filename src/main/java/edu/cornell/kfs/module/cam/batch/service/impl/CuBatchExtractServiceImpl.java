@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.gl.businessobject.Entry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -33,6 +35,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
 public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
+    private static final Logger LOG = LogManager.getLogger();
 
     protected DataDictionaryService dataDictionaryService;
 

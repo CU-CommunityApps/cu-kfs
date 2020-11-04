@@ -1066,7 +1066,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         indicators[0] = isEmployeeVendor ? AdHocPaymentIndicator.EMPLOYEE_VENDOR : AdHocPaymentIndicator.OTHER;
 
         boolean isVendorForeign = vendorService.isVendorForeign(vendorHeaderGeneratedIdentifier);
-        indicators[1] = isVendorForeign ? AdHocPaymentIndicator.ALIEN_VENDOR : AdHocPaymentIndicator.OTHER;
+        indicators[1] = isVendorForeign ? AdHocPaymentIndicator.NONRESIDENT_VENDOR : AdHocPaymentIndicator.OTHER;
 
         for (Object indicator : indicators) {
             if (!AdHocPaymentIndicator.OTHER.equals(indicator)) {
