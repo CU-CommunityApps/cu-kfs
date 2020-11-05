@@ -104,7 +104,6 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
 public class TransactionRow1099Processor extends TransactionRowProcessor<Transaction1099Summary> {
 	private static final Logger LOG = LogManager.getLogger(TransactionRow1099Processor.class);
 
-    private static final String BOX_PREFIX = "box";
     private static final int BOX_PROPERTY_SUBSTRING_MAX_LENGTH = 16;
 
     private static final int NUM_1099_CHAR_BUFFERS = 6;
@@ -1301,8 +1300,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                     LOG.debug("Found exclusions for row with key: " + rowKey);
                 }
                 if (overrideTaxBox != null) {
-                    rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
-                            ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+                    rs.updateString(detailRow.form1099OverriddenBox.index,
+                            findBoxMappingKeyForPotentiallyNullField(overriddenTaxBox, summary));
                 }
             } else {
                 numNoBoxDeterminedRows++;
@@ -1324,8 +1323,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             foundAmount = true;
             rs.updateString(detailRow.form1099Box.index, summary.boxNumberReverseMappings.get(taxBox));
             if (overrideTaxBox != null) {
-                rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
-                        ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+                rs.updateString(detailRow.form1099OverriddenBox.index,
+                        findBoxMappingKeyForPotentiallyNullField(overriddenTaxBox, summary));
             }
             
         } else {
@@ -1335,7 +1334,13 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         }
     }
 
-
+    private String findBoxMappingKeyForPotentiallyNullField(TaxTableField taxField, Transaction1099Summary summary) {
+        if (taxField == null) {
+            return CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY;
+        } else {
+            return summary.boxNumberReverseMappings.getOrDefault(taxField, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+        }
+    }
 
     /*
      * Helper method for writing 1099 tab records to the output file.
@@ -1380,25 +1385,24 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     }
 
     private boolean shouldWrite1099MiscTabLine(Transaction1099Summary summary) {
-        return miscRoyaltiesP.value.compareTo(summary.royaltiesMinimumReportingAmount) >= 0
-                || miscFedIncomeTaxWithheldP.value.compareTo(summary.zeroAmount) >= 0
-                || total1099MiscAmountsMeetReportingThreshold(summary);
-    }
-
-    private boolean total1099MiscAmountsMeetReportingThreshold(Transaction1099Summary summary) {
-        BigDecimal miscAmounts = Stream
-                .of(miscRentsP, miscRoyaltiesP, miscOtherIncomeP, miscFishingBoatProceedsP,
+        return Stream
+                .of(miscRentsP, miscRoyaltiesP, miscOtherIncomeP, miscFedIncomeTaxWithheldP, miscFishingBoatProceedsP,
                         miscMedicalHealthcarePaymentsP, miscSubstitutePaymentsP, miscCropInsuranceProceedsP,
                         miscGrossProceedsAttorneyP, miscSection409ADeferralP, miscGoldenParachuteP,
-                        miscNonQualifiedDeferredCompensationP)
-                .map(recordPiece -> recordPiece.value)
-                .reduce(summary.zeroAmount, BigDecimal::add);
-        return miscAmounts.compareTo(summary.defaultMinimumReportingAmount) >= 0;
+                        miscNonQualifiedDeferredCompensationP, miscStateTaxWithheldP)
+                .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
     }
 
     private boolean shouldWrite1099NecTabLine(Transaction1099Summary summary) {
-        return necNonEmployeeCompensationP.value.compareTo(summary.defaultMinimumReportingAmount) >= 0
-                || necFedIncomeTaxWithheldP.value.compareTo(summary.zeroAmount) >= 0;
+        return Stream.of(necNonEmployeeCompensationP, necFedIncomeTaxWithheldP, necStateTaxWithheldP)
+                .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
+    }
+
+    private boolean taxBoxAmountIsLargeEnoughToBeReported(
+            RecordPiece1099BigDecimal taxBoxPiece, Transaction1099Summary summary) {
+        BigDecimal minimumReportingAmount = summary.taxBoxMinimumReportingAmounts
+                .getOrDefault(taxBoxPiece.tableField, summary.defaultTaxBoxMinimumReportingAmount);
+        return taxBoxPiece.value.compareTo(minimumReportingAmount) >= 0;
     }
 
     @Override

@@ -40,6 +40,7 @@ public final class CUTaxConstants {
     public static final String MASKED_VALUE_19_CHARS = "XXXXXXXXXXXXXXXXXXX";
     public static final int INSERT_BATCH_SIZE = 500;
     public static final int TAX_1099_MAX_BUCKET_LENGTH = 3;
+    public static final double TAX_1099_DEFAULT_MIN_REPORTING_AMOUNT = 0.01;
 
     public static final String TAX_1099_MISC_OUTPUT_FILE_PREFIX = "irs_1099_misc_extract_";
     public static final String TAX_1099_NEC_OUTPUT_FILE_PREFIX = "irs_1099_nec_extract_";
@@ -182,8 +183,7 @@ public final class CUTaxConstants {
         public static final String PAYMENT_REASON_TO_NO_TAX_BOX = "1099_PAYMENT_REASON_TO_NO_TAX_BOX";
         public static final String DOCUMENT_TYPE_TO_TAX_BOX = "1099_DOCUMENT_TYPE_TO_TAX_BOX";
         public static final String TAX_BOX_NUMBER_MAPPINGS = "1099_TAX_BOX_NUMBER_MAPPINGS";
-        public static final String DEFAULT_REPORTING_MIN_AMOUNT = "1099_DEFAULT_REPORTING_MIN_AMOUNT";
-        public static final String ROYALTIES_REPORTING_MIN_AMOUNT = "1099_ROYALTIES_REPORTING_MIN_AMOUNT";
+        public static final String TAX_BOX_MINIMUM_REPORTING_AMOUNTS = "1099_TAX_BOX_MINIMUM_REPORTING_AMOUNTS";
         public static final String FILER_ADDRESS = "1099_FILER_ADDRESS";
         
         private Tax1099ParameterNames() {

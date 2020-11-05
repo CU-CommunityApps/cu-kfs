@@ -41,6 +41,7 @@
         <bean parent="MaintainableFieldDefinition" p:name="documentNumber" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialDocumentLineNumber" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="boxNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="formType"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
       </list>
     </property>

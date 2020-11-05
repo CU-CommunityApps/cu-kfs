@@ -1,6 +1,7 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
 import java.math.BigDecimal;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -77,8 +78,8 @@ class Transaction1099Summary extends TransactionDetailSummary {
     final Map<TaxTableField,Map<String,List<Pattern>>> taxBoxIncludedDvCheckStubTextMaps;
     // Indicates whether the values of the various taxBoxIncludedDvCheckStubTextMaps sub-maps are whitelists (true) or blacklists (false).
     final Map<TaxTableField,Boolean> taxBoxDvCheckStubTextsAreWhitelists;
-    final BigDecimal defaultMinimumReportingAmount;
-    final BigDecimal royaltiesMinimumReportingAmount;
+    final Map<TaxTableField, BigDecimal> taxBoxMinimumReportingAmounts;
+    final BigDecimal defaultTaxBoxMinimumReportingAmount;
     final Map<Tax1099FilerAddressField, String> filerAddressFields;
 
     Transaction1099Summary(int reportYear, java.sql.Date startDate, java.sql.Date endDate, boolean vendorForeign, Map<String,TaxDataRow> dataRows) {
@@ -223,30 +224,9 @@ class Transaction1099Summary extends TransactionDetailSummary {
         
         this.taxBoxIncludedDvCheckStubTextMaps = Collections.unmodifiableMap(tempCheckStubTextMaps);
         this.taxBoxDvCheckStubTextsAreWhitelists = Collections.unmodifiableMap(tempWhitelistFlagsMap);
-        this.defaultMinimumReportingAmount = get1099ParameterValueAsNonNegativeBigDecimal(
-                Tax1099ParameterNames.DEFAULT_REPORTING_MIN_AMOUNT, parameterService);
-        this.royaltiesMinimumReportingAmount = get1099ParameterValueAsNonNegativeBigDecimal(
-                Tax1099ParameterNames.ROYALTIES_REPORTING_MIN_AMOUNT, parameterService);
+        this.taxBoxMinimumReportingAmounts = parseReportingThresholdsForTaxBoxes(parameterService, boxNumberMappings);
+        this.defaultTaxBoxMinimumReportingAmount = computeDefaultTaxBoxMinimumReportingAmount();
         this.filerAddressFields = parseFilerAddressFields(parameterService);
-    }
-
-    private BigDecimal get1099ParameterValueAsNonNegativeBigDecimal(
-            String parameterName, ParameterService parameterService) {
-        String parameterValue = parameterService.getParameterValueAsString(
-                CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1099_PARM_DETAIL, parameterName);
-        if (StringUtils.isBlank(parameterValue)) {
-            return KualiDecimal.ZERO.bigDecimalValue();
-        } else {
-            try {
-                BigDecimal numericValue = new KualiDecimal(parameterValue).bigDecimalValue();
-                if (numericValue.compareTo(KualiDecimal.ZERO.bigDecimalValue()) < 0) {
-                    throw new IllegalStateException("Negative number is not permitted for parameter " + parameterName);
-                }
-                return numericValue;
-            } catch (NumberFormatException e) {
-                throw new IllegalStateException("Invalid number format detected for parameter " + parameterName, e);
-            }
-        }
     }
 
     private Map<Tax1099FilerAddressField, String> parseFilerAddressFields(ParameterService parameterService) {
@@ -300,6 +280,54 @@ class Transaction1099Summary extends TransactionDetailSummary {
         return regularBoxMappings.entrySet().stream()
                 .collect(Collectors.toUnmodifiableMap(
                         Map.Entry::getValue, Map.Entry::getKey));
+    }
+
+    private Map<TaxTableField, BigDecimal> parseReportingThresholdsForTaxBoxes(
+            ParameterService parameterService, Map<String, TaxTableField> boxNumberMap) {
+        String parameterName = Tax1099ParameterNames.TAX_BOX_MINIMUM_REPORTING_AMOUNTS;
+        Collection<String> amountMappings = parameterService.getParameterValuesAsString(
+                CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1099_PARM_DETAIL, parameterName);
+        return amountMappings.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        amountMapping -> getTaxTableFieldForAmountMapping(amountMapping, boxNumberMap, parameterName),
+                        amountMapping -> parseNonNegativeBigDecimalFromAmountMapping(amountMapping, parameterName)));
+    }
+
+    private TaxTableField getTaxTableFieldForAmountMapping(
+            String amountMapping, Map<String, TaxTableField> boxNumberMap, String parameterName) {
+        String boxMappingKey = StringUtils.substringBefore(amountMapping, CUKFSConstants.EQUALS_SIGN);
+        boxMappingKey = StringUtils.upperCase(boxMappingKey, Locale.US);
+        if (StringUtils.isBlank(boxMappingKey)) {
+            throw new IllegalStateException("Invalid blank tax box key detected for parameter " + parameterName);
+        }
+        TaxTableField taxField = boxNumberMap.get(boxMappingKey);
+        if (taxField == null || taxField.jdbcType != Types.DECIMAL) {
+            throw new IllegalStateException("Tax box key '" + boxMappingKey + "' in parameter "
+                    + parameterName + " references an invalid or non-numeric tax box");
+        }
+        return taxField;
+    }
+
+    private BigDecimal parseNonNegativeBigDecimalFromAmountMapping(String amountMapping, String parameterName) {
+        String value = StringUtils.substringAfter(amountMapping, CUKFSConstants.EQUALS_SIGN);
+        if (StringUtils.isBlank(value)) {
+            return computeDefaultTaxBoxMinimumReportingAmount();
+        } else {
+            try {
+                BigDecimal numericValue = new KualiDecimal(value).bigDecimalValue();
+                if (numericValue.compareTo(KualiDecimal.ZERO.bigDecimalValue()) < 0) {
+                    throw new IllegalStateException(
+                            "Negative numbers are not permitted in parameter " + parameterName);
+                }
+                return numericValue;
+            } catch (NumberFormatException e) {
+                throw new IllegalStateException("Invalid number format detected for parameter " + parameterName, e);
+            }
+        }
+    }
+
+    private BigDecimal computeDefaultTaxBoxMinimumReportingAmount() {
+        return new KualiDecimal(CUTaxConstants.TAX_1099_DEFAULT_MIN_REPORTING_AMOUNT).bigDecimalValue();
     }
 
     protected TaxTableField getBoxNumberConstant(String boxMappingKey) {
