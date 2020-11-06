@@ -22,7 +22,7 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
@@ -218,7 +218,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
 
         // Set req status to INPR.
         //for app doc status
-        updateAndSaveAppDocStatus(PurapConstants.RequisitionStatuses.APPDOC_IN_PROCESS);
+        updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_IN_PROCESS);
 
         // Set fields from the user.
         if (ObjectUtils.isNotNull(purapChartOrg)) {
@@ -404,7 +404,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
     	try {
     		String nodeName = change.getNewNodeName();
     		
-    		if (PurapConstants.RequisitionStatuses.NODE_COMMODITY_CODE_APO_REVIEW.equalsIgnoreCase(nodeName)) {
+    		if (RequisitionStatuses.NODE_COMMODITY_CODE_APO_REVIEW.equalsIgnoreCase(nodeName)) {
     			if (!RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW.equals(this.getApplicationDocumentStatus())) {
     				this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
 

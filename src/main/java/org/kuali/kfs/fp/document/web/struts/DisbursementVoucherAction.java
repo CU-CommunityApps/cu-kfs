@@ -85,7 +85,7 @@ import java.util.Set;
  */
 public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase {
 	
-	private static final Logger LOG = LogManager.getLogger(DisbursementVoucherAction.class);
+	private static final Logger LOG = LogManager.getLogger();
 
     private static final String DV_ADHOC_NODE = "AdHoc"; // ==== CU Customization ====
 
@@ -180,10 +180,6 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         return dest;
     }
 
-    /**
-     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#approve(org.apache.struts.action.ActionMapping,
-     *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;

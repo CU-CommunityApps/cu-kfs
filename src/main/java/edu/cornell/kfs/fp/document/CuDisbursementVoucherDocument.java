@@ -215,7 +215,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             this.disbVchrPayeeTaxControlCode = DisbursementVoucherConstants.TAX_CONTROL_CODE_BEGIN_WITHHOLDING;
         }
 
-        // if vendor is foreign, default alien payment code to true
+        // if vendor is foreign, default nonresident payment code to true
         if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
             getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(true);
         }

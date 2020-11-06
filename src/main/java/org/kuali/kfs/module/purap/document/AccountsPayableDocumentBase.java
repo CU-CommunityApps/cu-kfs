@@ -47,7 +47,7 @@ import java.util.List;
 public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPayableDocumentBase implements
         AccountsPayableDocument {
 
-    private static final Logger LOG = LogManager.getLogger(AccountsPayableDocumentBase.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     // SHARED FIELDS BETWEEN PAYMENT REQUEST AND CREDIT MEMO
     protected Timestamp accountsPayableApprovalTimestamp;

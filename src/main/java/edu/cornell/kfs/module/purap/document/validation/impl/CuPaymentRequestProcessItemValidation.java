@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.document.validation.impl;
 
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemFields;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -46,7 +47,7 @@ public class CuPaymentRequestProcessItemValidation extends PaymentRequestProcess
 
         //Modified to use the payment request document to not cause unnecessary refetch
         // check that non-quantity based items are not trying to pay on a zero encumbrance amount (check only prior to ap approval)
-        if ((ObjectUtils.isNull(paymentRequestDocument.getPurapDocumentIdentifier())) || (PurapConstants.PaymentRequestStatuses.APPDOC_IN_PROCESS.equals(paymentRequestDocument.getApplicationDocumentStatus()))) {
+        if ((ObjectUtils.isNull(paymentRequestDocument.getPurapDocumentIdentifier())) || (PaymentRequestStatuses.APPDOC_IN_PROCESS.equals(paymentRequestDocument.getApplicationDocumentStatus()))) {
             if ((item.getItemType().isAmountBasedGeneralLedgerIndicator()) && ((item.getExtendedPrice() != null) && item.getExtendedPrice().isNonZero())) {
                 if (item.getPoOutstandingAmount() == null || item.getPoOutstandingAmount().isZero()) {
                     valid = false;

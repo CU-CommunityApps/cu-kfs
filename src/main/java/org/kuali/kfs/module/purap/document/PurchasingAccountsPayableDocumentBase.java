@@ -84,7 +84,7 @@ import java.util.Set;
 public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDocumentBase implements
         PurchasingAccountsPayableDocument, AmountTotaling {
 
-    private static final Logger LOG = LogManager.getLogger(PurchasingAccountsPayableDocumentBase.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     // SHARED FIELDS BETWEEN REQUISITION, PURCHASE ORDER, PAYMENT REQUEST, AND CREDIT MEMO
     protected Integer purapDocumentIdentifier;

@@ -48,7 +48,7 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
     private static final String SUB_FUND_GROUP_CODE = "subFundGroupCode";
     protected static final String INITIATOR_ACCOUNT_FYI_SPLIT_NODE = "InitiatorAccountFYISplit";
     
-    private static final Logger LOG = LogManager.getLogger(CUAccountMaintainableImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     protected transient NoteService noteService;
     

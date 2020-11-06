@@ -38,7 +38,7 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
         Set<String> editModes = super.getEditModes(document);
         PurchaseOrderDocument poDocument = (PurchaseOrderDocument) document;
 
-        if (PurapConstants.PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(poDocument.getApplicationDocumentStatus())) {
+        if (org.kuali.kfs.module.purap.PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(poDocument.getApplicationDocumentStatus())) {
             WorkflowDocument workflowDocument = poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument();
             //  amendment doc needs to lock its field for initiator while enroute
             if (workflowDocument.isInitiated() || workflowDocument.isSaved()

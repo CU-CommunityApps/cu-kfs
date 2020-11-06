@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.batch.service.impl.AutoClosePurchaseOrderServiceImpl;
 import org.kuali.kfs.module.purap.businessobject.AutoClosePurchaseOrderView;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
@@ -30,7 +31,7 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
                     // autoClosePurchaseOrder(poAutoClose);
 
                     LOG.info("autoCloseFullyDisencumberedOrders() PO ID " + poAutoClose.getPurapDocumentIdentifier() + " with total " + poAutoClose.getTotalAmount().doubleValue() + " will be closed");
-                    String newStatus = PurapConstants.PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;
+                    String newStatus = PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;
                     String annotation = "This PO was automatically closed in batch.";
                     String documentType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_CLOSE_DOCUMENT;
                     PurchaseOrderDocument document = purchaseOrderService.getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());

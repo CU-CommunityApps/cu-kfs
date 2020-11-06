@@ -44,7 +44,7 @@ import java.util.List;
  * Base class for Related View Business Objects.
  */
 public abstract class AbstractRelatedView extends PersistableBusinessObjectBase {
-    private static final Logger LOG = LogManager.getLogger(AbstractRelatedView.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private Integer accountsPayablePurchasingDocumentLinkIdentifier;
     private Integer purapDocumentIdentifier;

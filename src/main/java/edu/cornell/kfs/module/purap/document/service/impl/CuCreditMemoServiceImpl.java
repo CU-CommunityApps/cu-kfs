@@ -12,7 +12,7 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
+import org.kuali.kfs.module.purap.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.impl.CreditMemoServiceImpl;
@@ -121,7 +121,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
 
         String cancelledStatusCode = "";
         if (StringUtils.isEmpty(currentNodeName)) {
-            cancelledStatusCode = PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_POST_AP_APPROVE;
+            cancelledStatusCode = CreditMemoStatuses.APPDOC_CANCELLED_POST_AP_APPROVE;
         }
         else {
             cancelledStatusCode = CreditMemoStatuses.getCreditMemoAppDocDisapproveStatuses().get(currentNodeName);

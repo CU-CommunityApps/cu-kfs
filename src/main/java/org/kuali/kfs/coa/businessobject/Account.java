@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.coa.businessobject;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import edu.cornell.kfs.coa.service.CuAccountService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -34,12 +35,12 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KualiModuleService;
-import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Campus;
 import org.kuali.kfs.sys.businessobject.PostalCode;
 import org.kuali.kfs.sys.businessobject.State;
+import org.kuali.kfs.sys.businessobject.serialization.PersistableBusinessObjectSerializer;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
@@ -55,7 +56,7 @@ import java.util.Map;
 
 public class Account extends PersistableBusinessObjectBase implements AccountIntf, MutableInactivatable {
 
-    private static final Logger LOG = LogManager.getLogger(Account.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     public static final String CACHE_NAME = KFSConstants.APPLICATION_NAMESPACE_CODE + "/" + "Account";
 
@@ -162,7 +163,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     public Account() {
         // assume active is true until set otherwise
-        active = true; 
+        active = true;
         indirectCostRecoveryAccounts = new ArrayList<>();
         // we need country code to have a value for OJB foreign keys to other location types but it isn't exposed on
         // docs so it never gets set. setting a default value on the column in the db did not do what we want b/c
@@ -656,6 +657,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
+    @JsonSerialize(using = PersistableBusinessObjectSerializer.class)
     public Account getReportsToAccount() {
         return reportsToAccount;
     }
@@ -667,6 +669,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
+    @JsonSerialize(using = PersistableBusinessObjectSerializer.class)
     public Account getEndowmentIncomeAccount() {
         return endowmentIncomeAccount;
     }
@@ -678,6 +681,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
+    @JsonSerialize(using = PersistableBusinessObjectSerializer.class)
     public Account getContractControlAccount() {
         return contractControlAccount;
     }
@@ -689,6 +693,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
+    @JsonSerialize(using = PersistableBusinessObjectSerializer.class)
     public Account getIncomeStreamAccount() {
         return incomeStreamAccount;
     }

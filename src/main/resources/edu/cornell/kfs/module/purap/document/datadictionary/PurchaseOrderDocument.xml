@@ -131,7 +131,7 @@
                 <entry key="Budget" value-ref="RoutingType-PurchaseOrderDocument-Budget"/>
                 <entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
     		    <entry key="Organization" value-ref="RoutingType-RequisitionDocument-Organization"/>                
-                <!-- no qualifiers for VendorIsEmployeeOrNonResidentAlien -->
+                <!-- no qualifiers for VendorIsEmployeeOrNonresident -->
                 <!-- no qualifiers for TransmissionMethodIsPrint -->
     		</map>
     	</property>

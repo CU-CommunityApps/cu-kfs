@@ -201,11 +201,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return amt;
     }
 
-    /**
-     * @hibernate.set name="paymentDetail"
-     * @hibernate.collection-key column="pmt_grp_id"
-     * @hibernate.collection-one-to-many class="edu.iu.uis.pdp.bo.PaymentDetail"
-     */
     public List<PaymentDetail> getPaymentDetails() {
         return paymentDetails;
     }
@@ -231,11 +226,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         paymentDetails.remove(pgh);
     }
 
-    /**
-     * @hibernate.set name="paymentGroupHistory"
-     * @hibernate.collection-key column="pmt_grp_id"
-     * @hibernate.collection-one-to-many class="edu.iu.uis.pdp.bo.PaymentGroupHistory"
-     */
     public List<PaymentGroupHistory> getPaymentGroupHistory() {
         return paymentGroupHistory;
     }
@@ -266,17 +256,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         paymentGroupHistory.remove(pd);
     }
 
-    /**
-     * @hibernate.id column="PMT_GRP_ID" generator-class="sequence"
-     * @hibernate.generator-param name="sequence" value="PDP.PDP_PMT_GRP_ID_SEQ"
-     */
     public KualiInteger getId() {
         return id;
     }
 
-    /**
-     * @hibernate.one-to-one class="edu.iu.uis.pdp.bo.AchAccountNumber"
-     */
     public AchAccountNumber getAchAccountNumber() {
         return achAccountNumber;
     }
@@ -313,9 +296,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.sortValue = sb.toString();
     }
 
-    /**
-     * @hibernate.property column="PMT_CTY_NM" length="30"
-     */
     public String getCity() {
         return city;
     }
@@ -332,9 +312,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.combineGroups = combineGroups;
     }
 
-    /**
-     * @hibernate.property column="PMT_CNTRY_NM" length="30"
-     */
     public String getCountry() {
         return country;
     }
@@ -343,9 +320,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.country = country;
     }
 
-    /**
-     * @hibernate.property column="PMT_ST_NM" length="30"
-     */
     public String getState() {
         return state;
     }
@@ -354,44 +328,26 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.state = state;
     }
 
-    /**
-     * @hibernate.property column="ACH_BNK_RTNG_NBR" length="9"
-     */
     public String getAchBankRoutingNbr() {
         return achBankRoutingNbr;
     }
 
-    /**
-     * @hibernate.property column="ADV_EMAIL_ADDR" length="50"
-     */
     public String getAdviceEmailAddress() {
         return adviceEmailAddress;
     }
 
-    /**
-     * @hibernate.property column="ALTRNT_PAYEE_ID" length="25"
-     */
     public String getAlternatePayeeId() {
         return alternatePayeeId;
     }
 
-    /**
-     * @hibernate.property column="ALTRNT_PAYEE_ID_TYP_CD" length="2"
-     */
     public String getAlternatePayeeIdTypeCd() {
         return alternatePayeeIdTypeCd;
     }
 
-    /**
-     * @hibernate.many-to-one column="BNK_ID" class="edu.iu.uis.pdp.bo.Bank" not-null="false"
-     */
     public Bank getBank() {
         return bank;
     }
 
-    /**
-     * @hibernate.many-to-one column="PMT_BATCH_ID" class="edu.iu.uis.pdp.bo.Batch" not-null="true"
-     */
     public Batch getBatch() {
         if (ObjectUtils.isNull(batch) && ObjectUtils.isNotNull(batchId)) {
             this.refreshReferenceObject("batch");
@@ -415,23 +371,14 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 		this.customerInstitutionNumber = customerInstitutionNumber;
 	}
 
-	/**
-     * @hibernate.property column="CMP_ADDR_IND" type="yes_no"
-     */
     public Boolean getCampusAddress() {
         return campusAddress;
     }
 
-    /**
-     * @hibernate.property column="PMT_CRDT_MEMO_AMT" length="14"
-     */
     public KualiDecimal getCreditMemoAmount() {
         return creditMemoAmount;
     }
 
-    /**
-     * @hibernate.property column="PMT_CRDT_MEMO_NBR" length="14"
-     */
     public String getCreditMemoNbr() {
         return creditMemoNbr;
     }
@@ -440,16 +387,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return disbursementDate;
     }
 
-    /**
-     * @hibernate.property column="DISB_NBR" length="9"
-     */
     public KualiInteger getDisbursementNbr() {
         return disbursementNbr;
     }
 
-    /**
-     * @hibernate.many-to-one column="DISB_TYP_CD" class="edu.iu.uis.pdp.bo.DisbursementType" not-null="false"
-     */
     public DisbursementType getDisbursementType() {
         return disbursementType;
     }
@@ -458,30 +399,18 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return employeeIndicator;
     }
 
-    /**
-     * @hibernate.property column="PMT_LN1_ADDR" length="45"
-     */
     public String getLine1Address() {
         return line1Address;
     }
 
-    /**
-     * @hibernate.property column="PMT_LN2_ADDR" length="45"
-     */
     public String getLine2Address() {
         return line2Address;
     }
 
-    /**
-     * @hibernate.property column="PMT_LN3_ADDR" length="45"
-     */
     public String getLine3Address() {
         return line3Address;
     }
 
-    /**
-     * @hibernate.property column="PMT_LN4_ADDR" length="45"
-     */
     public String getLine4Address() {
         return line4Address;
     }
@@ -490,93 +419,54 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return nonresidentPayment;
     }
 
-    /**
-     * @hibernate.property column="PAYEE_ID" length="25"
-     */
     public String getPayeeId() {
         return payeeId;
     }
 
-    /**
-     * @hibernate.property column="PAYEE_ID_TYP_CD" length="1"
-     */
     public String getPayeeIdTypeCd() {
         return payeeIdTypeCd;
     }
 
-    /**
-     * @hibernate.property column="PMT_PAYEE_NM" length="40"
-     */
     public String getPayeeName() {
         return payeeName;
     }
 
-    /**
-     * @hibernate.property column="PAYEE_OWNR_CD" length="2"
-     */
     public String getPayeeOwnerCd() {
         return payeeOwnerCd;
     }
 
-    /**
-     * @hibernate.property column="PMT_DT"
-     */
     public Date getPaymentDate() {
         return paymentDate;
     }
 
-    /**
-     * @hibernate.many-to-one column="PMT_STAT_CD" class="edu.iu.uis.pdp.bo.PaymentStatus" not-null="true"
-     */
     public PaymentStatus getPaymentStatus() {
         return paymentStatus;
     }
 
-    /**
-     * @hibernate.property column="PHYS_CMP_PROC_CD" length="2"
-     */
     public String getPhysCampusProcessCd() {
         return physCampusProcessCd;
     }
 
-    /**
-     * @hibernate.many-to-one column="PROC_ID" class="edu.iu.uis.pdp.bo.PaymentProcess" not-null="false"
-     */
     public PaymentProcess getProcess() {
         return process;
     }
 
-    /**
-     * @hibernate.property column="PROC_IMD_IND" type="yes_no" length="1"
-     */
     public Boolean getProcessImmediate() {
         return processImmediate;
     }
 
-    /**
-     * @hibernate.property column="PMT_ATTCHMNT_IND" type="yes_no" length="1"
-     */
     public Boolean getPymtAttachment() {
         return pymtAttachment;
     }
 
-    /**
-     * @hibernate.property column="PMT_SPCL_HANDLG_IND" type="yes_no" length="1"
-     */
     public Boolean getPymtSpecialHandling() {
         return pymtSpecialHandling;
     }
 
-    /**
-     * @hibernate.property column="PMT_TXBL_IND" type="yes_no" length="1"
-     */
     public Boolean getTaxablePayment() {
         return taxablePayment;
     }
 
-    /**
-     * @hibernate.property column="PMT_ZIP_CD" length="2"
-     */
     public String getZipCd() {
         return zipCd;
     }

@@ -18,7 +18,6 @@
  */
 package org.kuali.kfs.module.ar.document.service.impl;
 
-import com.lowagie.text.DocumentException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -102,13 +101,14 @@ import org.kuali.rice.core.api.util.type.AbstractKualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.lowagie.text.DocumentException;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -2289,17 +2289,12 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
 
     @Override
     public void markManuallySent(final ContractsGrantsInvoiceDocument document) {
-        try {
-            document.getInvoiceAddressDetails().stream().filter(InvoiceAddressDetail::isSendIndicator)
-                    .forEach(detail -> {
-                        detail.markSent();
-                        detail.setSendIndicator(false);
-                    });
-            documentService.saveDocument(document);
-        } catch (WorkflowException e) {
-            LOG.error("Problem during markManuallySent", e);
-            throw new RuntimeException("Problem during markManuallySent: " + e.getMessage(), e);
-        }
+        document.getInvoiceAddressDetails().stream().filter(InvoiceAddressDetail::isSendIndicator)
+                .forEach(detail -> {
+                    detail.markSent();
+                    detail.setSendIndicator(false);
+                });
+        documentService.updateDocument(document);
     }
 
     @Override
@@ -2311,7 +2306,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
                 });
         documentService.updateDocument(document);
     }
-    
+
     @Override
     public void addInvoiceTransmissionNote(ContractsGrantsInvoiceDocument document, String invoiceTransmissionMethod) {
         Note note = new Note();

@@ -63,7 +63,7 @@ import java.util.List;
 @Transactional
 public class PendingTransactionServiceImpl implements PendingTransactionService {
 
-    private static final Logger LOG = LogManager.getLogger(PendingTransactionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     public static final String REF_FDOC_TYP_CD_LIABILITY_CHECK = "PO";
 

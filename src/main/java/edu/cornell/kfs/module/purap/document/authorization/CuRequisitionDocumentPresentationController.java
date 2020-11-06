@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
-import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.authorization.RequisitionDocumentPresentationController;
 import org.kuali.kfs.sys.context.SpringContext;

@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Set;
 
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.authorization.VendorCreditMemoDocumentPresentationController;
@@ -26,7 +27,7 @@ public class CuVendorCreditMemoDocumentPresentationController extends VendorCred
         if (canApprove(vendorCreditMemoDocument) && canEditAmount(vendorCreditMemoDocument)) {
             editModes.add(CUPaymentRequestEditMode.EDIT_AMOUNT);
         }
-        if (vendorCreditMemoDocument.isDocumentStoppedInRouteNode(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {
+        if (vendorCreditMemoDocument.isDocumentStoppedInRouteNode(PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {
             editModes.add(CUPaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE);
         }
         
@@ -35,7 +36,7 @@ public class CuVendorCreditMemoDocumentPresentationController extends VendorCred
 	
     // KFSPTS-1891, KFSPTS-2851
     private boolean canEditAmount(VendorCreditMemoDocument vendorCreditMemoDocument) {
-    		return  PurapConstants.PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.contains(vendorCreditMemoDocument.getApplicationDocumentStatus());
+    		return  PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.contains(vendorCreditMemoDocument.getApplicationDocumentStatus());
     }
 
 }

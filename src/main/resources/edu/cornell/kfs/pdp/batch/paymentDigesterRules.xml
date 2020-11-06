@@ -76,8 +76,8 @@
                 <call-method-rule methodname="setTaxablePayment" paramcount="0" paramtypes="java.lang.Boolean"/>
                 <call-param-rule paramnumber="0" />
             </pattern>
-            <pattern value="nra_ind">
-                <call-method-rule methodname="setNraPayment" paramcount="0" paramtypes="java.lang.Boolean"/>
+            <pattern value="nonresident_ind">
+                <call-method-rule methodname="setNonresidentPayment" paramcount="0" paramtypes="java.lang.Boolean"/>
                 <call-param-rule paramnumber="0" />
             </pattern>
             <pattern value="combine_group_ind">

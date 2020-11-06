@@ -41,7 +41,7 @@ import java.util.List;
 
 public class PaymentRequestItem extends AccountsPayableItemBase {
 
-    private static final Logger LOG = LogManager.getLogger(PaymentRequestItem.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private BigDecimal purchaseOrderItemUnitPrice;
     private KualiDecimal itemOutstandingInvoiceQuantity;

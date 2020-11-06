@@ -16,7 +16,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
@@ -265,8 +265,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         // everything in the below list requires correcting entries to be written to the GL
             if (PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
             	// KFSPTS-2598 : Treasury also can 'calculate'
-                if (PurapConstants.PaymentRequestStatuses.NODE_ACCOUNT_REVIEW.equals(currentNode) || PurapConstants.PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW.equals(currentNode)
-                		|| PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW.equals(currentNode)) {
+                if (PaymentRequestStatuses.NODE_ACCOUNT_REVIEW.equals(currentNode) || PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW.equals(currentNode)
+                		|| PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW.equals(currentNode)) {
                     SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesModifyPaymentRequest(this);
                 }
             }

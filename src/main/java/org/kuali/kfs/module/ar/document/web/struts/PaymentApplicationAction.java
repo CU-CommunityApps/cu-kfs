@@ -996,7 +996,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     
     /*
      * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
-     * actually use Spring. This way, PowerMock is not necessary.
+     * actually use Spring. This way, static mocking is not necessary.
      */
     NonAppliedHoldingService getNonAppliedHoldingService() {
         if (nonAppliedHoldingService == null) {
@@ -1007,7 +1007,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
     /*
      * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
-     * actually use Spring. This way, PowerMock is not necessary.
+     * actually use Spring. This way, static mocking is not necessary.
      */
     CustomerInvoiceDocumentService getCustomerInvoiceDocumentService() {
         if (customerInvoiceDocumentService == null) {
@@ -1018,7 +1018,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
     /*
      * Wrapping SpringContext.getBean(...) in a method so the test can use a spy to provide a mock version and not
-     * actually use Spring. This way, PowerMock is not necessary.
+     * actually use Spring. This way, static mocking is not necessary.
      */
     PaymentApplicationDocumentService getPaymentApplicationDocumentService() {
         if (paymentApplicationDocumentService == null) {

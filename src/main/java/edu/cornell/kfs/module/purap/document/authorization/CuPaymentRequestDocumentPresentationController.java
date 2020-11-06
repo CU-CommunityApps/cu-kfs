@@ -5,7 +5,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PaymentRequestEditMode;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.authorization.PaymentRequestDocumentPresentationController;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
@@ -74,7 +74,7 @@ public class CuPaymentRequestDocumentPresentationController extends PaymentReque
         CuPaymentRequestDocument paymentRequestDocument = (CuPaymentRequestDocument) document;
         String paymentMethodCode = paymentRequestDocument.getPaymentMethodCode();
         
-        if ((PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode)) && paymentRequestDocument.isDocumentStoppedInRouteNode(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {
+        if ((PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode)) && paymentRequestDocument.isDocumentStoppedInRouteNode(PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {
             return true;
         } else {
             return false;

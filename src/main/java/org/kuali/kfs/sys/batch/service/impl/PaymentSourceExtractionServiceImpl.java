@@ -53,7 +53,7 @@ import java.util.Set;
 @Transactional
 public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtractionService {
 
-    private static final Logger LOG = LogManager.getLogger(PaymentSourceExtractionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected DateTimeService dateTimeService;
     protected CustomerProfileService customerProfileService;
