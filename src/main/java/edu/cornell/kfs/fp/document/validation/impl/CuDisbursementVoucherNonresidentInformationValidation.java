@@ -23,9 +23,9 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 
-public class CuDisbursementVoucherNonResidentAlienInformationValidation extends DisbursementVoucherNonresidentInformationValidation{
+public class CuDisbursementVoucherNonresidentInformationValidation extends DisbursementVoucherNonresidentInformationValidation{
     
-	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
+	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherNonresidentInformationValidation.class);
 	
     private String validationType;
 

@@ -529,7 +529,7 @@ public class GlLineServiceImpl implements GlLineService {
                         KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.FISCAL_PERIOD_SELECTION_DOCUMENT_TYPES,
                         docType);
         if (evaluator.evaluationSucceeds()) {
-            Integer closingYear = new Integer(parameterService
+            Integer closingYear = Integer.valueOf(parameterService
                     .getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class,
                             GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR));
             if (entry.getUniversityFiscalYear().equals(closingYear + 1)) {

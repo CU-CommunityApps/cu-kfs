@@ -19,6 +19,7 @@ import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
@@ -157,7 +158,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
             req.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
             req.setRequisitionSourceCode(PurapConstants.RequisitionSources.B2B);
 
-            req.updateAndSaveAppDocStatus(PurapConstants.RequisitionStatuses.APPDOC_IN_PROCESS);
+            req.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_IN_PROCESS);
 
             //KFSPTS-1446 : Needed to move the setting of method of PO transmission to after the templateVendorAddress call because that method will set the method of PO transmission to the value on the vendor address. 
             //req.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.ELECTRONIC);

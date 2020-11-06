@@ -67,7 +67,7 @@ import java.util.Optional;
 
 public class PaymentApplicationForm extends FinancialSystemTransactionalDocumentFormBase {
 
-    protected static Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final String ADJUST_BUTTON_EXTRA_BUTTON_PROPERTY = "methodToCall.adjust";
 

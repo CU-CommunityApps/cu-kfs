@@ -63,7 +63,7 @@ import java.util.List;
 
 @Transactional
 public class PaymentFileServiceImpl extends InitiateDirectoryBase implements PaymentFileService {
-    private static final Logger LOG = LogManager.getLogger(PaymentFileServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected String outgoingDirectoryName;
 

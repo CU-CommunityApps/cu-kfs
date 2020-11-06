@@ -1,0 +1,108 @@
+/*
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ *
+ * Copyright 2005-2020 Kuali, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.kuali.kfs.module.purap;
+
+import java.util.HashMap;
+
+public final class RequisitionStatuses {
+    
+    // Added for updating app doc status for disapproved
+    public static final String APPDOC_IN_PROCESS = "In Process";
+    public static final String APPDOC_CANCELLED = "Cancelled";
+    public static final String APPDOC_CLOSED = "Closed";
+    public static final String APPDOC_AWAIT_FISCAL_REVIEW = "Awaiting Fiscal Officer";
+    public static final String APPDOC_AWAIT_CONTENT_REVIEW = "Awaiting Content Approval";
+    public static final String APPDOC_AWAIT_HAS_ACCOUNTING_LINES = "Awaiting Accounting Lines";
+    public static final String APPDOC_AWAIT_SUB_ACCT_REVIEW = "Awaiting Sub Account";
+    public static final String APPDOC_AWAIT_CHART_REVIEW = "Awaiting Base Org Review";
+    public static final String APPDOC_AWAIT_COMMODITY_CODE_REVIEW = "Awaiting Commodity Review";
+    public static final String APPDOC_AWAIT_SEP_OF_DUTY_REVIEW = "Awaiting Separation of Duties";
+    public static final String APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN = "Awaiting Contract Manager Assignment";
+    
+    public static final String APPDOC_DAPRVD_AWARD = "Disapproved Award";
+    public static final String APPDOC_DAPRVD_CONTENT = "Disapproved Content";
+    public static final String APPDOC_DAPRVD_HAS_ACCOUNTING_LINES = "Disapproved Accounting Lines";
+    public static final String APPDOC_DAPRVD_SUB_ACCT = "Disapproved Sub Account";
+    public static final String APPDOC_DAPRVD_FISCAL = "Disapproved Fiscal";
+    public static final String APPDOC_DAPRVD_CHART = "Disapproved Base Org Review";
+    public static final String APPDOC_DAPRVD_COMMODITY_CODE = "Disapproved Commodity Review";
+    public static final String APPDOC_DAPRVD_SEP_OF_DUTY = "Disapproved Separation of Duties";
+    public static final String APPDOC_DAPRVD_AD_HOC = "Disapproved Ad Hoc";
+    
+    // Node Name Declarations
+    public static final String NODE_AWARD= "Award";
+    public static final String NODE_CONTENT_REVIEW = "Organization";
+    public static final String NODE_SUBACCOUNT = "SubAccount";
+    public static final String NODE_SEPARATION_OF_DUTIES = "SeparationOfDuties";
+    public static final String NODE_ACCOUNT = "Account";
+    public static final String NODE_HAS_ACCOUNTING_LINES = "Initiator";
+    public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
+    public static final String NODE_COMMODITY_CODE_REVIEW = "Commodity";
+    public static final String NODE_COMMODITY_CODE_APO_REVIEW = "CommodityAPO";
+    public static final String NODE_ADHOC_REVIEW = "AdHoc";
+    
+    public static HashMap<String, String> getAllAppDocStatuses() {
+        HashMap<String, String> appDocStatusMap = new HashMap<>();
+    
+        appDocStatusMap.put(APPDOC_IN_PROCESS, APPDOC_IN_PROCESS);
+        appDocStatusMap.put(APPDOC_CANCELLED, APPDOC_CANCELLED);
+        appDocStatusMap.put(APPDOC_CLOSED, APPDOC_CLOSED);
+        appDocStatusMap.put(APPDOC_AWAIT_FISCAL_REVIEW, APPDOC_AWAIT_FISCAL_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_CONTENT_REVIEW, APPDOC_AWAIT_CONTENT_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_HAS_ACCOUNTING_LINES, APPDOC_AWAIT_HAS_ACCOUNTING_LINES);
+        appDocStatusMap.put(APPDOC_AWAIT_SUB_ACCT_REVIEW, APPDOC_AWAIT_SUB_ACCT_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_CHART_REVIEW, APPDOC_AWAIT_CHART_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_COMMODITY_CODE_REVIEW, APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_SEP_OF_DUTY_REVIEW, APPDOC_AWAIT_SEP_OF_DUTY_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN, APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN);
+        appDocStatusMap.put(APPDOC_DAPRVD_AWARD, APPDOC_DAPRVD_AWARD);
+        appDocStatusMap.put(APPDOC_DAPRVD_CONTENT, APPDOC_DAPRVD_CONTENT);
+        appDocStatusMap.put(APPDOC_DAPRVD_HAS_ACCOUNTING_LINES, APPDOC_DAPRVD_HAS_ACCOUNTING_LINES);
+        appDocStatusMap.put(APPDOC_DAPRVD_SUB_ACCT, APPDOC_DAPRVD_SUB_ACCT);
+        appDocStatusMap.put(APPDOC_DAPRVD_FISCAL, APPDOC_DAPRVD_FISCAL);
+        appDocStatusMap.put(APPDOC_DAPRVD_CHART, APPDOC_DAPRVD_CHART);
+        appDocStatusMap.put(APPDOC_DAPRVD_COMMODITY_CODE, APPDOC_DAPRVD_COMMODITY_CODE);
+        appDocStatusMap.put(APPDOC_DAPRVD_SEP_OF_DUTY, APPDOC_DAPRVD_SEP_OF_DUTY);
+    
+        return appDocStatusMap;
+    }
+    
+    public static HashMap<String, String> getRequistionAppDocStatuses() {
+        HashMap<String, String> reqAppDocStatusMap;
+    
+        reqAppDocStatusMap = new HashMap<>();
+        reqAppDocStatusMap.put(NODE_AWARD, APPDOC_DAPRVD_AWARD);
+        reqAppDocStatusMap.put(NODE_CONTENT_REVIEW, APPDOC_DAPRVD_CONTENT);
+        reqAppDocStatusMap.put(NODE_HAS_ACCOUNTING_LINES, APPDOC_DAPRVD_HAS_ACCOUNTING_LINES);
+        reqAppDocStatusMap.put(NODE_SUBACCOUNT,  APPDOC_DAPRVD_SUB_ACCT);
+        reqAppDocStatusMap.put(NODE_ACCOUNT, APPDOC_DAPRVD_FISCAL);
+        reqAppDocStatusMap.put(NODE_ORG_REVIEW, APPDOC_DAPRVD_CHART);
+        reqAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);
+        reqAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);
+        reqAppDocStatusMap.put(NODE_SEPARATION_OF_DUTIES, APPDOC_DAPRVD_SEP_OF_DUTY);
+        reqAppDocStatusMap.put(APPDOC_IN_PROCESS,  APPDOC_IN_PROCESS);
+        reqAppDocStatusMap.put(APPDOC_CLOSED, APPDOC_CLOSED);
+        reqAppDocStatusMap.put(APPDOC_CANCELLED, APPDOC_CANCELLED);
+        reqAppDocStatusMap.put(APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN, APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN);
+        reqAppDocStatusMap.put(NODE_ADHOC_REVIEW, APPDOC_DAPRVD_AD_HOC);
+    
+        return reqAppDocStatusMap;
+    }
+
+}

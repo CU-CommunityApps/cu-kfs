@@ -32,17 +32,6 @@
         </property>
     </bean>
 
-    <bean id="securityProjectCodeLookupableHelperService"
-          parent="securityProjectCodeLookupableHelperService-parentBean" scope="prototype"/>
-    <bean id="securityProjectCodeLookupableHelperService-parentBean"
-          class="edu.cornell.kfs.sec.businessobject.lookup.AccessSecurityProjectCodeLookupableHelperServiceImpl"
-          parent="cf.lookupableHelperService" abstract="true" p:accessSecurityService-ref="accessSecurityService"
-          p:identityService-ref="identityService"/>
-
-    <bean id="securityProjectCodeLookupable"
-          parent="securityProjectCodeLookupable-parentBean" scope="prototype"/>
-    <bean id="securityProjectCodeLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
-          abstract="true" p:lookupableHelperService-ref="securityProjectCodeLookupableHelperService"/>
 
     <bean id="securityPrincipalLookupableHelperService"
           parent="securityPrincipalLookupableHelperService-parentBean" scope="prototype"/>

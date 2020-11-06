@@ -82,7 +82,7 @@ import java.util.Set;
  */
 public class KualiAccountingDocumentActionBase extends FinancialSystemTransactionalDocumentActionBase {
 
-    private static final Logger LOG = LogManager.getLogger(KualiAccountingDocumentActionBase.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     // Set of actions for which updateEvents should be generated
     protected static final Set UPDATE_EVENT_ACTIONS;

@@ -391,7 +391,7 @@ public class LookupResource {
 
     /*
      * Wrapping static utility class in a method so tests can use a spy to mock this call; this way,
-     * PowerMock is not necessary.
+     * static mocking is not necessary.
      */
     UserSession getUserSessionFromRequest(final HttpServletRequest request) {
         return KRADUtils.getUserSessionFromRequest(request);
@@ -399,7 +399,7 @@ public class LookupResource {
 
     /*
      * Wrapping static utility class in a method so tests can use a spy to mock this call; this way,
-     * PowerMock is not necessary.
+     * static mocking is not necessary.
      */
     Map getNamespaceAndComponentSimpleName(final Class boClass) {
         return KRADUtils.getNamespaceAndComponentSimpleName(boClass);
@@ -407,7 +407,7 @@ public class LookupResource {
 
     /*
      * Wrapping static utility class in a method so tests can use a spy to mock this call; this way,
-     * PowerMock is not necessary.
+     * static mocking is not necessary.
      */
     Class getPropertyType(
             final BusinessObjectEntry businessObjectEntry,

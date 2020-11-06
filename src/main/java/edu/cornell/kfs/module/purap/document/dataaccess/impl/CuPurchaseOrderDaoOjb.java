@@ -7,8 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryByCriteria;
-import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.AutoClosePurchaseOrderView;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.dataaccess.impl.PurchaseOrderDaoOjb;
@@ -29,7 +29,7 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
         criteria.addIsNull(PurapPropertyConstants.RECURRING_PAYMENT_TYPE_CODE);
         criteria.addEqualTo(PurapPropertyConstants.TOTAL_ENCUMBRANCE, new KualiDecimal(0));
         criteria.addEqualTo(PurapPropertyConstants.PURCHASE_ORDER_CURRENT_INDICATOR, true);
-        criteria.addEqualTo(KewApiConstants.APP_DOC_STATUS_DETAIL, PurapConstants.PurchaseOrderStatuses.APPDOC_OPEN);
+        criteria.addEqualTo(KewApiConstants.APP_DOC_STATUS_DETAIL, PurchaseOrderStatuses.APPDOC_OPEN);
         for (String excludeCode : excludedVendorChoiceCodes) {
             criteria.addNotEqualTo(PurapPropertyConstants.VENDOR_CHOICE_CODE, excludeCode);
         }

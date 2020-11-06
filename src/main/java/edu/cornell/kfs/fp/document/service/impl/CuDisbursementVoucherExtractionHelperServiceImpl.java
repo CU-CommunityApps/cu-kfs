@@ -74,9 +74,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         		// If the payee is an employee, set these flags accordingly
             pg.setEmployeeIndicator(Boolean.TRUE);
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.EMPLOYEE);
-            pg.setTaxablePayment(
-                    !/*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
-                            DisbursementVoucherDocument.class,
+            pg.setTaxablePayment(parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
                             FPParameterConstants.RESEARCH_PAYMENT_REASONS, rc).evaluationSucceeds()
                         && !parameterService.getParameterValueAsString(DisbursementVoucherDocument.class,
                             FPParameterConstants.PAYMENT_REASON_CODE_RENTAL_PAYMENT).equals(rc)
@@ -350,7 +348,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
             DisbursementVoucherPreConferenceDetail dvpcd = document.getDvPreConferenceDetail();
 
-            for (DisbursementVoucherPreConferenceRegistrant dvpcr : (List<DisbursementVoucherPreConferenceRegistrant>)dvpcd.getDvPreConferenceRegistrants()) {
+            for (DisbursementVoucherPreConferenceRegistrant dvpcr : 
+                    (List<DisbursementVoucherPreConferenceRegistrant>)dvpcd.getDvPreConferenceRegistrants()) {
                 if (line < (maxNoteLines - 8)) {
                     pnt = new PaymentNoteText();
                     pnt.setCustomerNoteLineNbr(new KualiInteger(line++));

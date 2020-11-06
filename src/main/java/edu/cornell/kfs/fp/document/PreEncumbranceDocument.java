@@ -24,7 +24,7 @@ import edu.cornell.kfs.fp.businessobject.PreEncumbranceAccountingLineUtil;
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine;
 
 public class PreEncumbranceDocument extends org.kuali.kfs.fp.document.PreEncumbranceDocument {
-	private static final Logger LOG = LogManager.getLogger(PreEncumbranceDocument.class);
+	private static final Logger LOG = LogManager.getLogger();
     private static final long serialVersionUID = 1L;
     protected Integer nextPositionSourceLineNumber;
     protected Integer nextPositionTargetLineNumber;

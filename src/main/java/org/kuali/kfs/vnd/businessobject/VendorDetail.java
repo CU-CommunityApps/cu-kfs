@@ -49,7 +49,7 @@ import java.util.Map;
  */
 public class VendorDetail extends PersistableBusinessObjectBase implements VendorRoutingComparable {
 
-    private static Logger LOG = LogManager.getLogger(VendorDetail.class);
+    private static Logger LOG = LogManager.getLogger();
 
     private Integer vendorHeaderGeneratedIdentifier;
     private Integer vendorDetailAssignedIdentifier;

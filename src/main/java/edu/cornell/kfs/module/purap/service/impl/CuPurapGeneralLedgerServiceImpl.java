@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
@@ -84,7 +85,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
 
         // when cancelling a PREQ, do not book encumbrances if PO is CLOSED
 		if (encumbrances != null
-				&& !(CANCEL_PAYMENT_REQUEST.equals(processType) && PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED
+				&& !(CANCEL_PAYMENT_REQUEST.equals(processType) && PurchaseOrderStatuses.APPDOC_CLOSED
 						.equals(preq.getPurchaseOrderDocument().getApplicationDocumentStatus()))) {
             LOG.debug("generateEntriesPaymentRequest() generate encumbrance entries");
             if (CREATE_PAYMENT_REQUEST.equals(processType)) {

@@ -30,7 +30,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 
 public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusinessObject {
 	
-	private static final Logger LOG = LogManager.getLogger(ObjectCodeGlobal.class);
+	private static final Logger LOG = LogManager.getLogger();
  
     //added for SUNY Object Code and CG Reporting Code extended attributes
     private String sunyObjectCode;

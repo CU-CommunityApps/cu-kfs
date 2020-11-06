@@ -53,31 +53,6 @@
                 <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
-        <property name="lookupFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="vendorPaymentTermsCode"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorPaymentTermsDescription"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorPaymentTermsPercent"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorDiscountDueNumber"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorDiscountDueTypeDescription"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorNetDueNumber"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorNetDueTypeDescription"
-                      p:defaultValueFinder-ref="paymentTypeValuesFinder"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
-        <property name="resultFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="vendorPaymentTermsCode"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorPaymentTermsDescription"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorPaymentTermsPercent"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorDiscountDueNumber"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorDiscountDueTypeDescription"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorNetDueNumber"/>
-                <bean parent="FieldDefinition" p:attributeName="vendorNetDueTypeDescription"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
     </bean>
     
 </beans>

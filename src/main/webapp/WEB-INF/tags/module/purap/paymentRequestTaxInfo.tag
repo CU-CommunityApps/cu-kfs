@@ -59,14 +59,22 @@
                 	<div align="right"><kul:htmlAttributeLabel forceRequired = "true" attributeEntry="${documentAttributes.taxFederalPercent}" /></div>
                 </th>
                 <td align=left valign=middle class="datacell">
-                	<kul:htmlControlAttribute 
-                		attributeEntry="${documentAttributes.taxFederalPercent}" property="document.taxFederalPercent" 
-                		readOnly="${not taxAreaEditable}" tabindexOverride="${tabindexOverrideBase + 0}"/>
+                	<kul:htmlControlAttribute
+                		attributeEntry="${documentAttributes.taxFederalPercent}"
+						property="document.taxFederalPercent"
+                		readOnly="${not taxAreaEditable}"
+						tabindexOverride="${tabindexOverrideBase + 0}"/>
 					&nbsp;                
                     <c:if test="${taxAreaEditable}">
-                   		<kul:lookup boClassName="org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent"
-                    		lookupParameters="document.taxClassificationCode:incomeClassCode,'F':incomeTaxTypeCode,'Y':active"
-                        	fieldConversions="incomeTaxPercent:document.taxFederalPercent"/>   
+						<!-- These hidden tags contain static values that can be picked up by new lookups to pre-populate fields -->
+						<input type="hidden" name="static.federalTaxPercentIncomeTaxTypeCode" value="F" />
+						<input type="hidden" name="static.federalTaxPercentActive" value="Y" />
+                   		<kul:lookup boClassName="org.kuali.kfs.fp.businessobject.NonresidentTaxPercent"
+                    		lookupParameters="document.taxClassificationCode:incomeClassCode,'F':incomeTaxTypeCode,'Y':active,document.taxFederalPercent:incomeTaxPercent"
+                        	fieldConversions="incomeTaxTypeCode:static.federalTaxPercentIncomeTaxTypeCode,active:federalTaxPercentActive,incomeTaxPercent:document.taxFederalPercent,incomeClassCode:document.taxClassificationCode"
+							fieldPropertyName="document.taxFederalPercent"
+							readOnlyFields="active,incomeTaxTypeCode"
+							newLookup="true"/> 
                     </c:if>                
                 </td>
                 <th align=right valign=middle class="bord-l-b">
@@ -84,14 +92,22 @@
                 	<div align="right"><kul:htmlAttributeLabel forceRequired = "true" attributeEntry="${documentAttributes.taxStatePercent}" /></div>
                 </th>
                 <td align=left valign=middle class="datacell">
-                	<kul:htmlControlAttribute 
-                		attributeEntry="${documentAttributes.taxStatePercent}" property="document.taxStatePercent" 
-                		readOnly="${not taxAreaEditable}" tabindexOverride="${tabindexOverrideBase + 0}"/>
+                	<kul:htmlControlAttribute
+                		attributeEntry="${documentAttributes.taxStatePercent}"
+						property="document.taxStatePercent"
+                		readOnly="${not taxAreaEditable}"
+						tabindexOverride="${tabindexOverrideBase + 0}"/>
 					&nbsp;                
                     <c:if test="${taxAreaEditable}">
-                   		<kul:lookup boClassName="org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent"
-                    		lookupParameters="document.taxClassificationCode:incomeClassCode,'S':incomeTaxTypeCode,'Y':active"
-                        	fieldConversions="incomeTaxPercent:document.taxStatePercent"/>   
+						<!-- These hidden tags contain static values that can be picked up by new lookups to pre-populate fields -->
+						<input type="hidden" name="static.stateTaxPercentIncomeTaxTypeCode" value="S" />
+						<input type="hidden" name="static.stateTaxPercentActive" value="Y" />
+                   		<kul:lookup boClassName="org.kuali.kfs.fp.businessobject.NonresidentTaxPercent"
+                    		lookupParameters="document.taxClassificationCode:incomeClassCode,staticIncomeTaxTypeCode:incomeTaxTypeCode,'Y':active,document.taxStatePercent:incomeTaxPercent"
+                        	fieldConversions="incomeTaxTypeCode:static.stateTaxPercentIncomeTaxTypeCode,active:stateTaxPercentActive.active,incomeTaxPercent:document.taxStatePercent,incomeClassCode:document.taxClassificationCode"
+							fieldPropertyName="document.taxStatePercent"
+							readOnlyFields="active,incomeTaxTypeCode"
+							newLookup="true"/> 
                     </c:if>                
                 </td>
                 <th align=right valign=middle class="bord-l-b">
@@ -162,7 +178,7 @@
 				<tr>
 					<td class="infoline" colspan="4">
 						<center>
-							<html:submit value="Clear All" styleClass="btn btn-default small" property="methodToCall.clearTaxInfo" title="Clear All Info From NRA Tax Entries" alt="Clear All Info From NRA Tax Entries"/>
+							<html:submit value="Clear All" styleClass="btn btn-default small" property="methodToCall.clearTaxInfo" title="Clear All Info From Nonresident Tax Entries" alt="Clear All Info From Nonresident Tax Entries"/>
 						</center>
 					</td>
     		    </tr>

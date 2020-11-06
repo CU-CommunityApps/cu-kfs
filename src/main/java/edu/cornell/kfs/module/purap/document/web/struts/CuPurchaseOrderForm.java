@@ -14,6 +14,7 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -73,12 +74,12 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	}
 	
 	protected boolean canOpenPoInCxmlErrorStatus() {
-		return PurapConstants.PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus()) && KimApiServiceLocator.getPermissionService().hasPermission(
+		return PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus()) && KimApiServiceLocator.getPermissionService().hasPermission(
 				GlobalVariables.getUserSession().getPrincipalId(), PurapConstants.PURAP_NAMESPACE, MOVE_CXML_ERROR_PO_PERM);
 		}
 	
 	protected boolean canVoidPoInCxmlErrorStatus() {
-		return  PurapConstants.PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus()) && KimApiServiceLocator.getPermissionService().hasPermission(
+		return  PurchaseOrderStatuses.APPDOC_CXML_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus()) && KimApiServiceLocator.getPermissionService().hasPermission(
 				GlobalVariables.getUserSession().getPrincipalId(), PurapConstants.PURAP_NAMESPACE, MOVE_CXML_ERROR_PO_PERM);
 		}
 	
@@ -177,9 +178,9 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
         boolean can = getPurchaseOrderDocument().isPurchaseOrderCurrentIndicator() && !getPurchaseOrderDocument().isPendingActionIndicator();
 
         if (can) {
-            boolean pendingPrint = PurapConstants.PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
-            boolean open = PurapConstants.PurchaseOrderStatuses.APPDOC_OPEN.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
-            boolean errorFax = PurapConstants.PurchaseOrderStatuses.APPDOC_FAX_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            boolean pendingPrint = PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            boolean open = PurchaseOrderStatuses.APPDOC_OPEN.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            boolean errorFax = PurchaseOrderStatuses.APPDOC_FAX_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
 
             List<PaymentRequestView> preqViews = SpringContext.getBean(PurapService.class)
                     .getRelatedViews(PaymentRequestView.class, getPurchaseOrderDocument().getAccountsPayablePurchasingDocumentLinkIdentifier());
