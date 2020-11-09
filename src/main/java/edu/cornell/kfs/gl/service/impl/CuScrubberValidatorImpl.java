@@ -14,7 +14,7 @@ import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.springframework.util.StringUtils;
 
 public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
-    private static final Logger LOG = LogManager.getLogger(CuScrubberValidatorImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     protected Message validateUniversityFiscalPeriodCode(OriginEntryInformation originEntry, OriginEntryInformation workingEntry, 

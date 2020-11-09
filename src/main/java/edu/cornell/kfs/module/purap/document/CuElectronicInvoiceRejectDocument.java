@@ -23,7 +23,7 @@ import edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAc
 import edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceItemHolder;
 
 public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDocument {
-    private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceRejectDocument.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     // KFSPTS-1719
     private List<CuElectronicInvoiceItemHolder> nonMatchItems;

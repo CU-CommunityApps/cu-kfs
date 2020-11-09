@@ -5,28 +5,25 @@ import java.util.Set;
 
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PurchaseOrderEditMode;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMode;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.authorization.PurchaseOrderAmendmentDocumentPresentationController;
-import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants.PurchaseOrderStatuses;
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class CuPurchaseOrderAmendmentDocumentPresentationController extends PurchaseOrderAmendmentDocumentPresentationController {
 
     @Override
     public boolean canEdit(Document document) {
         // KFSUPGRADE-339
-        if (PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
+        if (CUPurapConstants.PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
             return true;
         }
 
@@ -38,7 +35,7 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
         Set<String> editModes = super.getEditModes(document);
         PurchaseOrderDocument poDocument = (PurchaseOrderDocument) document;
 
-        if (org.kuali.kfs.module.purap.PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(poDocument.getApplicationDocumentStatus())) {
+        if (PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(poDocument.getApplicationDocumentStatus())) {
             WorkflowDocument workflowDocument = poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument();
             //  amendment doc needs to lock its field for initiator while enroute
             if (workflowDocument.isInitiated() || workflowDocument.isSaved()
@@ -47,7 +44,7 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
             }
         }
 		// KFSUPGRADE-339
-        if (PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
+        if (CUPurapConstants.PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
         	    editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
         }
         if (getPurapService().isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document, "New Unordered Items")) {

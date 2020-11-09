@@ -22,7 +22,7 @@ import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 
 public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
-	private static final Logger LOG = LogManager.getLogger(CuVendorCreditMemoDocument.class);
+	private static final Logger LOG = LogManager.getLogger();
 	
     public static String DOCUMENT_TYPE_NON_CHECK = "CMNC";
 

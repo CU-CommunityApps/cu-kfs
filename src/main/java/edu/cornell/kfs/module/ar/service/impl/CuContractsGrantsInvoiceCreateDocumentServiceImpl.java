@@ -59,7 +59,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl implements CuContractsGrantsInvoiceCreateDocumentService {
     
-    private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceCreateDocumentServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     protected CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService;
     protected CuVerifyBillingFrequencyService cuVerifyBillingFrequencyService;

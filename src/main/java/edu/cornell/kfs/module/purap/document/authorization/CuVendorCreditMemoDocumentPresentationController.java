@@ -3,7 +3,6 @@ package edu.cornell.kfs.module.purap.document.authorization;
 import java.util.Set;
 
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
-import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.authorization.VendorCreditMemoDocumentPresentationController;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;

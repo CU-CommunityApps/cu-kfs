@@ -15,7 +15,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import java.util.List;
 
 public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuAutoClosePurchaseOrderServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     public boolean autoCloseFullyDisencumberedOrders() {

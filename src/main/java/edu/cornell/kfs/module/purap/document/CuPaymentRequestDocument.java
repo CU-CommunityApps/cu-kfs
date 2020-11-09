@@ -15,7 +15,6 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
@@ -43,7 +42,7 @@ import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
-	private static final Logger LOG = LogManager.getLogger(CuPaymentRequestDocument.class);
+	private static final Logger LOG = LogManager.getLogger();
     // KFSPTS-1891
     public static String DOCUMENT_TYPE_NON_CHECK = "PRNC";
     public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
