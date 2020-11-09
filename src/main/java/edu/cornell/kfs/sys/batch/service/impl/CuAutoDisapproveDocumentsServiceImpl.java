@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocumentsServiceImpl {
-	private static final Logger LOG = LogManager.getLogger(CuAutoDisapproveDocumentsServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger();
     private static final String TAB = "\t";
 
     private RouteHeaderService routeHeaderService;

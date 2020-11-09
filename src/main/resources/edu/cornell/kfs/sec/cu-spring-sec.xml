@@ -32,16 +32,4 @@
         </property>
     </bean>
 
-
-    <bean id="securityPrincipalLookupableHelperService"
-          parent="securityPrincipalLookupableHelperService-parentBean" scope="prototype"/>
-    <bean id="securityPrincipalLookupableHelperService-parentBean"
-          class="edu.cornell.kfs.sec.businessobject.lookup.SecurityPrincipalLookupableHelperServiceImpl"
-          parent="cf.lookupableHelperService" abstract="true" p:identityService-ref="identityService"/>
-
-    <bean id="securityPrincipalLookupable"
-          parent="securityPrincipalLookupable-parentBean" scope="prototype"/>
-    <bean id="securityPrincipalLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
-          abstract="true" p:lookupableHelperService-ref="securityPrincipalLookupableHelperService"/>
-
 </beans>

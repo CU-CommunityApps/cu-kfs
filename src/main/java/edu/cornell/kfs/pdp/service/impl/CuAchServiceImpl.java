@@ -14,7 +14,7 @@ import org.kuali.kfs.pdp.service.impl.AchServiceImpl;
 import edu.cornell.kfs.pdp.service.CuAchService;
 
 public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
-    private static final Logger LOG = LogManager.getLogger(CuAchServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private BusinessObjectService businessObjectService;
 

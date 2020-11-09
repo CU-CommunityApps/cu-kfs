@@ -23,7 +23,7 @@ import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 
 @SuppressWarnings("unchecked")
 public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPaymentRequestDao {
-	private static final Logger LOG = LogManager.getLogger(CuPaymentRequestDaoOjb.class);
+	private static final Logger LOG = LogManager.getLogger();
 
     @Override
     public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String chartCode, Date onOrBeforePaymentRequestPayDate) {

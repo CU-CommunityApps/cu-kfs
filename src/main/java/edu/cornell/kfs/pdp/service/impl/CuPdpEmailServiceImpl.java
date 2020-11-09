@@ -29,7 +29,7 @@ import edu.cornell.kfs.pdp.service.CuPdpEmailService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpEmailService{
-    private static final Logger LOG = LogManager.getLogger(CuPdpEmailServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     private AchBundlerHelperService achBundlerHelperService;
     

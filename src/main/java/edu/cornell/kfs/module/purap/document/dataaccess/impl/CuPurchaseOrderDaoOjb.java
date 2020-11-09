@@ -21,7 +21,7 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuAutoClosePurchaseOrderView;
 
 public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
-    private static final Logger LOG = LogManager.getLogger(CuPurchaseOrderDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     public List<AutoClosePurchaseOrderView> getAllOpenPurchaseOrders(List<String> excludedVendorChoiceCodes) {
         LOG.info("getAllOpenPurchaseOrders() started");

@@ -23,7 +23,7 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 
 public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuRequisitionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     /**
      * Checks the rule for Automatic Purchase Order eligibility of the requisition and return a String containing the

@@ -48,7 +48,7 @@ import edu.cornell.kfs.sys.service.CUBankService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
-    private static final Logger LOG = LogManager.getLogger(CuPaymentRequestServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 

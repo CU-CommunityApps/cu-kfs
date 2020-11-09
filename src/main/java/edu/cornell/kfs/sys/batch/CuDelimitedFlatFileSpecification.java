@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.batch.FlatFilePropertySpecification;
 public class CuDelimitedFlatFileSpecification extends DelimitedFlatFileSpecification
         implements FlatFileSpecificationForProcessingPreSplitLines {
 
-    private static final Logger LOG = LogManager.getLogger(CuDelimitedFlatFileSpecification.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     public void parseLineIntoObject(FlatFileObjectSpecification parseSpecification, String lineToParse,
