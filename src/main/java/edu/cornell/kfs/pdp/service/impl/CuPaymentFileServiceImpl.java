@@ -41,7 +41,7 @@ import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 
 public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuPaymentFileServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     protected VendorService vendorService;
     protected EmailService emailService;

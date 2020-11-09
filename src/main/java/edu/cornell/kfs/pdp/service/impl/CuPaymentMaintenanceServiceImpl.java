@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuPaymentMaintenanceServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     @Override
     public boolean cancelDisbursement(Integer paymentGroupId, Integer paymentDetailId, String note, Person user) {

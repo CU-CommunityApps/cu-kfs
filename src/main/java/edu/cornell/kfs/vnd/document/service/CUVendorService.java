@@ -166,12 +166,13 @@ public interface CUVendorService {
     public boolean isVendorInstitutionEmployee(Integer vendorHeaderGeneratedIdentifier);
 
     /**
-     * Indicates whether the vendor identified by the given <code>vendorHeaderGeneratedIdentifier</code> is a non-resident alien
-     * by checking the value of {@link org.kuali.kfs.vnd.businessobject.VendorHeader#getVendorForeignIndicator()}.
-     * 
+     * Indicates whether the vendor identified by the given {@code vendorHeaderGeneratedIdentifier} is a
+     * nonresident by checking the value of
+     * {@link org.kuali.kfs.vnd.businessobject.VendorHeader#getVendorForeignIndicator()}.
+     *
      * @param vendorHeaderGeneratedIdentifier The Header Id in Integer form
-     * @return true if the vendor identified by the <code>vendorHeaderGeneratedIdentifier</code> given is valid and is marked as a
-     *         foreign vendor
+     * @return true if the vendor identified by the {@code vendorHeaderGeneratedIdentifier} given is valid and is
+     *         marked as a foreign vendor.
      */
     public boolean isVendorForeign(Integer vendorHeaderGeneratedIdentifier);
 

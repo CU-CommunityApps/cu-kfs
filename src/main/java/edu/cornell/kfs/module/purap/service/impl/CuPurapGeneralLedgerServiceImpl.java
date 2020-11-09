@@ -45,7 +45,7 @@ import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryServic
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 
 public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuPurapGeneralLedgerServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     // KFSPTS-1891
     protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;

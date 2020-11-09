@@ -83,7 +83,7 @@ import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
 
 @Transactional
 public class CuPendingTransactionServiceImpl extends PendingTransactionServiceImpl implements CuPendingTransactionService{
-    private static final Logger LOG = LogManager.getLogger(CuPendingTransactionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
 	private DocumentService documentService;
     private NoteService noteService;

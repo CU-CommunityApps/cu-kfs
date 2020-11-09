@@ -8,13 +8,14 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
@@ -29,10 +30,9 @@ import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.util.GlobalVariables;
 
 public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
-    private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceTestAction.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     private static final String AREA_C0DE = "areaCode";
     private static final String PHONE_NUMBER = "phoneNumber";
