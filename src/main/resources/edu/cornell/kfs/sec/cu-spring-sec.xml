@@ -26,7 +26,6 @@
         <property name="dataDictionaryPackages">
             <list merge="true">
                 <value>classpath:edu/cornell/kfs/sec/document/datadictionary/*.xml</value>
-                <value>classpath:edu/cornell/kfs/sec/datadictionary/*.xml</value>
             </list>
         </property>
     </bean>
