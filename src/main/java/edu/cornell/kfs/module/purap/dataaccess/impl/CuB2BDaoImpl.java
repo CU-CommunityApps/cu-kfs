@@ -18,7 +18,7 @@ import java.net.URL;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class CuB2BDaoImpl extends B2BDaoImpl {
-    private static final Logger LOG = LogManager.getLogger(CuB2BDaoImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * @see org.kuali.kfs.module.purap.dataaccess.impl.B2BDaoImpl#sendPunchOutRequest(java.lang.String, java.lang.String)

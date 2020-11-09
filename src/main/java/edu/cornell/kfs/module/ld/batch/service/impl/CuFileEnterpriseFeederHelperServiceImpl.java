@@ -42,7 +42,7 @@ import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeederHelperServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederHelperServiceImpl.class); 
+    private static final Logger LOG = LogManager.getLogger(); 
     
     @Override
     public void feedOnFile(File doneFile, File dataFile, File reconFile, PrintStream enterpriseFeedPs,

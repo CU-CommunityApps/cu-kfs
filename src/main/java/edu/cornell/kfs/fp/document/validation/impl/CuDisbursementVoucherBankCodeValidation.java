@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import edu.cornell.kfs.sys.document.validation.impl.CuBankCodeValidation;
 
 public class CuDisbursementVoucherBankCodeValidation extends DisbursementVoucherBankCodeValidation {
-    private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherBankCodeValidation.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     public boolean validate(AttributedDocumentEvent event) {
         LOG.debug("validate start");        

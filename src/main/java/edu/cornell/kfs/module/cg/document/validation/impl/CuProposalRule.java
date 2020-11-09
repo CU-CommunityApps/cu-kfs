@@ -12,7 +12,7 @@ import edu.cornell.kfs.module.cg.document.service.CuCGMaintenanceDocumentService
 
 @SuppressWarnings("deprecation")
 public class CuProposalRule extends ProposalRule {
-    private static final Logger LOG = LogManager.getLogger(CuProposalRule.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     protected CuCGMaintenanceDocumentService cuCGMaintenanceDocumentService;
     

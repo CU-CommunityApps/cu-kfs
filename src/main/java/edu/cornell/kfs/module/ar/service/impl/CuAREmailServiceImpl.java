@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.ar.service.impl;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
@@ -24,9 +25,11 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
                     invoice.getInvoiceGeneralDetail().getAward().getProposal().getProposalNumber());
         } else {
             subject = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_SUBJECT);
+            ContractsAndGrantsBillingAward award = invoice.getInvoiceGeneralDetail().getAward();
             message = MessageFormat.format(subject, invoice.getDocumentNumber(), 
-                    invoice.getInvoiceGeneralDetail().getAward().getProposal().getGrantNumber(), 
-                    invoice.getInvoiceGeneralDetail().getAward().getProposal().getProposalNumber());
+                    award.getProposal().getGrantNumber(), 
+                    award.getProposal().getProposalNumber(),
+                    award.getAwardPrimaryProjectDirector().getProjectDirector().getName());
         }
         return message;
     }
@@ -36,7 +39,7 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
         String message = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_BODY);
 
         Person fundManager = invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager();
-        return MessageFormat.format(message, customerAddress.getCustomer().getCustomerName(),
+        return MessageFormat.format(message, customerAddress.getCustomerAddressName(),
             fundManager.getFirstName() + KFSConstants.BLANK_SPACE + fundManager.getLastName(), fundManager.getPhoneNumber(),
             fundManager.getEmailAddress());
     }

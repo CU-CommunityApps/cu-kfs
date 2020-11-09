@@ -32,7 +32,7 @@ import java.io.InputStream;
 @Transactional
 public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
 
-    private static Logger LOG = LogManager.getLogger(CuAttachmentServiceImpl.class);
+    private static Logger LOG = LogManager.getLogger();
 
     private AntiVirusService antiVirusService;
     private NoteService noteService;

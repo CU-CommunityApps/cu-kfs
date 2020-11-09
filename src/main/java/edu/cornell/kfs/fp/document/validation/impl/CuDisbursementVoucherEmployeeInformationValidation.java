@@ -23,7 +23,7 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
 public class CuDisbursementVoucherEmployeeInformationValidation extends DisbursementVoucherEmployeeInformationValidation {
 	
-    private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherEmployeeInformationValidation.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     
     public boolean validate(AttributedDocumentEvent event) {

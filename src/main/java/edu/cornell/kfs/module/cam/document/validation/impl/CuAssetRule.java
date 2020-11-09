@@ -18,7 +18,7 @@ import org.kuali.kfs.module.cam.document.validation.impl.AssetRule;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 
 public class CuAssetRule extends AssetRule {
-    private static final Logger LOG = LogManager.getLogger(CuAssetRule.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected boolean validateTagNumber() {
         boolean valid = true;
