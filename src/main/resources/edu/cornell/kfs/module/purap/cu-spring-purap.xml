@@ -187,9 +187,7 @@
         <property name="userFavoriteAccountService" ref="userFavoriteAccountService"/>
     </bean>
    
-   <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl">
-       <property name="roleService" ref="roleService"/>
-   </bean>
+   <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl"/>
    
    <bean id="requisitionService" parent="requisitionService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuRequisitionServiceImpl"/>
     
