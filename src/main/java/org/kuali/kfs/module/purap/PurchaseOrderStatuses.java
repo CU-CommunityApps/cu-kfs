@@ -1,3 +1,21 @@
+/*
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ *
+ * Copyright 2005-2020 Kuali, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.kuali.kfs.module.purap;
 
 import java.util.HashMap;
@@ -8,6 +26,7 @@ import java.util.Set;
 import static java.util.Map.entry;
 
 public final class PurchaseOrderStatuses {
+
     // Added for updating app doc status for disapproved
     public static final String APPDOC_DAPRVD_UNORDERED_ITEM = "Disapproved New Unordered Item Review";
     public static final String APPDOC_DAPRVD_PURCHASING = "Disapproved Purchasing";
@@ -58,14 +77,20 @@ public final class PurchaseOrderStatuses {
     public static final String NODE_CONTRACTS_AND_GRANTS_REVIEW = "Award";
     public static final String NODE_BUDGET_OFFICE_REVIEW = "Budget";
     public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
-    public static final String NODE_DOCUMENT_TRANSMISSION = "JoinVendorIsEmployeeOrNonResidentAlien";
+    public static final String NODE_DOCUMENT_TRANSMISSION = "JoinVendorIsEmployeeOrNonresident";
 
-    public static final Set<String> INCOMPLETE_STATUSES = new HashSet<String>();
-    public static final Set<String> COMPLETE_STATUSES = new HashSet<String>();
+    public static final Set<String> INCOMPLETE_STATUSES = new HashSet<>();
+    public static final Set<String> COMPLETE_STATUSES = new HashSet<>();
 
     public static final Map<String, String> STATUSES_BY_TRANSMISSION_TYPE = getStatusesByTransmissionType();
 
-    public static HashMap<String, String> getAllAppDocStatuses(){
+    /**
+     * Private Constructor since this is a constants class that should never be instantiated.
+     */
+    private PurchaseOrderStatuses() {
+    }
+
+    public static HashMap<String, String> getAllAppDocStatuses() {
         HashMap<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(APPDOC_DAPRVD_UNORDERED_ITEM, APPDOC_DAPRVD_UNORDERED_ITEM);
@@ -110,21 +135,22 @@ public final class PurchaseOrderStatuses {
         return appDocStatusMap;
     }
 
-    public static HashMap<String, String> getPurchaseOrderAppDocDisapproveStatuses(){
+    public static HashMap<String, String> getPurchaseOrderAppDocDisapproveStatuses() {
         HashMap<String, String> poAppDocStatusMap = new HashMap<>();
 
         poAppDocStatusMap.put(NODE_ADHOC_REVIEW, PurchaseOrderStatuses.APPDOC_CANCELLED);
-        poAppDocStatusMap.put(NODE_AWAIT_NEW_UNORDERED_ITEM_REVIEW,PurchaseOrderStatuses.APPDOC_DAPRVD_UNORDERED_ITEM);
+        poAppDocStatusMap
+                .put(NODE_AWAIT_NEW_UNORDERED_ITEM_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_UNORDERED_ITEM);
         poAppDocStatusMap.put(NODE_INTERNAL_PURCHASING_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_PURCHASING);
         poAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW,  PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
         poAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW,  PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
         poAppDocStatusMap.put(NODE_CONTRACTS_AND_GRANTS_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_CG_APPROVAL);
         poAppDocStatusMap.put(NODE_BUDGET_OFFICE_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_BUDGET);
         poAppDocStatusMap.put(NODE_VENDOR_TAX_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_TAX);
-        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_CANCELLED,  PurchaseOrderStatuses.APPDOC_CANCELLED);
-        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_VOID,  PurchaseOrderStatuses.APPDOC_VOID);
-        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_IN_PROCESS,  PurchaseOrderStatuses.APPDOC_IN_PROCESS);
-        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_CLOSED,  PurchaseOrderStatuses.APPDOC_CLOSED);
+        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_CANCELLED, PurchaseOrderStatuses.APPDOC_CANCELLED);
+        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_VOID, PurchaseOrderStatuses.APPDOC_VOID);
+        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_IN_PROCESS, PurchaseOrderStatuses.APPDOC_IN_PROCESS);
+        poAppDocStatusMap.put(PurchaseOrderStatuses.APPDOC_CLOSED, PurchaseOrderStatuses.APPDOC_CLOSED);
         // KFSUPGRADE-345
         poAppDocStatusMap.put(RequisitionStatuses.NODE_ORG_REVIEW, RequisitionStatuses.APPDOC_DAPRVD_CHART);
         poAppDocStatusMap.put(RequisitionStatuses.NODE_ACCOUNT, RequisitionStatuses.APPDOC_DAPRVD_FISCAL);
@@ -173,10 +199,9 @@ public final class PurchaseOrderStatuses {
         COMPLETE_STATUSES.add(APPDOC_PENDING_VOID);
     }
 
-
     /**
-     * Do not include 'OPEN' status in this map. The 'OPEN' status is the default status that is set when no status exists for a
-     * particular pending transmission type code.
+     * Do not include 'OPEN' status in this map. The 'OPEN' status is the default status that is set when no status
+     * exists for a particular pending transmission type code.
      */
     private static Map<String, String> getStatusesByTransmissionType() {
         // TODO: Consider making this a constant field.
@@ -186,5 +211,4 @@ public final class PurchaseOrderStatuses {
                 entry(PurapConstants.POTransmissionMethods.FAX, APPDOC_PENDING_FAX)
         );
     }
-
 }

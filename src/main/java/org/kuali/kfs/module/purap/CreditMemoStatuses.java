@@ -1,13 +1,32 @@
+/*
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ *
+ * Copyright 2005-2020 Kuali, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.kuali.kfs.module.purap;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 public final class CreditMemoStatuses {
+
     public static final String APPDOC_INITIATE = "Initiated";
     public static final String APPDOC_IN_PROCESS = "In Process";
     public static final String APPDOC_CANCELLED_IN_PROCESS = "Cancelled In Process";
@@ -22,15 +41,23 @@ public final class CreditMemoStatuses {
     //KFSUPGRADE-779
     public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer";
 
-    public static final String[] STATUSES_ALLOWED_FOR_EXTRACTION = { APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_COMPLETE };
+    public static final String[] STATUSES_ALLOWED_FOR_EXTRACTION =
+        {APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_COMPLETE};
 
-    public static final String[] STATUSES_POTENTIALLY_ACTIVE = { APPDOC_IN_PROCESS, APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW };
+    public static final String[] STATUSES_POTENTIALLY_ACTIVE =
+        {APPDOC_IN_PROCESS, APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW};
 
-    public static final Set CANCELLED_STATUSES = new HashSet<>();
-    public static final Set STATUSES_DISALLOWING_HOLD = new HashSet();
-    public static final Set STATUSES_NOT_REQUIRING_ENTRY_REVERSAL = new HashSet();
-    
-    public static HashMap<String, String> getAllAppDocStatuses(){
+    public static final Set<String> CANCELLED_STATUSES = new HashSet<>();
+    public static final Set<String> STATUSES_DISALLOWING_HOLD = new HashSet<>();
+    public static final Set<String> STATUSES_NOT_REQUIRING_ENTRY_REVERSAL = new HashSet<>();
+
+    /**
+     * Private Constructor since this is a constants class that should never be instantiated.
+     */
+    private CreditMemoStatuses() {
+    }
+
+    public static HashMap<String, String> getAllAppDocStatuses() {
         HashMap<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(APPDOC_INITIATE, APPDOC_INITIATE);
@@ -46,10 +73,17 @@ public final class CreditMemoStatuses {
     }
 
     public enum STATUS_ORDER {
-        CANCELLED_IN_PROCESS(CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS, false), CANCELLED_PRIOR_TO_AP_APPROVAL(CreditMemoStatuses.APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL, false), CANCELLED_POST_AP_APPROVE(CreditMemoStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false), INITIATE(CreditMemoStatuses.APPDOC_INITIATE, true), IN_PROCESS(CreditMemoStatuses.APPDOC_IN_PROCESS, true), AWAITING_ACCOUNTS_PAYABLE_REVIEW(CreditMemoStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false), COMPLETE(CreditMemoStatuses.APPDOC_COMPLETE, false), ;
+        CANCELLED_IN_PROCESS(CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS, false),
+        CANCELLED_PRIOR_TO_AP_APPROVAL(CreditMemoStatuses.APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL, false),
+        CANCELLED_POST_AP_APPROVE(CreditMemoStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false),
+        INITIATE(CreditMemoStatuses.APPDOC_INITIATE, true),
+        IN_PROCESS(CreditMemoStatuses.APPDOC_IN_PROCESS, true),
+        AWAITING_ACCOUNTS_PAYABLE_REVIEW(CreditMemoStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),
+        PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false), 
+        COMPLETE(CreditMemoStatuses.APPDOC_COMPLETE, false);
 
-        private String statusCode = new String();
-        private boolean fullEntryAllowed = false;
+        private String statusCode;
+        private boolean fullEntryAllowed;
 
         STATUS_ORDER(String statusCode, boolean fullEntry) {
             this.statusCode = statusCode;
@@ -78,8 +112,8 @@ public final class CreditMemoStatuses {
         }
 
         public static boolean isFirstFullEntryStatus(String statusCode) {
-            // NOTE this won't work if there endsup being two ways to get to the first full entry status (i.e. like AUTO/DEPT
-            // for final)
+            // NOTE this won't work if there endsup being two ways to get to the first full entry status
+            // (i.e. like AUTO/DEPT for final)
             return getByStatusCode(statusCode).fullEntryAllowed && !getPreviousStatus(statusCode).fullEntryAllowed;
         }
     }
@@ -91,18 +125,21 @@ public final class CreditMemoStatuses {
 
         STATUSES_DISALLOWING_HOLD.add(APPDOC_INITIATE);
         STATUSES_DISALLOWING_HOLD.add(APPDOC_IN_PROCESS);
-        STATUSES_DISALLOWING_HOLD.addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+        STATUSES_DISALLOWING_HOLD
+                .addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
 
         STATUSES_NOT_REQUIRING_ENTRY_REVERSAL.add(APPDOC_INITIATE);
         STATUSES_NOT_REQUIRING_ENTRY_REVERSAL.add(APPDOC_IN_PROCESS);
-        STATUSES_NOT_REQUIRING_ENTRY_REVERSAL.addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+        STATUSES_NOT_REQUIRING_ENTRY_REVERSAL
+                .addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
     }
 
-    public static final HashMap<String, String> getCreditMemoAppDocDisapproveStatuses(){
+    public static HashMap<String, String> getCreditMemoAppDocDisapproveStatuses() {
         HashMap<String, String> appDocStatusMap = new HashMap<>();
 
-        appDocStatusMap.put(NODE_ADHOC_REVIEW,APPDOC_CANCELLED_IN_PROCESS);
-        appDocStatusMap.put(PurapConstants.AccountsPayableStatuses.NODE_ACCOUNT_PAYABLE_REVIEW, APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL);
+        appDocStatusMap.put(NODE_ADHOC_REVIEW, APPDOC_CANCELLED_IN_PROCESS);
+        appDocStatusMap.put(PurapConstants.AccountsPayableStatuses.NODE_ACCOUNT_PAYABLE_REVIEW,
+                APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL);
         appDocStatusMap.put(NODE_ACCOUNT_REVIEW, APPDOC_CANCELLED_POST_AP_APPROVE);
 
         return appDocStatusMap;

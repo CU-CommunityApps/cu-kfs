@@ -49,7 +49,6 @@ public final class PurapConstants {
 
     public static final KualiDecimal HUNDRED = new KualiDecimal(100);
 
-
     public static final String B2B_PUNCHBACK_METHOD_TO_CALL = "returnFromShopping";
 
     public static final String PDP_PURAP_EXTRACT_FILE_NAME = "extr_fr_purap";
@@ -70,7 +69,7 @@ public final class PurapConstants {
 
     public static final String REQ_REASON_NOT_APO = "ORDER ROUTED TO PURCHASING FOR PROCESSING: ";
     public static final String REQ_UNABLE_TO_CREATE_NOTE = "Unable to create a note on this document.";
-    public static final String REQ_NO_ACCOUNTING_LINES="message.requisition.no.accounting.lines";
+    public static final String REQ_NO_ACCOUNTING_LINES = "message.requisition.no.accounting.lines";
 
     public static final String TRADE_IN_OBJECT_CODE_FOR_CAPITAL_ASSET_OBJECT_SUB_TYPE = "7070";
     public static final String TRADE_IN_OBJECT_CODE_FOR_CAPITAL_LEASE_OBJECT_SUB_TYPE = "7099";
@@ -90,6 +89,7 @@ public final class PurapConstants {
 
     public static final String TAX_RECALCULATION_INFO = "TaxRecalculationQuestion";
     public static final String TAX_RECALCULATION_QUESTION = "The postal code of the delivery address has changed.[br]Selecting \"Yes\" will submit the document without recalculating the taxes.[br]Selecting \"No\" will return you to the document so that the taxes can be recalculated.[br]The \"clear all\" button can be used to clear all tax amounts which will force taxes to be recalculated upon submission.";
+
     public static final String PURCHASE_ORDER_TRANSMISSION_METHOD = "PMTM";
 
     public static final String REQ_B2B_ALLOW_COPY_DAYS = "5";
@@ -179,7 +179,7 @@ public final class PurapConstants {
 
     // CREDIT MEMO DOCUMENT
     public static final String CREDIT_MEMO_ACTION_NAME = "VendorCreditMemo";
-    
+
     // this should be removed - use the central definition in KFSConstants
     @Deprecated
     public static final String PURAP_ORIGIN_CODE = "01";
@@ -297,11 +297,11 @@ public final class PurapConstants {
         returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_VENDOR_NOTE_TEXT, null);
         return returnMap;
     }
-    
+
     /**
      * @deprecated This information needs to be looked up from the DD
      * @return map of purap doc types to classes
-    */
+     */
     @Deprecated
     private static HashMap<String, String> getPurapParameterDetailTypeCodes() {
         HashMap<String, String> map;
@@ -399,10 +399,10 @@ public final class PurapConstants {
         public static final String ITEM_TYPE_SHIPPING_CODE = "SHIP";
 
         public static final Set<String> EXCLUDED_ITEM_TYPES = new HashSet<String>();
-        
+
         static {
-        		EXCLUDED_ITEM_TYPES.add(ITEM_TYPE_UNORDERED_ITEM_CODE);
-        	}
+            EXCLUDED_ITEM_TYPES.add(ITEM_TYPE_UNORDERED_ITEM_CODE);
+        }
     }
 
     public static class PurchaseOrderDocTypes {
@@ -487,32 +487,32 @@ public final class PurapConstants {
         public static final String AWAITING_ACCOUNTS_PAYABLE_REVIEW = "APAD";
     }
 
-    public static final class AccountsPayableStatuses{
+    public static final class AccountsPayableStatuses {
         public static final String NODE_ACCOUNT_PAYABLE_REVIEW = "ImageAttachment";
     }
 
-    public static class LineItemReceivingDocumentStrings{
+    public static class LineItemReceivingDocumentStrings {
         public static final String DUPLICATE_RECEIVING_LINE_QUESTION = "DuplicateReceivingLine";
         public static final String VENDOR_DATE = "Vendor Date";
         public static final String AWAITING_PO_OPEN_STATUS = "OutstandingTransactions";
         public static final String JOIN_NODE = "Join";
     }
 
-    public static class LineItemReceivingStatuses{
+    public static class LineItemReceivingStatuses {
         public static final String APPDOC_IN_PROCESS = "In Process";
         public static final String APPDOC_AWAITING_PO_OPEN_STATUS = "Awaiting Purchase Order Open Status";
         public static final String APPDOC_COMPLETE = "Complete";
         public static final String APPDOC_CANCELLED = "Cancelled";
     }
 
-    public static class CorrectionReceivingDocumentStrings{
+    public static class CorrectionReceivingDocumentStrings {
         public static final String NOTE_QUESTION = "CorrectionReceivingNote";
         public static final String NOTE_PREFIX = "Note entered while creating Correction Receiving: ";
         public static final String CORRECTION_RECEIVING_DOCUMENT_TYPE_NAME = "CorrectionReceiving";
         public static final String CORRECTION_RECEIVING_CREATION_NOTE_PARAMETER = "CorrectionReceivingNoteParameter";
     }
 
-    public static class BulkReceivingDocumentStrings{
+    public static class BulkReceivingDocumentStrings {
         public static final String DUPLICATE_BULK_RECEIVING_DOCUMENT_QUESTION = "DuplicateBulkReceiving";
         public static final String VENDOR_DATE = "Vendor Date";
         public static final String MESSAGE_BULK_RECEIVING_DEFAULT_DOC_DESCRIPTION = "Not associated with a PO";
@@ -574,8 +574,6 @@ public final class PurapConstants {
 
     }
 
-    public static final Map<String, Class<?>> UNCOPYABLE_FIELDS_FOR_SPLIT_PO = uncopyableFieldsForSplitPurchaseOrder();
-
     // this is mostly a duplication of an earlier subclass
     @Deprecated
     public static final class PurapDocTypeCodes {
@@ -620,7 +618,7 @@ public final class PurapConstants {
         public static String NO_FILES_PROCESSED_EMAIL_MESSAGE = "No invoice files were processed today. " + "The developers will send notification if this was an error with the load process.";
 
         public static String[] ITEM_TYPES_REQUIRES_DESCRIPTION = {PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE,
-                                                                  PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE};
+            PurapConstants.ItemTypeCodes.ITEM_TYPE_MISC_CODE};
 
         // ELECTRONIC INVOICE REJECT REASON TYPE CODES
         public static String REJECT_REASON_TYPE_FILE = "FILE";
@@ -693,8 +691,7 @@ public final class PurapConstants {
         public static final String PREQ_ROUTING_VALIDATION_ERROR = "PRVE";
         public static final String ERROR_ADDING_SCHEMA = "EASC";
 
-
-        public static class RejectDocumentFields{
+        public static class RejectDocumentFields {
             public static final String INVOICE_FILE_NUMBER = "invoiceFileNumber";
             public static final String INVOICE_FILE_DATE = "invoiceFileDate";
 
@@ -713,9 +710,7 @@ public final class PurapConstants {
             public static final String INVOICE_ITEM_SHIPPING_AMT = "invoiceItemShippingAmount";
             public static final String INVOICE_ITEM_DISCOUNT_AMT = "invoiceItemDiscountAmount";
             public static final String INVOICE_ITEM_NET_AMT = "invoiceItemNetAmount";
-
         }
-
     }
 
     public static class CapitalAssetAvailability {
@@ -724,7 +719,7 @@ public final class PurapConstants {
         public static final String EACH = "EACH";
     }
 
-    public static class CapitalAssetSystemTypes{
+    public static class CapitalAssetSystemTypes {
         public static final String ONE_SYSTEM = "ONE";
         public static final String INDIVIDUAL = "IND";
         public static final String MULTIPLE = "MUL";
@@ -732,9 +727,9 @@ public final class PurapConstants {
 
     public static final class CAMS_REQUIREDNESS_FIELDS {
         public static final Map<String, String> REQUIREDNESS_FIELDS_BY_PARAMETER_NAMES = getRequirednessFieldsByParameterNames();
-        
+
         private static Map<String, String> getRequirednessFieldsByParameterNames() {
-            
+
             // TODO: Consider making this a constant field.
             return Map.ofEntries(
                     entry(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_NUMBER_ON_REQUISITION,
@@ -790,7 +785,7 @@ public final class PurapConstants {
         }
     }
 
-    public static class CapitalAssetSystemStates{
+    public static class CapitalAssetSystemStates {
         public static final String NEW = "NEW";
         public static final String MODIFY = "MOD";
     }
@@ -895,17 +890,20 @@ public final class PurapConstants {
             statuses.add(RequisitionStatuses.APPDOC_AWAIT_FISCAL_REVIEW);
             return statuses;
         }
+
         private static HashSet<String> getPurchaseOrderStatusCAMSWarnings() {
             HashSet<String> statuses = new HashSet<String>();
             statuses.add(PurchaseOrderStatuses.APPDOC_IN_PROCESS);
             statuses.add(PurchaseOrderStatuses.APPDOC_AWAIT_PURCHASING_REVIEW);
             return statuses;
         }
+
         private static HashSet<String> getPaymentRequestStatusCAMSWarnings() {
             HashSet<String> statuses = new HashSet<>();
             statuses.add(PaymentRequestStatuses.APPDOC_IN_PROCESS);
             return statuses;
         }
+
         private static HashSet<String> getCreditMemoStatusCAMSWarnings() {
             HashSet<String> statuses = new HashSet<>();
             statuses.add(CreditMemoStatuses.APPDOC_IN_PROCESS);
@@ -913,7 +911,7 @@ public final class PurapConstants {
         }
     }
 
-    public static final class AttachmentTypeCodes{
+    public static final class AttachmentTypeCodes {
         public static final String ATTACHMENT_TYPE_CM_IMAGE = "Credit Memo Image";
         public static final String ATTACHMENT_TYPE_CONTRACTS = "Contracts";
         public static final String ATTACHMENT_TYPE_CONTRACT_AMENDMENTS = "Contract Amendments";
@@ -929,5 +927,4 @@ public final class PurapConstants {
     public static final class AccountDistributionMethodCodes {
         public static final String PROPORTIONAL_CODE = "P";
     }
-   
 }
