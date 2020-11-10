@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -351,7 +352,8 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                     // Prepare any Writer instances needed by the tax processing.
                     tempValues = processor.getFilePathsForWriters(summary, processingStartDate);
                     for (int i = 0; i < tempValues.length; i++) {
-                        tempWriter = new BufferedWriter(new PrintWriter(new File(tempValues[i])));
+                        tempWriter = new BufferedWriter(
+                                new PrintWriter(new File(tempValues[i]), StandardCharsets.UTF_8));
                         processor.setWriter(tempWriter, i);
                     }
                     tempWriter = null;

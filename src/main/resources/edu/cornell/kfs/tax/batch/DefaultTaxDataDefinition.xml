@@ -296,7 +296,9 @@
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::chartCode" alias="chartCode" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::accountNumber" alias="accountNumber" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::initiatorNetId" alias="initiatorNetId" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1099Type" alias="form1099Type" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1099Box" alias="form1099Box" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1099OverriddenType" alias="form1099OverriddenType" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1099OverriddenBox" alias="form1099OverriddenBox" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SBox" alias="form1042SBox" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SOverriddenBox" alias="form1042SOverriddenBox" />
@@ -357,11 +359,11 @@
         <field name="miscGrossProceedsAttorney" type="DECIMAL" />
         <field name="miscSection409ADeferral" type="DECIMAL" />
         <field name="miscGoldenParachute" type="DECIMAL" />
-        <field name="miscNonQualifiedDeferredCompensation" type="DECIMAL" />
+        <field name="miscNonqualifiedDeferredCompensation" type="DECIMAL" />
         <field name="miscStateTaxWithheld" type="DECIMAL" />
         <field name="miscPayerStateNumber" type="VARCHAR" />
         <field name="miscStateIncome" type="DECIMAL" />
-        <field name="necNonEmployeeCompensation" type="DECIMAL" />
+        <field name="necNonemployeeCompensation" type="DECIMAL" />
         <field name="necFedIncomeTaxWithheld" type="DECIMAL" />
         <field name="necStateTaxWithheld" type="DECIMAL" />
         <field name="necPayerStateNumber" type="VARCHAR" />

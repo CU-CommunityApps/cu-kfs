@@ -2,6 +2,8 @@ package edu.cornell.kfs.tax;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * Helper class containing various tax-processing-related constants.
  */
@@ -30,8 +32,13 @@ public final class CUTaxConstants {
     public static final String NO_US_VENDOR_ADDRESS = "No US Address on File!";
     public static final String NO_FOREIGN_VENDOR_ADDRESS = "No Foreign Address on File!";
     public static final String NO_ANY_VENDOR_ADDRESS = "No Address on File!";
+    public static final String TAX_1099_MISC_FORM_TYPE = "MISC";
+    public static final String TAX_1099_NEC_FORM_TYPE = "NEC";
+    public static final String TAX_1099_UNKNOWN_FORM_TYPE = "????";
     public static final String NEEDS_UPDATING_BOX_KEY = "?";
     public static final String TAX_1099_UNKNOWN_BOX_KEY = "???";
+    public static final Pair<String, String> TAX_1099_UNKNOWN_BOX_COMPOSITE_KEY = Pair.of(
+            TAX_1099_UNKNOWN_FORM_TYPE, TAX_1099_UNKNOWN_BOX_KEY);
     public static final String TAX_1042S_UNKNOWN_BOX_KEY = "????";
     public static final String ANY_OR_NONE_PAYMENT_REASON = "*";
     public static final String UNKNOWN_COUNTRY = "UC";
@@ -72,11 +79,11 @@ public final class CUTaxConstants {
     public static final int DEFAULT_EXTRA_RS_SIZE = 2;
     public static final int VENDOR_ADDRESS_COUNTRY_CODE_PARAM_INDEX = 3;
 
-    public static final Pattern TAX_1099_BOX_MAPPING_KEY_PATTERN = Pattern.compile("^(MISC|NEC)\\((\\w+)\\)$");
+    public static final Pattern TAX_1099_BOX_MAPPING_KEY_PATTERN = Pattern.compile(
+            "^(\\w{1,4}|\\?{1,4})\\((\\w{1,3}|\\?{1,3})\\)$");
     public static final int TAX_1099_BOX_MAPPING_KEY_FORM_TYPE_GROUP = 1;
     public static final int TAX_1099_BOX_MAPPING_KEY_BOX_NUMBER_GROUP = 2;
     public static final String TAX_1099_BOX_MAPPING_KEY_FORMAT = "{0}({1})";
-    public static final String NULL_1099_MAPPING = "NULL";
 
     /**
      * Helper subclass containing config-prop-related constants.
@@ -90,6 +97,10 @@ public final class CUTaxConstants {
         public static final String ERROR_BATCH_UPLOAD_INVALID_TRANSACTION_OVERRIDES = "error.batchUpload.invalidTransactionOverrides";
         public static final String ERROR_DOCUMENT_TRANSACTIONOVERRIDEMAINTENANCE_1099_BOX_LENGTH =
                 "error.document.transactionOverrideMaintenance.1099.box.length";
+        public static final String ERROR_DOCUMENT_TRANSACTIONOVERRIDEMAINTENANCE_1099_FORMTYPE_EMPTY =
+                "error.document.transactionOverrideMaintenance.1099.formType.empty";
+        public static final String ERROR_DOCUMENT_TRANSACTIONOVERRIDEMAINTENANCE_1042S_FORMTYPE_NONEMPTY =
+                "error.document.transactionOverrideMaintenance.1042s.formType.nonEmpty";
         
         /*
          * The filename parameters pointing to the TaxOutputDefinition and TaxDataDefinition XML

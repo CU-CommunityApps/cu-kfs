@@ -523,7 +523,9 @@ abstract class TaxTableRow {
         final TaxTableField chartCode;
         final TaxTableField accountNumber;
         final TaxTableField initiatorNetId;
+        final TaxTableField form1099Type;
         final TaxTableField form1099Box;
+        final TaxTableField form1099OverriddenType;
         final TaxTableField form1099OverriddenBox;
         final TaxTableField form1042SBox;
         final TaxTableField form1042SOverriddenBox;
@@ -579,7 +581,9 @@ abstract class TaxTableRow {
             this.chartCode = getAliasedField(TransactionDetailFieldNames.CHART_CODE);
             this.accountNumber = getAliasedField(TransactionDetailFieldNames.ACCOUNT_NUMBER);
             this.initiatorNetId = getAliasedField(TransactionDetailFieldNames.INITIATOR_NETID);
+            this.form1099Type = getAliasedField(TransactionDetailFieldNames.FORM_1099_TYPE);
             this.form1099Box = getAliasedField(TransactionDetailFieldNames.FORM_1099_BOX);
+            this.form1099OverriddenType = getAliasedField(TransactionDetailFieldNames.FORM_1099_OVERRIDDEN_TYPE);
             this.form1099OverriddenBox = getAliasedField(TransactionDetailFieldNames.FORM_1099_OVERRIDDEN_BOX);
             this.form1042SBox = getAliasedField(TransactionDetailFieldNames.FORM_1042S_BOX);
             this.form1042SOverriddenBox = getAliasedField(TransactionDetailFieldNames.FORM_1042S_OVERRIDDEN_BOX);
@@ -634,11 +638,11 @@ abstract class TaxTableRow {
         final TaxTableField miscGrossProceedsAttorney;
         final TaxTableField miscSection409ADeferral;
         final TaxTableField miscGoldenParachute;
-        final TaxTableField miscNonQualifiedDeferredCompensation;
+        final TaxTableField miscNonqualifiedDeferredCompensation;
         final TaxTableField miscStateTaxWithheld;
         final TaxTableField miscPayerStateNumber;
         final TaxTableField miscStateIncome;
-        final TaxTableField necNonEmployeeCompensation;
+        final TaxTableField necNonemployeeCompensation;
         final TaxTableField necFedIncomeTaxWithheld;
         final TaxTableField necStateTaxWithheld;
         final TaxTableField necPayerStateNumber;
@@ -700,12 +704,12 @@ abstract class TaxTableRow {
             this.miscGrossProceedsAttorney = getAliasedField(DerivedFieldNames.MISC_GROSS_PROCEEDS_ATTORNEY);
             this.miscSection409ADeferral = getAliasedField(DerivedFieldNames.MISC_SECTION_409A_DEFERRAL);
             this.miscGoldenParachute = getAliasedField(DerivedFieldNames.MISC_GOLDEN_PARACHUTE);
-            this.miscNonQualifiedDeferredCompensation = getAliasedField(
+            this.miscNonqualifiedDeferredCompensation = getAliasedField(
                     DerivedFieldNames.MISC_NONQUALIFIED_DEFERRED_COMPENSATION);
             this.miscStateTaxWithheld = getAliasedField(DerivedFieldNames.MISC_STATE_TAX_WITHHELD);
             this.miscPayerStateNumber = getAliasedField(DerivedFieldNames.MISC_PAYER_STATE_NUMBER);
             this.miscStateIncome = getAliasedField(DerivedFieldNames.MISC_STATE_INCOME);
-            this.necNonEmployeeCompensation = getAliasedField(DerivedFieldNames.NEC_NONEMPLOYEE_COMPENSATION);
+            this.necNonemployeeCompensation = getAliasedField(DerivedFieldNames.NEC_NONEMPLOYEE_COMPENSATION);
             this.necFedIncomeTaxWithheld = getAliasedField(DerivedFieldNames.NEC_FED_INCOME_TAX_WITHHELD);
             this.necStateTaxWithheld = getAliasedField(DerivedFieldNames.NEC_STATE_TAX_WITHHELD);
             this.necPayerStateNumber = getAliasedField(DerivedFieldNames.NEC_PAYER_STATE_NUMBER);

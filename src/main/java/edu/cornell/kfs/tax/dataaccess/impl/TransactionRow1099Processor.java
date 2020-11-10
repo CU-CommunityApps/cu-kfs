@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
@@ -50,14 +52,19 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  * <p>This processor expects the following sections to be defined in the output definition XML:</p>
  * 
  * <ol>
- *   <li>Header row section</li>
- *   <li>Tab Record section</li>
+ *   <li>Common header row prefix</li>
+ *   <li>1099-MISC header row section</li>
+ *   <li>1099-NEC header row section</li>
+ *   <li>Common Tab Record prefix</li>
+ *   <li>1099-MISC Tab Record section</li>
+ *   <li>1099-NEC Tab Record section</li>
  * </ol>
  * 
  * <p>In addition, this processor has the following outputs:</p>
  * 
  * <ol>
- *   <li>Tab records file</li>
+ *   <li>1099-MISC Tab records file</li>
+ *   <li>1099-NEC Tab records file</li>
  * </ol>
  * 
  * <p>The following DERIVED-type fields will be populated by this implementation:</p>
@@ -70,22 +77,37 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  *   <li>vendorForeignCountryIndicator</li>
  *   <li>ssn</li>
  *   <li>tabSiteId</li>
- *   <li>box1</li>
- *   <li>box2</li>
- *   <li>box3</li>
- *   <li>box4</li>
- *   <li>box5</li>
- *   <li>box6</li>
- *   <li>box7</li>
- *   <li>box8</li>
- *   <li>box10</li>
- *   <li>box13</li>
- *   <li>box14</li>
- *   <li>box15a</li>
- *   <li>box15b</li>
- *   <li>box16</li>
- *   <li>box18</li>
+ *   <li>miscRents</li>
+ *   <li>miscRoyalties</li>
+ *   <li>miscOtherIncome</li>
+ *   <li>miscFedIncomeTaxWithheld</li>
+ *   <li>miscFishingBoatProceeds</li>
+ *   <li>miscMedicalHealthcarePayments</li>
+ *   <li>miscDirectSalesInd</li>
+ *   <li>miscSubstitutePayments</li>
+ *   <li>miscCropInsuranceProceeds</li>
+ *   <li>miscGrossProceedsAttorney</li>
+ *   <li>miscSection409ADeferral</li>
+ *   <li>miscGoldenParachute</li>
+ *   <li>miscNonqualifiedDeferredCompensation</li>
+ *   <li>miscStateTaxWithheld</li>
+ *   <li>miscPayerStateNumber</li>
+ *   <li>miscStateIncome</li>
+ *   <li>necNonemployeeCompensation</li>
+ *   <li>necFedIncomeTaxWithheld</li>
+ *   <li>necStateTaxWithheld</li>
+ *   <li>necPayerStateNumber</li>
+ *   <li>necStateIncome</li>
  *   <li>taxYear</li>
+ *   <li>ein</li>
+ *   <li>filerName1</li>
+ *   <li>filerName2</li>
+ *   <li>filerAddress1</li>
+ *   <li>filerAddress2</li>
+ *   <li>filerCity</li>
+ *   <li>filerState</li>
+ *   <li>filerZipCode</li>
+ *   <li>filerPhoneNumber</li>
  * </ul>
  * 
  * <p>The vendor handling of this processor will also populate the following DETAIL fields:</p>
@@ -99,6 +121,7 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  * 
  * <ul>
  *   <li>ssn (DERIVED field)</li>
+ *   <li>ein (DERIVED field)</li>
  * </ul>
  */
 public class TransactionRow1099Processor extends TransactionRowProcessor<Transaction1099Summary> {
@@ -198,11 +221,11 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     private RecordPiece1099BigDecimal miscGrossProceedsAttorneyP;
     private RecordPiece1099BigDecimal miscSection409ADeferralP;
     private RecordPiece1099BigDecimal miscGoldenParachuteP;
-    private RecordPiece1099BigDecimal miscNonQualifiedDeferredCompensationP;
+    private RecordPiece1099BigDecimal miscNonqualifiedDeferredCompensationP;
     private RecordPiece1099BigDecimal miscStateTaxWithheldP;
     private RecordPiece1099String miscPayerStateNumberP;
     private RecordPiece1099BigDecimal miscStateIncomeP;
-    private RecordPiece1099BigDecimal necNonEmployeeCompensationP;
+    private RecordPiece1099BigDecimal necNonemployeeCompensationP;
     private RecordPiece1099BigDecimal necFedIncomeTaxWithheldP;
     private RecordPiece1099BigDecimal necStateTaxWithheldP;
     private RecordPiece1099String necPayerStateNumberP;
@@ -450,11 +473,11 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                         derivedValues.miscGrossProceedsAttorney,
                         derivedValues.miscSection409ADeferral,
                         derivedValues.miscGoldenParachute,
-                        derivedValues.miscNonQualifiedDeferredCompensation,
+                        derivedValues.miscNonqualifiedDeferredCompensation,
                         derivedValues.miscStateTaxWithheld,
                         derivedValues.miscPayerStateNumber,
                         derivedValues.miscStateIncome,
-                        derivedValues.necNonEmployeeCompensation,
+                        derivedValues.necNonemployeeCompensation,
                         derivedValues.necFedIncomeTaxWithheld,
                         derivedValues.necStateTaxWithheld,
                         derivedValues.necPayerStateNumber,
@@ -582,12 +605,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         miscGrossProceedsAttorneyP = bigDecimalPieceFinder.apply(derivedValues.miscGrossProceedsAttorney);
         miscSection409ADeferralP = bigDecimalPieceFinder.apply(derivedValues.miscSection409ADeferral);
         miscGoldenParachuteP = bigDecimalPieceFinder.apply(derivedValues.miscGoldenParachute);
-        miscNonQualifiedDeferredCompensationP = bigDecimalPieceFinder.apply(
-                derivedValues.miscNonQualifiedDeferredCompensation);
+        miscNonqualifiedDeferredCompensationP = bigDecimalPieceFinder.apply(
+                derivedValues.miscNonqualifiedDeferredCompensation);
         miscStateTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.miscStateTaxWithheld);
         miscPayerStateNumberP = stringPieceFinder.apply(derivedValues.miscPayerStateNumber);
         miscStateIncomeP = bigDecimalPieceFinder.apply(derivedValues.miscStateIncome);
-        necNonEmployeeCompensationP = bigDecimalPieceFinder.apply(derivedValues.necNonEmployeeCompensation);
+        necNonemployeeCompensationP = bigDecimalPieceFinder.apply(derivedValues.necNonemployeeCompensation);
         necFedIncomeTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.necFedIncomeTaxWithheld);
         necStateTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.necStateTaxWithheld);
         necPayerStateNumberP = stringPieceFinder.apply(derivedValues.necPayerStateNumber);
@@ -606,10 +629,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         boxAmountsMap.put(miscGrossProceedsAttorneyP.tableField, miscGrossProceedsAttorneyP);
         boxAmountsMap.put(miscSection409ADeferralP.tableField, miscSection409ADeferralP);
         boxAmountsMap.put(miscGoldenParachuteP.tableField, miscGoldenParachuteP);
-        boxAmountsMap.put(miscNonQualifiedDeferredCompensationP.tableField, miscNonQualifiedDeferredCompensationP);
+        boxAmountsMap.put(miscNonqualifiedDeferredCompensationP.tableField, miscNonqualifiedDeferredCompensationP);
         boxAmountsMap.put(miscStateTaxWithheldP.tableField, miscStateTaxWithheldP);
         boxAmountsMap.put(miscStateIncomeP.tableField, miscStateIncomeP);
-        boxAmountsMap.put(necNonEmployeeCompensationP.tableField, necNonEmployeeCompensationP);
+        boxAmountsMap.put(necNonemployeeCompensationP.tableField, necNonemployeeCompensationP);
         boxAmountsMap.put(necFedIncomeTaxWithheldP.tableField, necFedIncomeTaxWithheldP);
         boxAmountsMap.put(necStateTaxWithheldP.tableField, necStateTaxWithheldP);
         boxAmountsMap.put(necStateIncomeP.tableField, necStateIncomeP);
@@ -857,11 +880,11 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         miscGrossProceedsAttorneyP.value = summary.zeroAmount;
         miscSection409ADeferralP.value = summary.zeroAmount;
         miscGoldenParachuteP.value = summary.zeroAmount;
-        miscNonQualifiedDeferredCompensationP.value = summary.zeroAmount;
+        miscNonqualifiedDeferredCompensationP.value = summary.zeroAmount;
         miscStateTaxWithheldP.value = summary.zeroAmount;
         miscPayerStateNumberP.value = KFSConstants.EMPTY_STRING;
         miscStateIncomeP.value = summary.zeroAmount;
-        necNonEmployeeCompensationP.value = summary.zeroAmount;
+        necNonemployeeCompensationP.value = summary.zeroAmount;
         necFedIncomeTaxWithheldP.value = summary.zeroAmount;
         necStateTaxWithheldP.value = summary.zeroAmount;
         necPayerStateNumberP.value = KFSConstants.EMPTY_STRING;
@@ -1064,6 +1087,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
 	        }
         }
         
+        if (summary.derivedValues.boxUnknown1099.equals(taxBox)) {
+            excludeTransaction = true;
+        }
+        
         // Check for vendor type or vendor ownership type exclusions.
         if (taxBox != null && !excludeTransaction) {
             if (summary.excludedVendorTypeCodes.contains(rsVendor.getString(vendorRow.vendorTypeCode.index))) {
@@ -1194,7 +1221,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 currentStats.numRoyaltyObjChartAccountNeitherDetermined++;
             }
             
-        } else if (summary.derivedValues.necNonEmployeeCompensation.equals(taxBox)) {
+        } else if (summary.derivedValues.necNonemployeeCompensation.equals(taxBox)) {
             // If Nonemployee Compensation, check for inclusions/exclusions based on vendor name or document title.
             
             // Check for vendor name inclusions/exclusions.
@@ -1294,20 +1321,23 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         // Perform logging and updates depending on box type and exclusions.
         if ((isParm1099Exclusion && overrideTaxBox == null) || summary.derivedValues.boxUnknown1099.equals(overrideTaxBox)) {
             // If exclusion without an override (or an override to a non-reportable box type), then do not update amounts.
+            rs.updateString(detailRow.form1099Type.index, CUTaxConstants.TAX_1099_UNKNOWN_FORM_TYPE);
             rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
             if (taxBox != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found exclusions for row with key: " + rowKey);
                 }
                 if (overrideTaxBox != null) {
-                    rs.updateString(detailRow.form1099OverriddenBox.index,
-                            findBoxMappingKeyForPotentiallyNullField(overriddenTaxBox, summary));
+                    Pair<String, String> overriddenTypeAndBox = findFormTypeAndBoxNumberForPotentiallyNullField(
+                            overriddenTaxBox, summary);
+                    rs.updateString(detailRow.form1099OverriddenType.index, overriddenTypeAndBox.getLeft());
+                    rs.updateString(detailRow.form1099OverriddenBox.index, overriddenTypeAndBox.getRight());
                 }
             } else {
                 numNoBoxDeterminedRows++;
             }
             
-        } else if (taxBox != null) {
+        } else if (taxBox != null && !summary.derivedValues.boxUnknown1099.equals(taxBox)) {
             // If not an exclusion and a tax box was found, then update the box's current amount.
             taxBoxPiece = boxAmountsMap.get(taxBox);
             if (taxBoxPiece != null) {
@@ -1321,24 +1351,38 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             
             // Update tax box indicator fields.
             foundAmount = true;
-            rs.updateString(detailRow.form1099Box.index, summary.boxNumberReverseMappings.get(taxBox));
+            Pair<String, String> typeAndBox = findKnownFormTypeAndBoxNumberForField(taxBox, summary);
+            rs.updateString(detailRow.form1099Type.index, typeAndBox.getLeft());
+            rs.updateString(detailRow.form1099Box.index, typeAndBox.getRight());
             if (overrideTaxBox != null) {
-                rs.updateString(detailRow.form1099OverriddenBox.index,
-                        findBoxMappingKeyForPotentiallyNullField(overriddenTaxBox, summary));
+                Pair<String, String> overriddenTypeAndBox = findFormTypeAndBoxNumberForPotentiallyNullField(
+                        overriddenTaxBox, summary);
+                rs.updateString(detailRow.form1099OverriddenType.index, overriddenTypeAndBox.getLeft());
+                rs.updateString(detailRow.form1099OverriddenBox.index, overriddenTypeAndBox.getRight());
             }
             
         } else {
             // Otherwise, do not update amounts.
+            rs.updateString(detailRow.form1099Type.index, CUTaxConstants.TAX_1099_UNKNOWN_FORM_TYPE);
             rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
             numNoBoxDeterminedRows++;
         }
     }
 
-    private String findBoxMappingKeyForPotentiallyNullField(TaxTableField taxField, Transaction1099Summary summary) {
+    private Pair<String, String> findKnownFormTypeAndBoxNumberForField(
+            TaxTableField taxField, Transaction1099Summary summary) {
+        Objects.requireNonNull(taxField, "taxField cannot be null; this should never happen!");
+        return Objects.requireNonNull(summary.boxNumberReverseMappings.get(taxField),
+                "Mapping for taxField " + taxField.propertyName + " cannot be null; this should never happen!");
+    }
+
+    private Pair<String, String> findFormTypeAndBoxNumberForPotentiallyNullField(
+            TaxTableField taxField, Transaction1099Summary summary) {
         if (taxField == null) {
-            return CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY;
+            return CUTaxConstants.TAX_1099_UNKNOWN_BOX_COMPOSITE_KEY;
         } else {
-            return summary.boxNumberReverseMappings.getOrDefault(taxField, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+            return summary.boxNumberReverseMappings.getOrDefault(
+                    taxField, CUTaxConstants.TAX_1099_UNKNOWN_BOX_COMPOSITE_KEY);
         }
     }
 
@@ -1389,12 +1433,12 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 .of(miscRentsP, miscRoyaltiesP, miscOtherIncomeP, miscFedIncomeTaxWithheldP, miscFishingBoatProceedsP,
                         miscMedicalHealthcarePaymentsP, miscSubstitutePaymentsP, miscCropInsuranceProceedsP,
                         miscGrossProceedsAttorneyP, miscSection409ADeferralP, miscGoldenParachuteP,
-                        miscNonQualifiedDeferredCompensationP, miscStateTaxWithheldP)
+                        miscNonqualifiedDeferredCompensationP, miscStateTaxWithheldP)
                 .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
     }
 
     private boolean shouldWrite1099NecTabLine(Transaction1099Summary summary) {
-        return Stream.of(necNonEmployeeCompensationP, necFedIncomeTaxWithheldP, necStateTaxWithheldP)
+        return Stream.of(necNonemployeeCompensationP, necFedIncomeTaxWithheldP, necStateTaxWithheldP)
                 .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
     }
 
@@ -1499,10 +1543,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 derivedValues.miscGrossProceedsAttorney,
                 derivedValues.miscSection409ADeferral,
                 derivedValues.miscGoldenParachute,
-                derivedValues.miscNonQualifiedDeferredCompensation,
+                derivedValues.miscNonqualifiedDeferredCompensation,
                 derivedValues.miscStateTaxWithheld,
                 derivedValues.miscStateIncome,
-                derivedValues.necNonEmployeeCompensation,
+                derivedValues.necNonemployeeCompensation,
                 derivedValues.necFedIncomeTaxWithheld,
                 derivedValues.necStateTaxWithheld,
                 derivedValues.necStateIncome
@@ -1586,11 +1630,11 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         miscGrossProceedsAttorneyP = null;
         miscSection409ADeferralP = null;
         miscGoldenParachuteP = null;
-        miscNonQualifiedDeferredCompensationP = null;
+        miscNonqualifiedDeferredCompensationP = null;
         miscStateTaxWithheldP = null;
         miscPayerStateNumberP = null;
         miscStateIncomeP = null;
-        necNonEmployeeCompensationP = null;
+        necNonemployeeCompensationP = null;
         necFedIncomeTaxWithheldP = null;
         necStateTaxWithheldP = null;
         necPayerStateNumberP = null;

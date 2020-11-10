@@ -15,6 +15,7 @@ public enum TransactionOverrideCsv {
     Doc_Number,
     Doc_Line_Number,
     Payment_Date,
+    Form_1099_Type("1099_Type"),
     Form_1099_Box("1099_Box"),
     Form_1042S_Box("1042S_Box");
 

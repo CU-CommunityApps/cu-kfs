@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Default output definition for 1099 tax processing.
-    This definition is for the tax year 2014 format.
+    This definition is for the tax year 2020 format.
  -->
 <taxOutputDefinition xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <!--
@@ -9,7 +9,7 @@
         This section represents the common starting column headers for 1099-MISC and 1099-NEC tab records.
         ==================================================================================================
      -->
-    <section length="" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="942" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="HDR_SITE_ID" length="40" type="STATIC" value="SITE_ID"/>
         <field name="HDR_FILER_FED_ID_NBR" length="40" type="STATIC" value="FILER_FEDERAL_ID_NUMBER"/>
         <field name="HDR_FILER_NAME" length="40" type="STATIC" value="FILER_NAME"/>
@@ -39,7 +39,7 @@
         This section represents a 1099-MISC header record (shared headers from above, plus MISC-specific headers).
         ==========================================================================================================
      -->
-    <section length="" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="1844" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="HDR_MISC_BOX1" length="40" type="STATIC" value="BOX1_RENTS"/>
         <field name="HDR_MISC_BOX2" length="40" type="STATIC" value="BOX2_ROYALTIES"/>
         <field name="HDR_MISC_BOX3" length="40" type="STATIC" value="BOX3_OTHER_INCOME"/>
@@ -68,7 +68,7 @@
         This section represents a 1099-NEC header record (shared headers from above, plus NEC-specific headers).
         ========================================================================================================
      -->
-    <section length="" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="1393" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="HDR_NEC_BOX1" length="40" type="STATIC" value="BOX1_NONEMPLOYEE_COMPENSATION"/>
         <field name="HDR_NEC_BOX4" length="40" type="STATIC" value="BOX4_FED_INCOME_TAX_WITHHELD"/>
         <field name="HDR_NEC_BOX5_1" length="40" type="STATIC" value="BOX5_STATE_TAX_WITHHELD1"/>
@@ -86,12 +86,12 @@
         This section represents the common starting fields for 1099-MISC and 1099-NEC tab records.
         ==========================================================================================
      -->
-    <section length="" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="703" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="TAB_SITE_ID" length="3" type="DERIVED" value="tabSiteId"/><!-- Site Identifier -->
-        <field name="TAB_FILER_FED_ID_NBR" length="9" type="DERIVED" value="filerTin"/><!-- Filer's TIN -->
+        <field name="TAB_FILER_FED_ID_NBR" length="9" type="DERIVED" value="ein"/><!-- Filer's TIN -->
         <field name="TAB_FILER_NAME" length="45" type="DERIVED" value="filerName1"/><!-- Filer's Name 1 -->
         <field name="TAB_FILER_NAME2" length="45" type="DERIVED" value="filerName2"/><!-- Filer's Name 2 -->
-        <field name="TAB_FILER_ADDRESS1" length="40" type="DERIVED" value="fileAddress1"/><!-- Filer's Address 1 -->
+        <field name="TAB_FILER_ADDRESS1" length="40" type="DERIVED" value="filerAddress1"/><!-- Filer's Address 1 -->
         <field name="TAB_FILER_ADDRESS2" length="40" type="DERIVED" value="filerAddress2"/><!-- Filer's Address 2 -->
         <field name="TAB_FILER_CITY" length="40" type="DERIVED" value="filerCity"/><!-- Filer's City -->
         <field name="TAB_FILER_STATE" length="2" type="DERIVED" value="filerState"/><!-- Filer's State -->
@@ -116,7 +116,7 @@
         This section represents a 1099-MISC tab record (shared fields from above, plus MISC-specific fields).
         =====================================================================================================
      -->
-    <section length="" hasExactLength="false" hasSeparators="true" separator="\t">
+    <section length="933" hasExactLength="false" hasSeparators="true" separator="\t">
         <field name="TAB_MISC_BOX1" length="12" type="DERIVED" value="miscRents"/><!-- Box 1 :: Rents -->
         <field name="TAB_MISC_BOX2" length="12" type="DERIVED" value="miscRoyalties"/><!-- Box 2 :: Royalties -->
         <field name="TAB_MISC_BOX3" length="12" type="DERIVED" value="miscOtherIncome"/><!-- Box 3 :: Other Income -->
@@ -129,7 +129,7 @@
         <field name="TAB_MISC_BOX10" length="12" type="DERIVED" value="miscGrossProceedsAttorney"/><!-- Box 10 :: Gross Proceeds Paid to an Attorney -->
         <field name="TAB_MISC_BOX12" length="12" type="DERIVED" value="miscSection409ADeferral"/><!-- Box 12 :: Section 409A Deferrals -->
         <field name="TAB_MISC_BOX13" length="12" type="DERIVED" value="miscGoldenParachute"/><!-- Box 13 :: Excess Golden Parachute Payments -->
-        <field name="TAB_MISC_BOX14" length="12" type="DERIVED" value="miscNonQualifiedDeferredCompensation"/><!-- Box 14 :: Nonqualified Deferred Compensation -->
+        <field name="TAB_MISC_BOX14" length="12" type="DERIVED" value="miscNonqualifiedDeferredCompensation"/><!-- Box 14 :: Nonqualified Deferred Compensation -->
         <field name="TAB_MISC_BOX15_1" length="12" type="DERIVED" value="miscStateTaxWithheld"/><!-- Box 15 :: State Tax Withheld 1 -->
         <field name="TAB_MISC_BOX15_2" length="12" type="STATIC" value="0"/><!-- Box 15 :: State Tax Withheld 2 -->
         <field name="TAB_MISC_BOX16_1" length="10" type="DERIVED" value="miscPayerStateNumber"/><!-- Box 16 :: State/Payer's State No. 1 -->
@@ -145,8 +145,8 @@
         This section represents a 1099-NEC tab record (shared fields from above, plus NEC-specific fields).
         ===================================================================================================
      -->
-    <section length="" hasExactLength="false" hasSeparators="true" separator="\t">
-        <field name="TAB_NEC_BOX1" length="12" type="DERIVED" value="necNonEmployeeCompensation"/><!-- Box 1 :: Nonemployee Compensation -->
+    <section length="812" hasExactLength="false" hasSeparators="true" separator="\t">
+        <field name="TAB_NEC_BOX1" length="12" type="DERIVED" value="necNonemployeeCompensation"/><!-- Box 1 :: Nonemployee Compensation -->
         <field name="TAB_NEC_BOX4" length="12" type="DERIVED" value="necFedIncomeTaxWithheld"/><!-- Box 4 :: Federal Income Tax Withheld -->
         <field name="TAB_NEC_BOX5_1" length="12" type="DERIVED" value="necStateTaxWithheld"/><!-- Box 5 :: State Tax Withheld 1 -->
         <field name="TAB_NEC_BOX5_2" length="12" type="STATIC" value="0"/><!-- Box 5 :: State Tax Withheld 2 -->

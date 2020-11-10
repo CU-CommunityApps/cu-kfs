@@ -7,16 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
@@ -39,6 +41,7 @@ import com.opencsv.CSVReader;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
 import edu.cornell.kfs.tax.CUTaxPropertyConstants;
+import edu.cornell.kfs.tax.FormTypes1099;
 import edu.cornell.kfs.tax.businessobject.TransactionOverride;
 
 /**
@@ -130,7 +133,8 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
             validateCSVFileInput(headerList, validateFileContents);
             
             //use csv reader to parse tab-delimited content
-            csvReader = new CSVReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent)), '\t');
+            csvReader = new CSVReader(new InputStreamReader(new ByteArrayInputStream(fileByteContent),
+                    StandardCharsets.UTF_8), '\t');
             List<String[]> dataList = csvReader.readAll();
             
             //remove first header line
@@ -168,7 +172,7 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
      */
     protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws IOException {
         //use csv reader to parse tab-delimited content
-        CSVReader csvReader = new CSVReader(new InputStreamReader(fileContents), '\t');
+        CSVReader csvReader = new CSVReader(new InputStreamReader(fileContents, StandardCharsets.UTF_8), '\t');
         try {
             List<String> inputHeaderList = Arrays.asList(csvReader.readNext());
 
@@ -237,11 +241,16 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
         TransactionOverride transOverride = new TransactionOverride();
         
         // Verify that exactly one type of tax box was specified, and that the tax box has the expected max length. Also setup tax box properties if valid.
-        String box1099 = parsedLine.get(TransactionOverrideCsv.Form_1099_Box.toString());
-        String box1042S = parsedLine.get(TransactionOverrideCsv.Form_1042S_Box.toString());
+        String formType1099 = getUpperCasedFieldValue(TransactionOverrideCsv.Form_1099_Type, parsedLine);
+        String box1099 = getUpperCasedFieldValue(TransactionOverrideCsv.Form_1099_Box, parsedLine);
+        String box1042S = getUpperCasedFieldValue(TransactionOverrideCsv.Form_1042S_Box, parsedLine);
         if (StringUtils.isBlank(box1099)) {
             if (StringUtils.isBlank(box1042S)) {
                 LOG.error("Found a line that does not specify a 1099 or 1042S tax box override. Line number: " + Integer.toString(lineNumber));
+                valid = false;
+            } else if (StringUtils.isNotBlank(formType1099)) {
+                LOG.error("Found a line that specifies a 1099 form type but also specifies 1042S tax box override. "
+                        + "Line number: " + Integer.toString(lineNumber));
                 valid = false;
             } else if (box1042S.length() > boxNumberMaxLength) {
                 LOG.error("Found a line with a 1042S box number that is too long. Line number: " + Integer.toString(lineNumber));
@@ -254,12 +263,22 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
         } else if (StringUtils.isNotBlank(box1042S)) {
             LOG.error("Found a line that specifies both a 1099 and 1042S tax box override. Line number: " + Integer.toString(lineNumber));
             valid = false;
+        } else if (StringUtils.isBlank(formType1099)) {
+            LOG.error("Found a line with a 1099 box number that is missing a 1099 form type. Line number: "
+                    + Integer.toString(lineNumber));
+            valid = false;
+        } else if (FormTypes1099.findPotentialFormTypes1099FromFormCode(formType1099).isEmpty()
+                && !StringUtils.equalsIgnoreCase(formType1099, NULL_STRING)) {
+            LOG.error("Found a line with a 1099 box number that has an invalid 1099 form type. Line number: "
+                    + Integer.toString(lineNumber));
         } else if (box1099.length() > CUTaxConstants.TAX_1099_MAX_BUCKET_LENGTH && !NULL_STRING.equalsIgnoreCase(box1099)) {
             LOG.error("Found a line with a 1099 box number that is too long. Line number: " + Integer.toString(lineNumber));
             valid = false;
         } else {
             // Validation succeeded; configure override of a 1099 tax box.
             transOverride.setTaxType(CUTaxConstants.TAX_TYPE_1099);
+            transOverride.setFormType(
+                    NULL_STRING.equalsIgnoreCase(formType1099) ? CUTaxConstants.TAX_1099_UNKNOWN_FORM_TYPE : formType1099);
             transOverride.setBoxNumber(NULL_STRING.equalsIgnoreCase(box1099) ? CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY : box1099);
         }
         
@@ -318,6 +337,11 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
             ret = (java.sql.Date) dateFormatter.convertFromPresentationFormat(universityDateRaw);
         }
         return ret;
+    }
+
+    private String getUpperCasedFieldValue(TransactionOverrideCsv fieldKey, Map<String, String> parsedLine) {
+        String fieldValue = parsedLine.get(fieldKey.toString());
+        return StringUtils.upperCase(fieldValue, Locale.US);
     }
 
     /**
@@ -388,7 +412,7 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
         BufferedWriter writer = null;
         try {
             // Create the file, and add a header line and the error lines.
-            writer = new BufferedWriter(new PrintWriter(errorFile));
+            writer = new BufferedWriter(new PrintWriter(errorFile, StandardCharsets.UTF_8));
             writer.write(StringUtils.join(getCsvHeaderList(), '\t'));
             writer.write('\n');
             for (String invalidLine : invalidLines) {

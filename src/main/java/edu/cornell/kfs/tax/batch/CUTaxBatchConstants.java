@@ -345,7 +345,9 @@ public final class CUTaxBatchConstants {
         public static final String CHART_CODE = "chartCode";
         public static final String ACCOUNT_NUMBER = CUTaxBatchConstants.ACCOUNT_NUMBER;
         public static final String INITIATOR_NETID = "initiatorNetId";
+        public static final String FORM_1099_TYPE = "form1099Type";
         public static final String FORM_1099_BOX = "form1099Box";
+        public static final String FORM_1099_OVERRIDDEN_TYPE = "form1099OverriddenType";
         public static final String FORM_1099_OVERRIDDEN_BOX = "form1099OverriddenBox";
         public static final String FORM_1042S_BOX = "form1042SBox";
         public static final String FORM_1042S_OVERRIDDEN_BOX = "form1042SOverriddenBox";
@@ -404,11 +406,11 @@ public final class CUTaxBatchConstants {
         public static final String MISC_GROSS_PROCEEDS_ATTORNEY = "miscGrossProceedsAttorney";
         public static final String MISC_SECTION_409A_DEFERRAL = "miscSection409ADeferral";
         public static final String MISC_GOLDEN_PARACHUTE = "miscGoldenParachute";
-        public static final String MISC_NONQUALIFIED_DEFERRED_COMPENSATION = "miscNonQualifiedDeferredCompensation";
+        public static final String MISC_NONQUALIFIED_DEFERRED_COMPENSATION = "miscNonqualifiedDeferredCompensation";
         public static final String MISC_STATE_TAX_WITHHELD = "miscStateTaxWithheld";
         public static final String MISC_PAYER_STATE_NUMBER = "miscPayerStateNumber";
         public static final String MISC_STATE_INCOME = "miscStateIncome";
-        public static final String NEC_NONEMPLOYEE_COMPENSATION = "necNonEmployeeCompensation";
+        public static final String NEC_NONEMPLOYEE_COMPENSATION = "necNonemployeeCompensation";
         public static final String NEC_FED_INCOME_TAX_WITHHELD = "necFedIncomeTaxWithheld";
         public static final String NEC_STATE_TAX_WITHHELD = "necStateTaxWithheld";
         public static final String NEC_PAYER_STATE_NUMBER = "necPayerStateNumber";

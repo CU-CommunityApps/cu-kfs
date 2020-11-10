@@ -25,13 +25,11 @@ public class DocumentType1099BoxServiceImplTest {
         documentType1099BoxService = new DocumentType1099BoxServiceImpl();
     }
 
-
-
     @Test
     public void testSearchForMappings() throws Exception {
-        setupMockParameterServiceForMappings("APCP=2", "APLB=3");
-        assertMappingExists("APCP", "2");
-        assertMappingExists("APLB", "3");
+        setupMockParameterServiceForMappings("APCP=MISC(2)", "APLB=NEC(3)");
+        assertMappingExists("APCP", "MISC(2)");
+        assertMappingExists("APLB", "NEC(3)");
         assertMappingDoesNotExist("PVEN");
         assertMappingDoesNotExist(null);
         assertMappingDoesNotExist("");
@@ -39,7 +37,7 @@ public class DocumentType1099BoxServiceImplTest {
 
     @Test
     public void testInvalidMappings() throws Exception {
-        setupMockParameterServiceForMappings("APLB:4");
+        setupMockParameterServiceForMappings("APLB:MISC(4)");
         try {
             documentType1099BoxService.isDocumentTypeMappedTo1099Box("APLB");
             fail("DocumentType1099BoxService should have thrown an exception due to invalid mapping configuration");
@@ -63,8 +61,6 @@ public class DocumentType1099BoxServiceImplTest {
         assertFalse("Document type should have been flagged as not being mapped", documentType1099BoxService.isDocumentTypeMappedTo1099Box(documentTypeName));
         assertNull("Document type should not have been mapped to a 1099 box", documentType1099BoxService.getDocumentType1099Box(documentTypeName));
     }
-
-
 
     protected void setupMockParameterServiceForMappings(String... mappings) {
         Collection<String> mappingsCollection = Arrays.asList(mappings);

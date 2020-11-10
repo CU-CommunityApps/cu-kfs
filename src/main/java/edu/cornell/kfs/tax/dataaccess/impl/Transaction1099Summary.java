@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -37,7 +38,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
     private static final int SMALL_KEY_SIZE = 30;
 
     final Map<String, TaxTableField> boxNumberMappings;
-    final Map<TaxTableField, String> boxNumberReverseMappings;
+    final Map<TaxTableField, Pair<String, String>> boxNumberReverseMappings;
     // Maps object-code-and-DV-payment-reason combos to 1099 tax boxes.
     final Map<String,TaxTableField> objectCodeBucketMappings;
     // Maps date-and-docNumber-and-docLineNumber combos to 1099 tax box overrides.
@@ -107,11 +108,11 @@ class Transaction1099Summary extends TransactionDetailSummary {
         dvCheckStubTextParamNames.put(derivedValues.miscGrossProceedsAttorney, Tax1099ParameterNames.ATTORNEY_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscSection409ADeferral, Tax1099ParameterNames.SECTION_409A_DEFERRALS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscGoldenParachute, Tax1099ParameterNames.GOLDEN_PARACHUTE_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.miscNonQualifiedDeferredCompensation,
+        dvCheckStubTextParamNames.put(derivedValues.miscNonqualifiedDeferredCompensation,
                 Tax1099ParameterNames.NONQUALIFIED_DEFERRED_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.miscStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
-        dvCheckStubTextParamNames.put(derivedValues.necNonEmployeeCompensation, Tax1099ParameterNames.NONEMPLOYEE_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
+        dvCheckStubTextParamNames.put(derivedValues.necNonemployeeCompensation, Tax1099ParameterNames.NONEMPLOYEE_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necFedIncomeTaxWithheld, Tax1099ParameterNames.FED_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
@@ -128,7 +129,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
             tempMap.put(
                     new StringBuilder().append(bucketMapping.getFinancialObjectCode()).append(';')
                             .append(bucketMapping.getDvPaymentReasonCode()).toString(),
-                    boxNumberMappings.get(boxNumberMappingKey));
+                    boxNumberMappings.getOrDefault(boxNumberMappingKey, derivedValues.boxUnknown1099));
         }
         this.objectCodeBucketMappings = Collections.unmodifiableMap(tempMap);
         
@@ -142,7 +143,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
                     new StringBuilder(SMALL_KEY_SIZE).append(transactionOverride.getUniversityDate()).append(';')
                             .append(transactionOverride.getDocumentNumber()).append(';')
                             .append(transactionOverride.getFinancialDocumentLineNumber()).toString(),
-                    boxNumberMappings.get(boxNumberMappingKey));
+                    boxNumberMappings.getOrDefault(boxNumberMappingKey, derivedValues.boxUnknown1099));
         }
         this.transactionOverrides = Collections.unmodifiableMap(tempMap);
         
@@ -276,10 +277,12 @@ class Transaction1099Summary extends TransactionDetailSummary {
         return taxField;
     }
 
-    private Map<TaxTableField, String> buildBoxNumberReverseMappings(Map<String, TaxTableField> regularBoxMappings) {
+    private Map<TaxTableField, Pair<String, String>> buildBoxNumberReverseMappings(
+            Map<String, TaxTableField> regularBoxMappings) {
         return regularBoxMappings.entrySet().stream()
                 .collect(Collectors.toUnmodifiableMap(
-                        Map.Entry::getValue, Map.Entry::getKey));
+                        Map.Entry::getValue,
+                        mappingEntry -> TaxUtils.build1099FormTypeAndBoxNumberPair(mappingEntry.getKey())));
     }
 
     private Map<TaxTableField, BigDecimal> parseReportingThresholdsForTaxBoxes(

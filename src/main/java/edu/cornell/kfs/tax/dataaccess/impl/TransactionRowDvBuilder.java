@@ -512,7 +512,9 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             // Setup prepared statement args accordingly. Income-code-related args are null, and 1099 box is set to "?" for bulk retrieval convenience.
             insertStatement.setString(detailRow.incomeCode.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.incomeCodeSubType.index - detailRow.insertOffset, null);
+            insertStatement.setString(detailRow.form1099Type.index - detailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
             insertStatement.setString(detailRow.form1099Box.index - detailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
+            insertStatement.setString(detailRow.form1099OverriddenType.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.form1099OverriddenBox.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.form1042SBox.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.form1042SOverriddenBox.index - detailRow.insertOffset, null);
@@ -564,7 +566,9 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             // Setup prepared statement args accordingly. The 1042S box is set to "?" for bulk retrieval convenience.
             insertStatement.setString(detailRow.incomeCode.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.incomeCodeSubType.index - detailRow.insertOffset, null);
+            insertStatement.setString(detailRow.form1099Type.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.form1099Box.index - detailRow.insertOffset, null);
+            insertStatement.setString(detailRow.form1099OverriddenType.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.form1099OverriddenBox.index - detailRow.insertOffset, null);
             insertStatement.setString(detailRow.form1042SBox.index - detailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
             insertStatement.setString(detailRow.form1042SOverriddenBox.index - detailRow.insertOffset, null);
