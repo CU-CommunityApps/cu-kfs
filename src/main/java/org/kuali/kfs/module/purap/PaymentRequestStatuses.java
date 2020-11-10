@@ -1,4 +1,24 @@
+/*
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ *
+ * Copyright 2005-2020 Kuali, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.kuali.kfs.module.purap;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,9 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 public final class PaymentRequestStatuses {
+
     public static final String APPDOC_INITIATE = "Initiated";
     public static final String APPDOC_IN_PROCESS = "In Process";
     public static final String APPDOC_CANCELLED_IN_PROCESS = "Cancelled In Process";
@@ -37,21 +56,33 @@ public final class PaymentRequestStatuses {
     // KFSDUPGRADE-500
     public static final String NODE_RECEIVING = "Receiving";
 
-    public static final String[] PREQ_STATUSES_FOR_AUTO_APPROVE = { APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_ORG_REVIEW };
+    public static final String[] PREQ_STATUSES_FOR_AUTO_APPROVE = {
+        APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_ORG_REVIEW};
 
-    public static final String[] STATUSES_ALLOWED_FOR_EXTRACTION = { APPDOC_AUTO_APPROVED, APPDOC_DEPARTMENT_APPROVED };
+    public static final String[] STATUSES_ALLOWED_FOR_EXTRACTION = {APPDOC_AUTO_APPROVED, APPDOC_DEPARTMENT_APPROVED};
 
-    public static final String[] STATUSES_POTENTIALLY_ACTIVE = { APPDOC_IN_PROCESS, APPDOC_DEPARTMENT_APPROVED, APPDOC_AUTO_APPROVED, APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_AWAITING_RECEIVING_REVIEW, APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_ORG_REVIEW, APPDOC_AWAITING_TAX_REVIEW };
+    public static final String[] STATUSES_POTENTIALLY_ACTIVE = {
+        APPDOC_IN_PROCESS, APPDOC_DEPARTMENT_APPROVED, APPDOC_AUTO_APPROVED,
+        APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_AWAITING_RECEIVING_REVIEW,
+        APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_ORG_REVIEW,
+        APPDOC_AWAITING_TAX_REVIEW};
 
-    public static final Set CANCELLED_STATUSES = new HashSet();
-    public static final Set STATUSES_DISALLOWING_HOLD = new HashSet();
-    public static final Set STATUSES_DISALLOWING_REMOVE_HOLD = new HashSet();
-    public static final Set STATUSES_DISALLOWING_REQUEST_CANCEL = new HashSet();
-    public static final Set STATUSES_DISALLOWING_REMOVE_REQUEST_CANCEL = new HashSet();
-    public static final Set STATUSES_PREROUTE = new HashSet();
-    public static final Set STATUSES_ENROUTE = new HashSet();
-    public static final Set STATUSES_POSTROUTE = new HashSet();
-    public static HashMap<String, String> getAllAppDocStatuses(){
+    public static final Set<String> CANCELLED_STATUSES = new HashSet<>();
+    public static final Set<String> STATUSES_DISALLOWING_HOLD = new HashSet<>();
+    public static final Set<String> STATUSES_DISALLOWING_REMOVE_HOLD = new HashSet<>();
+    public static final Set<String> STATUSES_DISALLOWING_REQUEST_CANCEL = new HashSet<>();
+    public static final Set<String> STATUSES_DISALLOWING_REMOVE_REQUEST_CANCEL = new HashSet<>();
+    public static final Set<String> STATUSES_PREROUTE = new HashSet<>();
+    public static final Set<String> STATUSES_ENROUTE = new HashSet<>();
+    public static final Set<String> STATUSES_POSTROUTE = new HashSet<>();
+
+    /**
+     * Private Constructor since this is a constants class that should never be instantiated.
+     */
+    private PaymentRequestStatuses() {
+    }
+
+    public static HashMap<String, String> getAllAppDocStatuses() {
         HashMap<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(APPDOC_INITIATE, APPDOC_INITIATE);
@@ -88,10 +119,10 @@ public final class PaymentRequestStatuses {
         AWAITING_TAX_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
         DEPARTMENT_APPROVED(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),
         PAYMENT_METHOD_REVIEW(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false),
-        AUTO_APPROVED(PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false), ;
+        AUTO_APPROVED(PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false),;
 
-        private String statusCode = new String();
-        private boolean fullEntryAllowed = false;
+        private String statusCode;
+        private boolean fullEntryAllowed;
 
         STATUS_ORDER(String statusCode, boolean fullEntry) {
             this.statusCode = statusCode;
@@ -123,8 +154,8 @@ public final class PaymentRequestStatuses {
         }
 
         public static boolean isFirstFullEntryStatus(String statusCode) {
-            // NOTE this won't work if there endsup being two ways to get to the first full entry status (i.e. like AUTO/DEPT
-            // for final)
+            // NOTE this won't work if there endsup being two ways to get to the first full entry status
+            // (i.e. like AUTO/DEPT for final)
             return getByStatusCode(statusCode).fullEntryAllowed && !getPreviousStatus(statusCode).fullEntryAllowed;
         }
     }
@@ -135,18 +166,22 @@ public final class PaymentRequestStatuses {
 
         STATUSES_DISALLOWING_HOLD.add(APPDOC_INITIATE);
         STATUSES_DISALLOWING_HOLD.add(APPDOC_IN_PROCESS);
-        STATUSES_DISALLOWING_HOLD.addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+        STATUSES_DISALLOWING_HOLD.addAll(Arrays.asList(
+                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
 
-        STATUSES_DISALLOWING_REMOVE_HOLD.addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+        STATUSES_DISALLOWING_REMOVE_HOLD.addAll(Arrays.asList(
+                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
 
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_INITIATE);
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_IN_PROCESS);
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_DEPARTMENT_APPROVED);
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_AUTO_APPROVED);
         STATUSES_DISALLOWING_REQUEST_CANCEL.add(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
-        STATUSES_DISALLOWING_REQUEST_CANCEL.addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+        STATUSES_DISALLOWING_REQUEST_CANCEL.addAll(Arrays.asList(
+                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
 
-        STATUSES_DISALLOWING_REMOVE_REQUEST_CANCEL.addAll(Arrays.asList(CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
+        STATUSES_DISALLOWING_REMOVE_REQUEST_CANCEL.addAll(Arrays.asList(
+                CANCELLED_STATUSES.toArray(new String[CANCELLED_STATUSES.size()])));
 
         STATUSES_PREROUTE.add(APPDOC_IN_PROCESS);
         STATUSES_PREROUTE.add(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
@@ -163,11 +198,11 @@ public final class PaymentRequestStatuses {
     }
 
     public static HashMap<String, String> getPaymentRequestAppDocDisapproveStatuses() {
-
         HashMap<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(NODE_ADHOC_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS);
-        appDocStatusMap.put(PurapConstants.AccountsPayableStatuses.NODE_ACCOUNT_PAYABLE_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS);
+        appDocStatusMap.put(PurapConstants.AccountsPayableStatuses.NODE_ACCOUNT_PAYABLE_REVIEW,
+                PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS);
         appDocStatusMap.put(NODE_AWAITING_RECEIVING_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_SUB_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
@@ -179,7 +214,7 @@ public final class PaymentRequestStatuses {
         appDocStatusMap.put(NODE_PAYMENT_METHOD_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
 
         return appDocStatusMap;
-}
+    }
 
     public static List<String> getNodesRequiringCorrectingGeneralLedgerEntries() {
         List<String> returnList = new ArrayList<>();
@@ -190,5 +225,4 @@ public final class PaymentRequestStatuses {
 
         return returnList;
     }
-
 }
