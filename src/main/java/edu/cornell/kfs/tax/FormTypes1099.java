@@ -1,7 +1,5 @@
 package edu.cornell.kfs.tax;
 
-import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,14 +15,6 @@ public enum FormTypes1099 {
     private FormTypes1099(String formCode, String formDescription) {
         this.formCode = formCode;
         this.formDescription = formDescription;
-    }
-
-    public static Optional<FormTypes1099> findPotentialFormTypes1099FromFormCode(String formCode) {
-        try {
-            return Optional.of(findFormTypes1099FromFormCode(formCode));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
     }
 
     public static FormTypes1099 findFormTypes1099FromFormCode(String formCode) {

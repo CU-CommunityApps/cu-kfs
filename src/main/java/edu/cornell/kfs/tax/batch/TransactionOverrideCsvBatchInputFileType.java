@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -267,10 +268,11 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
             LOG.error("Found a line with a 1099 box number that is missing a 1099 form type. Line number: "
                     + Integer.toString(lineNumber));
             valid = false;
-        } else if (FormTypes1099.findPotentialFormTypes1099FromFormCode(formType1099).isEmpty()
+        } else if (findPotentiallyPresentFormTypes1099FromFormCode(formType1099).isEmpty()
                 && !StringUtils.equalsIgnoreCase(formType1099, NULL_STRING)) {
             LOG.error("Found a line with a 1099 box number that has an invalid 1099 form type. Line number: "
                     + Integer.toString(lineNumber));
+            valid = false;
         } else if (box1099.length() > CUTaxConstants.TAX_1099_MAX_BUCKET_LENGTH && !NULL_STRING.equalsIgnoreCase(box1099)) {
             LOG.error("Found a line with a 1099 box number that is too long. Line number: " + Integer.toString(lineNumber));
             valid = false;
@@ -325,6 +327,14 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
                 lineValues.add(parsedLine.get(headerName));
             }
             return StringUtils.join(lineValues, '\t');
+        }
+    }
+
+    private Optional<FormTypes1099> findPotentiallyPresentFormTypes1099FromFormCode(String formCode) {
+        try {
+            return Optional.of(FormTypes1099.findFormTypes1099FromFormCode(formCode));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
         }
     }
 

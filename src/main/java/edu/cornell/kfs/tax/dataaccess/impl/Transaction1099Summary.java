@@ -117,7 +117,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
         dvCheckStubTextParamNames.put(derivedValues.necStateTaxWithheld, Tax1099ParameterNames.STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         dvCheckStubTextParamNames.put(derivedValues.necStateIncome, Tax1099ParameterNames.STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT);
         
-        this.boxNumberMappings = parseBoxNumberMappings(parameterService);
+        this.boxNumberMappings = buildBoxNumberMappingsFromParameter(parameterService);
         this.boxNumberReverseMappings = buildBoxNumberReverseMappings(boxNumberMappings);
         
         // Construct a Map from object-code-and-DV-payment-reason combos to 1099 tax buckets.
@@ -225,12 +225,14 @@ class Transaction1099Summary extends TransactionDetailSummary {
         
         this.taxBoxIncludedDvCheckStubTextMaps = Collections.unmodifiableMap(tempCheckStubTextMaps);
         this.taxBoxDvCheckStubTextsAreWhitelists = Collections.unmodifiableMap(tempWhitelistFlagsMap);
-        this.taxBoxMinimumReportingAmounts = parseReportingThresholdsForTaxBoxes(parameterService, boxNumberMappings);
+        this.taxBoxMinimumReportingAmounts = buildReportingThresholdsMapFromParameterAndTaxBoxes(
+                parameterService, boxNumberMappings);
         this.defaultTaxBoxMinimumReportingAmount = computeDefaultTaxBoxMinimumReportingAmount();
-        this.filerAddressFields = parseFilerAddressFields(parameterService);
+        this.filerAddressFields = buildFilerAddressFieldsMapFromParameter(parameterService);
     }
 
-    private Map<Tax1099FilerAddressField, String> parseFilerAddressFields(ParameterService parameterService) {
+    private Map<Tax1099FilerAddressField, String> buildFilerAddressFieldsMapFromParameter(
+            ParameterService parameterService) {
         Tax1099FilerAddressField[] addressFieldKeys = Tax1099FilerAddressField.values();
         Collection<String> filerAddressFieldsFromParameter = parameterService.getParameterValuesAsString(
                 CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1099_PARM_DETAIL, Tax1099ParameterNames.FILER_ADDRESS);
@@ -246,7 +248,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
         return Collections.unmodifiableMap(addressFields);
     }
 
-    private Map<String, TaxTableField> parseBoxNumberMappings(ParameterService parameterService) {
+    private Map<String, TaxTableField> buildBoxNumberMappingsFromParameter(ParameterService parameterService) {
         Collection<String> boxNumberMappingsFromParameter = parameterService.getParameterValuesAsString(
                 CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1099_PARM_DETAIL,
                 Tax1099ParameterNames.TAX_BOX_NUMBER_MAPPINGS);
@@ -285,7 +287,7 @@ class Transaction1099Summary extends TransactionDetailSummary {
                         mappingEntry -> TaxUtils.build1099FormTypeAndBoxNumberPair(mappingEntry.getKey())));
     }
 
-    private Map<TaxTableField, BigDecimal> parseReportingThresholdsForTaxBoxes(
+    private Map<TaxTableField, BigDecimal> buildReportingThresholdsMapFromParameterAndTaxBoxes(
             ParameterService parameterService, Map<String, TaxTableField> boxNumberMap) {
         String parameterName = Tax1099ParameterNames.TAX_BOX_MINIMUM_REPORTING_AMOUNTS;
         Collection<String> amountMappings = parameterService.getParameterValuesAsString(
