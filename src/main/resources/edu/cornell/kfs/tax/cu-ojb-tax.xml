@@ -16,6 +16,7 @@
         <field-descriptor name="taxType" column="TAX_TYPE" jdbc-type="VARCHAR" primarykey="true" />
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
         <field-descriptor name="financialDocumentLineNumber" column="FDOC_LINE_NBR" jdbc-type="INTEGER" primarykey="true" />
+        <field-descriptor name="formType" column="FORM_TYPE" jdbc-type="VARCHAR" />
         <field-descriptor name="boxNumber" column="BOX_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
@@ -71,7 +72,9 @@
         <field-descriptor name="chartCode" column="KFS_CHART" jdbc-type="VARCHAR" />
         <field-descriptor name="accountNumber" column="KFS_ACCOUNT" jdbc-type="VARCHAR" />
         <field-descriptor name="initiatorNetId" column="INITIATOR_NETID" jdbc-type="VARCHAR" />
+        <field-descriptor name="form1099Type" column="FORM_1099_TYPE" jdbc-type="VARCHAR" />
         <field-descriptor name="form1099Box" column="FORM_1099_BOX" jdbc-type="VARCHAR" />
+        <field-descriptor name="form1099OverriddenType" column="FORM_1099_OVERRIDDEN_TYPE" jdbc-type="VARCHAR" />
         <field-descriptor name="form1099OverriddenBox" column="FORM_1099_OVERRIDDEN_BOX" jdbc-type="VARCHAR" />
         <field-descriptor name="form1042SBox" column="FORM_1042S_BOX" jdbc-type="VARCHAR" />
         <field-descriptor name="form1042SOverriddenBox" column="FORM_1042S_OVERRIDDEN_BOX" jdbc-type="VARCHAR" />

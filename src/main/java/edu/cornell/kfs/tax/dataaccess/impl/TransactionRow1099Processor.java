@@ -12,11 +12,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
@@ -31,6 +37,7 @@ import org.kuali.rice.core.api.encryption.EncryptionService;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.Tax1099FilerAddressField;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DerivedValuesRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
@@ -45,14 +52,19 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  * <p>This processor expects the following sections to be defined in the output definition XML:</p>
  * 
  * <ol>
- *   <li>Header row section</li>
- *   <li>Tab Record section</li>
+ *   <li>Common header row prefix</li>
+ *   <li>1099-MISC header row section</li>
+ *   <li>1099-NEC header row section</li>
+ *   <li>Common Tab Record prefix</li>
+ *   <li>1099-MISC Tab Record section</li>
+ *   <li>1099-NEC Tab Record section</li>
  * </ol>
  * 
  * <p>In addition, this processor has the following outputs:</p>
  * 
  * <ol>
- *   <li>Tab records file</li>
+ *   <li>1099-MISC Tab records file</li>
+ *   <li>1099-NEC Tab records file</li>
  * </ol>
  * 
  * <p>The following DERIVED-type fields will be populated by this implementation:</p>
@@ -65,22 +77,37 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  *   <li>vendorForeignCountryIndicator</li>
  *   <li>ssn</li>
  *   <li>tabSiteId</li>
- *   <li>box1</li>
- *   <li>box2</li>
- *   <li>box3</li>
- *   <li>box4</li>
- *   <li>box5</li>
- *   <li>box6</li>
- *   <li>box7</li>
- *   <li>box8</li>
- *   <li>box10</li>
- *   <li>box13</li>
- *   <li>box14</li>
- *   <li>box15a</li>
- *   <li>box15b</li>
- *   <li>box16</li>
- *   <li>box18</li>
+ *   <li>miscRents</li>
+ *   <li>miscRoyalties</li>
+ *   <li>miscOtherIncome</li>
+ *   <li>miscFedIncomeTaxWithheld</li>
+ *   <li>miscFishingBoatProceeds</li>
+ *   <li>miscMedicalHealthcarePayments</li>
+ *   <li>miscDirectSalesInd</li>
+ *   <li>miscSubstitutePayments</li>
+ *   <li>miscCropInsuranceProceeds</li>
+ *   <li>miscGrossProceedsAttorney</li>
+ *   <li>miscSection409ADeferral</li>
+ *   <li>miscGoldenParachute</li>
+ *   <li>miscNonqualifiedDeferredCompensation</li>
+ *   <li>miscStateTaxWithheld</li>
+ *   <li>miscPayerStateNumber</li>
+ *   <li>miscStateIncome</li>
+ *   <li>necNonemployeeCompensation</li>
+ *   <li>necFedIncomeTaxWithheld</li>
+ *   <li>necStateTaxWithheld</li>
+ *   <li>necPayerStateNumber</li>
+ *   <li>necStateIncome</li>
  *   <li>taxYear</li>
+ *   <li>ein</li>
+ *   <li>filerName1</li>
+ *   <li>filerName2</li>
+ *   <li>filerAddress1</li>
+ *   <li>filerAddress2</li>
+ *   <li>filerCity</li>
+ *   <li>filerState</li>
+ *   <li>filerZipCode</li>
+ *   <li>filerPhoneNumber</li>
  * </ul>
  * 
  * <p>The vendor handling of this processor will also populate the following DETAIL fields:</p>
@@ -94,19 +121,26 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  * 
  * <ul>
  *   <li>ssn (DERIVED field)</li>
+ *   <li>ein (DERIVED field)</li>
  * </ul>
  */
 public class TransactionRow1099Processor extends TransactionRowProcessor<Transaction1099Summary> {
 	private static final Logger LOG = LogManager.getLogger(TransactionRow1099Processor.class);
 
-    private static final String BOX_PREFIX = "box";
+    private static final int BOX_PROPERTY_SUBSTRING_MAX_LENGTH = 16;
 
-    private static final int NUM_1099_CHAR_BUFFERS = 2;
-    private static final int NUM_1099_WRITERS = 1;
+    private static final int NUM_1099_CHAR_BUFFERS = 6;
+    private static final int NUM_1099_WRITERS = 2;
 
-    private static final int HEADER_BUFFER_INDEX = 0;
-    private static final int TAB_RECORD_BUFFER_INDEX = 1;
-    private static final int TAX_1099_WRITER_INDEX = 0;
+    private static final int SHARED_HEADER_BUFFER_INDEX = 0;
+    private static final int MISC_HEADER_BUFFER_INDEX = 1;
+    private static final int NEC_HEADER_BUFFER_INDEX = 2;
+    private static final int SHARED_TAB_DATA_BUFFER_INDEX = 3;
+    private static final int MISC_TAB_RECORD_BUFFER_INDEX = 4;
+    private static final int NEC_TAB_RECORD_BUFFER_INDEX = 5;
+
+    private static final int TAX_1099_MISC_WRITER_INDEX = 0;
+    private static final int TAX_1099_NEC_WRITER_INDEX = 1;
 
     private static final int VENDOR_ANY_ADDRESS_INDEX = 2;
     private static final int TAX_1099_EXTRA_RS_SIZE = 3;
@@ -163,24 +197,39 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     private RecordPiece1099String vendorForeignCountryNameP;
     private RecordPiece1099String vendorForeignCountryIndicatorP;
     private RecordPiece1099String taxYearP;
+    private RecordPiece1099String taxEINValueP;
+    private RecordPiece1099String filerName1P;
+    private RecordPiece1099String filerName2P;
+    private RecordPiece1099String filerAddress1P;
+    private RecordPiece1099String filerAddress2P;
+    private RecordPiece1099String filerCityP;
+    private RecordPiece1099String filerStateP;
+    private RecordPiece1099String filerZipCodeP;
+    private RecordPiece1099String filerPhoneNumberP;
 
     // Variables pertaining to derived fields related to a tax box.
-    private Map<TaxTableField,RecordPiece1099BigDecimal> boxesMap;
-    private RecordPiece1099BigDecimal box1P;
-    private RecordPiece1099BigDecimal box2P;
-    private RecordPiece1099BigDecimal box3P;
-    private RecordPiece1099BigDecimal box4P;
-    private RecordPiece1099BigDecimal box5P;
-    private RecordPiece1099BigDecimal box6P;
-    private RecordPiece1099BigDecimal box7P;
-    private RecordPiece1099BigDecimal box8P;
-    private RecordPiece1099BigDecimal box10P;
-    private RecordPiece1099BigDecimal box13P;
-    private RecordPiece1099BigDecimal box14P;
-    private RecordPiece1099BigDecimal box15aP;
-    private RecordPiece1099BigDecimal box15bP;
-    private RecordPiece1099BigDecimal box16P;
-    private RecordPiece1099BigDecimal box18P;
+    private Map<TaxTableField,RecordPiece1099BigDecimal> boxAmountsMap;
+    private RecordPiece1099BigDecimal miscRentsP;
+    private RecordPiece1099BigDecimal miscRoyaltiesP;
+    private RecordPiece1099BigDecimal miscOtherIncomeP;
+    private RecordPiece1099BigDecimal miscFedIncomeTaxWithheldP;
+    private RecordPiece1099BigDecimal miscFishingBoatProceedsP;
+    private RecordPiece1099BigDecimal miscMedicalHealthcarePaymentsP;
+    private RecordPiece1099String miscDirectSalesIndP;
+    private RecordPiece1099BigDecimal miscSubstitutePaymentsP;
+    private RecordPiece1099BigDecimal miscCropInsuranceProceedsP;
+    private RecordPiece1099BigDecimal miscGrossProceedsAttorneyP;
+    private RecordPiece1099BigDecimal miscSection409ADeferralP;
+    private RecordPiece1099BigDecimal miscGoldenParachuteP;
+    private RecordPiece1099BigDecimal miscNonqualifiedDeferredCompensationP;
+    private RecordPiece1099BigDecimal miscStateTaxWithheldP;
+    private RecordPiece1099String miscPayerStateNumberP;
+    private RecordPiece1099BigDecimal miscStateIncomeP;
+    private RecordPiece1099BigDecimal necNonemployeeCompensationP;
+    private RecordPiece1099BigDecimal necFedIncomeTaxWithheldP;
+    private RecordPiece1099BigDecimal necStateTaxWithheldP;
+    private RecordPiece1099String necPayerStateNumberP;
+    private RecordPiece1099BigDecimal necStateIncomeP;
 
     // Variables pertaining to row-specific values and flags.
     private String rowKey;
@@ -230,7 +279,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
     // Variables pertaining to various statistics.
     private Map<Integer,String> boxNumberMappingsWithStatistics;
     private int numTransactionRows;
-    private int numTabRecordsWritten;
+    private int numMiscTabRecordsWritten;
+    private int numNecTabRecordsWritten;
     private int numVendorNamesParsed;
     private int numVendorNamesNotParsed;
     private int numNoVendor;
@@ -411,22 +461,37 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                         derivedValues.vendorForeignCountryIndicator,
                         derivedValues.ssn,
                         derivedValues.tabSiteId,
-                        derivedValues.box1,
-                        derivedValues.box2,
-                        derivedValues.box3,
-                        derivedValues.box4,
-                        derivedValues.box5,
-                        derivedValues.box6,
-                        derivedValues.box7,
-                        derivedValues.box8,
-                        derivedValues.box10,
-                        derivedValues.box13,
-                        derivedValues.box14,
-                        derivedValues.box15a,
-                        derivedValues.box15b,
-                        derivedValues.box16,
-                        derivedValues.box18,
-                        derivedValues.taxYear
+                        derivedValues.miscRents,
+                        derivedValues.miscRoyalties,
+                        derivedValues.miscOtherIncome,
+                        derivedValues.miscFedIncomeTaxWithheld,
+                        derivedValues.miscFishingBoatProceeds,
+                        derivedValues.miscMedicalHealthcarePayments,
+                        derivedValues.miscDirectSalesInd,
+                        derivedValues.miscSubstitutePayments,
+                        derivedValues.miscCropInsuranceProceeds,
+                        derivedValues.miscGrossProceedsAttorney,
+                        derivedValues.miscSection409ADeferral,
+                        derivedValues.miscGoldenParachute,
+                        derivedValues.miscNonqualifiedDeferredCompensation,
+                        derivedValues.miscStateTaxWithheld,
+                        derivedValues.miscPayerStateNumber,
+                        derivedValues.miscStateIncome,
+                        derivedValues.necNonemployeeCompensation,
+                        derivedValues.necFedIncomeTaxWithheld,
+                        derivedValues.necStateTaxWithheld,
+                        derivedValues.necPayerStateNumber,
+                        derivedValues.necStateIncome,
+                        derivedValues.taxYear,
+                        derivedValues.ein,
+                        derivedValues.filerName1,
+                        derivedValues.filerName2,
+                        derivedValues.filerAddress1,
+                        derivedValues.filerAddress2,
+                        derivedValues.filerCity,
+                        derivedValues.filerState,
+                        derivedValues.filerZipCode,
+                        derivedValues.filerPhoneNumber
                 ));
                 break;
             
@@ -447,6 +512,15 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         List<RecordPiece1099Int> intPieces = new ArrayList<RecordPiece1099Int>();
         List<RecordPiece1099BigDecimal> bigDecimalPieces = new ArrayList<RecordPiece1099BigDecimal>();
         List<RecordPiece1099Date> datePieces = new ArrayList<RecordPiece1099Date>();
+        
+        Function<TaxTableField, RecordPiece1099String> stringPieceFinder =
+                taxField -> (RecordPiece1099String) complexPieces.get(taxField.propertyName);
+        Function<TaxTableField, RecordPiece1099Int> intPieceFinder =
+                taxField -> (RecordPiece1099Int) complexPieces.get(taxField.propertyName);
+        Function<TaxTableField, RecordPiece1099BigDecimal> bigDecimalPieceFinder =
+                taxField -> (RecordPiece1099BigDecimal) complexPieces.get(taxField.propertyName);
+        Function<TaxTableField, RecordPiece1099Date> datePieceFinder =
+                taxField -> (RecordPiece1099Date) complexPieces.get(taxField.propertyName);
         
         // retrieve the "piece" objects corresponding to all the given transaction detail fields.
         for (TaxTableField detailField : summary.transactionDetailRow.orderedFields) {
@@ -482,67 +556,86 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         detailDates = datePieces.toArray(new RecordPiece1099Date[datePieces.size()]);
         
         // Retrieve the various detail "pieces" that will be needed for the processing.
-        rowIdP = (RecordPiece1099String) complexPieces.get(detailRow.transactionDetailId.propertyName);
-        docNumberP = (RecordPiece1099String) complexPieces.get(detailRow.documentNumber.propertyName);
-        docTypeP = (RecordPiece1099String) complexPieces.get(detailRow.documentType.propertyName);
-        docTitleP = (RecordPiece1099String) complexPieces.get(detailRow.documentTitle.propertyName);
-        docLineNumberP = (RecordPiece1099Int) complexPieces.get(detailRow.financialDocumentLineNumber.propertyName);
-        objectCodeP = (RecordPiece1099String) complexPieces.get(detailRow.finObjectCode.propertyName);
-        paymentAmountP = (RecordPiece1099BigDecimal) complexPieces.get(detailRow.netPaymentAmount.propertyName);
-        taxIdP = (RecordPiece1099String) complexPieces.get(detailRow.vendorTaxNumber.propertyName);
-        dvCheckStubTextP = (RecordPiece1099String) complexPieces.get(detailRow.dvCheckStubText.propertyName);
-        payeeIdP = (RecordPiece1099String) complexPieces.get(detailRow.payeeId.propertyName);
-        vendorNameP = (RecordPiece1099String) complexPieces.get(detailRow.vendorName.propertyName);
-        parentVendorNameP = (RecordPiece1099String) complexPieces.get(detailRow.parentVendorName.propertyName);
-        paymentDateP = (RecordPiece1099Date) complexPieces.get(detailRow.paymentDate.propertyName);
-        paymentAddressLine1P = (RecordPiece1099String) complexPieces.get(detailRow.paymentLine1Address.propertyName);
-        chartCodeP = (RecordPiece1099String) complexPieces.get(detailRow.chartCode.propertyName);
-        accountNumberP = (RecordPiece1099String) complexPieces.get(detailRow.accountNumber.propertyName);
-        initiatorNetIdP = (RecordPiece1099String) complexPieces.get(detailRow.initiatorNetId.propertyName);
-        paymentReasonCodeP = (RecordPiece1099String) complexPieces.get(detailRow.paymentReasonCode.propertyName);
+        rowIdP = stringPieceFinder.apply(detailRow.transactionDetailId);
+        docNumberP = stringPieceFinder.apply(detailRow.documentNumber);
+        docTypeP = stringPieceFinder.apply(detailRow.documentType);
+        docTitleP = stringPieceFinder.apply(detailRow.documentTitle);
+        docLineNumberP = intPieceFinder.apply(detailRow.financialDocumentLineNumber);
+        objectCodeP = stringPieceFinder.apply(detailRow.finObjectCode);
+        paymentAmountP = bigDecimalPieceFinder.apply(detailRow.netPaymentAmount);
+        taxIdP = stringPieceFinder.apply(detailRow.vendorTaxNumber);
+        dvCheckStubTextP = stringPieceFinder.apply(detailRow.dvCheckStubText);
+        payeeIdP = stringPieceFinder.apply(detailRow.payeeId);
+        vendorNameP = stringPieceFinder.apply(detailRow.vendorName);
+        parentVendorNameP = stringPieceFinder.apply(detailRow.parentVendorName);
+        paymentDateP = datePieceFinder.apply(detailRow.paymentDate);
+        paymentAddressLine1P = stringPieceFinder.apply(detailRow.paymentLine1Address);
+        chartCodeP = stringPieceFinder.apply(detailRow.chartCode);
+        accountNumberP = stringPieceFinder.apply(detailRow.accountNumber);
+        initiatorNetIdP = stringPieceFinder.apply(detailRow.initiatorNetId);
+        paymentReasonCodeP = stringPieceFinder.apply(detailRow.paymentReasonCode);
         
         // Retrieve the various derived "pieces" that will be needed for the processing.
-        vendorEmailAddressP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorEmailAddress.propertyName);
-        vendorAddressLine1P = (RecordPiece1099String) complexPieces.get(derivedValues.vendorAnyAddressLine1.propertyName);
-        vendorNumbersOnlyZipCodeP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorZipCodeNumOnly.propertyName);
-        vendorForeignCountryNameP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorForeignCountryName.propertyName);
-        vendorForeignCountryIndicatorP = (RecordPiece1099String) complexPieces.get(derivedValues.vendorForeignCountryIndicator.propertyName);
-        outputTaxIdP = (RecordPiece1099String) complexPieces.get(derivedValues.ssn.propertyName);
-        tabSiteIdP = (RecordPiece1099String) complexPieces.get(derivedValues.tabSiteId.propertyName);
-        taxYearP = (RecordPiece1099String) complexPieces.get(derivedValues.taxYear.propertyName);
-        box1P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box1.propertyName);
-        box2P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box2.propertyName);
-        box3P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box3.propertyName);
-        box4P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box4.propertyName);
-        box5P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box5.propertyName);
-        box6P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box6.propertyName);
-        box7P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box7.propertyName);
-        box8P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box8.propertyName);
-        box10P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box10.propertyName);
-        box13P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box13.propertyName);
-        box14P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box14.propertyName);
-        box15aP = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box15a.propertyName);
-        box15bP = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box15b.propertyName);
-        box16P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box16.propertyName);
-        box18P = (RecordPiece1099BigDecimal) complexPieces.get(derivedValues.box18.propertyName);
+        vendorEmailAddressP = stringPieceFinder.apply(derivedValues.vendorEmailAddress);
+        vendorAddressLine1P = stringPieceFinder.apply(derivedValues.vendorAnyAddressLine1);
+        vendorNumbersOnlyZipCodeP = stringPieceFinder.apply(derivedValues.vendorZipCodeNumOnly);
+        vendorForeignCountryNameP = stringPieceFinder.apply(derivedValues.vendorForeignCountryName);
+        vendorForeignCountryIndicatorP = stringPieceFinder.apply(derivedValues.vendorForeignCountryIndicator);
+        outputTaxIdP = stringPieceFinder.apply(derivedValues.ssn);
+        tabSiteIdP = stringPieceFinder.apply(derivedValues.tabSiteId);
+        taxYearP = stringPieceFinder.apply(derivedValues.taxYear);
+        taxEINValueP = stringPieceFinder.apply(derivedValues.ein);
+        filerName1P = stringPieceFinder.apply(derivedValues.filerName1);
+        filerName2P = stringPieceFinder.apply(derivedValues.filerName2);
+        filerAddress1P = stringPieceFinder.apply(derivedValues.filerAddress1);
+        filerAddress2P = stringPieceFinder.apply(derivedValues.filerAddress2);
+        filerCityP = stringPieceFinder.apply(derivedValues.filerCity);
+        filerStateP = stringPieceFinder.apply(derivedValues.filerState);
+        filerZipCodeP = stringPieceFinder.apply(derivedValues.filerZipCode);
+        filerPhoneNumberP = stringPieceFinder.apply(derivedValues.filerPhoneNumber);
+        miscRentsP = bigDecimalPieceFinder.apply(derivedValues.miscRents);
+        miscRoyaltiesP = bigDecimalPieceFinder.apply(derivedValues.miscRoyalties);
+        miscOtherIncomeP = bigDecimalPieceFinder.apply(derivedValues.miscOtherIncome);
+        miscFedIncomeTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.miscFedIncomeTaxWithheld);
+        miscFishingBoatProceedsP = bigDecimalPieceFinder.apply(derivedValues.miscFishingBoatProceeds);
+        miscMedicalHealthcarePaymentsP = bigDecimalPieceFinder.apply(derivedValues.miscMedicalHealthcarePayments);
+        miscDirectSalesIndP = stringPieceFinder.apply(derivedValues.miscDirectSalesInd);
+        miscSubstitutePaymentsP = bigDecimalPieceFinder.apply(derivedValues.miscSubstitutePayments);
+        miscCropInsuranceProceedsP = bigDecimalPieceFinder.apply(derivedValues.miscCropInsuranceProceeds);
+        miscGrossProceedsAttorneyP = bigDecimalPieceFinder.apply(derivedValues.miscGrossProceedsAttorney);
+        miscSection409ADeferralP = bigDecimalPieceFinder.apply(derivedValues.miscSection409ADeferral);
+        miscGoldenParachuteP = bigDecimalPieceFinder.apply(derivedValues.miscGoldenParachute);
+        miscNonqualifiedDeferredCompensationP = bigDecimalPieceFinder.apply(
+                derivedValues.miscNonqualifiedDeferredCompensation);
+        miscStateTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.miscStateTaxWithheld);
+        miscPayerStateNumberP = stringPieceFinder.apply(derivedValues.miscPayerStateNumber);
+        miscStateIncomeP = bigDecimalPieceFinder.apply(derivedValues.miscStateIncome);
+        necNonemployeeCompensationP = bigDecimalPieceFinder.apply(derivedValues.necNonemployeeCompensation);
+        necFedIncomeTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.necFedIncomeTaxWithheld);
+        necStateTaxWithheldP = bigDecimalPieceFinder.apply(derivedValues.necStateTaxWithheld);
+        necPayerStateNumberP = stringPieceFinder.apply(derivedValues.necPayerStateNumber);
+        necStateIncomeP = bigDecimalPieceFinder.apply(derivedValues.necStateIncome);
         
         // Populate tax box field map.
-        boxesMap = new HashMap<TaxTableField,RecordPiece1099BigDecimal>();
-        boxesMap.put(box1P.tableField, box1P);
-        boxesMap.put(box2P.tableField, box2P);
-        boxesMap.put(box3P.tableField, box3P);
-        boxesMap.put(box4P.tableField, box4P);
-        boxesMap.put(box5P.tableField, box5P);
-        boxesMap.put(box6P.tableField, box6P);
-        boxesMap.put(box7P.tableField, box7P);
-        boxesMap.put(box8P.tableField, box8P);
-        boxesMap.put(box10P.tableField, box10P);
-        boxesMap.put(box13P.tableField, box13P);
-        boxesMap.put(box14P.tableField, box14P);
-        boxesMap.put(box15aP.tableField, box15aP);
-        boxesMap.put(box15bP.tableField, box15bP);
-        boxesMap.put(box16P.tableField, box16P);
-        boxesMap.put(box18P.tableField, box18P);
+        boxAmountsMap = new HashMap<TaxTableField,RecordPiece1099BigDecimal>();
+        boxAmountsMap.put(miscRentsP.tableField, miscRentsP);
+        boxAmountsMap.put(miscRoyaltiesP.tableField, miscRoyaltiesP);
+        boxAmountsMap.put(miscOtherIncomeP.tableField, miscOtherIncomeP);
+        boxAmountsMap.put(miscFedIncomeTaxWithheldP.tableField, miscFedIncomeTaxWithheldP);
+        boxAmountsMap.put(miscFishingBoatProceedsP.tableField, miscFishingBoatProceedsP);
+        boxAmountsMap.put(miscMedicalHealthcarePaymentsP.tableField, miscMedicalHealthcarePaymentsP);
+        boxAmountsMap.put(miscSubstitutePaymentsP.tableField, miscSubstitutePaymentsP);
+        boxAmountsMap.put(miscCropInsuranceProceedsP.tableField, miscCropInsuranceProceedsP);
+        boxAmountsMap.put(miscGrossProceedsAttorneyP.tableField, miscGrossProceedsAttorneyP);
+        boxAmountsMap.put(miscSection409ADeferralP.tableField, miscSection409ADeferralP);
+        boxAmountsMap.put(miscGoldenParachuteP.tableField, miscGoldenParachuteP);
+        boxAmountsMap.put(miscNonqualifiedDeferredCompensationP.tableField, miscNonqualifiedDeferredCompensationP);
+        boxAmountsMap.put(miscStateTaxWithheldP.tableField, miscStateTaxWithheldP);
+        boxAmountsMap.put(miscStateIncomeP.tableField, miscStateIncomeP);
+        boxAmountsMap.put(necNonemployeeCompensationP.tableField, necNonemployeeCompensationP);
+        boxAmountsMap.put(necFedIncomeTaxWithheldP.tableField, necFedIncomeTaxWithheldP);
+        boxAmountsMap.put(necStateTaxWithheldP.tableField, necStateTaxWithheldP);
+        boxAmountsMap.put(necStateIncomeP.tableField, necStateIncomeP);
     }
 
 
@@ -552,7 +645,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         String[] filePaths = super.getFilePathsForWriters(summary, processingStartDate);
         // Output file for 1099 tab records.
         filePaths[0] = new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/')
-                .append(CUTaxConstants.TAX_1099_OUTPUT_FILE_PREFIX).append(summary.reportYear)
+                .append(CUTaxConstants.TAX_1099_MISC_OUTPUT_FILE_PREFIX).append(summary.reportYear)
+                .append(buildDateFormatForFileSuffixes().format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
+        filePaths[1] = new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/')
+                .append(CUTaxConstants.TAX_1099_NEC_OUTPUT_FILE_PREFIX).append(summary.reportYear)
                 .append(buildDateFormatForFileSuffixes().format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
         return filePaths;
     }
@@ -602,6 +698,15 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         // Setup values that are not expected to change between each iteration.
         tabSiteIdP.value = summary.tabSiteId;
         taxYearP.value = String.valueOf(summary.reportYear);
+        taxEINValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_9_CHARS : summary.taxEIN;
+        filerName1P.value = summary.filerAddressFields.get(Tax1099FilerAddressField.NAME1);
+        filerName2P.value = summary.filerAddressFields.get(Tax1099FilerAddressField.NAME2);
+        filerAddress1P.value = summary.filerAddressFields.get(Tax1099FilerAddressField.ADDRESS1);
+        filerAddress2P.value = summary.filerAddressFields.get(Tax1099FilerAddressField.ADDRESS2);
+        filerCityP.value = summary.filerAddressFields.get(Tax1099FilerAddressField.CITY);
+        filerStateP.value = summary.filerAddressFields.get(Tax1099FilerAddressField.STATE);
+        filerZipCodeP.value = summary.filerAddressFields.get(Tax1099FilerAddressField.ZIP_CODE);
+        filerPhoneNumberP.value = summary.filerAddressFields.get(Tax1099FilerAddressField.PHONE_NUMBER);
         rsDummy = new DummyResultSet();
         vendorRow = summary.vendorRow;
         vendorAddressRow = summary.vendorAddressRow;
@@ -610,10 +715,17 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
             outputTaxIdP.value = CUTaxConstants.MASKED_VALUE_9_CHARS;
         }
         
-        // Print header.
-        resetBuffer(HEADER_BUFFER_INDEX);
-        appendPieces(HEADER_BUFFER_INDEX);
-        writeBufferToOutput(HEADER_BUFFER_INDEX, TAX_1099_WRITER_INDEX);
+        // Print headers.
+        resetBuffer(SHARED_HEADER_BUFFER_INDEX);
+        resetBuffer(MISC_HEADER_BUFFER_INDEX);
+        resetBuffer(NEC_HEADER_BUFFER_INDEX);
+        appendPieces(SHARED_HEADER_BUFFER_INDEX);
+        appendBuffer(SHARED_HEADER_BUFFER_INDEX, MISC_HEADER_BUFFER_INDEX);
+        appendBuffer(SHARED_HEADER_BUFFER_INDEX, NEC_HEADER_BUFFER_INDEX);
+        appendPieces(MISC_HEADER_BUFFER_INDEX);
+        appendPieces(NEC_HEADER_BUFFER_INDEX);
+        writeBufferToOutput(MISC_HEADER_BUFFER_INDEX, TAX_1099_MISC_WRITER_INDEX);
+        writeBufferToOutput(NEC_HEADER_BUFFER_INDEX, TAX_1099_NEC_WRITER_INDEX);
         
         // Perform initial processing for first row, if there is one.
         if (rs.next()) {
@@ -756,21 +868,27 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
 
 
     private void resetTaxBoxes(Transaction1099Summary summary) {
-        box1P.value = summary.zeroAmount;
-        box2P.value = summary.zeroAmount;
-        box3P.value = summary.zeroAmount;
-        box4P.value = summary.zeroAmount;
-        box5P.value = summary.zeroAmount;
-        box6P.value = summary.zeroAmount;
-        box7P.value = summary.zeroAmount;
-        box8P.value = summary.zeroAmount;
-        box10P.value = summary.zeroAmount;
-        box13P.value = summary.zeroAmount;
-        box14P.value = summary.zeroAmount;
-        box15aP.value = summary.zeroAmount;
-        box15bP.value = summary.zeroAmount;
-        box16P.value = summary.zeroAmount;
-        box18P.value = summary.zeroAmount;
+        miscRentsP.value = summary.zeroAmount;
+        miscRoyaltiesP.value = summary.zeroAmount;
+        miscOtherIncomeP.value = summary.zeroAmount;
+        miscFedIncomeTaxWithheldP.value = summary.zeroAmount;
+        miscFishingBoatProceedsP.value = summary.zeroAmount;
+        miscMedicalHealthcarePaymentsP.value = summary.zeroAmount;
+        miscDirectSalesIndP.value = KFSConstants.EMPTY_STRING;
+        miscSubstitutePaymentsP.value = summary.zeroAmount;
+        miscCropInsuranceProceedsP.value = summary.zeroAmount;
+        miscGrossProceedsAttorneyP.value = summary.zeroAmount;
+        miscSection409ADeferralP.value = summary.zeroAmount;
+        miscGoldenParachuteP.value = summary.zeroAmount;
+        miscNonqualifiedDeferredCompensationP.value = summary.zeroAmount;
+        miscStateTaxWithheldP.value = summary.zeroAmount;
+        miscPayerStateNumberP.value = KFSConstants.EMPTY_STRING;
+        miscStateIncomeP.value = summary.zeroAmount;
+        necNonemployeeCompensationP.value = summary.zeroAmount;
+        necFedIncomeTaxWithheldP.value = summary.zeroAmount;
+        necStateTaxWithheldP.value = summary.zeroAmount;
+        necPayerStateNumberP.value = KFSConstants.EMPTY_STRING;
+        necStateIncomeP.value = summary.zeroAmount;
     }
 
 
@@ -969,6 +1087,10 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
 	        }
         }
         
+        if (summary.derivedValues.boxUnknown1099.equals(taxBox)) {
+            excludeTransaction = true;
+        }
+        
         // Check for vendor type or vendor ownership type exclusions.
         if (taxBox != null && !excludeTransaction) {
             if (summary.excludedVendorTypeCodes.contains(rsVendor.getString(vendorRow.vendorTypeCode.index))) {
@@ -1079,8 +1201,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         /*
          * Look for box-specific inclusions/exclusions.
          */
-        if (summary.derivedValues.box2.equals(taxBox)) {
-            // If box 2 (royalties), check for inclusions/exclusions based on object code and chart-and-account combo.
+        if (summary.derivedValues.miscRoyalties.equals(taxBox)) {
+            // If box royalties, check for inclusions/exclusions based on object code and chart-and-account combo.
             tempSet = summary.royaltiesIncludedObjectCodeChartAccount.get(objectCodeP.value);
             if (tempSet != null) {
                 // Potential chart-and-account inclusions/exclusions exist for the given object code.
@@ -1099,8 +1221,8 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 currentStats.numRoyaltyObjChartAccountNeitherDetermined++;
             }
             
-        } else if (summary.derivedValues.box7.equals(taxBox)) {
-            // If box 7 (Nonemployee Compensation), check for inclusions/exclusions based on vendor name or document title.
+        } else if (summary.derivedValues.necNonemployeeCompensation.equals(taxBox)) {
+            // If Nonemployee Compensation, check for inclusions/exclusions based on vendor name or document title.
             
             // Check for vendor name inclusions/exclusions.
             nonEmployeeCompVendorNameInclusionInd = determineClusionWithPatterns(vendorNameForOutput,
@@ -1199,45 +1321,70 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         // Perform logging and updates depending on box type and exclusions.
         if ((isParm1099Exclusion && overrideTaxBox == null) || summary.derivedValues.boxUnknown1099.equals(overrideTaxBox)) {
             // If exclusion without an override (or an override to a non-reportable box type), then do not update amounts.
+            rs.updateString(detailRow.form1099Type.index, CUTaxConstants.TAX_1099_UNKNOWN_FORM_TYPE);
             rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
             if (taxBox != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Found exclusions for row with key: " + rowKey);
                 }
                 if (overrideTaxBox != null) {
-                    rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
-                            ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+                    Pair<String, String> overriddenTypeAndBox = findFormTypeAndBoxNumberForPotentiallyNullField(
+                            overriddenTaxBox, summary);
+                    rs.updateString(detailRow.form1099OverriddenType.index, overriddenTypeAndBox.getLeft());
+                    rs.updateString(detailRow.form1099OverriddenBox.index, overriddenTypeAndBox.getRight());
                 }
             } else {
                 numNoBoxDeterminedRows++;
             }
             
-        } else if (taxBox != null) {
+        } else if (taxBox != null && !summary.derivedValues.boxUnknown1099.equals(taxBox)) {
             // If not an exclusion and a tax box was found, then update the box's current amount.
-            taxBoxPiece = boxesMap.get(taxBox);
+            taxBoxPiece = boxAmountsMap.get(taxBox);
             if (taxBoxPiece != null) {
                 taxBoxPiece.value = taxBoxPiece.value.add(paymentAmountP.value);
                 
-            } else if (!summary.derivedValues.box9.equals(taxBox) && !summary.derivedValues.box17.equals(taxBox)) {
+            } else if (!summary.derivedValues.miscDirectSalesInd.equals(taxBox)
+                    && !summary.derivedValues.miscPayerStateNumber.equals(taxBox)
+                    && !summary.derivedValues.necPayerStateNumber.equals(taxBox)) {
                 throw new RuntimeException("Unrecognized 1099 tax box type");
             }
             
             // Update tax box indicator fields.
             foundAmount = true;
-            rs.updateString(detailRow.form1099Box.index, taxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase());
+            Pair<String, String> typeAndBox = findKnownFormTypeAndBoxNumberForField(taxBox, summary);
+            rs.updateString(detailRow.form1099Type.index, typeAndBox.getLeft());
+            rs.updateString(detailRow.form1099Box.index, typeAndBox.getRight());
             if (overrideTaxBox != null) {
-                rs.updateString(detailRow.form1099OverriddenBox.index, (overriddenTaxBox != null)
-                        ? overriddenTaxBox.propertyName.substring(BOX_PREFIX.length()).toUpperCase() : CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
+                Pair<String, String> overriddenTypeAndBox = findFormTypeAndBoxNumberForPotentiallyNullField(
+                        overriddenTaxBox, summary);
+                rs.updateString(detailRow.form1099OverriddenType.index, overriddenTypeAndBox.getLeft());
+                rs.updateString(detailRow.form1099OverriddenBox.index, overriddenTypeAndBox.getRight());
             }
             
         } else {
             // Otherwise, do not update amounts.
+            rs.updateString(detailRow.form1099Type.index, CUTaxConstants.TAX_1099_UNKNOWN_FORM_TYPE);
             rs.updateString(detailRow.form1099Box.index, CUTaxConstants.TAX_1099_UNKNOWN_BOX_KEY);
             numNoBoxDeterminedRows++;
         }
     }
 
+    private Pair<String, String> findKnownFormTypeAndBoxNumberForField(
+            TaxTableField taxField, Transaction1099Summary summary) {
+        Objects.requireNonNull(taxField, "taxField cannot be null; this should never happen!");
+        return Objects.requireNonNull(summary.boxNumberReverseMappings.get(taxField),
+                "Mapping for taxField " + taxField.propertyName + " cannot be null; this should never happen!");
+    }
 
+    private Pair<String, String> findFormTypeAndBoxNumberForPotentiallyNullField(
+            TaxTableField taxField, Transaction1099Summary summary) {
+        if (taxField == null) {
+            return CUTaxConstants.TAX_1099_UNKNOWN_BOX_COMPOSITE_KEY;
+        } else {
+            return summary.boxNumberReverseMappings.getOrDefault(
+                    taxField, CUTaxConstants.TAX_1099_UNKNOWN_BOX_COMPOSITE_KEY);
+        }
+    }
 
     /*
      * Helper method for writing 1099 tab records to the output file.
@@ -1255,13 +1402,25 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         // Setup zip code without hyphens.
         vendorNumbersOnlyZipCodeP.value = StringUtils.remove(rsVendorAnyAddress.getString(vendorAddressRow.vendorZipCode.index), '-');
         
-        // Write the tab record to the file.
-        resetBuffer(TAB_RECORD_BUFFER_INDEX);
-        appendPieces(TAB_RECORD_BUFFER_INDEX);
-        writeBufferToOutput(TAB_RECORD_BUFFER_INDEX, TAX_1099_WRITER_INDEX);
+        // Write the tab record(s) to the file(s).
+        resetBuffer(SHARED_TAB_DATA_BUFFER_INDEX);
+        appendPieces(SHARED_TAB_DATA_BUFFER_INDEX);
         
-        // Update statistics.
-        numTabRecordsWritten++;
+        if (shouldWrite1099MiscTabLine(summary)) {
+            resetBuffer(MISC_TAB_RECORD_BUFFER_INDEX);
+            appendBuffer(SHARED_TAB_DATA_BUFFER_INDEX, MISC_TAB_RECORD_BUFFER_INDEX);
+            appendPieces(MISC_TAB_RECORD_BUFFER_INDEX);
+            writeBufferToOutput(MISC_TAB_RECORD_BUFFER_INDEX, TAX_1099_MISC_WRITER_INDEX);
+            numMiscTabRecordsWritten++;
+        }
+        
+        if (shouldWrite1099NecTabLine(summary)) {
+            resetBuffer(NEC_TAB_RECORD_BUFFER_INDEX);
+            appendBuffer(SHARED_TAB_DATA_BUFFER_INDEX, NEC_TAB_RECORD_BUFFER_INDEX);
+            appendPieces(NEC_TAB_RECORD_BUFFER_INDEX);
+            writeBufferToOutput(NEC_TAB_RECORD_BUFFER_INDEX, TAX_1099_NEC_WRITER_INDEX);
+            numNecTabRecordsWritten++;
+        }
         
         // Reset values as needed.
         resetTaxBoxes(summary);
@@ -1269,14 +1428,34 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         writeTabRecord = false;
     }
 
+    private boolean shouldWrite1099MiscTabLine(Transaction1099Summary summary) {
+        return Stream
+                .of(miscRentsP, miscRoyaltiesP, miscOtherIncomeP, miscFedIncomeTaxWithheldP, miscFishingBoatProceedsP,
+                        miscMedicalHealthcarePaymentsP, miscSubstitutePaymentsP, miscCropInsuranceProceedsP,
+                        miscGrossProceedsAttorneyP, miscSection409ADeferralP, miscGoldenParachuteP,
+                        miscNonqualifiedDeferredCompensationP, miscStateTaxWithheldP)
+                .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
+    }
 
+    private boolean shouldWrite1099NecTabLine(Transaction1099Summary summary) {
+        return Stream.of(necNonemployeeCompensationP, necFedIncomeTaxWithheldP, necStateTaxWithheldP)
+                .anyMatch(taxBoxPiece -> taxBoxAmountIsLargeEnoughToBeReported(taxBoxPiece, summary));
+    }
+
+    private boolean taxBoxAmountIsLargeEnoughToBeReported(
+            RecordPiece1099BigDecimal taxBoxPiece, Transaction1099Summary summary) {
+        BigDecimal minimumReportingAmount = summary.taxBoxMinimumReportingAmounts
+                .getOrDefault(taxBoxPiece.tableField, summary.defaultTaxBoxMinimumReportingAmount);
+        return taxBoxPiece.value.compareTo(minimumReportingAmount) >= 0;
+    }
 
     @Override
     EnumMap<TaxStatType,Integer> getStatistics() {
         EnumMap<TaxStatType,Integer> statistics = super.getStatistics();
         
         statistics.put(TaxStatType.NUM_TRANSACTION_ROWS, Integer.valueOf(numTransactionRows));
-        statistics.put(TaxStatType.NUM_TAB_RECORDS_WRITTEN, Integer.valueOf(numTabRecordsWritten));
+        statistics.put(TaxStatType.NUM_MISC_TAB_RECORDS_WRITTEN, Integer.valueOf(numMiscTabRecordsWritten));
+        statistics.put(TaxStatType.NUM_NEC_TAB_RECORDS_WRITTEN, Integer.valueOf(numNecTabRecordsWritten));
         statistics.put(TaxStatType.NUM_VENDOR_NAMES_PARSED, Integer.valueOf(numVendorNamesParsed));
         statistics.put(TaxStatType.NUM_VENDOR_NAMES_NOT_PARSED, Integer.valueOf(numVendorNamesNotParsed));
         statistics.put(TaxStatType.NUM_NO_VENDOR, Integer.valueOf(numNoVendor));
@@ -1323,7 +1502,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         
         for (Map.Entry<Integer,String> taxBoxMapping : boxNumberMappingsWithStatistics.entrySet()) {
             int statIndex = taxBoxMapping.getKey().intValue();
-            String prefix = TAX_BOX_STAT_CONST_PREFIX + taxBoxMapping.getValue().toUpperCase();
+            String prefix = getTaxBoxStatConstantPrefix(taxBoxMapping.getValue());
             
             TaxSqlUtils.addDvPdpTotalStats(statistics, TaxStatType.valueOf(prefix + TAX_BOX_STAT_CONST_INCLUDE_SUFFIX),
                     dvStats.numTaxBoxDvCheckStubTextInclusionsDetermined[statIndex],
@@ -1339,33 +1518,41 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         return statistics;
     }
 
-
+    private String getTaxBoxStatConstantPrefix(String propertyName) {
+        String propertyNameSubstring = StringUtils.left(
+                StringUtils.defaultString(propertyName), BOX_PROPERTY_SUBSTRING_MAX_LENGTH);
+        return TAX_BOX_STAT_CONST_PREFIX + propertyNameSubstring.toUpperCase(Locale.US);
+    }
 
     /*
      * Convenience method for building a Map between derived-field indexes and derived-field property names.
      * The generated Map's iterators will return the results in the order that they should be added to the
-     * statistics printing, provided that the Map remains unaltered and does not have its get() method invoked.
+     * statistics printing, provided that the Map remains unaltered.
      */
-    private Map<Integer,String> getTaxBoxNumberMappingsWithStatistics(Transaction1099Summary summary) {
+    private Map<Integer, String> getTaxBoxNumberMappingsWithStatistics(Transaction1099Summary summary) {
         DerivedValuesRow derivedValues = summary.derivedValues;
-        Map<Integer,String> fieldsWithStats = new LinkedHashMap<Integer,String>();
-        
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box1.index), derivedValues.box1.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box2.index), derivedValues.box2.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box3.index), derivedValues.box3.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box4.index), derivedValues.box4.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box5.index), derivedValues.box5.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box6.index), derivedValues.box6.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box7.index), derivedValues.box7.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box8.index), derivedValues.box8.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box10.index), derivedValues.box10.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box13.index), derivedValues.box13.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box14.index), derivedValues.box14.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box15a.index), derivedValues.box15a.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box15b.index), derivedValues.box15b.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box16.index), derivedValues.box16.propertyName);
-        fieldsWithStats.put(Integer.valueOf(derivedValues.box18.index), derivedValues.box18.propertyName);
-        
+        Map<Integer, String> fieldsWithStats = Stream.of(
+                derivedValues.miscRents,
+                derivedValues.miscRoyalties,
+                derivedValues.miscOtherIncome,
+                derivedValues.miscFedIncomeTaxWithheld,
+                derivedValues.miscFishingBoatProceeds,
+                derivedValues.miscMedicalHealthcarePayments,
+                derivedValues.miscSubstitutePayments,
+                derivedValues.miscCropInsuranceProceeds,
+                derivedValues.miscGrossProceedsAttorney,
+                derivedValues.miscSection409ADeferral,
+                derivedValues.miscGoldenParachute,
+                derivedValues.miscNonqualifiedDeferredCompensation,
+                derivedValues.miscStateTaxWithheld,
+                derivedValues.miscStateIncome,
+                derivedValues.necNonemployeeCompensation,
+                derivedValues.necFedIncomeTaxWithheld,
+                derivedValues.necStateTaxWithheld,
+                derivedValues.necStateIncome
+                ).collect(Collectors.toMap(
+                        taxField -> taxField.index, taxField -> taxField.propertyName,
+                        (value1, value2) -> value2, LinkedHashMap::new));
         return fieldsWithStats;
     }
 
@@ -1422,24 +1609,39 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         vendorForeignCountryNameP = null;
         vendorForeignCountryIndicatorP = null;
         taxYearP = null;
-        box1P = null;
-        box2P = null;
-        box3P = null;
-        box4P = null;
-        box5P = null;
-        box6P = null;
-        box7P = null;
-        box8P = null;
-        box10P = null;
-        box13P = null;
-        box14P = null;
-        box15aP = null;
-        box15bP = null;
-        box16P = null;
-        box18P = null;
-        if (boxesMap != null) {
-            boxesMap.clear();
-            boxesMap = null;
+        taxEINValueP = null;
+        filerName1P = null;
+        filerName2P = null;
+        filerAddress1P = null;
+        filerAddress2P = null;
+        filerCityP = null;
+        filerStateP = null;
+        filerZipCodeP = null;
+        filerPhoneNumberP = null;
+        miscRentsP = null;
+        miscRoyaltiesP = null;
+        miscOtherIncomeP = null;
+        miscFedIncomeTaxWithheldP = null;
+        miscFishingBoatProceedsP = null;
+        miscMedicalHealthcarePaymentsP = null;
+        miscDirectSalesIndP = null;
+        miscSubstitutePaymentsP = null;
+        miscCropInsuranceProceedsP = null;
+        miscGrossProceedsAttorneyP = null;
+        miscSection409ADeferralP = null;
+        miscGoldenParachuteP = null;
+        miscNonqualifiedDeferredCompensationP = null;
+        miscStateTaxWithheldP = null;
+        miscPayerStateNumberP = null;
+        miscStateIncomeP = null;
+        necNonemployeeCompensationP = null;
+        necFedIncomeTaxWithheldP = null;
+        necStateTaxWithheldP = null;
+        necPayerStateNumberP = null;
+        necStateIncomeP = null;
+        if (boxAmountsMap != null) {
+            boxAmountsMap.clear();
+            boxAmountsMap = null;
         }
         
         // Perform other cleanup.

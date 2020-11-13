@@ -54,7 +54,16 @@ public final class CUTaxBatchConstants {
         DERIVED;
     }
 
-
+    public enum Tax1099FilerAddressField {
+        NAME1,
+        NAME2,
+        ADDRESS1,
+        ADDRESS2,
+        CITY,
+        STATE,
+        ZIP_CODE,
+        PHONE_NUMBER;
+    }
 
     /**
      * Helper subclass containing aliases for vendor fields used by the tax processing.
@@ -336,7 +345,9 @@ public final class CUTaxBatchConstants {
         public static final String CHART_CODE = "chartCode";
         public static final String ACCOUNT_NUMBER = CUTaxBatchConstants.ACCOUNT_NUMBER;
         public static final String INITIATOR_NETID = "initiatorNetId";
+        public static final String FORM_1099_TYPE = "form1099Type";
         public static final String FORM_1099_BOX = "form1099Box";
+        public static final String FORM_1099_OVERRIDDEN_TYPE = "form1099OverriddenType";
         public static final String FORM_1099_OVERRIDDEN_BOX = "form1099OverriddenBox";
         public static final String FORM_1042S_BOX = "form1042SBox";
         public static final String FORM_1042S_OVERRIDDEN_BOX = "form1042SOverriddenBox";
@@ -383,27 +394,39 @@ public final class CUTaxBatchConstants {
         public static final String STATE_CODE = "stateCode";
         public static final String DV_CHECK_STUB_WITH_UPDATED_WHITESPACE = "dvCheckStubTextWithUpdatedWhitespace";
         public static final String TAB_SITE_ID = "tabSiteId";
-        public static final String BOX1 = "box1";
-        public static final String BOX2 = "box2";
-        public static final String BOX3 = "box3";
-        public static final String BOX4 = "box4";
-        public static final String BOX5 = "box5";
-        public static final String BOX6 = "box6";
-        public static final String BOX7 = "box7";
-        public static final String BOX8 = "box8";
-        public static final String BOX9 = "box9";
-        public static final String BOX10 = "box10";
-        public static final String BOX13 = "box13";
-        public static final String BOX14 = "box14";
-        public static final String BOX15A = "box15a";
-        public static final String BOX15B = "box15b";
-        public static final String BOX16 = "box16";
-        public static final String BOX17 = "box17";
-        public static final String BOX18 = "box18";
+        public static final String MISC_RENTS = "miscRents";
+        public static final String MISC_ROYALTIES = "miscRoyalties";
+        public static final String MISC_OTHER_INCOME = "miscOtherIncome";
+        public static final String MISC_FED_INCOME_TAX_WITHHELD = "miscFedIncomeTaxWithheld";
+        public static final String MISC_FISHING_BOAT_PROCEEDS = "miscFishingBoatProceeds";
+        public static final String MISC_MEDICAL_HEALTHCARE_PAYMENTS = "miscMedicalHealthcarePayments";
+        public static final String MISC_DIRECT_SALES_IND = "miscDirectSalesInd";
+        public static final String MISC_SUBSTITUTE_PAYMENTS = "miscSubstitutePayments";
+        public static final String MISC_CROP_INSURANCE_PROCEEDS = "miscCropInsuranceProceeds";
+        public static final String MISC_GROSS_PROCEEDS_ATTORNEY = "miscGrossProceedsAttorney";
+        public static final String MISC_SECTION_409A_DEFERRAL = "miscSection409ADeferral";
+        public static final String MISC_GOLDEN_PARACHUTE = "miscGoldenParachute";
+        public static final String MISC_NONQUALIFIED_DEFERRED_COMPENSATION = "miscNonqualifiedDeferredCompensation";
+        public static final String MISC_STATE_TAX_WITHHELD = "miscStateTaxWithheld";
+        public static final String MISC_PAYER_STATE_NUMBER = "miscPayerStateNumber";
+        public static final String MISC_STATE_INCOME = "miscStateIncome";
+        public static final String NEC_NONEMPLOYEE_COMPENSATION = "necNonemployeeCompensation";
+        public static final String NEC_FED_INCOME_TAX_WITHHELD = "necFedIncomeTaxWithheld";
+        public static final String NEC_STATE_TAX_WITHHELD = "necStateTaxWithheld";
+        public static final String NEC_PAYER_STATE_NUMBER = "necPayerStateNumber";
+        public static final String NEC_STATE_INCOME = "necStateIncome";
         public static final String BOX_UNKNOWN_1099 = "box???";
         public static final String BOX_UNKNOWN_1042S = "box????";
         public static final String END_DATE = "endDate";
         public static final String TAX_YEAR = "taxYear";
+        public static final String FILER_NAME_1 = "filerName1";
+        public static final String FILER_NAME_2 = "filerName2";
+        public static final String FILER_ADDRESS_1 = "filerAddress1";
+        public static final String FILER_ADDRESS_2 = "filerAddress2";
+        public static final String FILER_CITY = "filerCity";
+        public static final String FILER_STATE = "filerState";
+        public static final String FILER_ZIP_CODE = "filerZipCode";
+        public static final String FILER_PHONE_NUMBER = "filerPhoneNumber";
         
         private DerivedFieldNames() {
             throw new UnsupportedOperationException("do not call DerivedFieldNames constructor");
