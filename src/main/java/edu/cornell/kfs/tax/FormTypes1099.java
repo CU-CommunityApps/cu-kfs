@@ -5,7 +5,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public enum FormTypes1099 {
-    MISC("MISC", "1099-Misc"), NEC("NEC", "1099-NEC");
+    MISC(CUTaxConstants.TAX_1099_MISC_FORM_TYPE, "1099-MISC"),
+    NEC(CUTaxConstants.TAX_1099_NEC_FORM_TYPE, "1099-NEC"),
+    UNKNOWN(CUTaxConstants.TAX_1099_UNKNOWN_FORM_TYPE, "Unknown");
 
     public final String formCode;
     public final String formDescription;

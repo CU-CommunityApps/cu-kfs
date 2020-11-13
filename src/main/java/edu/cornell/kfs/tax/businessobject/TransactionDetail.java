@@ -58,7 +58,9 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private String chartCode;
     private String accountNumber;
     private String initiatorNetId;
+    private String form1099Type;
     private String form1099Box;
+    private String form1099OverriddenType;
     private String form1099OverriddenBox;
     private String form1042SBox;
     private String form1042SOverriddenBox;
@@ -432,12 +434,28 @@ public class TransactionDetail extends TransientBusinessObjectBase {
         this.initiatorNetId = initiatorNetId;
     }
 
+    public String getForm1099Type() {
+        return form1099Type;
+    }
+
+    public void setForm1099Type(String form1099Type) {
+        this.form1099Type = form1099Type;
+    }
+
     public String getForm1099Box() {
         return form1099Box;
     }
 
     public void setForm1099Box(String form1099Box) {
         this.form1099Box = form1099Box;
+    }
+
+    public String getForm1099OverriddenType() {
+        return form1099OverriddenType;
+    }
+
+    public void setForm1099OverriddenType(String form1099OverriddenType) {
+        this.form1099OverriddenType = form1099OverriddenType;
     }
 
     public String getForm1099OverriddenBox() {

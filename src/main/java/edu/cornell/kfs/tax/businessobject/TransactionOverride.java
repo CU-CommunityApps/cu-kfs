@@ -19,6 +19,7 @@ public class TransactionOverride extends PersistableBusinessObjectBase implement
     private String documentNumber;
     private Integer financialDocumentLineNumber;
     private String boxNumber;
+    private String formType;
     private boolean active;
 
     public TransactionOverride() {
@@ -80,6 +81,14 @@ public class TransactionOverride extends PersistableBusinessObjectBase implement
 
     public void setBoxNumber(String boxNumber) {
         this.boxNumber = boxNumber;
+    }
+
+    public String getFormType() {
+        return formType;
+    }
+
+    public void setFormType(String formType) {
+        this.formType = formType;
     }
 
     @Override

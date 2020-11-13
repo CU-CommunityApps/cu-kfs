@@ -1,5 +1,9 @@
 package edu.cornell.kfs.tax;
 
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * Helper class containing various tax-processing-related constants.
  */
@@ -28,8 +32,13 @@ public final class CUTaxConstants {
     public static final String NO_US_VENDOR_ADDRESS = "No US Address on File!";
     public static final String NO_FOREIGN_VENDOR_ADDRESS = "No Foreign Address on File!";
     public static final String NO_ANY_VENDOR_ADDRESS = "No Address on File!";
+    public static final String TAX_1099_MISC_FORM_TYPE = "MISC";
+    public static final String TAX_1099_NEC_FORM_TYPE = "NEC";
+    public static final String TAX_1099_UNKNOWN_FORM_TYPE = "????";
     public static final String NEEDS_UPDATING_BOX_KEY = "?";
     public static final String TAX_1099_UNKNOWN_BOX_KEY = "???";
+    public static final Pair<String, String> TAX_1099_UNKNOWN_BOX_COMPOSITE_KEY = Pair.of(
+            TAX_1099_UNKNOWN_FORM_TYPE, TAX_1099_UNKNOWN_BOX_KEY);
     public static final String TAX_1042S_UNKNOWN_BOX_KEY = "????";
     public static final String ANY_OR_NONE_PAYMENT_REASON = "*";
     public static final String UNKNOWN_COUNTRY = "UC";
@@ -38,8 +47,10 @@ public final class CUTaxConstants {
     public static final String MASKED_VALUE_19_CHARS = "XXXXXXXXXXXXXXXXXXX";
     public static final int INSERT_BATCH_SIZE = 500;
     public static final int TAX_1099_MAX_BUCKET_LENGTH = 3;
+    public static final double TAX_1099_DEFAULT_MIN_REPORTING_AMOUNT = 0.01;
 
-    public static final String TAX_1099_OUTPUT_FILE_PREFIX = "irs_1099_extract_";
+    public static final String TAX_1099_MISC_OUTPUT_FILE_PREFIX = "irs_1099_misc_extract_";
+    public static final String TAX_1099_NEC_OUTPUT_FILE_PREFIX = "irs_1099_nec_extract_";
     public static final String TAX_1099_TRANSACTION_DETAILS_OUTPUT_FILE_PREFIX = "irs_1099_transaction_details_";
     public static final String TAX_1042S_BIO_OUTPUT_FILE_PREFIX = "irs_1042s_biographical_extract_";
     public static final String TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX = "irs_1042s_detail_extract_";
@@ -68,7 +79,11 @@ public final class CUTaxConstants {
     public static final int DEFAULT_EXTRA_RS_SIZE = 2;
     public static final int VENDOR_ADDRESS_COUNTRY_CODE_PARAM_INDEX = 3;
 
-
+    public static final Pattern TAX_1099_BOX_MAPPING_KEY_PATTERN = Pattern.compile(
+            "^(\\w{1,4}|\\?{1,4})\\((\\w{1,3}|\\?{1,3})\\)$");
+    public static final int TAX_1099_BOX_MAPPING_KEY_FORM_TYPE_GROUP = 1;
+    public static final int TAX_1099_BOX_MAPPING_KEY_BOX_NUMBER_GROUP = 2;
+    public static final String TAX_1099_BOX_MAPPING_KEY_FORMAT = "{0}({1})";
 
     /**
      * Helper subclass containing config-prop-related constants.
@@ -82,6 +97,10 @@ public final class CUTaxConstants {
         public static final String ERROR_BATCH_UPLOAD_INVALID_TRANSACTION_OVERRIDES = "error.batchUpload.invalidTransactionOverrides";
         public static final String ERROR_DOCUMENT_TRANSACTIONOVERRIDEMAINTENANCE_1099_BOX_LENGTH =
                 "error.document.transactionOverrideMaintenance.1099.box.length";
+        public static final String ERROR_DOCUMENT_TRANSACTIONOVERRIDEMAINTENANCE_1099_FORMTYPE_EMPTY =
+                "error.document.transactionOverrideMaintenance.1099.formType.empty";
+        public static final String ERROR_DOCUMENT_TRANSACTIONOVERRIDEMAINTENANCE_1042S_FORMTYPE_NONEMPTY =
+                "error.document.transactionOverrideMaintenance.1042s.formType.nonEmpty";
         
         /*
          * The filename parameters pointing to the TaxOutputDefinition and TaxDataDefinition XML
@@ -167,11 +186,16 @@ public final class CUTaxConstants {
                 "1099_SECTION_409A_DEFERRALS_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String SECTION_409A_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT =
                 "1099_SECTION_409A_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
+        public static final String NONQUALIFIED_DEFERRED_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT =
+                "1099_NONQUALIFIED_DEFERRED_COMPENSATION_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT = "1099_STATE_WITHHELD_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT = "1099_STATE_INCOME_INCLUDED_OBJECT_CODE_AND_DV_CHK_STUB_TEXT";
         public static final String PAYMENT_REASON_TO_TAX_BOX = "1099_PAYMENT_REASON_TO_TAX_BOX";
         public static final String PAYMENT_REASON_TO_NO_TAX_BOX = "1099_PAYMENT_REASON_TO_NO_TAX_BOX";
         public static final String DOCUMENT_TYPE_TO_TAX_BOX = "1099_DOCUMENT_TYPE_TO_TAX_BOX";
+        public static final String TAX_BOX_NUMBER_MAPPINGS = "1099_TAX_BOX_NUMBER_MAPPINGS";
+        public static final String TAX_BOX_MINIMUM_REPORTING_AMOUNTS = "1099_TAX_BOX_MINIMUM_REPORTING_AMOUNTS";
+        public static final String FILER_ADDRESS = "1099_FILER_ADDRESS";
         
         private Tax1099ParameterNames() {
             throw new UnsupportedOperationException("do not call Tax1099ParameterNames constructor");

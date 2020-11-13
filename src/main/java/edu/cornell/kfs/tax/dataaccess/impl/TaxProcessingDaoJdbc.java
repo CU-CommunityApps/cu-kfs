@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.ConnectionCallback;
 
@@ -39,6 +41,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
     private static final int DOCID_MAX_BATCH_SIZE = 5000;
 
     private String reportsDirectory;
+    private ConfigurationService configurationService;
 
     @Override
     public void doTaxProcessing(String taxType, int reportYear, java.sql.Date startDate, java.sql.Date endDate, boolean vendorForeign,
@@ -349,7 +352,8 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                     // Prepare any Writer instances needed by the tax processing.
                     tempValues = processor.getFilePathsForWriters(summary, processingStartDate);
                     for (int i = 0; i < tempValues.length; i++) {
-                        tempWriter = new BufferedWriter(new PrintWriter(new File(tempValues[i])));
+                        tempWriter = new BufferedWriter(
+                                new PrintWriter(new File(tempValues[i]), StandardCharsets.UTF_8));
                         processor.setWriter(tempWriter, i);
                     }
                     tempWriter = null;
@@ -473,15 +477,19 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
             
             // Print the label for the given type of statistic, followed by ": " and the sum.
             if (statDefined) {
-                LOG.info(statType.toString() + ": " + Integer.toString(total));
+                String labelKey = statType.toString();
+                String label = configurationService.getPropertyValueAsString(labelKey);
+                LOG.info("printStatistics: " + label + ": " + Integer.toString(total));
             }
         }
     }
 
-
-
     public void setReportsDirectory(String reportsDirectory) {
         this.reportsDirectory = reportsDirectory;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+  <import resource="classpath:edu/cornell/kfs/tax/cu-tax-lookup-beans.xml"/>
+
   <bean id="TransactionOverride" parent="TransactionOverride-parentBean"/>
 
   <bean id="TransactionOverride-parentBean" abstract="true" parent="BusinessObjectEntry">
@@ -19,6 +21,7 @@
         <ref bean="TransactionOverride-documentNumber"/>
         <ref bean="TransactionOverride-financialDocumentLineNumber"/>
         <ref bean="TransactionOverride-boxNumber"/>
+        <ref bean="TransactionOverride-formType"/>
         <ref bean="TransactionOverride-active" />
       </list>
     </property>
@@ -82,6 +85,20 @@
     </property>
   </bean>
 
+  <bean id="TransactionOverride-formType" parent="TransactionOverride-formType-parentBean"/>
+  <bean id="TransactionOverride-formType-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="formType"/>
+    <property name="label" value="1099 Form Type"/>
+    <property name="shortLabel" value="Form Type"/>
+    <property name="maxLength" value="10"/>
+    <property name="validationPattern">
+      <bean parent="AnyCharacterValidationPattern" />
+    </property>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="formType1099ValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
+  </bean>
+
   <bean id="TransactionOverride-active" parent="TransactionOverride-active-parentBean"/>
 
   <bean id="TransactionOverride-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
@@ -114,6 +131,7 @@
         <bean parent="FieldDefinition" p:attributeName="documentNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialDocumentLineNumber"/>
         <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="formType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
@@ -138,6 +156,7 @@
         <bean parent="FieldDefinition" p:attributeName="documentNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialDocumentLineNumber"/>
         <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="formType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
@@ -148,6 +167,7 @@
         <bean parent="FieldDefinition" p:attributeName="documentNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialDocumentLineNumber"/>
         <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
+        <bean parent="FieldDefinition" p:attributeName="formType"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
