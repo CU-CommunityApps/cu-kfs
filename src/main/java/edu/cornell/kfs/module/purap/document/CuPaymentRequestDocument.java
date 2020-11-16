@@ -117,7 +117,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         if (nodeName.equals(PurapWorkflowConstants.PURCHASE_WAS_RECEIVED)) {
             return shouldWaitForReceiving();
         }
-        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NONRESIDENT)) {
+        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NONRESIDENT) ||
+                "VendorIsEmployeeOrNonResidentAlien".equals(nodeName)) {
             return isVendorEmployeeOrNonresident();
         }
         // KFSPTS-1891
