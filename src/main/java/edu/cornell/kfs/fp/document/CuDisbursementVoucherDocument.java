@@ -71,7 +71,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument implements CULegacyTravelIntegrationInterface {
 
     private static final long serialVersionUID = 1L;
-    protected static Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
     protected static final String DOCUMENT_REQUIRES_CAMPUS_REVIEW_SPLIT = "RequiresCampusReview";
     protected static final String DOCUMENT_REQUIRES_AWARD_REVIEW_SPLIT = "RequiresAwardReview";
 

@@ -90,7 +90,7 @@
              </pattern>
 
             <pattern value="nra">
-                <object-create-rule classname="com.rsmart.kuali.kfs.fp.businessobject.BatchDisbursementVoucherNonResidentAlienTax" />
+                <object-create-rule classname="com.rsmart.kuali.kfs.fp.businessobject.BatchDisbursementVoucherNonresidentTax" />
        
                 <call-method-rule pattern="incomeClassCode" methodname="setIncomeClassCode" paramcount="0" />    
                 <call-method-rule pattern="postalCountryCode" methodname="setPostalCountryCode" paramcount="0" />    
@@ -101,7 +101,7 @@
                 <call-method-rule pattern="stateIncomeTaxPercent" methodname="setStateIncomeTaxPercent" paramcount="0" />    
                 <call-method-rule pattern="referenceFinancialDocumentNumber" methodname="setReferenceFinancialDocumentNumber" paramcount="0" />    
                 
-                <set-next-rule methodname="setDvNonResidentAlienTax" />
+                <set-next-rule methodname="setDvNonresidentTax" />
              </pattern>
              
             <pattern value="wire">

@@ -228,9 +228,9 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         nonEmployeeTravel.setDocumentNumber(dv.getDocumentNumber());
         dv.setDvNonEmployeeTravel(nonEmployeeTravel);
 
-        DisbursementVoucherNonresidentTax nonAlienTax = (DisbursementVoucherNonresidentTax) ObjectUtils.deepCopy(recurringDV.getDvNonresidentTax());
-        nonAlienTax.setDocumentNumber(dv.getDocumentNumber());
-        dv.setDvNonresidentTax(nonAlienTax);
+        DisbursementVoucherNonresidentTax nonresidentTax = (DisbursementVoucherNonresidentTax) ObjectUtils.deepCopy(recurringDV.getDvNonresidentTax());
+        nonresidentTax.setDocumentNumber(dv.getDocumentNumber());
+        dv.setDvNonresidentTax(nonresidentTax);
 
         DisbursementVoucherPreConferenceDetail conferenceDetail = (DisbursementVoucherPreConferenceDetail) ObjectUtils.deepCopy(recurringDV.getDvPreConferenceDetail());
         conferenceDetail.setDocumentNumber(dv.getDocumentNumber());

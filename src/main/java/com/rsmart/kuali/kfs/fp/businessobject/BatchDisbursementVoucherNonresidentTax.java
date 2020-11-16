@@ -25,7 +25,7 @@ import org.kuali.rice.core.web.format.BooleanFormatter;
 /**
  * Provides String setter methods for population from XML (batch)
  */
-public class BatchDisbursementVoucherNonResidentAlienTax extends DisbursementVoucherNonresidentTax {
+public class BatchDisbursementVoucherNonresidentTax extends DisbursementVoucherNonresidentTax {
 
     /**
      * Takes a <code>String</code> and attempt to format as <code>KualiDecimal</code> for setting the federalIncomeTaxPercent field

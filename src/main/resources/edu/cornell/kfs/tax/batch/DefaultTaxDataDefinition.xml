@@ -43,7 +43,7 @@
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::disbursementNbr" alias="disbursementNbr" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::payeeIdTypeCd" alias="payeeIdTypeCode" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::line1Address" alias="line1Address" />
-        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::nraPayment" alias="nraPayment" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::nonresidentPayment" alias="nraPayment" />
         <!-- ==== Fields from PDP_PMT_DTL_T ==== -->
         <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::id" alias="paymentDetail.id" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::custPaymentDocNbr" alias="custPaymentDocNbr" />
