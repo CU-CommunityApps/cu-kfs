@@ -20,7 +20,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 
 public class CuDisbursementVoucherNonresidentInformationValidation extends DisbursementVoucherNonresidentInformationValidation{
@@ -192,7 +191,7 @@ public class CuDisbursementVoucherNonresidentInformationValidation extends Disbu
                     if ((!document.getDvNonresidentTax().getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_ROYALTIES)) && (!document.getDvNonresidentTax().getIncomeClassCode().equals(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_INDEPENDENT_CONTRACTOR))) {
                         
                         // If fed tax rate is zero, the state tax rate should be zero.
-                        if ((document.getDvNonresidentTax().getFederalIncomeTaxPercent().compareTo(BigDecimal.ZERO) == 0) && (document.getDvNonresidentTax().getStateIncomeTaxPercent().compareTo(BigDecimal.ZERO) == 0)) {
+                        if ((document.getDvNonresidentTax().getFederalIncomeTaxPercent().compareTo(BigDecimal.ZERO) == 0) && (document.getDvNonresidentTax().getStateIncomeTaxPercent().compareTo(BigDecimal.ZERO) != 0)) {
                                     errors.putErrorWithoutFullErrorPath(KFSConstants.GENERAL_NONRESIDENTTAX_TAB_ERRORS, FPKeyConstants.ERROR_DV_STATE_TAX_SHOULD_BE_ZERO );
                                     return false;
                         }
@@ -334,8 +333,8 @@ public class CuDisbursementVoucherNonresidentInformationValidation extends Disbu
                     return false;
                 }
                 // Federal and State tax rate should be zero.
-                if (!(nonresidentTax.getStateIncomeTaxPercent().equals(KualiDecimal.ZERO))
-                        || !(nonresidentTax.getFederalIncomeTaxPercent().equals(KualiDecimal.ZERO))) {
+                if (nonresidentTax.getStateIncomeTaxPercent().compareTo(BigDecimal.ZERO) != 0
+                        || nonresidentTax.getFederalIncomeTaxPercent().compareTo(BigDecimal.ZERO) != 0) {
                     errors.putErrorWithoutFullErrorPath(KFSConstants.GENERAL_NONRESIDENTTAX_TAB_ERRORS,
                             FPKeyConstants.ERROR_DV_NONRESIDENT_TAX_WHEN_CHECKED_FEDERAL_AND_STATE_TAXES_SHOULD_BE_ZERO,
                             "Special W-4 Amount");

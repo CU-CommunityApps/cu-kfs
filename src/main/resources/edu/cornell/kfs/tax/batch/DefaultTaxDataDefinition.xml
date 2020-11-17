@@ -89,7 +89,7 @@
         <!-- ==== Fields from FP_DV_PAYEE_DTL_T ==== -->
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::documentNumber" alias="payeeDetail.documentNumber" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPaymentReasonCode" alias="disbVchrPaymentReasonCode" />
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrAlienPaymentCode" alias="disbVchrAlienPaymentCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrNonresidentPaymentCode" alias="disbVchrNonresidentPaymentCode" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeIdNumber" alias="disbVchrPayeeIdNumber" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeePersonName" alias="disbVchrPayeePersonName" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeLine1Addr" alias="disbVchrPayeeLine1Addr" />

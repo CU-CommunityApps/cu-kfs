@@ -301,7 +301,7 @@ abstract class TaxTableRow {
         // Fields from FP_DV_PAYEE_DTL_T (DisbursementVoucherPayeeDetail)
         final TaxTableField payeeDetailDocumentNumber;
         final TaxTableField disbVchrPaymentReasonCode;
-        final TaxTableField disbVchrAlienPaymentCode;
+        final TaxTableField disbVchrNonresidentPaymentCode;
         final TaxTableField disbVchrPayeeIdNumber;
         final TaxTableField disbVchrPayeePersonName;
         final TaxTableField disbVchrPayeeLine1Addr;
@@ -337,7 +337,7 @@ abstract class TaxTableRow {
             
             this.payeeDetailDocumentNumber = getAliasedField(CommonDvSourceFieldNames.PAYEE_DETAIL_DOCUMENT_NUMBER);
             this.disbVchrPaymentReasonCode = getAliasedField(CommonDvSourceFieldNames.DV_PAYMENT_REASON_CODE);
-            this.disbVchrAlienPaymentCode = getAliasedField(CommonDvSourceFieldNames.DV_ALIEN_PAYMENT_CODE);
+            this.disbVchrNonresidentPaymentCode = getAliasedField(CommonDvSourceFieldNames.DV_NONRESIDENT_PAYMENT_CODE);
             this.disbVchrPayeeIdNumber = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_ID_NUMBER);
             this.disbVchrPayeePersonName = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_PERSON_NAME);
             this.disbVchrPayeeLine1Addr = getAliasedField(CommonDvSourceFieldNames.DV_PAYEE_LINE1_ADDRESS);
