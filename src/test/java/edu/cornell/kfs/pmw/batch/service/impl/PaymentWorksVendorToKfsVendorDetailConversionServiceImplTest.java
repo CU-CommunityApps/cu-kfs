@@ -45,6 +45,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         Configurator.setLevel(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class.getName(), Level.DEBUG);
         conversionService = new PaymentWorksVendorToKfsVendorDetailConversionServiceImpl();
         conversionService.setDateTimeService(new TestDateTimeServiceImpl());
+        conversionService.setPaymentWorksTaxRuleDependencyService(new PaymentWorksTaxRuleDependencyServiceImpl());
         pmwVendor = new PaymentWorksVendor();
     }
 
