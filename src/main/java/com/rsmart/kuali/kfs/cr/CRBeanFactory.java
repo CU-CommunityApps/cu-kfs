@@ -20,6 +20,7 @@ import java.util.Vector;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
 
 public class CRBeanFactory {
+    
 
     public static Vector createBeanCollection() {
         java.util.Vector coll = new java.util.Vector();
