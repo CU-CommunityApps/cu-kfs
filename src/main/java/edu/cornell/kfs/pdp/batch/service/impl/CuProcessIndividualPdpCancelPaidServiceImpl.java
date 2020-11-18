@@ -18,7 +18,7 @@ import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleServic
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 
 public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividualPdpCancelPaidServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuProcessIndividualPdpCancelPaidServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)

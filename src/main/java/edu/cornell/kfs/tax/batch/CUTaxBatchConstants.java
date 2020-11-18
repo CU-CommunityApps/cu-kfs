@@ -149,13 +149,13 @@ public final class CUTaxBatchConstants {
         // Fields from FP_DV_PAYEE_DTL_T (DisbursementVoucherPayeeDetail)
         public static final String PAYEE_DETAIL_DOCUMENT_NUMBER = "payeeDetail.documentNumber";
         public static final String DV_PAYMENT_REASON_CODE = "disbVchrPaymentReasonCode";
-        public static final String DV_ALIEN_PAYMENT_CODE = "disbVchrAlienPaymentCode";
+        public static final String DV_NONRESIDENT_PAYMENT_CODE = "disbVchrNonresidentPaymentCode";
         public static final String DV_PAYEE_ID_NUMBER = "disbVchrPayeeIdNumber";
         public static final String DV_PAYEE_PERSON_NAME = "disbVchrPayeePersonName";
         public static final String DV_PAYEE_LINE1_ADDRESS = "disbVchrPayeeLine1Addr";
         public static final String DV_PAYEE_COUNTRY_CODE = "disbVchrPayeeCountryCode";
         public static final String DV_PAYEE_TYPE_CODE = "disbursementVoucherPayeeTypeCode";
-        // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonResidentAlienTax)
+        // Fields from FP_DV_NRA_TAX_T (DisbursementVoucherNonresidentTax)
         public static final String NRA_DOCUMENT_NUMBER = "nra.documentNumber";
         public static final String FEDERAL_INCOME_TAX_PERCENT = CUTaxBatchConstants.FEDERAL_INCOME_TAX_PERCENT;
         public static final String INCOME_CLASS_CODE = CUTaxBatchConstants.INCOME_CLASS_CODE;

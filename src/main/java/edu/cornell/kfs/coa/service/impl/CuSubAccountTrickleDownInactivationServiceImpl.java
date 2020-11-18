@@ -19,7 +19,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.coa.COAKeyConstants;
 
 public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTrickleDownInactivationServiceImpl {
-	private static final Logger LOG = LogManager.getLogger(CuSubAccountTrickleDownInactivationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger();
 	
     /**
      * @see org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl#trickleDownInactivateSubAccounts(org.kuali.kfs.coa.businessobject.Account, java.lang.String)

@@ -30,7 +30,7 @@ import edu.cornell.kfs.gl.batch.service.impl.ReversionUnitOfWorkServiceImpl;
  */
 @Transactional
 public class OrganizationReversionUnitOfWorkServiceImpl extends ReversionUnitOfWorkServiceImpl  {
-    private static final Logger LOG = LogManager.getLogger(OrganizationReversionUnitOfWorkServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     private ReversionUnitOfWorkDao orgReversionUnitOfWorkDao;
 
     /**

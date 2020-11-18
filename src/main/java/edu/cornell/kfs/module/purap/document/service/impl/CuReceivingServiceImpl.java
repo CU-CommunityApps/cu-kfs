@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderDocTypes;
-import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.document.LineItemReceivingDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;

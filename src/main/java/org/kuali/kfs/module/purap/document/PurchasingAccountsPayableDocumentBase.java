@@ -84,7 +84,7 @@ import java.util.Set;
 public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDocumentBase implements
         PurchasingAccountsPayableDocument, AmountTotaling {
 
-    private static final Logger LOG = LogManager.getLogger(PurchasingAccountsPayableDocumentBase.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     // SHARED FIELDS BETWEEN REQUISITION, PURCHASE ORDER, PAYMENT REQUEST, AND CREDIT MEMO
     protected Integer purapDocumentIdentifier;
@@ -1066,7 +1066,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         indicators[0] = isEmployeeVendor ? AdHocPaymentIndicator.EMPLOYEE_VENDOR : AdHocPaymentIndicator.OTHER;
 
         boolean isVendorForeign = vendorService.isVendorForeign(vendorHeaderGeneratedIdentifier);
-        indicators[1] = isVendorForeign ? AdHocPaymentIndicator.ALIEN_VENDOR : AdHocPaymentIndicator.OTHER;
+        indicators[1] = isVendorForeign ? AdHocPaymentIndicator.NONRESIDENT_VENDOR : AdHocPaymentIndicator.OTHER;
 
         for (Object indicator : indicators) {
             if (!AdHocPaymentIndicator.OTHER.equals(indicator)) {

@@ -48,7 +48,7 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
-	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherAction.class);
+	private static final Logger LOG = LogManager.getLogger();
 	
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,

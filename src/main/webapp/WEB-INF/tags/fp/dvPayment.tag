@@ -216,15 +216,15 @@
               <th  class="bord-l-b"><div align="right">Payment Type:</div></th>
               <td valign="top"  class="datacell">
                 <c:if test="${taxEntryMode}">
-                  <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrAlienPaymentCode}"
-                                            property="document.dvPayeeDetail.disbVchrAlienPaymentCode"/>
-                  <kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrAlienPaymentCode}" noColon="true" />
+                  <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrNonresidentPaymentCode}"
+                                            property="document.dvPayeeDetail.disbVchrNonresidentPaymentCode"/>
+                  <kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrNonresidentPaymentCode}" noColon="true" />
                   <br><br>
                 </c:if>
                 <c:if test="${!taxEntryMode}">
-                    <kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrAlienPaymentCode}"/>
-                    <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrAlienPaymentCode}"
-                                              property="document.dvPayeeDetail.disbVchrAlienPaymentCode" readOnly="true"/>
+                    <kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrNonresidentPaymentCode}"/>
+                    <kul:htmlControlAttribute attributeEntry="${payeeAttributes.disbVchrNonresidentPaymentCode}"
+                                              property="document.dvPayeeDetail.disbVchrNonresidentPaymentCode" readOnly="true"/>
                     <br><br>
                 </c:if>
                 <kul:htmlAttributeLabel attributeEntry="${payeeAttributes.disbVchrPayeeEmployeeCode}"/>

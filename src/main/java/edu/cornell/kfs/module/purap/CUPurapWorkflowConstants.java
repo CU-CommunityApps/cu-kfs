@@ -3,8 +3,7 @@ package edu.cornell.kfs.module.purap;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 
 

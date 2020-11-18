@@ -66,7 +66,7 @@
     <xsd:element name="invoice_tot_ship_amt" type="xsd:decimal"/>
     <xsd:element name="invoice_tot_other_debits" type="xsd:decimal"/>
     <xsd:element name="invoice_tot_other_credits" type="xsd:decimal"/>
-    <xsd:element name="nra_ind" type="xsd:normalizedString"/>
+    <xsd:element name="nonresident_ind" type="xsd:normalizedString"/>
     <xsd:element name="combine_group_ind" type="xsd:normalizedString"/>
     <xsd:element name="coa_cd" type="xsd:normalizedString"/>
     <xsd:element name="account_nbr" type="xsd:normalizedString"/>
@@ -153,7 +153,7 @@
                 <xsd:element maxOccurs="1" minOccurs="0" ref="immediate_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="special_handling_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="taxable_ind"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="nra_ind"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="nonresident_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="combine_group_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="bank_code"/>
                 <!--  Default check stub holds 27 note lines.  There is a line printed for each detail

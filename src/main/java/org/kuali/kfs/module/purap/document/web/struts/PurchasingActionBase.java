@@ -53,6 +53,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemState;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemType;
@@ -129,7 +130,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
  */
 public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
-    private static final Logger LOG = LogManager.getLogger(PurchasingActionBase.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     private static final int SIZE_5MB =5242880;
 
@@ -1338,7 +1339,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
         else if (ConfirmationQuestion.YES.equals(buttonClicked)) {
             // Add a note if system change occurs when the document is a PO that is being amended.
-            if ((document instanceof PurchaseOrderDocument) && (PurapConstants.PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(document.getApplicationDocumentStatus()))) {
+            if ((document instanceof PurchaseOrderDocument) && (PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(document.getApplicationDocumentStatus()))) {
                 Integer poId = document.getPurapDocumentIdentifier();
                 PurchaseOrderDocument currentPO = SpringContext.getBean(PurchaseOrderService.class).getCurrentPurchaseOrder(poId);
                 String oldSystemTypeCode = "";

@@ -25,7 +25,7 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 
 public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuAssetDepreciationServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     @Override
     protected boolean runAssetDepreciation() throws ParseException {

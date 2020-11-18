@@ -15,7 +15,7 @@ import edu.cornell.kfs.module.cg.CuCGKeyConstants;
 
 @SuppressWarnings("deprecation")
 public class CuAgencyRule extends AgencyRule {
-    private static final Logger LOG = LogManager.getLogger(CuAgencyRule.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     protected boolean validateAgencyReportingName(MaintenanceDocument document) {

@@ -42,7 +42,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
-    private static final Logger LOG = LogManager.getLogger(CuVendorMaintainableImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     private static final String HEADER_ID_SEQ = "VNDR_HDR_GNRTD_ID";
     private static final String ADDRESS_HEADER_ID_SEQ = "VNDR_ADDR_GNRTD_ID";
     private static final String VENDOR_SECTION_ID = "Vendor";

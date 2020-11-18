@@ -45,7 +45,7 @@ import com.opencsv.CSVReader;
  * and parse using CSV comma delimited
  */
 public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> extends BatchInputFileTypeBase {
-    private static final Logger LOG = LogManager.getLogger(CsvBatchInputFileTypeBase.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private Class<?> csvEnumClass;
 

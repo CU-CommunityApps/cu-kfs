@@ -21,7 +21,7 @@ import org.kuali.kfs.module.ld.report.EnterpriseFeederReportData;
 import org.kuali.kfs.sys.Message;
 
 public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     @Override
     public void feed(String processName, boolean performNotifications) {

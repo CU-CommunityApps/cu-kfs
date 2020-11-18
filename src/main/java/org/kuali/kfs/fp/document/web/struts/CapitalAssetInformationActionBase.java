@@ -66,7 +66,7 @@ import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAt
 
 public abstract class CapitalAssetInformationActionBase extends KualiAccountingDocumentActionBase {
 
-    private static final Logger LOG = LogManager.getLogger(CapitalAssetInformationActionBase.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * Multi-value asset lookup is implemented through the integration package by module's service

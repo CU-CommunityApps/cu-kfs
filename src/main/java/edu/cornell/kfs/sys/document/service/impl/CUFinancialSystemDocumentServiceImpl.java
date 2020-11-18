@@ -33,7 +33,7 @@ import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumentServiceImpl
 		implements CUFinancialSystemDocumentService {
     
-    private static final Logger LOG = LogManager.getLogger(CUFinancialSystemDocumentServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 	
 	/**
 	 *  new == null, old == null : no change; line deleted previously.

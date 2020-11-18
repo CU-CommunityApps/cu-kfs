@@ -29,7 +29,7 @@
 		class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" 
 		abstract="true" parent="AccountingDocument-accountingLineGroupTotalsUnchangedValidation" 
 		p:documentHelperService-ref="documentHelperService"/>
-	<bean id="DisbursementVoucher-nonResidentAlienInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation" abstract="true"
+	<bean id="DisbursementVoucher-nonresidentInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonresidentInformationValidation" abstract="true"
 		  p:businessObjectService-ref="businessObjectService"
           p:disbursementVoucherValidationService-ref="disbursementVoucherValidationService"
           p:parameterEvaluatorService-ref="parameterEvaluatorService" p:parameterService-ref="parameterService"/>

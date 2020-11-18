@@ -95,5 +95,6 @@
     <c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
 
     <sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}"/>
-
+    
+    <kul:modernLookupSupport />
 </kul:documentPage>

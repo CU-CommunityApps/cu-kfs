@@ -49,7 +49,7 @@ import java.util.List;
 
 public class PaymentDetail extends PersistableBusinessObjectBase {
 
-    private static final Logger LOG = LogManager.getLogger(PaymentDetail.class);
+    private static final Logger LOG = LogManager.getLogger();
     private static KualiDecimal zero = KualiDecimal.ZERO;
 
     private KualiInteger id;
@@ -181,11 +181,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         this.invoiceDate = SpringContext.getBean(DateTimeService.class).convertToSqlDate(invoiceDate);
     }
 
-    /**
-     * @hibernate.set name="accountDetail"
-     * @hibernate.collection-key column="pmt_dtl_id"
-     * @hibernate.collection-one-to-many class="edu.iu.uis.pdp.bo.PaymentAccountDetail"
-     */
     public List<PaymentAccountDetail> getAccountDetail() {
         return accountDetail;
     }
@@ -251,87 +246,50 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         SpringContext.getBean(BusinessObjectService.class).save(paymentDetailExtendedAttribute);
     }
 
-    /**
-     * @hibernate.id column="PMT_DTL_ID" generator-class="sequence"
-     * @hibernate.generator-param name="sequence" value="PDP.PDP_PMT_DTL_ID_SEQ"
-     */
     public KualiInteger getId() {
         return id;
     }
 
-    /**
-     * @hibernate.property column="CUST_PMT_DOC_NBR" length="9"
-     */
     public String getCustPaymentDocNbr() {
         return custPaymentDocNbr;
     }
 
-    /**
-     * @hibernate.property column="INV_NBR" length="14"
-     */
     public String getInvoiceNbr() {
         return invoiceNbr;
     }
 
-    /**
-     * @hibernate.property column="INV_TOT_DSCT_AMT" length="14"
-     */
     public KualiDecimal getInvTotDiscountAmount() {
         return invTotDiscountAmount;
     }
 
-    /**
-     * @hibernate.property column="INV_TOT_OTHR_CRDT_AMT" length="14"
-     */
     public KualiDecimal getInvTotOtherCreditAmount() {
         return invTotOtherCreditAmount;
     }
 
-    /**
-     * @hibernate.property column="INV_TOT_OTHR_DEBIT_AMT" length="14"
-     */
     public KualiDecimal getInvTotOtherDebitAmount() {
         return invTotOtherDebitAmount;
     }
 
-    /**
-     * @hibernate.property column="INV_TOT_SHP_AMT" length="14"
-     */
     public KualiDecimal getInvTotShipAmount() {
         return invTotShipAmount;
     }
 
-    /**
-     * @hibernate.property column="NET_PMT_AMT" length="14"
-     */
     public KualiDecimal getNetPaymentAmount() {
         return netPaymentAmount;
     }
 
-    /**
-     * @hibernate.property column="ORG_DOC_NBR" length="10"
-     */
     public String getOrganizationDocNbr() {
         return organizationDocNbr;
     }
 
-    /**
-     * @hibernate.property column="ORIG_INV_AMT" length="14"
-     */
     public KualiDecimal getOrigInvoiceAmount() {
         return origInvoiceAmount;
     }
 
-    /**
-     * @hibernate.property column="PO_NBR" length="9"
-     */
     public String getPurchaseOrderNbr() {
         return purchaseOrderNbr;
     }
 
-    /**
-     * @hibernate.property column="REQS_NBR" length=8"
-     */
     public String getRequisitionNbr() {
         return requisitionNbr;
     }

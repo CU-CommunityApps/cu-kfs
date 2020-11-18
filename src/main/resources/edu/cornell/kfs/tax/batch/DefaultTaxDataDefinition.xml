@@ -18,7 +18,7 @@
             <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
             <objectClass name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument" /> 
             <objectClass name="org.kuali.kfs.fp.document.DisbursementVoucherDocument"/>
-            <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax"/>
+            <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax"/>
         </objectClasses>
         <!-- ==== Fields from PDP_PROC_SUM_T ==== -->
         <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::id" alias="summary.id" />
@@ -43,7 +43,7 @@
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::disbursementNbr" alias="disbursementNbr" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::payeeIdTypeCd" alias="payeeIdTypeCode" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::line1Address" alias="line1Address" />
-        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::nraPayment" alias="nraPayment" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::nonresidentPayment" alias="nraPayment" />
         <!-- ==== Fields from PDP_PMT_DTL_T ==== -->
         <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::id" alias="paymentDetail.id" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::custPaymentDocNbr" alias="custPaymentDocNbr" />
@@ -69,8 +69,8 @@
         <!-- ==== Fields from FP_DV_DOC_T ==== -->
         <field name="org.kuali.kfs.fp.document.DisbursementVoucherDocument::documentNumber" alias="dv.documentNumber" />
         <!-- ==== Fields from FP_DV_NRA_TAX_T ==== -->
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::documentNumber" alias="nra.documentNumber" />
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::incomeClassCode" alias="incomeClassCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax::documentNumber" alias="nra.documentNumber" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax::incomeClassCode" alias="incomeClassCode" />
     </row>
     <!--
         =================================================================
@@ -80,7 +80,7 @@
     <row id="DV">
         <objectClasses>
             <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail" />
-            <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax" />
+            <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax" />
             <objectClass name="org.kuali.kfs.sys.businessobject.SourceAccountingLine" />
             <objectClass name="org.kuali.kfs.fp.document.DisbursementVoucherDocument" />
             <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
@@ -89,18 +89,18 @@
         <!-- ==== Fields from FP_DV_PAYEE_DTL_T ==== -->
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::documentNumber" alias="payeeDetail.documentNumber" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPaymentReasonCode" alias="disbVchrPaymentReasonCode" />
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrAlienPaymentCode" alias="disbVchrAlienPaymentCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrNonresidentPaymentCode" alias="disbVchrNonresidentPaymentCode" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeIdNumber" alias="disbVchrPayeeIdNumber" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeePersonName" alias="disbVchrPayeePersonName" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeLine1Addr" alias="disbVchrPayeeLine1Addr" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbVchrPayeeCountryCode" alias="disbVchrPayeeCountryCode" />
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::disbursementVoucherPayeeTypeCode" alias="disbursementVoucherPayeeTypeCode" />
         <!-- ==== Fields from FP_DV_NRA_TAX_T ==== -->
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::documentNumber" alias="nra.documentNumber" />
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::federalIncomeTaxPercent" alias="federalIncomeTaxPercent" />
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::incomeClassCode" alias="incomeClassCode" />
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::incomeTaxTreatyExemptCode" alias="incomeTaxTreatyExemptCode" />
-        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::foreignSourceIncomeCode" alias="foreignSourceIncomeCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax::documentNumber" alias="nra.documentNumber" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax::federalIncomeTaxPercent" alias="federalIncomeTaxPercent" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax::incomeClassCode" alias="incomeClassCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax::incomeTaxTreatyExemptCode" alias="incomeTaxTreatyExemptCode" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax::foreignSourceIncomeCode" alias="foreignSourceIncomeCode" />
         <!-- ==== Fields from FP_ACCT_LINES_T ==== -->
         <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::documentNumber" alias="accountingLine.documentNumber" />
         <field name="org.kuali.kfs.sys.businessobject.SourceAccountingLine::sequenceNumber" alias="accountingLine.sequenceNumber" />

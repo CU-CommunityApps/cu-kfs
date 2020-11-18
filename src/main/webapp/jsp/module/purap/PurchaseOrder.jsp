@@ -204,5 +204,7 @@
             });
         </script>
     </c:if>
+    
+    <kul:modernLookupSupport />
 
 </kul:documentPage>
