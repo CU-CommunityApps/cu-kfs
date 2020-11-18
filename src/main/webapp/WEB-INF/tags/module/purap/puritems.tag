@@ -203,11 +203,15 @@
 								property="${itemUnitOfMeasureCodeField}"
 								readOnly="${readOnly}"
 								onblur="loadItemUnitOfMeasureInfo( '${itemUnitOfMeasureCodeField}', '${itemUnitOfMeasureDescriptionField}' );${onblur}" tabindexOverride="${tabindexOverrideBase + 0}"/>
-						<kul:lookup
-								boClassName="org.kuali.kfs.sys.businessobject.UnitOfMeasure"
-								fieldConversions="itemUnitOfMeasureCode:newPurchasingItemLine.itemUnitOfMeasureCode"
-								lookupParameters="'Y':active"
-								addClass="embed"/>
+                        <!-- This hidden tag contains static values that can be picked up by new lookups to pre-populate fields -->
+                        <input type="hidden" name="static.unitOfMeasureActive" value="Y" />
+                        <kul:lookup
+                                boClassName="org.kuali.kfs.sys.businessobject.UnitOfMeasure"
+                                fieldConversions="active:static.unitOfMeasureActive"
+                                lookupParameters="newPurchasingItemLine.itemUnitOfMeasureCode:itemUnitOfMeasureCode,newPurchasingItemLine.itemUnitOfMeasure.itemUnitOfMeasureDescription.div:itemUnitOfMeasureDescription"
+                                fieldPropertyName="${itemUnitOfMeasureCodeField}"
+                                newLookup="true"
+                                addClass="embed"/>
 						<div id="newPurchasingItemLine.itemUnitOfMeasure.itemUnitOfMeasureDescription.div" class="fineprint">
 							<html:hidden write="true" property="${itemUnitOfMeasureDescriptionField}"/>
 						</div>
@@ -435,11 +439,14 @@
                             	readOnly="${not ((fullEntryMode and !amendmentEntry) or (amendmentEntry and itemLine.itemActiveIndicator and (not (amendmentEntryWithUnpaidPreqOrCM and itemLine.itemInvoicedTotalAmount != null and itemLine.itemInvoicedTotalAmount != 0.00 and !itemLine.newItemForAmendment)))) or lockB2BEntry}"
                             	tabindexOverride="${tabindexOverrideBase + 0}"/>
                         	<c:if test="${!(not ((fullEntryMode and !amendmentEntry) or (amendmentEntry and itemLine.itemActiveIndicator and (not (amendmentEntryWithUnpaidPreqOrCM and itemLine.itemInvoicedTotalAmount != null and itemLine.itemInvoicedTotalAmount != 0.00 and !itemLine.newItemForAmendment)))) or lockB2BEntry)}">
-                            	<kul:lookup
-										boClassName="org.kuali.kfs.sys.businessobject.UnitOfMeasure"
-                                		fieldConversions="itemUnitOfMeasureCode:document.item[${ctr}].itemUnitOfMeasureCode"
-                                    	lookupParameters="'Y':active"
-                                    	addClass="embed"/>
+                                <kul:lookup
+                                        boClassName="org.kuali.kfs.sys.businessobject.UnitOfMeasure"
+                                        fieldConversions="active:static.unitOfMeasureActive"
+                                        lookupParameters="document.item[${ctr}].itemUnitOfMeasureCode:itemUnitOfMeasureCode,document.item[${ctr}].itemUnitOfMeasure.itemUnitOfMeasureDescription.div:itemUnitOfMeasureDescription"
+                                        fieldPropertyName="document.item[${ctr}].itemUnitOfMeasureCode"
+                                        newLookup="true"
+                                        addClass="embed"/>
+                            </c:if>
                         	</c:if>
 							<div id="document.item[${ctr}].itemUnitOfMeasure.itemUnitOfMeasureDescription.div" class="fineprint">
 								<html:hidden write="true" property="document.item[${ctr}].itemUnitOfMeasure.itemUnitOfMeasureDescription"/>&nbsp;

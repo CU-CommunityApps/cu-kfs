@@ -401,8 +401,8 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
         disbursementVoucherDocument.getDvPayeeDetail().setDisbVchrSpecialHandlingStateCode(batchDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrSpecialHandlingStateCode());
         disbursementVoucherDocument.getDvPayeeDetail().setDisbVchrSpecialHandlingCountryCode(batchDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrSpecialHandlingCountryCode());
 
-        disbursementVoucherDocument.setDvNonResidentAlienTax(batchDisbursementVoucherDocument.getDvNonResidentAlienTax());
-        disbursementVoucherDocument.getDvNonResidentAlienTax().setDocumentNumber(disbursementVoucherDocument.getDocumentNumber());
+        disbursementVoucherDocument.setDvNonresidentTax(batchDisbursementVoucherDocument.getDvNonresidentTax());
+        disbursementVoucherDocument.getDvNonresidentTax().setDocumentNumber(disbursementVoucherDocument.getDocumentNumber());
 
         /* UPGRADE-911
         disbursementVoucherDocument.setDvWireTransfer(batchDisbursementVoucherDocument.getDvWireTransfer());

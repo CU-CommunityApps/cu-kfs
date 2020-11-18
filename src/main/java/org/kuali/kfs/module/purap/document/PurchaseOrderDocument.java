@@ -41,9 +41,10 @@ import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
+import org.kuali.kfs.module.purap.CreditMemoStatuses;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
-import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.QuoteTypeDescriptions;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -127,7 +128,7 @@ import java.util.Set;
 
 public class PurchaseOrderDocument extends PurchasingDocumentBase implements MultiselectableDocSearchConversion {
 
-    private static final Logger LOG = LogManager.getLogger(PurchaseOrderDocument.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected Timestamp purchaseOrderCreateTimestamp;
     protected Integer requisitionIdentifier;
@@ -569,7 +570,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setPaymentRequestPositiveApprovalIndicator(
                 requisitionDocument.isPaymentRequestPositiveApprovalIndicator());
 
-        setApplicationDocumentStatus(PurapConstants.PurchaseOrderStatuses.APPDOC_IN_PROCESS);
+        setApplicationDocumentStatus(PurchaseOrderStatuses.APPDOC_IN_PROCESS);
         this.setAccountDistributionMethod(requisitionDocument.getAccountDistributionMethod());
         // Copy items from requisition (which will copy the item's accounts and capital assets)
         List<PurchaseOrderItem> items = new ArrayList<>();
@@ -655,8 +656,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         List<PurchaseOrderView> relatedPoViews = getRelatedViews().getRelatedPurchaseOrderViews();
         for (PurchaseOrderView poView : relatedPoViews) {
             //don't lock related PO's if this is a split PO that's in process
-            if (!((PurapConstants.PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(this.getApplicationDocumentStatus())
-                    || PurapConstants.PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(
+            if (!((PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(this.getApplicationDocumentStatus())
+                    || PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(
                             this.getApplicationDocumentStatus()))
                     && PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(
                             currentDocumentTypeName))) {
@@ -724,7 +725,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     protected String findDisapprovalStatus(String nodeName) {
-        return PurapConstants.PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
+        return PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
     }
 
     protected boolean shouldAdhocFyi() {
@@ -1370,7 +1371,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             for (PaymentRequestView element : getRelatedViews().getRelatedPaymentRequestViews()) {
                 // If the PREQ is neither cancelled nor voided, check whether the PREQ has been paid.
                 // If it has not been paid, then this method will return true.
-                if (!PurapConstants.PaymentRequestStatuses.CANCELLED_STATUSES.contains(
+                if (!PaymentRequestStatuses.CANCELLED_STATUSES.contains(
                         element.getApplicationDocumentStatus())) {
                     if (element.getPaymentPaidTimestamp() == null) {
                         return true;
@@ -1518,7 +1519,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * Provides answers to the following splits:
      * RequiresContractManagementReview
      * RequiresBudgetReview
-     * VendorIsEmployeeOrNonResidentAlien
+     * VendorIsEmployeeOrNonresident
      * TransmissionMethodIsPrint
      */
     @Override
@@ -1532,8 +1533,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         if (nodeName.equals(PurapWorkflowConstants.BUDGET_REVIEW_REQUIRED)) {
             return isBudgetReviewRequired();
         }
-        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NON_RESIDENT_ALIEN)) {
-            return isVendorEmployeeOrNonResidentAlien();
+        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NONRESIDENT) ||
+                "VendorIsEmployeeOrNonResidentAlien".equals(nodeName)) {
+            return isVendorEmployeeOrNonresident();
         }
         return super.answerSplitNodeQuestion(nodeName);
     }
@@ -1606,7 +1608,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return false;
     }
 
-    protected boolean isVendorEmployeeOrNonResidentAlien() {
+    protected boolean isVendorEmployeeOrNonresident() {
         if (ObjectUtils.isNull(this.getVendorHeaderGeneratedIdentifier())) {
             // no vendor header id so can't check for proper tax routing
             return false;

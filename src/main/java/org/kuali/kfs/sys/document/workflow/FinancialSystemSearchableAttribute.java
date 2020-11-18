@@ -76,7 +76,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 //RICE20 This class needs to be fixed to support pre-rice2.0 features
 public class FinancialSystemSearchableAttribute extends DataDictionarySearchableAttribute {
 
-    private static final Logger LOG = LogManager.getLogger(FinancialSystemSearchableAttribute.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected static final String DISPLAY_TYPE_SEARCH_ATTRIBUTE_LABEL = "Search Result Type";
     protected static final String WORKFLOW_DISPLAY_TYPE_LABEL = "Workflow Data";

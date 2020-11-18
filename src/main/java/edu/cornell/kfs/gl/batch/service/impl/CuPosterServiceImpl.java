@@ -34,7 +34,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 public class CuPosterServiceImpl extends PosterServiceImpl implements PosterService {
-    private static final Logger LOG = LogManager.getLogger(CuPosterServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     
     /**

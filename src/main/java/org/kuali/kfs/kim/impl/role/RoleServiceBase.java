@@ -70,7 +70,7 @@ import org.kuali.rice.kim.api.type.KimTypeInfoService;
  */
 abstract class RoleServiceBase {
 
-    private static final Logger LOG = LogManager.getLogger(RoleServiceBase.class);
+    private static final Logger LOG = LogManager.getLogger();
     private BusinessObjectService businessObjectService;
     private LookupService lookupService;
     private IdentityService identityService;

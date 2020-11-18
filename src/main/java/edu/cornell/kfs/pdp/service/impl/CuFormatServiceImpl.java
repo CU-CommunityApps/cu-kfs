@@ -31,7 +31,7 @@ import edu.cornell.kfs.pdp.service.CuFormatService;
 
 public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatService {
 
-    private static final Logger LOG = LogManager.getLogger(CuFormatServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     @Override
     public FormatProcessSummary startFormatProcess(Person user, String campus,

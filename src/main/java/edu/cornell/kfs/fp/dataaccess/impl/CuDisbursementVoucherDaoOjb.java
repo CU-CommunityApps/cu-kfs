@@ -15,7 +15,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 
 public class CuDisbursementVoucherDaoOjb extends DisbursementVoucherDaoOjb {
-    private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger();
 	
     public DisbursementVoucherDocument getDocument(String fdocNbr) {
         LOG.debug("getDocument() started");

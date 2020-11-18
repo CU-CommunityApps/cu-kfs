@@ -68,7 +68,7 @@ import java.util.Map;
  */
 public class KualiInquiryAction extends KualiAction {
 
-    private static final Logger LOG = LogManager.getLogger(KualiInquiryAction.class);
+    private static final Logger LOG = LogManager.getLogger();
     private NoteService noteService;
 
     @Override

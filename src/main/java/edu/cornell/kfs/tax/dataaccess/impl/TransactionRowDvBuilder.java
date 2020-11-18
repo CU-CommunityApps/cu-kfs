@@ -294,7 +294,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setString(detailRow.vendorOwnershipCode.index - offset, rs.getString(dvRow.vendorOwnershipCode.index));
             insertStatement.setString(detailRow.vendorOwnershipCategoryCode.index - offset, rs.getString(dvRow.vendorOwnershipCategoryCode.index));
             insertStatement.setString(detailRow.vendorForeignIndicator.index - offset, rs.getString(dvRow.vendorForeignInd.index));
-            insertStatement.setString(detailRow.nraPaymentIndicator.index - offset, rs.getString(dvRow.disbVchrAlienPaymentCode.index));
+            insertStatement.setString(detailRow.nraPaymentIndicator.index - offset, rs.getString(dvRow.disbVchrNonresidentPaymentCode.index));
             insertStatement.setDate(detailRow.paymentDate.index - offset, rs.getDate(dvRow.paidDate.index));
             insertStatement.setString(detailRow.paymentPayeeName.index - offset, rs.getString(dvRow.disbVchrPayeePersonName.index));
             insertStatement.setString(detailRow.incomeClassCode.index - offset, rs.getString(dvRow.incomeClassCode.index));

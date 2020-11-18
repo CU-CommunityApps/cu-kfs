@@ -91,7 +91,7 @@ import static java.util.Map.entry;
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
-    private static final Logger LOG = LogManager.getLogger(RoleServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final Map<String, RoleDaoAction> memberTypeToRoleDaoActionMap = populateMemberTypeToRoleDaoActionMap();
     private RoleService proxiedRoleService;

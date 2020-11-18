@@ -118,7 +118,6 @@
             transactionalDocument="true"
             extraButtons="${extraButtons}"
             suppressRoutingControls="${KualiForm.editingMode['displayInitTab']}"
-            tabindex="${globalButtonTabIndex}"
-    />
-
+            tabindex="${globalButtonTabIndex}"/>
+    <kul:modernLookupSupport />
 </kul:documentPage>

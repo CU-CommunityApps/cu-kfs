@@ -38,7 +38,7 @@ import edu.cornell.kfs.sys.service.ReportWriterService;
  */
 public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl
 		implements ReportWriterService {
-	private static final Logger LOG = LogManager.getLogger(ReportWriterTextServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger();
 
 	protected String fullFilePath;
 	protected String fromAddress;

@@ -42,7 +42,7 @@ import edu.cornell.kfs.vnd.document.service.CUVendorService;
 @Transactional
 public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorService {
 
-    private static final Logger LOG = LogManager.getLogger(CUVendorServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private BusinessObjectService businessObjectService;
     private VendorLookupableHelperServiceImpl vendorLookupableHelperServiceImpl;

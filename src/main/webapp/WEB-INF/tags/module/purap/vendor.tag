@@ -385,37 +385,9 @@
                             	fieldConversions="vendorContractGeneratedIdentifier:document.vendorContractGeneratedIdentifier" />
                         </c:if>
                     </td>
-                    <th class="right">
-                        <kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorContactsLabel}" />
-                    </th>
-                    <td class="datacell nowrap">
-                        <kul:htmlControlAttribute 
-                        	attributeEntry="${documentAttributes.vendorContactsLabel}" property="document.vendorContactsLabel" 
-                        	readOnly="true" tabindexOverride="${tabindexOverrideBase + 6}"/>                    
-                        <c:if test="${vendorReadOnly}" >
-                            <kul:lookup  boClassName="org.kuali.kfs.vnd.businessobject.VendorContact" 
-                            	readOnlyFields="vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier" autoSearch="yes" 
-                            	lookupParameters="document.vendorHeaderGeneratedIdentifier:vendorHeaderGeneratedIdentifier,document.vendorDetailAssignedIdentifier:vendorDetailAssignedIdentifier" 
-                            	hideReturnLink="true" extraButtonSource="${ConfigProperties.externalizable.images.url}buttonsmall_return.gif" />                    
-                        </c:if>
-                    </td>
                 </tr>            
 
                 <tr>
-                    <th class="right">
-                        <kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorPhoneNumber}" />
-                    </th>
-                    <td class="datacell nowrap">
-                        <kul:htmlControlAttribute 
-                        	attributeEntry="${documentAttributes.vendorPhoneNumber}" property="document.vendorPhoneNumber" 
-                        	readOnly="true" tabindexOverride="${tabindexOverrideBase + 4}"/>                    
-                        <c:if test="${vendorReadOnly}" >
-                            <kul:lookup  boClassName="org.kuali.kfs.vnd.businessobject.VendorPhoneNumber" 
-                            	readOnlyFields="vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier" autoSearch="yes" 
-                            	lookupParameters="document.vendorHeaderGeneratedIdentifier:vendorHeaderGeneratedIdentifier,document.vendorDetailAssignedIdentifier:vendorDetailAssignedIdentifier" 
-                            	hideReturnLink="true" extraButtonSource="${ConfigProperties.externalizable.images.url}buttonsmall_return.gif" />                    
-                        </c:if>
-                    </td>
                     <th class="right" rowspan="2">
                         <kul:htmlAttributeLabel attributeEntry="${documentAttributes.supplierDiversityLabel}" />
                     </th>

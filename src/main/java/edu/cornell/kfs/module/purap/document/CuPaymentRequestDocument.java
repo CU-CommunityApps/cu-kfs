@@ -15,8 +15,7 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
@@ -43,7 +42,7 @@ import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
-	private static final Logger LOG = LogManager.getLogger(CuPaymentRequestDocument.class);
+	private static final Logger LOG = LogManager.getLogger();
     // KFSPTS-1891
     public static String DOCUMENT_TYPE_NON_CHECK = "PRNC";
     public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
@@ -118,8 +117,9 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         if (nodeName.equals(PurapWorkflowConstants.PURCHASE_WAS_RECEIVED)) {
             return shouldWaitForReceiving();
         }
-        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NON_RESIDENT_ALIEN)) {
-            return isVendorEmployeeOrNonResidentAlien();
+        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NONRESIDENT) ||
+                "VendorIsEmployeeOrNonResidentAlien".equals(nodeName)) {
+            return isVendorEmployeeOrNonresident();
         }
         // KFSPTS-1891
         if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER)) {
@@ -265,8 +265,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         // everything in the below list requires correcting entries to be written to the GL
             if (PaymentRequestStatuses.getNodesRequiringCorrectingGeneralLedgerEntries().contains(currentNode)) {
             	// KFSPTS-2598 : Treasury also can 'calculate'
-                if (PurapConstants.PaymentRequestStatuses.NODE_ACCOUNT_REVIEW.equals(currentNode) || PurapConstants.PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW.equals(currentNode)
-                		|| PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW.equals(currentNode)) {
+                if (PaymentRequestStatuses.NODE_ACCOUNT_REVIEW.equals(currentNode) || PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW.equals(currentNode)
+                		|| PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW.equals(currentNode)) {
                     SpringContext.getBean(PurapGeneralLedgerService.class).generateEntriesModifyPaymentRequest(this);
                 }
             }

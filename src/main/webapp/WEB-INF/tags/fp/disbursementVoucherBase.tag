@@ -78,7 +78,7 @@
 	
 	<fp:dvContact />
     <fp:dvSpecialHandling />
-	<fp:dvNRATax />
+	<fp:dvNonresidentTax/>
 	<fp:wireTransfer />
 	<fp:foreignDraft />
 	<fp:dvNonEmployeeTravel />
@@ -110,5 +110,6 @@
 	<kul:superUserActions />
 
 	<sys:documentControls transactionalDocument="${documentEntry.transactionalDocument}" extraButtons="${KualiForm.extraButtons}"/>
+	<kul:modernLookupSupport />
 </kul:documentPage>
 

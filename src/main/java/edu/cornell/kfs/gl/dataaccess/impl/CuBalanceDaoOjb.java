@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
-    private static final Logger LOG = LogManager.getLogger(CuBalanceDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * Returns a list of balances to return for the Organization Reversion year end job to process

@@ -88,7 +88,7 @@ import java.util.Map;
  * This class represents the business rules for the maintenance of {@link AccountGlobal} business objects
  */
 public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
-	private static final Logger LOG = LogManager.getLogger(AccountGlobalRule.class);
+	private static final Logger LOG = LogManager.getLogger();
 
 	protected static final BigDecimal BD100 = new BigDecimal(100);
 

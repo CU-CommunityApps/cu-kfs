@@ -26,8 +26,8 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.sys.KFSConstants;
@@ -35,8 +35,6 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.Correctable;
@@ -67,7 +65,7 @@ import java.util.Set;
  */
 public class AccountingLineAccessibleValidation extends GenericValidation {
 
-    private static final Logger LOG = LogManager.getLogger(AccountingLineAccessibleValidation.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected DataDictionaryService dataDictionaryService;
     protected AccountingDocument accountingDocumentForValidation;
@@ -382,7 +380,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         // KFSPTS-1891 : added treasury node
       return workflowDocument != null && workflowDocument.getDocument() != null && (
     		  workflowDocument.getCurrentNodeNames().contains("ContractManagement") ||
-    		  workflowDocument.getCurrentNodeNames().contains(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW));
+    		  workflowDocument.getCurrentNodeNames().contains(PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW));
     }
 
 }

@@ -63,7 +63,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
 		Integer vendorHeaderId = dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger();
 
 		if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewNotRequired(payeeTypeCode,paymentReasonCode, vendorHeaderId)) {
-			dvDoc.getDvNonResidentAlienTax().setIncomeClassCode(DisbursementVoucherConstants.NRA_TAX_INCOME_CLASS_NON_REPORTABLE);
+			dvDoc.getDvNonresidentTax().setIncomeClassCode(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_NON_REPORTABLE);
 		}
 	}
 

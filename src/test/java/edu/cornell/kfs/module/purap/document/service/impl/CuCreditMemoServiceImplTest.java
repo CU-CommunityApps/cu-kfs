@@ -19,7 +19,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
-import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocumentBase;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
@@ -160,7 +160,7 @@ public class CuCreditMemoServiceImplTest {
 
 	@Test
 	public void testrResetExtractedCreditMemo_Fail() throws Exception {
-		creditMemoDocument.setApplicationDocumentStatus(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS);
+		creditMemoDocument.setApplicationDocumentStatus(CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS);
 		creditMemoDocument.setExtractedTimestamp(dateTimeService.getCurrentTimestamp());
 		creditMemoDocument.setCreditMemoPaidTimestamp(dateTimeService.getCurrentTimestamp());
 

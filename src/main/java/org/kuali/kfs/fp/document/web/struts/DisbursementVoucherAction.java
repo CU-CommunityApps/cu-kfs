@@ -85,7 +85,7 @@ import java.util.Set;
  */
 public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase {
 	
-	private static final Logger LOG = LogManager.getLogger(DisbursementVoucherAction.class);
+	private static final Logger LOG = LogManager.getLogger();
 
     private static final String DV_ADHOC_NODE = "AdHoc"; // ==== CU Customization ====
 
@@ -180,10 +180,6 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         return dest;
     }
 
-    /**
-     * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#approve(org.apache.struts.action.ActionMapping,
-     *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
@@ -501,9 +497,9 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
 
     /**
-     * Calls service to generate tax accounting lines and updates nra tax line string in action form.
+     * Calls service to generate tax accounting lines and updates nonresident tax line string in action form.
      */
-    public ActionForward generateNonResidentAlienTaxLines(ActionMapping mapping, ActionForm form,
+    public ActionForward generateNonresidentTaxLines(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
         DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
@@ -512,7 +508,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
         /* call service to generate new tax lines */
         GlobalVariables.getMessageMap().addToErrorPath("document");
-        taxService.processNonResidentAlienTax(document);
+        taxService.processNonresidentTax(document);
         GlobalVariables.getMessageMap().removeFromErrorPath("document");
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -521,7 +517,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calls service to clear tax accounting lines and updates nra tax line string in action form.
      */
-    public ActionForward clearNonResidentAlienTaxLines(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward clearNonresidentTaxLines(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
         DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
@@ -529,7 +525,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
 
         /* call service to clear previous lines */
-        taxService.clearNRATaxLines(document);
+        taxService.clearNonresidentTaxLines(document);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -537,7 +533,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calls service to clear tax info.
      */
-    public ActionForward clearNonResidentAlienTaxInfo(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward clearNonresidentTaxInfo(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
         DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
@@ -545,7 +541,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
 
         /* call service to clear previous lines */
-        taxService.clearNRATaxInfo(document);
+        taxService.clearNonresidentTaxInfo(document);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }

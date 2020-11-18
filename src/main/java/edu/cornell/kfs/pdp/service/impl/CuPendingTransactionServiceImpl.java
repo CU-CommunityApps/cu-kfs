@@ -35,6 +35,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoItem;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
@@ -82,7 +83,7 @@ import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
 
 @Transactional
 public class CuPendingTransactionServiceImpl extends PendingTransactionServiceImpl implements CuPendingTransactionService{
-    private static final Logger LOG = LogManager.getLogger(CuPendingTransactionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
 	private DocumentService documentService;
     private NoteService noteService;
@@ -464,7 +465,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             // for CM cancel or create, do not book encumbrances if PO is CLOSED, but do update the amounts on the PO
             List encumbrances = getCreditMemoEncumbrance(cm, po);
-            if (!(PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED.equals(po.getApplicationDocumentStatus()))) {
+            if (!(PurchaseOrderStatuses.APPDOC_CLOSED.equals(po.getApplicationDocumentStatus()))) {
                 if (encumbrances != null) {
                     cm.setGenerateEncumbranceEntries(true);
 

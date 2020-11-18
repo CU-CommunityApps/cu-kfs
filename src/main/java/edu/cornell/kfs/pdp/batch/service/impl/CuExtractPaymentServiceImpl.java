@@ -52,7 +52,7 @@ import edu.cornell.kfs.pdp.batch.service.CuPayeeAddressService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
-    private static final Logger LOG = LogManager.getLogger(CuExtractPaymentServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     public static final String DV_EXTRACT_SUB_UNIT_CODE = "DV";
     public static final String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
     

@@ -14,7 +14,7 @@ import org.quartz.JobExecutionContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 public class CuJobListener extends JobListener  {
-    private static final Logger LOG = LogManager.getLogger(CuJobListener.class);
+    private static final Logger LOG = LogManager.getLogger();
 	
 	protected void notify(JobExecutionContext jobExecutionContext, String jobStatus) {		
 		try {

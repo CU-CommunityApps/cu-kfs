@@ -6,7 +6,7 @@ package edu.cornell.kfs.module.purap;
 import java.util.HashSet;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 
 /**
  * Cornell University specific constants class for holding and defining constants necessary for Cornell's implementation of the Kuali Financial System.
@@ -52,20 +52,20 @@ public class CUPurapConstants {
     }       
     
     public enum STATUS_ORDER {
-        CANCELLED_IN_PROCESS(PurapConstants.PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS, false),
-        CANCELLED_POST_AP_APPROVE(PurapConstants.PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false),
-        INITIATE(PurapConstants.PaymentRequestStatuses.APPDOC_INITIATE, true),
-        IN_PROCESS(PurapConstants.PaymentRequestStatuses.APPDOC_IN_PROCESS, true),
-        AWAITING_ACCOUNTS_PAYABLE_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),
-        AWAITING_RECEIVING_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_RECEIVING_REVIEW, false),
-        AWAITING_SUB_ACCT_MGR_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, false),
-        AWAITING_FISCAL_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_FISCAL_REVIEW, false),
-        AWAITING_ORG_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_ORG_REVIEW, false),
-        AWAITING_TAX_REVIEW(PurapConstants.PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
-        DEPARTMENT_APPROVED(PurapConstants.PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),        
+        CANCELLED_IN_PROCESS(PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS, false),
+        CANCELLED_POST_AP_APPROVE(PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false),
+        INITIATE(PaymentRequestStatuses.APPDOC_INITIATE, true),
+        IN_PROCESS(PaymentRequestStatuses.APPDOC_IN_PROCESS, true),
+        AWAITING_ACCOUNTS_PAYABLE_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),
+        AWAITING_RECEIVING_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_RECEIVING_REVIEW, false),
+        AWAITING_SUB_ACCT_MGR_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, false),
+        AWAITING_FISCAL_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_FISCAL_REVIEW, false),
+        AWAITING_ORG_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_ORG_REVIEW, false),
+        AWAITING_TAX_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
+        DEPARTMENT_APPROVED(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),        
         // KFSPTS-1891
         PAYMENT_METHOD_REVIEW(CUPurapConstants.PAYMENT_METHODL_REVIEW, false), 
-        AUTO_APPROVED(PurapConstants.PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false), ;
+        AUTO_APPROVED(PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false), ;
 
         private String statusCode = new String();
         private boolean fullEntryAllowed = false;
@@ -95,9 +95,9 @@ public class CUPurapConstants {
        
         
         static {
-            STATUSES_ALLOWING_AUTO_CLOSE.add(PurapConstants.PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
-            STATUSES_ALLOWING_AUTO_CLOSE.add(PurapConstants.PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
-            STATUSES_ALLOWING_AUTO_CLOSE.addAll(PurapConstants.PaymentRequestStatuses.CANCELLED_STATUSES);
+            STATUSES_ALLOWING_AUTO_CLOSE.add(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
+            STATUSES_ALLOWING_AUTO_CLOSE.add(PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
+            STATUSES_ALLOWING_AUTO_CLOSE.addAll(PaymentRequestStatuses.CANCELLED_STATUSES);
   
         }
     }

@@ -15,7 +15,7 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 
 @SuppressWarnings("unchecked")
 public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
-    private static final Logger LOG = LogManager.getLogger(CuCreditMemoDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
 	public List<VendorCreditMemoDocument> getCreditMemosToExtract(String chartCode) {

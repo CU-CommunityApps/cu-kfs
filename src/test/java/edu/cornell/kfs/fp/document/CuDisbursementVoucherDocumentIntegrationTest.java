@@ -7,7 +7,7 @@ import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -60,23 +60,23 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
 
         assertEquals(new KualiDecimal(86.00), cuDisbursementVoucherDocument.getDisbVchrCheckTotalAmount());
 
-        DisbursementVoucherNonResidentAlienTax disbursementVoucherNonResidentAlienTax = cuDisbursementVoucherDocument.getDvNonResidentAlienTax();
-        assertNull(disbursementVoucherNonResidentAlienTax.getDocumentNumber());
-        assertNull(disbursementVoucherNonResidentAlienTax.getFederalIncomeTaxPercent());
-        assertNull(disbursementVoucherNonResidentAlienTax.getStateIncomeTaxPercent());
-        assertNull(disbursementVoucherNonResidentAlienTax.getIncomeClassCode());
-        assertNull(disbursementVoucherNonResidentAlienTax.getPostalCountryCode());
-        assertFalse(disbursementVoucherNonResidentAlienTax.isIncomeTaxTreatyExemptCode());
-        assertFalse(disbursementVoucherNonResidentAlienTax.isForeignSourceIncomeCode());
-        assertFalse(disbursementVoucherNonResidentAlienTax.isIncomeTaxGrossUpCode());
-        assertNull(disbursementVoucherNonResidentAlienTax.getReferenceFinancialSystemOriginationCode());
-        assertNull(disbursementVoucherNonResidentAlienTax.getReferenceFinancialDocumentNumber());
-        assertNull(disbursementVoucherNonResidentAlienTax.getFinancialDocumentAccountingLineText());
-        assertNull(disbursementVoucherNonResidentAlienTax.getTaxNQIId());
-        assertFalse(disbursementVoucherNonResidentAlienTax.isTaxOtherExemptIndicator());
-        assertFalse(disbursementVoucherNonResidentAlienTax.isTaxUSAIDPerDiemIndicator());
-        assertNull(disbursementVoucherNonResidentAlienTax.getTaxSpecialW4Amount());
-        assertNull(disbursementVoucherNonResidentAlienTax.getIncomeClass());
+        DisbursementVoucherNonresidentTax disbursementVoucherNonresidentTax = cuDisbursementVoucherDocument.getDvNonresidentTax();
+        assertNull(disbursementVoucherNonresidentTax.getDocumentNumber());
+        assertNull(disbursementVoucherNonresidentTax.getFederalIncomeTaxPercent());
+        assertNull(disbursementVoucherNonresidentTax.getStateIncomeTaxPercent());
+        assertNull(disbursementVoucherNonresidentTax.getIncomeClassCode());
+        assertNull(disbursementVoucherNonresidentTax.getPostalCountryCode());
+        assertFalse(disbursementVoucherNonresidentTax.isIncomeTaxTreatyExemptCode());
+        assertFalse(disbursementVoucherNonresidentTax.isForeignSourceIncomeCode());
+        assertFalse(disbursementVoucherNonresidentTax.isIncomeTaxGrossUpCode());
+        assertNull(disbursementVoucherNonresidentTax.getReferenceFinancialSystemOriginationCode());
+        assertNull(disbursementVoucherNonresidentTax.getReferenceFinancialDocumentNumber());
+        assertNull(disbursementVoucherNonresidentTax.getFinancialDocumentAccountingLineText());
+        assertNull(disbursementVoucherNonresidentTax.getTaxNQIId());
+        assertFalse(disbursementVoucherNonresidentTax.isTaxOtherExemptIndicator());
+        assertFalse(disbursementVoucherNonresidentTax.isTaxUSAIDPerDiemIndicator());
+        assertNull(disbursementVoucherNonresidentTax.getTaxSpecialW4Amount());
+        assertNull(disbursementVoucherNonresidentTax.getIncomeClass());
 
         assertFalse(cuDisbursementVoucherDocument.getWireTransfer().isWireTransferFeeWaiverIndicator());
 

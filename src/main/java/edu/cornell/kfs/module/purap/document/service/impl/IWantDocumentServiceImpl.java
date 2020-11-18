@@ -28,6 +28,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
@@ -299,7 +300,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         requisitionDocument.getDocumentHeader().setExplanation(iWantDocument.getExplanation());
 
         requisitionDocument.setRequisitionSourceCode(CUPurapConstants.RequisitionSources.IWNT);
-        requisitionDocument.setApplicationDocumentStatus(PurapConstants.RequisitionStatuses.APPDOC_IN_PROCESS);
+        requisitionDocument.setApplicationDocumentStatus(RequisitionStatuses.APPDOC_IN_PROCESS);
 
         requisitionDocument.setPurchaseOrderCostSourceCode(PurapConstants.POCostSources.ESTIMATE);
         requisitionDocument.setPurchaseOrderTransmissionMethodCode(parameterService.getParameterValueAsString(
