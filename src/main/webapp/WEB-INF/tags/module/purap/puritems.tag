@@ -446,7 +446,6 @@
                                         fieldPropertyName="document.item[${ctr}].itemUnitOfMeasureCode"
                                         newLookup="true"
                                         addClass="embed"/>
-                            </c:if>
                         	</c:if>
 							<div id="document.item[${ctr}].itemUnitOfMeasure.itemUnitOfMeasureDescription.div" class="fineprint">
 								<html:hidden write="true" property="document.item[${ctr}].itemUnitOfMeasure.itemUnitOfMeasureDescription"/>&nbsp;
