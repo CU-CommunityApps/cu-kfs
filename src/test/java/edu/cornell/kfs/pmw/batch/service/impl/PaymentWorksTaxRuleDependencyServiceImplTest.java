@@ -100,7 +100,7 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
     }
     
     @Test
-    void testPopulateOwernshipCodeLLC_C_Corp() {
+    void testPopulateOwnershipCodeLLC_C_Corp() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxClassificationCode(PaymentWorksConstants.LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR);
         VendorHeader vendorHeader = new VendorHeader();
