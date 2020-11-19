@@ -115,7 +115,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             && isPurchaseOrderCountryNotUnitedStatesFipsCountryCodeOption(pmwVendor)) {
             kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
         } else {
-            switch (determineTaxRuleToUseForDataPopulation(pmwVendor, convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap))) {
+            switch (determineTaxRuleToUseForDataPopulation(pmwVendor, 
+                    paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                            pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap))) {
                 case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_US_SSN:
                 {    kfsVendorDataWrapper = populateDataForTaxRuleIndividualUsSsn(kfsVendorDataWrapper, pmwVendor, paymentWorksIsoToFipsCountryMap);
                 }
@@ -177,7 +179,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString());
         vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.legacyFormTranslationToKfsOwnershipTypeCode);
-        vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap)); 
+        vendorHeader.setVendorCorpCitizenCode(paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap)); 
         kfsVendorDataWrapper.getVendorDetail().setVendorHeader(vendorHeader);
         kfsVendorDataWrapper = populateW9Attributes(kfsVendorDataWrapper, pmwVendor);
         kfsVendorDataWrapper = populateFirstLastLegalName(pmwVendor, kfsVendorDataWrapper);
@@ -190,7 +193,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString());
         vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.legacyFormTranslationToKfsOwnershipTypeCode);
-        vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
+        vendorHeader.setVendorCorpCitizenCode(paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
         kfsVendorDataWrapper.getVendorDetail().setVendorHeader(vendorHeader);
         kfsVendorDataWrapper = populateW9Attributes(kfsVendorDataWrapper, pmwVendor);
         kfsVendorDataWrapper = populateBusinessLegalName(pmwVendor, kfsVendorDataWrapper);
@@ -203,7 +207,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorHeader.setVendorTaxNumber(pmwVendor.getRequestingCompanyTin());
         vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString());
         vendorHeader.setVendorOwnershipCode(determineKfsOwnershipTypeCodeFromPmwTaxClassificationCode(pmwVendor));
-        vendorHeader.setVendorCorpCitizenCode(convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
+        vendorHeader.setVendorCorpCitizenCode(paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap));
         kfsVendorDataWrapper.getVendorDetail().setVendorHeader(vendorHeader);
         kfsVendorDataWrapper = populateW9Attributes(kfsVendorDataWrapper, pmwVendor);
         kfsVendorDataWrapper = populateBusinessLegalName(pmwVendor, kfsVendorDataWrapper);
@@ -221,10 +226,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         kfsVendorDataWrapper.setVendorDetail(null);
         return kfsVendorDataWrapper;
     }
-    
-    private String convertIsoCountryCodeToFipsCountryCode(String isoCountryCode, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
-        return (paymentWorksIsoToFipsCountryMap.get(isoCountryCode).get(0)).getFipsCountryCode();
-    }
 
     private List<VendorAddress> buildVendorAddresses(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         List<VendorAddress> allVendorAddresses = new ArrayList<VendorAddress>();
@@ -240,7 +241,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         VendorAddress taxAddress = buildBaseAddress(CUVendorConstants.CUAddressTypes.TAX, 
                                                     pmwVendor.getCorpAddressStreet1(),pmwVendor.getCorpAddressStreet2(),
                                                     pmwVendor.getCorpAddressCity(), pmwVendor.getCorpAddressZipCode(), 
-                                                    convertIsoCountryCodeToFipsCountryCode(pmwVendor.getCorpAddressCountry(), paymentWorksIsoToFipsCountryMap));
+                                                    paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                                                            pmwVendor.getCorpAddressCountry(), paymentWorksIsoToFipsCountryMap));
         taxAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(taxAddress, pmwVendor.getCorpAddressState());
         return taxAddress;
     }
@@ -249,7 +251,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         VendorAddress remitAddress = buildBaseAddress(VendorConstants.AddressTypes.REMIT,
                                                       pmwVendor.getRemittanceAddressStreet1(), pmwVendor.getRemittanceAddressStreet2(), 
                                                       pmwVendor.getRemittanceAddressCity(), pmwVendor.getRemittanceAddressZipCode(), 
-                                                      convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRemittanceAddressCountry(), paymentWorksIsoToFipsCountryMap));
+                                                      paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                                                              pmwVendor.getRemittanceAddressCountry(), paymentWorksIsoToFipsCountryMap));
         remitAddress.setVendorDefaultAddressIndicator(true);
         remitAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(remitAddress, pmwVendor.getRemittanceAddressState());
         return (remitAddress);
@@ -305,7 +308,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                 fipsCountryCode = option.fipsCountryCode;
             } else {
                 try {
-                    fipsCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getPoCountry(), paymentWorksIsoToFipsCountryMap);
+                    fipsCountryCode = paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                            pmwVendor.getPoCountry(), paymentWorksIsoToFipsCountryMap);
                 } catch (NullPointerException npe) {
                     LOG.error("buildPOFipsCountryCode, had an error converting '" + pmwVendor.getPoCountry() + "' to a FIPS code.", npe);
                     fipsCountryCode = StringUtils.EMPTY;
@@ -751,7 +755,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     protected String buildKFSPaymentMethod(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
-        String vendorCountryCode = convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
+        String vendorCountryCode = paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
+                pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
         if (isUnitedStatesFipsCountryCode(vendorCountryCode)) {
             LOG.debug("buildKFSPaymentMethod, Domestic Vendor");
             return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;

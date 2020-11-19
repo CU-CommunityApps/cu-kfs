@@ -13,7 +13,6 @@ import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -130,7 +129,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         if (pmwNewVendorNotNull(stgNewVendorRequestDetailToProcess, errorMessages)
                 && pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess)
                 && pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages)
-                && allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages)
                 && pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)) {
             return true;
         } else {
@@ -242,22 +240,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
         return dateIsFormattedCorrectly;
     }
-
-    private boolean allPmwNewVendorIsoCountriesMapToSingleFipsCountry(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        //WHEN FUNCTIONALITY ADDED FOR PO VENDORS NEED TO ADD THE FOLLOWING:
-        //  NEED TO ADD METHOD "allOptionalIsoCountriesContainData" FOR PO VENDORS and check poCountry data value with those methods
-        //  NEED TO ADD CALL TO METHOD "isoCountryMapsToSingleFipsCountry" for poCountry
-        boolean allCountryChecksPassed = false;
-        if (allRequiredIsoCountriesContainData(stgNewVendorRequestDetailToProcess, errorMessages) &&
-            allRequiredFipsCountriesContainData(stgNewVendorRequestDetailToProcess, errorMessages) &&
-            isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getRequestingCompanyTaxCountry(), errorMessages) &&
-            isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getCorpAddressCountry(), errorMessages) &&
-            isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getRemittanceAddressCountry(), errorMessages) &&
-            bankIsoCountryCodeIsNotProvidedOrTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getBankAddressCountry(), errorMessages)) {
-            allCountryChecksPassed = true;
-        }
-        return allCountryChecksPassed;
-    }
     
     private boolean allRequiredIsoCountriesContainData(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
         boolean allRequiredAreNotBlank = true;
@@ -274,40 +256,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             allRequiredAreNotBlank = false;
         }
         return allRequiredAreNotBlank;
-    }
-    
-    private boolean allRequiredFipsCountriesContainData(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        boolean allRequiredAreNotBlank = true;
-        if (StringUtils.isBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyTaxCountry())) {
-            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_FIPS_TAX_COUNTRY_BLANK));
-            allRequiredAreNotBlank = false;
-        }
-        return allRequiredAreNotBlank;
-    }
-    
-    private boolean isoCountryCodeTranslatesToSingleFipsCountryCode(String isoCountryCode, List<String> errorMessages) {
-        if (getPaymentWorksIsoToFipsCountryMap().containsKey(isoCountryCode)) {
-            if((getPaymentWorksIsoToFipsCountryMap().get(isoCountryCode)).size() == 1) {
-                return true;
-            }
-            else {
-                errorMessages.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_SINGLE_ISO_MAPS_TO_MULTIPLE_FIPS), isoCountryCode));
-                return false;
-            }
-        }
-        else {
-            errorMessages.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_ISO_COUNTRY_NOT_FOUND), isoCountryCode));
-            return false;
-        }
-    }
-    
-    private boolean bankIsoCountryCodeIsNotProvidedOrTranslatesToSingleFipsCountryCode(String isoCountryCode, List<String> errorMessages) {
-        if (ObjectUtils.isNotNull(isoCountryCode)) {
-            return isoCountryCodeTranslatesToSingleFipsCountryCode(isoCountryCode, errorMessages);
-        } else {
-            LOG.info("bankIsoCountryCodeTranslatesToSingleFipsCountryCodeWhenBankDataIsEntered: Bank Country could not be validated. No bank data provided.");
-            return true;
-        }
     }
     
     private boolean pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
