@@ -9,5 +9,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public interface PaymentWorksTaxRuleDependencyService {
     KfsVendorDataWrapper buildKfsVendorDataWrapper(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap);
+    
+    String convertIsoCountryCodeToFipsCountryCode(String isoCountryCode, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap);
 
 }

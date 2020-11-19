@@ -225,8 +225,19 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             return truncateValueToMaxLength(legalFirstName, maxAllowedLengthOfFirstName);
     }
     
-    private String convertIsoCountryCodeToFipsCountryCode(String isoCountryCode, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
-        return (paymentWorksIsoToFipsCountryMap.get(isoCountryCode).get(0)).getFipsCountryCode();
+    @Override
+    public String convertIsoCountryCodeToFipsCountryCode(String isoCountryCode, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
+        String fipsCountryCode = StringUtils.EMPTY;
+        if (paymentWorksIsoToFipsCountryMap.containsKey(isoCountryCode)) {
+            if (paymentWorksIsoToFipsCountryMap.get(isoCountryCode).size() == 1) {
+                fipsCountryCode = paymentWorksIsoToFipsCountryMap.get(isoCountryCode).get(0).getFipsCountryCode();
+            } else {
+                LOG.error("convertIsoCountryCodeToFipsCountryCode, more than one FIPS country for ISO country " + isoCountryCode);
+            }
+        } else {
+            LOG.error("convertIsoCountryCodeToFipsCountryCode, no FIPS country for ISO country " + isoCountryCode);
+        }
+        return fipsCountryCode;
     }
     
     private boolean isUnitedStatesFipsCountryCode (String countryCode) {

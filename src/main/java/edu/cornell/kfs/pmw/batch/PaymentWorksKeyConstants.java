@@ -67,7 +67,7 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_PRIMARY_ADDRESS_COUNTRY_BLANK = "error.paymentworks.primary.address.country.blank";
     public static final String ERROR_REMITTANCE_ADDRESS_COUNTRY_BLANK = "error.paymentworks.remittance.address.country.blank";
     public static final String ERROR_BANK_ADDRESS_COUNTRY_BLANK = "error.paymentworks.bank.address.country.blank";
-    public static final String ERROR_FIPS_TAX_COUNTRY_BLANK = "error.paymentworks.tax.address.fips.country.blank.";
+    public static final String ERROR_FIPS_TAX_COUNTRY_BLANK = "error.paymentworks.tax.address.fips.country.blank";
     public static final String ERROR_SINGLE_ISO_MAPS_TO_MULTIPLE_FIPS = "error.paymentworks.single.iso.maps.to.multiple.fips";
     public static final String ERROR_ISO_COUNTRY_NOT_FOUND = "error.paymentworks.iso.country.not.found";
     public static final String ERROR_W8_W9_URL_IS_NULL_OR_BLANK = "error.paymentworks.w8.w9.url.null.or.blank";
