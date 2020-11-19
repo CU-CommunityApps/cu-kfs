@@ -11,9 +11,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.TaxRule;
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.VendorOwnershipTypeCodes;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 class PaymentWorksTaxRuleDependencyServiceImplTest {
@@ -95,6 +97,24 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
         Date expectedDate = PaymentWorksVendorSupplierDiversityServiceImplTest.createCalendar(2020, Calendar.JULY, 1);
         
         assertEquals(expectedDate, actualDate);
+    }
+    
+    @Test
+    void testpopulateOwernshipCodeLLC_C_Corp() {
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setRequestingCompanyTaxClassificationCode(PaymentWorksConstants.LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR);
+        VendorHeader vendorHeader = new VendorHeader();
+        taxRuleService.populateOwernshipCode(pmwVendor, TaxRule.NOT_INDIVIDUAL_US, vendorHeader);
+        assertEquals(VendorOwnershipTypeCodes.C_CORPORATION, vendorHeader.getVendorOwnershipCode());
+    }
+    
+    @Test
+    void testpopulateOwernshipCodeLLC_S_Corp() {
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setRequestingCompanyTaxClassificationCode(PaymentWorksConstants.LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR);
+        VendorHeader vendorHeader = new VendorHeader();
+        taxRuleService.populateOwernshipCode(pmwVendor, TaxRule.NOT_INDIVIDUAL_US, vendorHeader);
+        assertEquals(VendorOwnershipTypeCodes.S_CORPORATION, vendorHeader.getVendorOwnershipCode());
     }
 
 }
