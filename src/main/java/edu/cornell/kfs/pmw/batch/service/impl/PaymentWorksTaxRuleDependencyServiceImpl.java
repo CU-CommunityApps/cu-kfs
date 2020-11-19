@@ -83,7 +83,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
             vendorHeader.setVendorTaxTypeCode(taxRule.taxTypeCode);
         }
         
-        populateOwnernshipCode(pmwVendor, taxRule, vendorHeader);
+        populateOwnershipCode(pmwVendor, taxRule, vendorHeader);
         
         if (taxRule.populateW9Attributes) {
             populateW9Attributes(vendorDataWrapper, pmwVendor);
@@ -121,7 +121,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         }
     }
     
-    protected void populateOwnernshipCode(PaymentWorksVendor pmwVendor, TaxRule taxRule, VendorHeader vendorHeader) {
+    protected void populateOwnershipCode(PaymentWorksVendor pmwVendor, TaxRule taxRule, VendorHeader vendorHeader) {
         if (StringUtils.isNotBlank(taxRule.ownershipTypeCode)) {
             vendorHeader.setVendorOwnershipCode(taxRule.ownershipTypeCode);
         } else {

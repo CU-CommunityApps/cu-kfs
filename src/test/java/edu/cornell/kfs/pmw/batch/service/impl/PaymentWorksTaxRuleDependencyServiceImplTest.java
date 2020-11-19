@@ -104,7 +104,7 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxClassificationCode(PaymentWorksConstants.LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR);
         VendorHeader vendorHeader = new VendorHeader();
-        taxRuleService.populateOwnernshipCode(pmwVendor, TaxRule.NOT_INDIVIDUAL_US, vendorHeader);
+        taxRuleService.populateOwnershipCode(pmwVendor, TaxRule.NOT_INDIVIDUAL_US, vendorHeader);
         assertEquals(VendorOwnershipTypeCodes.C_CORPORATION, vendorHeader.getVendorOwnershipCode());
     }
     
@@ -113,7 +113,7 @@ class PaymentWorksTaxRuleDependencyServiceImplTest {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxClassificationCode(PaymentWorksConstants.LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR);
         VendorHeader vendorHeader = new VendorHeader();
-        taxRuleService.populateOwnernshipCode(pmwVendor, TaxRule.NOT_INDIVIDUAL_US, vendorHeader);
+        taxRuleService.populateOwnershipCode(pmwVendor, TaxRule.NOT_INDIVIDUAL_US, vendorHeader);
         assertEquals(VendorOwnershipTypeCodes.S_CORPORATION, vendorHeader.getVendorOwnershipCode());
     }
 
