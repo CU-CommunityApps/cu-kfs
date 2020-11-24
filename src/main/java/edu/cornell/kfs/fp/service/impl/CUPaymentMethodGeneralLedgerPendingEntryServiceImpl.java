@@ -20,6 +20,8 @@ import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.sys.service.CuGeneralLedgerPendingEntryService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +70,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     protected static final String DEFAULT_PAYMENT_METHOD_IF_MISSING = "A"; // check/ACH
 
     // not sure why these are not injected ?
-    private GeneralLedgerPendingEntryService generalLedgerPendingEntryService;
+    private CuGeneralLedgerPendingEntryService generalLedgerPendingEntryService;
     private ObjectCodeService objectCodeService;
     private ParameterService parameterService;
     private BusinessObjectService businessObjectService;
@@ -399,9 +401,9 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         return success;
     }
     
-    protected GeneralLedgerPendingEntryService getGeneralLedgerPendingEntryService() {
+    protected CuGeneralLedgerPendingEntryService getGeneralLedgerPendingEntryService() {
         if ( generalLedgerPendingEntryService == null ) {
-            generalLedgerPendingEntryService = SpringContext.getBean(GeneralLedgerPendingEntryService.class);
+            generalLedgerPendingEntryService = SpringContext.getBean(CuGeneralLedgerPendingEntryService.class);
         }
         return generalLedgerPendingEntryService;
     }
