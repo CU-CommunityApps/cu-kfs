@@ -21,7 +21,11 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
         implements CuGeneralLedgerPendingEntryService {
     private static final Logger LOG = LogManager.getLogger(CuGeneralLedgerPendingEntryServiceImpl.class);
     protected HomeOriginationService homeOriginationService;
-
+    
+    /*
+     * With the 11/20/2020 patch, this function was removed from GeneralLedgerPendingEntryServiceImpl, 
+     * this function is a copy of the code that was removed
+     */
     @Override
     public GeneralLedgerPendingEntry buildGeneralLedgerPendingEntry(GeneralLedgerPostingDocument document,
             Account account, ObjectCode objectCode, String subAccountNumber, String subObjectCode,
