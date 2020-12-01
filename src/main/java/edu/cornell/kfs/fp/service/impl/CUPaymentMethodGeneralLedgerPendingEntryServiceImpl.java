@@ -20,6 +20,8 @@ import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.sys.service.CuGeneralLedgerPendingEntryService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +70,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     protected static final String DEFAULT_PAYMENT_METHOD_IF_MISSING = "A"; // check/ACH
 
     // not sure why these are not injected ?
-    private GeneralLedgerPendingEntryService generalLedgerPendingEntryService;
+    private CuGeneralLedgerPendingEntryService generalLedgerPendingEntryService;
     private ObjectCodeService objectCodeService;
     private ParameterService parameterService;
     private BusinessObjectService businessObjectService;
@@ -221,7 +223,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     
             // handle the offset entry
             GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry(chargeEntry);
-            getGeneralLedgerPendingEntryService().populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), chargeEntry, sequenceHelper, offsetEntry);
+            generalLedgerPendingEntryService.populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), chargeEntry, sequenceHelper, offsetEntry);
     
             document.addPendingEntry(offsetEntry);
             sequenceHelper.increment();
@@ -254,7 +256,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             
             // create the offset entry
             offsetEntry = new GeneralLedgerPendingEntry(feeIncomeEntry);
-            getGeneralLedgerPendingEntryService().populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), feeIncomeEntry, sequenceHelper, offsetEntry);
+            generalLedgerPendingEntryService.populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), feeIncomeEntry, sequenceHelper, offsetEntry);
     
             document.addPendingEntry(offsetEntry);
             sequenceHelper.increment();
@@ -349,7 +351,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
                 
                 // handle the offset entry
                 GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry(apOffsetEntry);
-                getGeneralLedgerPendingEntryService().populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), apOffsetEntry, sequenceHelper, offsetEntry);
+                generalLedgerPendingEntryService.populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), apOffsetEntry, sequenceHelper, offsetEntry);
     
                 document.addPendingEntry(offsetEntry);
                 sequenceHelper.increment();
@@ -372,11 +374,11 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         Bank bank = getBankService().getByPrimaryId(bankCode);
 
         if ( bankOffsetAmount == null ) {
-            bankOffsetAmount = getGeneralLedgerPendingEntryService().getOffsetToCashAmount(document).negated();
+            bankOffsetAmount = generalLedgerPendingEntryService.getOffsetToCashAmount(document).negated();
         }
         if ( !KualiDecimal.ZERO.equals(bankOffsetAmount) ) {
             GeneralLedgerPendingEntry bankOffsetEntry = new GeneralLedgerPendingEntry();
-            success &= getGeneralLedgerPendingEntryService()
+            success &= generalLedgerPendingEntryService
                     .populateBankOffsetGeneralLedgerPendingEntry(bank, bankOffsetAmount, document, 
                             document.getPostingYear(), sequenceHelper, bankOffsetEntry, bankCodePropertyName);
     
@@ -388,7 +390,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
                 sequenceHelper.increment();
     
                 GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry(bankOffsetEntry);
-                success &= getGeneralLedgerPendingEntryService().populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), bankOffsetEntry, sequenceHelper, offsetEntry);
+                success &= generalLedgerPendingEntryService.populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), bankOffsetEntry, sequenceHelper, offsetEntry);
                 bankOffsetEntry.setFinancialDocumentTypeCode(documentTypeCode);
 
                 document.addPendingEntry(offsetEntry);
@@ -397,13 +399,6 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         }
 
         return success;
-    }
-    
-    protected GeneralLedgerPendingEntryService getGeneralLedgerPendingEntryService() {
-        if ( generalLedgerPendingEntryService == null ) {
-            generalLedgerPendingEntryService = SpringContext.getBean(GeneralLedgerPendingEntryService.class);
-        }
-        return generalLedgerPendingEntryService;
     }
     
     protected ObjectCodeService getObjectCodeService() {
@@ -497,13 +492,13 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
                     // create reversal
                     GeneralLedgerPendingEntry glpe = new GeneralLedgerPendingEntry();
                     boolean debit = KFSConstants.GL_CREDIT_CODE.equalsIgnoreCase(entry.getTransactionDebitCreditCode());
-                    glpe = getGeneralLedgerPendingEntryService().buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getFinancialObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
+                    glpe = generalLedgerPendingEntryService.buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getFinancialObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
                     glpe.setFinancialDocumentTypeCode(documentType);
                     document.addPendingEntry(glpe);
                     sequenceHelper.increment();
                     // create cash entry
                     GeneralLedgerPendingEntry cashGlpe = new GeneralLedgerPendingEntry();
-                    cashGlpe = getGeneralLedgerPendingEntryService().buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getChart().getFinancialCashObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), !debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
+                    cashGlpe = generalLedgerPendingEntryService.buildGeneralLedgerPendingEntry((GeneralLedgerPostingDocument) document, entry.getAccount(), entry.getChart().getFinancialCashObject(), entry.getSubAccountNumber(), entry.getFinancialSubObjectCode(), entry.getOrganizationReferenceId(), entry.getProjectCode(), entry.getReferenceFinancialDocumentNumber(), entry.getReferenceFinancialDocumentTypeCode(), entry.getReferenceFinancialSystemOriginationCode(), entry.getTransactionLedgerEntryDescription(), !debit, entry.getTransactionLedgerEntryAmount(), sequenceHelper);
                     cashGlpe.setFinancialDocumentTypeCode(documentType);
                     document.addPendingEntry(cashGlpe);
                     sequenceHelper.increment();
