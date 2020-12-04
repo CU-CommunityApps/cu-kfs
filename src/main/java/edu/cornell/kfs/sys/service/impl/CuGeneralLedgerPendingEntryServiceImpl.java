@@ -25,6 +25,7 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
     /*
      * With the 11/12/2020 patch, this function was removed from GeneralLedgerPendingEntryServiceImpl, 
      * this function is a copy of the code that was removed
+     * 
      */
     @Override
     public GeneralLedgerPendingEntry buildGeneralLedgerPendingEntry(GeneralLedgerPostingDocument document,
