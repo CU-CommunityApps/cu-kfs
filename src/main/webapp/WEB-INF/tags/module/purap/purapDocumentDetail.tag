@@ -235,6 +235,7 @@
 	            <label><kul:htmlAttributeLabel attributeEntry="${documentAttributes.statusChange}" /></label>
 	        </th>
 	        <td>
+	       <%--CU Customization, base code moved the purchase order constants, but did not update the tag refernces, causing these to not work --%>
 		        <html:radio title="${documentAttributes.statusChange.label} - None" property="statusChange" value="${PurchaseOrderStatuses.APPDOC_IN_PROCESS}" tabindex="${tabindexOverrideBase + 9}" />&nbsp;None&nbsp;
 				<html:radio title="${documentAttributes.statusChange.label} - Department" property="statusChange" value="${PurchaseOrderStatuses.APPDOC_WAITING_FOR_DEPARTMENT}" tabindex="${tabindexOverrideBase + 9}" />&nbsp;Department&nbsp;
 				<html:radio title="${documentAttributes.statusChange.label} - Vendor" property="statusChange" value="${PurchaseOrderStatuses.APPDOC_WAITING_FOR_VENDOR}" tabindex="${tabindexOverrideBase + 9}" />&nbsp;Vendor&nbsp;
