@@ -113,6 +113,7 @@
   <bean id="ObjectCodeBucketMapping-lookupDefinition" parent="ObjectCodeBucketMapping-lookupDefinition-parentBean"/>
   <bean id="ObjectCodeBucketMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="Object Code Bucket Mapping Lookup"/>
+    <property name="lookupableID" value="objectCodeBucketMappingLookupable"/>
     <property name="defaultSort">
       <bean parent="SortDefinition">
       </bean>

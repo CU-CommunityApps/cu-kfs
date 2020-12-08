@@ -146,4 +146,16 @@
         </property>
     </bean>
 
+    <bean id="objectCodeBucketMappingLookupableHelperService"
+          parent="objectCodeBucketMappingLookupableHelperService-parentBean" scope="prototype"/>
+    <bean id="objectCodeBucketMappingLookupableHelperService-parentBean"
+          parent="cf.lookupableHelperService" abstract="true" scope="prototype"
+          class="edu.cornell.kfs.tax.businessobject.lookup.ObjectCodeBucketMappingLookupableHelperServiceImpl"/>
+
+    <bean id="objectCodeBucketMappingLookupable" parent="objectCodeBucketMappingLookupable-parentBean"
+          scope="prototype"/>
+    <bean id="objectCodeBucketMappingLookupable-parentBean" abstract="true" scope="prototype"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          p:lookupableHelperService-ref="objectCodeBucketMappingLookupableHelperService"/>
+
 </beans>
