@@ -280,4 +280,15 @@
 
 	<bean id="eInvoiceDao" parent="platformAwareDao"
 		  class="edu.cornell.kfs.module.purap.dataaccess.impl.CuEinvoiceDaoOjb"/>
+		  
+    <bean id="PurchaseOrderStatuses" class="org.kuali.rice.core.api.util.collect.ConstantsMap">
+		<property name="constantClass" value="org.kuali.kfs.module.purap.PurchaseOrderStatuses" />
+	</bean>
+	<bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
+        <property name="attributes">
+            <map>
+                <entry key="PurchaseOrderStatuses" value-ref="PurchaseOrderStatuses"/>
+            </map>
+        </property>
+    </bean>
 </beans>
