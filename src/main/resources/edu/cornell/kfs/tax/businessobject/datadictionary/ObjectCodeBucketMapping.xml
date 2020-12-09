@@ -113,7 +113,6 @@
   <bean id="ObjectCodeBucketMapping-lookupDefinition" parent="ObjectCodeBucketMapping-lookupDefinition-parentBean"/>
   <bean id="ObjectCodeBucketMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
     <property name="title" value="Object Code Bucket Mapping Lookup"/>
-    <property name="lookupableID" value="objectCodeBucketMappingLookupable"/>
     <property name="defaultSort">
       <bean parent="SortDefinition">
       </bean>
@@ -121,9 +120,10 @@
     <property name="lookupFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
-        <bean parent="FieldDefinition" p:attributeName="dvPaymentReasonCode"/>
-        <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="formType"/>
+        <bean parent="FieldDefinition" p:attributeName="dvPaymentReasonCode"
+              p:treatWildcardsAndOperatorsAsLiteral="true"/>
+        <bean parent="FieldDefinition" p:attributeName="boxNumber" p:treatWildcardsAndOperatorsAsLiteral="true"/>
+        <bean parent="FieldDefinition" p:attributeName="formType" p:treatWildcardsAndOperatorsAsLiteral="true"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
