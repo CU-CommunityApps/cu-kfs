@@ -363,6 +363,90 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
     }
 
     /**
+     * Convenience method to build a GLPE without a generalLedgerPendingEntrySourceDetail
+     *
+     * @param document                a GeneralLedgerPostingDocument
+     * @param account                 the account for use in the GLPE
+     * @param objectCode              the object code for use in the GLPE
+     * @param subAccountNumber        the sub account number for use in the GLPE
+     * @param subObjectCode           the subobject code for use in the GLPE
+     * @param organizationReferenceId the organization reference id to use in the GLPE
+     * @param projectCode             the project code to use in the GLPE
+     * @param referenceNumber         the reference number to use in the GLPE
+     * @param referenceTypeCode       the reference type code to use in the GLPE
+     * @param referenceOriginCode     the reference origin code to use in the GLPE
+     * @param description             the description to put in the GLPE
+     * @param isDebit                 true if the GLPE represents a debit, false if it represents a credit
+     * @param amount                  the amount of the GLPE
+     * @param sequenceHelper          the sequence helper to use
+     * @return a populated general ledger pending entry
+     */
+    @Override
+    public GeneralLedgerPendingEntry buildGeneralLedgerPendingEntry(GeneralLedgerPostingDocument document,
+            Account account, ObjectCode objectCode, String subAccountNumber, String subObjectCode,
+            String organizationReferenceId, String projectCode, String referenceNumber, String referenceTypeCode,
+            String referenceOriginCode, String description, boolean isDebit, KualiDecimal amount,
+            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("populateExplicitGeneralLedgerPendingEntry(AccountingDocument, AccountingLine," +
+                    " GeneralLedgerPendingEntrySequenceHelper, GeneralLedgerPendingEntry) - start");
+        }
+
+        GeneralLedgerPendingEntry explicitEntry = new GeneralLedgerPendingEntry();
+        explicitEntry.setFinancialDocumentTypeCode(document.getDocumentHeader().getWorkflowDocument()
+                .getDocumentTypeName());
+        explicitEntry.setVersionNumber(1L);
+        explicitEntry.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
+        Timestamp transactionTimestamp = new Timestamp(dateTimeService.getCurrentDate().getTime());
+        explicitEntry.setTransactionDate(new java.sql.Date(transactionTimestamp.getTime()));
+        explicitEntry.setTransactionEntryProcessedTs(transactionTimestamp);
+        explicitEntry.setAccountNumber(account.getAccountNumber());
+        if (account.getAccountSufficientFundsCode() == null) {
+            account.setAccountSufficientFundsCode(KFSConstants.SF_TYPE_NO_CHECKING);
+        }
+        // FIXME! - inject the sufficient funds service
+        explicitEntry.setAcctSufficientFundsFinObjCd(getSufficientFundsService().getSufficientFundsObjectCode(
+                objectCode, account.getAccountSufficientFundsCode()));
+        explicitEntry.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.NOT_PROCESSED);
+        explicitEntry.setTransactionEncumbranceUpdateCode(KFSConstants.BLANK_SPACE);
+        // this is the default that most documents use
+        explicitEntry.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
+        explicitEntry.setChartOfAccountsCode(account.getChartOfAccountsCode());
+        explicitEntry.setTransactionDebitCreditCode(isDebit ? KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
+        // TODO: this value never changes - the result could be cached
+        explicitEntry.setFinancialSystemOriginationCode(homeOriginationService.getHomeOrigination()
+                .getFinSystemHomeOriginationCode());
+        explicitEntry.setDocumentNumber(document.getDocumentNumber());
+        explicitEntry.setFinancialObjectCode(objectCode.getFinancialObjectCode());
+        explicitEntry.setFinancialObjectTypeCode(objectCode.getFinancialObjectTypeCode());
+        explicitEntry.setOrganizationDocumentNumber(document.getDocumentHeader().getOrganizationDocumentNumber());
+        explicitEntry.setOrganizationReferenceId(organizationReferenceId);
+        explicitEntry.setProjectCode(getEntryValue(projectCode, GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankProjectCode()));
+        explicitEntry.setReferenceFinancialDocumentNumber(getEntryValue(referenceNumber, KFSConstants.BLANK_SPACE));
+        explicitEntry.setReferenceFinancialDocumentTypeCode(getEntryValue(referenceTypeCode, KFSConstants.BLANK_SPACE));
+        explicitEntry.setReferenceFinancialSystemOriginationCode(getEntryValue(referenceOriginCode,
+                KFSConstants.BLANK_SPACE));
+        explicitEntry.setSubAccountNumber(getEntryValue(subAccountNumber,
+                GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankSubAccountNumber()));
+        explicitEntry.setFinancialSubObjectCode(getEntryValue(subObjectCode,
+                GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankFinancialSubObjectCode()));
+        explicitEntry.setTransactionEntryOffsetIndicator(false);
+        explicitEntry.setTransactionLedgerEntryAmount(amount);
+        explicitEntry.setTransactionLedgerEntryDescription(getEntryValue(description, document.getDocumentHeader()
+                .getDocumentDescription()));
+        // null here, is assigned during batch or in specific document rule classes
+        explicitEntry.setUniversityFiscalPeriodCode(null);
+        explicitEntry.setUniversityFiscalYear(document.getPostingYear());
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("populateExplicitGeneralLedgerPendingEntry(AccountingDocument, AccountingLine, " +
+                    "GeneralLedgerPendingEntrySequenceHelper, GeneralLedgerPendingEntry) - end");
+        }
+
+        return explicitEntry;
+    }
+
+    /**
      * This populates an GeneralLedgerPendingEntry offsetEntry object instance with values that differ from the values
      * supplied in the explicit entry that it was cloned from. Note that the entries do not contain BOs now.
      *
