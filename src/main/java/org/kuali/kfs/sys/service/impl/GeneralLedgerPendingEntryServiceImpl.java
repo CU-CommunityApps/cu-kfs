@@ -354,7 +354,6 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
         // null here, is assigned during batch or in specific document rule classes
         explicitEntry.setUniversityFiscalPeriodCode(null);
         
-        explicitEntry.setUniversityFiscalPeriodCode(glpeSource.getPostingPeriodCode());
         explicitEntry.setUniversityFiscalYear(glpeSource.getPostingYear());
 
         if (LOG.isDebugEnabled()) {
