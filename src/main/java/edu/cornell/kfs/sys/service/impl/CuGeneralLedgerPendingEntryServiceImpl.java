@@ -94,6 +94,7 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
 
     public void setHomeOriginationService(HomeOriginationService homeOriginationService) {
         this.homeOriginationService = homeOriginationService;
+        super.setHomeOriginationService(homeOriginationService);
     }
 
 }
