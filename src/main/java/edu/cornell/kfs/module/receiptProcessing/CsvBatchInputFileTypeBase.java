@@ -76,15 +76,14 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
 
         List<String> headerList = getCsvHeaderList();
         Object parsedContents;
-        try {
-            // validate csv header
-            ByteArrayInputStream validateFileContents = new ByteArrayInputStream(fileByteContent);
-            validateCSVFileInput(headerList, validateFileContents);
 
-            //use csv reader to parse the csv content
-            CSVReader csvReader = new CSVReader(
-                    new InputStreamReader(new ByteArrayInputStream(fileByteContent), StandardCharsets.UTF_8),
-                    ',', '"', '|');
+        validateCSVHeader(fileByteContent, headerList);
+
+        try (
+                InputStream fileContents = new ByteArrayInputStream(fileByteContent);
+                InputStreamReader streamReader = new InputStreamReader(fileContents, StandardCharsets.UTF_8);
+                CSVReader csvReader = new CSVReader(streamReader, ',', '"', '|');
+        ) {
             List<String[]> dataList = csvReader.readAll();
 
             //remove first header line
@@ -111,6 +110,15 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
             throw new ParseException(ex.getMessage(), ex);
         }
         return convertParsedObjectToVO(parsedContents);
+    }
+
+    protected void validateCSVHeader(byte[] fileByteContent, List<String> headerList) throws ParseException {
+        try (ByteArrayInputStream validateFileContents = new ByteArrayInputStream(fileByteContent)) {
+            validateCSVFileInput(headerList, validateFileContents);
+        } catch (IOException ex) {
+            LOG.error("validateCSVHeader: " + ex.getMessage(), ex);
+            throw new ParseException(ex.getMessage(), ex);
+        }
     }
 
     /**
