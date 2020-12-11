@@ -391,9 +391,17 @@
           class="edu.cornell.kfs.sys.identity.ExcludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService"
           p:workflowDocumentService-ref="rice.kew.workflowDocumentService"/>
     <import resource="cu-spring-sys-bus-exports.xml"/>
-    
+
+    <!--
+        NOTE: After upgrading to the 2020-12-10 financials patch or newer, the GLPE service beans below
+        will not need to explicitly inject parameterEvaluatorService, since the base beans will handle that.
+     -->
     <bean id="cuGeneralLedgerPendingEntryService" parent="cuGeneralLedgerPendingEntryService-parentBean"/>
-    <bean id="cuGeneralLedgerPendingEntryService-parentBean" parent = "generalLedgerPendingEntryService-parentBean"
-          class="edu.cornell.kfs.sys.service.impl.CuGeneralLedgerPendingEntryServiceImpl"/>
+    <bean id="cuGeneralLedgerPendingEntryService-parentBean" parent="generalLedgerPendingEntryService-parentBean"
+          abstract="true" class="edu.cornell.kfs.sys.service.impl.CuGeneralLedgerPendingEntryServiceImpl"
+          p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
+
+    <bean id="generalLedgerPendingEntryService" parent="generalLedgerPendingEntryService-parentBean"
+          p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
 
 </beans>
