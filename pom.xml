@@ -795,10 +795,10 @@
             </exclusions>
         </dependency>
         <dependency>
-				    <groupId>com.amazonaws</groupId>
-				    <artifactId>aws-java-sdk-secretsmanager</artifactId>
-				    <version>${aws-java-sdk.version}</version>
-				</dependency>
+          <groupId>com.amazonaws</groupId>
+          <artifactId>aws-java-sdk-secretsmanager</artifactId>
+          <version>${aws-java-sdk.version}</version>
+        </dependency>
         <dependency>
             <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>

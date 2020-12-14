@@ -2,7 +2,6 @@ package edu.cornell.kfs.sys.service.impl;
 
 import java.util.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +18,6 @@ import com.amazonaws.services.secretsmanager.model.InvalidRequestException;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
 import com.google.gson.Gson;
 
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.jsonadapters.JsonDateSerializer;
 import edu.cornell.kfs.sys.service.AwsSecretService;
 

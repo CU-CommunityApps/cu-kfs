@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretePojoBasic;
 
 class AwsSecretServiceImplTest {
-    private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImplTest.class);
-    
     private static final String SINGLE_STRING_SECRET_KEY_NAME = "kfs/unittest/singlestring";
     private static final String SINGLE_STRING_SECRET_VALUE = "Test Value";
     private static final String SINGLE_DATE_SECRET_KEY_NAME = "kfs/unittest/singledate";
