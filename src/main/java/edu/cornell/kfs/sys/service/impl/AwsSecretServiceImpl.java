@@ -17,6 +17,7 @@ import com.amazonaws.services.secretsmanager.model.InternalServiceErrorException
 import com.amazonaws.services.secretsmanager.model.InvalidParameterException;
 import com.amazonaws.services.secretsmanager.model.InvalidRequestException;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
+import com.google.gson.Gson;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
@@ -56,15 +57,29 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     }
     
     @Override
-    public Date getSingleDateValueFromAwsSecret(String awsKeyName) {
-        // TODO Auto-generated method stub
-        return null;
+    public Date getSingleDateValueFromAwsSecret(String awsKeyName) throws ParseException {
+        String dateString = getSingleStringValueFromAwsSecret(awsKeyName);
+        return convertStringToDate(dateString);
+    }
+    
+    @Override
+    public void updateSecretDate(String awsKeyName, Date date) {
+        updateSecretValue(awsKeyName, convertDateToString(date));
     }
 
     @Override
     public <T> T getPojoFromAwsSecret(String awsKeyName, Class<T> objectType) {
-        // TODO Auto-generated method stub
-        return null;
+        String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName);
+        Gson gson = new Gson();
+        T object = gson.fromJson(pojoJsonString, objectType);
+        return object;
+    }
+    
+    @Override
+    public void updatePojo(String awsKeyName, Object pojo) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(pojo);
+        updateSecretValue(awsKeyName, jsonString);
     }
 
     protected String convertDateToString(Date date) {
