@@ -20,6 +20,7 @@ import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.jsonadapters.JsonDateSerializer;
 import edu.cornell.kfs.sys.service.AwsSecretService;
 
 public class AwsSecretServiceImpl  implements AwsSecretService{
@@ -59,12 +60,12 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     @Override
     public Date getSingleDateValueFromAwsSecret(String awsKeyName) throws ParseException {
         String dateString = getSingleStringValueFromAwsSecret(awsKeyName);
-        return convertStringToDate(dateString);
+        return JsonDateSerializer.convertStringToDate(dateString);
     }
     
     @Override
     public void updateSecretDate(String awsKeyName, Date date) {
-        updateSecretValue(awsKeyName, convertDateToString(date));
+        updateSecretValue(awsKeyName, JsonDateSerializer.convertDateToString(date));
     }
 
     @Override
@@ -80,16 +81,6 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         Gson gson = new Gson();
         String jsonString = gson.toJson(pojo);
         updateSecretValue(awsKeyName, jsonString);
-    }
-
-    protected String convertDateToString(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
-        return format.format(date);
-    }
-    
-    protected Date convertStringToDate(String dateString) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
-        return format.parse(dateString);
     }
 
     public void setAwsRegion(String awsRegion) {

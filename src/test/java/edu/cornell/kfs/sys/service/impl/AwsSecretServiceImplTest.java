@@ -47,17 +47,6 @@ class AwsSecretServiceImplTest {
     }
     
     @Test
-    void testDateConversionFunctions() throws ParseException {
-        Date date = new Date(Calendar.getInstance().getTimeInMillis());
-        String dateString = awsSecretServiceImpl.convertDateToString(date);
-        LOG.info("testDateConversionFunctions, dateString: " + dateString);
-        
-        Date returnDate = awsSecretServiceImpl.convertStringToDate(dateString);
-        assertEquals(date.toString(), returnDate.toString());
-        
-    }
-    
-    @Test
     void testDateSetAndGet() throws ParseException {
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
         awsSecretServiceImpl.updateSecretDate(SINGLE_DATE_SECRET_KEY_NAME, date);
@@ -67,18 +56,20 @@ class AwsSecretServiceImplTest {
     }
     
     @Test
-    void testPojoBasic() {
-        String newUniqueString = UUID.randomUUID().toString();;
+    void testPojo() {
+        String newUniqueString = UUID.randomUUID().toString();
+        Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
         
         AwsSecretePojoBasic pojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, AwsSecretePojoBasic.class);
         pojo.setChangeable_string(newUniqueString);
+        pojo.setUpdate_date(newDate);;
         awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, pojo);
         
         AwsSecretePojoBasic pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, AwsSecretePojoBasic.class);
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
-        
+        assertEquals(newDate.toString(), pojoNew.getUpdate_date().toString());
     }
 
 }
