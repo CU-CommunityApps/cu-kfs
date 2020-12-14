@@ -120,9 +120,10 @@
     <property name="lookupFields">
       <list>
         <bean parent="FieldDefinition" p:attributeName="financialObjectCode"/>
-        <bean parent="FieldDefinition" p:attributeName="dvPaymentReasonCode"/>
-        <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="formType"/>
+        <bean parent="FieldDefinition" p:attributeName="dvPaymentReasonCode"
+              p:treatWildcardsAndOperatorsAsLiteral="true"/>
+        <bean parent="FieldDefinition" p:attributeName="boxNumber" p:treatWildcardsAndOperatorsAsLiteral="true"/>
+        <bean parent="FieldDefinition" p:attributeName="formType" p:treatWildcardsAndOperatorsAsLiteral="true"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>

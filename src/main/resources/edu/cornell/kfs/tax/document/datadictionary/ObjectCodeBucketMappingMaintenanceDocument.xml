@@ -6,6 +6,7 @@
   <bean id="ObjectCodeBucketMappingMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
     <property name="businessObjectClass" value="edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping"/>
     <property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>
+    <property name="businessRulesClass" value="edu.cornell.kfs.tax.document.validation.impl.ObjectCodeBucketMappingMaintenanceDocumentRule"/>
     <property name="maintainableSections">
       <list>
         <ref bean="ObjectCodeBucketMappingMaintenanceDocument-EditBucketMapping"/>

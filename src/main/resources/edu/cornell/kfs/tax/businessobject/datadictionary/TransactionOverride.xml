@@ -155,8 +155,8 @@
         <bean parent="FieldDefinition" p:attributeName="taxType"/>
         <bean parent="FieldDefinition" p:attributeName="documentNumber"/>
         <bean parent="FieldDefinition" p:attributeName="financialDocumentLineNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="boxNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="formType"/>
+        <bean parent="FieldDefinition" p:attributeName="boxNumber" p:treatWildcardsAndOperatorsAsLiteral="true"/>
+        <bean parent="FieldDefinition" p:attributeName="formType" p:treatWildcardsAndOperatorsAsLiteral="true"/>
         <bean parent="FieldDefinition" p:attributeName="active"/>
       </list>
     </property>
