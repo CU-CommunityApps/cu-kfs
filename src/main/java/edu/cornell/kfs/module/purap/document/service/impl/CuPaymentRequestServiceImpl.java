@@ -453,6 +453,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         }
         return "PayReq {0} cannot be auto-approved because the amount on the associated PO matches or exceeds the limit of {1}";
     }
+    
+    protected boolean isPRNCDocument(PaymentRequestDocument paymentRequestDocument) {
+        String paymentMethodCode = ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode();
+        return (StringUtils.equals(PaymentMethod.PM_CODE_WIRE, paymentMethodCode) || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, paymentMethodCode));
+    }
 
     /**
      * Overridden to also require that the associated PO's amount must be within auto-approval limits.
@@ -462,7 +467,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      */
     @Override
     protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {
-        return purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(document)
+        return !isPRNCDocument(document) && purchaseOrderForPaymentRequestIsWithinAutoApproveAmountLimit(document)
                 && super.isEligibleForAutoApproval(document, defaultMinimumLimit);
     }
 
