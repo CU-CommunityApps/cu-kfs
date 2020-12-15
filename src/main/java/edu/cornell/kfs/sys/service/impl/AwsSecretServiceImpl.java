@@ -6,6 +6,7 @@ import java.text.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
@@ -25,64 +26,85 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
     
     protected String awsRegion;
+    protected String kfsInstanceNameSpace;
+    protected String kfsSharedNamespace;
     
     @Override
-    public String getSingleStringValueFromAwsSecret(String awsKeyName) {
-        AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard()
-                .withRegion(awsRegion).build();
-        String secret;
-        GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(awsKeyName);
+    public String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
+        String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
+        GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(fullAwsKey);
         GetSecretValueResult getSecretValueResult = null;
 
         try {
-            getSecretValueResult = client.getSecretValue(getSecretValueRequest);
-        } catch (DecryptionFailureException | InternalServiceErrorException | InvalidParameterException
-                | InvalidRequestException | ResourceNotFoundException e) {
-            LOG.error("getSingleStringValueFromAwsSecret, had an error get value for secret " + awsKeyName, e);
+            getSecretValueResult = buildAWSSecretsManager().getSecretValue(getSecretValueRequest);
+        } catch (SdkClientException e) {
+            LOG.error("getSingleStringValueFromAwsSecret, had an error getting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
         }
 
-        secret = getSecretValueResult.getSecretString();
-        return secret;
+        return getSecretValueResult.getSecretString();
     }
     
     @Override
-    public void updateSecretValue(String awsKeyName, String keyValue) {
+    public void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
+        String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
+        UpdateSecretRequest updateSecretRequest = new UpdateSecretRequest ().withSecretId(fullAwsKey);
+        updateSecretRequest.setSecretString(keyValue);
+        buildAWSSecretsManager().updateSecret(updateSecretRequest);
+    }
+    
+    protected AWSSecretsManager buildAWSSecretsManager() {
         AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard()
                 .withRegion(awsRegion).build();
-        UpdateSecretRequest updateSecretRequest = new UpdateSecretRequest ().withSecretId (awsKeyName);
-        updateSecretRequest.setSecretString(keyValue);
-        client.updateSecret(updateSecretRequest);
+        return client;
+    }
+    
+    protected String buildFullAwsKeyName(String awsKeyName, boolean useKfsInstanceNamespace) {
+        String fullKeyName;
+        if (useKfsInstanceNamespace) {
+            fullKeyName = kfsInstanceNameSpace + awsKeyName;
+        } else {
+            fullKeyName = kfsSharedNamespace + awsKeyName; 
+        }
+        return fullKeyName;
     }
     
     @Override
-    public Date getSingleDateValueFromAwsSecret(String awsKeyName) throws ParseException {
-        String dateString = getSingleStringValueFromAwsSecret(awsKeyName);
+    public Date getSingleDateValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException {
+        String dateString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
         return JsonDateSerializer.convertStringToDate(dateString);
     }
     
     @Override
-    public void updateSecretDate(String awsKeyName, Date date) {
-        updateSecretValue(awsKeyName, JsonDateSerializer.convertDateToString(date));
+    public void updateSecretDate(String awsKeyName, boolean useKfsInstanceNamespace, Date date) {
+        updateSecretValue(awsKeyName, useKfsInstanceNamespace, JsonDateSerializer.convertDateToString(date));
     }
 
     @Override
-    public <T> T getPojoFromAwsSecret(String awsKeyName, Class<T> objectType) {
-        String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName);
+    public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) {
+        String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
         Gson gson = new Gson();
         T object = gson.fromJson(pojoJsonString, objectType);
         return object;
     }
     
     @Override
-    public void updatePojo(String awsKeyName, Object pojo) {
+    public void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(pojo);
-        updateSecretValue(awsKeyName, jsonString);
+        updateSecretValue(awsKeyName, useKfsInstanceNamespace, jsonString);
     }
 
     public void setAwsRegion(String awsRegion) {
         this.awsRegion = awsRegion;
+    }
+
+    public void setKfsInstanceNameSpace(String kfsInstanceNameSpace) {
+        this.kfsInstanceNameSpace = kfsInstanceNameSpace;
+    }
+
+    public void setKfsSharedNamespace(String kfsSharedNamespace) {
+        this.kfsSharedNamespace = kfsSharedNamespace;
     }
 
 }

@@ -5,16 +5,16 @@ import java.util.Date;
 
 public interface AwsSecretService {
     
-    String getSingleStringValueFromAwsSecret(String awsKeyName);
+    String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
     
-    void updateSecretValue(String awsKeyName, String keyValue);
+    void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue);
     
-    Date getSingleDateValueFromAwsSecret(String awsKeyName) throws ParseException;
+    Date getSingleDateValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException;
     
-    void updateSecretDate(String awsKeyName, Date date);
+    void updateSecretDate(String awsKeyName, boolean useKfsInstanceNamespace, Date date);
 
-    <T> T getPojoFromAwsSecret(String awsKeyName, Class<T> objectType);
+    <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType);
     
-    void updatePojo(String awsKeyName, Object pojo);
+    void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo);
 
 }
