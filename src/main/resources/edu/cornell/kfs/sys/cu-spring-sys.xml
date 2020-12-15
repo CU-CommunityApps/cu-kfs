@@ -392,4 +392,12 @@
           p:workflowDocumentService-ref="rice.kew.workflowDocumentService"/>
     <import resource="cu-spring-sys-bus-exports.xml"/>
 
+    <!--
+        When we are ready to move the 2020-11-12 financials upgrade forward to the master branch,
+        we should revert the bean override below and replace it with the variant intended for
+        the 2020-11-12 patch.
+     -->
+    <bean id="generalLedgerPendingEntryService" parent="generalLedgerPendingEntryService-parentBean"
+          p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
+
 </beans>
