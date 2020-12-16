@@ -454,9 +454,18 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         return "PayReq {0} cannot be auto-approved because the amount on the associated PO matches or exceeds the limit of {1}";
     }
     
+    /**
+     * Checks if PREQ is of type PRNC as these should not be auto-approved.
+     * 
+     * @param paymentRequestDocument
+     * @return true if PRNC, false otherwise
+     */
     protected boolean isPRNCDocument(PaymentRequestDocument paymentRequestDocument) {
-        String paymentMethodCode = ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode();
-        return (StringUtils.equals(PaymentMethod.PM_CODE_WIRE, paymentMethodCode) || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, paymentMethodCode));
+        String paymentMethodCode = ((CuPaymentRequestDocument) paymentRequestDocument).getPaymentMethodCode();
+        boolean isPRNC = StringUtils.equals(PaymentMethod.PM_CODE_WIRE, paymentMethodCode)
+                || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, paymentMethodCode);
+        LOG.info(" -- PayReq [" + paymentRequestDocument.getDocumentNumber() + "] skipped as it is of type PRNC.");
+        return isPRNC;
     }
 
     /**
