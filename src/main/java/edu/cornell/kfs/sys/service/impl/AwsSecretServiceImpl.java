@@ -1,21 +1,25 @@
 package edu.cornell.kfs.sys.service.impl;
 
-import java.util.Date;
 import java.text.ParseException;
+import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.DecryptionFailureException;
+import com.amazonaws.services.secretsmanager.model.EncryptionFailureException;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.amazonaws.services.secretsmanager.model.InternalServiceErrorException;
 import com.amazonaws.services.secretsmanager.model.InvalidParameterException;
 import com.amazonaws.services.secretsmanager.model.InvalidRequestException;
+import com.amazonaws.services.secretsmanager.model.LimitExceededException;
+import com.amazonaws.services.secretsmanager.model.MalformedPolicyDocumentException;
+import com.amazonaws.services.secretsmanager.model.PreconditionNotMetException;
+import com.amazonaws.services.secretsmanager.model.ResourceExistsException;
+import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
 import com.google.gson.Gson;
 
@@ -34,12 +38,16 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(fullAwsKey);
         GetSecretValueResult getSecretValueResult = null;
-
+        
+        AWSSecretsManager client = buildAWSSecretsManager();
         try {
-            getSecretValueResult = buildAWSSecretsManager().getSecretValue(getSecretValueRequest);
-        } catch (SdkClientException e) {
+            getSecretValueResult = client.getSecretValue(getSecretValueRequest);
+        } catch (DecryptionFailureException | InternalServiceErrorException | InvalidParameterException | 
+                InvalidRequestException | ResourceNotFoundException e) {
             LOG.error("getSingleStringValueFromAwsSecret, had an error getting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
+        } finally {
+            client.shutdown();
         }
 
         return getSecretValueResult.getSecretString();
@@ -50,7 +58,18 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
         UpdateSecretRequest updateSecretRequest = new UpdateSecretRequest ().withSecretId(fullAwsKey);
         updateSecretRequest.setSecretString(keyValue);
-        buildAWSSecretsManager().updateSecret(updateSecretRequest);
+        
+        AWSSecretsManager client = buildAWSSecretsManager();
+        try {
+            client.updateSecret(updateSecretRequest);
+        } catch (EncryptionFailureException | InternalServiceErrorException | InvalidParameterException | LimitExceededException |
+                InvalidRequestException | ResourceNotFoundException | ResourceExistsException | MalformedPolicyDocumentException |
+                PreconditionNotMetException e) {
+            LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
+            throw new RuntimeException(e);
+        } finally {
+            client.shutdown();
+        }
     }
     
     protected AWSSecretsManager buildAWSSecretsManager() {
