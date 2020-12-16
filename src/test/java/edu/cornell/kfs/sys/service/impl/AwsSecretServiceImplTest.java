@@ -20,6 +20,7 @@ class AwsSecretServiceImplTest {
     private static final String SINGLE_STRING_SECRET_KEY_NAME = "unittest/singlestring";
     private static final String SINGLE_DATE_SECRET_KEY_NAME = "unittest/singledate";
     private static final String BASIC_POJO_SECRET_KEY_NAME = "unittest/pojo";
+    private static final String SINGLE_BOOLEAN_SECRET_KEY_NAME = "unittest/singleboolean";
     
     private static final String SINGLE_STRING_SECRET_VALUE = "Test Value";
     private static final String BASIC_POJO_STATIC_STRING_VALUE = "do not change me";
@@ -57,13 +58,26 @@ class AwsSecretServiceImplTest {
     }
     
     @Test
+    void testBooleanSetAndGet() {
+        boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
+        boolean expectedNewBoolean = !initialValue;
+        awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
+        
+        boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
+        
+        assertEquals(expectedNewBoolean, actualNewBoolean);
+    }
+    
+    @Test
     void testPojo() {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
         
         AwsSecretePojoBasic pojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretePojoBasic.class);
         pojo.setChangeable_string(newUniqueString);
-        pojo.setUpdate_date(newDate);;
+        pojo.setUpdate_date(newDate);
+        boolean newBooleanTest = !pojo.isBoolean_test();
+        pojo.setBoolean_test(newBooleanTest);
         awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
         
         AwsSecretePojoBasic pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretePojoBasic.class);
@@ -71,6 +85,7 @@ class AwsSecretServiceImplTest {
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
         assertEquals(newDate.toString(), pojoNew.getUpdate_date().toString());
+        assertEquals(newBooleanTest, pojo.isBoolean_test());
     }
     
     @Test 

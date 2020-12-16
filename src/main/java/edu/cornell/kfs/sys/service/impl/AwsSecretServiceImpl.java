@@ -79,6 +79,19 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     public void updateSecretDate(String awsKeyName, boolean useKfsInstanceNamespace, Date date) {
         updateSecretValue(awsKeyName, useKfsInstanceNamespace, JsonDateSerializer.convertDateToString(date));
     }
+    
+    @Override
+    public boolean getSingleBooleanFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
+        String booleanString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
+        Boolean secretBooleanValue = Boolean.valueOf(booleanString);
+        return secretBooleanValue.booleanValue();
+    }
+
+    @Override
+    public void updateSecretBoolean(String awsKeyName, boolean useKfsInstanceNamespace, boolean booleanValue) {
+        updateSecretValue(awsKeyName, useKfsInstanceNamespace, String.valueOf(booleanValue));
+        
+    }
 
     @Override
     public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) {

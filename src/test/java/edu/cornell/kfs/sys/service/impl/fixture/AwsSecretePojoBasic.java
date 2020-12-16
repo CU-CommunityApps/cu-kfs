@@ -14,6 +14,7 @@ public class AwsSecretePojoBasic {
     private String static_string;
     private String changeable_string;
     private int number_test;
+    private boolean boolean_test;
     
     @JsonAdapter(JsonDateSerializer.class)
     private Date update_date;
@@ -40,6 +41,14 @@ public class AwsSecretePojoBasic {
 
     public void setUpdate_date(Date update_date) {
         this.update_date = update_date;
+    }
+
+    public boolean isBoolean_test() {
+        return boolean_test;
+    }
+
+    public void setBoolean_test(boolean boolean_test) {
+        this.boolean_test = boolean_test;
     }
 
     @Override

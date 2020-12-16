@@ -12,6 +12,10 @@ public interface AwsSecretService {
     Date getSingleDateValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException;
     
     void updateSecretDate(String awsKeyName, boolean useKfsInstanceNamespace, Date date);
+    
+    boolean getSingleBooleanFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
+    
+    void updateSecretBoolean(String awsKeyName, boolean useKfsInstanceNamespace,  boolean booleanValue);
 
     <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType);
     
