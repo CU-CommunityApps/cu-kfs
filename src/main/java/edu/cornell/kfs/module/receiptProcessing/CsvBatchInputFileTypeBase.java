@@ -31,6 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReaderBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -79,10 +82,10 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
 
         validateCSVHeader(fileByteContent, headerList);
 
+        final CSVParser csvParser = new CSVParserBuilder().withSeparator(',').withQuoteChar('"').withEscapeChar('|').build();
         try (
-                InputStream fileContents = new ByteArrayInputStream(fileByteContent);
-                InputStreamReader streamReader = new InputStreamReader(fileContents, StandardCharsets.UTF_8);
-                CSVReader csvReader = new CSVReader(streamReader, ',', '"', '|');
+                final InputStreamReader inputStreamReader = new InputStreamReader(new ByteArrayInputStream(fileByteContent), StandardCharsets.UTF_8);
+                final CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withSkipLines(1).withCSVParser(csvParser).build();
         ) {
             List<String[]> dataList = csvReader.readAll();
 
