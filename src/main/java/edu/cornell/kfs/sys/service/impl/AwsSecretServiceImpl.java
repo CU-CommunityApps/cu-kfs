@@ -8,21 +8,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.PredefinedClientConfigurations;
-import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
-import com.amazonaws.services.secretsmanager.model.DecryptionFailureException;
-import com.amazonaws.services.secretsmanager.model.EncryptionFailureException;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
-import com.amazonaws.services.secretsmanager.model.InternalServiceErrorException;
-import com.amazonaws.services.secretsmanager.model.InvalidParameterException;
-import com.amazonaws.services.secretsmanager.model.InvalidRequestException;
-import com.amazonaws.services.secretsmanager.model.LimitExceededException;
-import com.amazonaws.services.secretsmanager.model.MalformedPolicyDocumentException;
-import com.amazonaws.services.secretsmanager.model.PreconditionNotMetException;
-import com.amazonaws.services.secretsmanager.model.ResourceExistsException;
-import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretResult;
 import com.google.gson.Gson;
@@ -46,8 +36,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
             getSecretValueResult = client.getSecretValue(getSecretValueRequest);
-        } catch (DecryptionFailureException | InternalServiceErrorException | InvalidParameterException | 
-                InvalidRequestException | ResourceNotFoundException e) {
+        } catch (SdkClientException e) {
             LOG.error("getSingleStringValueFromAwsSecret, had an error getting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
         } finally {
@@ -66,9 +55,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
             perfornUpdate(updateSecretRequest, client);
-        } catch (EncryptionFailureException | InternalServiceErrorException | InvalidParameterException | LimitExceededException |
-                InvalidRequestException | ResourceNotFoundException | ResourceExistsException | MalformedPolicyDocumentException |
-                PreconditionNotMetException e) {
+        } catch (SdkClientException e) {
             LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
         } finally {
