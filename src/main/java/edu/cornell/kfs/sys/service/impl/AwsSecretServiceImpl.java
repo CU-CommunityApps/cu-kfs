@@ -6,6 +6,9 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.PredefinedClientConfigurations;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.DecryptionFailureException;
@@ -21,6 +24,7 @@ import com.amazonaws.services.secretsmanager.model.PreconditionNotMetException;
 import com.amazonaws.services.secretsmanager.model.ResourceExistsException;
 import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
+import com.amazonaws.services.secretsmanager.model.UpdateSecretResult;
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.sys.jsonadapters.JsonDateSerializer;
@@ -61,7 +65,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
-            client.updateSecret(updateSecretRequest);
+            perfornUpdate(updateSecretRequest, client);
         } catch (EncryptionFailureException | InternalServiceErrorException | InvalidParameterException | LimitExceededException |
                 InvalidRequestException | ResourceNotFoundException | ResourceExistsException | MalformedPolicyDocumentException |
                 PreconditionNotMetException e) {
@@ -71,11 +75,29 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
             client.shutdown();
         }
     }
+
+    protected void perfornUpdate(UpdateSecretRequest updateSecretRequest, AWSSecretsManager client) {
+        boolean processed = false;
+        int tryCount = 0;
+        while(!processed) {
+            UpdateSecretResult result = client.updateSecret(updateSecretRequest);
+            if (result.getSdkHttpMetadata().getHttpStatusCode() == 200) {
+                processed = true;
+            } else {
+                tryCount ++;
+                if (tryCount <= 5) {
+                    throw new RuntimeException("perfornUpdate, unable to update secret: " + result.toString());
+                }
+            }
+        }
+    }
     
     protected AWSSecretsManager buildAWSSecretsManager() {
-        AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard()
-                .withRegion(awsRegion).build();
+        ClientConfiguration config = PredefinedClientConfigurations.defaultConfig();
+        config.setCacheResponseMetadata(false);
+        AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard().withRegion(awsRegion).withClientConfiguration(config).build();
         return client;
+        
     }
     
     protected String buildFullAwsKeyName(String awsKeyName, boolean useKfsInstanceNamespace) {
