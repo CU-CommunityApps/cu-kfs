@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +23,7 @@ class AwsSecretServiceImplIntegraionTest {
     private static final String SINGLE_DATE_SECRET_KEY_NAME = "unittest/singledate";
     private static final String BASIC_POJO_SECRET_KEY_NAME = "unittest/pojo";
     private static final String SINGLE_BOOLEAN_SECRET_KEY_NAME = "unittest/singleboolean";
+    private static final String SINGLE_FLOAT_SECRET_KEY_NAME = "unittest/singlefloat";
     
     private static final String SINGLE_STRING_SECRET_VALUE = "Test Value";
     private static final String BASIC_POJO_STATIC_STRING_VALUE = "do not change me";
@@ -103,6 +105,16 @@ class AwsSecretServiceImplIntegraionTest {
         String actualFullNameSpace = awsSecretServiceImpl.buildFullAwsKeyName(keyName, true);
         String expectedFullNameSpace = KFS_INSTANCE_NAMESPACE + keyName;
         assertEquals(expectedFullNameSpace, actualFullNameSpace);
+    }
+    
+    @Test
+    void testNumber() {
+        Random rand = new Random();
+        float floatNumber = rand.nextFloat();
+        awsSecretServiceImpl.updateSecretNumber(SINGLE_FLOAT_SECRET_KEY_NAME, true, floatNumber);
+        
+        float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(SINGLE_FLOAT_SECRET_KEY_NAME, true);
+        assertEquals(floatNumber, returnedNumber);
     }
 
 }

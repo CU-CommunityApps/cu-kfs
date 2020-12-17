@@ -16,6 +16,10 @@ public interface AwsSecretService {
     boolean getSingleBooleanFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
     
     void updateSecretBoolean(String awsKeyName, boolean useKfsInstanceNamespace,  boolean booleanValue);
+    
+    float getSingleNumberValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
+    
+    void updateSecretNumber(String awsKeyName, boolean useKfsInstanceNamespace,  float numericValue);
 
     <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType);
     

@@ -120,6 +120,17 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         updateSecretValue(awsKeyName, useKfsInstanceNamespace, String.valueOf(booleanValue));
         
     }
+    
+    @Override
+    public float getSingleNumberValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
+        String floatString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
+        return Float.valueOf(floatString);
+    }
+    
+    @Override
+    public void updateSecretNumber(String awsKeyName, boolean useKfsInstanceNamespace,  float numericValue) {
+        updateSecretValue(awsKeyName, useKfsInstanceNamespace, String.valueOf(numericValue));
+    }
 
     @Override
     public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) {
