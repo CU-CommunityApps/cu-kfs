@@ -3,6 +3,9 @@ package edu.cornell.kfs.sys.service;
 import java.text.ParseException;
 import java.util.Date;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 public interface AwsSecretService {
     
     String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
@@ -21,8 +24,8 @@ public interface AwsSecretService {
     
     void updateSecretNumber(String awsKeyName, boolean useKfsInstanceNamespace,  float numericValue);
 
-    <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType);
+    <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException;
     
-    void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo);
+    void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException;
 
 }

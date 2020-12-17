@@ -1,8 +1,10 @@
 package edu.cornell.kfs.sys.service.impl;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,9 +17,11 @@ import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretResult;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.cornell.kfs.sys.jsonadapters.JsonDateSerializer;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
 
 public class AwsSecretServiceImpl  implements AwsSecretService{
@@ -100,12 +104,12 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     @Override
     public Date getSingleDateValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException {
         String dateString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
-        return JsonDateSerializer.convertStringToDate(dateString);
+        return convertStringToDate(dateString);
     }
     
     @Override
     public void updateSecretDate(String awsKeyName, boolean useKfsInstanceNamespace, Date date) {
-        updateSecretValue(awsKeyName, useKfsInstanceNamespace, JsonDateSerializer.convertDateToString(date));
+        updateSecretValue(awsKeyName, useKfsInstanceNamespace, convertDateToString(date));
     }
     
     @Override
@@ -133,18 +137,36 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     }
 
     @Override
-    public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) {
+    public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException {
         String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
-        Gson gson = new Gson();
-        T object = gson.fromJson(pojoJsonString, objectType);
+        ObjectMapper objectMapper = new ObjectMapper();
+        T object = objectMapper.readValue(pojoJsonString, objectType);
         return object;
     }
     
     @Override
-    public void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) {
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(pojo);
+    public void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(pojo);
         updateSecretValue(awsKeyName, useKfsInstanceNamespace, jsonString);
+    }
+    
+    public String convertDateToString(Date date) {
+        if (date == null) {
+            return StringUtils.EMPTY;
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
+            return format.format(date);
+        }
+    }
+
+    public Date convertStringToDate(String dateString) throws ParseException {
+        if (StringUtils.isBlank(dateString)) {
+            return null;
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
+            return format.parse(dateString);
+        }
     }
 
     public void setAwsRegion(String awsRegion) {

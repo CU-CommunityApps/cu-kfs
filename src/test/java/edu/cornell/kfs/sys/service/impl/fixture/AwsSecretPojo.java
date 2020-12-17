@@ -5,20 +5,20 @@ import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.google.gson.annotations.JsonAdapter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-import edu.cornell.kfs.sys.jsonadapters.JsonDateSerializer;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class AwsSecretPojo {
-    
+
     private String static_string;
     private String changeable_string;
     private int number_test;
     private boolean boolean_test;
-    
-    @JsonAdapter(JsonDateSerializer.class)
+
+    @JsonFormat(pattern = CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss)
     private Date update_date;
-    
+
     public String getChangeable_string() {
         return changeable_string;
     }

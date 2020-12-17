@@ -12,7 +12,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
+import net.bull.javamelody.internal.common.LOG;
 
 class AwsSecretServiceImplIntegraionTest {
     private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
@@ -72,11 +76,12 @@ class AwsSecretServiceImplIntegraionTest {
     }
     
     @Test
-    void testPojo() {
+    void testPojo() throws JsonMappingException, JsonProcessingException {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
         
         AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+        LOG.info("testPojo, pojo: " + pojo);
         pojo.setChangeable_string(newUniqueString);
         pojo.setUpdate_date(newDate);
         boolean newBooleanTest = !pojo.isBoolean_test();
