@@ -5,7 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,12 +30,11 @@ public class JsonDateSerializer implements JsonSerializer<Date>, JsonDeserialize
     }
 
     @Override
-    public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+    public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
         try {
             return convertStringToDate(json.getAsString());
         } catch (ParseException e) {
-            LOG.error("deserialize, unable to deserialize json: " + json.toString(), e);
+            LOG.error("deserialize, unable to deserialize json: " + json.getAsString(), e);
             return null;
         }
     }

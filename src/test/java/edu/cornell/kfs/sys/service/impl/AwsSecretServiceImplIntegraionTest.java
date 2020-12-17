@@ -11,9 +11,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretePojoBasic;
+import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
 
-class AwsSecretServiceImplTest {
+class AwsSecretServiceImplIntegraionTest {
+    private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
     private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";
     private static final String KFS_SHARED_NAMESPACE = "kfs/kfs-shared/";
 
@@ -32,9 +33,9 @@ class AwsSecretServiceImplTest {
     @BeforeEach
     void setUp() throws Exception {
         awsSecretServiceImpl = new AwsSecretServiceImpl();
-        awsSecretServiceImpl.setAwsRegion("us-east-1");
+        awsSecretServiceImpl.setAwsRegion(AWS_US_EAST_ONE_REGION);
         awsSecretServiceImpl.setKfsSharedNamespace(KFS_SHARED_NAMESPACE);
-        awsSecretServiceImpl.setKfsInstanceNameSpace(KFS_INSTANCE_NAMESPACE);
+        awsSecretServiceImpl.setKfsInstanceNamespace(KFS_INSTANCE_NAMESPACE);
     }
 
     @AfterEach
@@ -73,14 +74,14 @@ class AwsSecretServiceImplTest {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
         
-        AwsSecretePojoBasic pojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretePojoBasic.class);
+        AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         pojo.setChangeable_string(newUniqueString);
         pojo.setUpdate_date(newDate);
         boolean newBooleanTest = !pojo.isBoolean_test();
         pojo.setBoolean_test(newBooleanTest);
         awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
         
-        AwsSecretePojoBasic pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretePojoBasic.class);
+        AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
@@ -97,7 +98,7 @@ class AwsSecretServiceImplTest {
     }
     
     @Test 
-    void testBuildFullAwsKeyNameInstanctNamespace() {
+    void testBuildFullAwsKeyNameInstanceNamespace() {
         String keyName = "foo";
         String actualFullNameSpace = awsSecretServiceImpl.buildFullAwsKeyName(keyName, true);
         String expectedFullNameSpace = KFS_INSTANCE_NAMESPACE + keyName;

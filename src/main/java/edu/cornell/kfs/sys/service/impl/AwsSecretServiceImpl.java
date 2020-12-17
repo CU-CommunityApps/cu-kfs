@@ -24,7 +24,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
     
     protected String awsRegion;
-    protected String kfsInstanceNameSpace;
+    protected String kfsInstanceNamespace;
     protected String kfsSharedNamespace;
     
     @Override
@@ -54,7 +54,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
-            perfornUpdate(updateSecretRequest, client);
+            performUpdate(updateSecretRequest, client);
         } catch (SdkClientException e) {
             LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
@@ -63,17 +63,17 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         }
     }
 
-    protected void perfornUpdate(UpdateSecretRequest updateSecretRequest, AWSSecretsManager client) {
+    protected void performUpdate(UpdateSecretRequest updateSecretRequest, AWSSecretsManager client) {
         boolean processed = false;
         int tryCount = 0;
-        while(!processed) {
+        while (!processed) {
             UpdateSecretResult result = client.updateSecret(updateSecretRequest);
             if (result.getSdkHttpMetadata().getHttpStatusCode() == 200) {
                 processed = true;
             } else {
-                tryCount ++;
-                if (tryCount <= 5) {
-                    throw new RuntimeException("perfornUpdate, unable to update secret: " + result.toString());
+                tryCount++;
+                if (tryCount >= 5) {
+                    throw new RuntimeException("performUpdate, unable to update secret: " + result.toString());
                 }
             }
         }
@@ -90,7 +90,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
     protected String buildFullAwsKeyName(String awsKeyName, boolean useKfsInstanceNamespace) {
         String fullKeyName;
         if (useKfsInstanceNamespace) {
-            fullKeyName = kfsInstanceNameSpace + awsKeyName;
+            fullKeyName = kfsInstanceNamespace + awsKeyName;
         } else {
             fullKeyName = kfsSharedNamespace + awsKeyName; 
         }
@@ -140,8 +140,8 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         this.awsRegion = awsRegion;
     }
 
-    public void setKfsInstanceNameSpace(String kfsInstanceNameSpace) {
-        this.kfsInstanceNameSpace = kfsInstanceNameSpace;
+    public void setKfsInstanceNamespace(String kfsInstanceNamespace) {
+        this.kfsInstanceNamespace = kfsInstanceNamespace;
     }
 
     public void setKfsSharedNamespace(String kfsSharedNamespace) {

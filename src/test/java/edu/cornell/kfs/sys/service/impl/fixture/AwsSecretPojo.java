@@ -9,7 +9,7 @@ import com.google.gson.annotations.JsonAdapter;
 
 import edu.cornell.kfs.sys.jsonadapters.JsonDateSerializer;
 
-public class AwsSecretePojoBasic {
+public class AwsSecretPojo {
     
     private String static_string;
     private String changeable_string;
