@@ -55,7 +55,6 @@
     <bean id="paymentWorksNewVendorCreateKfsVendorStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksNewVendorCreateKfsVendorStep">
         <property name="paymentWorksNewVendorRequestsService" ref="paymentWorksNewVendorRequestsService" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService" />
     </bean>
     
     <bean id="paymentWorksNewVendorCreateKfsAchBatchJob" parent="unscheduledJobDescriptor">
