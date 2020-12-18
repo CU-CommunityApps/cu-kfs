@@ -125,11 +125,6 @@
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
     </bean>
     
-    <bean id="paymentWorksFormModeService" parent="paymentWorksFormModeService-parentBean" />
-    <bean id="paymentWorksFormModeService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksFormModeServiceImpl" abstract="true">
-        <property name="parameterService" ref="parameterService" />
-    </bean>
-
     <bean id="paymentWorksWebServiceCallsService" parent="paymentWorksWebServiceCallsService-parentBean" />
     <bean id="paymentWorksWebServiceCallsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksWebServiceCallsServiceImpl" abstract="true">
         <property name="paymentWorksDtoToPaymentWorksVendorConversionService" ref="paymentWorksDtoToPaymentWorksVendorConversionService" />
