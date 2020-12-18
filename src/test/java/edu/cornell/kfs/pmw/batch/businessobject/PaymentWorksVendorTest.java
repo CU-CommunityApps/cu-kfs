@@ -8,10 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 
 class PaymentWorksVendorTest {
     private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorTest.class);
@@ -33,19 +31,10 @@ class PaymentWorksVendorTest {
     }
 
     @Test
-    void testToStringForign() {
-        pmwVendor.setPaymentWorksFormModeService(BuildMockPaymentWorksFormModeService(true));
+    void testToString() {
         String actualToString = pmwVendor.toString();
         LOG.info("testToStringForign: " + actualToString);
         checkToStringValue(actualToString, "=");
-    }
-    
-    @Test
-    void testToStringLegacy() {
-        pmwVendor.setPaymentWorksFormModeService(BuildMockPaymentWorksFormModeService(false));
-        String actualToString = pmwVendor.toString();
-        LOG.info("testToStringLegacy: " + actualToString);
-        checkToStringValue(actualToString, ": ");
     }
     
     private void checkToStringValue(String toStringValue, String connector) {
@@ -55,13 +44,6 @@ class PaymentWorksVendorTest {
                 connector + REQUESTING_COMPANY_DESCRIPTION));
         assertTrue("Should find the informal marketing ", StringUtils.contains(toStringValue, "informalMarketing" + 
                 connector + "false"));
-    }
-    
-    private PaymentWorksFormModeService BuildMockPaymentWorksFormModeService(boolean useForeign) {
-        PaymentWorksFormModeService service = Mockito.mock(PaymentWorksFormModeService.class);
-        Mockito.when(service.shouldUseForeignFormProcessingMode()).thenReturn(useForeign);
-        Mockito.when(service.shouldUseLegacyFormProcessingMode()).thenReturn(!useForeign);
-        return service;
     }
 
 }
