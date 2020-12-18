@@ -107,7 +107,6 @@
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="businessObjectService" ref="businessObjectService" />
-        <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService" />
         <property name="paymentWorksVendorSupplierDiversityService" ref="paymentWorksVendorSupplierDiversityService" />
         <property name="paymentWorksTaxRuleDependencyService" ref="paymentWorksTaxRuleDependencyService" />
     </bean>
@@ -201,7 +200,6 @@
         <property name="paymentWorksNewVendorRequestsReportService" ref="paymentWorksNewVendorRequestsReportService" />
         <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
         <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
-        <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService" />
     </bean>
     
     <bean id="paymentWorksVendorToKfsPayeeAchAccountConversionService" parent="paymentWorksVendorToKfsPayeeAchAccountConversionService-parentBean" />
