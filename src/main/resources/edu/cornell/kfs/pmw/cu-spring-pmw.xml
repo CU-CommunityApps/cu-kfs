@@ -237,7 +237,6 @@
         <property name="paymentWorksNewVendorPayeeAchReportService" ref="paymentWorksNewVendorPayeeAchReportService" />
         <property name="paymentWorksVendorAchDataProcessingIntoKfsService" ref="paymentWorksVendorAchDataProcessingIntoKfsService" />
         <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
-        <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService" />
     </bean>
     
     <bean id="paymentWorksUploadSuppliersService" parent="paymentWorksUploadSuppliersService-parentBean" />
