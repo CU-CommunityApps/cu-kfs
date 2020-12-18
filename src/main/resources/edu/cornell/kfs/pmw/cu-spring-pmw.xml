@@ -217,7 +217,6 @@
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
         <property name="reportWriterService" ref="paymentWorksReportWriterService" />
         <property name="configurationService" ref="configurationService" />
-        <property name="paymentWorksFormModeService" ref="paymentWorksFormModeService" />
     </bean>
 
     <bean id="paymentWorksVendorAchDataProcessingIntoKfsService" parent="paymentWorksVendorAchDataProcessingIntoKfsService-parentBean" />
