@@ -7,7 +7,6 @@ import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
@@ -447,6 +446,15 @@ public class PaymentWorksConstants {
         public static final String ACH = "ACH";
         public static final String WIRE = "Wire";
         public static final String CHECK = "Check";
+    }
+    
+    public final class PaymentWorksVendorFieldName {
+        public static final String REQUESTING_COMPANY_TIN = "requestingCompanyTin";
+        public static final String REQUESTING_COMPANY_W8_W9 = "requestingCompanyW8W9";
+        public static final String BANK_ACCOUNT_ROUTING_NUMBER = "bankAcctRoutingNumber";
+        public static final String BANK_ACCOUNT_BANK_ACCOUNT_NUMBER = "bankAcctBankAccountNumber";
+        public static final String BANK_ACCOUNT_BANK_VALIDATION_FILE = "bankAcctBankValidationFile";
+        
     }
 
 }

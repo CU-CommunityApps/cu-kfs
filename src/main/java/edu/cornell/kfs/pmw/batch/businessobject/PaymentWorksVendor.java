@@ -7,12 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable{
     private static final long serialVersionUID = -6784832598701451681L;
@@ -1256,19 +1253,33 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     @Override
     public String toString() {
             ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
-            builder.setExcludeFieldNames("requestingCompanyTin", "requestingCompanyW8W9", 
-                    "bankAcctRoutingNumber", "bankAcctBankAccountNumber", "bankAcctBankValidationFile");
-            builder.append("requestingCompanyTin", (StringUtils.isNotEmpty(requestingCompanyTin)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("requestingCompanyW8W9", (StringUtils.isNotEmpty(requestingCompanyW8W9)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("bankAcctRoutingNumber", (StringUtils.isNotEmpty(bankAcctRoutingNumber)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("bankAcctBankAccountNumber", (StringUtils.isNotEmpty(bankAcctBankAccountNumber)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("bankAcctBankValidationFile", (StringUtils.isNotEmpty(bankAcctBankValidationFile)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
+            
+            builder.setExcludeFieldNames(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN, 
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9,
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER,
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER,
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE);
+            
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN, 
+                    buildToStringAppender(requestingCompanyTin));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9, 
+                    buildToStringAppender(requestingCompanyW8W9));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER, 
+                    buildToStringAppender(bankAcctBankAccountNumber));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER, 
+                    buildToStringAppender(bankAcctBankAccountNumber));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE, 
+                    buildToStringAppender(bankAcctBankValidationFile));
+            
             return builder.build();
+    }
+    
+    private String buildToStringAppender(String fieldValue) {
+        if (StringUtils.isNotEmpty(fieldValue)) {
+            return PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT;
+        } else {
+            return StringUtils.EMPTY;
+        }
     }
 
 }
