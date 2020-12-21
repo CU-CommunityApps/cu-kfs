@@ -22,6 +22,7 @@ class AwsSecretServiceImplIntegrationTest {
     private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
     private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";
     private static final String KFS_SHARED_NAMESPACE = "kfs/kfs-shared/";
+    private static final int AWS_SECRET_UPDATE_RETRY_COUNT = 5;
 
     private static final String SINGLE_STRING_SECRET_KEY_NAME = "unittest/singlestring";
     private static final String SINGLE_DATE_SECRET_KEY_NAME = "unittest/singledate";
@@ -42,6 +43,7 @@ class AwsSecretServiceImplIntegrationTest {
         awsSecretServiceImpl.setAwsRegion(AWS_US_EAST_ONE_REGION);
         awsSecretServiceImpl.setKfsSharedNamespace(KFS_SHARED_NAMESPACE);
         awsSecretServiceImpl.setKfsInstanceNamespace(KFS_INSTANCE_NAMESPACE);
+        awsSecretServiceImpl.setRetryCount(AWS_SECRET_UPDATE_RETRY_COUNT);
     }
 
     @AfterEach

@@ -30,6 +30,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     protected String awsRegion;
     protected String kfsInstanceNamespace;
     protected String kfsSharedNamespace;
+    protected int retryCount;
     
     @Override
     public String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
@@ -76,7 +77,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
                 processed = true;
             } else {
                 tryCount++;
-                if (tryCount >= 5) {
+                if (tryCount >= retryCount) {
                     throw new RuntimeException("performUpdate, unable to update secret: " + result.toString());
                 }
             }
@@ -181,4 +182,8 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         this.kfsSharedNamespace = kfsSharedNamespace;
     }
 
+    public void setRetryCount(int retryCount) {
+        this.retryCount = retryCount;
+    }
+    
 }
