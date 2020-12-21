@@ -16,7 +16,7 @@ public class AwsSecretPojo {
     private int number_test;
     private boolean boolean_test;
 
-    @JsonFormat(pattern = CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss)
+    @JsonFormat(pattern = CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS)
     private Date update_date;
 
     public String getChangeable_string() {

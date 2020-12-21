@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
 
-public class AwsSecretServiceImpl  implements AwsSecretService{
+public class AwsSecretServiceImpl implements AwsSecretService {
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
     
     protected String awsRegion;
@@ -155,7 +155,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         if (date == null) {
             return StringUtils.EMPTY;
         } else {
-            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
+            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
             return format.format(date);
         }
     }
@@ -164,7 +164,7 @@ public class AwsSecretServiceImpl  implements AwsSecretService{
         if (StringUtils.isBlank(dateString)) {
             return null;
         } else {
-            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
+            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
             return format.parse(dateString);
         }
     }

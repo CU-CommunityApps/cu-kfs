@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
 import net.bull.javamelody.internal.common.LOG;
 
-class AwsSecretServiceImplIntegraionTest {
+class AwsSecretServiceImplIntegrationTest {
     private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
     private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";
     private static final String KFS_SHARED_NAMESPACE = "kfs/kfs-shared/";
@@ -61,7 +61,7 @@ class AwsSecretServiceImplIntegraionTest {
         awsSecretServiceImpl.updateSecretDate(SINGLE_DATE_SECRET_KEY_NAME, false, date);
         
         Date secretDate = awsSecretServiceImpl.getSingleDateValueFromAwsSecret(SINGLE_DATE_SECRET_KEY_NAME, false);
-        assertEquals(date.toString(), secretDate.toString());
+        assertEquals(date, secretDate);
     }
     
     @Test
@@ -92,8 +92,8 @@ class AwsSecretServiceImplIntegraionTest {
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
-        assertEquals(newDate.toString(), pojoNew.getUpdate_date().toString());
-        assertEquals(newBooleanTest, pojo.isBoolean_test());
+        assertEquals(pojo.getUpdate_date(), pojoNew.getUpdate_date());
+        assertEquals(pojo.isBoolean_test(), pojoNew.isBoolean_test());
     }
     
     @Test 
