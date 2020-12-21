@@ -127,7 +127,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
         } else {
             PaymentWorksConstants.PaymentWorksTaxClassification classfication = PaymentWorksConstants.PaymentWorksTaxClassification.
                     findPaymentWorksTaxClassification(pmwVendor.getRequestingCompanyTaxClassificationCode());
-            vendorHeader.setVendorOwnershipCode(classfication.foreignFormTranslationToKfsOwnershipTypeCode);
+            vendorHeader.setVendorOwnershipCode(classfication.kfsVendorOwnershipTypeCode);
         }
     }
     

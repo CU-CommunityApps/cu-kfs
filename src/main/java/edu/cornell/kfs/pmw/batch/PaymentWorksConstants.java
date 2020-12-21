@@ -237,32 +237,23 @@ public class PaymentWorksConstants {
         PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", VendorOwnershipTypeCodes.PARTNERSHIP),
         TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", VendorOwnershipTypeCodes.ESTATE_TRUST), 
         LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", 
-        		VendorOwnershipTypeCodes.C_CORPORATION, VendorOwnershipTypeCodes.C_CORPORATION) ,
+        		VendorOwnershipTypeCodes.C_CORPORATION) ,
         LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", 
-        		VendorOwnershipTypeCodes.S_CORPORATION, VendorOwnershipTypeCodes.S_CORPORATION),
+        		VendorOwnershipTypeCodes.S_CORPORATION),
         LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", 
-        		VendorOwnershipTypeCodes.PARTNERSHIP, VendorOwnershipTypeCodes.PARTNERSHIP),
+        		VendorOwnershipTypeCodes.PARTNERSHIP),
         OTHER(OTHER_TAX_CLASSIFICATION_INDICATOR, "Other", "OT");
         
         public final int pmwCode;
         public final String pmwDescription;
-        public final String legacyFormTranslationToKfsOwnershipTypeCode;
-        public final String foreignFormTranslationToKfsOwnershipTypeCode;
+        public final String kfsVendorOwnershipTypeCode;
         
-        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String legacyFormTranslationToKfsOwnershipTypeCode) {
+        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String kfsVendorOwnershipTypeCode) {
             this.pmwCode = pmwCode;
             this.pmwDescription = pmwDescription;
-            this.legacyFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
-            this.foreignFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
+            this.kfsVendorOwnershipTypeCode = kfsVendorOwnershipTypeCode;
         }
         
-        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String legacyFormTranslationToKfsOwnershipTypeCode, 
-        		String foreignFormTranslationToKfsOwnershipTypeCode) {
-            this.pmwCode = pmwCode;
-            this.pmwDescription = pmwDescription;
-            this.legacyFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
-            this.foreignFormTranslationToKfsOwnershipTypeCode = foreignFormTranslationToKfsOwnershipTypeCode;
-        }
         
         public static PaymentWorksTaxClassification findPaymentWorksTaxClassification(int requestingCompanyTaxClassificationCode) {
             for (PaymentWorksTaxClassification classification : PaymentWorksTaxClassification.values()) {
