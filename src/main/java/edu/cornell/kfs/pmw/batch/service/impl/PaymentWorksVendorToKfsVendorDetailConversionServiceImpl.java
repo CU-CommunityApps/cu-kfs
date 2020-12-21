@@ -3,7 +3,6 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorSupplierDiversityServ
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements PaymentWorksVendorToKfsVendorDetailConversionService {
@@ -153,7 +151,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             }
         }
         if (StringUtils.isBlank(fipsCountryCode)) {
-            LOG.error("buildPOFipsCountryCode, unable to find new foreign form FIPS country code for country code " + pmwVendor.getPoCountry());
+            LOG.error("buildPOFipsCountryCode, unable to find FIPS country code for country code " + pmwVendor.getPoCountry());
         }
         return fipsCountryCode;
     }
@@ -359,7 +357,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         String paymentMethod = buildKFSPaymentMethod(pmwVendor, paymentWorksIsoToFipsCountryMap);
-        LOG.info("buildVendorDetailExtension, foreign mode form setting payment method to " + paymentMethod);
+        LOG.info("buildVendorDetailExtension, setting payment method to " + paymentMethod);
         vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod);
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(dateTimeService.getCurrentTimestamp());

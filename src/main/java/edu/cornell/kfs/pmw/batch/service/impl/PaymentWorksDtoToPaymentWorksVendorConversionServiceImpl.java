@@ -26,7 +26,6 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
-import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksAddressBaseDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAccountDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAddressDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksCorpAddressDTO;
