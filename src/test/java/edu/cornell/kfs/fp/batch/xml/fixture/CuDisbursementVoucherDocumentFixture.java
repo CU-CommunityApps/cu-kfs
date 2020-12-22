@@ -27,10 +27,10 @@ public enum CuDisbursementVoucherDocumentFixture {
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING), 
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER)),
-    XYZ_INDUSTRIES_DV_DETAIL("DISB", "Wyzee, Eks", "E", "V", -1, null, null, null, "12/28/2020", null, null,
+    XYZ_INDUSTRIES_DV_DETAIL("DISB", "Wyzee, Eks", "R", "V", -1, null, null, null, "12/28/2020", null, null,
             DocGenVendorFixture.XYZ_INDUSTRIES,
             buildExpenseFixtureArray(), buildExpenseFixtureArray()),
-    REE_PHUND_DV_DETAIL("DISB", "Smith, Jack", "R", "V", -1, null, null, null, "12/29/2020", "12/22/2020", "123123",
+    REE_PHUND_DV_DETAIL("DISB", "Smith, Jack", "F", "V", -1, null, null, null, "12/29/2020", "12/22/2020", "123123",
             DocGenVendorFixture.REE_PHUND,
             buildExpenseFixtureArray(), buildExpenseFixtureArray());
     

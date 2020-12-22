@@ -41,7 +41,7 @@
                 <campus_code>IT</campus_code>
                 <bank_code>DISB</bank_code>
                 <payment_information>
-                    <payment_reason_code>E</payment_reason_code>
+                    <payment_reason_code>R</payment_reason_code>
                     <payee_id>2100-0</payee_id>
                     <payee_type_code>V</payee_type_code>
                     <payee_name>XYZ Industries</payee_name>
@@ -147,7 +147,7 @@
                 <campus_code>IT</campus_code>
                 <bank_code>DISB</bank_code>
                 <payment_information>
-                    <payment_reason_code>R</payment_reason_code>
+                    <payment_reason_code>F</payment_reason_code>
                     <payee_id>5555-0</payee_id>
                     <payee_type_code>V</payee_type_code>
                     <payee_name>Phund, Ree</payee_name>
