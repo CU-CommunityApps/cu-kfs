@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -9,6 +10,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +21,7 @@ import edu.cornell.kfs.fp.batch.service.CloudCheckrService;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAwsResultWrapper;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CloudCheckrWrapper;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
@@ -30,6 +33,32 @@ public class CloudCheckrServiceImpl extends DisposableClientServiceImplBase impl
 
     @Override
     public CloudCheckrWrapper getCloudCheckrWrapper(String startDate, String endDate, String masterAccountName) throws URISyntaxException, IOException {
+        /*
+         * If this needs to be done again, cloudcheckr will send an XML file that is our billing data.  Save the file to your file system, and update
+         * the fileName String below to point to the file.
+         * 
+         * If there are XML parsing exceptions about unexpected tags, compare the XML cloudcheckr sent to the test file cloudcheckr_basic_cornell_test.xml.
+         * I had to replace the header rows in the cloudcheckr file with what we had in our test file.
+         * 
+         * The XML cloudcheckr sends will probably only include details for the Cornell+Master+v2.  In hindsight, creating the "create accounting document" 
+         * XML locally would be faster if I updated the parameter AWS_MASTER_ACCOUNTS to only include Cornell+Master+v2 account.
+         * 
+         * The generate "create accounting document" XML start KFS locally, and run the AWS Billing gbatch job.  That will create 
+         * AmazonBill-2020-November-Cornell+Master+v2-TIMESTAMP.xml in your staginging_area/fp/accountingXmlDocumentFolder.  Copy that file
+         * into a kfs instance, and have prod control run the create accounting document job.
+         */
+        String fileName = "/Users/jdh34/kuali/infra/work/staging/fp/cloudcheckr_nov_billing_detail.xml";
+        CUMarshalServiceImpl service = new CUMarshalServiceImpl();
+        File xmlFile = new File(fileName);
+        CloudCheckrWrapper wrapper;
+        try {
+            wrapper = service.unmarshalFile(xmlFile, CloudCheckrWrapper.class);
+        } catch (JAXBException e) {
+            LOG.error("getCloudCheckrWrapper, had an error creating POJO", e);
+            throw new RuntimeException(e);
+        }
+        return wrapper;
+        /*
         String cloudCheckrURL = findCloudCheckrEndPoint();
         String formattedUrl = MessageFormat.format(cloudCheckrURL, startDate, endDate, masterAccountName);
         Response response = null;
@@ -45,6 +74,7 @@ public class CloudCheckrServiceImpl extends DisposableClientServiceImplBase impl
         } finally {
             CURestClientUtils.closeQuietly(response);
         }
+        */
     }
     
     private String findCloudCheckrEndPoint() {
