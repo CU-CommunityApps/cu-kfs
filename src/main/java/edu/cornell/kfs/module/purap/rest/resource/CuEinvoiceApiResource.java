@@ -1,6 +1,10 @@
 package edu.cornell.kfs.module.purap.rest.resource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,11 +15,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,6 +32,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.cornell.kfs.sys.web.service.CuApiJsonWebRequestReader;
+import edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -62,6 +75,7 @@ public class CuEinvoiceApiResource {
     private LookupDao lookupDao;
     private CuEinvoiceDao cuEinvoiceDao;
     private Gson gson = new Gson();
+    private CuApiJsonWebRequestReader cuApiJsonWebRequestReader;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -74,11 +88,13 @@ public class CuEinvoiceApiResource {
         return Response.ok(CUPurapConstants.Einvoice.EINVOICE_KFS_API_DESCRIPTION).build();
     }
 
-    @GET
+    @POST
     @Path("vendors")
+    @Consumes (MediaType.APPLICATION_JSON)
+    @Produces (MediaType.APPLICATION_JSON)
     public Response getVendors(@Context HttpHeaders headers) {
         try {
-            List<String> vendorNumbers = getVendorNumbersFromRequest();
+            List<String> vendorNumbers = getVendorNumbers();
             List<VendorDetail> vendors = getCuEinvoiceDao().getVendors(vendorNumbers);
             List<Properties> vendorsSerialized = vendors.stream().map(vendor -> getVendorProperties(vendor)).collect(Collectors.toList());
             return Response.ok(gson.toJson(vendorsSerialized)).build();
@@ -160,13 +176,55 @@ public class CuEinvoiceApiResource {
         }
     }
 
-    private List<String> getVendorNumbersFromRequest() {
-        String vendorNumbersString = servletRequest.getParameter(CUPurapConstants.Einvoice.VENDOR_NUMBERS);
-        if (StringUtils.isEmpty(vendorNumbersString)) {
-            throw new BadRequestException();
+    private List<String> getVendorNumbers() throws IOException, BadRequestException {
+        String badRequestErrorMessage = "Invalid Request Body, expect JSON Object with \"vendors\" property of type array";
+        var jsonNode = getCuApiJsonWebRequestReader().getJsonContentFromServletRequest(servletRequest);
+
+        if (!jsonNode.has("vendors") || jsonNode.get("vendors").isArray()) {
+            throw new BadRequestException(badRequestErrorMessage);
         }
-        String[] vendorNumbers = vendorNumbersString.split(KFSConstants.COMMA);
-        return Arrays.asList(vendorNumbers);
+
+        List<String> vendorNumbers = new ArrayList<>();
+        for (final JsonNode objNode : jsonNode.get("vendors")) {
+            vendorNumbers.add(objNode.asText());
+        }
+
+        return vendorNumbers;
+    }
+
+    private JsonNode getJsonContentFromCurrentRequest() throws IOException {
+        try (var requestInputStream = servletRequest.getInputStream();
+             var streamReader = new InputStreamReader(requestInputStream, StandardCharsets.UTF_8)) {
+            var objectMapper = new ObjectMapper();
+            var jsonNode = objectMapper.readTree(streamReader);
+            if (jsonNode == null) {
+                throw new BadRequestException("The request has no content in its JSON payload");
+            } else if (!jsonNode.isObject()) {
+                throw new BadRequestException("The request does not have a JSON object as the root node");
+            }
+            return jsonNode;
+        } catch (JsonProcessingException e) {
+            throw new BadRequestException("The request has malformed JSON content");
+        }
+    }
+
+    private List<String> getVendorNumbersFromRequest() throws BadRequestException, IOException {
+        List<String> vendors = new ArrayList<>();
+        BufferedReader reader = servletRequest.getReader();
+
+        JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+        JsonArray jsonArray = jsonObject.getJsonArray("vendors");
+        if (jsonArray == null) {
+            throw new BadRequestException("Invalid Request Body, expect JSON Object with \"vendors\" property of type array");
+        }
+
+        for (Object o : jsonArray.toArray()) {
+            if (o != null) {
+                vendors.add(o.toString());
+            }
+        }
+
+        return vendors;
     }
 
     private Properties getVendorProperties(VendorDetail vendorDetail) {
@@ -314,6 +372,13 @@ public class CuEinvoiceApiResource {
             cuEinvoiceDao = SpringContext.getBean(CuEinvoiceDaoOjb.class);
         }
         return cuEinvoiceDao;
+    }
+
+    private CuApiJsonWebRequestReader getCuApiJsonWebRequestReader() {
+        if (ObjectUtils.isNull(cuApiJsonWebRequestReader)) {
+            cuApiJsonWebRequestReader = SpringContext.getBean(CuApiJsonWebRequestReaderImpl.class);
+        }
+        return cuApiJsonWebRequestReader;
     }
 
     private HashMap<String,String> parseVendorNumber(String vendorNumber) throws BadRequestException {
