@@ -1261,20 +1261,20 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
                     PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE);
             
             builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN, 
-                    buildToStringAppender(requestingCompanyTin));
+                    buildRestrictedFieldPrintableValue(requestingCompanyTin));
             builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9, 
-                    buildToStringAppender(requestingCompanyW8W9));
+                    buildRestrictedFieldPrintableValue(requestingCompanyW8W9));
             builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER, 
-                    buildToStringAppender(bankAcctBankAccountNumber));
+                    buildRestrictedFieldPrintableValue(bankAcctBankAccountNumber));
             builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER, 
-                    buildToStringAppender(bankAcctBankAccountNumber));
+                    buildRestrictedFieldPrintableValue(bankAcctBankAccountNumber));
             builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE, 
-                    buildToStringAppender(bankAcctBankValidationFile));
+                    buildRestrictedFieldPrintableValue(bankAcctBankValidationFile));
             
             return builder.build();
     }
     
-    private String buildToStringAppender(String fieldValue) {
+    private String buildRestrictedFieldPrintableValue(String fieldValue) {
         if (StringUtils.isNotEmpty(fieldValue)) {
             return PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT;
         } else {

@@ -45,7 +45,7 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
     
     @Test
-    void testIsUsAchBankForeignFormUsBank() {
+    void testIsUsAchBankUsBank() {
         pmwVendor.setBankAddressCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString());
         boolean actualResults = achService.isUsAchBank(pmwVendor, reportData);
         assertTrue(actualResults);
@@ -53,7 +53,7 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
     
     @Test
-    void testIsUsAchBankForeignFormCanadaBank() {
+    void testIsUsAchBankCanadaBank() {
         pmwVendor.setBankAddressCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getPmwCountryOptionAsString());
         boolean actualIsUsBankAccount = achService.isUsAchBank(pmwVendor, reportData);
         assertFalse(actualIsUsBankAccount);
@@ -72,21 +72,21 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
     
     @Test
-    void testIsAchPaymentMethodForeignFormAch() {
+    void testIsAchPaymentMethodAch() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
         assertTrue(actualAchPaymentMethod);
     }
     
     @Test
-    void testIsAchPaymentMethodForeignFormCheck() {
+    void testIsAchPaymentMethodCheck() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
         assertFalse(actualAchPaymentMethod);
     }
     
     @Test
-    void testIsAchPaymentMethodForeignFormForeignWire() {
+    void testIsAchPaymentMethodForeignWire() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
         pmwVendor.setRequestingCompanyTaxCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getPmwCountryOptionAsString());
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
@@ -94,7 +94,7 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
     
     @Test
-    void testIsAchPaymentMethodForeignFormDomesticWire() {
+    void testIsAchPaymentMethodDomesticWire() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
         pmwVendor.setRequestingCompanyTaxCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString());
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);

@@ -40,11 +40,11 @@ class PaymentWorksVendorTest {
         String actualToString = pmwVendor.toString();
         LOG.info("testToStringForign: " + actualToString);
         
-        assertRestringFieldExists(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN);
-        assertRestringFieldExists(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9);
-        assertRestringFieldExists(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER);
-        assertRestringFieldExists(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER);
-        assertRestringFieldExists(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE);
         
         
         assertTrue("Should find the requesting company description", StringUtils.contains(actualToString, "requestingCompanyDesc" + 
@@ -54,7 +54,7 @@ class PaymentWorksVendorTest {
                 CUKFSConstants.EQUALS_SIGN + "false"));
     }
     
-    private void assertRestringFieldExists(String toStringValue, String searchField) {
+    private void assertRestrictedFieldFormattedCorrectly(String toStringValue, String searchField) {
         String searchString = searchField + CUKFSConstants.EQUALS_SIGN + PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT;
         assertTrue("Should find restricted value for " + searchField, StringUtils.contains(toStringValue, searchString));
     }
