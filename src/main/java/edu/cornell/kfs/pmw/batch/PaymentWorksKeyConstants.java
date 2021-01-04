@@ -6,13 +6,6 @@ public class PaymentWorksKeyConstants {
     public static final String NOTES_INITIATOR_LABEL = "note.label.paymentworks.initiator";
     public static final String NEW_VENDOR_PVEN_NOTES_W8_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w8.exists";
     public static final String NEW_VENDOR_PVEN_NOTES_W9_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w9.exists";
-    public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_PROVIDED_LABEL = "note.label.paymentworks.pven.goods.services.provided";
-    public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_CURRENT_PAYROLL_PAID_LABEL = "note.label.paymentworks.pven.goods.services.provider.currently.payroll.paid";
-    public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_EVER_PAYROLL_PAID_LABEL = "note.label.paymentworks.pven.goods.services.provider.ever.payroll.paid";
-    public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NOT_SOLE_PROPRIETOR_LABEL = "note.label.paymentworks.pven.goods.services.provider.not.sole.proprietor";
-    public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_RECEIVING_EQUIPMENT_TRAINING_LABEL = "note.label.paymentworks.pven.goods.services.provider.receiving.equipment.training";
-    public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_MARKETING_LABEL = "note.label.paymentworks.pven.goods.services.provider.no.marketing";
-    public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_INSURANCE_LABEL = "note.label.paymentworks.pven.goods.services.provider.no.insurance.policy"; 
     public static final String NEW_VENDOR_PVEN_NOTES_PAYMENT_REASON_LABEL = "note.label.paymentworks.pven.payment.reason";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_MESSAGE = "note.message.paymentworks.pven.conflict.of.interest";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL = "note.label.paymentworks.pven.conflict.of.interest.employee.name";

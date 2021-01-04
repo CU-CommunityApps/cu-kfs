@@ -17,12 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
-import org.mockito.Mockito;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -55,34 +53,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor = null;
     }
     
-    private PaymentWorksFormModeService buildMockPaymentWorksFormModeService(boolean useForeign) {
-        PaymentWorksFormModeService service = Mockito.mock(PaymentWorksFormModeService.class);
-        Mockito.when(service.shouldUseForeignFormProcessingMode()).thenReturn(useForeign);
-        Mockito.when(service.shouldUseLegacyFormProcessingMode()).thenReturn(!useForeign);
-        return service;
-    }
-
     @Test
-    void testFindPoCountryToUseLegacy() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        pmwVendor.setPoCountryLegacy(LEGACY_PO_COUNTRY);
-        pmwVendor.setPoCountryUsCanadaAustraliaOther(KFSConstants.COUNTRY_CODE_UNITED_STATES);
-        String actual = conversionService.findPoCountryToUse(pmwVendor);
-        assertEquals(LEGACY_PO_COUNTRY, actual);
-    }
-    
-    @Test
-    void testFindPoCountryToUseLegacyBlankPoCountry() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        pmwVendor.setPoCountryLegacy(KFSConstants.BLANK_SPACE);
-        pmwVendor.setPoCountryUsCanadaAustraliaOther(KFSConstants.COUNTRY_CODE_UNITED_STATES);
-        String actual = conversionService.findPoCountryToUse(pmwVendor);
-        assertEquals(KFSConstants.COUNTRY_CODE_UNITED_STATES, actual);
-    }
-    
-    @Test
-    void testFindPoCountryToUseForeignUS() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testFindPoCountryToUseUS() {
         pmwVendor.setPoCountryLegacy(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         String actual = conversionService.findPoCountryToUse(pmwVendor);
@@ -90,8 +62,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testFindPoCountryToUseForeignAustralia() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testFindPoCountryToUseAustralia() {
         pmwVendor.setPoCountryLegacy(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.FIPS_COUNTRY_CODE_AUSTRALIA);
         String actual = conversionService.findPoCountryToUse(pmwVendor);
@@ -99,8 +70,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testFindPoCountryToUseForeignOther() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testFindPoCountryToUseOther() {
         pmwVendor.setPoCountryLegacy(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountry(FOREIGN_PO_COUNTRY);
         pmwVendor.setPoCountryUsCanadaAustraliaOther(StringUtils.upperCase(PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER));
@@ -109,50 +79,25 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testShouldCreateContactLegacyGoodContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
+    void testShouldCreateContactGoodContact() {
         String contactName = "foo";
         assertTrue(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
-    void testShouldCreateContactLegacyNullContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        String contactName = null;
-        assertTrue(conversionService.shouldCreateContact(contactName));
-    }
-    
-    @Test
-    void testShouldCreateContactLegacyEmptyContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        String contactName = StringUtils.EMPTY;
-        assertTrue(conversionService.shouldCreateContact(contactName));
-    }
-    
-    @Test
-    void testShouldCreateContactForeignGoodContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
-        String contactName = "foo";
-        assertTrue(conversionService.shouldCreateContact(contactName));
-    }
-    
-    @Test
-    void testShouldCreateContactForeignNullContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testShouldCreateContactNullContact() {
         String contactName = null;
         assertFalse(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
-    void testShouldCreateContactForeignEmptyContact() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testShouldCreateContactEmptyContact() {
         String contactName = StringUtils.EMPTY;
         assertFalse(conversionService.shouldCreateContact(contactName));
     }
     
     @Test
-    void testBuildPOFipsCountryCodeUSForeignMode() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testBuildPOFipsCountryCodeUS() {
         String expectedPoCountry = PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.fipsCountryCode;
         pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.pmwCountryOptionAsString);
         String actualPoCountry = conversionService.buildPOFipsCountryCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
@@ -160,17 +105,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testBuildPOFipsCountryCodeUSLegacyMode() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        String expectedPoCountry = PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.fipsCountryCode;
-        pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.pmwCountryOptionAsString);
-        String actualPoCountry = conversionService.buildPOFipsCountryCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
-        assertEquals(expectedPoCountry, actualPoCountry);
-    }
-    
-    @Test
-    void testBuildPOFipsCountryCodeCanadaForeignMode() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testBuildPOFipsCountryCodeCanada() {
         String expectedPoCountry = PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.fipsCountryCode;
         pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.pmwCountryOptionAsString);
         String actualPoCountry = conversionService.buildPOFipsCountryCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
@@ -178,17 +113,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testBuildPOFipsCountryCodeCanadaLegacyMode() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        String expectedPoCountry = PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.fipsCountryCode;
-        pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.pmwCountryOptionAsString);
-        String actualPoCountry = conversionService.buildPOFipsCountryCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
-        assertEquals(expectedPoCountry, actualPoCountry);
-    }
-    
-    @Test
-    void testBuildPOFipsCountryCodeArubaForeignMode() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testBuildPOFipsCountryCodeAruba() {
         String expectedPoCountry = ARUBA_FIPS_CODE;
         pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.OTHER.pmwCountryOptionAsString);
         pmwVendor.setPoCountry(ARUBA_ISO_CODE);
@@ -197,8 +122,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testBuildPOFipsCountryCodeEmptyCountryForeignMode() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testBuildPOFipsCountryCodeEmptyCountry() {
         String expectedPoCountry = StringUtils.EMPTY;
         pmwVendor.setPoCountryUsCanadaAustraliaOther(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.OTHER.pmwCountryOptionAsString);
         pmwVendor.setPoCountry(StringUtils.EMPTY);
@@ -207,8 +131,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testBuildPOFipsCountryCodeBadCountryForeignMode() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testBuildPOFipsCountryCodeBadCountry() {
         String expectedPoCountry = StringUtils.EMPTY;
         pmwVendor.setPoCountryUsCanadaAustraliaOther("foo");
         pmwVendor.setPoCountry("foo");
@@ -282,27 +205,9 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         assertEquals(CONTACT_NAME, actualContact.getVendorContactName());
         assertEquals(CONTACT_EMAIL_ADDRESS, actualContact.getVendorContactEmailAddress());
     }
-    
-    @Test
-    void testbuildVendorDetailExtensionLegacyForm() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
-    }
-    
-    @Test
-    void testbuildVendorDetailExtensionLegacyFormForeignWire() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, actualDetail.getDefaultB2BPaymentMethodCode());
-    }
 
     @Test
-    void testbuildVendorDetailExtensionForeignFormForeignCheck() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionCheck() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
@@ -312,8 +217,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
 
     @Test
-    void testbuildVendorDetailExtensionForeignFormForeignAch() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionAch() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
@@ -322,8 +226,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionForeignFormWire() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionWire() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
@@ -332,8 +235,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionForeignFormEmpty() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionEmpty() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
@@ -346,8 +248,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionForeignFormDomesticCheck() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionDomesticCheck() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
@@ -357,8 +258,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionForeignFormDomesticAch() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionDomesticAch() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
@@ -368,8 +268,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionForeignFormDomesticWire() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionDomesticWire() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
@@ -379,8 +278,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionForeignFormDomesticEmpty() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testbuildVendorDetailExtensionDomesticEmpty() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
@@ -390,24 +288,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testIsDiverseLegacyDiverseYes() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setDiverseBusiness(true);
-        assertTrue(conversionService.isDiverseBusiness(pmwVendor));
-    }
-    
-    @Test
-    void testIsDiverseLegacyDiverseNo() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
-        pmwVendor.setDiverseBusiness(false);
-        assertFalse(conversionService.isDiverseBusiness(pmwVendor));
-    }
-    
-    @Test
-    void testIsDiverseForeignDiverseState() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsDiverseState() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
         pmwVendor.setStateDiversityClassifications(DIVERSITY_TEST_VALUE);
@@ -415,8 +296,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testIsDiverseForeignDiverseStateFed() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsDiverseStateFed() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
         pmwVendor.setStateDiversityClassifications(DIVERSITY_TEST_VALUE);
@@ -425,8 +305,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testIsDiverseForeignDiverseFed() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsDiverseFed() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
         pmwVendor.setFederalDiversityClassifications(DIVERSITY_TEST_VALUE);
@@ -434,8 +313,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testIsDiverseForeignDiverseNone() {
-        conversionService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsDiverseNone() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setDiverseBusiness(false);
         assertFalse(conversionService.isDiverseBusiness(pmwVendor));

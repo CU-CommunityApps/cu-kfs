@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pmw.batch.businessobject;
 
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class PaymentWorksIsoFipsCountryItem {
 
@@ -56,12 +57,7 @@ public class PaymentWorksIsoFipsCountryItem {
     }
     
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("isoCountryCode").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(isoCountryCode).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
-        sb.append("isoCountryName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(isoCountryName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
-        sb.append("fipsCountryCode").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(fipsCountryCode).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
-        sb.append("fipsCountryName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(fipsCountryName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
-        return sb.toString();
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
     }
 
 }

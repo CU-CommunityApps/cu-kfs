@@ -7,16 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable{
     private static final long serialVersionUID = -6784832598701451681L;
-    protected transient PaymentWorksFormModeService paymentWorksFormModeService;
     
     private Integer id;
     private String pmwVendorRequestId;
@@ -1133,17 +1129,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     public void setServicesProvidedWithoutInsurance(boolean servicesProvidedWithoutInsurance) {
         this.servicesProvidedWithoutInsurance = servicesProvidedWithoutInsurance;
     }
-
-    public PaymentWorksFormModeService getPaymentWorksFormModeService() {
-        if (paymentWorksFormModeService == null) {
-            paymentWorksFormModeService = SpringContext.getBean(PaymentWorksFormModeService.class);
-        }
-        return paymentWorksFormModeService;
-    }
-
-    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
-        this.paymentWorksFormModeService = paymentWorksFormModeService;
-    }
     
     public String getSupplierCategory() {
         return supplierCategory;
@@ -1267,145 +1252,34 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     @Override
     public String toString() {
-        if (getPaymentWorksFormModeService().shouldUseForeignFormProcessingMode()) {
             ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
-            builder.setExcludeFieldNames("requestingCompanyTin", "requestingCompanyW8W9", 
-                    "bankAcctRoutingNumber", "bankAcctBankAccountNumber", "bankAcctBankValidationFile");
-            builder.append("requestingCompanyTin", (StringUtils.isNotEmpty(requestingCompanyTin)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("requestingCompanyW8W9", (StringUtils.isNotEmpty(requestingCompanyW8W9)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("bankAcctRoutingNumber", (StringUtils.isNotEmpty(bankAcctRoutingNumber)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("bankAcctBankAccountNumber", (StringUtils.isNotEmpty(bankAcctBankAccountNumber)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
-            builder.append("bankAcctBankValidationFile", (StringUtils.isNotEmpty(bankAcctBankValidationFile)) ? 
-                    PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : StringUtils.EMPTY);
+            
+            builder.setExcludeFieldNames(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN, 
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9,
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER,
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER,
+                    PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE);
+            
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN, 
+                    buildRestrictedFieldPrintableValue(requestingCompanyTin));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9, 
+                    buildRestrictedFieldPrintableValue(requestingCompanyW8W9));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER, 
+                    buildRestrictedFieldPrintableValue(bankAcctBankAccountNumber));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER, 
+                    buildRestrictedFieldPrintableValue(bankAcctBankAccountNumber));
+            builder.append(PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE, 
+                    buildRestrictedFieldPrintableValue(bankAcctBankValidationFile));
+            
             return builder.build();
+    }
+    
+    private String buildRestrictedFieldPrintableValue(String fieldValue) {
+        if (StringUtils.isNotEmpty(fieldValue)) {
+            return PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT;
+        } else {
+            return StringUtils.EMPTY;
         }
-        
-        StringBuilder sb = new StringBuilder("PaymentWorksVendor::  pmwVendorRequestId:  ").append(pmwVendorRequestId).append(System.lineSeparator());
-        sb.append("requestingCompanyId: ").append(requestingCompanyId).append(System.lineSeparator());
-        sb.append("requestingCompanyTin: ").append((StringUtils.isNotBlank(requestingCompanyTin) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
-        sb.append("requestingCompanyTinType: ").append(requestingCompanyTinType).append(System.lineSeparator());
-        sb.append("requestingCompanyTaxCountry: ").append(requestingCompanyTaxCountry).append(System.lineSeparator());
-        sb.append("requestingCompanyLegalName: ").append(requestingCompanyLegalName).append(System.lineSeparator());
-        sb.append("requestingCompanyLegalFirstName: ").append(requestingCompanyLegalFirstName).append(System.lineSeparator());
-        sb.append("requestingCompanyLegalLastName: ").append(requestingCompanyLegalLastName).append(System.lineSeparator());
-        sb.append("requestingCompanyName: ").append(requestingCompanyName).append(System.lineSeparator());
-        sb.append("requestingCompanyDesc: ").append(requestingCompanyDesc).append(System.lineSeparator());
-        sb.append("requestingCompanyTelephone: ").append(requestingCompanyTelephone).append(System.lineSeparator());
-        sb.append("requestingCompanyDuns: ").append(requestingCompanyDuns).append(System.lineSeparator());
-        sb.append("requestingCompanyTaxClassificationName: ").append(requestingCompanyTaxClassificationName).append(System.lineSeparator());
-        sb.append("requestingCompanyTaxClassificationCode: ").append(requestingCompanyTaxClassificationCode).append(System.lineSeparator());
-        sb.append("requestingCompanyUrl: ").append(requestingCompanyUrl).append(System.lineSeparator());
-        sb.append("requestingCompanyW8W9: ").append((StringUtils.isNotBlank(requestingCompanyW8W9) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
-        sb.append("requestingCompanyCorporateEmail: ").append(requestingCompanyCorporateEmail).append(System.lineSeparator());
-
-        sb.append("remittanceAddressStreet1: ").append(remittanceAddressStreet1).append(System.lineSeparator());
-        sb.append("remittanceAddressStreet2: ").append(remittanceAddressStreet2).append(System.lineSeparator());
-        sb.append("remittanceAddressCity: ").append(remittanceAddressCity).append(System.lineSeparator());
-        sb.append("remittanceAddressState: ").append(remittanceAddressState).append(System.lineSeparator());
-        sb.append("remittanceAddressCountry: ").append(remittanceAddressCountry).append(System.lineSeparator());
-        sb.append("remittanceAddressZipCode: ").append(remittanceAddressZipCode).append(System.lineSeparator());
-        sb.append("remittanceAddressValidated: ").append((remittanceAddressValidated ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-
-        sb.append("corpAddressStreet1: ").append(corpAddressStreet1).append(System.lineSeparator());
-        sb.append("corpAddressStreet2: ").append(corpAddressStreet2).append(System.lineSeparator());
-        sb.append("corpAddressCity: ").append(corpAddressCity).append(System.lineSeparator());
-        sb.append("corpAddressState: ").append(corpAddressState).append(System.lineSeparator());
-        sb.append("corpAddressCountry: ").append(corpAddressCountry).append(System.lineSeparator());
-        sb.append("corpAddressZipCode: ").append(corpAddressZipCode).append(System.lineSeparator());
-        sb.append("corpAddressValidated: ").append((corpAddressValidated ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-
-        sb.append("bankAcctBankName: ").append(bankAcctBankName).append(System.lineSeparator());
-        sb.append("bankAcctRoutingNumber: ").append((StringUtils.isNotBlank(bankAcctRoutingNumber) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
-        sb.append("bankAcctBankAccountNumber: ").append((StringUtils.isNotBlank(bankAcctBankAccountNumber) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
-        sb.append("bankAcctBankValidationFile: ").append((StringUtils.isNotBlank(bankAcctBankValidationFile) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
-        sb.append("bankAcctAchEmail: ").append(bankAcctAchEmail).append(System.lineSeparator());
-        sb.append("bankAcctType: ").append(bankAcctType).append(System.lineSeparator());
-        sb.append("bankAcctAuthorized: ").append(bankAcctAuthorized).append(System.lineSeparator());
-        sb.append("bankAcctSwiftCode: ").append(bankAcctSwiftCode).append(System.lineSeparator());
-        sb.append("bankAcctNameOnAccount: ").append(bankAcctNameOnAccount).append(System.lineSeparator());
-
-        sb.append("bankAddressStreet1: ").append(bankAddressStreet1).append(System.lineSeparator());
-        sb.append("bankAddressStreet2: ").append(bankAddressStreet2).append(System.lineSeparator());
-        sb.append("bankAddressCity: ").append(bankAddressCity).append(System.lineSeparator());
-        sb.append("bankAddressState: ").append(bankAddressState).append(System.lineSeparator());
-        sb.append("bankAddressCountry: ").append(bankAddressCountry).append(System.lineSeparator());
-        sb.append("bankAddressZipCode: ").append(bankAddressZipCode).append(System.lineSeparator());
-        sb.append("bankAddressValidated: ").append((bankAddressValidated ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        
-        sb.append("taxCountry: ").append(taxCountry).append(System.lineSeparator());
-        sb.append("initiatorNetId: ").append(initiatorNetId).append(System.lineSeparator());
-        sb.append("vendorType: ").append(vendorType).append(System.lineSeparator());
-
-        sb.append("vendorInformationContactName: ").append(vendorInformationContactName).append(System.lineSeparator());
-        sb.append("vendorInformationPhoneNumber: ").append(vendorInformationPhoneNumber).append(System.lineSeparator());
-        sb.append("vendorInformationPhoneExtension: ").append(vendorInformationPhoneExtension).append(System.lineSeparator());
-        sb.append("vendorInformationEmail: ").append(vendorInformationEmail).append(System.lineSeparator());
-
-        sb.append("diverseBusiness: ").append((diverseBusiness ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("diversityClassifications: ").append(diversityClassifications).append(System.lineSeparator());
-        sb.append("minorityStatus: ").append(minorityStatus).append(System.lineSeparator());
-        sb.append("mbeCertificationExpirationDate: ").append(mbeCertificationExpirationDate).append(System.lineSeparator());
-        sb.append("womanOwned: ").append(womanOwned).append(System.lineSeparator());
-        sb.append("wbeCertificationExpirationDate: ").append(wbeCertificationExpirationDate).append(System.lineSeparator());
-        sb.append("disabledVeteran: ").append(disabledVeteran).append(System.lineSeparator());
-        sb.append("veteranCertificationExpirationDate: ").append(veteranCertificationExpirationDate).append(System.lineSeparator());
-
-        sb.append("conflictOfInterest: ").append((conflictOfInterest ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("conflictOfInterestRelationshipToEmployee: ").append(conflictOfInterestRelationshipToEmployee).append(System.lineSeparator());
-        sb.append("conflictOfInterestEmployeeName: ").append(conflictOfInterestEmployeeName).append(System.lineSeparator());
-        sb.append("conflictOfInterestEmployeePhoneNumber: ").append(conflictOfInterestEmployeePhoneNumber).append(System.lineSeparator());
-
-        sb.append("acceptCreditCards: ").append((acceptCreditCards ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("insuranceContactName: ").append(insuranceContactName).append(System.lineSeparator());
-        sb.append("insuranceContactPhoneNumber: ").append(insuranceContactPhoneNumber).append(System.lineSeparator());
-        sb.append("insuranceContactPhoneExtension: ").append(insuranceContactPhoneExtension).append(System.lineSeparator());
-        sb.append("insuranceContactEmail: ").append(insuranceContactEmail).append(System.lineSeparator());
-        sb.append("insuranceCertificate: ").append(insuranceCertificate).append(System.lineSeparator());
-        
-        sb.append("invoicing: ").append((invoicing ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("eInvoiceContactName: ").append(eInvoiceContactName).append(System.lineSeparator());
-        sb.append("eInvoiceContactPhoneNumber: ").append(eInvoiceContactPhoneNumber).append(System.lineSeparator());
-        sb.append("eInvoicePhoneExtension: ").append(eInvoicePhoneExtension).append(System.lineSeparator());
-        sb.append("eInvoiceEmail: ").append(eInvoiceEmail).append(System.lineSeparator());
-        
-        sb.append("poCountryLegacy: ").append(poCountryLegacy).append(System.lineSeparator());
-        sb.append("poUsState: ").append(poUsState).append(System.lineSeparator());
-        sb.append("poAustralianProvince: ").append(poAustralianProvince).append(System.lineSeparator());
-        sb.append("poCanadianProvince: ").append(poCanadianProvince).append(System.lineSeparator());
-        sb.append("poCountryName: ").append(poCountryName).append(System.lineSeparator());
-        sb.append("poStateProvince: ").append(poStateProvince).append(System.lineSeparator());
-        sb.append("poAddress1: ").append(poAddress1).append(System.lineSeparator());
-        sb.append("poAddress2: ").append(poAddress2).append(System.lineSeparator());
-        sb.append("poCity: ").append(poCity).append(System.lineSeparator());
-        sb.append("poPostalCode: ").append(poPostalCode).append(System.lineSeparator());
-        sb.append("poAttention: ").append(poAttention).append(System.lineSeparator());
-
-        sb.append("salesContactName: ").append(salesContactName).append(System.lineSeparator());
-        sb.append("salesContactPhoneNumber: ").append(salesContactPhoneNumber).append(System.lineSeparator());
-        sb.append("salesContactPhoneExtension: ").append(salesContactPhoneExtension).append(System.lineSeparator());
-        sb.append("salesContactEmail: ").append(salesContactEmail).append(System.lineSeparator());
-        
-        sb.append("accountsReceivableContactName: ").append(accountsReceivableContactName).append(System.lineSeparator());
-        sb.append("accountsReceivableContactPhone: ").append(accountsReceivableContactPhone).append(System.lineSeparator());
-        sb.append("accountsReceivableContactPhoneExtension: ").append(accountsReceivableContactPhoneExtension).append(System.lineSeparator());
-        sb.append("accountsReceivableContactEmail: ").append(accountsReceivableContactEmail).append(System.lineSeparator());
-        
-        sb.append("poTransmissionMethod: ").append(poTransmissionMethod).append(System.lineSeparator());
-        sb.append("poFaxNumber: ").append(poFaxNumber).append(System.lineSeparator());
-        sb.append("poEmailAddress: ").append(poEmailAddress).append(System.lineSeparator());
-
-        sb.append("servicesProvided: ").append(servicesProvided).append(System.lineSeparator());
-        sb.append("currentlyPaidThroughPayroll: ").append((currentlyPaidThroughPayroll ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("everPaidThroughPayroll: ").append((everPaidThroughPayroll ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("seperateLegalEntityProvidingServices: ").append((seperateLegalEntityProvidingServices ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("cornellProvidedTrainingOrEquipmentRequired: ").append((cornellProvidedTrainingOrEquipmentRequired ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("informalMarketing: ").append((informalMarketing ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        sb.append("servicesProvidedWithoutInsurance: ").append((servicesProvidedWithoutInsurance ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
-        return sb.toString();
     }
 
 }

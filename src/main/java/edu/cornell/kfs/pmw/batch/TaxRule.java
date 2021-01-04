@@ -6,18 +6,18 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public enum TaxRule {
     INDIVIDUAL_US_SSN(PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString(),
-            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.foreignFormTranslationToKfsOwnershipTypeCode, true, true, false), 
+            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.kfsVendorOwnershipTypeCode, true, true, false), 
     INDIVIDUAL_US_EIN(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(),
-            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.foreignFormTranslationToKfsOwnershipTypeCode, true, false, true), 
+            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.kfsVendorOwnershipTypeCode, true, false, true), 
     NOT_INDIVIDUAL_US(PaymentWorksConstants.PaymentWorksTinType.FEIN.getKfsTaxTypeCodeAsString(), StringUtils.EMPTY, true, false, true),
     FOREIGN_INDIVIDUAL_US_TAX_PAYER(PaymentWorksConstants.PaymentWorksTinType.SSN.getKfsTaxTypeCodeAsString(), 
-            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.foreignFormTranslationToKfsOwnershipTypeCode, false, true, false, 
+            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.kfsVendorOwnershipTypeCode, false, true, false, 
             true, true, PaymentWorksConstants.W8TypeCodes.BN, true),
     FOREIGN_INDIVIDUAL(PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getKfsTaxTypeCodeAsString(), 
-            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.foreignFormTranslationToKfsOwnershipTypeCode, false, true, false, 
+            PaymentWorksConstants.PaymentWorksTaxClassification.INDIVIDUAL_SOLE_PROPRIETOR.kfsVendorOwnershipTypeCode, false, true, false, 
             true, true, PaymentWorksConstants.W8TypeCodes.BN, false),
     FOREIGN_ENTITY(PaymentWorksConstants.PaymentWorksTinType.FOREIGN_TIN.getKfsTaxTypeCodeAsString(), 
-            PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.foreignFormTranslationToKfsOwnershipTypeCode, false, false, true, true, false,
+            PaymentWorksConstants.PaymentWorksTaxClassification.C_CORPORATION.kfsVendorOwnershipTypeCode, false, false, true, true, false,
             PaymentWorksConstants.W8TypeCodes.BE, false),
     OTHER(StringUtils.EMPTY, StringUtils.EMPTY, false, false, false, false, false, StringUtils.EMPTY, false);
 

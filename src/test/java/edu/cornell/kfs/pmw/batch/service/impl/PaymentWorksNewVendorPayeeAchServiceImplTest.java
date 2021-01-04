@@ -17,7 +17,6 @@ import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 
 class PaymentWorksNewVendorPayeeAchServiceImplTest {
     
@@ -44,18 +43,9 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
         pmwVendor = null;
         reportData = null;
     }
-
-    @Test
-    void testIsUsAchBankLegacyForm() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        boolean actualResults = achService.isUsAchBank(pmwVendor, reportData);
-        assertTrue(actualResults);
-        assertEquals(0, reportData.getRecordsThatCouldNotBeProcessedSummary().getRecordCount());
-    }
     
     @Test
-    void testIsUsAchBankForeignFormUsBank() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsUsAchBankUsBank() {
         pmwVendor.setBankAddressCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString());
         boolean actualResults = achService.isUsAchBank(pmwVendor, reportData);
         assertTrue(actualResults);
@@ -63,8 +53,7 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
     
     @Test
-    void testIsUsAchBankForeignFormCanadaBank() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsUsAchBankCanadaBank() {
         pmwVendor.setBankAddressCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getPmwCountryOptionAsString());
         boolean actualIsUsBankAccount = achService.isUsAchBank(pmwVendor, reportData);
         assertFalse(actualIsUsBankAccount);
@@ -83,31 +72,21 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
     
     @Test
-    void testIsAchPaymentMethodLegacyForm() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(false));
-        boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
-        assertTrue(actualAchPaymentMethod);
-    }
-    
-    @Test
-    void testIsAchPaymentMethodForeignFormAch() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsAchPaymentMethodAch() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
         assertTrue(actualAchPaymentMethod);
     }
     
     @Test
-    void testIsAchPaymentMethodForeignFormCheck() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsAchPaymentMethodCheck() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
         assertFalse(actualAchPaymentMethod);
     }
     
     @Test
-    void testIsAchPaymentMethodForeignFormForeignWire() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsAchPaymentMethodForeignWire() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
         pmwVendor.setRequestingCompanyTaxCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getPmwCountryOptionAsString());
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
@@ -115,19 +94,11 @@ class PaymentWorksNewVendorPayeeAchServiceImplTest {
     }
     
     @Test
-    void testIsAchPaymentMethodForeignFormDomesticWire() {
-        achService.setPaymentWorksFormModeService(buildMockPaymentWorksFormModeService(true));
+    void testIsAchPaymentMethodDomesticWire() {
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
         pmwVendor.setRequestingCompanyTaxCountry(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString());
         boolean actualAchPaymentMethod = achService.isAchPaymentMethod(pmwVendor, reportData);
         assertFalse(actualAchPaymentMethod);
-    }
-    
-    private PaymentWorksFormModeService buildMockPaymentWorksFormModeService(boolean shouldUseForeignForm) {
-        PaymentWorksFormModeService formService = Mockito.mock(PaymentWorksFormModeService.class);
-        Mockito.when(formService.shouldUseForeignFormProcessingMode()).thenReturn(shouldUseForeignForm);
-        Mockito.when(formService.shouldUseLegacyFormProcessingMode()).thenReturn(!shouldUseForeignForm);
-        return formService;
     }
     
     private ConfigurationService buildMockConfigurationService() {

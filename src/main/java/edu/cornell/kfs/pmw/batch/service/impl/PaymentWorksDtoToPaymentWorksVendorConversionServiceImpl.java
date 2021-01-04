@@ -26,8 +26,6 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
-import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksAddressBaseDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAccountDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAddressDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksCorpAddressDTO;
@@ -43,7 +41,6 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
-    protected PaymentWorksFormModeService paymentWorksFormModeService;
     
     @Override
     public PaymentWorksVendor createPaymentWorksVendorFromPaymentWorksNewVendorRequestDetailDTO(PaymentWorksNewVendorRequestDetailDTO pmwNewVendorRequestDetailDTO, PaymentWorksNewVendorRequestsBatchReportData reportData) {
@@ -216,14 +213,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
 
     protected String findCustomFieldValue(PaymentWorksCustomFieldDTO customField, PaymentWorksFieldMapping fieldMapping) {
-        String customFieldValue;
-        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            customFieldValue = customField.getField_value();
-        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            customFieldValue = getValueOutOfPaymentWorksCustomFieldDTO(customField, fieldMapping);
-        } else {
-            throw new IllegalArgumentException("Unknown form processing mode.");
-        }
+        String customFieldValue = getValueOutOfPaymentWorksCustomFieldDTO(customField, fieldMapping);
         return customFieldValue;
     }
     
@@ -297,9 +287,5 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-    }
-
-    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
-        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 }
