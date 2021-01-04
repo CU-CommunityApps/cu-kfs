@@ -139,7 +139,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         String payeeTypeCode = paymentInfo.getPayeeTypeCode();
         String payeeId = paymentInfo.getPayeeId();
         boolean isEmployee = false;
-        String convertedPayeeTypeCode;
+        String convertedPayeeTypeCode = payeeTypeCode;
         if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_VENDOR)) {
             VendorDetail vendorDetail = vendorService.getByVendorNumber(payeeId);
             if (ObjectUtils.isNull(vendorDetail) || ObjectUtils.isNull(vendorDetail.getVendorHeader())) {
@@ -154,14 +154,12 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
                 throw new ValidationException(MessageFormat.format(employeeErrorMessage, payeeId));
             } else {
                 isEmployee = true;
-                convertedPayeeTypeCode = payeeTypeCode;
             }
         } else if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_ALUMNI) || StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_STUDENT)) {
             if (ObjectUtils.isNull(personService.getPerson(payeeId))) {
                 String personError = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD);
                 throw new ValidationException(MessageFormat.format(personError, payeeId));
             }
-            convertedPayeeTypeCode = payeeTypeCode;
         } else {
             String payeeTypeCodeErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_TYPE_CODE_BAD);
             throw new ValidationException(MessageFormat.format(payeeTypeCodeErrorMessage, payeeTypeCode));
