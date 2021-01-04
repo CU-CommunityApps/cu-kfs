@@ -24,7 +24,6 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorAchDataProcessingIntoKfsService;
@@ -40,7 +39,6 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     protected PaymentWorksNewVendorPayeeAchReportService paymentWorksNewVendorPayeeAchReportService;
     protected PaymentWorksVendorAchDataProcessingIntoKfsService paymentWorksVendorAchDataProcessingIntoKfsService;
     protected PaymentWorksVendorDao paymentWorksVendorDao;
-    protected PaymentWorksFormModeService paymentWorksFormModeService;
     
     @Override
     public void processKfsPayeeAchAccountsForApprovedAndDisapprovedPmwNewVendors() {
@@ -279,60 +277,49 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     
     protected boolean isUsAchBank(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
         boolean usAchBank = true;
-        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            String bankCountry = pmwVendor.getBankAddressCountry();
-            if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
-                    bankCountry)) {
-                LOG.debug("isUsAchBank, found an ACH record that has a US country, it is OK to proceed.");
-            } else {
-                LOG.info("isUsAchBank, the bank has a country of " + bankCountry + " so can NOT create an ACH record.");
-                reportData.getRecordsWithForeignAchSummary().incrementRecordCount();
-                List<String> errorMessages = new ArrayList<String>();
-                errorMessages.add(MessageFormat.format(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_BANK_NOT_US), 
-                        bankCountry));
-                reportData.addForeignAchItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
-                        errorMessages));
-                usAchBank = false;
-            }
+        String bankCountry = pmwVendor.getBankAddressCountry();
+        if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
+                bankCountry)) {
+            LOG.debug("isUsAchBank, found an ACH record that has a US country, it is OK to proceed.");
         } else {
-            LOG.debug("isUsAchBank, not in foreign form mode, so just return true.");
+            LOG.info("isUsAchBank, the bank has a country of " + bankCountry + " so can NOT create an ACH record.");
+            reportData.getRecordsWithForeignAchSummary().incrementRecordCount();
+            List<String> errorMessages = new ArrayList<String>();
+            errorMessages.add(MessageFormat.format(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_BANK_NOT_US), 
+                    bankCountry));
+            reportData.addForeignAchItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                    errorMessages));
+            usAchBank = false;
         }
         return usAchBank;
     }
     
     protected boolean isAchPaymentMethod(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
-        if (paymentWorksFormModeService.shouldUseLegacyFormProcessingMode()) {
-            LOG.debug("isAchPaymentMethod, legacy form mode, just return true");
+        if (StringUtils.equalsIgnoreCase(pmwVendor.getPaymentMethod(), PaymentWorksConstants.PaymentWorksPaymentMethods.ACH)) {
+            LOG.debug("isAchPaymentMethod, found an ACH payment method, return true.");
             return true;
-        } else if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            if (StringUtils.equalsIgnoreCase(pmwVendor.getPaymentMethod(), PaymentWorksConstants.PaymentWorksPaymentMethods.ACH)) {
-                LOG.debug("isAchPaymentMethod, found an ACH payment method, return true.");
-                return true;
-            } else {
-                if (StringUtils.equalsIgnoreCase(pmwVendor.getPaymentMethod(), PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE)) {
-                    List<String> errorMessages = new ArrayList<String>();
-                    if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
-                            pmwVendor.getRequestingCompanyTaxCountry())) {
-                        LOG.debug("isAchPaymentMethod, found a domestic WIRE payment method, return false.");
-                        reportData.getRecordsWithPaymentMethodWireDomesticSummary().incrementRecordCount();
-                        errorMessages.add(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_DOMESTIC_WIRE_VENDOR_ACH));
-                        reportData.addPaymentWireDomesticItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
-                                errorMessages));
-                    } else {
-                        LOG.debug("isAchPaymentMethod, found a foreign WIRE payment method, return false.");
-                        reportData.getRecordsWithPaymentMethodWireForeignSummary().incrementRecordCount();
-                        errorMessages.add(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_FOREIGN_WIRE_VENDOR_ACH));
-                        reportData.addPaymentWireForeignItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
-                                errorMessages));
-                    }
-                } else {
-                    LOG.error("isAchPaymentMethod, We should only see wire or ACH payment methods hitting this function, found an unexpected method: " 
-                            + pmwVendor.getPaymentMethod());
-                }
-                return false;
-            }
         } else {
-            throw new IllegalStateException("Invalid form mode");
+            if (StringUtils.equalsIgnoreCase(pmwVendor.getPaymentMethod(), PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE)) {
+                List<String> errorMessages = new ArrayList<String>();
+                if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString(), 
+                        pmwVendor.getRequestingCompanyTaxCountry())) {
+                    LOG.debug("isAchPaymentMethod, found a domestic WIRE payment method, return false.");
+                    reportData.getRecordsWithPaymentMethodWireDomesticSummary().incrementRecordCount();
+                    errorMessages.add(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_DOMESTIC_WIRE_VENDOR_ACH));
+                    reportData.addPaymentWireDomesticItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                            errorMessages));
+                } else {
+                    LOG.debug("isAchPaymentMethod, found a foreign WIRE payment method, return false.");
+                    reportData.getRecordsWithPaymentMethodWireForeignSummary().incrementRecordCount();
+                    errorMessages.add(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_FOREIGN_WIRE_VENDOR_ACH));
+                    reportData.addPaymentWireForeignItem(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
+                            errorMessages));
+                }
+            } else {
+                LOG.error("isAchPaymentMethod, We should only see wire or ACH payment methods hitting this function, found an unexpected method: " 
+                        + pmwVendor.getPaymentMethod());
+            }
+            return false;
         }
     }
     
@@ -530,10 +517,6 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
 
     public void setPaymentWorksNewVendorPayeeAchReportService(PaymentWorksNewVendorPayeeAchReportService paymentWorksNewVendorPayeeAchReportService) {
         this.paymentWorksNewVendorPayeeAchReportService = paymentWorksNewVendorPayeeAchReportService;
-    }
-
-    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
-        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 
 }

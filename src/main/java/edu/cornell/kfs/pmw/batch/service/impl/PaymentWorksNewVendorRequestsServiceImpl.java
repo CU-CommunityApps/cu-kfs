@@ -28,7 +28,6 @@ import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
@@ -49,7 +48,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     protected PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
     protected PaymentWorksIsoFipsCountryDao paymentWorksIsoFipsCountryDao;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
-    protected PaymentWorksFormModeService paymentWorksFormModeService;
     
     protected Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap = null; 
     protected Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap = null;
@@ -190,21 +188,19 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY, errorMessages) 
                 && allValidationPassed;
         
-        if (paymentWorksFormModeService.shouldUseForeignFormProcessingMode()) {
-            if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getDateOfBirth())) {
-                allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getDateOfBirth(), 
-                        getConfigurationService().getPropertyValueAsString(
-                                PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION), 
-                        PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_YYYY_SLASH_MM_SLASH_DD, errorMessages) 
-                        && allValidationPassed;
-            }
-            if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getW8SignedDate())) {
-                allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getW8SignedDate(), 
-                        getConfigurationService().getPropertyValueAsString(
-                                PaymentWorksKeyConstants.ERROR_W8_SIGNED_DATE_DESCRIPTION),
-                        PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_YYYY_SLASH_MM_SLASH_DD, errorMessages) 
-                        && allValidationPassed;
-            }
+        if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getDateOfBirth())) {
+            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getDateOfBirth(), 
+                    getConfigurationService().getPropertyValueAsString(
+                            PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION), 
+                    PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_YYYY_SLASH_MM_SLASH_DD, errorMessages) 
+                    && allValidationPassed;
+        }
+        if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getW8SignedDate())) {
+            allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getW8SignedDate(), 
+                    getConfigurationService().getPropertyValueAsString(
+                            PaymentWorksKeyConstants.ERROR_W8_SIGNED_DATE_DESCRIPTION),
+                    PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_YYYY_SLASH_MM_SLASH_DD, errorMessages) 
+                    && allValidationPassed;
         }
         
         return allValidationPassed;
@@ -471,10 +467,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
 
     public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
         this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
-    }
-
-    public void setPaymentWorksFormModeService(PaymentWorksFormModeService paymentWorksFormModeService) {
-        this.paymentWorksFormModeService = paymentWorksFormModeService;
     }
 
 }

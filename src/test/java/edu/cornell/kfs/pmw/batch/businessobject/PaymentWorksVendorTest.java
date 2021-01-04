@@ -8,10 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksFormModeService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 class PaymentWorksVendorTest {
     private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorTest.class);
@@ -25,6 +24,10 @@ class PaymentWorksVendorTest {
         pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyDesc(REQUESTING_COMPANY_DESCRIPTION);
         pmwVendor.setRequestingCompanyTin("123232");
+        pmwVendor.setRequestingCompanyW8W9("w8w9");
+        pmwVendor.setBankAcctRoutingNumber("566");
+        pmwVendor.setBankAcctBankAccountNumber("0998");
+        pmwVendor.setBankAcctBankValidationFile("bankaccoountfile.pdf");
     }
 
     @AfterEach
@@ -33,35 +36,27 @@ class PaymentWorksVendorTest {
     }
 
     @Test
-    void testToStringForign() {
-        pmwVendor.setPaymentWorksFormModeService(BuildMockPaymentWorksFormModeService(true));
+    void testToString() {
         String actualToString = pmwVendor.toString();
         LOG.info("testToStringForign: " + actualToString);
-        checkToStringValue(actualToString, "=");
+        
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_TIN);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_W8_W9);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_ROUTING_NUMBER);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_ACCOUNT_NUMBER);
+        assertRestrictedFieldFormattedCorrectly(actualToString, PaymentWorksConstants.PaymentWorksVendorFieldName.BANK_ACCOUNT_BANK_VALIDATION_FILE);
+        
+        
+        assertTrue("Should find the requesting company description", StringUtils.contains(actualToString, "requestingCompanyDesc" + 
+                CUKFSConstants.EQUALS_SIGN + REQUESTING_COMPANY_DESCRIPTION));
+        
+        assertTrue("Should find the informal marketing ", StringUtils.contains(actualToString, "informalMarketing" + 
+                CUKFSConstants.EQUALS_SIGN + "false"));
     }
     
-    @Test
-    void testToStringLegacy() {
-        pmwVendor.setPaymentWorksFormModeService(BuildMockPaymentWorksFormModeService(false));
-        String actualToString = pmwVendor.toString();
-        LOG.info("testToStringLegacy: " + actualToString);
-        checkToStringValue(actualToString, ": ");
-    }
-    
-    private void checkToStringValue(String toStringValue, String connector) {
-        assertTrue("Should find the requesting company TIN", StringUtils.contains(toStringValue, "requestingCompanyTin" + 
-                connector + PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT));
-        assertTrue("Should find the requesting company description", StringUtils.contains(toStringValue, "requestingCompanyDesc" + 
-                connector + REQUESTING_COMPANY_DESCRIPTION));
-        assertTrue("Should find the informal marketing ", StringUtils.contains(toStringValue, "informalMarketing" + 
-                connector + "false"));
-    }
-    
-    private PaymentWorksFormModeService BuildMockPaymentWorksFormModeService(boolean useForeign) {
-        PaymentWorksFormModeService service = Mockito.mock(PaymentWorksFormModeService.class);
-        Mockito.when(service.shouldUseForeignFormProcessingMode()).thenReturn(useForeign);
-        Mockito.when(service.shouldUseLegacyFormProcessingMode()).thenReturn(!useForeign);
-        return service;
+    private void assertRestrictedFieldFormattedCorrectly(String toStringValue, String searchField) {
+        String searchString = searchField + CUKFSConstants.EQUALS_SIGN + PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT;
+        assertTrue("Should find restricted value for " + searchField, StringUtils.contains(toStringValue, searchString));
     }
 
 }

@@ -7,7 +7,6 @@ import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
@@ -16,11 +15,8 @@ public class PaymentWorksConstants {
     public static final String PAYMENTWORKS_NAMESPACE_CODE = "KFS-PMW";
     public static final String PAYMENTWORKS_WEB_SERVICE_GROUP_CODE = "PMW";
 
-    public static final String OUTPUT_ATTRIBUTE_BEGIN_DELIMITER = ":<";
-    public static final String OUTPUT_ATTRIBUTE_END_DELIMITER = "> ";
     public static final String OUTPUT_RESTRICTED_DATA_PRESENT = "RestrictedDataPresent";
 
-    public final static String DIVERSITY_EXPIRATION_DATE_CERTIFIED = "Certified";
     public final static String REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = "^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$";
     public final static Pattern PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = Pattern.compile(REGEX_FOR_MM_SLASH_DD_SLASH_YYYY);
     public final static String REGEX_FOR_YYYY_SLASH_MM_SLASH_DD = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$";
@@ -28,8 +24,6 @@ public class PaymentWorksConstants {
     
     public static final String NULL_STRING = "NULL";
     public static final String SUPPLIER_UPLOAD_DELETE_INDICATOR = "DEL";
-    
-    public static final String FOREIGN_FORM_PROCESSING_NOT_IMPLEMENTED_LOG_MESSAGE = "PMW foreign mode processing not implemented yet.";
     
     public static final String SUPPLIER_CATEGORY_INDIVIDUAL = "Individual";
     public static final String SUPPLIER_CATEGORY_ENTITY = "Entity";
@@ -73,21 +67,6 @@ public class PaymentWorksConstants {
     
     public static final class PaymentWorksVendorType {
         public static final String PURCHASE_ORDER = "Purchase Order";
-    }
-    
-    public static final class PaymentWorksNewVendorTaxBusinessRule {
-        //INDIVIDUAL means "Individual, sole proprietor or single-member LLC" = Yes
-        //NOT_INDIVIDUAL means "Individual, sole proprietor or single-member LLC" = No
-        public static final int INDIVIDUAL_US_SSN = 1;
-        public static final int INDIVIDUAL_US_EIN = 2;
-        public static final int NOT_INDIVIDUAL_US = 3;
-        public static final int INDIVIDUAL_NOT_US_SSN_OR_ITIN_TAX_CLASS_INDIVIDUAL = 41;
-        public static final int INDIVIDUAL_NOT_US_SSN_OR_ITIN_TAX_CLASS_OTHER = 42;  //Generate error when encountered
-        public static final int INDIVIDUAL_NOT_US_FOREIGN_TAX_CLASS_INDIVIDUAL = 51;
-        public static final int INDIVIDUAL_NOT_US_FOREIGN_TAX_CLASS_OTHER = 52;  //Generate error when encountered
-        public static final int NOT_INDIVIDUAL_NOT_US_EIN = 6;
-        public static final int NOT_INDIVIDUAL_NOT_US_FOREIGN = 7;
-        public static final int COULD_NOT_DETERMINE_TAX_RULE_TO_USE = -1;
     }
     
     public static final class KFSVendorMaintenaceDocumentConstants {
@@ -238,32 +217,23 @@ public class PaymentWorksConstants {
         PARTNERSHIP(PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "Partnership", VendorOwnershipTypeCodes.PARTNERSHIP),
         TRUST_ESTATE(TRUST_ESTATE_TAX_CLASSIFICATION_INDICATOR, "Trust/estate", VendorOwnershipTypeCodes.ESTATE_TRUST), 
         LLC_TAXED_AS_C_CORPORATION(LLC_TAXED_AS_C_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as C Corporation", 
-        		VendorOwnershipTypeCodes.C_CORPORATION, VendorOwnershipTypeCodes.C_CORPORATION) ,
+        		VendorOwnershipTypeCodes.C_CORPORATION) ,
         LLC_TAXED_AS_S_CORPORATION(LLC_TAXED_AS_S_CORPORATION_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as S Corporation", 
-        		VendorOwnershipTypeCodes.S_CORPORATION, VendorOwnershipTypeCodes.S_CORPORATION),
+        		VendorOwnershipTypeCodes.S_CORPORATION),
         LLC_TAXED_AS_PARTNERSHIP(LLC_TAXED_AS_PARTNERSHIP_TAX_CLASSIFICATION_INDICATOR, "LLC taxed as Partnership", 
-        		VendorOwnershipTypeCodes.PARTNERSHIP, VendorOwnershipTypeCodes.PARTNERSHIP),
+        		VendorOwnershipTypeCodes.PARTNERSHIP),
         OTHER(OTHER_TAX_CLASSIFICATION_INDICATOR, "Other", "OT");
         
         public final int pmwCode;
         public final String pmwDescription;
-        public final String legacyFormTranslationToKfsOwnershipTypeCode;
-        public final String foreignFormTranslationToKfsOwnershipTypeCode;
+        public final String kfsVendorOwnershipTypeCode;
         
-        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String legacyFormTranslationToKfsOwnershipTypeCode) {
+        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String kfsVendorOwnershipTypeCode) {
             this.pmwCode = pmwCode;
             this.pmwDescription = pmwDescription;
-            this.legacyFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
-            this.foreignFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
+            this.kfsVendorOwnershipTypeCode = kfsVendorOwnershipTypeCode;
         }
         
-        private PaymentWorksTaxClassification(int pmwCode, String pmwDescription, String legacyFormTranslationToKfsOwnershipTypeCode, 
-        		String foreignFormTranslationToKfsOwnershipTypeCode) {
-            this.pmwCode = pmwCode;
-            this.pmwDescription = pmwDescription;
-            this.legacyFormTranslationToKfsOwnershipTypeCode = legacyFormTranslationToKfsOwnershipTypeCode;
-            this.foreignFormTranslationToKfsOwnershipTypeCode = foreignFormTranslationToKfsOwnershipTypeCode;
-        }
         
         public static PaymentWorksTaxClassification findPaymentWorksTaxClassification(int requestingCompanyTaxClassificationCode) {
             for (PaymentWorksTaxClassification classification : PaymentWorksTaxClassification.values()) {
@@ -272,22 +242,6 @@ public class PaymentWorksConstants {
                 }
             }
             throw new IllegalArgumentException("Unable to find a tax classficaiton for code " + requestingCompanyTaxClassificationCode);
-        }
-    }
-    
-    public enum PaymentWorksGoodsVsServicesOptions {
-        GOODS("Goods"),
-        SERVICES("Services"),
-        GOODS_WITH_SERVICES("Goods with a service component");
-        
-        public final String optionValueAsString;
-        
-        private PaymentWorksGoodsVsServicesOptions(String optionValueAsString) {
-            this.optionValueAsString = optionValueAsString;
-        }
-        
-        public String getOptionValueAsString() {
-            return optionValueAsString;
         }
     }
     
@@ -447,6 +401,15 @@ public class PaymentWorksConstants {
         public static final String ACH = "ACH";
         public static final String WIRE = "Wire";
         public static final String CHECK = "Check";
+    }
+    
+    public final class PaymentWorksVendorFieldName {
+        public static final String REQUESTING_COMPANY_TIN = "requestingCompanyTin";
+        public static final String REQUESTING_COMPANY_W8_W9 = "requestingCompanyW8W9";
+        public static final String BANK_ACCOUNT_ROUTING_NUMBER = "bankAcctRoutingNumber";
+        public static final String BANK_ACCOUNT_BANK_ACCOUNT_NUMBER = "bankAcctBankAccountNumber";
+        public static final String BANK_ACCOUNT_BANK_VALIDATION_FILE = "bankAcctBankValidationFile";
+        
     }
 
 }
