@@ -82,7 +82,8 @@ public final class CreditMemoStatuses {
         IN_PROCESS(CreditMemoStatuses.APPDOC_IN_PROCESS, true),
         AWAITING_ACCOUNTS_PAYABLE_REVIEW(CreditMemoStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),
         // CU Customization: Added PAYMENT_METHOD_REVIEW constant
-        PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false), 
+        PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false),
+        // End CU Customization
         COMPLETE(CreditMemoStatuses.APPDOC_COMPLETE, false);
 
         private String statusCode;

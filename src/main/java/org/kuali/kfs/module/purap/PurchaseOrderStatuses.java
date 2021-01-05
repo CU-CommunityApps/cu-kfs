@@ -75,6 +75,7 @@ public final class PurchaseOrderStatuses {
     public static final String NODE_COMMODITY_CODE_REVIEW = "Commodity";
     // CU Customization: Added new CommodityAPO node
     public static final String NODE_COMMODITY_CODE_APO_REVIEW = "CommodityAPO";
+    // End CU Customization
     public static final String NODE_CONTRACTS_AND_GRANTS_REVIEW = "Award";
     public static final String NODE_BUDGET_OFFICE_REVIEW = "Budget";
     public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
@@ -146,6 +147,7 @@ public final class PurchaseOrderStatuses {
         poAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
         // CU Customization: Added mapping for NODE_COMMODITY_CODE_APO_REVIEW
         poAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
+        // End CU Customization
         poAppDocStatusMap.put(NODE_CONTRACTS_AND_GRANTS_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_CG_APPROVAL);
         poAppDocStatusMap.put(NODE_BUDGET_OFFICE_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_BUDGET);
         poAppDocStatusMap.put(NODE_VENDOR_TAX_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_TAX);
@@ -157,6 +159,7 @@ public final class PurchaseOrderStatuses {
         poAppDocStatusMap.put(RequisitionStatuses.NODE_ORG_REVIEW, RequisitionStatuses.APPDOC_DAPRVD_CHART);
         poAppDocStatusMap.put(RequisitionStatuses.NODE_ACCOUNT, RequisitionStatuses.APPDOC_DAPRVD_FISCAL);
         poAppDocStatusMap.put(RequisitionStatuses.NODE_SUBACCOUNT,  RequisitionStatuses.APPDOC_DAPRVD_SUB_ACCT);
+        // End CU Customization
 
         return poAppDocStatusMap;
     }
