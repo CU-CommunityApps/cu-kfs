@@ -595,6 +595,37 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(),
             CuDisbursementVoucherDocumentFixture.JOHN_DOE_DV_DETAIL),
     
+    DV_DOC_VENDOR_TEST1(1, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            "Test Vendor", "This is only a test document!", "ABYZ1290",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(),
+            items(),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
+            CuDisbursementVoucherDocumentFixture.XYZ_INDUSTRIES_DV_DETAIL),
+    DV_DOC_VENDOR_TEST2(2, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            "Test Vendor Person", "This is another test document!", "ABYZ1291",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(),
+            items(),
+            notes("This is a sample note"),
+            adHocRecipients(),
+            backupLinks(),
+            CuDisbursementVoucherDocumentFixture.REE_PHUND_DV_DETAIL),
+    
     SINGLE_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
@@ -822,7 +853,7 @@ public enum AccountingXmlDocumentEntryFixture {
             dvDoc.setDisbVchrBankCode(dvDetails.bankCode);
             dvDoc.setDisbVchrContactPersonName(dvDetails.contactName);
             dvDoc.getDvPayeeDetail().setDisbVchrPaymentReasonCode(dvDetails.paymentReasonCode);
-            dvDoc.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(dvDetails.payeeTypeCode);
+            dvDoc.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(dvDetails.getMappedPayeeTypeCode());
             dvDoc.getDvNonEmployeeTravel().setDisbVchrPerdiemRate(dvDetails.perdiemRate);
             dvDoc.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(dvDetails.nonEmployeeTravelerName);
             dvDoc.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(dvDetails.nonEmployeeCarMileage);

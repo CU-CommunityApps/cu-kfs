@@ -197,6 +197,11 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.DV_DOC_TEST1,
                     AccountingXmlDocumentEntryFixture.DV_DOC_TEST2)),
+    DV_DOCUMENT_VENDOR_TEST(
+            "12/22/2020", "xyz789@cornell.edu", "Example DV XML file with vendors",
+            documents(
+                    AccountingXmlDocumentEntryFixture.DV_DOC_VENDOR_TEST1,
+                    AccountingXmlDocumentEntryFixture.DV_DOC_VENDOR_TEST2)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(

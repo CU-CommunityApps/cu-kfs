@@ -936,6 +936,7 @@
         <property name="vendorService" ref="vendorService"/>
         <property name="businessObjectService" ref="businessObjectService"/>
         <property name="cuDisbursementVoucherDefaultDueDateService" ref="cuDisbursementVoucherDefaultDueDateService"/>
+        <property name="cuDisbursementVoucherPayeeService" ref="disbursementVoucherPayeeService"/>
     </bean>
 
     <bean id="AccountingDocumentGenerator_AV" class="edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator">

@@ -67,5 +67,6 @@ public interface CuDisbursementVoucherPayeeService extends org.kuali.kfs.fp.docu
 public DisbursementPayee getPayeeFromPerson(Person personDetail,
         String payeeTypeCode);
 
-   
+    public String getPayeeTypeCodeForVendorType(String vendorTypeCode);
+
 }
