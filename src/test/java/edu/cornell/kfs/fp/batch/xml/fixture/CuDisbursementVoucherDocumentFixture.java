@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -9,21 +8,31 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.fp.batch.service.impl.fixture.DocGenVendorFixture;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
+import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum CuDisbursementVoucherDocumentFixture {
     EMPTY(),
     JANE_DOE_DV_DETAIL("DISB", "Doe, Jane", "X", "E", 50, "Freeville", "Jane Doe", 25, "7/24/2018", StringUtils.EMPTY, null,
+            TestUserFixture.TEST_USER,
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING),
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER)),
     JOHN_DOE_DV_DETAIL("DISB", "Doe, John", "X", "E", 50, "Freeville", "John Doe", 25, StringUtils.EMPTY, "04/15/2020", "12321",
+            TestUserFixture.TEST_USER,
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
                     CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING), 
             buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
-                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER));
+                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER)),
+    XYZ_INDUSTRIES_DV_DETAIL("DISB", "Wyzee, Eks", "R", "V", -1, null, null, null, "12/28/2020", null, null,
+            DocGenVendorFixture.XYZ_INDUSTRIES,
+            buildExpenseFixtureArray(), buildExpenseFixtureArray()),
+    REE_PHUND_DV_DETAIL("DISB", "Smith, Jack", "F", "V", -1, null, null, null, "12/29/2020", "12/22/2020", "123123",
+            DocGenVendorFixture.REE_PHUND,
+            buildExpenseFixtureArray(), buildExpenseFixtureArray());
     
     public final String bankCode;
     public final String contactName;
@@ -36,6 +45,7 @@ public enum CuDisbursementVoucherDocumentFixture {
     public final DateTime dueDate;
     public final DateTime invoiceDate;
     public final String invoiceNumber;
+    public final Enum<?> payee;
     public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerExpense;
     public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerPrepaidExpense;
     
@@ -53,21 +63,23 @@ public enum CuDisbursementVoucherDocumentFixture {
         this.dueDate = calculateDefaultDueDate();
         this.invoiceDate = null;
         this.invoiceNumber = StringUtils.EMPTY;
+        this.payee = null;
     }
     
     private CuDisbursementVoucherDocumentFixture(String bankCode, String contactName, String paymentReasonCode, String payeeTypeCode, double perdiemRate, 
             String conferenceDestination,  String nonEmployeeTravelerName, Integer nonEmployeeCarMileage, String dueDateString, String invoiceDateString, 
-            String invoiceNumber, 
+            String invoiceNumber, Enum<?> payee, 
             CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTravelerExpenseArray,
             CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTravelerPrepaidExpenseArray) {
         this.bankCode = bankCode;
         this.contactName = contactName;
         this.paymentReasonCode = paymentReasonCode;
         this.payeeTypeCode = payeeTypeCode;
-        this.perdiemRate = new KualiDecimal(perdiemRate);
+        this.perdiemRate = perdiemRate >= 0 ? new KualiDecimal(perdiemRate) : null;
         this.conferenceDestination = conferenceDestination;
         this.nonEmployeeTravelerName = nonEmployeeTravelerName;
         this.nonEmployeeCarMileage = nonEmployeeCarMileage;
+        this.payee = payee;
         this.nonEmployeeTravelerExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerExpenseArray);
         this.nonEmployeeTravelerPrepaidExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerPrepaidExpenseArray);
         if (StringUtils.isNotEmpty(dueDateString)) {
@@ -81,6 +93,17 @@ public enum CuDisbursementVoucherDocumentFixture {
         } else {
             this.invoiceDate = null;
         }
+    }
+    
+    public String getMappedPayeeTypeCode() {
+        if (payee != null) {
+            if (payee instanceof TestUserFixture) {
+                return payeeTypeCode;
+            } else if (payee instanceof DocGenVendorFixture) {
+                return ((DocGenVendorFixture) payee).payeeTypeCode;
+            }
+        }
+        return null;
     }
     
     private static DateTime calculateDefaultDueDate() {

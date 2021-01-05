@@ -182,4 +182,12 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
 
         return entityId;
     }
+
+    @Override
+    public String getPayeeTypeCodeForVendorType(String vendorTypeCode) {
+        if (StringUtils.isBlank(vendorTypeCode)) {
+            return null;
+        }
+        return getVendorPayeeTypeCodeMapping().get(vendorTypeCode);
+    }
 }
