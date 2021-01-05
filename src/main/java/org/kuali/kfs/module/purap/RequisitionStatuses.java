@@ -31,22 +31,26 @@ public final class RequisitionStatuses {
     public static final String APPDOC_AWAIT_HAS_ACCOUNTING_LINES = "Awaiting Accounting Lines";
     public static final String APPDOC_AWAIT_SUB_ACCT_REVIEW = "Awaiting Sub Account";
     public static final String APPDOC_AWAIT_CHART_REVIEW = "Awaiting Base Org Review";
+    // CU Customization: Changed doc status name to Awaiting Commodity Review
     public static final String APPDOC_AWAIT_COMMODITY_CODE_REVIEW = "Awaiting Commodity Review";
     public static final String APPDOC_AWAIT_SEP_OF_DUTY_REVIEW = "Awaiting Separation of Duties";
     public static final String APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN = "Awaiting Contract Manager Assignment";
-    
+
+    // CU Customization: Added new Disapproved Award status
     public static final String APPDOC_DAPRVD_AWARD = "Disapproved Award";
     public static final String APPDOC_DAPRVD_CONTENT = "Disapproved Content";
     public static final String APPDOC_DAPRVD_HAS_ACCOUNTING_LINES = "Disapproved Accounting Lines";
     public static final String APPDOC_DAPRVD_SUB_ACCT = "Disapproved Sub Account";
     public static final String APPDOC_DAPRVD_FISCAL = "Disapproved Fiscal";
     public static final String APPDOC_DAPRVD_CHART = "Disapproved Base Org Review";
+    // CU Customization: Changed doc status name to Disapproved Commodity Review
     public static final String APPDOC_DAPRVD_COMMODITY_CODE = "Disapproved Commodity Review";
     public static final String APPDOC_DAPRVD_SEP_OF_DUTY = "Disapproved Separation of Duties";
     public static final String APPDOC_DAPRVD_AD_HOC = "Disapproved Ad Hoc";
-    
+
     // Node Name Declarations
-    public static final String NODE_AWARD= "Award";
+    // CU Customization: Added new Award node
+    public static final String NODE_AWARD = "Award";
     public static final String NODE_CONTENT_REVIEW = "Organization";
     public static final String NODE_SUBACCOUNT = "SubAccount";
     public static final String NODE_SEPARATION_OF_DUTIES = "SeparationOfDuties";
@@ -54,6 +58,7 @@ public final class RequisitionStatuses {
     public static final String NODE_HAS_ACCOUNTING_LINES = "Initiator";
     public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
     public static final String NODE_COMMODITY_CODE_REVIEW = "Commodity";
+    // CU Customization: Added new CommodityAPO node
     public static final String NODE_COMMODITY_CODE_APO_REVIEW = "CommodityAPO";
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
 
@@ -77,6 +82,7 @@ public final class RequisitionStatuses {
         appDocStatusMap.put(APPDOC_AWAIT_COMMODITY_CODE_REVIEW, APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_SEP_OF_DUTY_REVIEW, APPDOC_AWAIT_SEP_OF_DUTY_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN, APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN);
+        // CU Customization: Added mapping for APPDOC_DAPRVD_AWARD
         appDocStatusMap.put(APPDOC_DAPRVD_AWARD, APPDOC_DAPRVD_AWARD);
         appDocStatusMap.put(APPDOC_DAPRVD_CONTENT, APPDOC_DAPRVD_CONTENT);
         appDocStatusMap.put(APPDOC_DAPRVD_HAS_ACCOUNTING_LINES, APPDOC_DAPRVD_HAS_ACCOUNTING_LINES);
@@ -93,6 +99,7 @@ public final class RequisitionStatuses {
         HashMap<String, String> reqAppDocStatusMap;
 
         reqAppDocStatusMap = new HashMap<>();
+        // CU Customization: Added mapping for NODE_AWARD
         reqAppDocStatusMap.put(NODE_AWARD, APPDOC_DAPRVD_AWARD);
         reqAppDocStatusMap.put(NODE_CONTENT_REVIEW, APPDOC_DAPRVD_CONTENT);
         reqAppDocStatusMap.put(NODE_HAS_ACCOUNTING_LINES, APPDOC_DAPRVD_HAS_ACCOUNTING_LINES);
@@ -100,6 +107,7 @@ public final class RequisitionStatuses {
         reqAppDocStatusMap.put(NODE_ACCOUNT, APPDOC_DAPRVD_FISCAL);
         reqAppDocStatusMap.put(NODE_ORG_REVIEW, APPDOC_DAPRVD_CHART);
         reqAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);
+        // CU Customization: Added mapping for NODE_COMMODITY_CODE_APO_REVIEW
         reqAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);
         reqAppDocStatusMap.put(NODE_SEPARATION_OF_DUTIES, APPDOC_DAPRVD_SEP_OF_DUTY);
         reqAppDocStatusMap.put(APPDOC_IN_PROCESS, APPDOC_IN_PROCESS);
