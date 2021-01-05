@@ -31,6 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReaderBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -76,19 +79,15 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
 
         List<String> headerList = getCsvHeaderList();
         Object parsedContents;
-        try {
-            // validate csv header
-            ByteArrayInputStream validateFileContents = new ByteArrayInputStream(fileByteContent);
-            validateCSVFileInput(headerList, validateFileContents);
 
-            //use csv reader to parse the csv content
-            CSVReader csvReader = new CSVReader(
-                    new InputStreamReader(new ByteArrayInputStream(fileByteContent), StandardCharsets.UTF_8),
-                    ',', '"', '|');
+        validateCSVHeader(fileByteContent, headerList);
+
+        final CSVParser csvParser = new CSVParserBuilder().withSeparator(',').withQuoteChar('"').withEscapeChar('|').build();
+        try (
+                final InputStreamReader inputStreamReader = new InputStreamReader(new ByteArrayInputStream(fileByteContent), StandardCharsets.UTF_8);
+                final CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withSkipLines(1).withCSVParser(csvParser).build();
+        ) {
             List<String[]> dataList = csvReader.readAll();
-
-            //remove first header line
-            dataList.remove(0);
 
             //parse and create List of Maps base on enum value names as map keys
             List<Map<String, String>> dataMapList = new ArrayList<>();
@@ -113,6 +112,15 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
         return convertParsedObjectToVO(parsedContents);
     }
 
+    protected void validateCSVHeader(byte[] fileByteContent, List<String> headerList) throws ParseException {
+        try (ByteArrayInputStream validateFileContents = new ByteArrayInputStream(fileByteContent)) {
+            validateCSVFileInput(headerList, validateFileContents);
+        } catch (IOException ex) {
+            LOG.error("validateCSVHeader: " + ex.getMessage(), ex);
+            throw new ParseException(ex.getMessage(), ex);
+        }
+    }
+
     /**
      * Validates the CSV file content against the CSVEnum items as header
      * 1. content header must match CSVEnum order/value
@@ -125,23 +133,27 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
     protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws
             IOException {
         //use csv reader to parse the csv content
-        CSVReader csvReader = new CSVReader(new InputStreamReader(fileContents, StandardCharsets.UTF_8));
-        List<String> inputHeaderList = Arrays.asList(csvReader.readNext());
+        try (
+                final InputStreamReader inputStreamReader = new InputStreamReader(fileContents, StandardCharsets.UTF_8);
+                final CSVReader csvReader = new CSVReader(inputStreamReader);
+        ) {
+            List<String> inputHeaderList = Arrays.asList(csvReader.readNext());
 
-        String errorMessage;
+            String errorMessage;
 
-        if (!CollectionUtils.isEqualCollection(expectedHeaderList, inputHeaderList)) {
-            errorMessage = "CSV Batch Input File contains incorrect number of headers";
-            //collection has same elements, now check the exact content orders by looking at the toString comparisons
-        } else if (!expectedHeaderList.equals(inputHeaderList)) {
-            errorMessage = "CSV Batch Input File headers are different";
-        } else {
-        		errorMessage = validateDetailRowsContainExpectedNumberOfFields(expectedHeaderList, csvReader);
-        }
+            if (!CollectionUtils.isEqualCollection(expectedHeaderList, inputHeaderList)) {
+                errorMessage = "CSV Batch Input File contains incorrect number of headers";
+                //collection has same elements, now check the exact content orders by looking at the toString comparisons
+            } else if (!expectedHeaderList.equals(inputHeaderList)) {
+                errorMessage = "CSV Batch Input File headers are different";
+            } else {
+                errorMessage = validateDetailRowsContainExpectedNumberOfFields(expectedHeaderList, csvReader);
+            }
 
-        if (errorMessage != null) {
-            LOG.error(errorMessage);
-            throw new ParseException(errorMessage);
+            if (errorMessage != null) {
+                LOG.error(errorMessage);
+                throw new ParseException(errorMessage);
+            }
         }
     }
     
