@@ -178,9 +178,9 @@ public class CuEinvoiceApiResource {
 
     private List<String> getVendorNumbers() throws IOException, BadRequestException {
         String badRequestErrorMessage = "Invalid Request Body, expect JSON Object with \"vendors\" property of type array";
-        var jsonNode = getCuApiJsonWebRequestReader().getJsonContentFromServletRequest(servletRequest);
+        JsonNode jsonNode = getCuApiJsonWebRequestReader().getJsonContentFromServletRequest(servletRequest);
 
-        if (!jsonNode.has("vendors") || jsonNode.get("vendors").isArray()) {
+        if (!jsonNode.has("vendors") || !jsonNode.get("vendors").isArray()) {
             throw new BadRequestException(badRequestErrorMessage);
         }
 

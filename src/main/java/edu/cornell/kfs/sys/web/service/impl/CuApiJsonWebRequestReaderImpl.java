@@ -22,7 +22,7 @@ public class CuApiJsonWebRequestReaderImpl implements CuApiJsonWebRequestReader 
         try (var requestInputStream = request.getInputStream();
              var streamReader = new InputStreamReader(requestInputStream, StandardCharsets.UTF_8)) {
             var objectMapper = new ObjectMapper();
-            var jsonNode = objectMapper.readTree(streamReader);
+            JsonNode jsonNode = objectMapper.readTree(streamReader);
             if (jsonNode == null) {
                 throw new BadRequestException("The request has no content in its JSON payload");
             } else if (!jsonNode.isObject()) {
