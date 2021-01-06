@@ -34,11 +34,12 @@ public final class CreditMemoStatuses {
     public static final String APPDOC_CANCELLED_POST_AP_APPROVE = "Cancelled";
     public static final String APPDOC_COMPLETE = "Complete";
     public static final String APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW = "Awaiting AP Review";
+    // CU Customization: Added new APPDOC status
     public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval";
 
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
     public static final String NODE_ACCOUNT_REVIEW = "Account";
-    //KFSUPGRADE-779
+    // CU Customization: Added new node for KFSUPGRADE-779
     public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer";
 
     public static final String[] STATUSES_ALLOWED_FOR_EXTRACTION =
@@ -67,6 +68,7 @@ public final class CreditMemoStatuses {
         appDocStatusMap.put(APPDOC_CANCELLED_POST_AP_APPROVE, APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(APPDOC_COMPLETE, APPDOC_COMPLETE);
         appDocStatusMap.put(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
+        // CU Customization: Added mapping for APPDOC_PAYMENT_METHOD_REVIEW
         appDocStatusMap.put(APPDOC_PAYMENT_METHOD_REVIEW, APPDOC_PAYMENT_METHOD_REVIEW);
 
         return appDocStatusMap;
@@ -79,7 +81,9 @@ public final class CreditMemoStatuses {
         INITIATE(CreditMemoStatuses.APPDOC_INITIATE, true),
         IN_PROCESS(CreditMemoStatuses.APPDOC_IN_PROCESS, true),
         AWAITING_ACCOUNTS_PAYABLE_REVIEW(CreditMemoStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, false),
-        PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false), 
+        // CU Customization: Added PAYMENT_METHOD_REVIEW constant
+        PAYMENT_METHOD_REVIEW(CreditMemoStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false),
+        // End CU Customization
         COMPLETE(CreditMemoStatuses.APPDOC_COMPLETE, false);
 
         private String statusCode;
