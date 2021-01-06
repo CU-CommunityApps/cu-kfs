@@ -42,6 +42,7 @@ public final class PaymentRequestStatuses {
     public static final String APPDOC_AWAITING_ORG_REVIEW = "Awaiting Chart Approval";
     public static final String APPDOC_AWAITING_TAX_REVIEW = "Awaiting Tax Approval";
     public static final String APPDOC_PENDING_E_INVOICE = "Pending Route Electronic Invoice";
+    // CU Customization: Added new APPDOC status
     public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval";
 
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
@@ -50,11 +51,10 @@ public final class PaymentRequestStatuses {
     public static final String NODE_ACCOUNT_REVIEW = "Account";
     public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
     public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
-    //KFSUPGRADE-779
+    // CU Customization: Added two new nodes for KFSUPGRADE-779 and KFSUPGRADE-500
     public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer";
-    
-    // KFSDUPGRADE-500
     public static final String NODE_RECEIVING = "Receiving";
+    // End CU Customization
 
     public static final String[] PREQ_STATUSES_FOR_AUTO_APPROVE = {
         APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_ORG_REVIEW};
@@ -97,7 +97,9 @@ public final class PaymentRequestStatuses {
         appDocStatusMap.put(APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW);
         appDocStatusMap.put(APPDOC_AWAITING_ORG_REVIEW, APPDOC_AWAITING_ORG_REVIEW);
         appDocStatusMap.put(APPDOC_AWAITING_TAX_REVIEW, APPDOC_AWAITING_TAX_REVIEW);
+        // CU Customization: Added mapping for APPDOC_PAYMENT_METHOD_REVIEW
         appDocStatusMap.put(APPDOC_PAYMENT_METHOD_REVIEW, APPDOC_PAYMENT_METHOD_REVIEW);
+        // End CU Customization
         appDocStatusMap.put(APPDOC_PENDING_E_INVOICE, APPDOC_PENDING_E_INVOICE);
 
         return appDocStatusMap;
@@ -118,7 +120,9 @@ public final class PaymentRequestStatuses {
         AWAITING_ORG_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_ORG_REVIEW, false),
         AWAITING_TAX_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
         DEPARTMENT_APPROVED(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),
+        // CU Customization: Added new PAYMENT_METHOD_REVIEW constant
         PAYMENT_METHOD_REVIEW(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false),
+        // End CU Customization
         AUTO_APPROVED(PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false),;
 
         private String statusCode;
@@ -190,7 +194,7 @@ public final class PaymentRequestStatuses {
         STATUSES_ENROUTE.add(APPDOC_AWAITING_FISCAL_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_ORG_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_TAX_REVIEW);
-        // KFSUPGRADE-500
+        // CU Customization: Added APPDOC_AWAITING_RECEIVING_REVIEW entry for KFSUPGRADE-500
         STATUSES_ENROUTE.add(APPDOC_AWAITING_RECEIVING_REVIEW);
 
         STATUSES_POSTROUTE.add(APPDOC_DEPARTMENT_APPROVED);
@@ -208,10 +212,10 @@ public final class PaymentRequestStatuses {
         appDocStatusMap.put(NODE_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_ORG_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_VENDOR_TAX_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
-        // KFSUPGRADE-500
+        // CU Customization: Added two new mappings for KFSUPGRADE-500 and KFSUPGRADE-964
         appDocStatusMap.put(NODE_RECEIVING, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
-        // KFSUPGRADE-964
         appDocStatusMap.put(NODE_PAYMENT_METHOD_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
+        // End CU Customization
 
         return appDocStatusMap;
     }
@@ -221,6 +225,7 @@ public final class PaymentRequestStatuses {
 
         returnList.add(NODE_ACCOUNT_REVIEW);
         returnList.add(NODE_VENDOR_TAX_REVIEW);
+        // CU Customization: Added entry for NODE_PAYMENT_METHOD_REVIEW
         returnList.add(NODE_PAYMENT_METHOD_REVIEW);
 
         return returnList;
