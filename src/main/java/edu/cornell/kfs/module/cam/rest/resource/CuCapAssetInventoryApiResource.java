@@ -40,6 +40,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,6 +75,13 @@ public class CuCapAssetInventoryApiResource {
     @GET
     public Response describeCapAssetApiResource() {
         return Response.ok(CuCamsConstants.CapAssetApi.CAPITAL_ASSET_KFS_API_DESCRIPTION).build();
+    }
+    
+    @GET
+    @Path("/showdevbanner")
+    public Response showDevBanner() {
+        boolean showDevBanner = !ConfigContext.getCurrentContextConfig().isProductionEnvironment();
+        return Response.ok(showDevBanner).build();
     }
 
     @GET
