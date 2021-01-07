@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.cornell.kfs.sys.web.service.CuApiJsonWebRequestReader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
@@ -15,7 +13,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 public class CuApiJsonWebRequestReaderImpl implements CuApiJsonWebRequestReader {
-    private static final Logger LOG = LogManager.getLogger();
 
 	@Override
     public JsonNode getJsonContentFromServletRequest(HttpServletRequest request) throws BadRequestException, IOException {

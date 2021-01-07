@@ -192,41 +192,6 @@ public class CuEinvoiceApiResource {
         return vendorNumbers;
     }
 
-    private JsonNode getJsonContentFromCurrentRequest() throws IOException {
-        try (var requestInputStream = servletRequest.getInputStream();
-             var streamReader = new InputStreamReader(requestInputStream, StandardCharsets.UTF_8)) {
-            var objectMapper = new ObjectMapper();
-            var jsonNode = objectMapper.readTree(streamReader);
-            if (jsonNode == null) {
-                throw new BadRequestException("The request has no content in its JSON payload");
-            } else if (!jsonNode.isObject()) {
-                throw new BadRequestException("The request does not have a JSON object as the root node");
-            }
-            return jsonNode;
-        } catch (JsonProcessingException e) {
-            throw new BadRequestException("The request has malformed JSON content");
-        }
-    }
-
-    private List<String> getVendorNumbersFromRequest() throws BadRequestException, IOException {
-        List<String> vendors = new ArrayList<>();
-        BufferedReader reader = servletRequest.getReader();
-
-        JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-        JsonArray jsonArray = jsonObject.getJsonArray("vendors");
-        if (jsonArray == null) {
-            throw new BadRequestException("Invalid Request Body, expect JSON Object with \"vendors\" property of type array");
-        }
-
-        for (Object o : jsonArray.toArray()) {
-            if (o != null) {
-                vendors.add(o.toString());
-            }
-        }
-
-        return vendors;
-    }
-
     private Properties getVendorProperties(VendorDetail vendorDetail) {
         Properties vendorProperties = new Properties();
         safelyAddProperty(vendorProperties, CUPurapConstants.Einvoice.DUNS, vendorDetail.getVendorDunsNumber());
