@@ -8,6 +8,6 @@ import java.io.IOException;
 
 public interface CuApiJsonWebRequestReader {
 
-    public JsonNode getJsonContentFromServletRequest(HttpServletRequest request) throws BadRequestException, IOException;
+    JsonNode getJsonContentFromServletRequest(HttpServletRequest request) throws BadRequestException, IOException;
 
 }
