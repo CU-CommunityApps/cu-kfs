@@ -341,7 +341,7 @@ public class CuEinvoiceApiResource {
 
     private CuApiJsonWebRequestReader getCuApiJsonWebRequestReader() {
         if (ObjectUtils.isNull(cuApiJsonWebRequestReader)) {
-            cuApiJsonWebRequestReader = SpringContext.getBean(CuApiJsonWebRequestReaderImpl.class);
+            cuApiJsonWebRequestReader = SpringContext.getBean(CuApiJsonWebRequestReader.class);
         }
         return cuApiJsonWebRequestReader;
     }
