@@ -89,7 +89,7 @@ public class CuEinvoiceApiResource {
     }
 
     @POST
-    @Path("vendors")
+    @Path(CUPurapConstants.Einvoice.VENDORS)
     @Consumes (MediaType.APPLICATION_JSON)
     @Produces (MediaType.APPLICATION_JSON)
     public Response getVendors(@Context HttpHeaders headers) {
@@ -180,12 +180,12 @@ public class CuEinvoiceApiResource {
         String badRequestErrorMessage = "Invalid Request Body, expect JSON Object with \"vendors\" property of type array";
         JsonNode jsonNode = getCuApiJsonWebRequestReader().getJsonContentFromServletRequest(servletRequest);
 
-        if (!jsonNode.has("vendors") || !jsonNode.get("vendors").isArray()) {
+        if (!jsonNode.has(CUPurapConstants.Einvoice.VENDORS) || !jsonNode.get(CUPurapConstants.Einvoice.VENDORS).isArray()) {
             throw new BadRequestException(badRequestErrorMessage);
         }
 
         List<String> vendorNumbers = new ArrayList<>();
-        for (final JsonNode objNode : jsonNode.get("vendors")) {
+        for (final JsonNode objNode : jsonNode.get(CUPurapConstants.Einvoice.VENDORS)) {
             vendorNumbers.add(objNode.asText());
         }
 

@@ -17,7 +17,7 @@ public class CuApiJsonWebRequestReaderImpl implements CuApiJsonWebRequestReader 
 	@Override
     public JsonNode getJsonContentFromServletRequest(HttpServletRequest request) throws BadRequestException, IOException {
         try (var requestInputStream = request.getInputStream();
-             var streamReader = new InputStreamReader(requestInputStream, StandardCharsets.UTF_8)) {
+            var streamReader = new InputStreamReader(requestInputStream, StandardCharsets.UTF_8)) {
             var objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(streamReader);
             if (jsonNode == null) {
