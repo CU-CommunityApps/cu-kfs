@@ -404,4 +404,6 @@
     <bean id="generalLedgerPendingEntryService" parent="generalLedgerPendingEntryService-parentBean"
           p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
 
+	<bean id="cuApiJsonWebRequestReader" class="edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl" />
+
 </beans>
