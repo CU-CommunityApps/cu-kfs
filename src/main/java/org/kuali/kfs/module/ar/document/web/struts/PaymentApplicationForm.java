@@ -129,6 +129,7 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
      *    - the PaymentApplication document
      *    - the CashControl document associated with the PaymentApplication document, if any
      *    - other PaymentApplication documents associated with the CashControl document, if any
+     * - AND the PaymentApplicationAdjustment document has a non-zero amount applied to invoices and/or unapplied
      *
      * @return {@code true} if the document can be adjusted; otherwise, {@code false}.
      */
@@ -137,13 +138,19 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
             LOG.debug("canAdjust() - Exit; User does not have permission");
             return false;
         }
-        final boolean canAdjust = noPreviousOrPendingAdjustments() && isFinalOrProcessed();
+        final boolean canAdjust = noPreviousOrPendingAdjustments() && isFinalOrProcessed() && hasInvoiceAppliedsOrNonApplieds();
         LOG.debug("canAdjust() - Exit : canAdjust={}", canAdjust);
         return canAdjust;
     }
 
     protected boolean noPreviousOrPendingAdjustments() {
         return getPaymentApplicationDocument().getAdjusterDocumentNumber() == null;
+    }
+
+    private boolean hasInvoiceAppliedsOrNonApplieds() {
+        List<InvoicePaidApplied> invoicePaidApplieds = getPaymentApplicationDocument().getInvoicePaidApplieds();
+        List<NonAppliedHolding> nonAppliedHoldings = getPaymentApplicationDocument().getNonAppliedHoldings();
+        return !(invoicePaidApplieds.isEmpty() && nonAppliedHoldings.isEmpty());
     }
 
     private boolean isFinalOrProcessed() {
