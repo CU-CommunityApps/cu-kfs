@@ -38,6 +38,8 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksTaxClassificationDTO;
 
 public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements PaymentWorksDtoToPaymentWorksVendorConversionService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl.class);
+	
+	private static final String DASH = "-";
     
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
@@ -120,7 +122,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
         if (bankAccountDataExists(pmwRemittanceAddressDTO)) {
             PaymentWorksBankAccountDTO pmwBankAccountDTO = pmwRemittanceAddressDTO.getBank_acct();
             stgNewVendor.setBankAcctBankName(pmwBankAccountDTO.getBank_name());
-            stgNewVendor.setBankAcctBankAccountNumber(pmwBankAccountDTO.getBank_acct_num());
+            stgNewVendor.setBankAcctBankAccountNumber(sanitizeBankAcctBankAccountNumberValue(pmwBankAccountDTO.getBank_acct_num()));
             stgNewVendor.setBankAcctBankValidationFile(pmwBankAccountDTO.getValidation_file());
             stgNewVendor.setBankAcctAchEmail(pmwBankAccountDTO.getAch_email());
             stgNewVendor.setBankAcctRoutingNumber(pmwBankAccountDTO.getRouting_num());
@@ -130,6 +132,14 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
             stgNewVendor.setBankAcctNameOnAccount(pmwBankAccountDTO.getName_on_acct());
             populateNewVendorBankAddressAttributes(stgNewVendor, pmwBankAccountDTO);
         }
+    }
+    
+    protected String sanitizeBankAcctBankAccountNumberValue(String pwsBankAccountNumber) {
+        if(StringUtils.isNotBlank(pwsBankAccountNumber) && StringUtils.contains(pwsBankAccountNumber, DASH)) {
+            return StringUtils.replace(pwsBankAccountNumber, DASH, StringUtils.EMPTY);
+        }
+        return pwsBankAccountNumber;
+        
     }
 
     private void populateNewVendorBankAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksBankAccountDTO pmwBankAccountDTO) {
