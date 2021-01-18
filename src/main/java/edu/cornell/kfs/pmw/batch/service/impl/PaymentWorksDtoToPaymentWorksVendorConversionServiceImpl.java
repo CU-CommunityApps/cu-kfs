@@ -134,11 +134,11 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
         }
     }
     
-    protected String sanitizeBankAcctBankAccountNumberValue(String pwsBankAccountNumber) {
-        if(StringUtils.isNotBlank(pwsBankAccountNumber) && StringUtils.contains(pwsBankAccountNumber, DASH)) {
-            return StringUtils.replace(pwsBankAccountNumber, DASH, StringUtils.EMPTY);
+    protected String sanitizeBankAcctBankAccountNumberValue(String pmwBankAccountNumber) {
+        if(StringUtils.isNotBlank(pmwBankAccountNumber) && StringUtils.contains(pmwBankAccountNumber, DASH)) {
+            return StringUtils.replace(pmwBankAccountNumber, DASH, StringUtils.EMPTY);
         }
-        return pwsBankAccountNumber;
+        return pmwBankAccountNumber;
         
     }
 
