@@ -32,14 +32,19 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurAwsKeyNames;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
+import edu.cornell.kfs.concur.aws.ConcurStaticConfig;
+import edu.cornell.kfs.concur.aws.ConcurTokenConfig;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.service.AwsSecretService;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
@@ -48,25 +53,56 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     private String concurRequestAccessTokenURL;
     private String concurRefreshAccessTokenURL;
     private String concurRevokeAccessTokenURL;
-    protected WebServiceCredentialService webServiceCredentialService;
+    //protected WebServiceCredentialService webServiceCredentialService;
+    protected AwsSecretService awsSecretService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
+
+    public ConcurStaticConfig getStaticConfig() {
+        return getConcurPojoFromAws(ConcurAwsKeyNames.STATIC_CONFIG, ConcurStaticConfig.class);
+    }
+
+    public ConcurTokenConfig getTokenConfig() {
+        return getConcurPojoFromAws(ConcurAwsKeyNames.TOKEN_CONFIG, ConcurTokenConfig.class);
+    }
+
+    protected <T> T getConcurPojoFromAws(String awsKeyName, Class<T> pojoClass) {
+        try {
+            return awsSecretService.getPojoFromAwsSecret(awsKeyName, true, pojoClass);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void updateTokenConfig(String accessToken, String expirationDate, String refreshToken) {
+        ConcurTokenConfig tokenConfig = new ConcurTokenConfig();
+        tokenConfig.setAccess_token(accessToken);
+        tokenConfig.setAccess_token_expiration_date(expirationDate);
+        tokenConfig.setRefresh_token(refreshToken);
+        try {
+            awsSecretService.updatePojo(ConcurAwsKeyNames.TOKEN_CONFIG, true, tokenConfig);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Transactional
     @Override
     public void requestNewAccessToken() {
         AccessTokenDTO newToken = callConcurEndpoint(
                 this::buildRequestAccessTokenClientRequest, AccessTokenDTO.class);
-        setWebserivceCredentialValues(newToken.getToken(), newToken.getExpirationDate(), newToken.getRefreshToken());
-    }
-    
-    protected void setWebserivceCredentialValues(String accessToken, String expirationDate, String refreshToken) {
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN, accessToken);
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, expirationDate);
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
+        updateTokenConfig(newToken.getToken(), newToken.getExpirationDate(), newToken.getRefreshToken());
     }
 
+    //protected void setWebserivceCredentialValues(String accessToken, String expirationDate, String refreshToken) {
+        //webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN, accessToken);
+        //webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, expirationDate);
+        //webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
+    //}
+
     protected Invocation buildRequestAccessTokenClientRequest(Client client) {
-        String credentials = buildCredentialsStringForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
+        ConcurStaticConfig staticConfig = getStaticConfig();
+        String credentials = buildCredentialsStringForRequestingNewAccessToken(
+                staticConfig.getLogin_username(), staticConfig.getLogin_password());
         String encodedCredentials = ConcurUtils.base64Encode(credentials);
         
         URI uri;
@@ -85,7 +121,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
                 .accept(MediaType.APPLICATION_XML)
                 .header(ConcurConstants.AUTHORIZATION_PROPERTY,
                         ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials)
-                .header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey())
+                .header(ConcurConstants.CONSUMER_KEY_PROPERTY, staticConfig.getConsumer_key())
                 .buildGet();
     }
 
@@ -99,11 +135,8 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         if (shouldRefreshAccessToken()) {
             AccessTokenDTO refreshedToken = callConcurEndpoint(
                     this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
-            webServiceCredentialService.updateWebServiceCredentialValue(
-                    ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,
-                    ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE,
-                    refreshedToken.getExpirationDate()
-            );
+            updateTokenConfig(
+                    refreshedToken.getToken(), refreshedToken.getExpirationDate(), refreshedToken.getRefreshToken());
         }
     }
     
@@ -117,12 +150,14 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
 
     protected Invocation buildRefreshAccessTokenClientRequest(Client client) {
+        ConcurStaticConfig staticConfig = getStaticConfig();
+        ConcurTokenConfig tokenConfig = getTokenConfig();
         URI uri;
         try {
             uri = new URI(getConcurRefreshAccessTokenURL()
-                    + ConcurConstants.REFRESH_TOKEN_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getRefreshToken()
-                    + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_ID_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getConsumerKey()
-                    + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_SECRET_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getSecretKey());
+                    + ConcurConstants.REFRESH_TOKEN_URL_PARAM + CUKFSConstants.EQUALS_SIGN + tokenConfig.getRefresh_token()
+                    + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_ID_URL_PARAM + CUKFSConstants.EQUALS_SIGN + staticConfig.getConsumer_key()
+                    + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_SECRET_URL_PARAM + CUKFSConstants.EQUALS_SIGN + staticConfig.getSecret_key());
         } catch (URISyntaxException e) {
             LOG.error("buildRefreshAccessTokenClientRequest, there was a problem building refresh access token client request.", e);
             throw new RuntimeException("An error occured while building the refresh access token URI: ", e);
@@ -172,7 +207,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     public void revokeAccessToken() {
         boolean success = executeRevokeAccessTokenRequest();
         if (success) {
-            setWebserivceCredentialValues(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+            updateTokenConfig(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         } else {
             throw new RuntimeException("Error revoking access token: Unsuccessful response from Concur");
         }
@@ -180,7 +215,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     
     @Override
     public void resetTokenToEmptyStringInDatabase() {
-        setWebserivceCredentialValues(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateTokenConfig(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
     /*
@@ -263,32 +298,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     @Override
     public String getAccessToken() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN);
-    }
-
-    @Override
-    public String getRefreshToken() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_REFRESH_TOKEN);
-    }
-
-    @Override
-    public String getConsumerKey() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_CONSUMER_KEY);
-    }
-
-    @Override
-    public String getSecretKey() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_SECRET_KEY);
-    }
-
-    @Override
-    public String getLoginUsername() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_LOGIN_USERNAME);
-    }
-
-    @Override
-    public String getLoginPassword() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_LOGIN_PASSWORD);
+        return getTokenConfig().getAccess_token();
     }
 
     public String getConcurRequestAccessTokenURL() {
@@ -315,12 +325,8 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         this.concurRevokeAccessTokenURL = concurRevokeAccessTokenURL;
     }
 
-    public WebServiceCredentialService getWebServiceCredentialService() {
-        return webServiceCredentialService;
-    }
-
-    public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
-        this.webServiceCredentialService = webServiceCredentialService;
+    public void setAwsSecretService(AwsSecretService awsSecretService) {
+        this.awsSecretService = awsSecretService;
     }
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {

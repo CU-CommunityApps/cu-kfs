@@ -5,16 +5,6 @@ public interface ConcurAccessTokenService {
     
     String getAccessToken();
     
-    String getRefreshToken();
-    
-    String getConsumerKey();
-    
-    String getSecretKey();
-
-    String getLoginUsername();
-
-    String getLoginPassword();
-
     void requestNewAccessToken();
 
     void refreshAccessToken();

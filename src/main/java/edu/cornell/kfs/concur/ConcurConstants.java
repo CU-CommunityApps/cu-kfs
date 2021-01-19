@@ -148,4 +148,16 @@ public class ConcurConstants {
         public static final String TRAVEL_REQUEST = "http://www.concursolutions.com/api/travelrequest/2012/06";
     }
 
+    public static final class ConcurAwsKeyNames {
+        public static final String STATIC_CONFIG = "concur/static-config";
+        public static final String TOKEN_CONFIG = "concur/token-config";
+        public static final String LOGIN_USERNAME = "concur/login-username";
+        public static final String LOGIN_PASSWORD = "concur/login-password";
+        public static final String ACCESS_TOKEN = "concur/access-token";
+        public static final String REFRESH_TOKEN = "concur/refresh-token";
+        public static final String CONSUMER_KEY = "concur/consumer-key";
+        public static final String SECRET_KEY = "concur/secret-key";
+        public static final String ACCESS_TOKEN_EXPIRATION_DATE = "concur/access-token-expiration-date";
+    }
+
 }
