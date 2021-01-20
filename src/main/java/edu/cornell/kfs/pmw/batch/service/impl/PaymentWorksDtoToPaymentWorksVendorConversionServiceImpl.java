@@ -135,11 +135,14 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
     
     protected String sanitizeBankAcctBankAccountNumberValue(String pmwBankAccountNumber) {
-        if(StringUtils.isNotBlank(pmwBankAccountNumber) && StringUtils.contains(pmwBankAccountNumber, DASH)) {
-            return StringUtils.replace(pmwBankAccountNumber, DASH, StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(pmwBankAccountNumber) && StringUtils.contains(pmwBankAccountNumber, DASH)) {
+            String sanitizedPmwBankAccountNumberValue = StringUtils.replace(pmwBankAccountNumber, DASH, StringUtils.EMPTY);
+            LOG.info("sanitizeBankAcctBankAccountNumberValue: the PaymentWorks bank account number value: " + pmwBankAccountNumber + " has been sanitized to: "
+                    + sanitizedPmwBankAccountNumberValue);
+            return sanitizedPmwBankAccountNumberValue;
         }
         return pmwBankAccountNumber;
-        
+
     }
 
     private void populateNewVendorBankAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksBankAccountDTO pmwBankAccountDTO) {
