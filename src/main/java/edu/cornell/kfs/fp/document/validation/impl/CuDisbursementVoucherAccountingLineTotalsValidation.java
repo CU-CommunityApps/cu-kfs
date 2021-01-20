@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.document.validation.impl;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -115,7 +116,7 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
         boolean valid = true;
         int counter = 0;
         Date maximumScheduledAccountingLineEndDate = getScheduledAccountingLineService().getMaximumScheduledAccountingLineEndDate();
-        SimpleDateFormat dateFormater = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT);
+        SimpleDateFormat dateFormater = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
         for (Object accountingLine : recurringDV.getSourceAccountingLines()) {
             ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;
             scheduledAccountingLine.setEndDate(getScheduledAccountingLineService().generateEndDate(scheduledAccountingLine));

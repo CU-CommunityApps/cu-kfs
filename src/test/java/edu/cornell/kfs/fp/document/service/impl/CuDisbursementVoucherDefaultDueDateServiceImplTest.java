@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -27,7 +28,7 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
     public void setUp() throws Exception {
         Logger.getLogger(CuDisbursementVoucherDefaultDueDateServiceImpl.class.getName()).setLevel(Level.DEBUG);
         cuDisbursementVoucherDefaultDueDateServiceImpl = new CuDisbursementVoucherDefaultDueDateServiceImpl();
-        dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd);
+        dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US);
     }
 
     @After

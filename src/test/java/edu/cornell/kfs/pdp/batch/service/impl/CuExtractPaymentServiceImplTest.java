@@ -22,6 +22,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,6 +36,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class CuExtractPaymentServiceImplTest {
     
@@ -43,8 +45,8 @@ public class CuExtractPaymentServiceImplTest {
     private static final String ACH_EXTRACT_TEST_FILE_NAME = "testAchExtractPaymentsOuput.txt";
     private static final String ACH_EXTRACT_TEST_PATH_AND_FILE = ACH_EXTRACT_TEST_FILE_PATH + File.separator + ACH_EXTRACT_TEST_FILE_NAME;
     private static final String ACH_EXTRACT_TEST_PATH_AND_FILE_FOR_VALIDATION = ACH_EXTRACT_TEST_PATH_AND_FILE + ".READY";
-    private static final SimpleDateFormat yyyyMMddHHmmss_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static final SimpleDateFormat yyyyMMdd_DATE_FORMATTER = new SimpleDateFormat("yyyyMMdd");
+    private static final SimpleDateFormat yyyyMMddHHmmss_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+    private static final SimpleDateFormat yyyyMMdd_DATE_FORMATTER = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US);
     private static final String[] NOTIFICATION_EMAIL_ADDRESSES = {"abc@xyz.edu", "def@xyz.edu", "ghi@xyz.edu"};
     private static final int HEADER_LINE_IN_OUTPUT_FILE = 1;
     private static final int FIRST_PAYEE_LINE_IN_OUTPUT_FILE = HEADER_LINE_IN_OUTPUT_FILE + NOTIFICATION_EMAIL_ADDRESSES.length + 1;

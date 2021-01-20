@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
@@ -17,7 +18,7 @@ public class ValidationResultTest {
     private static final String TEST_STRING_ONE = "test string 1";
     private static final String TEST_STRING_TWO = "test string 2";
     private static final String TEST_STRING_THREE = "test string 3";
-    private static final String TEST_STRING_THREE_UPPER_CASE = StringUtils.upperCase(TEST_STRING_THREE);
+    private static final String TEST_STRING_THREE_UPPER_CASE = StringUtils.upperCase(TEST_STRING_THREE, Locale.US);
 
     @Before
     public void setUp() throws Exception {

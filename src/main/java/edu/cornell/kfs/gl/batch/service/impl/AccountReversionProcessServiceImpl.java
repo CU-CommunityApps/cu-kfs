@@ -18,6 +18,7 @@ package edu.cornell.kfs.gl.batch.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -130,7 +131,7 @@ public class AccountReversionProcessServiceImpl implements ReversionProcessServi
         String strUniversityFiscalYear = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR);
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
             java.util.Date jud = sdf.parse(strTransactionDate);
             jobParameters.put(KFSConstants.TRANSACTION_DT, new java.sql.Date(jud.getTime()));
         }

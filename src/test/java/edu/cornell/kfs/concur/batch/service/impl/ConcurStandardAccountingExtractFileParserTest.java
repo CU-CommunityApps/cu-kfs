@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -104,7 +105,7 @@ public class ConcurStandardAccountingExtractFileParserTest extends CuDelimitedFl
     }
 
     protected void assertEqualsIgnoreCase(String message, String expected, String actual) throws Exception {
-        assertEquals(message, StringUtils.upperCase(expected), StringUtils.upperCase(actual));
+        assertEquals(message, StringUtils.upperCase(expected, Locale.US), StringUtils.upperCase(actual, Locale.US));
     }
 
     protected void assertConcurSAEFileFailsParsingDueToMisusedQuotes(String fileName) throws Exception {

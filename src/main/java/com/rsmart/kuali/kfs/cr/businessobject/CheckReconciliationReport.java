@@ -16,7 +16,11 @@
 package com.rsmart.kuali.kfs.cr.businessobject;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+import org.kuali.kfs.sys.KFSConstants;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
@@ -38,11 +42,11 @@ public class CheckReconciliationReport implements Comparable<CheckReconciliation
     private String status;
     private String amount;
     private Double subTotal;
-    public static SimpleDateFormat MONYYF = new SimpleDateFormat("yyyy/MM");
-    public static SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
-    public static DecimalFormat DF = new DecimalFormat("#0.00");
+    public static SimpleDateFormat MONYYF = new SimpleDateFormat("yyyy/MM", Locale.US);
+    public static SimpleDateFormat SDF = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
+    public static DecimalFormat DF = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.US));
     
-    public CheckReconciliationReport() {    
+    public CheckReconciliationReport() {
     }
     
     public CheckReconciliationReport(CheckReconciliation cr) {

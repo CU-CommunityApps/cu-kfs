@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -393,14 +394,14 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     protected String findStartDate() {
-        DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT);
+        DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT, Locale.US);
         Calendar cal = findProcessDate();
         cal.set(Calendar.DATE, 1);
         return transactionDateFormat.format(cal.getTime());
     }
     
     protected String findEndDate() {
-        DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT);
+        DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT, Locale.US);
         Calendar cal = findProcessDate();
         cal.set(Calendar.DATE, 1);
         cal.add(Calendar.MONTH, 1);

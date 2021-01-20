@@ -3,6 +3,7 @@ package edu.cornell.kfs.tax.dataaccess.impl;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -228,7 +229,7 @@ class Transaction1042SSummary extends TransactionDetailSummary {
                 || CUTaxConstants.FORM_1042S_FED_TAX_WITHHELD_BOX.equalsIgnoreCase(boxNumber)
                 || CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX.equalsIgnoreCase(boxNumber)
                 || CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY.equalsIgnoreCase(boxNumber))) {
-            return boxNumber.toUpperCase();
+            return boxNumber.toUpperCase(Locale.US);
         }
         return null;
     }

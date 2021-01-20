@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -73,7 +74,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testFindPoCountryToUseOther() {
         pmwVendor.setPoCountryLegacy(LEGACY_PO_COUNTRY);
         pmwVendor.setPoCountry(FOREIGN_PO_COUNTRY);
-        pmwVendor.setPoCountryUsCanadaAustraliaOther(StringUtils.upperCase(PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER));
+        pmwVendor.setPoCountryUsCanadaAustraliaOther(StringUtils.upperCase(PaymentWorksConstants.PO_ADDRESS_COUNTRY_OTHER, Locale.US));
         String actual = conversionService.findPoCountryToUse(pmwVendor);
         assertEquals(FOREIGN_PO_COUNTRY, actual);
     }

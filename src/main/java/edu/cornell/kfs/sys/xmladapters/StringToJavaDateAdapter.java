@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.xmladapters;
 
 import java.util.Date;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -16,7 +17,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class StringToJavaDateAdapter extends XmlAdapter<String, Date> {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("MM/dd/yyyy");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("MM/dd/yyyy").withLocale(Locale.US);
 
     @Override
     public Date unmarshal(String value) throws Exception {

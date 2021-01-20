@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -209,7 +210,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 			Note note = new Note();
 
 			java.util.Date pdate = null;
-			DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			DateFormat df = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
 			try {
 				pdate = (java.util.Date) df.parse(receipt.getPurchasedate());
 			} catch (ParseException e) {
@@ -334,7 +335,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 
 			if (matchOnly) {
 				java.util.Date pdate = null;
-				DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+				DateFormat df = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
 				try {
 					pdate = (java.util.Date) df.parse(receipt.getPurchasedate());
 				} catch (ParseException e) {
@@ -389,7 +390,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 					pcdo = pcdoList.get(0);
 				}
 		        if(StringUtils.isNotBlank(customerName)){
-		        	attachmentsPath = pdfDirectory + "/" + StringUtils.upperCase(customerName) + CUSTOMER_PDF_SUBFOLDER_SUFFIX ;
+		        	attachmentsPath = pdfDirectory + "/" + StringUtils.upperCase(customerName, Locale.US) + CUSTOMER_PDF_SUBFOLDER_SUFFIX ;
 		        }
 				String pdfFileName = attachmentsPath + "/" + receipt.getFilename();
 				LOG.info("Start creating note and attaching pdf file " + pdfFileName + " to PCDO document #" + pcdo.getDocumentNumber());
@@ -486,7 +487,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
     protected void getcsvWriter(String csvDoc, String reportDropFolder) {
         
         String fileName = "CIT_OUT_" +
-            new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(dateTimeService.getCurrentDate()) + ".csv";
+            new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US).format(dateTimeService.getCurrentDate()) + ".csv";
         
          //  setup the writer
          File reportFile = new File(reportDropFolder + fileName);

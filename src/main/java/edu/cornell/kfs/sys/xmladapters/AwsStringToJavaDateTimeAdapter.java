@@ -2,6 +2,7 @@ package edu.cornell.kfs.sys.xmladapters;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -12,7 +13,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class AwsStringToJavaDateTimeAdapter extends XmlAdapter<String, Date> {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss).withLocale(Locale.US);
 
     @Override
     public Date unmarshal(String value) throws Exception {

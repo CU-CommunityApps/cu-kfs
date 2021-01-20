@@ -166,7 +166,7 @@ public class CheckReconciliationReportAction extends KualiAction {
                 ResourceBundle resourceBundle = ResourceBundle.getBundle(CRConstants.REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
                 Map<String, Object> reportData = new HashMap<String, Object>();
                 reportData.put(JRParameter.REPORT_RESOURCE_BUNDLE, resourceBundle);
-                reportData.put("REPORT_END_DATE", new SimpleDateFormat("MM/dd/yyyy").format(crForm.getEndDate()));
+                reportData.put("REPORT_END_DATE", new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US).format(crForm.getEndDate()));
         
                 SpringContext.getBean(ReportGenerationService.class).generateReportToOutputStream(reportData, reportSet, CRConstants.REPORT_TEMPLATE_CLASSPATH + CRConstants.REPORT_FILE_NAME, baos);
                 WebUtils.saveMimeOutputStreamAsFile(response, ReportGeneration.PDF_MIME_TYPE, baos, CRConstants.REPORT_FILE_NAME + ReportGeneration.PDF_FILE_EXTENSION);

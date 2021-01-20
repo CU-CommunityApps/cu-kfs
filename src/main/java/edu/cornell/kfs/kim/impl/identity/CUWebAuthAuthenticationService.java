@@ -1,5 +1,7 @@
 package edu.cornell.kfs.kim.impl.identity;
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +49,7 @@ public class CUWebAuthAuthenticationService extends AuthenticationServiceImpl {
             // ok we need to check the CUWebAuth headers
             String user = request.getHeader(CUWAL_REMOTE_USER_HEADER);
             if (user == null) {
-                user = request.getHeader(CUWAL_REMOTE_USER_HEADER.toUpperCase());
+                user = request.getHeader(CUWAL_REMOTE_USER_HEADER.toUpperCase(Locale.US));
             }
             id = user;
         }

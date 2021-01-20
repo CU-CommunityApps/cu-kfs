@@ -11,6 +11,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.CuPurapTestConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuElectronicInvoiceHelperServiceFixture {
         private static final String ATTRIBUTE_NAME_VALUE_FORMAT = "%s=\"%s\"";
@@ -253,7 +254,7 @@ public class CuElectronicInvoiceHelperServiceFixture {
             if (SpringContext.isInitialized()) {
                 return PurApDateFormatUtils.getSimpleDateFormat(formatName);
             } else if (StringUtils.equals(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT, formatName)) {
-                return new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                return new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
             } else if (StringUtils.equals(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT, formatName)) {
                 return new SimpleDateFormat("HH:mm:ss.sss", Locale.US);
             } else {

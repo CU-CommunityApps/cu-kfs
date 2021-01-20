@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +48,7 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 		String regex ="([a-z])([A-Z])";
 		String replacement ="$1%$2";
 		
-		return cardHodlerName.replaceAll(regex, replacement).toUpperCase() + WILD_CARD;
+		return cardHodlerName.replaceAll(regex, replacement).toUpperCase(Locale.US) + WILD_CARD;
 	}
 
 	/**
@@ -67,7 +68,7 @@ public class ProcurementCardDocumentDaoOjb extends PlatformAwareDaoBaseOjb imple
 			gc.add(Calendar.DATE, 21);
 			
 			Criteria criteria = new Criteria();
-	        criteria.addLike("procurementCardHolder.cardHolderAlternateName", cardHolderNetID.toUpperCase() + WILD_CARD);
+	        criteria.addLike("procurementCardHolder.cardHolderAlternateName", cardHolderNetID.toUpperCase(Locale.US) + WILD_CARD);
 	        criteria.addEqualTo("transactionEntries.transactionTotalAmount", amount);
 	        criteria.addGreaterOrEqualThan("transactionEntries.transactionDate", transactionDate);
 			criteria.addLessOrEqualThan("transactionEntries.transactionDate", new Timestamp(gc.getTimeInMillis()));

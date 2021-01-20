@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.dataaccess.impl.VendorDaoOjb;
 import org.kuali.kfs.kns.lookup.LookupUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 
@@ -109,7 +111,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         }
         if (StringUtils.isNotBlank(nameVal) && nameVal.contains("*")) {
     		String upperVendorName = getDbPlatform().getUpperCaseFunction() + "( vendorName )";
-    		String upperNameVal = nameVal.toUpperCase();
+    		String upperNameVal = nameVal.toUpperCase(Locale.US);
         	name.addLike(upperVendorName, upperNameVal);
         	alias.addLike(getDbPlatform().getUpperCaseFunction() + "( " + VendorPropertyConstants.VENDOR_ALIAS_NAME_FULL_PATH + " )", upperNameVal);
         	alias.addEqualTo(VendorPropertyConstants.VENDOR_ALIAS_ACTIVE, "Y");
@@ -149,7 +151,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         }
         if (StringUtils.isNotBlank(vendorSupplierDiversityExpirationDateVal)) {
             try {
-                Date date = new java.sql.Date(new SimpleDateFormat("MM/dd/yyyy").parse(vendorSupplierDiversityExpirationDateVal).getTime());
+                Date date = new java.sql.Date(new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US).parse(vendorSupplierDiversityExpirationDateVal).getTime());
                 vendorSupplierDiversityExpirationDate.addGreaterOrEqualThan(CUVendorPropertyConstants.VENDOR_HEADER_PREFIX +
                         VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, date);
                 header.addAndCriteria(vendorSupplierDiversityExpirationDate);

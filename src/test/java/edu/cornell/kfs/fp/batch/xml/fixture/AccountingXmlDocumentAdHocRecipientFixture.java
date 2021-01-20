@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
+import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.rice.kew.api.action.ActionRequestType;
@@ -29,7 +31,7 @@ public enum AccountingXmlDocumentAdHocRecipientFixture {
     }
 
     public AdHocRoutePerson toAdHocRoutePerson(String documentNumber) {
-        ActionRequestType actionRequestType = ActionRequestType.valueOf(StringUtils.upperCase(actionRequested));
+        ActionRequestType actionRequestType = ActionRequestType.valueOf(StringUtils.upperCase(actionRequested, Locale.US));
         AdHocRoutePerson adHocPerson = MockDocumentUtils.buildMockAdHocRoutePerson();
         adHocPerson.setdocumentNumber(documentNumber);
         adHocPerson.setId(netId);

@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -191,7 +192,7 @@ public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
                 Object currentValue = ObjectUtils.getPropertyValue(businessObject, attribute.getName());
                 if (currentValue != null && String.class.isAssignableFrom(currentValue.getClass())) {
                     try {
-                        ObjectUtils.setObjectProperty(businessObject, attribute.getName(), currentValue.toString().toUpperCase());
+                        ObjectUtils.setObjectProperty(businessObject, attribute.getName(), currentValue.toString().toUpperCase(Locale.US));
                     }
                     catch (Exception e) {
                         LOG.error("cannot uppercase property " + attribute.getName() + " in bo class " + entryName, e);

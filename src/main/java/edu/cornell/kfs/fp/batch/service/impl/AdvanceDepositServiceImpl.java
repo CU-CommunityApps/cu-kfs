@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -287,7 +289,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
     }
 
     private void createNotes(AchIncomeTransaction transaction, AdvanceDepositDocument document) {
-        String fileName = CuFPConstants.ADVANCE_DEPOSIT_NOTE_FILE_PREFIX + document.getDocumentNumber() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(dateTimeService.getCurrentDate()) + ".txt";
+        String fileName = CuFPConstants.ADVANCE_DEPOSIT_NOTE_FILE_PREFIX + document.getDocumentNumber() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(dateTimeService.getCurrentDate()) + ".txt";
         StringBuilder notes = new StringBuilder();
 
         for (AchIncomeNote achIncomeNote : transaction.getNotes()) {
@@ -1003,7 +1005,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         List<AchIncomeFileTransactionNote> fileTransactionNotes = achIncomeFileTransaction.getNotes();
         for (AchIncomeFileTransactionNote fileTransactionNote : fileTransactionNotes) {
             if (fileTransactionNote.getType() != null) {
-                String nteTxt = fileTransactionNote.getType().toUpperCase() + ": " + fileTransactionNote.getValue();
+                String nteTxt = fileTransactionNote.getType().toUpperCase(Locale.US) + ": " + fileTransactionNote.getValue();
                 int notesPlusNoteTxtLength = nteTxt.length() + notes.length();
                 if (notesPlusNoteTxtLength >= MAX_NOTE_SIZE) {
                     achNotes.add(notes.toString());
@@ -1101,7 +1103,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         String fileDateTime = achIncomeFile.getFileDate() + achIncomeFile.getFileTime();
 
         // need to use 24 hour format, since otherwise exception will be thrown if the time falls in PM range.
-        SimpleDateFormat dateFormat = new SimpleDateFormat(CuFPConstants.ACH_INCOME_FILE_DATE_FORMAT);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(CuFPConstants.ACH_INCOME_FILE_DATE_FORMAT, Locale.US);
         dateFormat.setLenient(false);
 
         try {
@@ -1124,12 +1126,12 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
     }
 
     private String getFormattedAmount(String pattern, KualiDecimal amount) {
-        DecimalFormat formatter = new DecimalFormat(pattern);
+        DecimalFormat formatter = new DecimalFormat(pattern, new DecimalFormatSymbols(Locale.US));
         return formatter.format(amount);
     }
 
     private String getFormattedAmount(String pattern, Integer value) {
-        DecimalFormat formatter = new DecimalFormat(pattern);
+        DecimalFormat formatter = new DecimalFormat(pattern, new DecimalFormatSymbols(Locale.US));
         return formatter.format(value);
     }
 

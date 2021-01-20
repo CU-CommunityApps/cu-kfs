@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -407,7 +408,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     
     public SimpleDateFormat getDateFormat() {
         if (dateFormat == null) {
-            dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd); 
+            dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US); 
         }
         return dateFormat;
     }
