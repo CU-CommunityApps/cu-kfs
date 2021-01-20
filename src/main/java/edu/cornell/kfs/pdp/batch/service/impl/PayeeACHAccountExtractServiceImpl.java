@@ -26,6 +26,7 @@ import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.ObjectPropertyUtils;
@@ -46,6 +47,7 @@ import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
@@ -74,6 +76,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private SequenceAccessorService sequenceAccessorService;
     private CuAchService achService;
     private AchBankService achBankService;
+    private BusinessObjectService businessObjectService; 
+    private DateTimeService dateTimeService;
 
     private Map<String, List<String>> partialProcessingSummary;
 
@@ -203,10 +207,49 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             String error = processACHBatchDetail(achDetail);
             if (StringUtils.isNotBlank(error)) {
                 failedRowsErrors.add(error);
+                //store PayeeACHAccountExtractDetail
+                achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
+                achDetail.setCreateDate(dateTimeService.getCurrentSqlDate());
+                achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
+                achDetail.setRetryCount(0);
+                businessObjectService.save(achDetail);
+            }
+        }
+        
+        int maxRetryCount = Integer.valueOf(parameterService.getParameterValueAsString(PayeeACHAccountExtractStep.class, CUPdpParameterConstants.MAX_ACH_ACCT_EXTRACT_RETRY));
+
+        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = getPersistedPayeeACHAccountExtractDetails();
+        if (!persistedPayeeACHAccountExtractDetails.isEmpty()) {
+            for (PayeeACHAccountExtractDetail achDetail : achDetails) {
+                String error = processACHBatchDetail(achDetail);
+                if (StringUtils.isNotBlank(error)) {
+                    if (achDetail.getRetryCount() <= maxRetryCount) {
+                        // store PayeeACHAccountExtractDetail
+                        achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
+                        achDetail.setRetryCount(achDetail.getRetryCount() + 1);
+                        businessObjectService.save(achDetail);
+                    }
+                    else {
+                        failedRowsErrors.add(error);
+                    }
+                }
+                else {
+                    achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.PROCESSED);
+                    achDetail.setRetryCount(achDetail.getRetryCount() + 1);
+                    achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
+                }
             }
         }
         
         return failedRowsErrors;
+    }
+    
+    protected List<PayeeACHAccountExtractDetail> getPersistedPayeeACHAccountExtractDetails() {
+        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = new ArrayList<PayeeACHAccountExtractDetail>();
+        Map<String, Object> fieldValues = new HashMap<>();
+        fieldValues.put(CUPdpPropertyConstants.PAYEE_ACH_EXTRACT_DETAIL_STATUS, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
+        businessObjectService.findMatching(PayeeACHAccountExtractDetail.class, fieldValues);
+        return persistedPayeeACHAccountExtractDetails;
     }
     
     protected void cleanPayeeACHAccountExtractDetail(PayeeACHAccountExtractDetail detail) {
@@ -769,6 +812,14 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+    
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+    
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
     protected static class PayeeACHData {
