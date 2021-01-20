@@ -9,6 +9,7 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.kfs.sys.document.GeneralLedgerPendingEntrySource;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.GENERAL_LEDGER_PENDING_ENTRY_CODE;
 import org.kuali.kfs.sys.service.HomeOriginationService;
@@ -80,8 +81,8 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
         explicitEntry.setTransactionLedgerEntryAmount(amount);
         explicitEntry.setTransactionLedgerEntryDescription(
                 getEntryValue(description, document.getDocumentHeader().getDocumentDescription()));
-        // null here, is assigned during batch or in specific document rule classes
-        explicitEntry.setUniversityFiscalPeriodCode(null);
+        explicitEntry.setUniversityFiscalPeriodCode(
+                determineFiscalPeriodCode((GeneralLedgerPendingEntrySource) document));
         explicitEntry.setUniversityFiscalYear(document.getPostingYear());
 
         if (LOG.isDebugEnabled()) {

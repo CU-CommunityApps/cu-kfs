@@ -79,8 +79,12 @@ import java.util.List;
 import java.util.Map;
 
 /*
- * CU Customization: Backported the FINP-7275 fix from the 2020-12-10 financials patch.
- * This overlay can be removed once we upgrade to the 2020-12-10 patch or later.
+ * CU Customization: Backported the FINP-7275 fix from the 2020-12-10 financials patch,
+ * and updated the new determineFiscalPeriodCode() method from that release to protected visibility.
+ * Once we upgrade to the 2020-12-10 patch, this overlay can be updated to pull in all the other changes
+ * (if any) to this file from that release, but we will still need the customization for increasing
+ * the determineFiscalPeriodCode() method visibility. Once we upgrade to a release that already has
+ * determineFiscalPeriodCode() in protected visibility or greater, we can remove this overlay.
  */
 /**
  * This class is the service implementation for the GeneralLedgerPendingEntry structure. This is the default
@@ -376,7 +380,7 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
      * are stored separately from the FiscalPeriod object on LedgerPostingDocs. In a perfect world, the data is
      * modeled a little cleaner and we don't have this problem but for now we're working around it.
      */
-    private String determineFiscalPeriodCode(GeneralLedgerPendingEntrySource glpeSource) {
+    protected String determineFiscalPeriodCode(GeneralLedgerPendingEntrySource glpeSource) {
         String docType = glpeSource.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
         // is accounting period enabled for our current doc type in the system parameter
         ParameterEvaluator evaluator = parameterEvaluatorService.getParameterEvaluator(
