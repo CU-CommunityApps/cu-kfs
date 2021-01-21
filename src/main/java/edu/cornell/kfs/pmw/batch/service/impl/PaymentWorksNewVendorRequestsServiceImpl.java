@@ -35,7 +35,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 
 public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNewVendorRequestsService {
     
-    private static final Logger LOG = LogManager.getLogger(PaymentWorksNewVendorRequestsServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksNewVendorRequestsServiceImpl.class);
 
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;

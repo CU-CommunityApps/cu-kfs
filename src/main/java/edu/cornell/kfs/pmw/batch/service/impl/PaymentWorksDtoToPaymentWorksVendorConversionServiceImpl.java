@@ -140,7 +140,6 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
             return sanitizedPmwBankAccountNumberValue;
         }
         return pmwBankAccountNumber;
-
     }
 
     private void populateNewVendorBankAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksBankAccountDTO pmwBankAccountDTO) {
