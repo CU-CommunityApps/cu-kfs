@@ -56,7 +56,10 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     @Override
     public void createKfsVendorsFromPmwNewVendorRequests() {
         LOG.info("createKfsVendorsFromPmwNewVendorRequests: was invoked");
-        List<String> pmwNewVendorIdentifers = getPaymentWorksWebServiceCallsService().obtainPmwIdentifiersForApprovedNewVendorRequests();
+        List<String> pmwNewVendorIdentifers = new ArrayList<>();
+                //getPaymentWorksWebServiceCallsService().obtainPmwIdentifiersForApprovedNewVendorRequests();
+        pmwNewVendorIdentifers.add("9382");
+        pmwNewVendorIdentifers.add("9384");
         if (pmwNewVendorIdentifers.isEmpty()) {
             LOG.info("createKfsVendorsFromPmwNewVendorRequests: No PaymentWorks APPROVED New Vendors found to process.");
             sendEmailThatNoPmwDataWasFoundToCreateNewKfsVendors();
@@ -104,9 +107,9 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             } else {
                 LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
             }
-            getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
+           // getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
         }
-        getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
+        //getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
     }
     
     private boolean pmwNewVendorRequestProcessingIntoKfsWasSuccessful(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {

@@ -17,6 +17,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.service.impl.exception.FormatException;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
@@ -38,8 +39,6 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksTaxClassificationDTO;
 
 public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements PaymentWorksDtoToPaymentWorksVendorConversionService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl.class);
-	
-	private static final String DASH = "-";
     
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
@@ -135,10 +134,9 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
     
     protected String sanitizeBankAcctBankAccountNumberValue(String pmwBankAccountNumber) {
-        if (StringUtils.isNotBlank(pmwBankAccountNumber) && StringUtils.contains(pmwBankAccountNumber, DASH)) {
-            String sanitizedPmwBankAccountNumberValue = StringUtils.replace(pmwBankAccountNumber, DASH, StringUtils.EMPTY);
-            LOG.info("sanitizeBankAcctBankAccountNumberValue: the PaymentWorks bank account number value: " + pmwBankAccountNumber + " has been sanitized to: "
-                    + sanitizedPmwBankAccountNumberValue);
+        if (StringUtils.contains(pmwBankAccountNumber, KFSConstants.DASH)) {
+            String sanitizedPmwBankAccountNumberValue = StringUtils.replace(pmwBankAccountNumber, KFSConstants.DASH, StringUtils.EMPTY);
+            LOG.info("sanitizeBankAcctBankAccountNumberValue: the PaymentWorks bank account number value has been altered to remove dashes.");
             return sanitizedPmwBankAccountNumberValue;
         }
         return pmwBankAccountNumber;
