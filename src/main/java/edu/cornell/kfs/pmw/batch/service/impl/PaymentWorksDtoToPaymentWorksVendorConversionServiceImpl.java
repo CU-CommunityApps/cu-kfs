@@ -17,6 +17,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.service.impl.exception.FormatException;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
@@ -120,7 +121,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
         if (bankAccountDataExists(pmwRemittanceAddressDTO)) {
             PaymentWorksBankAccountDTO pmwBankAccountDTO = pmwRemittanceAddressDTO.getBank_acct();
             stgNewVendor.setBankAcctBankName(pmwBankAccountDTO.getBank_name());
-            stgNewVendor.setBankAcctBankAccountNumber(pmwBankAccountDTO.getBank_acct_num());
+            stgNewVendor.setBankAcctBankAccountNumber(sanitizeBankAcctBankAccountNumberValue(pmwBankAccountDTO.getBank_acct_num()));
             stgNewVendor.setBankAcctBankValidationFile(pmwBankAccountDTO.getValidation_file());
             stgNewVendor.setBankAcctAchEmail(pmwBankAccountDTO.getAch_email());
             stgNewVendor.setBankAcctRoutingNumber(pmwBankAccountDTO.getRouting_num());
@@ -130,6 +131,15 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
             stgNewVendor.setBankAcctNameOnAccount(pmwBankAccountDTO.getName_on_acct());
             populateNewVendorBankAddressAttributes(stgNewVendor, pmwBankAccountDTO);
         }
+    }
+    
+    protected String sanitizeBankAcctBankAccountNumberValue(String pmwBankAccountNumber) {
+        if (StringUtils.contains(pmwBankAccountNumber, KFSConstants.DASH)) {
+            String sanitizedPmwBankAccountNumberValue = StringUtils.replace(pmwBankAccountNumber, KFSConstants.DASH, StringUtils.EMPTY);
+            LOG.info("sanitizeBankAcctBankAccountNumberValue: the PaymentWorks bank account number value has been altered to remove dashes.");
+            return sanitizedPmwBankAccountNumberValue;
+        }
+        return pmwBankAccountNumber;
     }
 
     private void populateNewVendorBankAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksBankAccountDTO pmwBankAccountDTO) {
