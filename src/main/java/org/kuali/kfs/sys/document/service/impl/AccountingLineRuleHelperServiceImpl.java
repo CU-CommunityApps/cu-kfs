@@ -136,7 +136,8 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         if (AccountingLineOverride.needsExpiredAccountOverride(account)
                 && !override.hasComponent(AccountingLineOverride.COMPONENT.EXPIRED_ACCOUNT)) {
             Account continuation = accountService.getUnexpiredContinuationAccountOrNull(account);
-            if (continuation == null) {
+            // CORNELL FIX: if (continuation == null) {
+            if (ObjectUtils.isNull(continuation)) {
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER,
                         KFSKeyConstants.ERROR_DOCUMENT_ACCOUNT_EXPIRED_NO_CONTINUATION, account.getAccountNumber());
             } else {
@@ -387,7 +388,8 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
      */
     @Override
     public boolean validateAccountingLine(AccountingLine accountingLine) {
-        if (accountingLine == null) {
+        // CORNELL FIX: if (accountingLine == null) {
+        if (ObjectUtils.isNull(accountingLine)) {
             throw new IllegalStateException(configurationService.getPropertyValueAsString(
                     KFSKeyConstants.ERROR_DOCUMENT_NULL_ACCOUNTING_LINE));
         }
@@ -397,7 +399,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         accountingLine.refreshReferenceObject("account");
         accountingLine.refreshReferenceObject("objectCode");
         if (StringUtils.isNotBlank(accountingLine.getSubAccountNumber())
-                && !accountingLine.getSubAccountNumber().equals(getDashSubAccountNumber())) {
+                && !accountingLine.getSubAccountNumber().equals(KFSConstants.getDashSubAccountNumber())) {
             accountingLine.refreshReferenceObject("subAccount");
         }
         if (StringUtils.isNotBlank(accountingLine.getFinancialSubObjectCode())) {
@@ -422,6 +424,11 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
     @Override
     public List<AccountingLineValidationError> getAccountingLineValidationErrors(AccountingLine accountingLine, boolean useShortMessages) {
         List<AccountingLineValidationError> validationErrors = new ArrayList<>();
+        
+        // CORNELL FIX:
+        if (ObjectUtils.isNull(accountingLine)) {
+            return validationErrors;
+        }
 
         //get the accounting line sequence string to identify which line has error.
         String accountIdentifyingPropertyName = getAccountIdentifyingPropertyName(accountingLine);
@@ -440,7 +447,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
 
         // sub account is not required
         if (StringUtils.isNotBlank(accountingLine.getSubAccountNumber())
-                && !accountingLine.getSubAccountNumber().equals(getDashSubAccountNumber())) {
+                && !accountingLine.getSubAccountNumber().equals(KFSConstants.getDashSubAccountNumber())) {
             SubAccount subAccount = accountingLine.getSubAccount();
 
             validationErrors.addAll(
@@ -580,10 +587,5 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-    }
-
-    // This exists so tests can avoid static mocking
-    String getDashSubAccountNumber() {
-        return KFSConstants.getDashSubAccountNumber();
     }
 }
