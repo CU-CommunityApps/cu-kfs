@@ -2979,8 +2979,6 @@
     <field-descriptor name="purchaseOrderItemUnitPrice" column="PO_ITM_UNIT_PRC" jdbc-type="DECIMAL"/>
     <field-descriptor name="extendedPrice" column="ITM_EXTND_PRC" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
     <field-descriptor name="itemAssignedToTradeInIndicator" column="ITM_ASND_TO_TRADE_IN_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="itemOutstandingInvoiceQuantity" column="ITM_OSTND_INV_QTY" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
-    <field-descriptor name="itemOutstandingInvoiceAmount" column="ITM_OSTND_INV_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" /> 
     <field-descriptor name="itemSalesTaxAmount" column="ITM_TAX_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
     <field-descriptor name="capitalAssetTransactionTypeCode" column="CPTL_AST_TRN_TYP_CD" jdbc-type="VARCHAR"/>    
     <reference-descriptor name="purapDocument" class-ref="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
