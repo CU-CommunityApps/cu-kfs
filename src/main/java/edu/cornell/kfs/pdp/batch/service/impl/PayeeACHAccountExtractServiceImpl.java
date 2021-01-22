@@ -117,6 +117,18 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 numFail++;
             }
         }
+        
+        LOG.info("processACHBatchDetails: Beginning processing of ACH entries persisted for a retry");
+        List<String> errorList = new ArrayList<>();
+        errorList = loadACHBatchDetailPersisted();
+        if (errorList.isEmpty()) {
+            LOG.info("processACHBatchDetails: Successfully loaded ACH retry entries");
+            numSuccess++;
+        } else {
+            LOG.warn("processACHBatchDetails: ACH retry entries contained "+ errorList.size() + " rows that could not be processed.");
+            //partialProcessingSummary.put(inputFileName, errorList);
+            numPartial++;
+        }
 
         removeDoneFiles(processedFiles);
 
@@ -215,6 +227,13 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 businessObjectService.save(achDetail);
             }
         }
+        
+        return failedRowsErrors;
+    }
+    
+    protected List<String> loadACHBatchDetailPersisted( ) {
+        List<String>failedRowsErrors = new ArrayList<>();
+        List<PayeeACHAccountExtractDetail> achDetails = new ArrayList<>();
         
         int maxRetryCount = Integer.valueOf(parameterService.getParameterValueAsString(PayeeACHAccountExtractStep.class, CUPdpParameterConstants.MAX_ACH_ACCT_EXTRACT_RETRY));
 
