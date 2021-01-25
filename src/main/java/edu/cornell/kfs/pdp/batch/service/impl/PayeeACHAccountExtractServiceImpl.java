@@ -239,7 +239,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
         List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = getPersistedPayeeACHAccountExtractDetails();
         if (!persistedPayeeACHAccountExtractDetails.isEmpty()) {
-            for (PayeeACHAccountExtractDetail achDetail : achDetails) {
+            for (PayeeACHAccountExtractDetail achDetail : persistedPayeeACHAccountExtractDetails) {
                 String error = processACHBatchDetail(achDetail);
                 if (StringUtils.isNotBlank(error)) {
                     if (achDetail.getRetryCount() <= maxRetryCount) {
@@ -256,6 +256,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                     achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.PROCESSED);
                     achDetail.setRetryCount(achDetail.getRetryCount() + 1);
                     achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
+                    businessObjectService.save(achDetail);
                 }
             }
         }
@@ -267,7 +268,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = new ArrayList<PayeeACHAccountExtractDetail>();
         Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put(CUPdpPropertyConstants.PAYEE_ACH_EXTRACT_DETAIL_STATUS, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
-        businessObjectService.findMatching(PayeeACHAccountExtractDetail.class, fieldValues);
+        persistedPayeeACHAccountExtractDetails.addAll(businessObjectService.findMatching(PayeeACHAccountExtractDetail.class, fieldValues));
         return persistedPayeeACHAccountExtractDetails;
     }
     
