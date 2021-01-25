@@ -53,7 +53,6 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     private String concurRequestAccessTokenURL;
     private String concurRefreshAccessTokenURL;
     private String concurRevokeAccessTokenURL;
-    //protected WebServiceCredentialService webServiceCredentialService;
     protected AwsSecretService awsSecretService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
 

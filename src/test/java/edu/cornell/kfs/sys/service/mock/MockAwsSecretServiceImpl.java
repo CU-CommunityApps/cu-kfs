@@ -3,6 +3,8 @@ package edu.cornell.kfs.sys.service.mock;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -17,61 +19,55 @@ import edu.cornell.kfs.sys.service.impl.AwsSecretServiceImpl;
 
 public class MockAwsSecretServiceImpl extends AwsSecretServiceImpl {
 
-    private Map<String, Map<String, String>> secretsByRegion;
+    private Map<String, String> localSecrets;
 
     public MockAwsSecretServiceImpl() {
         super();
-        this.secretsByRegion = new HashMap<>();
+        this.localSecrets = new HashMap<>();
     }
 
     @SafeVarargs
-    public final void configureInitialSecretsForRegion(String region,
-            Map.Entry<String, String>... secrets) {
-        Map<String, String> secretsForRegion = secretsByRegion.computeIfAbsent(
-                region, this::buildEmptyMapForAnyKey);
+    public final void setInitialSecrets(Map.Entry<String, String>... secrets) {
         for (Map.Entry<String, String> secret : secrets) {
-            secretsForRegion.put(secret.getKey(), secret.getValue());
+            localSecrets.put(secret.getKey(), secret.getValue());
         }
+    }
+
+    // Overridden just to increase the method's visibility for unit testing convenience.
+    @Override
+    public String buildFullAwsKeyName(String awsKeyName, boolean useKfsInstanceNamespace) {
+        return super.buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
     }
 
     @Override
     protected AWSSecretsManager buildAWSSecretsManager() {
-        String configuredAwsRegion = awsRegion;
         AWSSecretsManager secretsManager = Mockito.mock(AWSSecretsManager.class);
         Mockito.when(secretsManager.getSecretValue(Mockito.any()))
-                .then(invocation -> getSecretValueForRegion(invocation, configuredAwsRegion));
+                .then(this::getLocalSecretValue);
         Mockito.when(secretsManager.updateSecret(Mockito.any()))
-                .then(invocation -> updateSecretForRegion(invocation, configuredAwsRegion));
+                .then(this::updateLocalSecret);
         return secretsManager;
     }
 
-    protected GetSecretValueResult getSecretValueForRegion(InvocationOnMock invocation, String configuredAwsRegion) {
+    protected GetSecretValueResult getLocalSecretValue(InvocationOnMock invocation) {
         GetSecretValueRequest request = invocation.getArgument(0);
-        Map<String, String> secretsForRegion = secretsByRegion.computeIfAbsent(
-                configuredAwsRegion, this::buildEmptyMapForAnyKey);
-        String secretValue = secretsForRegion.get(request.getSecretId());
+        String secretValue = localSecrets.get(request.getSecretId());
         return new GetSecretValueResult()
                 .withName(request.getSecretId())
                 .withSecretString(secretValue);
     }
 
-    protected UpdateSecretResult updateSecretForRegion(InvocationOnMock invocation, String configuredAwsRegion) {
+    protected UpdateSecretResult updateLocalSecret(InvocationOnMock invocation) {
         UpdateSecretRequest request = invocation.getArgument(0);
-        Map<String, String> secretsForRegion = secretsByRegion.computeIfAbsent(
-                configuredAwsRegion, this::buildEmptyMapForAnyKey);
-        secretsForRegion.put(request.getSecretId(), request.getSecretString());
+        localSecrets.put(request.getSecretId(), request.getSecretString());
         
         SdkHttpMetadata httpMetadata = Mockito.mock(SdkHttpMetadata.class);
         Mockito.when(httpMetadata.getHttpStatusCode())
-                .thenReturn(200);
+                .thenReturn(Response.Status.OK.getStatusCode());
         
         UpdateSecretResult result = new UpdateSecretResult().withName(request.getSecretId());
         result.setSdkHttpMetadata(httpMetadata);
         return result;
-    }
-
-    protected Map<String, String> buildEmptyMapForAnyKey(String key) {
-        return new HashMap<>();
     }
 
 }
