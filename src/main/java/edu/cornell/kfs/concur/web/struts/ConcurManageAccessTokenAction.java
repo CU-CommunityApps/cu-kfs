@@ -67,7 +67,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     
     public ActionForward resetTokenToEmptyString(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (!isProduction()) {
-            getConcurAccessTokenService().resetTokenToEmptyStringInDatabase();
+            getConcurAccessTokenService().resetTokenToEmptyStringInDataStorage();
             GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_RESET_SUCCESS);
         } else {
             LOG.error("resetTokenToEmptyString, we are in production, should not reset the token to an empty string.");

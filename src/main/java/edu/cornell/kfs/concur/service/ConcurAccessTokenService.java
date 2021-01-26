@@ -13,7 +13,7 @@ public interface ConcurAccessTokenService {
     
     void revokeAccessToken();
     
-    void resetTokenToEmptyStringInDatabase();
+    void resetTokenToEmptyStringInDataStorage();
 
     boolean currentAccessTokenExists();
 

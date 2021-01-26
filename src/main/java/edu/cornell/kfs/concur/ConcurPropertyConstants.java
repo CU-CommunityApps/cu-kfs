@@ -34,4 +34,17 @@ public class ConcurPropertyConstants {
         public static final String FILE_NAME = "fileName";
     }
 
+    public static final class ConcurStaticConfig {
+        public static final String LOGIN_USERNAME = "login_username";
+        public static final String LOGIN_PASSWORD = "login_password";
+        public static final String CONSUMER_KEY = "consumer_key";
+        public static final String SECRET_KEY = "secret_key";
+    }
+
+    public static final class ConcurTokenConfig {
+        public static final String ACCESS_TOKEN = "access_token";
+        public static final String REFRESH_TOKEN = "refresh_token";
+        public static final String ACCESS_TOKEN_EXPIRATION_DATE = "access_token_expiration_date";
+    }
+
 }

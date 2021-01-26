@@ -109,7 +109,7 @@ public class ConcurTestConstants {
     }
 
     public static final class MockLegacyAuthConstants {
-        public static final String BASE_PATH = "net2/oauth2";
+        public static final String BASE_RESOURCE_PATH = "net2/oauth2";
         public static final String REQUEST_TOKEN_PATH = "accesstoken.ashx";
         public static final String REFRESH_TOKEN_PATH = "getaccesstoken.ashx";
         public static final String REVOKE_TOKEN_PATH = "revoketoken.ashx";
@@ -119,6 +119,8 @@ public class ConcurTestConstants {
         public static final String MOCK_CLIENT_ID = "AbCdEFG1357999H1i3J5";
         public static final String MOCK_SECRET_KEY = "Zy88XW66vu44TtTTT222";
         public static final String EXPIRATION_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss aa";
+        
+        public static final String MOCK_AWS_REGION_NAME = "";
     }
 
 }

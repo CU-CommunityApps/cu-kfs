@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
 import net.bull.javamelody.internal.common.LOG;
 
@@ -24,11 +25,6 @@ import net.bull.javamelody.internal.common.LOG;
  * which has been changed to validate the Mock AWS Secret Service instead.
  */
 public class MockAwsSecretServiceImplTest {
-    private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
-    private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";
-    private static final String KFS_SHARED_NAMESPACE = "kfs/kfs-shared/";
-    private static final int AWS_SECRET_UPDATE_RETRY_COUNT = 5;
-
     private static final String SINGLE_STRING_SECRET_KEY_NAME = "unittest/singlestring";
     private static final String SINGLE_DATE_SECRET_KEY_NAME = "unittest/singledate";
     private static final String BASIC_POJO_SECRET_KEY_NAME = "unittest/pojo";
@@ -44,17 +40,21 @@ public class MockAwsSecretServiceImplTest {
     @BeforeEach
     void setUp() throws Exception {
         awsSecretServiceImpl = new MockAwsSecretServiceImpl();
-        awsSecretServiceImpl.setAwsRegion(AWS_US_EAST_ONE_REGION);
-        awsSecretServiceImpl.setKfsSharedNamespace(KFS_SHARED_NAMESPACE);
-        awsSecretServiceImpl.setKfsInstanceNamespace(KFS_INSTANCE_NAMESPACE);
-        awsSecretServiceImpl.setRetryCount(AWS_SECRET_UPDATE_RETRY_COUNT);
+        awsSecretServiceImpl.setAwsRegion(MockAwsSecretServiceConstants.AWS_US_EAST_ONE_REGION);
+        awsSecretServiceImpl.setKfsSharedNamespace(MockAwsSecretServiceConstants.KFS_SHARED_NAMESPACE);
+        awsSecretServiceImpl.setKfsInstanceNamespace(MockAwsSecretServiceConstants.KFS_LOCALDEV_INSTANCE_NAMESPACE);
+        awsSecretServiceImpl.setRetryCount(MockAwsSecretServiceConstants.AWS_SECRET_DEFAULT_UPDATE_RETRY_COUNT);
         awsSecretServiceImpl.setInitialSecrets(
-                Map.entry(KFS_SHARED_NAMESPACE + SINGLE_STRING_SECRET_KEY_NAME, SINGLE_STRING_SECRET_VALUE),
-                Map.entry(KFS_SHARED_NAMESPACE + SINGLE_BOOLEAN_SECRET_KEY_NAME, Boolean.TRUE.toString()),
-                Map.entry(KFS_SHARED_NAMESPACE + BASIC_POJO_SECRET_KEY_NAME, buildInitialPojoJson()));
+                buildSharedSecret(SINGLE_STRING_SECRET_KEY_NAME, SINGLE_STRING_SECRET_VALUE),
+                buildSharedSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, Boolean.TRUE.toString()),
+                buildSharedSecret(BASIC_POJO_SECRET_KEY_NAME, buildInitialPojoJson()));
     }
 
-    private String buildInitialPojoJson() throws Exception {
+    private Map.Entry<String, String> buildSharedSecret(String awsKeyName, String value) {
+        return Map.entry(MockAwsSecretServiceConstants.KFS_SHARED_NAMESPACE + awsKeyName, value);
+    }
+
+    private String buildInitialPojoJson() {
         String pojoFormatWithStaticFieldsOnly = "{ \"static_string\": \"%s\", \"number_test\": \"%s\" }";
         return String.format(pojoFormatWithStaticFieldsOnly,
                 BASIC_POJO_STATIC_STRING_VALUE, BASIC_POJO_NUMBER_VALUE);
@@ -121,7 +121,7 @@ public class MockAwsSecretServiceImplTest {
     void testBuildFullAwsKeyNameAnyNamespace() {
         String keyName = "foo";
         String actualFullNameSpace = awsSecretServiceImpl.buildFullAwsKeyName(keyName, false);
-        String expectedFullNameSpace = KFS_SHARED_NAMESPACE + keyName;
+        String expectedFullNameSpace = MockAwsSecretServiceConstants.KFS_SHARED_NAMESPACE + keyName;
         assertEquals(expectedFullNameSpace, actualFullNameSpace);
     }
     
@@ -129,7 +129,7 @@ public class MockAwsSecretServiceImplTest {
     void testBuildFullAwsKeyNameInstanceNamespace() {
         String keyName = "foo";
         String actualFullNameSpace = awsSecretServiceImpl.buildFullAwsKeyName(keyName, true);
-        String expectedFullNameSpace = KFS_INSTANCE_NAMESPACE + keyName;
+        String expectedFullNameSpace = MockAwsSecretServiceConstants.KFS_LOCALDEV_INSTANCE_NAMESPACE + keyName;
         assertEquals(expectedFullNameSpace, actualFullNameSpace);
     }
     

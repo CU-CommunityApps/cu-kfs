@@ -1,6 +1,8 @@
 package edu.cornell.kfs.concur.rest.resource;
 
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.ClientErrorException;
@@ -37,6 +39,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * NOTE: This resource's error responses do not necessarily match the status codes
  * or error content that the actual Concur server would respond with.
  */
+@Path(MockLegacyAuthConstants.BASE_RESOURCE_PATH)
 public class MockConcurLegacyAuthenticationServerResource {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -49,6 +52,10 @@ public class MockConcurLegacyAuthenticationServerResource {
     private String validEncodedCredentials;
     private ConcurrentMap<String, AccessTokenDTO> currentTokens;
     private DateTimeFormatter dateTimeFormatter;
+
+    public MockConcurLegacyAuthenticationServerResource() {
+        this.currentTokens = new ConcurrentHashMap<>();
+    }
 
     @GET
     @Path(MockLegacyAuthConstants.REQUEST_TOKEN_PATH)
@@ -221,6 +228,14 @@ public class MockConcurLegacyAuthenticationServerResource {
                 .build();
     }
 
+    public Optional<AccessTokenDTO> getTokenDTOByAccessToken(String accessToken) {
+        if (StringUtils.isBlank(accessToken)) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(currentTokens.get(accessToken));
+        }
+    }
+
     public String getBaseUri() {
         return baseUri;
     }
@@ -251,14 +266,6 @@ public class MockConcurLegacyAuthenticationServerResource {
 
     public void setValidEncodedCredentials(String validEncodedCredentials) {
         this.validEncodedCredentials = validEncodedCredentials;
-    }
-
-    public ConcurrentMap<String, AccessTokenDTO> getCurrentTokens() {
-        return currentTokens;
-    }
-
-    public void setCurrentTokens(ConcurrentMap<String, AccessTokenDTO> currentTokens) {
-        this.currentTokens = currentTokens;
     }
 
     public DateTimeFormatter getDateTimeFormatter() {

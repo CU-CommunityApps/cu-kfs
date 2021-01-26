@@ -92,12 +92,6 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         updateTokenConfig(newToken.getToken(), newToken.getExpirationDate(), newToken.getRefreshToken());
     }
 
-    //protected void setWebserivceCredentialValues(String accessToken, String expirationDate, String refreshToken) {
-        //webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN, accessToken);
-        //webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, expirationDate);
-        //webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
-    //}
-
     protected Invocation buildRequestAccessTokenClientRequest(Client client) {
         ConcurStaticConfig staticConfig = getStaticConfig();
         String credentials = buildCredentialsStringForRequestingNewAccessToken(
@@ -132,10 +126,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Override
     public void refreshAccessToken() {
         if (shouldRefreshAccessToken()) {
+            ConcurTokenConfig oldTokenConfig = getTokenConfig();
             AccessTokenDTO refreshedToken = callConcurEndpoint(
                     this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
             updateTokenConfig(
-                    refreshedToken.getToken(), refreshedToken.getExpirationDate(), refreshedToken.getRefreshToken());
+                    refreshedToken.getToken(), refreshedToken.getExpirationDate(), oldTokenConfig.getRefresh_token());
         }
     }
     
@@ -213,7 +208,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
     
     @Override
-    public void resetTokenToEmptyStringInDatabase() {
+    public void resetTokenToEmptyStringInDataStorage() {
         updateTokenConfig(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
