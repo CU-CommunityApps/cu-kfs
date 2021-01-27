@@ -28,6 +28,14 @@ import org.glassfish.jersey.server.ContainerException;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.spi.ContainerResponseWriter;
 
+/**
+ * Jersey ContainerResponseWriter implementation that integrates with an Apache HTTP server.
+ * 
+ * This code is based on an official Jersey Container implementation (plus its nested classes)
+ * that integrates with a "simple-http" server:
+ * 
+ * https://github.com/eclipse-ee4j/jersey/blob/master/containers/simple-http/src/main/java/org/glassfish/jersey/simple/SimpleContainer.java
+ */
 public class ApacheHttpResponseWriter implements ContainerResponseWriter, Closeable {
     private HttpResponse httpResponse;
     private ByteArrayOutputStream outputStream;
@@ -164,7 +172,7 @@ public class ApacheHttpResponseWriter implements ContainerResponseWriter, Closea
                 scheduledEventReference.set(null);
                 timeoutHandler.onTimeout(responseWriter);
             } catch (Exception e) {
-                
+                // Do nothing
             }
         }
 

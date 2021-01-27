@@ -164,9 +164,9 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
         return tokenService;
     }
 
-    private String buildMockConcurServiceUrl(String... subPath) {
+    private String buildMockConcurServiceUrl(String... subPathSegments) {
         return buildAbsoluteUriPath(
-                MockLegacyAuthConstants.BASE_RESOURCE_PATH, subPath);
+                MockLegacyAuthConstants.BASE_RESOURCE_PATH, subPathSegments);
     }
 
     @Test

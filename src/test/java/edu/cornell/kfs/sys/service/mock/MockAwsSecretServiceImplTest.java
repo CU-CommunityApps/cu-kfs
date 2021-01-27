@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,18 +20,24 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
-import net.bull.javamelody.internal.common.LOG;
+import edu.cornell.kfs.sys.util.CuJsonUtils;
 
 /**
  * This is a modified copy of the cu-kfs AwsSecretServiceImplIntegrationTest class,
  * which has been changed to validate the Mock AWS Secret Service instead.
  */
 public class MockAwsSecretServiceImplTest {
+
+    private static final Logger LOG = LogManager.getLogger();
+
     private static final String SINGLE_STRING_SECRET_KEY_NAME = "unittest/singlestring";
     private static final String SINGLE_DATE_SECRET_KEY_NAME = "unittest/singledate";
     private static final String BASIC_POJO_SECRET_KEY_NAME = "unittest/pojo";
     private static final String SINGLE_BOOLEAN_SECRET_KEY_NAME = "unittest/singleboolean";
     private static final String SINGLE_FLOAT_SECRET_KEY_NAME = "unittest/singlefloat";
+    
+    private static final String STATIC_STRING_PROPERTY_NAME = "static_string";
+    private static final String NUMBER_TEST_PROPERTY_NAME = "number_test";
     
     private static final String SINGLE_STRING_SECRET_VALUE = "Test Value";
     private static final String BASIC_POJO_STATIC_STRING_VALUE = "do not change me";
@@ -55,9 +63,9 @@ public class MockAwsSecretServiceImplTest {
     }
 
     private String buildInitialPojoJson() {
-        String pojoFormatWithStaticFieldsOnly = "{ \"static_string\": \"%s\", \"number_test\": \"%s\" }";
-        return String.format(pojoFormatWithStaticFieldsOnly,
-                BASIC_POJO_STATIC_STRING_VALUE, BASIC_POJO_NUMBER_VALUE);
+        return CuJsonUtils.buildJsonStringFromEntries(
+                Map.entry(STATIC_STRING_PROPERTY_NAME, BASIC_POJO_STATIC_STRING_VALUE),
+                Map.entry(NUMBER_TEST_PROPERTY_NAME, String.valueOf(BASIC_POJO_NUMBER_VALUE)));
     }
 
     @AfterEach

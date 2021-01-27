@@ -33,6 +33,19 @@ import org.glassfish.jersey.test.spi.TestContainer;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
+/**
+ * Jersey TestContainer implementation that integrates with an Apache HTTP server.
+ * 
+ * Note that, at the moment, this container does NOT support servlets (or mock-ups
+ * of servlet processing). Before using this container to test out a servlet-related
+ * JAX-RS Application, further code changes will be needed, or an alternative
+ * TestContainer implementation should be used instead.
+ * 
+ * Some of this code is based on an official Jersey Container implementation
+ * that integrates with a "simple-http" server:
+ * 
+ * https://github.com/eclipse-ee4j/jersey/blob/master/containers/simple-http/src/main/java/org/glassfish/jersey/simple/SimpleContainer.java
+ */
 public class ApacheHttpTestContainer implements TestContainer {
 
     private static final int THREAD_POOL_SIZE = 4;
@@ -143,6 +156,10 @@ public class ApacheHttpTestContainer implements TestContainer {
             this.httpHost = start();
         }
 
+        /**
+         * Overridden to shutdown the server immediately and to perform some other minor cleanup,
+         * but otherwise is identical to the superclass code.
+         */
         @Override
         public void shutDown() throws Exception {
             this.httpHost = null;

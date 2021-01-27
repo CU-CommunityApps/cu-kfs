@@ -31,7 +31,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * Unlike JerseyTest, this class takes full control of the TestContainerFactory setup.
  * Thus, the constructor that takes TestContainerFactory as an input is not supported.
  */
-public abstract class ApacheHttpJerseyTestBase extends JerseyTest implements TestContainerFactory {
+public abstract class ApacheHttpJerseyTestBase extends JerseyTest {
 
     protected Application application;
 
@@ -53,11 +53,10 @@ public abstract class ApacheHttpJerseyTestBase extends JerseyTest implements Tes
 
     @Override
     protected final TestContainerFactory getTestContainerFactory() throws TestContainerException {
-        return this;
+        return this::createTestContainer;
     }
 
-    @Override
-    public final TestContainer create(URI baseUri, DeploymentContext context) {
+    protected TestContainer createTestContainer(URI baseUri, DeploymentContext context) {
         return new ApacheHttpTestContainer(context.getResourceConfig());
     }
 

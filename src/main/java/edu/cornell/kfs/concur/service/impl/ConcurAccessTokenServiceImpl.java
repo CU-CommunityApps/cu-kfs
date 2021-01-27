@@ -56,11 +56,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     protected AwsSecretService awsSecretService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
 
-    public ConcurStaticConfig getStaticConfig() {
+    protected ConcurStaticConfig getStaticConfig() {
         return getConcurPojoFromAws(ConcurAwsKeyNames.STATIC_CONFIG, ConcurStaticConfig.class);
     }
 
-    public ConcurTokenConfig getTokenConfig() {
+    protected ConcurTokenConfig getTokenConfig() {
         return getConcurPojoFromAws(ConcurAwsKeyNames.TOKEN_CONFIG, ConcurTokenConfig.class);
     }
 
