@@ -40,6 +40,7 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao;
 import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;
 import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
@@ -487,7 +488,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
     protected void getcsvWriter(String csvDoc, String reportDropFolder) {
         
         String fileName = "CIT_OUT_" +
-            new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US).format(dateTimeService.getCurrentDate()) + ".csv";
+            new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS, Locale.US).format(dateTimeService.getCurrentDate()) + ".csv";
         
          //  setup the writer
          File reportFile = new File(reportDropFolder + fileName);

@@ -10,6 +10,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 /**
  * XML adapter for converting between java.util.Date instances and "MM/dd/yyyy"-formatted date strings.
  * Unlike Rice's StringToDateTimeAdapter, this adapter only supports one pattern,
@@ -17,7 +19,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class StringToJavaDateAdapter extends XmlAdapter<String, Date> {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("MM/dd/yyyy").withLocale(Locale.US);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_MM_dd_yyyy).withLocale(Locale.US);
 
     @Override
     public Date unmarshal(String value) throws Exception {

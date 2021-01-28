@@ -45,7 +45,7 @@ public class CuExtractPaymentServiceImplTest {
     private static final String ACH_EXTRACT_TEST_FILE_NAME = "testAchExtractPaymentsOuput.txt";
     private static final String ACH_EXTRACT_TEST_PATH_AND_FILE = ACH_EXTRACT_TEST_FILE_PATH + File.separator + ACH_EXTRACT_TEST_FILE_NAME;
     private static final String ACH_EXTRACT_TEST_PATH_AND_FILE_FOR_VALIDATION = ACH_EXTRACT_TEST_PATH_AND_FILE + ".READY";
-    private static final SimpleDateFormat yyyyMMddHHmmss_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+    private static final SimpleDateFormat yyyyMMddHHmmss_DATE_FORMATTER = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMddHHmmss, Locale.US);
     private static final SimpleDateFormat yyyyMMdd_DATE_FORMATTER = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US);
     private static final String[] NOTIFICATION_EMAIL_ADDRESSES = {"abc@xyz.edu", "def@xyz.edu", "ghi@xyz.edu"};
     private static final int HEADER_LINE_IN_OUTPUT_FILE = 1;

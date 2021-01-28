@@ -289,7 +289,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
     }
 
     private void createNotes(AchIncomeTransaction transaction, AdvanceDepositDocument document) {
-        String fileName = CuFPConstants.ADVANCE_DEPOSIT_NOTE_FILE_PREFIX + document.getDocumentNumber() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(dateTimeService.getCurrentDate()) + ".txt";
+        String fileName = CuFPConstants.ADVANCE_DEPOSIT_NOTE_FILE_PREFIX + document.getDocumentNumber() + "_" + new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US).format(dateTimeService.getCurrentDate()) + ".txt";
         StringBuilder notes = new StringBuilder();
 
         for (AchIncomeNote achIncomeNote : transaction.getNotes()) {

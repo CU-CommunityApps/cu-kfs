@@ -32,6 +32,8 @@ import com.rsmart.kuali.kfs.fp.batch.service.DisbursementVoucherDocumentBatchSer
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchFeed;
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchStatus;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 /**
  * Batch input type for the disbursement voucher files
  */
@@ -46,7 +48,7 @@ public class DisbursementVoucherInputFileType extends XmlBatchInputFileTypeBase 
         Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
 
         StringBuffer buf = new StringBuffer();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
         formatter.setLenient(false);
         formatter.format(currentTimestamp, buf, new FieldPosition(0));
 

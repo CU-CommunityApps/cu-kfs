@@ -143,7 +143,7 @@ public class CreateAccountingDocumentServiceImplTest {
     private static final String TARGET_TEST_FILE_PATH = "test/fp/accountingXmlDocument";
     private static final String FULL_FILE_PATH_FORMAT = "%s/%s%s";
     private static final int DOCUMENT_NUMBER_START = 1000;
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH-mm-ss-S", Locale.US);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HH_mm_ss_S, Locale.US);
 
     private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;

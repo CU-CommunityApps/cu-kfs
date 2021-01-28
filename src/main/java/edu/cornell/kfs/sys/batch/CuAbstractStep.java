@@ -27,6 +27,8 @@ import org.kuali.kfs.kns.bo.Step;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 public abstract class CuAbstractStep extends AbstractStep implements Step, BeanNameAware, InitializingBean, InitiateDirectory{
     
     
@@ -40,7 +42,7 @@ public abstract class CuAbstractStep extends AbstractStep implements Step, BeanN
 		String fileNameProper = fileName.substring(0, fileName.lastIndexOf('.'));
 		String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
 
-		DateFormat df = new SimpleDateFormat("MMddyyyy_hhmmss", Locale.US);
+		DateFormat df = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_MMddyyyy_hhmmss, Locale.US);
 		
 		File newFile = new File(directory+File.separator+fileNameProper+"_"+df.format(new Date())+fileExtension);
 		origFile.renameTo(newFile);

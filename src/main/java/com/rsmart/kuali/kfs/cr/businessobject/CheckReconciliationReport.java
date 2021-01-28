@@ -24,6 +24,8 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 /**
  * Check Reconciliation Report
  * 
@@ -42,9 +44,9 @@ public class CheckReconciliationReport implements Comparable<CheckReconciliation
     private String status;
     private String amount;
     private Double subTotal;
-    public static SimpleDateFormat MONYYF = new SimpleDateFormat("yyyy/MM", Locale.US);
+    public static SimpleDateFormat MONYYF = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM, Locale.US);
     public static SimpleDateFormat SDF = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
-    public static DecimalFormat DF = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.US));
+    public static DecimalFormat DF = new DecimalFormat(CUKFSConstants.DECIMAL_FORMAT_0N_NN, new DecimalFormatSymbols(Locale.US));
     
     public CheckReconciliationReport() {
     }
