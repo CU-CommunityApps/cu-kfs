@@ -14,11 +14,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm;
-import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 @SuppressWarnings("deprecation")
 public class ConcurManageAccessTokenAction extends KualiAction {
@@ -45,9 +43,14 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     }
 
     public ActionForward refreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        getConcurAccessTokenService().refreshAccessToken();
-        LOG.debug("refreshToken, refresh was successful");
-        GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS);
+        if (getConcurAccessTokenService().isAccessTokenRefreshEnabled()) {
+            getConcurAccessTokenService().refreshAccessToken();
+            LOG.debug("refreshToken, refresh was successful");
+            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS);
+        } else {
+            LOG.debug("refreshToken, refresh is disabled in current environment");
+            GlobalVariables.getMessageMap().putWarning(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.WARNING_CONCUR_TOKEN_REFRESH_DISABLED);
+        }
         updateFormValues((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -78,10 +81,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     }
     
     protected void updateFormValues(ConcurManageAccessTokenForm concurTokenForm) {
-        String accessTokenExpirationDate = getWebServiceCredentialService().getWebServiceCredentialValue(
-                ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,
-                ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE
-        );
+        String accessTokenExpirationDate = getConcurAccessTokenService().getAccessTokenExpirationDate();
         concurTokenForm.setAccessTokenExpirationDate(accessTokenExpirationDate);
         concurTokenForm.setShowResetTokenToEmptyStringButton(!isProduction());
         if (LOG.isDebugEnabled()) {
@@ -99,10 +99,6 @@ public class ConcurManageAccessTokenAction extends KualiAction {
 
     protected ConcurAccessTokenService getConcurAccessTokenService() {
         return SpringContext.getBean(ConcurAccessTokenService.class);
-    }
-    
-    protected WebServiceCredentialService getWebServiceCredentialService() {
-        return SpringContext.getBean(WebServiceCredentialService.class);
     }
 
 }

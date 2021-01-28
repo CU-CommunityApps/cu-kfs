@@ -11,6 +11,9 @@ public final class CuJaxrsTestConstants {
                 APPLICATION_PATH + CUKFSConstants.SLASH + RESOURCE_RELATIVE_PATH;
         public static final String DESCRIPTION_SUB_PATH = "description";
         public static final String DESCRIPTION_RESPONSE = "This is a resource for testing a JAX-RS test server";
+        public static final String POST_PATH = "testpost";
+        public static final String BAD_REQUEST_PATH = "badrequest";
+        public static final String UNMAPPED_PATH = "unmappedpath";
     }
 
 }

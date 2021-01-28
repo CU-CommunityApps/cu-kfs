@@ -57,6 +57,15 @@ public class MockConcurLegacyAuthenticationServerResource {
         this.currentTokens = new ConcurrentHashMap<>();
     }
 
+    public void resetForNextTestMethod() {
+        this.currentTokens.clear();
+        this.baseUri = null;
+        this.validClientId = null;
+        this.validClientSecret = null;
+        this.validEncodedCredentials = null;
+        this.dateTimeFormatter = null;
+    }
+
     @GET
     @Path(MockLegacyAuthConstants.REQUEST_TOKEN_PATH)
     @Produces(MediaType.APPLICATION_XML)
@@ -236,40 +245,20 @@ public class MockConcurLegacyAuthenticationServerResource {
         }
     }
 
-    public String getBaseUri() {
-        return baseUri;
-    }
-
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
-    }
-
-    public String getValidClientId() {
-        return validClientId;
     }
 
     public void setValidClientId(String validClientId) {
         this.validClientId = validClientId;
     }
 
-    public String getValidClientSecret() {
-        return validClientSecret;
-    }
-
     public void setValidClientSecret(String validClientSecret) {
         this.validClientSecret = validClientSecret;
     }
 
-    public String getValidEncodedCredentials() {
-        return validEncodedCredentials;
-    }
-
     public void setValidEncodedCredentials(String validEncodedCredentials) {
         this.validEncodedCredentials = validEncodedCredentials;
-    }
-
-    public DateTimeFormatter getDateTimeFormatter() {
-        return dateTimeFormatter;
     }
 
     public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {

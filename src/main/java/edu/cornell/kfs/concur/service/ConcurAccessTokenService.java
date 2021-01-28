@@ -4,6 +4,8 @@ package edu.cornell.kfs.concur.service;
 public interface ConcurAccessTokenService {
     
     String getAccessToken();
+
+    String getAccessTokenExpirationDate();
     
     void requestNewAccessToken();
 
@@ -16,5 +18,7 @@ public interface ConcurAccessTokenService {
     void resetTokenToEmptyStringInDataStorage();
 
     boolean currentAccessTokenExists();
+
+    boolean isAccessTokenRefreshEnabled();
 
 }

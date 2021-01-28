@@ -12,12 +12,12 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import javax.ws.rs.core.Application;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -40,14 +40,16 @@ import edu.cornell.kfs.concur.rest.application.MockConcurLegacyAuthenticationSer
 import edu.cornell.kfs.concur.rest.resource.MockConcurLegacyAuthenticationServerResource;
 import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
 import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
-import edu.cornell.kfs.sys.rest.util.ApacheHttpJerseyTestBase;
+import edu.cornell.kfs.sys.rest.util.ApacheHttpJerseyTestExtension;
 import edu.cornell.kfs.sys.service.mock.MockAwsSecretServiceImpl;
 import edu.cornell.kfs.sys.util.CuJsonUtils;
 
 @Execution(ExecutionMode.SAME_THREAD)
-public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.ForJUnit5 {
+public class ConcurAccessTokenServiceImplTest {
 
     private static final String DUMMY_CONFIG_VALUE = "ABCD3333EFG456__";
+
+    private static ApacheHttpJerseyTestExtension jerseyExtension;
 
     private MockConcurLegacyAuthenticationServerResource mockAuthenticationResource;
     private DateTimeFormatter dateTimeFormatter;
@@ -56,15 +58,26 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
     private MockAwsSecretServiceImpl mockAwsSecretService;
     private ConcurAccessTokenServiceImpl concurAccessTokenService;
 
-    @Override
-    protected Application configure() {
-        return new MockConcurLegacyAuthenticationServerApplication();
+    @BeforeAll
+    static void startUpMockConcurApplication() throws Exception {
+        jerseyExtension = new ApacheHttpJerseyTestExtension(
+                new MockConcurLegacyAuthenticationServerApplication());
+        jerseyExtension.startUp();
+    }
+
+    @AfterAll
+    static void shutDownMockConcurApplication() throws Exception {
+        try {
+            if (jerseyExtension != null) {
+                jerseyExtension.close();
+            }
+        } finally {
+            jerseyExtension = null;
+        }
     }
 
     @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    void setUp() throws Exception {
         this.dateTimeFormatter = DateTimeFormat.forPattern(MockLegacyAuthConstants.EXPIRATION_DATE_FORMAT);
         this.mockAuthenticationResource = getAndConfigureMockAuthenticationResource(dateTimeFormatter);
         this.initialTokenDTO = mockAuthenticationResource.buildAndStoreNewTokenDTO();
@@ -74,9 +87,10 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
     }
 
     @AfterEach
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    void tearDown() throws Exception {
+        if (mockAuthenticationResource != null) {
+            mockAuthenticationResource.resetForNextTestMethod();
+        }
         this.dateTimeFormatter = null;
         this.mockAuthenticationResource = null;
         this.initialTokenDTO = null;
@@ -91,9 +105,9 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
                 + ConcurConstants.USERNAME_PASSWORD_SEPARATOR + MockLegacyAuthConstants.MOCK_PASSWORD;
         String encodedCredentials = ConcurUtils.base64Encode(decodedCredentials);
         
-        MockConcurLegacyAuthenticationServerResource mockResource = getSingletonFromApplication(
+        MockConcurLegacyAuthenticationServerResource mockResource = jerseyExtension.getSingletonFromApplication(
                 MockConcurLegacyAuthenticationServerResource.class);
-        mockResource.setBaseUri(getBaseUri().toString());
+        mockResource.setBaseUri(jerseyExtension.getBaseUri().toString());
         mockResource.setDateTimeFormatter(expirationDateTimeFormatter);
         mockResource.setValidClientId(MockLegacyAuthConstants.MOCK_CLIENT_ID);
         mockResource.setValidClientSecret(MockLegacyAuthConstants.MOCK_SECRET_KEY);
@@ -165,7 +179,7 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
     }
 
     private String buildMockConcurServiceUrl(String... subPathSegments) {
-        return buildAbsoluteUriPath(
+        return jerseyExtension.buildAbsoluteUriPath(
                 MockLegacyAuthConstants.BASE_RESOURCE_PATH, subPathSegments);
     }
 
@@ -240,6 +254,21 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
         AccessTokenDTO requestedTokenDTO = optionalDTO.get();
         concurAccessTokenService.refreshAccessToken();
         assertSuccessfulTokenChangeForTokenRefresh(requestedTokenDTO);
+    }
+
+    @Test
+    void testDisableTokenRefresh() throws Exception {
+        assertServiceHasCorrectTokenForInitialSetup();
+        Mockito.doReturn(KFSConstants.ParameterValues.NO)
+                .when(concurBatchUtilityService).getConcurParameterValue(
+                        ConcurParameterConstants.CONCUR_REFRESH_ACCESS_TOKEN);
+        
+        concurAccessTokenService.refreshAccessToken();
+        assertServiceHasCorrectTokenForInitialSetup();
+        assertCurrentTokenConfigHasCorrectSetupAndThen(tokenConfig -> {
+            assertEquals(initialTokenDTO.getRefreshToken(), tokenConfig.getRefresh_token(),
+                    "The refresh token should not have changed when access token refreshes are disabled in KFS");
+        });
     }
 
     static Stream<Consumer<ConcurAccessTokenServiceImpl>> serviceActionsDisallowedAfterResetOrRevoke() {
@@ -319,6 +348,8 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
                 "Service should have had an initial token set up");
         assertEquals(initialTokenDTO.getToken(), concurAccessTokenService.getAccessToken(),
                 "Service returned the wrong initial token");
+        assertEquals(initialTokenDTO.getExpirationDate(), concurAccessTokenService.getAccessTokenExpirationDate(),
+                "Service returned the wrong initial token expiration date");
         assertMockEndpointHasMatchingToken(initialTokenDTO);
     }
 
@@ -344,10 +375,17 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
         assertNotEquals(oldTokenDTO.getToken(), concurAccessTokenService.getAccessToken(),
                 "Service should have updated its access token");
         
+        assertCurrentTokenConfigHasCorrectSetupAndThen(extraValidation);
+    }
+
+    private void assertCurrentTokenConfigHasCorrectSetupAndThen(Consumer<ConcurTokenConfig> extraValidation) {
         ConcurTokenConfig tokenConfig = concurAccessTokenService.getTokenConfig();
         assertNotNull(tokenConfig, "Service should have had a token config object available");
         assertEquals(tokenConfig.getAccess_token(), concurAccessTokenService.getAccessToken(),
                 "Service should have had the same access token as the current token config object");
+        assertEquals(tokenConfig.getAccess_token_expiration_date(),
+                concurAccessTokenService.getAccessTokenExpirationDate(),
+                "Service should have had the same access token expiration date as the current token config object");
         
         assertMockEndpointHasMatchingToken(tokenConfig);
         extraValidation.accept(tokenConfig);
@@ -368,6 +406,8 @@ public class ConcurAccessTokenServiceImplTest extends ApacheHttpJerseyTestBase.F
                 "Service should not have had an active token");
         assertTrue(StringUtils.isBlank(concurAccessTokenService.getAccessToken()),
                 "Service should have returned a blank access token");
+        assertTrue(StringUtils.isBlank(concurAccessTokenService.getAccessTokenExpirationDate()),
+                "Service should have returned a blank access token expiration date");
         
         ConcurTokenConfig tokenConfig = concurAccessTokenService.getTokenConfig();
         assertNotNull(tokenConfig, "Service should have had a token config object, even if its fields are blank");

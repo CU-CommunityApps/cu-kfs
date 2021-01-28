@@ -125,7 +125,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Transactional
     @Override
     public void refreshAccessToken() {
-        if (shouldRefreshAccessToken()) {
+        if (isAccessTokenRefreshEnabled()) {
             ConcurTokenConfig oldTokenConfig = getTokenConfig();
             AccessTokenDTO refreshedToken = callConcurEndpoint(
                     this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
@@ -134,12 +134,13 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         }
     }
     
-    private boolean shouldRefreshAccessToken() {
+    @Override
+    public boolean isAccessTokenRefreshEnabled() {
         String refreshConcurToken = concurBatchUtilityService.getConcurParameterValue(
                 ConcurParameterConstants.CONCUR_REFRESH_ACCESS_TOKEN);
         boolean shouldRefresh = StringUtils.equalsIgnoreCase(
                 refreshConcurToken, KFSConstants.ParameterValues.YES);
-        LOG.info("shouldRefreshAccessToken, shouldRefresh: " + shouldRefresh);
+        LOG.info("isAccessTokenRefreshEnabled, shouldRefresh: " + shouldRefresh);
         return shouldRefresh;
     }
 
@@ -293,6 +294,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Override
     public String getAccessToken() {
         return getTokenConfig().getAccess_token();
+    }
+
+    @Override
+    public String getAccessTokenExpirationDate() {
+        return getTokenConfig().getAccess_token_expiration_date();
     }
 
     public String getConcurRequestAccessTokenURL() {

@@ -8,7 +8,7 @@
 	<div class="main-panel">
 		<div class="center" style="margin: 30px 0;"]>
 			<div style="font-weight: bold">Access Token Expiration Date</div>
-			<div>${KualiForm.accessTokenExpirationDate }</div>
+			<div>${KualiForm.accessTokenExpirationDate}</div>
 		</div>
 		<div class="center" style="margin: 30px 0;"]>
 			<div style="font-weight: bold">Revoke the existing access token and retrieve new access and refresh tokens.</div>
@@ -37,8 +37,8 @@
 		<c:choose>
 			<c:when test="${KualiForm.showResetTokenToEmptyStringButton}">
 				<div class="center" style="margin: 30px 0;">
-					<div style="font-weight: bold">Reset existing token to empty string in the KFS database.</div>
-					<div>(Do this in non-prod databases to test revoke access token.)</div>
+					<div style="font-weight: bold">Reset existing token to empty string in the back-end storage.</div>
+					<div>(Do this in non-prod systems to test revoke access token.)</div>
 					<div>
 						<html:submit property="methodToCall.resetTokenToEmptyString" styleClass="btn btn-default" value="Reset Token To Empty String" />
 					</div>

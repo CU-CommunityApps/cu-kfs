@@ -28,10 +28,11 @@ public class ConcurKeyConstants {
     public static final String MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS = "message.concur.token.replace.success";
     public static final String MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS = "message.concur.token.revoke.and.replace.success";
     public static final String MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS = "message.concur.token.refresh.success";
+    public static final String WARNING_CONCUR_TOKEN_REFRESH_DISABLED = "warning.concur.token.refresh.disabled";
     public static final String MESSAGE_CONCUR_TOKEN_REVOKE_SUCCESS = "message.concur.token.revoke.success";
     public static final String ERROR_CONCUR_TOKEN_REVOKE_NO_TOKEN = "error.concur.token.revoke.no.token";
     public static final String MESSAGE_CONCUR_TOKEN_RESET_SUCCESS = "message.concur.token.reset.success";
-    public static final String ERROR_CONCUR_TOKEN_RESET_IN_PRODUCTION = "error.concur.token.retet.production"; 
+    public static final String ERROR_CONCUR_TOKEN_RESET_IN_PRODUCTION = "error.concur.token.reset.production"; 
 
     public static final String CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER = "validation.error.concur.request.extract.cash.advance.invalid.unique.identifier";
     public static final String CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE = "validation.error.concur.sae.not.requested.cash.advance";
