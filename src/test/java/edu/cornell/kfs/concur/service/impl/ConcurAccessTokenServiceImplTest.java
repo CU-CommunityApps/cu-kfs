@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -78,7 +79,8 @@ public class ConcurAccessTokenServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        this.dateTimeFormatter = DateTimeFormat.forPattern(MockLegacyAuthConstants.EXPIRATION_DATE_FORMAT);
+        this.dateTimeFormatter = DateTimeFormat.forPattern(MockLegacyAuthConstants.EXPIRATION_DATE_FORMAT)
+                .withLocale(Locale.US);
         this.mockAuthenticationResource = getAndConfigureMockAuthenticationResource(dateTimeFormatter);
         this.initialTokenDTO = mockAuthenticationResource.buildAndStoreNewTokenDTO();
         this.concurBatchUtilityService = buildMockConcurBatchUtilityService();

@@ -151,8 +151,7 @@ public class MockConcurLegacyAuthenticationServerResource {
         String accessToken = UUID.randomUUID().toString();
         
         MutableDateTime expirationDateTime = MutableDateTime.now();
-        expirationDateTime.setTime(0, 0, 0, 0);
-        expirationDateTime.addMonths(6);
+        expirationDateTime.addYears(1);
         
         AccessTokenDTO tokenDTO = new AccessTokenDTO();
         tokenDTO.setInstanceURL(baseUri + CUKFSConstants.SLASH);
