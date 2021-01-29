@@ -107,7 +107,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                     
                 Collection<String> offsetDocTypes = parameterService.getParameterValuesAsString(
                         LaborEnterpriseFeedStep.class, LaborParameterConstants.LABOR_BENEFIT_OFFSET_DOCTYPE);
-                offsetDocTypes = offsetDocTypes.parallelStream().map(offsetDocType -> offsetDocType.toUpperCase(Locale.US)).collect(Collectors.toList());
+                offsetDocTypes = offsetDocTypes.stream().map(offsetDocType -> offsetDocType.toUpperCase(Locale.US)).collect(Collectors.toList());
 
                 while ((line = dataFileReader.readLine()) != null) {
                     try {
