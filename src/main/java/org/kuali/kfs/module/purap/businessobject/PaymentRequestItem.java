@@ -44,14 +44,11 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
     private static final Logger LOG = LogManager.getLogger();
 
     private BigDecimal purchaseOrderItemUnitPrice;
-    private KualiDecimal itemOutstandingInvoiceQuantity;
-    private KualiDecimal itemOutstandingInvoiceAmount;
     
     // KFSPTS-1891
     private List<PaymentRequestAccountRevision> preqAccounRevisions;
 
     public PaymentRequestItem() {
-
     }
 
     /**
@@ -244,22 +241,6 @@ public class PaymentRequestItem extends AccountsPayableItemBase {
 
     public void setPurchaseOrderItemUnitPrice(BigDecimal purchaseOrderItemUnitPrice) {
         this.purchaseOrderItemUnitPrice = purchaseOrderItemUnitPrice;
-    }
-
-    public KualiDecimal getItemOutstandingInvoiceAmount() {
-        return itemOutstandingInvoiceAmount;
-    }
-
-    public void setItemOutstandingInvoiceAmount(KualiDecimal itemOutstandingInvoiceAmount) {
-        this.itemOutstandingInvoiceAmount = itemOutstandingInvoiceAmount;
-    }
-
-    public KualiDecimal getItemOutstandingInvoiceQuantity() {
-        return itemOutstandingInvoiceQuantity;
-    }
-
-    public void setItemOutstandingInvoiceQuantity(KualiDecimal itemOutstandingInvoiceQuantity) {
-        this.itemOutstandingInvoiceQuantity = itemOutstandingInvoiceQuantity;
     }
 
     public PaymentRequestDocument getPaymentRequest() {
