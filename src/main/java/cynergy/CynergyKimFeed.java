@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -1031,7 +1032,7 @@ public class CynergyKimFeed {
     }
 
     private DateTime getParsedDeltaLoadDate() {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(DELTA_LOAD_DATE_PROPERTY_FORMAT);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(DELTA_LOAD_DATE_PROPERTY_FORMAT).withLocale(Locale.US);
         return formatter.parseDateTime(getDeltaLoadDate());
     }
 

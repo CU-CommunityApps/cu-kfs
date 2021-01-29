@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
  */
 public class ConcurFixtureUtils {
 
-    private static final DateTimeFormatter CONCUR_DATE_FORMATTER = DateTimeFormat.forPattern(ConcurConstants.DATE_FORMAT);
+    private static final DateTimeFormatter CONCUR_DATE_FORMATTER = DateTimeFormat.forPattern(ConcurConstants.DATE_FORMAT).withLocale(Locale.US);
 
     /**
      * Returns all the constants of the given enum class that reference the given parent object.

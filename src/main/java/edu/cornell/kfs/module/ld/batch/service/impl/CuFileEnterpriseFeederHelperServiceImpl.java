@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -106,7 +107,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                     
                 Collection<String> offsetDocTypes = parameterService.getParameterValuesAsString(
                         LaborEnterpriseFeedStep.class, LaborParameterConstants.LABOR_BENEFIT_OFFSET_DOCTYPE);
-                offsetDocTypes = offsetDocTypes.stream().map(String::toUpperCase).collect(Collectors.toList());
+                offsetDocTypes = offsetDocTypes.stream().map(offsetDocType -> offsetDocType.toUpperCase(Locale.US)).collect(Collectors.toList());
 
                 while ((line = dataFileReader.readLine()) != null) {
                     try {

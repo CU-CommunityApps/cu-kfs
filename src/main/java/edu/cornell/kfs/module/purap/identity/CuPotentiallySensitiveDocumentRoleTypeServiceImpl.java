@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.identity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,8 +35,8 @@ public class CuPotentiallySensitiveDocumentRoleTypeServiceImpl extends Potential
                 if (inputAttributes.containsKey(entry.getKey())) {
                     String inputValue = inputAttributes.get(entry.getKey());
                     // For matching to succeed, the sensitive-doc attributes have to be both true or both false. (We assume null means false.)
-                    if (TRUE_VALUES.contains(inputValue == null ? DOCUMENT_SENSITIVE_FALSE_VALUE : inputValue.toLowerCase())
-                            != TRUE_VALUES.contains(entry.getValue() == null ? DOCUMENT_SENSITIVE_FALSE_VALUE : entry.getValue().toLowerCase())) {
+                    if (TRUE_VALUES.contains(inputValue == null ? DOCUMENT_SENSITIVE_FALSE_VALUE : inputValue.toLowerCase(Locale.US))
+                            != TRUE_VALUES.contains(entry.getValue() == null ? DOCUMENT_SENSITIVE_FALSE_VALUE : entry.getValue().toLowerCase(Locale.US))) {
                         return false;
                     }
                 }

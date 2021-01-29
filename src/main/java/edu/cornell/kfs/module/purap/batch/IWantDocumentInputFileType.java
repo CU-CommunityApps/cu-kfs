@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
@@ -12,6 +13,7 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import com.rsmart.kuali.kfs.fp.FPKeyConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class IWantDocumentInputFileType extends XmlBatchInputFileTypeBase {
     private DateTimeService dateTimeService;
@@ -23,7 +25,7 @@ public class IWantDocumentInputFileType extends XmlBatchInputFileTypeBase {
         Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
 
         StringBuffer buf = new StringBuffer();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
         formatter.setLenient(false);
         formatter.format(currentTimestamp, buf, new FieldPosition(0));
 

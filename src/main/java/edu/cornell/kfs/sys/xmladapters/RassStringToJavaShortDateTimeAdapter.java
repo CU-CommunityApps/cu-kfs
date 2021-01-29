@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.xmladapters;
 
 import java.util.Date;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -13,7 +14,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class RassStringToJavaShortDateTimeAdapter extends XmlAdapter<String, Date> {
     
-    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
+    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd).withLocale(Locale.US);
     
     @Override
     public Date unmarshal(String value) throws Exception {

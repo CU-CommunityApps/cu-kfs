@@ -1,6 +1,7 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,7 +23,7 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GroupCostDate", namespace = StringUtils.EMPTY)
 public class GroupCostDate {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am).withLocale(Locale.US);
     
     @XmlElement(name = "Date", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(CloudcheckrStringToJavaDateTimeAdapter.class)

@@ -22,6 +22,14 @@ public class CUKFSConstants {
     public static final String DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am = "MM/dd/yyyy hh:mm:ss a";
     public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     public static final String DATE_FORMAT_dd_MMM_yy = "dd-MMM-yy";
+    public static final String DATE_FORMAT_yyyyMMddHHmmss = "yyyyMMddHHmmss";
+    public static final String DATE_FORMAT_yyyy_MM = "yyyy/MM";
+    public static final String DATE_FORMAT_yyyyMMdd_HHmmss = "yyyyMMdd_HHmmss";
+    public static final String DATE_FORMAT_yyyyMMdd_HHmmssSSS = "yyyyMMdd_HHmmssSSS";
+    public static final String DATE_FORMAT_MMddyyyy_hhmmss = "MMddyyyy_hhmmss";
+    public static final String DATE_FORMAT_yyyyMMdd_HH_mm_ss_S = "yyyyMMdd-HH-mm-ss-S";
+    
+    public static final String DECIMAL_FORMAT_0N_NN = "#0.00";
     
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";

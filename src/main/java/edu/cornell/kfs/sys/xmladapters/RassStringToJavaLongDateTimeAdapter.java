@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.xmladapters;
 
 import java.util.Date;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -13,7 +14,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class RassStringToJavaLongDateTimeAdapter extends XmlAdapter<String, Date> {
 
-    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
+    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS).withLocale(Locale.US);
 
     @Override
     public Date unmarshal(String value) throws Exception {

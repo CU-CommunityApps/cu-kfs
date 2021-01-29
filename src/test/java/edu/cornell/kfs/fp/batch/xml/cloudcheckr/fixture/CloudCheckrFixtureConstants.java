@@ -1,12 +1,14 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 
+import java.util.Locale;
+
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CloudCheckrFixtureConstants {
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am);
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am).withLocale(Locale.US);
     
     public static final String DATE_FEB_1_2018_MIDNIGHT = "2/1/2018 12:00:00 AM";
     public static final String DATE_JAN_20_2017_MIDNIGHT= "1/20/2017 12:00:00 AM";

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -163,7 +164,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected String getActionRequestCode(String actionRequestedLabel) {
-        ActionRequestType actionRequestType = ActionRequestType.valueOf(StringUtils.upperCase(actionRequestedLabel));
+        ActionRequestType actionRequestType = ActionRequestType.valueOf(StringUtils.upperCase(actionRequestedLabel, Locale.US));
         return actionRequestType.getCode();
     }
 

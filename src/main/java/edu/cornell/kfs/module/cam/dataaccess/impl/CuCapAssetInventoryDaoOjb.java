@@ -16,6 +16,7 @@ import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import java.util.List;
+import java.util.Locale;
 
 public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implements CuCapAssetInventoryDao {
 
@@ -26,9 +27,9 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_CODE_PARAMETER, campusCode);
         criteria.addEqualTo(CuCamsConstants.CapAssetApi.ACTIVE, true);
         if (StringUtils.isNotEmpty(queryName)) {
-            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_NAME + ")", "%" + queryName.toUpperCase() + "%");
+            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_NAME + ")", "%" + queryName.toUpperCase(Locale.US) + "%");
         } else if (StringUtils.isNotEmpty(queryCode)) {
-            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_CODE + ")", "%" + queryCode.toUpperCase() + "%");
+            criteria.addLike(getDbPlatform().getUpperCaseFunction() + "(" + KFSPropertyConstants.BUILDING_CODE + ")", "%" + queryCode.toUpperCase(Locale.US) + "%");
         }
 
         Query query = QueryFactory.newQuery(Building.class, criteria);

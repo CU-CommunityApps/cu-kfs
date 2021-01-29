@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.Invocation.Builder;
@@ -90,7 +91,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 }
             }
         }
-        return StringUtils.lowerCase(mimeType);
+        return StringUtils.lowerCase(mimeType, Locale.US);
     }
 
     protected byte[] downloadByteArray(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {

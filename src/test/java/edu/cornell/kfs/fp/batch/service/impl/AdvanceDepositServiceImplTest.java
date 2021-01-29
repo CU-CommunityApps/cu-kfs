@@ -47,6 +47,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -495,7 +496,7 @@ public class AdvanceDepositServiceImplTest {
         achIncomeFileTransaction.setCompanyId("1111541330");
         achIncomeFileTransaction.setPaymentMethodCode("ACH");
 
-        Date expectedDate = new Date(new SimpleDateFormat("yyyyMMdd").parse("20160223").getTime());
+        Date expectedDate = new Date(new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US).parse("20160223").getTime());
         achIncomeFileTransaction.setEffectiveDate(expectedDate);
 
         List<AchIncomeFileTransactionOpenItemReference> openItemReferences = new ArrayList<>();

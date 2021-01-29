@@ -3,25 +3,18 @@ package edu.cornell.kfs.coa.batch.dataaccess.impl;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.RowMapper;
 
 import edu.cornell.kfs.coa.batch.CuCoaBatchConstants;
 import edu.cornell.kfs.coa.batch.businessobject.ClosedAccount;
 import edu.cornell.kfs.coa.batch.dataaccess.ClosedAccountsByDateRangeDao;
-import edu.cornell.kfs.sys.CUKFSConstants;
 
 
 public class ClosedAccountsByDateRangeDaoJdbc extends PlatformAwareDaoBaseJdbc implements ClosedAccountsByDateRangeDao {

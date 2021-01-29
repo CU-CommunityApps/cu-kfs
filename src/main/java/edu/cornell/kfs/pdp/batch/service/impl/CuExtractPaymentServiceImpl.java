@@ -717,7 +717,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                         LOG.warn("WARNING: No zip code was provided.  Changing it to blanks for check number: " + CheckNumber);
                                     }
                                     else {
-                                        if (sTemp.substring(spaceForZip).trim().toLowerCase().equals("null")) {
+                                        if (sTemp.substring(spaceForZip).trim().toLowerCase(Locale.US).equals("null")) {
                                             altAddrZip = sTemp.substring(spaceForZip);  //Use the space between the state and zip to obtain the "null" zip
                                             sTemp = sTemp.replace(altAddrZip, "");      //Remove the "null" zip characters from sTemp
                                             altAddrZip = "";        // Since ZIP is missing set it to "" per discussion with Marcia
@@ -881,7 +881,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     sCountryName = "";  // Do this only if both the getPostalCountryName() AND getCountry() are empty
                             
                             // Do final country name processing per requirements from BNY Mellon.
-                            if (sCountryName.toUpperCase().contains("UNITED STATES"))
+                            if (sCountryName.toUpperCase(Locale.US).contains("UNITED STATES"))
                                 sCountryName = "";
                             
                             //Get special handling indicator
@@ -1467,8 +1467,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                 repeatThis(" ", 10) +                                                           // Additional Data (Optional) - 10 bytes
                                 repeatThis(" ", 5) +                                                            // Register Information (Optional) - 5 Bytes
                                 repeatThis(" ", 49) +                                                           // Not used - 49 bytes
-                                String.format("%-60.60s", arPayeeName.toUpperCase()) +                          // Payee Line 1 - Payee Name (Required) - 60 Bytes
-                                String.format("%-60.60s", arLine1Address.toUpperCase()) + "\n" );               // Payee Line 2 - Payee Name or first line of address (Required) - 60 Bytes
+                                String.format("%-60.60s", arPayeeName.toUpperCase(Locale.US)) +                 // Payee Line 1 - Payee Name (Required) - 60 Bytes
+                                String.format("%-60.60s", arLine1Address.toUpperCase(Locale.US)) + "\n" );      // Payee Line 2 - Payee Name or first line of address (Required) - 60 Bytes
                             
                             arNumOfAddIssues = arNumOfAddIssues + 1;                        // Totals the number of add issues across ALL checks issued not just for this one payee.
                             arTotalOfAddIssues = arTotalOfAddIssues.add(totalNetAmount);    // Same as for the count but for the total dollar amount.
@@ -1754,13 +1754,13 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             
                             if (country != null) {
                                 sCountryName = country.getName().substring(0,((country.getName().length() >= CountryNameMaxLength)? CountryNameMaxLength: country.getName().length() ));
-                                if (sCountryName.toUpperCase().contains("UNITED STATES"))
+                                if (sCountryName.toUpperCase(Locale.US).contains("UNITED STATES"))
                                     sCountryName = "";
                             }
                             else
                                 if (ObjectUtils.isNotNull(pg.getCountry()))
                                     sCountryName = pg.getCountry().substring(0,((pg.getCountry().length() >= CountryNameMaxLength)? CountryNameMaxLength: pg.getCountry().length() ));
-                                    if (sCountryName.toUpperCase().contains("UNITED STATES"))
+                                    if (sCountryName.toUpperCase(Locale.US).contains("UNITED STATES"))
                                         sCountryName = "";
                                 else
                                     sCountryName = "";

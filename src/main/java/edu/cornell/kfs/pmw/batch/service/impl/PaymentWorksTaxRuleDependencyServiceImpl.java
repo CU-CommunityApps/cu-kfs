@@ -2,6 +2,7 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -277,7 +278,7 @@ public class PaymentWorksTaxRuleDependencyServiceImpl implements PaymentWorksTax
 
     public DateTimeFormatter getDateTimeFormatter() {
         if (dateTimeFormatter == null) {
-            dateTimeFormatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
+            dateTimeFormatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd).withLocale(Locale.US);
         }
         return dateTimeFormatter;
     }

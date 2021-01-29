@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.cg.document.validation.impl;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -221,7 +222,7 @@ public class AwardExtensionRule extends AwardRule {
 			
 			Collection<String> exemptAccounts = getParameterService().getParameterValuesAsString(AwardAccount.class, CUKFSConstants.CGParms.ACCOUNTS_EXEMPT_FROM_MULTIPLE_AWARDS_VALIDATION);
 			
-			if(exemptAccounts.contains(StringUtils.upperCase(accountChart) + ":" + StringUtils.upperCase(accountNumber))){
+			if(exemptAccounts.contains(StringUtils.upperCase(accountChart, Locale.US) + ":" + StringUtils.upperCase(accountNumber, Locale.US))){
 				// validation not needed
 				return true;
 			}

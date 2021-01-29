@@ -5,12 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -229,7 +231,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
             this.organizationService = builder.organizationService;
         } else {
             this.nullTaxNumberReplacementsByPayeeId = new HashMap<String,String>();
-            this.autoGenTaxNumFormat = new DecimalFormat("~00000000");
+            this.autoGenTaxNumFormat = new DecimalFormat("~00000000", new DecimalFormatSymbols(Locale.US));
             this.autoGenTaxNumFormat.setMaximumIntegerDigits(MAX_AUTO_TAXNUM_DIGITS);
             this.workflowDocumentService = KewApiServiceLocator.getWorkflowDocumentService();
             this.identityService = KimApiServiceLocator.getIdentityService();

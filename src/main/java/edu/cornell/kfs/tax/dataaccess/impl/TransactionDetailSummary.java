@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -260,7 +261,7 @@ abstract class TransactionDetailSummary {
         
         List<String> prefixes = new ArrayList<String>(parameterValues.size());
         for (String parameterValue : parameterValues) {
-            prefixes.add(parameterValue.toUpperCase());
+            prefixes.add(parameterValue.toUpperCase(Locale.US));
         }
         
         return Collections.unmodifiableList(prefixes);
@@ -324,7 +325,7 @@ abstract class TransactionDetailSummary {
             if (equalsSignIndex != -1 && equalsSignIndex < parameterValue.length() - 1) {
                 // Get the key and the value, and uppercase the value.
                 String key = parameterValue.substring(0, equalsSignIndex);
-                String value = parameterValue.substring(equalsSignIndex + 1).toUpperCase();
+                String value = parameterValue.substring(equalsSignIndex + 1).toUpperCase(Locale.US);
                 
                 // Create a new Pattern list for the given key if one does not exist.
                 List<Pattern> patterns = patternMap.get(key);

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +60,7 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
     }
 
     protected String generateRandomToken() {
-        String baseToken = StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH - 1));
+        String baseToken = StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH - 1), Locale.US);
         int nextId = idCounter.updateAndGet((value) -> (value + 1) % 10);
         return baseToken + String.valueOf(nextId);
     }

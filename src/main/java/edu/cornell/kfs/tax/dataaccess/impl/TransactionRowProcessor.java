@@ -7,10 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -142,7 +144,7 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
      * @return A new DecimalFormat for formatting amounts.
      */
     DecimalFormat buildAmountFormat() {
-        DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_AMOUNT_FORMAT);
+        DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_AMOUNT_FORMAT, new DecimalFormatSymbols(Locale.US));
         newFormat.setMaximumIntegerDigits(CUTaxConstants.DEFAULT_AMOUNT_MAX_INT_DIGITS);
         return newFormat;
     }
@@ -156,7 +158,7 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
      * @return A new DecimalFormat for formatting percents.
      */
     DecimalFormat buildPercentFormat() {
-        DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_PERCENT_FORMAT);
+        DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_PERCENT_FORMAT, new DecimalFormatSymbols(Locale.US));
         newFormat.setMaximumIntegerDigits(CUTaxConstants.DEFAULT_PERCENT_MAX_INT_DIGITS);
         return newFormat;
     }
@@ -170,7 +172,7 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
      * @return A new DateFormat for formatting dates.
      */
     DateFormat buildDateFormat() {
-        return new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT);
+        return new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
     }
 
     /**
@@ -180,7 +182,7 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
      * @return A new DateFormat for formatting date-times as filename suffixes.
      */
     DateFormat buildDateFormatForFileSuffixes() {
-        return new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT);
+        return new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
     }
 
 
@@ -214,7 +216,7 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
         
         // Check if the value matches at least one of the given patterns.
         boolean foundMatch = false;
-        value = value.toUpperCase();
+        value = value.toUpperCase(Locale.US);
         for (int i = patterns.size() - 1; !foundMatch && i >= 0; i--) {
             if (patterns.get(i).matcher(value).matches()) {
                 foundMatch = true;

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -412,7 +413,7 @@ public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
             }
         }
         else {
-            acct.setChartOfAccountsCode(acct.getChartOfAccountsCode().toUpperCase());
+            acct.setChartOfAccountsCode(acct.getChartOfAccountsCode().toUpperCase(Locale.US));
             acct.refreshReferenceObject("chartOfAccounts");
             if (ObjectUtils.isNull(acct.getChartOfAccounts())) {
                 success = false;
