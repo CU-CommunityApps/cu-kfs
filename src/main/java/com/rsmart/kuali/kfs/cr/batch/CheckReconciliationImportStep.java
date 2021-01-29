@@ -22,7 +22,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -55,6 +55,7 @@ import com.rsmart.kuali.kfs.cr.businessobject.CheckReconError;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.CuAbstractStep;
 
 
@@ -93,12 +94,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
     private boolean isAmountDecimalValue;
     
     private boolean isAccountNumHeaderValue;
-    
-    private static SimpleDateFormat dateformat = null;
-
-    private static SimpleDateFormat ARCHIVE_DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-    
-    private static DecimalFormat DECFORMAT = new DecimalFormat("#.00");
     
     private BusinessObjectService businessObjectService;
     
@@ -156,7 +151,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         fileType   = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_TYPE);
         header     = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_HEADER);
         footer     = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_FOOTER);
-        dateformat = new SimpleDateFormat(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_DATE_FORMAT));
         
         try {
             if( CRConstants.DELIMITED.equals(fileType) ) {
@@ -256,7 +250,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         }
 
         if (folder.exists()) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            SimpleDateFormat sdf = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMddHHmmss, Locale.US);
 
             String sepa = "/";
             String logFile = folder.getAbsolutePath() + sepa + "cr_" + sdf.format(new java.util.Date()) + ".txt";

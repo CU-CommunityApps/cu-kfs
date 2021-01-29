@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -156,7 +157,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         if (date == null) {
             return StringUtils.EMPTY;
         } else {
-            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
+            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS, Locale.US);
             return format.format(date);
         }
     }
@@ -165,7 +166,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         if (StringUtils.isBlank(dateString)) {
             return null;
         } else {
-            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
+            SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS, Locale.US);
             return format.parse(dateString);
         }
     }

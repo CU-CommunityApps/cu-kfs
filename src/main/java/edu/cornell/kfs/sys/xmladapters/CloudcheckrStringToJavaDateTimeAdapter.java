@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.xmladapters;
 
 import java.util.Date;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -12,7 +13,7 @@ import org.joda.time.format.DateTimeFormatter;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CloudcheckrStringToJavaDateTimeAdapter extends XmlAdapter<String, Date> {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am).withLocale(Locale.US);
 
     @Override
     public Date unmarshal(String value) throws Exception {

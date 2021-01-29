@@ -19,6 +19,7 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
@@ -30,6 +31,8 @@ import com.rsmart.kuali.kfs.fp.FPKeyConstants;
 import com.rsmart.kuali.kfs.fp.batch.service.DisbursementVoucherDocumentBatchService;
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchFeed;
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchStatus;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * Batch input type for the disbursement voucher files
@@ -45,7 +48,7 @@ public class DisbursementVoucherInputFileType extends XmlBatchInputFileTypeBase 
         Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
 
         StringBuffer buf = new StringBuffer();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
         formatter.setLenient(false);
         formatter.format(currentTimestamp, buf, new FieldPosition(0));
 

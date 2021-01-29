@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 
@@ -149,7 +150,7 @@ public class AchIncomeDelimitedFlatFileSpecificationTest {
         AchIncomeFileTransaction achIncomeFileTransaction = new AchIncomeFileTransaction();
         achIncomeDelimitedFlatFileSpecification.parseLineIntoObject(flatFileObjectSpecification, BPR_LINE2, achIncomeFileTransaction, 1);
 
-        Date expectedDate = new SimpleDateFormat(DATE_FORMAT).parse("20160223");
+        Date expectedDate = new SimpleDateFormat(DATE_FORMAT, Locale.US).parse("20160223");
 
         assertEquals(new KualiDecimal("3131.04"), achIncomeFileTransaction.getTransactionAmount());
         assertEquals("C", achIncomeFileTransaction.getCreditDebitIndicator());

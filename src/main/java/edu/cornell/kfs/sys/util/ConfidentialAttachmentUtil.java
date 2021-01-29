@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.util;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -85,7 +86,7 @@ public final class ConfidentialAttachmentUtil {
      * The text will be auto-uppercased prior to matching.
      */
     private static boolean foundMatchingPattern(String text, Collection<String> patterns) {
-        text = text.toUpperCase();
+        text = text.toUpperCase(Locale.US);
         for (String pattern : patterns) {
             if (Pattern.compile(pattern).matcher(text).find()) {
                 return true;

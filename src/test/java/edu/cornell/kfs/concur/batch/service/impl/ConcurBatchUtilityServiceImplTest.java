@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -73,8 +75,8 @@ public class ConcurBatchUtilityServiceImplTest {
     public void testTravelerStatusCheck() throws Exception {
         assertTravelerStatusIsValid(ConcurConstants.EMPLOYEE_STATUS_CODE);
         assertTravelerStatusIsValid(ConcurConstants.NON_EMPLOYEE_STATUS_CODE);
-        assertTravelerStatusIsValid(ConcurConstants.EMPLOYEE_STATUS_CODE.toLowerCase());
-        assertTravelerStatusIsValid(ConcurConstants.NON_EMPLOYEE_STATUS_CODE.toLowerCase());
+        assertTravelerStatusIsValid(ConcurConstants.EMPLOYEE_STATUS_CODE.toLowerCase(Locale.US));
+        assertTravelerStatusIsValid(ConcurConstants.NON_EMPLOYEE_STATUS_CODE.toLowerCase(Locale.US));
         assertTravelerStatusIsInvalid(null);
         assertTravelerStatusIsInvalid(KFSConstants.EMPTY_STRING);
         assertTravelerStatusIsInvalid(KFSConstants.BLANK_SPACE);

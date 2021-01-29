@@ -1124,7 +1124,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
         // Check if the row should be excluded from the processing based on the start of the payment line 1 address.
         if (taxBox != null && !excludeTransaction) {
             if (StringUtils.isNotBlank(paymentAddressLine1P.value)) {
-                tempValue = paymentAddressLine1P.value.toUpperCase();
+                tempValue = paymentAddressLine1P.value.toUpperCase(Locale.US);
                 foundMatch = false;
                 
                 for (idx = summary.otherIncomeExcludedPaymentLine1AddressPrefixes.size() - 1; !foundMatch && idx >= 0; idx--) {
@@ -1151,7 +1151,7 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 do {
                     tempValue = rsDocNote.getString(docNoteTextField.index);
                     if (StringUtils.isNotBlank(tempValue)) {
-                        tempValue = tempValue.toUpperCase();
+                        tempValue = tempValue.toUpperCase(Locale.US);
                         
                         for (idx = summary.excludedDocumentNoteTextPrefixes.size() - 1; !foundMatch && idx >= 0; idx--) {
                             if (tempValue.startsWith(summary.excludedDocumentNoteTextPrefixes.get(idx))) {

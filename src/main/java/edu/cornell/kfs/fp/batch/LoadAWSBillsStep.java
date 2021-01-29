@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +19,7 @@ public class LoadAWSBillsStep extends AbstractStep {
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        SimpleDateFormat dateFormater = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT);
+        SimpleDateFormat dateFormater = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
         LOG.info("execute(); jobName: " + jobName + " run date: " + dateFormater.format(jobRunDate));
         getAmazonWebServicesBillingService().generateDistributionOfIncomeDocumentsFromAWSService();
         LOG.info("execute(); finished");

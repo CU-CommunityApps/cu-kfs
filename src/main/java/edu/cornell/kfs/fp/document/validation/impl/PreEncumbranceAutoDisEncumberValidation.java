@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TreeMap;
 
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +43,7 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
                 boolean success = true;
                 ParameterService ps = SpringContext.getBean(ParameterService.class);
         try {
-            DateFormat transactionDateFormat = new SimpleDateFormat(TRANSACTION_DATE_FORMAT_STRING);
+            DateFormat transactionDateFormat = new SimpleDateFormat(TRANSACTION_DATE_FORMAT_STRING, Locale.US);
             annualClosingDate = new Date(transactionDateFormat.parse(ps.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_TRANSACTION_DATE)).getTime());
             // this needs to be changed
             annualClosingDate.setYear(annualClosingDate.getYear()+1);
@@ -52,24 +53,22 @@ public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
             LOG.error("PreEncumbrance validation nnable to parse transaction date", e);
             throw new IllegalArgumentException("Unable to parse transaction date");
         }
-                PreEncumbranceDocument ped = (PreEncumbranceDocument) getAccountingDocumentForValidation();                             
+                PreEncumbranceDocument ped = (PreEncumbranceDocument) getAccountingDocumentForValidation();
                 Iterator<PreEncumbranceSourceAccountingLine> it = ped.getSourceAccountingLines().iterator();
                 while (it.hasNext()) {
                         PreEncumbranceSourceAccountingLine pesal = it.next();
                         auto = true;
-                        if (checkMinimumRequirements(pesal) && auto) {                       		
+                        if (checkMinimumRequirements(pesal) && auto) {
                                 success &=checkDates(pesal);
-                                success &=checkGenerationValidity(pesal);                               
+                                success &=checkGenerationValidity(pesal);
                         } else {
-                        	if (auto) {                        		
+                            if (auto) {
                                 	success &= false;
-                        	}
+                            }
                         }
                 }
                 return success;
         }
-        
-        
         
         private boolean checkMinimumRequirements(PreEncumbranceSourceAccountingLine sourceAccountingLine) {
                 boolean success = true;

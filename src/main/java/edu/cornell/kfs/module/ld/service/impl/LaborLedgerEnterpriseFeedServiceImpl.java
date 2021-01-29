@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -102,7 +103,7 @@ public class LaborLedgerEnterpriseFeedServiceImpl implements LaborLedgerEnterpri
                     }
 
                     // set transaction date
-                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
                     String currentDateString = sdf.format(currentDate);
                     resultLine = StringUtils.overlay(resultLine, currentDateString, TRANSACTION_DT_STRART_INDEX, TRANSACTION_DT_END_INDEX);
 
