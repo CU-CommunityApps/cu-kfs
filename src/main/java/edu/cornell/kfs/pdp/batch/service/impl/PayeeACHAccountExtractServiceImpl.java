@@ -57,7 +57,11 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractFileResult;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractReportData;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractRetryResult;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep;
+import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractReportService;
 import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractService;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 import edu.cornell.kfs.pdp.service.CuAchService;
@@ -79,6 +83,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private AchBankService achBankService;
     private BusinessObjectService businessObjectService; 
     private DateTimeService dateTimeService;
+    private PayeeACHAccountExtractReportService payeeACHAccountExtractReportService;
 
     private Map<String, List<String>> partialProcessingSummary;
 
@@ -86,9 +91,11 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     @Transactional
     @Override
     public boolean processACHBatchDetails() {
+        PayeeACHAccountExtractReportData achAccountExtractReportData = new PayeeACHAccountExtractReportData();
         
         LOG.info("processACHBatchDetails: Beginning processing of ACH entries persisted for a retry");
-        loadACHBatchDetailPersisted();
+        PayeeACHAccountExtractRetryResult processingRetriesResult = loadACHBatchDetailRetries();
+        achAccountExtractReportData.setAchAccountExtractRetryResults(processingRetriesResult);
         
         LOG.info("processACHBatchDetails: Beginning processing of ACH input files");
         
@@ -99,16 +106,19 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
         Map<String,BatchInputFileType> fileNamesToLoad = getListOfFilesToProcess();
         LOG.info("processACHBatchDetails: Found " + fileNamesToLoad.size() + " file(s) to process.");
+        
 
         List<String> processedFiles = new ArrayList<String>();
         for (String inputFileName : fileNamesToLoad.keySet()) {
             
             LOG.info("processACHBatchDetails: Beginning processing of filename: " + inputFileName);
             processedFiles.add(inputFileName);
-            
+
             try {
                 List<String> errorList = new ArrayList<>();
-                errorList = loadACHBatchDetailFile(inputFileName, fileNamesToLoad.get(inputFileName));
+                PayeeACHAccountExtractFileResult processingFileResult = loadACHBatchDetailFile(inputFileName, fileNamesToLoad.get(inputFileName));
+                errorList = processingFileResult.getErrors();
+                achAccountExtractReportData.getAchAccountExtractFileResults().add(processingFileResult);
                 if (errorList.isEmpty()) {
                     LOG.info("processACHBatchDetails: Successfully loaded ACH input file");
                     numSuccess++;
@@ -124,6 +134,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         }
 
         removeDoneFiles(processedFiles);
+        payeeACHAccountExtractReportService.writeBatchJobReports(achAccountExtractReportData);
 
         LOG.info("processACHBatchDetails: ==============================================");
         LOG.info("processACHBatchDetails: ==== Summary of Payee ACH Account Extract ====");
@@ -185,8 +196,9 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
      * Processes a single ACH input file.
      */
     // Portions of this method are based on the code and logic from CustomerLoadServiceImpl.loadFile
-    protected List<String> loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
-        List<String>failedRowsErrors = new ArrayList();
+    protected PayeeACHAccountExtractFileResult loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
+        List<String> failedRowsErrors = new ArrayList<>();
+        PayeeACHAccountExtractFileResult processingFileResult = new PayeeACHAccountExtractFileResult(inputFileName);
         
         byte[] fileByteContent = LoadFileUtils.safelyLoadFileBytes(inputFileName);
         
@@ -213,19 +225,21 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             String error = processACHBatchDetail(achDetail);
             if (StringUtils.isNotBlank(error)) {
                 failedRowsErrors.add(error);
-                //store PayeeACHAccountExtractDetail
-                achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
-                achDetail.setCreateDate(dateTimeService.getCurrentSqlDate());
-                achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
-                achDetail.setRetryCount(0);
-                businessObjectService.save(achDetail);
+                processingFileResult.addFailedRow();
+                storeACHAccountExtractDetailForRetry(achDetail, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
+            }
+            else {
+                processingFileResult.addSuccessRow();
             }
         }
         
-        return failedRowsErrors;
+        processingFileResult.setErrors(failedRowsErrors);
+        
+        return processingFileResult;
     }
 
-    protected void loadACHBatchDetailPersisted() {
+    protected PayeeACHAccountExtractRetryResult loadACHBatchDetailRetries() {
+        PayeeACHAccountExtractRetryResult processingRetryResult = new PayeeACHAccountExtractRetryResult();
         int numRetrySuccess = 0;
         int numRetryFail = 0;
 
@@ -234,11 +248,14 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             for (PayeeACHAccountExtractDetail achDetail : achDetailsEligibleForRetry) {
                 String error = processACHBatchDetail(achDetail);
                 if (StringUtils.isNotBlank(error)) {
-                    updateAndStoreACHAccountExtractDetail(achDetail);
+                    updateAndStoreACHAccountExtractDetail(achDetail, achDetail.getRetryCount() + 1);
                     numRetryFail++;
+                    processingRetryResult.addFailedRow();
+                    processingRetryResult.getErrors().add(error);
                 } else {
-                    updateStatusAndStoreACHAccountExtractDetail(achDetail, CUPdpConstants.PayeeAchAccountExtractStatuses.PROCESSED);
+                    updateStatusAndStoreACHAccountExtractDetail(achDetail);
                     numRetrySuccess++;
+                    processingRetryResult.addSuccessRow();
                 }
             }
         }
@@ -247,6 +264,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         LOG.info("loadACHBatchDetailPersisted: ======================================================");
         LOG.info("loadACHBatchDetailPersisted: Retries loaded successfully: " + numRetrySuccess);
         LOG.info("loadACHBatchDetailPersisted: Retries that failed: " + numRetryFail);
+        return processingRetryResult;
     }
 
     private List<PayeeACHAccountExtractDetail> getPayeeACHExtractDetailsEligibleForRetry() {
@@ -261,15 +279,21 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private int getMaxRetryCount() {
         return Integer.valueOf(parameterService.getParameterValueAsString(PayeeACHAccountExtractStep.class, CUPdpParameterConstants.MAX_ACH_ACCT_EXTRACT_RETRY));
     }
-
-    private void updateStatusAndStoreACHAccountExtractDetail(PayeeACHAccountExtractDetail achDetail, String status) {
-        achDetail.setStatus(status);
-        updateAndStoreACHAccountExtractDetail(achDetail);
+    
+    private void storeACHAccountExtractDetailForRetry(PayeeACHAccountExtractDetail achDetail, String status) {
+        achDetail.setCreateDate(dateTimeService.getCurrentSqlDate());
+        achDetail.setStatus( CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
+        updateAndStoreACHAccountExtractDetail(achDetail, 0);
     }
 
-    private void updateAndStoreACHAccountExtractDetail(PayeeACHAccountExtractDetail achDetail) {
+    private void updateStatusAndStoreACHAccountExtractDetail(PayeeACHAccountExtractDetail achDetail) {
+        achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.PROCESSED);
+        updateAndStoreACHAccountExtractDetail(achDetail, achDetail.getRetryCount() + 1);
+    }
+
+    private void updateAndStoreACHAccountExtractDetail(PayeeACHAccountExtractDetail achDetail, int retryCount) {
         achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
-        achDetail.setRetryCount(achDetail.getRetryCount() + 1);
+        achDetail.setRetryCount(retryCount);
         businessObjectService.save(achDetail);
     }
 
@@ -887,6 +911,14 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         public PayeeACHAccount getOldAccount() {
             return oldAccount.get();
         }
+    }
+    
+    public PayeeACHAccountExtractReportService getPayeeACHAccountExtractReportService() {
+        return payeeACHAccountExtractReportService;
+    }
+
+    public void setPayeeACHAccountExtractReportService(PayeeACHAccountExtractReportService payeeACHAccountExtractReportService) {
+        this.payeeACHAccountExtractReportService = payeeACHAccountExtractReportService;
     }
 
 }

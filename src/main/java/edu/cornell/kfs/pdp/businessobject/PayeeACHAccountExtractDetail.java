@@ -15,7 +15,7 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
     private KualiInteger id;
     private Date createDate;
     private String status;
-    private Integer retryCount;
+    private Integer retryCount = 0;
     private String employeeID;
     private String netID;
     private String lastName;

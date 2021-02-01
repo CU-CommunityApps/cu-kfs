@@ -78,6 +78,8 @@ import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 import edu.cornell.kfs.pdp.CUPdpTestConstants;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsv;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsvInputFileType;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractFileResult;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractResult;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep;
 import edu.cornell.kfs.pdp.batch.fixture.ACHBankFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHFileFixture;
@@ -584,7 +586,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         private ACHRowResult currentRowResult;
         
         @Override
-        protected List<String> loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
+        protected PayeeACHAccountExtractFileResult loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
             currentFileResult = new ACHFileResult();
             
             try {
