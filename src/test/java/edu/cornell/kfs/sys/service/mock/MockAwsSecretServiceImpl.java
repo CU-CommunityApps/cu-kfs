@@ -20,10 +20,12 @@ import edu.cornell.kfs.sys.service.impl.AwsSecretServiceImpl;
 public class MockAwsSecretServiceImpl extends AwsSecretServiceImpl {
 
     private Map<String, String> localSecrets;
+    private AWSSecretsManager mockAWSSecretsManager;
 
     public MockAwsSecretServiceImpl() {
         super();
         this.localSecrets = new HashMap<>();
+        this.mockAWSSecretsManager = buildMockAWSSecretsManager();
     }
 
     @SafeVarargs
@@ -41,6 +43,10 @@ public class MockAwsSecretServiceImpl extends AwsSecretServiceImpl {
 
     @Override
     protected AWSSecretsManager buildAWSSecretsManager() {
+        return mockAWSSecretsManager;
+    }
+
+    protected AWSSecretsManager buildMockAWSSecretsManager() {
         AWSSecretsManager secretsManager = Mockito.mock(AWSSecretsManager.class);
         Mockito.when(secretsManager.getSecretValue(Mockito.any()))
                 .then(this::getLocalSecretValue);

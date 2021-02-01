@@ -29,12 +29,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurAwsKeyNames;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.MockLegacyAuthConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
+import edu.cornell.kfs.concur.aws.ConcurStaticConfig;
 import edu.cornell.kfs.concur.aws.ConcurTokenConfig;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.rest.application.MockConcurLegacyAuthenticationServerApplication;
@@ -183,6 +186,48 @@ public class ConcurAccessTokenServiceImplTest {
     private String buildMockConcurServiceUrl(String... subPathSegments) {
         return jerseyExtension.buildAbsoluteUriPath(
                 MockLegacyAuthConstants.BASE_RESOURCE_PATH, subPathSegments);
+    }
+
+    @Test
+    void testUnmarshalAndMarshalOfStaticConfigJson() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String staticConfigJson = buildStaticConfigJson();
+        assertTrue(StringUtils.isNotBlank(staticConfigJson), "Initial JSON string should have been non-blank");
+        
+        ConcurStaticConfig staticConfig = objectMapper.readValue(staticConfigJson, ConcurStaticConfig.class);
+        assertNotNull(staticConfig, "Static Config DTO should have been non-null");
+        assertEquals(MockLegacyAuthConstants.MOCK_USERNAME, staticConfig.getLogin_username(), "Wrong username");
+        assertEquals(MockLegacyAuthConstants.MOCK_PASSWORD, staticConfig.getLogin_password(), "Wrong password");
+        assertEquals(MockLegacyAuthConstants.MOCK_CLIENT_ID, staticConfig.getConsumer_key(),
+                "Wrong client ID (aka consumer key)");
+        assertEquals(MockLegacyAuthConstants.MOCK_SECRET_KEY, staticConfig.getSecret_key(), "Wrong secret key");
+        
+        String jsonFromDTO = objectMapper.writeValueAsString(staticConfig);
+        assertEquals(staticConfigJson, jsonFromDTO, "Marshalled JSON should have matched the original JSON");
+    }
+
+    @Test
+    void testUnmarshalAndMarshalOfTokenConfigJson() throws Exception {
+        assertTrue(StringUtils.isNotBlank(initialTokenDTO.getToken()),
+                "Initial access token should have been non-blank");
+        assertTrue(StringUtils.isNotBlank(initialTokenDTO.getRefreshToken()),
+                "Initial refresh token should have been non-blank");
+        assertTrue(StringUtils.isNotBlank(initialTokenDTO.getExpirationDate()),
+                "Initial access token expiration date should have been non-blank");
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        String tokenConfigJson = buildTokenConfigJson(initialTokenDTO);
+        assertTrue(StringUtils.isNotBlank(tokenConfigJson), "Initial JSON string should have been non-blank");
+        
+        ConcurTokenConfig tokenConfig = objectMapper.readValue(tokenConfigJson, ConcurTokenConfig.class);
+        assertNotNull(tokenConfig, "Token Config DTO should have been non-null");
+        assertEquals(initialTokenDTO.getToken(), tokenConfig.getAccess_token(), "Wrong access token");
+        assertEquals(initialTokenDTO.getRefreshToken(), tokenConfig.getRefresh_token(), "Wrong refresh token");
+        assertEquals(initialTokenDTO.getExpirationDate(), tokenConfig.getAccess_token_expiration_date(),
+                "Wrong access token expiration date");
+        
+        String jsonFromDTO = objectMapper.writeValueAsString(tokenConfig);
+        assertEquals(tokenConfigJson, jsonFromDTO, "Marshalled JSON should have matched the original JSON");
     }
 
     @Test

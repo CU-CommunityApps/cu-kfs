@@ -2,6 +2,8 @@ package edu.cornell.kfs.sys.util;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,9 @@ public final class CuJsonUtils {
 
     public static String rebuildJsonStringWithPropertyOverride(
             String jsonString, String propertyName, String propertyValue) {
+        requireNonBlank("jsonString", jsonString);
+        requireNonBlank("propertyName", propertyName);
+        String cleanedPropertyValue = StringUtils.defaultString(propertyValue);
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonRoot = objectMapper.readTree(jsonString);
@@ -32,10 +37,16 @@ public final class CuJsonUtils {
                 throw new IllegalArgumentException("jsonString does not represent a JSON object");
             }
             ObjectNode jsonObject = (ObjectNode) jsonRoot;
-            jsonObject.put(propertyName, propertyValue);
+            jsonObject.put(propertyName, cleanedPropertyValue);
             return objectMapper.writeValueAsString(jsonRoot);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void requireNonBlank(String argumentName, String argumentValue) {
+        if (StringUtils.isBlank(argumentValue)) {
+            throw new IllegalArgumentException(argumentName + " cannot be blank");
         }
     }
 
