@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +69,7 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.invocation.InvocationOnMock;
@@ -87,6 +90,7 @@ import edu.cornell.kfs.pdp.batch.fixture.ACHPersonPayeeFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHRowFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHUpdateFixture;
 import edu.cornell.kfs.pdp.batch.fixture.PayeeACHAccountFixture;
+import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractReportService;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 import edu.cornell.kfs.pdp.businessobject.options.TestPayeeAchIdTypeValuesFinder;
 import edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl;
@@ -139,6 +143,9 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.setAchService(createAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
         payeeACHAccountExtractService.setConfigurationService(createMockConfigurationService());
+        payeeACHAccountExtractService.setBusinessObjectService(createMockBusinessObjectService());
+        payeeACHAccountExtractService.setPayeeACHAccountExtractReportService(createMockPayeeACHAccountExtractReportService());
+        payeeACHAccountExtractService.setDateTimeService(createMockDateTimeService());
     }
 
     @After
@@ -543,6 +550,13 @@ public class PayeeACHAccountExtractServiceImplTest {
         
         return businessObjectService;
     }
+    
+    private DateTimeService createMockDateTimeService() throws Exception {
+        DateTimeService dateTimeService = mock(DateTimeService.class);
+        Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
+        when(dateTimeService.getCurrentDate()).thenReturn(currentDate);
+        return dateTimeService;
+    }
 
     private Map<String, Object> createPropertiesMapForMatching(PayeeACHAccountFixture achFixture) {
         Map<String, Object> propertiesMap = new HashMap<>();
@@ -571,6 +585,13 @@ public class PayeeACHAccountExtractServiceImplTest {
                 .thenReturn(GLOBAL_ERROR_FORMAT);
         
         return configurationService;
+    }
+    
+
+    private PayeeACHAccountExtractReportService createMockPayeeACHAccountExtractReportService() throws Exception {
+        PayeeACHAccountExtractReportService payeeACHAccountExtractReportService = mock(PayeeACHAccountExtractReportService.class);
+        
+        return payeeACHAccountExtractReportService;
     }
 
     private static class TestEmailService extends EmailServiceImpl {
