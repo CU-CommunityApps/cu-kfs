@@ -420,49 +420,7 @@
         <foreignkey field-ref="capitalAssetLineNumber" />
         <foreignkey field-ref="itemLineNumber" />
     </reference-descriptor>
-    
-    
-    
 </class-descriptor>
-
-
-
-<class-descriptor class="edu.cornell.kfs.fp.document.PreEncumbranceDocument" table="FP_PRE_ENCUM_DOC_T">
-    <!--  common transactional document base attributes -->
-    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
-    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
-    <field-descriptor name="postingYear" column="FDOC_POST_YR" jdbc-type="INTEGER" />
-    <field-descriptor name="nextSourceLineNumber" column="FDOC_NXT_ENC_NBR" jdbc-type="INTEGER" />
-    <field-descriptor name="reversalDate" column="FDOC_REVERSAL_DT" jdbc-type="DATE" />
-    <field-descriptor name="postingPeriodCode" column="FDOC_POST_PRD_CD" jdbc-type="VARCHAR" />
-    <field-descriptor name="nextTargetLineNumber" column="FDOC_NXT_DIS_NBR" jdbc-type="INTEGER" />
-    <!--  object references -->
-    <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
-        <foreignkey field-ref="documentNumber" />
-    </reference-descriptor>
-    <!--  collections -->
-    <!--  common collections -->
-    <collection-descriptor name="sourceAccountingLines" element-class-ref="edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
-        <orderby name="sequenceNumber" sort="ASC" />
-        <inverse-foreignkey field-ref="documentNumber" />
-                                <query-customizer class="org.kuali.kfs.sys.dataaccess.impl.OjbQueryCustomizer">
-                                                <attribute attribute-name="financialDocumentLineTypeCode" attribute-value="F" />
-                                </query-customizer>
-    </collection-descriptor>
-    <collection-descriptor name="targetAccountingLines" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.TargetAccountingLine" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
-        <orderby name="sequenceNumber" sort="ASC" />
-        <inverse-foreignkey field-ref="documentNumber" />
-                                <query-customizer class="org.kuali.kfs.sys.dataaccess.impl.OjbQueryCustomizer">
-                                                <attribute attribute-name="financialDocumentLineTypeCode" attribute-value="T" />
-                                </query-customizer>
-    </collection-descriptor>
-    <collection-descriptor name="generalLedgerPendingEntries" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
-        <orderby name="transactionLedgerEntrySequenceNumber" sort="ASC" />
-        <inverse-foreignkey field-ref="documentNumber" />
-    </collection-descriptor>
-</class-descriptor>
-
 
 <class-descriptor class="edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine" table="FP_PRE_ENCUM_DTL_T">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
