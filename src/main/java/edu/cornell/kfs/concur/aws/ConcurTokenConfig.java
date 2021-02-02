@@ -1,9 +1,18 @@
 package edu.cornell.kfs.concur.aws;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 public class ConcurTokenConfig {
     private String access_token;
+
     private String refresh_token;
-    private String access_token_expiration_date;
+
+    @JsonFormat(pattern = CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am, locale = CUKFSConstants.US_LOCALE_STRING)
+    private Date access_token_expiration_date;
 
     public String getAccess_token() {
         return access_token;
@@ -21,11 +30,11 @@ public class ConcurTokenConfig {
         this.refresh_token = refresh_token;
     }
 
-    public String getAccess_token_expiration_date() {
+    public Date getAccess_token_expiration_date() {
         return access_token_expiration_date;
     }
 
-    public void setAccess_token_expiration_date(String access_token_expiration_date) {
+    public void setAccess_token_expiration_date(Date access_token_expiration_date) {
         this.access_token_expiration_date = access_token_expiration_date;
     }
 }

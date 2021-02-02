@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -26,6 +28,7 @@ import edu.cornell.kfs.sys.util.CuJsonUtils;
  * This is a modified copy of the cu-kfs AwsSecretServiceImplIntegrationTest class,
  * which has been changed to validate the Mock AWS Secret Service instead.
  */
+@Execution(ExecutionMode.SAME_THREAD)
 public class MockAwsSecretServiceImplTest {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -48,10 +51,6 @@ public class MockAwsSecretServiceImplTest {
     @BeforeEach
     void setUp() throws Exception {
         awsSecretServiceImpl = new MockAwsSecretServiceImpl();
-        awsSecretServiceImpl.setAwsRegion(MockAwsSecretServiceConstants.AWS_US_EAST_ONE_REGION);
-        awsSecretServiceImpl.setKfsSharedNamespace(MockAwsSecretServiceConstants.KFS_SHARED_NAMESPACE);
-        awsSecretServiceImpl.setKfsInstanceNamespace(MockAwsSecretServiceConstants.KFS_LOCALDEV_INSTANCE_NAMESPACE);
-        awsSecretServiceImpl.setRetryCount(MockAwsSecretServiceConstants.AWS_SECRET_DEFAULT_UPDATE_RETRY_COUNT);
         awsSecretServiceImpl.setInitialSecrets(
                 buildSharedSecret(SINGLE_STRING_SECRET_KEY_NAME, SINGLE_STRING_SECRET_VALUE),
                 buildSharedSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, Boolean.TRUE.toString()),

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.util;
 
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,10 +12,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class CuJsonUtils {
 
+    public static ObjectMapper buildObjectMapperUsingDefaultTimeZone() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setTimeZone(TimeZone.getDefault());
+        return objectMapper;
+    }
+
     @SafeVarargs
     public static String buildJsonStringFromEntries(Map.Entry<String, String>... entries) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = buildObjectMapperUsingDefaultTimeZone();
             ObjectNode jsonRoot = objectMapper.createObjectNode();
             for (Map.Entry<String, String> entry : entries) {
                 jsonRoot.put(entry.getKey(), entry.getValue());
@@ -31,7 +38,7 @@ public final class CuJsonUtils {
         requireNonBlank("propertyName", propertyName);
         String cleanedPropertyValue = StringUtils.defaultString(propertyValue);
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = buildObjectMapperUsingDefaultTimeZone();
             JsonNode jsonRoot = objectMapper.readTree(jsonString);
             if (!jsonRoot.isObject()) {
                 throw new IllegalArgumentException("jsonString does not represent a JSON object");

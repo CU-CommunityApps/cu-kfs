@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.function.Function;
 
 import javax.net.ssl.SSLContext;
@@ -68,11 +69,12 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         try {
             return awsSecretService.getPojoFromAwsSecret(awsKeyName, true, pojoClass);
         } catch (JsonProcessingException e) {
+            LOG.error("getConcurPojoFromAws: Unable to parse object from JSON value in AWS", e);
             throw new RuntimeException(e);
         }
     }
 
-    protected void updateTokenConfig(String accessToken, String expirationDate, String refreshToken) {
+    protected void updateTokenConfig(String accessToken, Date expirationDate, String refreshToken) {
         ConcurTokenConfig tokenConfig = new ConcurTokenConfig();
         tokenConfig.setAccess_token(accessToken);
         tokenConfig.setAccess_token_expiration_date(expirationDate);
@@ -202,7 +204,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     public void revokeAccessToken() {
         boolean success = executeRevokeAccessTokenRequest();
         if (success) {
-            updateTokenConfig(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+            updateTokenConfig(StringUtils.EMPTY, null, StringUtils.EMPTY);
         } else {
             throw new RuntimeException("Error revoking access token: Unsuccessful response from Concur");
         }
@@ -210,7 +212,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     
     @Override
     public void resetTokenToEmptyStringInDataStorage() {
-        updateTokenConfig(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateTokenConfig(StringUtils.EMPTY, null, StringUtils.EMPTY);
     }
 
     /*
@@ -297,7 +299,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
 
     @Override
-    public String getAccessTokenExpirationDate() {
+    public Date getAccessTokenExpirationDate() {
         return getTokenConfig().getAccess_token_expiration_date();
     }
 

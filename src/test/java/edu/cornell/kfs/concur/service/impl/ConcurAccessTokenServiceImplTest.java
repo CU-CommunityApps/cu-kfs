@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -43,6 +45,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.rest.application.MockConcurLegacyAuthenticationServerApplication;
 import edu.cornell.kfs.concur.rest.resource.MockConcurLegacyAuthenticationServerResource;
 import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
 import edu.cornell.kfs.sys.rest.util.ApacheHttpJerseyTestExtension;
 import edu.cornell.kfs.sys.service.mock.MockAwsSecretServiceImpl;
@@ -54,9 +57,9 @@ public class ConcurAccessTokenServiceImplTest {
     private static final String DUMMY_CONFIG_VALUE = "ABCD3333EFG456__";
 
     private static ApacheHttpJerseyTestExtension jerseyExtension;
+    private static DateTimeFormatter dateTimeFormatter;
 
     private MockConcurLegacyAuthenticationServerResource mockAuthenticationResource;
-    private DateTimeFormatter dateTimeFormatter;
     private AccessTokenDTO initialTokenDTO;
     private ConcurBatchUtilityService concurBatchUtilityService;
     private MockAwsSecretServiceImpl mockAwsSecretService;
@@ -64,6 +67,8 @@ public class ConcurAccessTokenServiceImplTest {
 
     @BeforeAll
     static void startUpMockConcurApplication() throws Exception {
+        dateTimeFormatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am)
+                .withLocale(Locale.US);
         jerseyExtension = new ApacheHttpJerseyTestExtension(
                 new MockConcurLegacyAuthenticationServerApplication());
         jerseyExtension.startUp();
@@ -71,6 +76,7 @@ public class ConcurAccessTokenServiceImplTest {
 
     @AfterAll
     static void shutDownMockConcurApplication() throws Exception {
+        dateTimeFormatter = null;
         try {
             if (jerseyExtension != null) {
                 jerseyExtension.close();
@@ -82,9 +88,7 @@ public class ConcurAccessTokenServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        this.dateTimeFormatter = DateTimeFormat.forPattern(MockLegacyAuthConstants.EXPIRATION_DATE_FORMAT)
-                .withLocale(Locale.US);
-        this.mockAuthenticationResource = getAndConfigureMockAuthenticationResource(dateTimeFormatter);
+        this.mockAuthenticationResource = getAndConfigureMockAuthenticationResource();
         this.initialTokenDTO = mockAuthenticationResource.buildAndStoreNewTokenDTO();
         this.concurBatchUtilityService = buildMockConcurBatchUtilityService();
         this.mockAwsSecretService = buildMockAwsSecretService(initialTokenDTO);
@@ -96,7 +100,6 @@ public class ConcurAccessTokenServiceImplTest {
         if (mockAuthenticationResource != null) {
             mockAuthenticationResource.resetForNextTestMethod();
         }
-        this.dateTimeFormatter = null;
         this.mockAuthenticationResource = null;
         this.initialTokenDTO = null;
         this.concurBatchUtilityService = null;
@@ -104,8 +107,7 @@ public class ConcurAccessTokenServiceImplTest {
         this.concurAccessTokenService = null;
     }
 
-    private MockConcurLegacyAuthenticationServerResource getAndConfigureMockAuthenticationResource(
-            DateTimeFormatter expirationDateTimeFormatter) {
+    private MockConcurLegacyAuthenticationServerResource getAndConfigureMockAuthenticationResource() {
         String decodedCredentials = MockLegacyAuthConstants.MOCK_USERNAME
                 + ConcurConstants.USERNAME_PASSWORD_SEPARATOR + MockLegacyAuthConstants.MOCK_PASSWORD;
         String encodedCredentials = ConcurUtils.base64Encode(decodedCredentials);
@@ -113,7 +115,6 @@ public class ConcurAccessTokenServiceImplTest {
         MockConcurLegacyAuthenticationServerResource mockResource = jerseyExtension.getSingletonFromApplication(
                 MockConcurLegacyAuthenticationServerResource.class);
         mockResource.setBaseUri(jerseyExtension.getBaseUri().toString());
-        mockResource.setDateTimeFormatter(expirationDateTimeFormatter);
         mockResource.setValidClientId(MockLegacyAuthConstants.MOCK_CLIENT_ID);
         mockResource.setValidClientSecret(MockLegacyAuthConstants.MOCK_SECRET_KEY);
         mockResource.setValidEncodedCredentials(encodedCredentials);
@@ -132,10 +133,6 @@ public class ConcurAccessTokenServiceImplTest {
         String tokenConfigJson = buildTokenConfigJson(tokenDTO);
         
         MockAwsSecretServiceImpl secretService = new MockAwsSecretServiceImpl();
-        secretService.setAwsRegion(MockAwsSecretServiceConstants.AWS_US_EAST_ONE_REGION);
-        secretService.setKfsInstanceNamespace(MockAwsSecretServiceConstants.KFS_LOCALDEV_INSTANCE_NAMESPACE);
-        secretService.setKfsSharedNamespace(MockAwsSecretServiceConstants.KFS_SHARED_NAMESPACE);
-        secretService.setRetryCount(MockAwsSecretServiceConstants.AWS_SECRET_DEFAULT_UPDATE_RETRY_COUNT);
         secretService.setInitialSecrets(
                 buildConcurSecret(ConcurAwsKeyNames.STATIC_CONFIG, staticConfigJson),
                 buildConcurSecret(ConcurAwsKeyNames.TOKEN_CONFIG, tokenConfigJson));
@@ -159,7 +156,7 @@ public class ConcurAccessTokenServiceImplTest {
                 Map.entry(ConcurPropertyConstants.ConcurTokenConfig.ACCESS_TOKEN, tokenDTO.getToken()),
                 Map.entry(ConcurPropertyConstants.ConcurTokenConfig.REFRESH_TOKEN, tokenDTO.getRefreshToken()),
                 Map.entry(ConcurPropertyConstants.ConcurTokenConfig.ACCESS_TOKEN_EXPIRATION_DATE,
-                        tokenDTO.getExpirationDate()));
+                        dateTimeFormatter.print(tokenDTO.getExpirationDate().getTime())));
     }
 
     private Map.Entry<String, String> buildConcurSecret(String awsKeyName, String value) {
@@ -190,7 +187,7 @@ public class ConcurAccessTokenServiceImplTest {
 
     @Test
     void testUnmarshalAndMarshalOfStaticConfigJson() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         String staticConfigJson = buildStaticConfigJson();
         assertTrue(StringUtils.isNotBlank(staticConfigJson), "Initial JSON string should have been non-blank");
         
@@ -212,10 +209,10 @@ public class ConcurAccessTokenServiceImplTest {
                 "Initial access token should have been non-blank");
         assertTrue(StringUtils.isNotBlank(initialTokenDTO.getRefreshToken()),
                 "Initial refresh token should have been non-blank");
-        assertTrue(StringUtils.isNotBlank(initialTokenDTO.getExpirationDate()),
-                "Initial access token expiration date should have been non-blank");
+        assertNotNull(initialTokenDTO.getExpirationDate(),
+                "Initial access token expiration date should have been non-null");
         
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         String tokenConfigJson = buildTokenConfigJson(initialTokenDTO);
         assertTrue(StringUtils.isNotBlank(tokenConfigJson), "Initial JSON string should have been non-blank");
         
@@ -453,15 +450,14 @@ public class ConcurAccessTokenServiceImplTest {
                 "Service should not have had an active token");
         assertTrue(StringUtils.isBlank(concurAccessTokenService.getAccessToken()),
                 "Service should have returned a blank access token");
-        assertTrue(StringUtils.isBlank(concurAccessTokenService.getAccessTokenExpirationDate()),
-                "Service should have returned a blank access token expiration date");
+        assertNull(concurAccessTokenService.getAccessTokenExpirationDate(),
+                "Service should have returned a null access token expiration date");
         
         ConcurTokenConfig tokenConfig = concurAccessTokenService.getTokenConfig();
         assertNotNull(tokenConfig, "Service should have had a token config object, even if its fields are blank");
         assertTrue(StringUtils.isBlank(tokenConfig.getAccess_token()), "Access token should have been blank");
         assertTrue(StringUtils.isBlank(tokenConfig.getRefresh_token()), "Refresh token should have been blank");
-        assertTrue(StringUtils.isBlank(tokenConfig.getAccess_token_expiration_date()),
-                "Token expiration date should have been blank");
+        assertNull(tokenConfig.getAccess_token_expiration_date(), "Token expiration date should have been null");
     }
 
     private void assertMockEndpointHasMatchingToken(AccessTokenDTO tokenDTO) {
@@ -474,7 +470,7 @@ public class ConcurAccessTokenServiceImplTest {
                 tokenConfig.getAccess_token_expiration_date());
     }
 
-    private void assertMockEndpointHasMatchingToken(String accessToken, String refreshToken, String expirationDate) {
+    private void assertMockEndpointHasMatchingToken(String accessToken, String refreshToken, Date expirationDate) {
         Optional<AccessTokenDTO> optionalDTO = mockAuthenticationResource.getTokenDTOByAccessToken(accessToken);
         assertTrue(optionalDTO.isPresent(), "The mock endpoint should have contained the given token");
         

@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.MutableDateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -51,7 +50,6 @@ public class MockConcurLegacyAuthenticationServerResource {
     private String validClientSecret;
     private String validEncodedCredentials;
     private ConcurrentMap<String, AccessTokenDTO> currentTokens;
-    private DateTimeFormatter dateTimeFormatter;
 
     public MockConcurLegacyAuthenticationServerResource() {
         this.currentTokens = new ConcurrentHashMap<>();
@@ -63,7 +61,6 @@ public class MockConcurLegacyAuthenticationServerResource {
         this.validClientId = null;
         this.validClientSecret = null;
         this.validEncodedCredentials = null;
-        this.dateTimeFormatter = null;
     }
 
     @GET
@@ -151,13 +148,14 @@ public class MockConcurLegacyAuthenticationServerResource {
         String accessToken = UUID.randomUUID().toString();
         
         MutableDateTime expirationDateTime = MutableDateTime.now();
+        expirationDateTime.setMillisOfSecond(0);
         expirationDateTime.addYears(1);
         
         AccessTokenDTO tokenDTO = new AccessTokenDTO();
         tokenDTO.setInstanceURL(baseUri + CUKFSConstants.SLASH);
         tokenDTO.setToken(accessToken);
         tokenDTO.setRefreshToken(refreshToken);
-        tokenDTO.setExpirationDate(dateTimeFormatter.print(expirationDateTime));
+        tokenDTO.setExpirationDate(expirationDateTime.toDate());
         return tokenDTO;
     }
 
@@ -258,10 +256,6 @@ public class MockConcurLegacyAuthenticationServerResource {
 
     public void setValidEncodedCredentials(String validEncodedCredentials) {
         this.validEncodedCredentials = validEncodedCredentials;
-    }
-
-    public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
-        this.dateTimeFormatter = dateTimeFormatter;
     }
 
 }

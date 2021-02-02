@@ -1,11 +1,12 @@
 package edu.cornell.kfs.concur.service;
 
+import java.util.Date;
 
 public interface ConcurAccessTokenService {
     
     String getAccessToken();
 
-    String getAccessTokenExpirationDate();
+    Date getAccessTokenExpirationDate();
     
     void requestNewAccessToken();
 

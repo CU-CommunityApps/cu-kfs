@@ -118,9 +118,6 @@ public class ConcurTestConstants {
         public static final String MOCK_PASSWORD = "MockUser666";
         public static final String MOCK_CLIENT_ID = "AbCdEFG1357999H1i3J5";
         public static final String MOCK_SECRET_KEY = "Zy88XW66vu44TtTTT222";
-        public static final String EXPIRATION_DATE_FORMAT = "MM/dd/yyyy hh:mm:ss aa";
-        
-        public static final String MOCK_AWS_REGION_NAME = "";
     }
 
 }

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
+import edu.cornell.kfs.sys.util.CuJsonUtils;
 
 public class AwsSecretServiceImpl implements AwsSecretService {
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
@@ -141,14 +142,14 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     @Override
     public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException {
         String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         T object = objectMapper.readValue(pojoJsonString, objectType);
         return object;
     }
     
     @Override
     public void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         String jsonString = objectMapper.writeValueAsString(pojo);
         updateSecretValue(awsKeyName, useKfsInstanceNamespace, jsonString);
     }

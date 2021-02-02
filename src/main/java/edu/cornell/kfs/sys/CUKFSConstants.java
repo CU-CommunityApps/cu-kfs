@@ -15,6 +15,7 @@ public class CUKFSConstants {
     public static final String CASH_REVERSION_OBJECT_CD = "CASH_REVERSION_OBJECT_CD";
     public static final String RULE_CODE_CA = "CA";
     public static final String DELIMITER = ".";
+    public static final String US_LOCALE_STRING = "en_US";
     public static final String DATE_FORMAT_YYYY = "YYYY";
     public static final String DATE_FORMAT_yyyyMMdd = "yyyyMMdd";
     public static final String DATE_FORMAT_yyyy_MM_dd_HH_mm_ss = "yyyy-MM-dd HH:mm:ss";

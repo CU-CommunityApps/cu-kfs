@@ -15,6 +15,7 @@ import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
 import com.amazonaws.services.secretsmanager.model.UpdateSecretResult;
 
+import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
 import edu.cornell.kfs.sys.service.impl.AwsSecretServiceImpl;
 
 public class MockAwsSecretServiceImpl extends AwsSecretServiceImpl {
@@ -23,7 +24,19 @@ public class MockAwsSecretServiceImpl extends AwsSecretServiceImpl {
     private AWSSecretsManager mockAWSSecretsManager;
 
     public MockAwsSecretServiceImpl() {
+        this(MockAwsSecretServiceConstants.AWS_US_EAST_ONE_REGION,
+                MockAwsSecretServiceConstants.KFS_LOCALDEV_INSTANCE_NAMESPACE,
+                MockAwsSecretServiceConstants.KFS_SHARED_NAMESPACE,
+                MockAwsSecretServiceConstants.AWS_SECRET_DEFAULT_UPDATE_RETRY_COUNT);
+    }
+
+    public MockAwsSecretServiceImpl(String awsRegion, String kfsInstanceNamespace,
+            String kfsSharedNamespace, int retryCount) {
         super();
+        this.awsRegion = awsRegion;
+        this.kfsInstanceNamespace = kfsInstanceNamespace;
+        this.kfsSharedNamespace = kfsSharedNamespace;
+        this.retryCount = retryCount;
         this.localSecrets = new HashMap<>();
         this.mockAWSSecretsManager = buildMockAWSSecretsManager();
     }

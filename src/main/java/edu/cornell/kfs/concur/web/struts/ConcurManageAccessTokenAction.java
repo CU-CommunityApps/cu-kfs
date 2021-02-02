@@ -1,5 +1,9 @@
 package edu.cornell.kfs.concur.web.struts;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +21,7 @@ import org.kuali.rice.core.api.config.property.ConfigContext;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 @SuppressWarnings("deprecation")
 public class ConcurManageAccessTokenAction extends KualiAction {
@@ -81,8 +86,12 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     }
     
     protected void updateFormValues(ConcurManageAccessTokenForm concurTokenForm) {
-        String accessTokenExpirationDate = getConcurAccessTokenService().getAccessTokenExpirationDate();
-        concurTokenForm.setAccessTokenExpirationDate(accessTokenExpirationDate);
+        Date accessTokenExpirationDate = getConcurAccessTokenService().getAccessTokenExpirationDate();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am, Locale.US);
+        String expirationDateAsString = accessTokenExpirationDate != null
+                ? dateFormat.format(accessTokenExpirationDate) : KFSConstants.EMPTY_STRING;
+        concurTokenForm.setAccessTokenExpirationDate(expirationDateAsString);
         concurTokenForm.setShowResetTokenToEmptyStringButton(!isProduction());
         if (LOG.isDebugEnabled()) {
             LOG.debug("updateFormValues, accessTokenExpirationDate: " + accessTokenExpirationDate);
