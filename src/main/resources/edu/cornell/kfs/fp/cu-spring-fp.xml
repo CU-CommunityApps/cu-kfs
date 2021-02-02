@@ -305,7 +305,6 @@
     <!--  Validations -->
     <bean id="AuxliaryVoucher-accountingDocumentSingleSubFundValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuAuxiliaryVoucherSingleSubFundValidation" abstract="true" />
     
-    <bean id="PreEncumbranceAutoDisEncumberValidation" class="edu.cornell.kfs.fp.document.validation.impl.PreEncumbranceAutoDisEncumberValidation" />
 	<import resource="document/validation/configuration/FinancialProcessingValidators.xml" />
     <import resource="document/validation/configuration/CU-DisbursementVoucherValidation.xml" />
     <import resource="document/validation/configuration/CuNonCheckDisbursementValidation.xml" />
