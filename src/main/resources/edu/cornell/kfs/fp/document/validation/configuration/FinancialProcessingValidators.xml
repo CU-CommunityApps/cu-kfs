@@ -29,10 +29,6 @@
 		class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" 
 		abstract="true" parent="AccountingDocument-accountingLineGroupTotalsUnchangedValidation" 
 		p:documentHelperService-ref="documentHelperService"/>
-	<bean id="DisbursementVoucher-nonresidentInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonresidentInformationValidation" abstract="true"
-		  p:businessObjectService-ref="businessObjectService"
-          p:disbursementVoucherValidationService-ref="disbursementVoucherValidationService"
-          p:parameterEvaluatorService-ref="parameterEvaluatorService" p:parameterService-ref="parameterService"/>
 	<bean id="DisbursementVoucher-bankCodeValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherBankCodeValidation" abstract="true" />
 	<bean id="DisbursementVoucher-payeeStateAndCountryValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeStateAndCountryValidation" abstract="true">
 		<property name="recurringDisbursementVoucherForeignVendorValidation" ref="RecurringDisbursementVoucherForeignVendorValidation" />
