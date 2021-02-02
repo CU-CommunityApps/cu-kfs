@@ -155,7 +155,6 @@
 	  <property name="accountingLineView" ref="PreEncumbranceDocument-accountingLineView"/>
 	  <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.TargetAccountingLine"/>
 	  <property name="groupLabel" value="Disencumbrance"/>
-	  <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuPreEncumbranceAccountingLineAuthorizer"/>
 	  <property name="importedLinePropertyPrefix" value="target"/>
 	  <property name="totals" ref="AccountingDocument-targetGroupTotals"/>
 	  <property name="errorKey" value="document.targetAccounting*,targetAccountingLines,newTargetLine*"/>
