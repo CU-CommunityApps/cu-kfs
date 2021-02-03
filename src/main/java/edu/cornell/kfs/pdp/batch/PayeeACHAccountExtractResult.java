@@ -1,16 +1,24 @@
 package edu.cornell.kfs.pdp.batch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 
 public class PayeeACHAccountExtractResult {
     
     private List<String> errors;
+    private Map<PayeeACHAccountExtractDetail, List<String>> errorEntries;
+    private List<PayeeACHAccountExtractDetail> successEntries;
     private int numberOfRowsProcessedSuccessfully;
     private int numberOfRowsWithFailures;
     
     PayeeACHAccountExtractResult(){
         errors = new ArrayList<String>();
+        errorEntries = new HashMap<PayeeACHAccountExtractDetail, List<String>>();
+        successEntries = new ArrayList<PayeeACHAccountExtractDetail>();
     }  
     
     public List<String> getErrors() {
@@ -43,6 +51,22 @@ public class PayeeACHAccountExtractResult {
     
     public void addFailedRow() {
         this.numberOfRowsWithFailures++;
+    }
+
+    public Map<PayeeACHAccountExtractDetail, List<String>> getErrorEntries() {
+        return errorEntries;
+    }
+
+    public void setErrorEntries(Map<PayeeACHAccountExtractDetail, List<String>> entryErrors) {
+        this.errorEntries = entryErrors;
+    }
+
+    public List<PayeeACHAccountExtractDetail> getSuccessEntries() {
+        return successEntries;
+    }
+
+    public void setSuccessEntries(List<PayeeACHAccountExtractDetail> successEntries) {
+        this.successEntries = successEntries;
     }
 
 }

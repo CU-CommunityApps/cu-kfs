@@ -98,7 +98,15 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         achAccountExtractReportData.setAchAccountExtractRetryResults(processingRetriesResult);
         
         LOG.info("processACHBatchDetails: Beginning processing of ACH input files");
+        loadACHBatchDetailFiles(achAccountExtractReportData);
         
+        payeeACHAccountExtractReportService.writeBatchJobReports(achAccountExtractReportData);
+
+        // For now, return true even if files or rows did not load successfully. Functionals will address the failed rows/files accordingly.
+        return true;
+    }
+    
+    private void loadACHBatchDetailFiles(PayeeACHAccountExtractReportData achAccountExtractReportData){
         int numSuccess = 0;
         int numPartial = 0;
         int numFail = 0;
@@ -132,10 +140,13 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 numFail++;
             }
         }
+        
+        removeDoneFiles(processedFiles);        
 
-        removeDoneFiles(processedFiles);
-        payeeACHAccountExtractReportService.writeBatchJobReports(achAccountExtractReportData);
-
+        logSummaryOfPayeeACHExtract(numSuccess, numPartial, numFail);
+    }
+    
+    private void logSummaryOfPayeeACHExtract(int numSuccess, int numPartial, int numFail) {
         LOG.info("processACHBatchDetails: ==============================================");
         LOG.info("processACHBatchDetails: ==== Summary of Payee ACH Account Extract ====");
         LOG.info("processACHBatchDetails: ==============================================");
@@ -156,9 +167,6 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         LOG.info("processACHBatchDetails: =====================");
         LOG.info("processACHBatchDetails: ==== End Summary ====");
         LOG.info("processACHBatchDetails: =====================");
-
-        // For now, return true even if files or rows did not load successfully. Functionals will address the failed rows/files accordingly.
-        return true;
     }
 
     /**
@@ -223,13 +231,17 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         for (PayeeACHAccountExtractDetail achDetail : achDetails) {
             cleanPayeeACHAccountExtractDetail(achDetail);
             String error = processACHBatchDetail(achDetail);
+            List<String> errors = new ArrayList<String>();
             if (StringUtils.isNotBlank(error)) {
                 failedRowsErrors.add(error);
                 processingFileResult.addFailedRow();
+                errors.add(error);
+                processingFileResult.getErrorEntries().put(achDetail, errors);
                 storeACHAccountExtractDetailForRetry(achDetail, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
             }
             else {
                 processingFileResult.addSuccessRow();
+                processingFileResult.getSuccessEntries().add(achDetail);
             }
         }
         
@@ -248,23 +260,42 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             for (PayeeACHAccountExtractDetail achDetail : achDetailsEligibleForRetry) {
                 String error = processACHBatchDetail(achDetail);
                 if (StringUtils.isNotBlank(error)) {
-                    updateAndStoreACHAccountExtractDetail(achDetail, achDetail.getRetryCount() + 1);
+                    updateACHAccountExtractDetailRetryCount(achDetail, achDetail.getRetryCount() + 1);
                     numRetryFail++;
-                    processingRetryResult.addFailedRow();
-                    processingRetryResult.getErrors().add(error);
+                    addErrorToReport(processingRetryResult, achDetail, error);
                 } else {
-                    updateStatusAndStoreACHAccountExtractDetail(achDetail);
+                    markACHAccountExtractDetailAsProcessed(achDetail);
                     numRetrySuccess++;
-                    processingRetryResult.addSuccessRow();
+                    addSuccessToReport(processingRetryResult, achDetail);
                 }
             }
         }
+        logLoadACHBatchDetailRetriesSummary(numRetrySuccess, numRetryFail);
+        return processingRetryResult;
+    }
+    
+    private void logLoadACHBatchDetailRetriesSummary(int numRetrySuccess, int numRetryFail) {
         LOG.info("loadACHBatchDetailPersisted: ======================================================");
         LOG.info("loadACHBatchDetailPersisted: ==== Summary of Payee ACH Account Extract Retries ====");
         LOG.info("loadACHBatchDetailPersisted: ======================================================");
         LOG.info("loadACHBatchDetailPersisted: Retries loaded successfully: " + numRetrySuccess);
-        LOG.info("loadACHBatchDetailPersisted: Retries that failed: " + numRetryFail);
-        return processingRetryResult;
+        LOG.info("loadACHBatchDetailPersisted: Retries that failed: " + numRetryFail);      
+    }
+    
+    private void addSuccessToReport(PayeeACHAccountExtractRetryResult processingRetryResult, PayeeACHAccountExtractDetail achDetail) {
+        processingRetryResult.addSuccessRow();
+        processingRetryResult.getSuccessEntries().add(achDetail);
+    }
+    
+    private void addErrorToReport(PayeeACHAccountExtractRetryResult processingRetryResult, PayeeACHAccountExtractDetail achDetail, String error) {
+        List<String> errors = new ArrayList<String>();
+        errors.add(error);
+        processingRetryResult.addFailedRow();
+        processingRetryResult.getErrors().add(error);
+        if(achDetail.getRetryCount().equals(getMaxRetryCount())) {
+            errors.add("Maximum processing retries has been reached for this entry.");
+        }
+        processingRetryResult.getErrorEntries().put(achDetail, errors);
     }
 
     private List<PayeeACHAccountExtractDetail> getPayeeACHExtractDetailsEligibleForRetry() {
@@ -283,15 +314,15 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private void storeACHAccountExtractDetailForRetry(PayeeACHAccountExtractDetail achDetail, String status) {
         achDetail.setCreateDate(dateTimeService.getCurrentSqlDate());
         achDetail.setStatus( CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
-        updateAndStoreACHAccountExtractDetail(achDetail, 0);
+        updateACHAccountExtractDetailRetryCount(achDetail, 0);
     }
 
-    private void updateStatusAndStoreACHAccountExtractDetail(PayeeACHAccountExtractDetail achDetail) {
+    private void markACHAccountExtractDetailAsProcessed(PayeeACHAccountExtractDetail achDetail) {
         achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.PROCESSED);
-        updateAndStoreACHAccountExtractDetail(achDetail, achDetail.getRetryCount() + 1);
+        updateACHAccountExtractDetailRetryCount(achDetail, achDetail.getRetryCount() + 1);
     }
 
-    private void updateAndStoreACHAccountExtractDetail(PayeeACHAccountExtractDetail achDetail, int retryCount) {
+    private void updateACHAccountExtractDetailRetryCount(PayeeACHAccountExtractDetail achDetail, int retryCount) {
         achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
         achDetail.setRetryCount(retryCount);
         businessObjectService.save(achDetail);
