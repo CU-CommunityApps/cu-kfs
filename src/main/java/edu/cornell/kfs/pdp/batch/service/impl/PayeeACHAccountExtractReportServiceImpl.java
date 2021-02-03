@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.text.MessageFormat;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -139,7 +140,7 @@ public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountE
         if (processingResult.getErrorEntries().isEmpty()) {
             reportWriterService.writeFormattedMessageLine("* No entries processed with errors.");
         } else {
-            for (PayeeACHAccountExtractDetail achDetail : processingResult.getErrorEntries().keySet()) {
+            for (PayeeACHAccountExtractDetail achDetail : processingResult.getErrorEntries().keySet().stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList())) {
                 String rowFormat = "%30s %-70s";
                 reportWriterService.writeFormattedMessageLine(rowFormat, "Net id:", achDetail.getNetID());
                 reportWriterService.writeFormattedMessageLine(rowFormat, "Creation Date:", achDetail.getCreateDate());
