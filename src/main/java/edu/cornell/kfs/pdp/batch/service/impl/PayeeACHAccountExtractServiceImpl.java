@@ -332,7 +332,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = new ArrayList<PayeeACHAccountExtractDetail>();
         Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put(CUPdpPropertyConstants.PAYEE_ACH_EXTRACT_DETAIL_STATUS, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
-        persistedPayeeACHAccountExtractDetails.addAll(businessObjectService.findMatchingOrderBy(PayeeACHAccountExtractDetail.class, fieldValues, KRADPropertyConstants.ID, true));
+        persistedPayeeACHAccountExtractDetails
+                .addAll(businessObjectService.findMatchingOrderBy(PayeeACHAccountExtractDetail.class, fieldValues, KRADPropertyConstants.ID, true));
         return persistedPayeeACHAccountExtractDetails;
     }
     
