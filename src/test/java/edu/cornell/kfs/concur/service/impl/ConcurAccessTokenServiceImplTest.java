@@ -47,11 +47,13 @@ import edu.cornell.kfs.concur.rest.resource.MockConcurLegacyAuthenticationServer
 import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
+import edu.cornell.kfs.sys.extension.AwsSecretServiceCacheExtension;
 import edu.cornell.kfs.sys.rest.util.ApacheHttpJerseyTestExtension;
-import edu.cornell.kfs.sys.service.mock.MockAwsSecretServiceImpl;
+import edu.cornell.kfs.sys.service.impl.MockAwsSecretServiceImpl;
 import edu.cornell.kfs.sys.util.CuJsonUtils;
 
 @Execution(ExecutionMode.SAME_THREAD)
+@AwsSecretServiceCacheExtension(awsSecretServiceField = "mockAwsSecretService")
 public class ConcurAccessTokenServiceImplTest {
 
     private static final String DUMMY_CONFIG_VALUE = "ABCD3333EFG456__";
@@ -133,9 +135,9 @@ public class ConcurAccessTokenServiceImplTest {
         String tokenConfigJson = buildTokenConfigJson(tokenDTO);
         
         MockAwsSecretServiceImpl secretService = new MockAwsSecretServiceImpl();
-        secretService.setInitialSecrets(
-                buildConcurSecret(ConcurAwsKeyNames.STATIC_CONFIG, staticConfigJson),
-                buildConcurSecret(ConcurAwsKeyNames.TOKEN_CONFIG, tokenConfigJson));
+        secretService.overrideLocalSecrets(
+                buildSharedConcurSecret(ConcurAwsKeyNames.STATIC_CONFIG, staticConfigJson),
+                buildInstanceConcurSecret(ConcurAwsKeyNames.TOKEN_CONFIG, tokenConfigJson));
         return secretService;
     }
 
@@ -159,8 +161,16 @@ public class ConcurAccessTokenServiceImplTest {
                         dateTimeFormatter.print(tokenDTO.getExpirationDate().getTime())));
     }
 
-    private Map.Entry<String, String> buildConcurSecret(String awsKeyName, String value) {
-        return Map.entry(MockAwsSecretServiceConstants.KFS_LOCALDEV_INSTANCE_NAMESPACE + awsKeyName, value);
+    private Map.Entry<String, String> buildInstanceConcurSecret(String awsKeyName, String value) {
+        return buildConcurSecret(MockAwsSecretServiceConstants.KFS_LOCALDEV_INSTANCE_NAMESPACE, awsKeyName, value);
+    }
+
+    private Map.Entry<String, String> buildSharedConcurSecret(String awsKeyName, String value) {
+        return buildConcurSecret(MockAwsSecretServiceConstants.KFS_SHARED_NAMESPACE, awsKeyName, value);
+    }
+
+    private Map.Entry<String, String> buildConcurSecret(String awsKeyPrefix, String awsKeyName, String value) {
+        return Map.entry(awsKeyPrefix + awsKeyName, value);
     }
 
     private ConcurAccessTokenServiceImpl buildConcurAccessTokenService(
@@ -487,10 +497,12 @@ public class ConcurAccessTokenServiceImplTest {
 
     private void overridePropertyInJsonConfig(String propertyName, String propertyValue) {
         String jsonAwsKey = getAwsKeyOfConfigContainingProperty(propertyName);
-        String oldJsonConfig = mockAwsSecretService.getSingleStringValueFromAwsSecret(jsonAwsKey, true);
+        boolean useKfsInstanceNamespace = StringUtils.equals(ConcurAwsKeyNames.TOKEN_CONFIG, jsonAwsKey);
+        String oldJsonConfig = mockAwsSecretService.getSingleStringValueFromAwsSecret(
+                jsonAwsKey, useKfsInstanceNamespace);
         String newJsonConfig = CuJsonUtils.rebuildJsonStringWithPropertyOverride(
                 oldJsonConfig, propertyName, propertyValue);
-        mockAwsSecretService.updateSecretValue(jsonAwsKey, true, newJsonConfig);
+        mockAwsSecretService.updateSecretValue(jsonAwsKey, useKfsInstanceNamespace, newJsonConfig);
     }
 
     private String getAwsKeyOfConfigContainingProperty(String propertyName) {

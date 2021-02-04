@@ -6,7 +6,12 @@ import java.util.Date;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import edu.cornell.kfs.sys.util.CallableForThrowType;
+
 public interface AwsSecretService {
+    
+    <R, T extends Throwable> R doWithAwsSecretsCachingEnabled(
+            CallableForThrowType<R, T> callable) throws T;
     
     String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
     
@@ -27,5 +32,9 @@ public interface AwsSecretService {
     <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException;
     
     void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException;
+
+    void removeSecretFromCurrentCache(String awsKeyName, boolean useKfsInstanceNamespace);
+
+    void removeAllSecretsFromCurrentCache();
 
 }

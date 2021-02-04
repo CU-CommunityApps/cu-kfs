@@ -11,13 +11,18 @@ import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import edu.cornell.kfs.sys.extension.AwsSecretServiceCacheExtension;
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
 import net.bull.javamelody.internal.common.LOG;
 
+@Execution(ExecutionMode.SAME_THREAD)
+@AwsSecretServiceCacheExtension(awsSecretServiceField = "awsSecretServiceImpl")
 class AwsSecretServiceImplIntegrationTest {
     private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
     private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";

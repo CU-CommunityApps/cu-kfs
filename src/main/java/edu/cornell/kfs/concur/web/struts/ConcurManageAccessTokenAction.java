@@ -22,11 +22,19 @@ import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.service.AwsSecretService;
 
 @SuppressWarnings("deprecation")
 public class ConcurManageAccessTokenAction extends KualiAction {
-	private static final Logger LOG = LogManager.getLogger(ConcurManageAccessTokenAction.class);
-    
+    private static final Logger LOG = LogManager.getLogger(ConcurManageAccessTokenAction.class);
+
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        return getAwsSecretService().doWithAwsSecretsCachingEnabled(
+                () -> super.execute(mapping, form, request, response));
+    }
+
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOG.debug("start, entering");
         updateFormValues((ConcurManageAccessTokenForm) form);
@@ -108,6 +116,10 @@ public class ConcurManageAccessTokenAction extends KualiAction {
 
     protected ConcurAccessTokenService getConcurAccessTokenService() {
         return SpringContext.getBean(ConcurAccessTokenService.class);
+    }
+
+    protected AwsSecretService getAwsSecretService() {
+        return SpringContext.getBean(AwsSecretService.class);
     }
 
 }

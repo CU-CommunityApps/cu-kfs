@@ -58,16 +58,16 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     protected ConcurBatchUtilityService concurBatchUtilityService;
 
     protected ConcurStaticConfig getStaticConfig() {
-        return getConcurPojoFromAws(ConcurAwsKeyNames.STATIC_CONFIG, ConcurStaticConfig.class);
+        return getConcurPojoFromAws(ConcurAwsKeyNames.STATIC_CONFIG, false, ConcurStaticConfig.class);
     }
 
     protected ConcurTokenConfig getTokenConfig() {
-        return getConcurPojoFromAws(ConcurAwsKeyNames.TOKEN_CONFIG, ConcurTokenConfig.class);
+        return getConcurPojoFromAws(ConcurAwsKeyNames.TOKEN_CONFIG, true, ConcurTokenConfig.class);
     }
 
-    protected <T> T getConcurPojoFromAws(String awsKeyName, Class<T> pojoClass) {
+    protected <T> T getConcurPojoFromAws(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> pojoClass) {
         try {
-            return awsSecretService.getPojoFromAwsSecret(awsKeyName, true, pojoClass);
+            return awsSecretService.getPojoFromAwsSecret(awsKeyName, useKfsInstanceNamespace, pojoClass);
         } catch (JsonProcessingException e) {
             LOG.error("getConcurPojoFromAws: Unable to parse object from JSON value in AWS", e);
             throw new RuntimeException(e);

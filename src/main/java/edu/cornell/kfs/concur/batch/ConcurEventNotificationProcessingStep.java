@@ -3,24 +3,25 @@ package edu.cornell.kfs.concur.batch;
 import java.util.Date;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationProcessingService;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
-import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
+import edu.cornell.kfs.sys.service.AwsSecretService;
 
 public class ConcurEventNotificationProcessingStep extends AbstractStep {
     
     protected ConcurEventNotificationProcessingService concurEventNotificationProcessingService;
     protected ConcurAccessTokenService concurAccessTokenService;
+    protected AwsSecretService awsSecretService;
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+        return awsSecretService.doWithAwsSecretsCachingEnabled(this::processConcurEventNotifications);
+    }
+
+    protected boolean processConcurEventNotifications() {
         concurAccessTokenService.refreshAccessToken();
         concurEventNotificationProcessingService.processConcurEventNotifications();
-       
         return true;
     }
 
