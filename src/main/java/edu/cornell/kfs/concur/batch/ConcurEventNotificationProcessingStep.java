@@ -41,4 +41,8 @@ public class ConcurEventNotificationProcessingStep extends AbstractStep {
         this.concurAccessTokenService = concurAccessTokenService;
     }
 
+    public void setAwsSecretService(AwsSecretService awsSecretService) {
+        this.awsSecretService = awsSecretService;
+    }
+
 }

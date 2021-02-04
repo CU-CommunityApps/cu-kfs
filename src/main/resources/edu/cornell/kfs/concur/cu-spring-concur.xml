@@ -275,6 +275,7 @@
 	<bean id="concurEventNotificationProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationProcessingStep">
 		<property name="concurEventNotificationProcessingService" ref="concurEventNotificationProcessingService" />
 		<property name="concurAccessTokenService" ref="concurAccessTokenService" />
+		<property name="awsSecretService" ref="awsSecretService" />
 	</bean>
 	
 	<bean id="concurEventNotificationProcessingService" parent="concurEventNotificationProcessingService-parentBean" />
