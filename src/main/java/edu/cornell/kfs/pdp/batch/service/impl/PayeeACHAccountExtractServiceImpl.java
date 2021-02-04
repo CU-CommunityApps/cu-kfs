@@ -126,7 +126,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 List<String> errorList = new ArrayList<>();
                 PayeeACHAccountExtractFileResult processingFileResult = loadACHBatchDetailFile(inputFileName, fileNamesToLoad.get(inputFileName));
                 errorList = processingFileResult.getErrors();
-                achAccountExtractReportData.getAchAccountExtractFileResults().add(processingFileResult);
+                achAccountExtractReportData.addAchAccountExtractFileResult(processingFileResult);
                 if (errorList.isEmpty()) {
                     LOG.info("processACHBatchDetails: Successfully loaded ACH input file");
                     numSuccess++;

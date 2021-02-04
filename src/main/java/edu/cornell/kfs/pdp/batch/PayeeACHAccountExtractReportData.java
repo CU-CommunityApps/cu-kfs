@@ -11,6 +11,10 @@ public class PayeeACHAccountExtractReportData {
     public PayeeACHAccountExtractReportData() {
         achAccountExtractFileResults = new ArrayList<PayeeACHAccountExtractFileResult>();
     }
+    
+    public void addAchAccountExtractFileResult(PayeeACHAccountExtractFileResult accountExtractFileResult) {
+        achAccountExtractFileResults.add(accountExtractFileResult);
+    }
 
     public List<PayeeACHAccountExtractFileResult> getAchAccountExtractFileResults() {
         return achAccountExtractFileResults;
