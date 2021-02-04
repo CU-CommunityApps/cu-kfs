@@ -4,8 +4,6 @@ import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
 
-import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
-
 /**
  Copyright Cornell University
  This program is free software: you can redistribute it and/or modify
@@ -110,8 +108,12 @@ public class CuFPConstants {
         public static final String PAYER_TYPE_PR = "PR";
     }
     
-    public static class ScheduledSourceAccountingLineConstants extends PreEncumbranceSourceAccountingLineConstants {
-    	public static final String SCHEDULE_TYPE = "scheduleType";
+    public static class ScheduledSourceAccountingLineConstants {
+        public static final String SCHEDULE_TYPE = "scheduleType";
+        public static final String END_DATE = "endDate";
+        public static final String START_DATE = "startDate";
+        public static final String PARTIAL_TRANSACTION_COUNT = "partialTransactionCount";
+        public static final String PARTIAL_AMOUNT = "partialAmount";
     	
     	public enum ScheduleTypes {
     		DAILY("Daily", Calendar.DATE, 1),

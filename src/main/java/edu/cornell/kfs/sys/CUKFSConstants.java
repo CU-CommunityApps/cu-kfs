@@ -70,21 +70,6 @@ public class CUKFSConstants {
         public static final String SELECTION_4 = "SELECTION_4";
     }
     
-    public static class PreEncumbranceDocumentConstants {
-        public static final String BIWEEKLY = "biWeekly";
-        public static final String CUSTOM = "custom";
-        public static final String SEMIMONTHLY = "semiMonthly";
-        public static final String MONTHLY = "monthly";
-    }
-    
-    public static class PreEncumbranceSourceAccountingLineConstants {
-        public static final String END_DATE = "endDate";
-        public static final String START_DATE = "startDate";
-        public static final String AUTO_DISENCUMBER_TYPE = "autoDisEncumberType";
-        public static final String PARTIAL_TRANSACTION_COUNT = "partialTransactionCount";
-        public static final String PARTIAL_AMOUNT = "partialAmount";
-    }
-    
     // Confidential-attachment-related constants.
     public static class ConfidentialAttachmentTypeCodes {
         public static final String CONFIDENTIAL_ATTACHMENT_TYPE = "Confidential";

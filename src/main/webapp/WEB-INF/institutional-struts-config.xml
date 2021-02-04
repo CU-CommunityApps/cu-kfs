@@ -101,13 +101,6 @@
             <forward name="basic" path="/jsp/module/purap/IWant.jsp" /> 
             <forward name="finish" path="/jsp/module/purap/iWantDocumentFinish.jsp" />      
         </action>
-        
-        <action path="/financialPreEncumbrance" name="PreEncumbranceForm" input="/jsp/fp/PreEncumbrance.jsp"
-			type="edu.cornell.kfs.fp.document.web.struts.CuPreEncumbranceAction" scope="request"
-			parameter="methodToCall" validate="true" attribute="KualiForm">
-			<set-property property="cancellable" value="true" />
-			<forward name="basic" path="/jsp/fp/PreEncumbrance.jsp" />
-		</action>
 		             
 	 	<action path="/financialDisbursementVoucher" name="CuDisbursementVoucherForm" input="/jsp/fp/DisbursementVoucher.jsp"
 			type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherAction" scope="request"
