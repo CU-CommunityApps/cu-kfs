@@ -110,7 +110,7 @@ public class CuFPConstants {
     
     public static class ScheduledSourceAccountingLineConstants {
     	public static final String SCHEDULE_TYPE = "scheduleType";
-    	public static final String END_DATE = "endDate";
+        public static final String END_DATE = "endDate";
         public static final String START_DATE = "startDate";
         public static final String PARTIAL_TRANSACTION_COUNT = "partialTransactionCount";
         public static final String PARTIAL_AMOUNT = "partialAmount";
