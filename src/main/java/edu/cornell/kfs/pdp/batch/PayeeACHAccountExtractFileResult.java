@@ -6,7 +6,6 @@ public class PayeeACHAccountExtractFileResult extends PayeeACHAccountExtractResu
     public PayeeACHAccountExtractFileResult(String fileName) {
         super();
         this.fileName = fileName;
-
     }
 
     public String getFileName() {

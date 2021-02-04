@@ -299,13 +299,20 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     }
 
     private List<PayeeACHAccountExtractDetail> getPayeeACHExtractDetailsEligibleForRetry() {
-        List<PayeeACHAccountExtractDetail> achDetailsEligibleForRetry = new ArrayList<PayeeACHAccountExtractDetail>();
-        List<PayeeACHAccountExtractDetail> sortedAchDetailsEligibleForRetry = new ArrayList<PayeeACHAccountExtractDetail>();
         List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = getPersistedPayeeACHAccountExtractDetails();
         if (!persistedPayeeACHAccountExtractDetails.isEmpty()) {
-            achDetailsEligibleForRetry = persistedPayeeACHAccountExtractDetails.stream().filter(a -> a.getRetryCount() < getMaxRetryCount()).collect(Collectors.toList());
-            sortedAchDetailsEligibleForRetry = achDetailsEligibleForRetry.stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList());
+            return getSortedACHDetailsEligibleForRetry(persistedPayeeACHAccountExtractDetails);
         }
+        return persistedPayeeACHAccountExtractDetails;
+    }
+
+    private List<PayeeACHAccountExtractDetail> getSortedACHDetailsEligibleForRetry(List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails) {
+        List<PayeeACHAccountExtractDetail> achDetailsEligibleForRetry = new ArrayList<PayeeACHAccountExtractDetail>();
+        List<PayeeACHAccountExtractDetail> sortedAchDetailsEligibleForRetry = new ArrayList<PayeeACHAccountExtractDetail>();
+        achDetailsEligibleForRetry = persistedPayeeACHAccountExtractDetails.stream().filter(a -> a.getRetryCount() < getMaxRetryCount())
+                .collect(Collectors.toList());
+        sortedAchDetailsEligibleForRetry = achDetailsEligibleForRetry.stream().sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
+                .collect(Collectors.toList());
         return sortedAchDetailsEligibleForRetry;
     }
 

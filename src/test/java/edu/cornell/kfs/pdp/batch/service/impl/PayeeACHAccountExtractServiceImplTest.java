@@ -586,10 +586,8 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
     
 
-    private PayeeACHAccountExtractReportService createMockPayeeACHAccountExtractReportService() throws Exception {
-        PayeeACHAccountExtractReportService payeeACHAccountExtractReportService = mock(PayeeACHAccountExtractReportService.class);
-        
-        return payeeACHAccountExtractReportService;
+    private PayeeACHAccountExtractReportService createMockPayeeACHAccountExtractReportService() throws Exception {              
+        return mock(PayeeACHAccountExtractReportService.class);
     }
 
     private static class TestEmailService extends EmailServiceImpl {
