@@ -3,7 +3,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2020 Kuali, Inc.
+    Copyright 2005-2021 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
 <xsd:schema elementFormDefault="qualified"
             targetNamespace="http://www.kuali.org/kfs/purap/b2bPunchOutOrder"
             xmlns="http://www.kuali.org/kfs/purap/b2bPunchOutOrder"
@@ -27,9 +26,12 @@
             xmlns:kfs="http://www.kuali.org/kfs/sys/types"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="classpath:org/kuali/kfs/sys/xml.xsd"/>
-    <xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="classpath:edu/cornell/kfs/module/purap/purapTypes.xsd"/>
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="classpath:org/kuali/kfs/sys/types.xsd"/>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
+                schemaLocation="classpath:org/kuali/kfs/sys/xml.xsd"/>
+    <xsd:import namespace="http://www.kuali.org/kfs/purap/types"
+                schemaLocation="classpath:edu/cornell/kfs/module/purap/purapTypes.xsd"/>
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types"
+                schemaLocation="classpath:org/kuali/kfs/sys/types.xsd"/>
 
     <xsd:element name="Credential">
         <xsd:complexType>
@@ -147,11 +149,12 @@
                                                         </xsd:complexType>
                                                     </xsd:element> <!-- Total -->
                                                 </xsd:sequence>
-                                                <xsd:attribute name="operationAllowed" type="xsd:string"/> <!-- Not Used -->
-                                                <xsd:attribute name="quoteStatus" type="xsd:string" use="optional"/> <!-- Not Used -->
+                                                <xsd:attribute name="operationAllowed"
+                                                               type="xsd:string"/> <!-- Not Used -->
+                                                <xsd:attribute name="quoteStatus" type="xsd:string"
+                                                               use="optional"/> <!-- Not Used -->
                                             </xsd:complexType>
                                         </xsd:element>
-
                                         <xsd:element name="ItemIn" maxOccurs="unbounded">
                                             <xsd:complexType>
                                                 <xsd:sequence>
@@ -161,28 +164,37 @@
                                                             <xsd:sequence>
                                                                 <xsd:element ref="UnitPrice"/>
                                                                 <xsd:element ref="Description"/>
-                                                                <xsd:element name="UnitOfMeasure" type="purap:uomType"/>
-
-                                                                <xsd:element name="Classification" maxOccurs="unbounded">
+                                                                <xsd:element name="UnitOfMeasure"
+                                                                             type="purap:uomType"/>
+                                                                <xsd:element name="Classification"
+                                                                             maxOccurs="unbounded">
                                                                     <xsd:complexType>
                                                                         <xsd:simpleContent>
-                                                                            <xsd:extension base="kfs:zeroToThirtyCharType">
-                                                                                <xsd:attribute name="domain" type="kfs:oneToTwentyOneCharType"/>
+                                                                            <xsd:extension
+                                                                                    base="kfs:zeroToThirtyCharType">
+                                                                                <xsd:attribute name="domain"
+                                                                                               type="kfs:oneToTwentyOneCharType"/>
                                                                             </xsd:extension>
                                                                         </xsd:simpleContent>
                                                                     </xsd:complexType>
                                                                 </xsd:element> <!-- Classification -->
-                                                                <xsd:element name="ManufacturerPartID" type="kfs:oneToTwentyOneCharType" minOccurs="0"/>
-                                                                <xsd:element name="ManufacturerName" type="kfs:zeroToFiftyFiveCharType" minOccurs="0"/>
+                                                                <xsd:element name="ManufacturerPartID"
+                                                                             type="kfs:oneToTwentyOneCharType"
+                                                                             minOccurs="0"/>
+                                                                <xsd:element name="ManufacturerName"
+                                                                             type="kfs:zeroToFiftyFiveCharType"
+                                                                             minOccurs="0"/>
                                                                 <xsd:element ref="Extrinsic" maxOccurs="unbounded"/>
                                                             </xsd:sequence>
                                                         </xsd:complexType>
                                                     </xsd:element> <!-- ItemDetail -->
-                                                    <xsd:element name="SupplierID" minOccurs="0" maxOccurs="unbounded"> <!-- Not used -->
+                                                    <xsd:element name="SupplierID" minOccurs="0"
+                                                                 maxOccurs="unbounded"> <!-- Not used -->
                                                         <xsd:complexType>
                                                             <xsd:simpleContent>
                                                                 <xsd:extension base="kfs:zeroToNinetyCharType">
-                                                                    <xsd:attribute name="domain" type="kfs:zeroToTwentyCharType"/>
+                                                                    <xsd:attribute name="domain"
+                                                                                   type="kfs:zeroToTwentyCharType"/>
                                                                 </xsd:extension>
                                                             </xsd:simpleContent>
                                                         </xsd:complexType>

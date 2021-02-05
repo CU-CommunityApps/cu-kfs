@@ -3,7 +3,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2020 Kuali, Inc.
+    Copyright 2005-2021 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -19,16 +19,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
 <xsd:schema elementFormDefault="qualified"
             targetNamespace="http://www.kuali.org/kfs/purap/electronicInvoice"
             xmlns="http://www.kuali.org/kfs/purap/electronicInvoice"
             xmlns:purap="http://www.kuali.org/kfs/purap/types"
             xmlns:kfs="http://www.kuali.org/kfs/sys/types"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="classpath:org/kuali/kfs/sys/xml.xsd"/>
-    <xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="classpath:edu/cornell/kfs/module/purap/purapTypes.xsd"/>
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="classpath:org/kuali/kfs/sys/types.xsd"/>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
+                schemaLocation="classpath:org/kuali/kfs/sys/xml.xsd"/>
+    <xsd:import namespace="http://www.kuali.org/kfs/purap/types"
+                schemaLocation="classpath:edu/cornell/kfs/module/purap/purapTypes.xsd"/>
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types"
+                schemaLocation="classpath:org/kuali/kfs/sys/types.xsd"/>
 
     <xsd:element name="Credential">
         <xsd:complexType>
@@ -43,7 +45,8 @@
     <xsd:element name="Name">
         <xsd:complexType>
             <xsd:simpleContent>
-                <xsd:extension base="purap:twoHundredCharsType"> <!--  since barnesandnoble.xml contains empty name in contact, we need minLen=0 insteadof 1 -->
+                <xsd:extension base="purap:twoHundredCharsType">
+                    <!--  since barnesandnoble.xml contains empty name in contact, we need minLen=0 insteadof 1 -->
                     <xsd:attribute ref="xml:lang" use="required"/>
                 </xsd:extension>
             </xsd:simpleContent>
@@ -102,7 +105,8 @@
                                 <xsd:complexType>
                                     <xsd:simpleContent>
                                         <xsd:extension base="purap:addressType">
-                                            <xsd:attribute name="isoCountryCode" type="kfs:oneToFourCharType"/> <!-- It's national prefix, not iso Country Code -->
+                                            <xsd:attribute name="isoCountryCode" type="kfs:oneToFourCharType"/>
+                                            <!-- It's national prefix, not iso Country Code -->
                                         </xsd:extension>
                                     </xsd:simpleContent>
                                 </xsd:complexType>
@@ -127,7 +131,8 @@
                                 <xsd:complexType>
                                     <xsd:simpleContent>
                                         <xsd:extension base="purap:addressType">
-                                            <xsd:attribute name="isoCountryCode" type="kfs:oneToFourCharType"/> <!-- It's national prefix, not iso Country Code -->
+                                            <xsd:attribute name="isoCountryCode" type="kfs:oneToFourCharType"/>
+                                            <!-- It's national prefix, not iso Country Code -->
                                         </xsd:extension>
                                     </xsd:simpleContent>
                                 </xsd:complexType>
@@ -190,7 +195,8 @@
     <xsd:element name="Money" default="0">
         <xsd:complexType>
             <xsd:simpleContent>
-                <xsd:extension base="xsd:string"> <!-- since cdw3.xml contains 3703.7400000000002, declaring as string insteadof kfs:amountType -->
+                <xsd:extension base="xsd:string">
+                    <!-- since cdw3.xml contains 3703.7400000000002, declaring as string insteadof kfs:amountType -->
                     <xsd:attribute name="currency" type="purap:currencyType" use="required"/>
                 </xsd:extension>
             </xsd:simpleContent>
@@ -320,7 +326,8 @@
                             <xsd:attribute name="domain" type="xsd:string" use="required"/>
                         </xsd:complexType>
                     </xsd:element>
-                    <xsd:element name="ShipmentIdentifier" type="xsd:string" minOccurs="0"/>    <!-- Not found in vendor xml -->
+                    <xsd:element name="ShipmentIdentifier" type="xsd:string" minOccurs="0"/>
+                    <!-- Not found in vendor xml -->
                 </xsd:choice>
                 <xsd:element name="DocumentReference" minOccurs="0"> <!-- Not found in vendor xml -->
                     <xsd:complexType>
@@ -375,13 +382,14 @@
                                 <xsd:complexType>
                                     <xsd:sequence>
                                         <xsd:element name="SupplierPartID" type="purap:catalogNumberType"/>
-                                        <xsd:element name="SupplierPartAuxiliaryID" type="purap:auxiliaryIDType" minOccurs="0"/>
+                                        <xsd:element name="SupplierPartAuxiliaryID" type="purap:auxiliaryIDType"
+                                                     minOccurs="0"/>
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
 
                             <xsd:element ref="Description" minOccurs="0"/>
-                            
+
                             <xsd:element name="Classification" minOccurs="0" maxOccurs="unbounded">
                                 <xsd:complexType>
                                     <xsd:simpleContent>
@@ -411,15 +419,18 @@
                                 <xsd:complexType>
                                     <xsd:simpleContent>
                                         <xsd:extension base="purap:addressType">
-                                            <xsd:attribute name="isoCountryCode" type="kfs:oneToFourCharType" use="required"/>
+                                            <xsd:attribute name="isoCountryCode" type="kfs:oneToFourCharType"
+                                                           use="required"/>
                                         </xsd:extension>
                                     </xsd:simpleContent>
                                 </xsd:complexType>
                             </xsd:element>
-                            <xsd:element name="SerialNumber" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/> <!-- Not found in vendor file -->
+                            <xsd:element name="SerialNumber" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                            <!-- Not found in vendor file -->
                         </xsd:sequence>
                         <xsd:attribute name="lineNumber" type="xsd:unsignedByte" use="required"/>
-                        <xsd:attribute name="serialNumber" type="xsd:string" use="optional"/> <!-- Not found in vendor file -->
+                        <xsd:attribute name="serialNumber" type="xsd:string" use="optional"/>
+                        <!-- Not found in vendor file -->
                     </xsd:complexType>
                 </xsd:element> <!-- InvoiceDetailItemReference -->
 
@@ -468,27 +479,26 @@
                                         <xsd:element name="AccountingSegment" maxOccurs="unbounded">
                                             <xsd:complexType>
                                                 <xsd:sequence>
-                                                    <xsd:element ref="Name" />
-                                                    <xsd:element ref="Description" />
+                                                    <xsd:element ref="Name"/>
+                                                    <xsd:element ref="Description"/>
                                                 </xsd:sequence>
-                                                <xsd:attribute name="id" type="xsd:string" />
+                                                <xsd:attribute name="id" type="xsd:string"/>
                                             </xsd:complexType>
                                         </xsd:element>
                                     </xsd:sequence>
-                                    <xsd:attribute name="name" type="xsd:string" />
+                                    <xsd:attribute name="name" type="xsd:string"/>
                                 </xsd:complexType>
                             </xsd:element>
                             <xsd:element name="Charge">
                                 <xsd:complexType>
                                     <xsd:sequence>
-                                        <xsd:element ref="Money" />
+                                        <xsd:element ref="Money"/>
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
                         </xsd:sequence>
                     </xsd:complexType>
                 </xsd:element>
-
                 <xsd:element ref="Comments" minOccurs="0"/>
                 <xsd:element ref="Extrinsic" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
@@ -512,7 +522,8 @@
                                 <xsd:complexType>
                                     <xsd:sequence>
                                         <xsd:element name="SupplierPartID" type="purap:catalogNumberType"/>
-                                        <xsd:element name="SupplierPartAuxiliaryID" type="purap:auxiliaryIDType" minOccurs="0" maxOccurs="1"/>
+                                        <xsd:element name="SupplierPartAuxiliaryID" type="purap:auxiliaryIDType"
+                                                     minOccurs="0" maxOccurs="1"/>
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element><!-- ItemID -->
@@ -539,7 +550,8 @@
                                     <xsd:element name="UnitOfMeasure" type="purap:uomType"/>
                                     <xsd:element name="TermReference" minOccurs="0">
                                         <xsd:complexType>
-                                            <xsd:attribute name="termName" type="kfs:oneToTwentyCharType" use="required"/>
+                                            <xsd:attribute name="termName" type="kfs:oneToTwentyCharType"
+                                                           use="required"/>
                                             <xsd:attribute name="term" type="kfs:oneToTenCharType" use="required"/>
                                         </xsd:complexType>
                                     </xsd:element>
@@ -559,17 +571,14 @@
                 <xsd:element ref="NetAmount" minOccurs="0"/>
                 <xsd:element ref="Comments" minOccurs="0"/>
                 <xsd:element ref="Extrinsic" minOccurs="0" maxOccurs="unbounded"/>
-
             </xsd:sequence>
 
             <xsd:attribute name="invoiceLineNumber" type="xsd:unsignedByte" use="required"/>
             <xsd:attribute name="quantity" type="xsd:unsignedByte" use="optional"/>
             <xsd:attribute name="referenceDate" type="xsd:date" use="optional"/>
             <xsd:attribute name="inspectionDate" type="xsd:date" use="optional"/>
-
         </xsd:complexType>
     </xsd:element>  <!-- InvoiceDetailServiceItem -->
-
 
     <xsd:element name="cXML">
         <xsd:complexType>
@@ -615,14 +624,16 @@
                                                         <xsd:complexType>
                                                             <xsd:simpleContent>
                                                                 <xsd:extension base="purap:emptyType">
-                                                                    <xsd:attribute name="isHeaderInvoice" use="optional">
+                                                                    <xsd:attribute name="isHeaderInvoice"
+                                                                                   use="optional">
                                                                         <xsd:simpleType>
                                                                             <xsd:restriction base="xsd:string">
                                                                                 <xsd:enumeration value="yes"/>
                                                                             </xsd:restriction>
                                                                         </xsd:simpleType>
                                                                     </xsd:attribute>
-                                                                    <xsd:attribute name="isVatRecoverable" use="optional">
+                                                                    <xsd:attribute name="isVatRecoverable"
+                                                                                   use="optional">
                                                                         <xsd:simpleType>
                                                                             <xsd:restriction base="xsd:string">
                                                                                 <xsd:enumeration value="yes"/>
@@ -644,28 +655,32 @@
                                                                             </xsd:restriction>
                                                                         </xsd:simpleType>
                                                                     </xsd:attribute>
-                                                                    <xsd:attribute name="isSpecialHandlingInLine" use="optional">
+                                                                    <xsd:attribute name="isSpecialHandlingInLine"
+                                                                                   use="optional">
                                                                         <xsd:simpleType>
                                                                             <xsd:restriction base="xsd:string">
                                                                                 <xsd:enumeration value="yes"/>
                                                                             </xsd:restriction>
                                                                         </xsd:simpleType>
                                                                     </xsd:attribute>
-                                                                    <xsd:attribute name="isShippingInLine" use="optional">
+                                                                    <xsd:attribute name="isShippingInLine"
+                                                                                   use="optional">
                                                                         <xsd:simpleType>
                                                                             <xsd:restriction base="xsd:string">
                                                                                 <xsd:enumeration value="yes"/>
                                                                             </xsd:restriction>
                                                                         </xsd:simpleType>
                                                                     </xsd:attribute>
-                                                                    <xsd:attribute name="isDiscountInLine" use="optional">
+                                                                    <xsd:attribute name="isDiscountInLine"
+                                                                                   use="optional">
                                                                         <xsd:simpleType>
                                                                             <xsd:restriction base="xsd:string">
                                                                                 <xsd:enumeration value="yes"/>
                                                                             </xsd:restriction>
                                                                         </xsd:simpleType>
                                                                     </xsd:attribute>
-                                                                    <xsd:attribute name="isAccountingInLine" use="optional">
+                                                                    <xsd:attribute name="isAccountingInLine"
+                                                                                   use="optional">
                                                                         <xsd:simpleType>
                                                                             <xsd:restriction base="xsd:string">
                                                                                 <xsd:enumeration value="yes"/>
@@ -676,7 +691,8 @@
                                                             </xsd:simpleContent>
                                                         </xsd:complexType>
                                                     </xsd:element>
-                                                    <xsd:element name="InvoicePartner" minOccurs="0" maxOccurs="unbounded">
+                                                    <xsd:element name="InvoicePartner" minOccurs="0"
+                                                                 maxOccurs="unbounded">
                                                         <xsd:complexType>
                                                             <xsd:sequence>
                                                                 <!-- Contact should be allowed only once, but EPIC parser is supporting
@@ -685,11 +701,18 @@
                                                                 <xsd:element name="IdReference" minOccurs="0">
                                                                     <xsd:complexType>
                                                                         <xsd:sequence>
-                                                                            <xsd:element name="Creator" type="kfs:zeroToTwentyCharType" minOccurs="0"/>
-                                                                            <xsd:element ref="Description" minOccurs="0"/>
+                                                                            <xsd:element name="Creator"
+                                                                                         type="kfs:zeroToTwentyCharType"
+                                                                                         minOccurs="0"/>
+                                                                            <xsd:element ref="Description"
+                                                                                         minOccurs="0"/>
                                                                         </xsd:sequence>
-                                                                        <xsd:attribute name="domain" type="kfs:zeroToTwentyCharType" use="required"/>
-                                                                        <xsd:attribute name="identifier" type="kfs:zeroToTwentyCharType" use="required"/>
+                                                                        <xsd:attribute name="domain"
+                                                                                       type="kfs:zeroToTwentyCharType"
+                                                                                       use="required"/>
+                                                                        <xsd:attribute name="identifier"
+                                                                                       type="kfs:zeroToTwentyCharType"
+                                                                                       use="required"/>
                                                                     </xsd:complexType>
                                                                 </xsd:element>
                                                             </xsd:sequence>
@@ -704,13 +727,16 @@
                                                     <xsd:choice minOccurs="0" maxOccurs="unbounded">
                                                         <xsd:element name="InvoiceDetailPaymentTerm">
                                                             <xsd:complexType>
-                                                                <xsd:attribute name="payInNumberOfDays" type="xsd:unsignedInt" use="required"/>
-                                                                <xsd:attribute name="percentageRate" type="xsd:decimal" use="required"/>
+                                                                <xsd:attribute name="payInNumberOfDays"
+                                                                               type="xsd:unsignedInt" use="required"/>
+                                                                <xsd:attribute name="percentageRate"
+                                                                               type="xsd:decimal" use="required"/>
                                                             </xsd:complexType>
                                                         </xsd:element>
                                                         <xsd:element name="PaymentTerm">
                                                             <xsd:complexType>
-                                                                <xsd:attribute name="payInNumberOfDays" type="xsd:unsignedInt" use="required"/>
+                                                                <xsd:attribute name="payInNumberOfDays"
+                                                                               type="xsd:unsignedInt" use="required"/>
                                                             </xsd:complexType>
                                                         </xsd:element>
                                                     </xsd:choice>
@@ -718,9 +744,7 @@
                                                     <!--  InvoiceDetailPaymentTerm and PaymentTerm not used in EPIC -->
 
                                                     <xsd:element ref="Comments" minOccurs="0"/>
-
                                                     <xsd:element ref="Extrinsic" minOccurs="0" maxOccurs="unbounded"/>
-
                                                 </xsd:sequence>
                                                 <xsd:attribute name="purpose" use="optional" default="standard">
                                                     <xsd:simpleType>
@@ -747,7 +771,8 @@
                                                 In vwr, it's like 2008-07-29 (Not valid)
                                                 In guybrown, it's 2008-07-29T12:00:00 (valid dateTime)
                                                 In fisher, it's 2008-07-25T00:00:00-08:00 (valid dateTime) -->
-                                                <xsd:attribute name="invoiceDate" type="purap:dateStringType" use="required"/>
+                                                <xsd:attribute name="invoiceDate" type="purap:dateStringType"
+                                                               use="required"/>
                                                 <!-- Changed to String from unsignedint -->
                                                 <xsd:attribute name="invoiceID" type="purap:idType" use="required"/>
                                                 <xsd:attribute name="isInformationOnly" use="optional">
@@ -769,24 +794,29 @@
                                                                     <xsd:sequence>
                                                                         <xsd:element ref="OrderReference"/>
                                                                         <xsd:choice minOccurs="0">
-                                                                            <xsd:element ref="MasterAgreementReference"/>
+                                                                            <xsd:element
+                                                                                    ref="MasterAgreementReference"/>
                                                                             <xsd:element ref="MasterAgreementIDInfo"/>
                                                                         </xsd:choice>
-                                                                        <xsd:element ref="SupplierOrderInfo" minOccurs="0"/>
+                                                                        <xsd:element ref="SupplierOrderInfo"
+                                                                                     minOccurs="0"/>
                                                                     </xsd:sequence>
                                                                     <xsd:sequence>
                                                                         <xsd:element ref="MasterAgreementReference"/>
                                                                         <xsd:element ref="OrderIDInfo" minOccurs="0"/>
-                                                                        <xsd:element ref="SupplierOrderInfo" minOccurs="0"/>
+                                                                        <xsd:element ref="SupplierOrderInfo"
+                                                                                     minOccurs="0"/>
                                                                     </xsd:sequence>
                                                                     <xsd:sequence>
                                                                         <xsd:element ref="MasterAgreementIDInfo"/>
                                                                         <xsd:element ref="OrderIDInfo" minOccurs="0"/>
-                                                                        <xsd:element ref="SupplierOrderInfo" minOccurs="0"/>
+                                                                        <xsd:element ref="SupplierOrderInfo"
+                                                                                     minOccurs="0"/>
                                                                     </xsd:sequence>
                                                                     <xsd:sequence>
                                                                         <xsd:element ref="OrderIDInfo"/>
-                                                                        <xsd:element ref="SupplierOrderInfo" minOccurs="0"/>
+                                                                        <xsd:element ref="SupplierOrderInfo"
+                                                                                     minOccurs="0"/>
                                                                     </xsd:sequence>
                                                                     <xsd:sequence>
                                                                         <xsd:element ref="SupplierOrderInfo"/>
@@ -797,16 +827,16 @@
                                                     </xsd:element>
 
                                                     <xsd:choice>
-                                                        <xsd:element ref="InvoiceDetailItem" minOccurs="1" maxOccurs="unbounded"/>
-                                                        <xsd:element ref="InvoiceDetailServiceItem" minOccurs="1" maxOccurs="unbounded"/>
+                                                        <xsd:element ref="InvoiceDetailItem" minOccurs="1"
+                                                                     maxOccurs="unbounded"/>
+                                                        <xsd:element ref="InvoiceDetailServiceItem" minOccurs="1"
+                                                                     maxOccurs="unbounded"/>
                                                     </xsd:choice>
-
                                                 </xsd:sequence>
                                             </xsd:complexType>
                                         </xsd:element>
 
                                         <!--  The next element should be InvoiceDetailHeaderOrder, but EPIC doesnt uses this element -->
-
                                         <xsd:element name="InvoiceDetailSummary">
                                             <xsd:complexType>
                                                 <xsd:sequence>
@@ -869,7 +899,7 @@
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>
-            <!-- Chaning to optional since barnesandnoble's xml doesn't contain this attribute -->
+            <!-- Changing to optional since barnesandnoble's xml doesn't contain this attribute -->
             <xsd:attribute name="version" type="xsd:string" use="optional" default="1.2.019"/>
             <xsd:attribute ref="xml:lang" use="optional"/>
             <xsd:attribute name="timestamp" type="xsd:string" use="required"/>

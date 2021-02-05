@@ -3,7 +3,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2020 Kuali, Inc.
+    Copyright 2005-2021 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -19,19 +19,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
 <xsd:schema elementFormDefault="qualified"
             targetNamespace="http://www.kuali.org/kfs/purap/b2bPOResponse"
             xmlns="http://www.kuali.org/kfs/purap/b2bPOResponse"
             xmlns:purap="http://www.kuali.org/kfs/purap/types"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="classpath:edu/cornell/kfs/module/purap/purapTypes.xsd"/>
+    <xsd:import namespace="http://www.kuali.org/kfs/purap/types"
+                schemaLocation="classpath:edu/cornell/kfs/module/purap/purapTypes.xsd"/>
 
     <xsd:element name="Error">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="ErrorMessage" type="xsd:string"/>  <!-- Not needed to restrict the length since this gets added to notes -->
+                <!-- Not needed to restrict the length since this gets added to notes -->
+                <xsd:element name="ErrorMessage" type="xsd:string"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -74,7 +75,8 @@
                                                     <xsd:element name="Error" maxOccurs="unbounded">
                                                         <xsd:complexType>
                                                             <xsd:sequence>
-                                                                <xsd:element name="ErrorMessage" maxOccurs="unbounded"/>
+                                                                <xsd:element name="ErrorMessage"
+                                                                             maxOccurs="unbounded"/>
                                                             </xsd:sequence>
                                                             <xsd:attribute name="type" type="xsd:string"/>
                                                         </xsd:complexType>
@@ -89,14 +91,16 @@
                                                     <xsd:element name="Error" maxOccurs="unbounded">
                                                         <xsd:complexType>
                                                             <xsd:sequence>
-                                                                <xsd:element name="ErrorMessage" maxOccurs="unbounded"/>
+                                                                <xsd:element name="ErrorMessage"
+                                                                             maxOccurs="unbounded"/>
                                                             </xsd:sequence>
                                                             <xsd:attribute name="type" type="xsd:string"/>
                                                         </xsd:complexType>
                                                     </xsd:element>
                                                 </xsd:sequence>
                                                 <xsd:attribute name="ponumber" type="xsd:unsignedInt" use="required"/>
-                                                <xsd:attribute name="linenumber" type="xsd:unsignedInt" use="required"/>
+                                                <xsd:attribute name="linenumber" type="xsd:unsignedInt"
+                                                               use="required"/>
                                             </xsd:complexType>
                                         </xsd:element>
                                     </xsd:sequence>
@@ -109,5 +113,4 @@
             <xsd:attribute name="version" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
-
 </xsd:schema>

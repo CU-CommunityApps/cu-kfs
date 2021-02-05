@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2020 Kuali, Inc.
+ * Copyright 2005-2021 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,10 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.annotations.JoinFetch;
 import org.eclipse.persistence.annotations.JoinFetchType;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
-import org.kuali.rice.kim.api.role.Role;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kim.api.type.KimType;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleMember;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleQualifier;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleResponsibilityAction;
@@ -55,6 +51,10 @@ import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.rice.core.api.membership.MemberType;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
+import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kim.api.type.KimType;
 import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
 import org.kuali.rice.krad.data.jpa.converters.HashConverter;
 import org.kuali.rice.krad.data.platform.MaxValueIncrementerFactory;
@@ -365,9 +365,8 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
-            setIfRolesEditable();
-            // CU Customization: Added group-editable flag updates.
             setIfGroupsEditable();
+            setIfRolesEditable();
             KIMServiceLocatorInternal.getUiDocumentService().saveEntityPerson(this);
         }
     }
@@ -559,19 +558,31 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return new KimTypeAttributesHelper(kimTypeInfo);
     }
 
-    public void setIfRolesEditable() {
-        if (CollectionUtils.isNotEmpty(getRoles())) {
-            for (PersonDocumentRole role : getRoles()) {
-                role.setEditable(validAssignRole(role));
-            }
-        }
-    }
-
-    // CU Customization: Added method for setting group-editable flags.
     public void setIfGroupsEditable() {
         if (CollectionUtils.isNotEmpty(getGroups())) {
             for (PersonDocumentGroup group : getGroups()) {
                 group.setEditable(validAssignGroup(group));
+            }
+        }
+    }
+
+    public boolean validPopulateGroup(PersonDocumentGroup group) {
+        if (StringUtils.isNotEmpty(group.getNamespaceCode())) {
+            Map<String, String> roleDetails = new HashMap<>();
+            roleDetails.put(KimConstants.AttributeConstants.NAMESPACE_CODE, group.getNamespaceCode());
+            roleDetails.put(KimConstants.AttributeConstants.GROUP_NAME, group.getGroupName());
+            return getDocumentHelperService().getDocumentAuthorizer(this).isAuthorizedByTemplate(this,
+                    KimConstants.NAMESPACE_CODE, KimConstants.PermissionTemplateNames.POPULATE_GROUP,
+                    GlobalVariables.getUserSession().getPerson().getPrincipalId(), roleDetails, null);
+        }
+
+        return true;
+    }
+
+    public void setIfRolesEditable() {
+        if (CollectionUtils.isNotEmpty(getRoles())) {
+            for (PersonDocumentRole role : getRoles()) {
+                role.setEditable(validAssignRole(role));
             }
         }
     }
