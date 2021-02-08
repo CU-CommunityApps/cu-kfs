@@ -549,7 +549,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         return businessObjectService;
     }
     
-    private DateTimeService createMockDateTimeService() throws Exception {
+    private DateTimeService createMockDateTimeService() {
         DateTimeService dateTimeService = mock(DateTimeService.class);
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         when(dateTimeService.getCurrentSqlDate()).thenReturn(currentDate);
@@ -586,7 +586,7 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
     
 
-    private PayeeACHAccountExtractReportService createMockPayeeACHAccountExtractReportService() throws Exception {              
+    private PayeeACHAccountExtractReportService createMockPayeeACHAccountExtractReportService() {              
         return mock(PayeeACHAccountExtractReportService.class);
     }
 

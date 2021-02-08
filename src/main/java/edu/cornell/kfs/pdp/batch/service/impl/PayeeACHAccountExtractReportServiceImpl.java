@@ -1,13 +1,14 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.text.MessageFormat;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractFileResult;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractReportData;
@@ -15,7 +16,7 @@ import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractResult;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractRetryResult;
 import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractReportService;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
-import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountExtractReportService {
@@ -51,7 +52,7 @@ public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountE
     }
 
     private void writeBatchJobReport(PayeeACHAccountExtractFileResult fileResult) {
-        String baseName = getFileNameWithoutPathOrExtension(fileResult.getFileName());
+        String baseName = CuBatchFileUtils.getFileNameWithoutPathOrExtension(fileResult.getFileName());
 
         LOG.info("writeBatchJobReport: Start writing ACH Extract report for file: " + fileResult.getFileName());
 
@@ -64,23 +65,6 @@ public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountE
         LOG.info("writeBatchJobReport: Finished writing ACH Extract for file: " + fileResult.getFileName());
     }
 
-    private String getFileNameWithoutPathOrExtension(String fileName) {
-        String result = getFileNameWithoutPath(fileName);
-        result = StringUtils.substringBefore(result, KFSConstants.DELIMITER);
-        return result;
-    }
-
-    public static String getFileNameWithoutPath(String fileName) {
-        String result = fileName;
-        if (StringUtils.contains(result, CUKFSConstants.SLASH)) {
-            result = StringUtils.substringAfterLast(fileName, CUKFSConstants.SLASH);
-        }
-        if (StringUtils.contains(result, CUKFSConstants.BACKSLASH)) {
-            result = StringUtils.substringAfterLast(result, CUKFSConstants.BACKSLASH);
-        }
-        return result;
-    }
-
     private void initializeNewReport(String baseName) {
         String fileNamePrefix = MessageFormat.format(reportFileNamePrefixFormat, baseName);
         reportWriterService.setFileNamePrefix(fileNamePrefix);
@@ -88,7 +72,7 @@ public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountE
     }
 
     private void writeReportSummaryTitleForFile(PayeeACHAccountExtractFileResult fileResult) {
-        reportWriterService.writeFormattedMessageLine("Report for ACH File: %s", getFileNameWithoutPath(fileResult.getFileName()));
+        reportWriterService.writeFormattedMessageLine("Report for ACH File: %s", CuBatchFileUtils.getFileNameWithoutPath(fileResult.getFileName()));
 
     }
 
@@ -140,7 +124,7 @@ public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountE
         if (processingResult.getErrorEntries().isEmpty()) {
             reportWriterService.writeFormattedMessageLine("* No entries processed with errors.");
         } else {
-            for (PayeeACHAccountExtractDetail achDetail : processingResult.getErrorEntries().keySet().stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList())) {
+            for (PayeeACHAccountExtractDetail achDetail : getSortedAchDetailsWithErrors(processingResult)) {
                 String rowFormat = "%30s %-70s";
                 reportWriterService.writeFormattedMessageLine(rowFormat, "Net id:", achDetail.getNetID());
                 reportWriterService.writeFormattedMessageLine(rowFormat, "Creation Date:", achDetail.getCreateDate());
@@ -152,6 +136,11 @@ public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountE
                 reportWriterService.writeNewLines(1);
             }
         }
+    }
+    
+    private List<PayeeACHAccountExtractDetail> getSortedAchDetailsWithErrors(PayeeACHAccountExtractResult processingResult) {
+        Set<PayeeACHAccountExtractDetail> errorEntries = processingResult.getErrorEntries().keySet();
+        return errorEntries.stream().sorted(Comparator.comparing(PayeeACHAccountExtractDetail::getIdIntValue)).collect(Collectors.toList());
     }
 
     private void finalizeReportForCurrentFile() {

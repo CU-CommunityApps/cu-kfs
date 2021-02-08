@@ -9,7 +9,7 @@ public class PayeeACHAccountExtractReportData {
     private PayeeACHAccountExtractRetryResult achAccountExtractRetryResults;
     
     public PayeeACHAccountExtractReportData() {
-        achAccountExtractFileResults = new ArrayList<PayeeACHAccountExtractFileResult>();
+        achAccountExtractFileResults = new ArrayList<>();
     }
     
     public void addAchAccountExtractFileResult(PayeeACHAccountExtractFileResult accountExtractFileResult) {

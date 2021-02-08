@@ -3,6 +3,7 @@ package edu.cornell.kfs.pdp.batch.service.impl;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -106,7 +107,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         return true;
     }
     
-    private void loadACHBatchDetailFiles(PayeeACHAccountExtractReportData achAccountExtractReportData){
+    private void loadACHBatchDetailFiles(PayeeACHAccountExtractReportData achAccountExtractReportData) {
         int numSuccess = 0;
         int numPartial = 0;
         int numFail = 0;
@@ -237,9 +238,10 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 processingFileResult.addFailedRow();
                 errors.add(error);
                 processingFileResult.getErrorEntries().put(achDetail, errors);
-                storeACHAccountExtractDetailForRetry(achDetail, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
+                storeACHAccountExtractDetailForRetry(achDetail);
             }
             else {
+                achDetail.setCreateDate(dateTimeService.getCurrentSqlDate());
                 processingFileResult.addSuccessRow();
                 processingFileResult.getSuccessEntries().add(achDetail);
             }
@@ -288,7 +290,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     }
     
     private void addErrorToReport(PayeeACHAccountExtractRetryResult processingRetryResult, PayeeACHAccountExtractDetail achDetail, String error) {
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         errors.add(error);
         processingRetryResult.addFailedRow();
         processingRetryResult.getErrors().add(error);
@@ -307,22 +309,22 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     }
 
     private List<PayeeACHAccountExtractDetail> getSortedACHDetailsEligibleForRetry(List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails) {
-        List<PayeeACHAccountExtractDetail> achDetailsEligibleForRetry = new ArrayList<PayeeACHAccountExtractDetail>();
-        List<PayeeACHAccountExtractDetail> sortedAchDetailsEligibleForRetry = new ArrayList<PayeeACHAccountExtractDetail>();
+        List<PayeeACHAccountExtractDetail> achDetailsEligibleForRetry = new ArrayList<>();
+        List<PayeeACHAccountExtractDetail> sortedAchDetailsEligibleForRetry = new ArrayList<>();
         achDetailsEligibleForRetry = persistedPayeeACHAccountExtractDetails.stream().filter(a -> a.getRetryCount() < getMaxRetryCount())
                 .collect(Collectors.toList());
-        sortedAchDetailsEligibleForRetry = achDetailsEligibleForRetry.stream().sorted((o1, o2) -> o1.getId().compareTo(o2.getId()))
+        sortedAchDetailsEligibleForRetry = achDetailsEligibleForRetry.stream().sorted(Comparator.comparing(PayeeACHAccountExtractDetail::getIdIntValue))
                 .collect(Collectors.toList());
         return sortedAchDetailsEligibleForRetry;
     }
 
     private int getMaxRetryCount() {
-        return Integer.valueOf(parameterService.getParameterValueAsString(PayeeACHAccountExtractStep.class, CUPdpParameterConstants.MAX_ACH_ACCT_EXTRACT_RETRY));
+        return Integer.parseInt(parameterService.getParameterValueAsString(PayeeACHAccountExtractStep.class, CUPdpParameterConstants.MAX_ACH_ACCT_EXTRACT_RETRY));
     }
     
-    private void storeACHAccountExtractDetailForRetry(PayeeACHAccountExtractDetail achDetail, String status) {
+    private void storeACHAccountExtractDetailForRetry(PayeeACHAccountExtractDetail achDetail) {
         achDetail.setCreateDate(dateTimeService.getCurrentSqlDate());
-        achDetail.setStatus( CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
+        achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
         updateACHAccountExtractDetailRetryCount(achDetail, 0);
     }
 
@@ -338,7 +340,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     }
 
     protected List<PayeeACHAccountExtractDetail> getPersistedPayeeACHAccountExtractDetails() {
-        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = new ArrayList<PayeeACHAccountExtractDetail>();
+        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = new ArrayList<>();
         Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put(CUPdpPropertyConstants.PAYEE_ACH_EXTRACT_DETAIL_STATUS, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
         persistedPayeeACHAccountExtractDetails

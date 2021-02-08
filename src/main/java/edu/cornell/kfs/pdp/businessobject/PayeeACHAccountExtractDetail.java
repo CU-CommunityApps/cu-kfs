@@ -159,5 +159,9 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
     public void setId(KualiInteger id) {
         this.id = id;
     }
+    
+    public int getIdIntValue() {
+        return id.intValue();
+    }
 
 }

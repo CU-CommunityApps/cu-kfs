@@ -10,6 +10,8 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import com.rsmart.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 public class CuBatchFileUtils {
     private static ConfigurationService configurationService;
 
@@ -43,6 +45,23 @@ public class CuBatchFileUtils {
     
     private static boolean isPrefixOfAnother(String str1, String str2) {
         return str1.startsWith(str2) || str2.startsWith(str1);
+    }
+    
+    public static String getFileNameWithoutPathOrExtension(String fileName) {
+        String result = getFileNameWithoutPath(fileName);
+        result = StringUtils.substringBefore(result, org.kuali.kfs.sys.KFSConstants.DELIMITER);
+        return result;
+    }
+
+    public static String getFileNameWithoutPath(String fileName) {
+        String result = fileName;
+        if (StringUtils.contains(result, CUKFSConstants.SLASH)) {
+            result = StringUtils.substringAfterLast(fileName, CUKFSConstants.SLASH);
+        }
+        if (StringUtils.contains(result, CUKFSConstants.BACKSLASH)) {
+            result = StringUtils.substringAfterLast(result, CUKFSConstants.BACKSLASH);
+        }
+        return result;
     }
 
     private static ConfigurationService getConfigurationService() {
