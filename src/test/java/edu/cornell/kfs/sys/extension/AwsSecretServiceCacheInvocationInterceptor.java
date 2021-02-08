@@ -4,13 +4,48 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 
 import edu.cornell.kfs.sys.service.AwsSecretService;
 
-public class AwsSecretServiceCacheInvocationInterceptor implements InvocationInterceptor {
+public class AwsSecretServiceCacheInvocationInterceptor implements InvocationInterceptor,
+        BeforeAllCallback, AfterAllCallback {
+
+    private Field awsSecretServiceField;
+
+    @Override
+    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        this.awsSecretServiceField = getFieldOnTestClassContainingAwsSecretService(extensionContext);
+    }
+
+    @Override
+    public void afterAll(ExtensionContext extensionContext) throws Exception {
+        this.awsSecretServiceField = null;
+    }
+
+    private Field getFieldOnTestClassContainingAwsSecretService(
+            ExtensionContext extensionContext) throws Exception {
+        Class<?> testClass = extensionContext.getRequiredTestClass();
+        AwsSecretServiceCacheExtension awsCacheAnnotation = testClass.getAnnotation(
+                AwsSecretServiceCacheExtension.class);
+        if (awsCacheAnnotation == null) {
+            throw new IllegalStateException("AwsSecretServiceCacheExtension annotation was not present on test class");
+        }
+        
+        String awsSecretServiceFieldName = awsCacheAnnotation.awsSecretServiceField();
+        if (StringUtils.isBlank(awsSecretServiceFieldName)) {
+            throw new IllegalStateException(
+                    "AwsSecretServiceCacheExtension annotation cannot specify a blank AwsSecretService field");
+        }
+        
+        Field declaredAwsSecretServiceField = testClass.getDeclaredField(awsSecretServiceFieldName);
+        declaredAwsSecretServiceField.setAccessible(true);
+        return declaredAwsSecretServiceField;
+    }
 
     @Override
     public void interceptTestMethod(
@@ -37,7 +72,7 @@ public class AwsSecretServiceCacheInvocationInterceptor implements InvocationInt
             invocation.proceed();
         } else {
             AwsSecretService awsSecretService = getAwsSecretServiceFromFieldOnTestClass(extensionContext);
-            awsSecretService.doWithAwsSecretsCachingEnabled(() -> {
+            awsSecretService.performTaskRequiringAccessToAwsSecrets(() -> {
                 invocation.proceed();
                 return null;
             });
@@ -56,23 +91,7 @@ public class AwsSecretServiceCacheInvocationInterceptor implements InvocationInt
 
     private AwsSecretService getAwsSecretServiceFromFieldOnTestClass(
             ExtensionContext extensionContext) throws Throwable {
-        Class<?> testClass = extensionContext.getRequiredTestClass();
         Object testInstance = extensionContext.getRequiredTestInstance();
-        
-        AwsSecretServiceCacheExtension awsCacheAnnotation = testClass.getAnnotation(
-                AwsSecretServiceCacheExtension.class);
-        if (awsCacheAnnotation == null) {
-            throw new IllegalStateException("AwsSecretServiceCacheExtension annotation was not present on test class");
-        }
-        
-        String awsSecretServiceFieldName = awsCacheAnnotation.awsSecretServiceField();
-        if (StringUtils.isBlank(awsSecretServiceFieldName)) {
-            throw new IllegalStateException(
-                    "AwsSecretServiceCacheExtension annotation cannot specify a blank AwsSecretService field");
-        }
-        
-        Field awsSecretServiceField = testClass.getDeclaredField(awsSecretServiceFieldName);
-        awsSecretServiceField.setAccessible(true);
         AwsSecretService awsSecretService = (AwsSecretService) awsSecretServiceField.get(testInstance);
         if (awsSecretService == null) {
             throw new IllegalStateException("The test instance did not initialize its AwsSecretService field "

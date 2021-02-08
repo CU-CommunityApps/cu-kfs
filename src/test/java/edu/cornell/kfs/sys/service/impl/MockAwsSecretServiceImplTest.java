@@ -3,10 +3,10 @@ package edu.cornell.kfs.sys.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -23,17 +24,18 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.sys.KFSConstants;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
 import edu.cornell.kfs.sys.extension.AwsSecretServiceCacheExtension;
 import edu.cornell.kfs.sys.extension.ExcludeAwsSecretsCacheSetup;
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
 import edu.cornell.kfs.sys.util.ConsumerForThrowType;
-import edu.cornell.kfs.sys.util.CuJsonUtils;
+import edu.cornell.kfs.sys.util.CuJsonTestUtils;
+import edu.cornell.kfs.sys.util.RunnableForThrowType;
 
 /**
  * This is a modified copy of the cu-kfs AwsSecretServiceImplIntegrationTest class,
@@ -85,7 +87,7 @@ public class MockAwsSecretServiceImplTest {
     }
 
     private String buildInitialPojoJson() {
-        return CuJsonUtils.buildJsonStringFromEntries(
+        return CuJsonTestUtils.buildJsonStringFromEntries(
                 Map.entry(STATIC_STRING_PROPERTY_NAME, BASIC_POJO_STATIC_STRING_VALUE),
                 Map.entry(NUMBER_TEST_PROPERTY_NAME, String.valueOf(BASIC_POJO_NUMBER_VALUE)));
     }
@@ -96,36 +98,39 @@ public class MockAwsSecretServiceImplTest {
     }
 
     @Test
-    void testGetSingleStringValueFromAwsSecret() {
+    void testGetSingleStringValueFromAwsSecret() throws Exception {
         String actualSecretValue = awsSecretServiceImpl.getSingleStringValueFromAwsSecret(
                 SINGLE_STRING_SECRET_KEY_NAME, false);
         assertEquals(SINGLE_STRING_SECRET_VALUE, actualSecretValue);
     }
     
     @Test
-    void testDateSetAndGet() throws ParseException {
+    void testDateSetAndGet() throws Exception {
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
         awsSecretServiceImpl.updateSecretDate(SINGLE_DATE_SECRET_KEY_NAME, false, date);
         
-        Date secretDate = awsSecretServiceImpl.getSingleDateValueFromAwsSecret(SINGLE_DATE_SECRET_KEY_NAME, false);
-        assertEquals(date, secretDate);
+        performTaskBeforeAndAfterClearingAwsCache(() -> {
+            Date secretDate = awsSecretServiceImpl.getSingleDateValueFromAwsSecret(SINGLE_DATE_SECRET_KEY_NAME, false);
+            assertEquals(date, secretDate);
+        });
     }
     
     @Test
-    void testBooleanSetAndGet() {
+    void testBooleanSetAndGet() throws Exception {
         boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(
                 SINGLE_BOOLEAN_SECRET_KEY_NAME, true);
         boolean expectedNewBoolean = !initialValue;
         awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, true, expectedNewBoolean);
         
-        boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(
-                SINGLE_BOOLEAN_SECRET_KEY_NAME, true);
-        
-        assertEquals(expectedNewBoolean, actualNewBoolean);
+        performTaskBeforeAndAfterClearingAwsCache(() -> {
+            boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(
+                    SINGLE_BOOLEAN_SECRET_KEY_NAME, true);
+            assertEquals(expectedNewBoolean, actualNewBoolean);
+        });
     }
     
     @Test
-    void testPojo() throws JsonMappingException, JsonProcessingException {
+    void testPojo() throws Exception {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
         
@@ -138,13 +143,15 @@ public class MockAwsSecretServiceImplTest {
         pojo.setBoolean_test(newBooleanTest);
         awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
         
-        AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(
-                BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        assertEquals(newUniqueString, pojoNew.getChangeable_string());
-        assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
-        assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
-        assertEquals(pojo.getUpdate_date(), pojoNew.getUpdate_date());
-        assertEquals(pojo.isBoolean_test(), pojoNew.isBoolean_test());
+        performTaskBeforeAndAfterClearingAwsCache(() -> {
+            AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(
+                    BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+            assertEquals(newUniqueString, pojoNew.getChangeable_string());
+            assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
+            assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
+            assertEquals(pojo.getUpdate_date(), pojoNew.getUpdate_date());
+            assertEquals(pojo.isBoolean_test(), pojoNew.isBoolean_test());
+        });
     }
     
     @Test 
@@ -164,32 +171,79 @@ public class MockAwsSecretServiceImplTest {
     }
     
     @Test
-    void testNumber() {
+    void testNumber() throws Exception {
         Random rand = new Random();
         float floatNumber = rand.nextFloat();
         awsSecretServiceImpl.updateSecretNumber(SINGLE_FLOAT_SECRET_KEY_NAME, true, floatNumber);
         
-        float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(
-                SINGLE_FLOAT_SECRET_KEY_NAME, true);
-        assertEquals(floatNumber, returnedNumber);
-    }
-
-    static Stream<ConsumerForThrowType<MockAwsSecretServiceImpl, Exception>> serviceCallsForNullOrBlankSecretUpdate() {
-        return Stream.of(
-                service -> service.updateSecretValue(SINGLE_STRING_SECRET_KEY_NAME, false, null),
-                service -> service.updateSecretValue(SINGLE_STRING_SECRET_KEY_NAME, false, KFSConstants.EMPTY_STRING),
-                service -> service.updateSecretValue(SINGLE_STRING_SECRET_KEY_NAME, false, KFSConstants.BLANK_SPACE),
-                service -> service.updateSecretDate(SINGLE_DATE_SECRET_KEY_NAME, false, null),
-                service -> service.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, null)
-        );
+        performTaskBeforeAndAfterClearingAwsCache(() -> {
+            float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(
+                    SINGLE_FLOAT_SECRET_KEY_NAME, true);
+            assertEquals(floatNumber, returnedNumber);
+        });
     }
 
     @ParameterizedTest
-    @MethodSource("serviceCallsForNullOrBlankSecretUpdate")
-    void testCannotUpdateSecretWithNullOrBlankValue(
-            ConsumerForThrowType<MockAwsSecretServiceImpl, Exception> awsSecretServiceAction) throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> awsSecretServiceAction.accept(awsSecretServiceImpl),
-                "Updating a non-primitive AWS secret with a null or blank value should not have been allowed");
+    @NullAndEmptySource
+    @ValueSource(strings = { KFSConstants.BLANK_SPACE })
+    void testReadAndWriteStringAwsSecretWithBlankValue(String blankValue) throws Exception {
+        awsSecretServiceImpl.updateSecretValue(SINGLE_STRING_SECRET_KEY_NAME, false, blankValue);
+        
+        performTaskBeforeAndAfterClearingAwsCache(() -> {
+            String awsString = awsSecretServiceImpl.getSingleStringValueFromAwsSecret(
+                    SINGLE_STRING_SECRET_KEY_NAME, false);
+            assertEquals(StringUtils.EMPTY, awsString, "Retrieved string should have been empty");
+        });
+        
+        String storedAwsStringValue = awsSecretServiceImpl.getLocalSecretValue(SINGLE_STRING_SECRET_KEY_NAME, false);
+        assertEquals(CUKFSConstants.NULL_AWS_SECRET_VALUE, storedAwsStringValue,
+                "Wrong back-end value for null/blank string");
+    }
+
+    @Test
+    void testReadPrimitiveAwsSecretsWithInitialNullValues() throws Exception {
+        String fullBooleanAwsKey = awsSecretServiceImpl.buildFullAwsKeyName(SINGLE_BOOLEAN_SECRET_KEY_NAME, true);
+        String fullFloatAwsKey = awsSecretServiceImpl.buildFullAwsKeyName(SINGLE_FLOAT_SECRET_KEY_NAME, true);
+        awsSecretServiceImpl.overrideLocalSecrets(
+                Map.entry(fullBooleanAwsKey, CUKFSConstants.NULL_AWS_SECRET_VALUE),
+                Map.entry(fullFloatAwsKey, CUKFSConstants.NULL_AWS_SECRET_VALUE));
+        
+        boolean awsBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, true);
+        float awsFloat = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(SINGLE_FLOAT_SECRET_KEY_NAME, true);
+        
+        assertEquals(false, awsBoolean, "A null AWS secret boolean should have defaulted to false");
+        assertEquals(0f, awsFloat, "A null AWS secret number should have defaulted to zero");
+        
+        String storedAwsBooleanValue = awsSecretServiceImpl.getLocalSecretValue(fullBooleanAwsKey);
+        String storedAwsFloatValue = awsSecretServiceImpl.getLocalSecretValue(fullFloatAwsKey);
+        
+        assertEquals(CUKFSConstants.NULL_AWS_SECRET_VALUE, storedAwsBooleanValue,
+                "Wrong back-end value for null boolean");
+        assertEquals(CUKFSConstants.NULL_AWS_SECRET_VALUE, storedAwsFloatValue,
+                "Wrong back-end value for null number");
+    }
+
+    @Test
+    void testReadAndWriteDateAndPojoAwsSecretsWithNullValues() throws Exception {
+        awsSecretServiceImpl.updateSecretDate(SINGLE_DATE_SECRET_KEY_NAME, false, null);
+        awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, null);
+        
+        performTaskBeforeAndAfterClearingAwsCache(() -> {
+            Date awsDate = awsSecretServiceImpl.getSingleDateValueFromAwsSecret(SINGLE_DATE_SECRET_KEY_NAME, false);
+            AwsSecretPojo awsPojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false,
+                    AwsSecretPojo.class);
+        
+            assertNull(awsDate, "Retrieved Date should have been null");
+            assertNull(awsPojo, "Retrieved POJO should have been null");
+            
+            awsSecretServiceImpl.removeAllSecretsFromCurrentCache();
+        });
+        
+        String storedAwsDateValue = awsSecretServiceImpl.getLocalSecretValue(SINGLE_DATE_SECRET_KEY_NAME, false);
+        String storedAwsPojoValue = awsSecretServiceImpl.getLocalSecretValue(BASIC_POJO_SECRET_KEY_NAME, false);
+        
+        assertEquals(CUKFSConstants.NULL_AWS_SECRET_VALUE, storedAwsDateValue, "Wrong back-end value for null Date");
+        assertEquals(CUKFSConstants.NULL_AWS_SECRET_VALUE, storedAwsPojoValue, "Wrong back-end value for null POJO");
     }
 
     static Stream<ConsumerForThrowType<MockAwsSecretServiceImpl, Exception>>
@@ -249,7 +303,7 @@ public class MockAwsSecretServiceImplTest {
         assertCannotUseSecretsCacheOutsideOfHelperServiceMethod();
         assertThrows(IllegalStateException.class, () -> awsSecretServiceAction.accept(awsSecretServiceImpl),
                 "The AWS Secret service operation should have failed when it was executed "
-                        + "outside of a doWithAwsSecretsCachingEnabled() method call");
+                        + "outside of a performTaskRequiringAccessToAwsSecrets() method call");
     }
 
     @Test
@@ -257,7 +311,7 @@ public class MockAwsSecretServiceImplTest {
     void testBasicHandlingAndPrecedenceOfAwsSecretsCache() throws Exception {
         assertCannotUseSecretsCacheOutsideOfHelperServiceMethod();
         
-        String singleStringValue = awsSecretServiceImpl.doWithAwsSecretsCachingEnabled(() -> {
+        String singleStringValue = awsSecretServiceImpl.performTaskRequiringAccessToAwsSecrets(() -> {
             assertSecretsCacheExistsAndIsEmpty();
             
             String fullAwsKey = awsSecretServiceImpl.buildFullAwsKeyName(SINGLE_STRING_SECRET_KEY_NAME, false);
@@ -284,7 +338,7 @@ public class MockAwsSecretServiceImplTest {
     void testAwsSecretsCacheHandlingOfUpdates() throws Exception {
         assertCannotUseSecretsCacheOutsideOfHelperServiceMethod();
         
-        String singleStringValue = awsSecretServiceImpl.doWithAwsSecretsCachingEnabled(() -> {
+        String singleStringValue = awsSecretServiceImpl.performTaskRequiringAccessToAwsSecrets(() -> {
             assertSecretsCacheExistsAndIsEmpty();
             
             String fullAwsKey = awsSecretServiceImpl.buildFullAwsKeyName(SINGLE_STRING_SECRET_KEY_NAME, false);
@@ -308,7 +362,7 @@ public class MockAwsSecretServiceImplTest {
     void testManuallyClearCachedSecrets() throws Exception {
         assertCannotUseSecretsCacheOutsideOfHelperServiceMethod();
         
-        Boolean singleBooleanValue = awsSecretServiceImpl.doWithAwsSecretsCachingEnabled(() -> {
+        Boolean singleBooleanValue = awsSecretServiceImpl.performTaskRequiringAccessToAwsSecrets(() -> {
             assertSecretsCacheExistsAndIsEmpty();
             
             String fullAwsStringKey = awsSecretServiceImpl.buildFullAwsKeyName(SINGLE_STRING_SECRET_KEY_NAME, false);
@@ -355,7 +409,7 @@ public class MockAwsSecretServiceImplTest {
     void testNestedSecretsCaches() throws Exception {
         assertCannotUseSecretsCacheOutsideOfHelperServiceMethod();
         
-        Float singleFloatValue = awsSecretServiceImpl.doWithAwsSecretsCachingEnabled(() -> {
+        Float singleFloatValue = awsSecretServiceImpl.performTaskRequiringAccessToAwsSecrets(() -> {
             assertSecretsCacheExistsAndIsEmpty();
             
             String fullAwsStringKey = awsSecretServiceImpl.buildFullAwsKeyName(SINGLE_STRING_SECRET_KEY_NAME, false);
@@ -365,7 +419,7 @@ public class MockAwsSecretServiceImplTest {
             assertReturnedSecretAndCachedSecretHaveValue(fullAwsFloatKey, SINGLE_FLOAT_SECRET_VALUE, floatValue);
             assertSecretsCacheDoesNotContainMapping(fullAwsStringKey);
             
-            float floatValueDuplicate = awsSecretServiceImpl.doWithAwsSecretsCachingEnabled(() -> {
+            float floatValueDuplicate = awsSecretServiceImpl.performTaskRequiringAccessToAwsSecrets(() -> {
                 assertSecretsCacheExistsAndIsEmpty();
                 
                 float floatValue2 = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(
@@ -392,7 +446,8 @@ public class MockAwsSecretServiceImplTest {
 
     private void assertCannotUseSecretsCacheOutsideOfHelperServiceMethod() {
         assertThrows(IllegalStateException.class, awsSecretServiceImpl::getCurrentAwsSecretsCache,
-                "Internal AWS secrets cache should not be usable outside of a doWithAwsSecretsCachingEnabled() call");
+                "Internal AWS secrets cache should not be usable outside of a "
+                        + "performTaskRequiringAccessToAwsSecrets() call");
     }
 
     private void assertSecretsCacheExistsAndIsEmpty() throws Exception {
@@ -417,6 +472,12 @@ public class MockAwsSecretServiceImplTest {
         Map<String, String> secretsCache = awsSecretServiceImpl.getCurrentAwsSecretsCache();
         assertFalse(secretsCache.containsKey(fullAwsKey),
                 "Internal AWS secrets cache should not have contained a mapping for key: " + fullAwsKey);
+    }
+
+    private void performTaskBeforeAndAfterClearingAwsCache(RunnableForThrowType<Exception> task) throws Exception {
+        task.run();
+        awsSecretServiceImpl.removeAllSecretsFromCurrentCache();
+        task.run();
     }
 
 }

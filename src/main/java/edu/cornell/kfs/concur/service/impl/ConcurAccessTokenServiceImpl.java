@@ -82,6 +82,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         try {
             awsSecretService.updatePojo(ConcurAwsKeyNames.TOKEN_CONFIG, true, tokenConfig);
         } catch (JsonProcessingException e) {
+            LOG.error("updateTokenConfig: Unable to serialize token config object into a JSON string", e);
             throw new RuntimeException(e);
         }
     }

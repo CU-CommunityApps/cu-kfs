@@ -10,8 +10,7 @@ import edu.cornell.kfs.sys.util.CallableForThrowType;
 
 public interface AwsSecretService {
     
-    <R, T extends Throwable> R doWithAwsSecretsCachingEnabled(
-            CallableForThrowType<R, T> callable) throws T;
+    <R, T extends Throwable> R performTaskRequiringAccessToAwsSecrets(CallableForThrowType<R, T> callable) throws T;
     
     String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
     

@@ -23,7 +23,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * Helper class that wraps a custom JerseyTest instance that integrates with an Apache HTTP server,
  * and which allows for starting/stopping the test server on a per-test-class basis.
  * 
- * For a future enhancement, this class should be converted into a true JUnit 5 extension.
+ * TODO: For a future enhancement, this class should be converted into a true JUnit 5 extension.
  */
 public class ApacheHttpJerseyTestExtension implements Closeable {
 

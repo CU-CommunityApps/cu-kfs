@@ -32,6 +32,8 @@ public class CUKFSConstants {
     
     public static final String DECIMAL_FORMAT_0N_NN = "#0.00";
     
+    public static final String NULL_AWS_SECRET_VALUE = "NULL";
+    
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
         public static final String ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME = "Advanced Deposit Organization Review";

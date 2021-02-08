@@ -31,7 +31,12 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        return getAwsSecretService().doWithAwsSecretsCachingEnabled(
+        return dispatchPageActionWithAccessToAwsSecretsEnabled(mapping, form, request, response);
+    }
+
+    protected ActionForward dispatchPageActionWithAccessToAwsSecretsEnabled(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return getAwsSecretService().performTaskRequiringAccessToAwsSecrets(
                 () -> super.execute(mapping, form, request, response));
     }
 

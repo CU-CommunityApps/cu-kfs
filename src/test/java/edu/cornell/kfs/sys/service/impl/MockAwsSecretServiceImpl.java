@@ -39,6 +39,12 @@ public class MockAwsSecretServiceImpl extends AwsSecretServiceImpl {
         this.retryCount = retryCount;
         this.localSecrets = new HashMap<>();
         this.mockAWSSecretsManager = buildMockAWSSecretsManager();
+        
+        try {
+            afterPropertiesSet();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SafeVarargs
@@ -46,6 +52,15 @@ public class MockAwsSecretServiceImpl extends AwsSecretServiceImpl {
         for (Map.Entry<String, String> secret : secrets) {
             localSecrets.put(secret.getKey(), secret.getValue());
         }
+    }
+
+    public String getLocalSecretValue(String awsKeyName, boolean useKfsInstanceNamespace) {
+        String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
+        return getLocalSecretValue(fullAwsKey);
+    }
+
+    public String getLocalSecretValue(String fullAwsKey) {
+        return localSecrets.get(fullAwsKey);
     }
 
     @Override

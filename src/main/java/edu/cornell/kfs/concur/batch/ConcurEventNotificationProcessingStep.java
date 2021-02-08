@@ -16,7 +16,7 @@ public class ConcurEventNotificationProcessingStep extends AbstractStep {
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        return awsSecretService.doWithAwsSecretsCachingEnabled(this::processConcurEventNotifications);
+        return awsSecretService.performTaskRequiringAccessToAwsSecrets(this::processConcurEventNotifications);
     }
 
     protected boolean processConcurEventNotifications() {

@@ -50,6 +50,7 @@ import edu.cornell.kfs.sys.CuSysTestConstants.MockAwsSecretServiceConstants;
 import edu.cornell.kfs.sys.extension.AwsSecretServiceCacheExtension;
 import edu.cornell.kfs.sys.rest.util.ApacheHttpJerseyTestExtension;
 import edu.cornell.kfs.sys.service.impl.MockAwsSecretServiceImpl;
+import edu.cornell.kfs.sys.util.CuJsonTestUtils;
 import edu.cornell.kfs.sys.util.CuJsonUtils;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -142,7 +143,7 @@ public class ConcurAccessTokenServiceImplTest {
     }
 
     private String buildStaticConfigJson() {
-        return CuJsonUtils.buildJsonStringFromEntries(
+        return CuJsonTestUtils.buildJsonStringFromEntries(
                 Map.entry(ConcurPropertyConstants.ConcurStaticConfig.LOGIN_USERNAME,
                         MockLegacyAuthConstants.MOCK_USERNAME),
                 Map.entry(ConcurPropertyConstants.ConcurStaticConfig.LOGIN_PASSWORD,
@@ -154,7 +155,7 @@ public class ConcurAccessTokenServiceImplTest {
     }
 
     private String buildTokenConfigJson(AccessTokenDTO tokenDTO) {
-        return CuJsonUtils.buildJsonStringFromEntries(
+        return CuJsonTestUtils.buildJsonStringFromEntries(
                 Map.entry(ConcurPropertyConstants.ConcurTokenConfig.ACCESS_TOKEN, tokenDTO.getToken()),
                 Map.entry(ConcurPropertyConstants.ConcurTokenConfig.REFRESH_TOKEN, tokenDTO.getRefreshToken()),
                 Map.entry(ConcurPropertyConstants.ConcurTokenConfig.ACCESS_TOKEN_EXPIRATION_DATE,
@@ -500,7 +501,7 @@ public class ConcurAccessTokenServiceImplTest {
         boolean useKfsInstanceNamespace = StringUtils.equals(ConcurAwsKeyNames.TOKEN_CONFIG, jsonAwsKey);
         String oldJsonConfig = mockAwsSecretService.getSingleStringValueFromAwsSecret(
                 jsonAwsKey, useKfsInstanceNamespace);
-        String newJsonConfig = CuJsonUtils.rebuildJsonStringWithPropertyOverride(
+        String newJsonConfig = CuJsonTestUtils.rebuildJsonStringWithNewOrUpdatedProperty(
                 oldJsonConfig, propertyName, propertyValue);
         mockAwsSecretService.updateSecretValue(jsonAwsKey, useKfsInstanceNamespace, newJsonConfig);
     }

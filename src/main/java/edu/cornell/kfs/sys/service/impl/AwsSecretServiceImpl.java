@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -12,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.PredefinedClientConfigurations;
@@ -30,41 +30,32 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
 import edu.cornell.kfs.sys.util.CallableForThrowType;
 import edu.cornell.kfs.sys.util.CuJsonUtils;
+import edu.cornell.kfs.sys.util.StackedThreadLocalObject;
 
-public class AwsSecretServiceImpl implements AwsSecretService {
+public class AwsSecretServiceImpl implements AwsSecretService, InitializingBean {
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
 
-    private static final ThreadLocal<LinkedList<Map<String, String>>> AWS_SECRETS_CACHE_STACK =
-            ThreadLocal.withInitial(LinkedList::new);
+    private static final String MISSING_CACHE_MESSAGE = "The AWS secrets cache was not initialized properly; "
+            + "one of the calls in the chain must be wrapped inside a call to the "
+            + "performTaskRequiringAccessToAwsSecrets() method.";
+
+    private StackedThreadLocalObject<Map<String, String>> awsSecretsCache;
 
     protected String awsRegion;
     protected String kfsInstanceNamespace;
     protected String kfsSharedNamespace;
     protected int retryCount;
-    
+
     @Override
-    public <R, T extends Throwable> R doWithAwsSecretsCachingEnabled(
-            CallableForThrowType<R, T> callable) throws T {
-        Map<String, String> awsSecretsCache = new HashMap<>();
-        boolean pushedCacheToStack = false;
-        try {
-            getAwsSecretsCacheStack().offerFirst(awsSecretsCache);
-            pushedCacheToStack = true;
-            return callable.call();
-        } finally {
-            try {
-                awsSecretsCache.clear();
-                if (pushedCacheToStack) {
-                    getAwsSecretsCacheStack().pollFirst();
-                }
-            } catch (RuntimeException e) {
-                LOG.error("doWithAwsSecretsCachingEnabled: Unexpected error when clearing and removing cache", e);
-            }
-        }
+    public void afterPropertiesSet() throws Exception {
+        this.awsSecretsCache = StackedThreadLocalObject.withLifecycleTasksAndMissingObjectMessage(
+                HashMap::new, Map::clear, MISSING_CACHE_MESSAGE);
     }
-    
-    protected LinkedList<Map<String, String>> getAwsSecretsCacheStack() {
-        return AWS_SECRETS_CACHE_STACK.get();
+
+    @Override
+    public <R, T extends Throwable> R performTaskRequiringAccessToAwsSecrets(
+            CallableForThrowType<R, T> callable) throws T {
+        return awsSecretsCache.performTaskWithNewLocalObject(callable);
     }
     
     @Override
@@ -89,23 +80,24 @@ public class AwsSecretServiceImpl implements AwsSecretService {
             client.shutdown();
         }
 
-        return getSecretValueResult.getSecretString();
+        String secretString = getSecretValueResult.getSecretString();
+        return StringUtils.equalsIgnoreCase(CUKFSConstants.NULL_AWS_SECRET_VALUE, secretString)
+                ? StringUtils.EMPTY : secretString;
     }
     
     @Override
     public void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
-        if (StringUtils.isBlank(keyValue)) {
-            throw new IllegalArgumentException("keyValue to be stored in AWS Secrets cannot be blank");
-        }
+        String convertedKeyValue = StringUtils.isNotBlank(keyValue) ? keyValue : CUKFSConstants.NULL_AWS_SECRET_VALUE;
+        String keyValueForCache = StringUtils.isNotBlank(keyValue) ? keyValue : StringUtils.EMPTY;
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
         Map<String, String> awsSecretsCache = getCurrentAwsSecretsCache();
         UpdateSecretRequest updateSecretRequest = new UpdateSecretRequest().withSecretId(fullAwsKey);
-        updateSecretRequest.setSecretString(keyValue);
+        updateSecretRequest.setSecretString(convertedKeyValue);
         
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
             performUpdate(updateSecretRequest, client);
-            awsSecretsCache.put(fullAwsKey, keyValue);
+            awsSecretsCache.put(fullAwsKey, keyValueForCache);
         } catch (SdkClientException e) {
             LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
@@ -149,12 +141,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     }
     
     protected Map<String, String> getCurrentAwsSecretsCache() {
-        Map<String, String> awsSecretsCache = getAwsSecretsCacheStack().peekFirst();
-        if (awsSecretsCache == null) {
-            throw new IllegalStateException("AWS secrets caching has not been initialized properly; "
-                    + "please call the doWithAwsSecretsCachingEnabled() method to set up the cache in advance");
-        }
-        return awsSecretsCache;
+        return awsSecretsCache.getRequiredLocalObject();
     }
     
     @Override
@@ -171,20 +158,18 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     @Override
     public boolean getSingleBooleanFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
         String booleanString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
-        Boolean secretBooleanValue = Boolean.valueOf(booleanString);
-        return secretBooleanValue.booleanValue();
+        return Boolean.parseBoolean(booleanString);
     }
 
     @Override
     public void updateSecretBoolean(String awsKeyName, boolean useKfsInstanceNamespace, boolean booleanValue) {
         updateSecretValue(awsKeyName, useKfsInstanceNamespace, String.valueOf(booleanValue));
-        
     }
     
     @Override
     public float getSingleNumberValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
         String floatString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
-        return Float.valueOf(floatString);
+        return StringUtils.isNotBlank(floatString) ? Float.parseFloat(floatString) : 0;
     }
     
     @Override
@@ -195,18 +180,24 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     @Override
     public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException {
         String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
-        ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
-        T object = objectMapper.readValue(pojoJsonString, objectType);
-        return object;
+        if (StringUtils.isNotBlank(pojoJsonString)) {
+            ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
+            T object = objectMapper.readValue(pojoJsonString, objectType);
+            return object;
+        } else {
+            return null;
+        }
     }
     
     @Override
     public void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException {
+        String jsonString;
         if (ObjectUtils.isNull(pojo)) {
-            throw new IllegalArgumentException("Pojo to be stored in AWS Secrets cannot be null");
+            jsonString = StringUtils.EMPTY;
+        } else {
+            ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
+            jsonString = objectMapper.writeValueAsString(pojo);
         }
-        ObjectMapper objectMapper = CuJsonUtils.buildObjectMapperUsingDefaultTimeZone();
-        String jsonString = objectMapper.writeValueAsString(pojo);
         updateSecretValue(awsKeyName, useKfsInstanceNamespace, jsonString);
     }
     
@@ -225,7 +216,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     
     protected String convertDateToString(Date date) {
         if (date == null) {
-            throw new IllegalArgumentException("Date value to be stored in AWS Secrets cannot be null");
+            return StringUtils.EMPTY;
         } else {
             SimpleDateFormat format = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS, Locale.US);
             return format.format(date);
