@@ -1,5 +1,6 @@
 package edu.cornell.kfs.pdp.businessobject;
 
+import java.math.BigInteger;
 import java.sql.Date;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -162,6 +163,10 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
     
     public int getIdIntValue() {
         return id.intValue();
+    }
+    
+    public BigInteger getIdBigIntValue() {
+        return id.bigIntegerValue();
     }
 
 }

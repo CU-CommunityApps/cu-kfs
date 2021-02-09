@@ -140,7 +140,7 @@ public class PayeeACHAccountExtractReportServiceImpl implements PayeeACHAccountE
     
     private List<PayeeACHAccountExtractDetail> getSortedAchDetailsWithErrors(PayeeACHAccountExtractResult processingResult) {
         Set<PayeeACHAccountExtractDetail> errorEntries = processingResult.getErrorEntries().keySet();
-        return errorEntries.stream().sorted(Comparator.comparing(PayeeACHAccountExtractDetail::getIdIntValue)).collect(Collectors.toList());
+        return errorEntries.stream().sorted(Comparator.comparing(PayeeACHAccountExtractDetail::getIdBigIntValue)).collect(Collectors.toList());
     }
 
     private void finalizeReportForCurrentFile() {

@@ -313,7 +313,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         List<PayeeACHAccountExtractDetail> sortedAchDetailsEligibleForRetry = new ArrayList<>();
         achDetailsEligibleForRetry = persistedPayeeACHAccountExtractDetails.stream().filter(a -> a.getRetryCount() < getMaxRetryCount())
                 .collect(Collectors.toList());
-        sortedAchDetailsEligibleForRetry = achDetailsEligibleForRetry.stream().sorted(Comparator.comparing(PayeeACHAccountExtractDetail::getIdIntValue))
+        sortedAchDetailsEligibleForRetry = achDetailsEligibleForRetry.stream().sorted(Comparator.comparing(PayeeACHAccountExtractDetail::getIdBigIntValue))
                 .collect(Collectors.toList());
         return sortedAchDetailsEligibleForRetry;
     }
