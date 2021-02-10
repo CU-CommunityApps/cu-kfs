@@ -16,8 +16,8 @@ public class PayeeACHAccountExtractResult {
     private int numberOfRowsWithFailures;
     
     public PayeeACHAccountExtractResult(){
-        errors = new ArrayList<String>();
-        errorEntries = new HashMap<PayeeACHAccountExtractDetail, List<String>>();
+        errors = new ArrayList<>();
+        errorEntries = new HashMap<>();
         successEntries = new ArrayList<>();
     }  
     
