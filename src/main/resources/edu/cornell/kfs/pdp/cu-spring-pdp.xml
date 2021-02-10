@@ -190,6 +190,9 @@
         <property name="sequenceAccessorService" ref="sequenceAccessorService" />
         <property name="achService" ref="pdpAchService" />
         <property name="achBankService" ref="pdpAchBankService" />
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="payeeACHAccountExtractReportService" ref="payeeACHAccountExtractReportService" />
         <property name="batchInputFileTypes">
             <list>
                 <ref bean="payeeACHAccountExtractCsvInputFileType" />
@@ -199,6 +202,19 @@
             <ref bean="kualiConfigurationService" />
         </property>
     </bean>
+
+    <bean id="payeeACHAccountExtractReportService" parent="payeeACHAccountExtractReportService-parentBean"/>
+    <bean id="payeeACHAccountExtractReportService-parentBean" abstract="true"
+            class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountExtractReportServiceImpl"
+            p:reportFileNamePrefixFormat="ach_extract_report_for_{0}_"
+            p:reportWriterService-ref="achExtractReportWriterService" />
+
+    <bean id="achExtractReportWriterService" parent="achExtractReportWriterService-parentBean"/>
+    <bean id="achExtractReportWriterService-parentBean" abstract="true" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
+            parent="reportWriterService"
+            p:filePath="${reports.directory}/pdp"
+            p:fileNamePrefix="ach_extract_report_"
+            p:title="Payee ACH Account Extract Job Report File"/>
 
     <bean id="payeeACHAccountExtractStep" class="edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep" parent="step">
         <property name="payeeACHAccountExtractService" ref="payeeACHAccountExtractService" />
