@@ -1,5 +1,6 @@
 package edu.cornell.kfs.pdp.businessobject;
 
+import java.math.BigInteger;
 import java.sql.Date;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -15,7 +16,7 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
     private KualiInteger id;
     private Date createDate;
     private String status;
-    private Integer retryCount;
+    private Integer retryCount = 0;
     private String employeeID;
     private String netID;
     private String lastName;
@@ -158,6 +159,14 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
 
     public void setId(KualiInteger id) {
         this.id = id;
+    }
+    
+    public int getIdIntValue() {
+        return id.intValue();
+    }
+    
+    public BigInteger getIdBigIntValue() {
+        return id.bigIntegerValue();
     }
 
 }

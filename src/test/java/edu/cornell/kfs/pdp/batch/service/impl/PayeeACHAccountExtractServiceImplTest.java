@@ -11,9 +11,11 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +32,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.kns.datadictionary.control.SelectControlDefinition;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
@@ -42,7 +44,6 @@ import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -67,6 +68,7 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.invocation.InvocationOnMock;
@@ -78,6 +80,7 @@ import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 import edu.cornell.kfs.pdp.CUPdpTestConstants;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsv;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsvInputFileType;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractFileResult;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep;
 import edu.cornell.kfs.pdp.batch.fixture.ACHBankFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHFileFixture;
@@ -85,6 +88,7 @@ import edu.cornell.kfs.pdp.batch.fixture.ACHPersonPayeeFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHRowFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHUpdateFixture;
 import edu.cornell.kfs.pdp.batch.fixture.PayeeACHAccountFixture;
+import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractReportService;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 import edu.cornell.kfs.pdp.businessobject.options.TestPayeeAchIdTypeValuesFinder;
 import edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl;
@@ -137,6 +141,9 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.setAchService(createAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
         payeeACHAccountExtractService.setConfigurationService(createMockConfigurationService());
+        payeeACHAccountExtractService.setBusinessObjectService(createMockBusinessObjectService());
+        payeeACHAccountExtractService.setPayeeACHAccountExtractReportService(createMockPayeeACHAccountExtractReportService());
+        payeeACHAccountExtractService.setDateTimeService(createMockDateTimeService());
     }
 
     @After
@@ -541,6 +548,13 @@ public class PayeeACHAccountExtractServiceImplTest {
         
         return businessObjectService;
     }
+    
+    private DateTimeService createMockDateTimeService() {
+        DateTimeService dateTimeService = mock(DateTimeService.class);
+        Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
+        when(dateTimeService.getCurrentSqlDate()).thenReturn(currentDate);
+        return dateTimeService;
+    }
 
     private Map<String, Object> createPropertiesMapForMatching(PayeeACHAccountFixture achFixture) {
         Map<String, Object> propertiesMap = new HashMap<>();
@@ -570,6 +584,11 @@ public class PayeeACHAccountExtractServiceImplTest {
         
         return configurationService;
     }
+    
+
+    private PayeeACHAccountExtractReportService createMockPayeeACHAccountExtractReportService() {              
+        return mock(PayeeACHAccountExtractReportService.class);
+    }
 
     private static class TestEmailService extends EmailServiceImpl {
         @Override
@@ -584,7 +603,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         private ACHRowResult currentRowResult;
         
         @Override
-        protected List<String> loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
+        protected PayeeACHAccountExtractFileResult loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
             currentFileResult = new ACHFileResult();
             
             try {
