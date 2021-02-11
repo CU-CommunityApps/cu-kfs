@@ -8,7 +8,6 @@ import org.kuali.kfs.module.purap.PurapAuthorizationConstants.RequisitionEditMod
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.authorization.PurchaseOrderAmendmentDocumentPresentationController;
@@ -26,10 +25,9 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
         if (CUPurapConstants.PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
             return true;
         }
-
         return super.canEdit(document);
     }
-   
+
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
@@ -43,17 +41,20 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
                 editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
             }
         }
-		// KFSUPGRADE-339
-        if (CUPurapConstants.PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
-        	    editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
+        // KFSUPGRADE-339
+        if (CUPurapConstants.PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW
+                .equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
+            editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
         }
-        if (getPurapService().isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document, "New Unordered Items")) {
+
+        if (getPurapService().isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document,
+                "New Unordered Items")) {
             editModes.add(PurchaseOrderEditMode.UNORDERED_ITEM_ACCOUNT_ENTRY);
         }
 
-        PurchaseOrderAmendmentDocument purchaseOrderAmendmentDocument = (PurchaseOrderAmendmentDocument) document;
-        List<PurApItem> aboveTheLinePOItems =
-                PurApItemUtils.getAboveTheLineOnly(purchaseOrderAmendmentDocument.getItems());
+        PurchasingAccountsPayableDocument purchasingAccountsPayableDocument = (PurchasingAccountsPayableDocument) document;
+        List<PurApItem> aboveTheLinePOItems = PurApItemUtils.getAboveTheLineOnly(
+                purchasingAccountsPayableDocument.getItems());
         boolean containsUnpaidPaymentRequestsOrCreditMemos = poDocument.getContainsUnpaidPaymentRequestsOrCreditMemos();
         for (PurApItem poItem : aboveTheLinePOItems) {
             if (!allowAccountingLinesAreEditable((PurchaseOrderItem) poItem,
@@ -69,6 +70,5 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
         }
         return editModes;
     }
-    	
     
 }
