@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2020 Kuali, Inc.
+ * Copyright 2005-2021 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -57,7 +57,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -258,7 +257,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         }
 
         try (FileOutputStream out = new FileOutputStream(filename);
-                PrintStream p = new PrintStream(out, false, StandardCharsets.UTF_8)) {
+             PrintStream p = new PrintStream(out, false, StandardCharsets.UTF_8)) {
 
             p.println("<pdp_load_status>");
             p.println("  <input_file_name>" + inputFileName + "</input_file_name>");
@@ -271,6 +270,8 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             }
 
             p.println("  <description>" + message + "</description>");
+            
+            //Cornell Mod
             if(ObjectUtils.isNotNull(status.getWarnings())) { // Warnings list may be null if file failed to load.
                 p.println("  <messages>");
                 for (String warning : status.getWarnings()) {
@@ -278,6 +279,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
                 }
                 p.println("  </messages>");
             }
+            
             p.println("</pdp_load_status>");
 
             // creating .done file
@@ -398,12 +400,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
 
     @Override
     public List<String> getRequiredDirectoryNames() {
-        return new ArrayList<String>() {
-            {
-                add(outgoingDirectoryName);
-            }
-        };
+        return List.of(outgoingDirectoryName);
     }
-
 }
 
