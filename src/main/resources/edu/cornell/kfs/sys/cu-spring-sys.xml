@@ -397,5 +397,13 @@
           abstract="true" class="edu.cornell.kfs.sys.service.impl.CuGeneralLedgerPendingEntryServiceImpl"/>
 
 	<bean id="cuApiJsonWebRequestReader" class="edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl" />
-
+	<!-- 
+	<bean id="awsSecretService" parent="awsSecretService-parentBean"/>
+    <bean id="awsSecretService-parentBean"
+          abstract="true" class="edu.cornell.kfs.sys.service.impl.AwsSecretServiceImpl"
+          p:awsRegion="${aws.secret.region}"
+          p:kfsInstanceNamespace="${aws.secret.kfs.instance.namespace}"
+          p:kfsSharedNamespace="${aws.secret.kfs.shared.namespace}"
+          p:retryCount="${aws.secret.retry.count}"/>
+ -->
 </beans>

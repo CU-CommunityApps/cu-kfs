@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
+import edu.cornell.kfs.sys.util.CUJsonUtils;
 
 public class AwsSecretServiceImpl implements AwsSecretService {
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
@@ -62,7 +63,6 @@ public class AwsSecretServiceImpl implements AwsSecretService {
                 for (Class cacheScopeClass : awsSecretsCache.keySet()) {
                     Map<String, String> cacheScope = awsSecretsCache.get(cacheScopeClass);
                     if (cacheScope.keySet().isEmpty()) {
-                        LOG.debug("logCacheStatus, cache scope: " + cacheScopeClass + " has no secrets");
                     } else {
                         for (String key : cacheScope.keySet()) {
                             LOG.debug("logCacheStatus, cache scope: " + cacheScopeClass + " AWS secret key: " + key);
@@ -217,16 +217,17 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     }
 
     @Override
-    public <T> T getPojoFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException {
+    public <T> T getPojoFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) 
+            throws JsonMappingException, JsonProcessingException {
         String pojoJsonString = getSingleStringValueFromAwsSecret(cacheScope, awsKeyName, useKfsInstanceNamespace);
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         T object = objectMapper.readValue(pojoJsonString, objectType);
         return object;
     }
     
     @Override
     public void updatePojo(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         String jsonString = objectMapper.writeValueAsString(pojo);
         updateSecretValue(cacheScope, awsKeyName, useKfsInstanceNamespace, jsonString);
     }
