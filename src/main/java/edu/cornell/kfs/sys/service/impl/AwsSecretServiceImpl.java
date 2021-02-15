@@ -3,7 +3,9 @@ package edu.cornell.kfs.sys.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +35,83 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     protected String kfsSharedNamespace;
     protected int retryCount;
     
+    private Map<Class, Map<String, String>> awsSecretsCache;
+    
     @Override
-    public String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
+    public void initializeCache(Class cacheScope) {
+        if (awsSecretsCache == null) {
+            awsSecretsCache = new HashMap<Class, Map<String, String>>();
+        }
+        awsSecretsCache.put(cacheScope, new HashMap<String, String>());
+        logCacheStatus();
+    }
+    
+    @Override
+    public void clearCache(Class cacheScope) {
+        awsSecretsCache.put(cacheScope, new HashMap<String, String>());
+        logCacheStatus();
+    }
+    
+    public void logCacheStatus() {
+        if (LOG.isDebugEnabled()) {
+            if (awsSecretsCache == null) {
+                LOG.debug("logCacheStatus, the cache has not been set");
+            } else if (awsSecretsCache.isEmpty()) {
+                LOG.debug("logCacheStatus, the cache has been set, but is empty");
+            } else {
+                for (Class cacheScopeClass : awsSecretsCache.keySet()) {
+                    Map<String, String> cacheScope = awsSecretsCache.get(cacheScopeClass);
+                    if (cacheScope.keySet().isEmpty()) {
+                        LOG.debug("logCacheStatus, cache scope: " + cacheScopeClass + " has no secrets");
+                    } else {
+                        for (String key : cacheScope.keySet()) {
+                            LOG.debug("logCacheStatus, cache scope: " + cacheScopeClass + " AWS secret key: " + key);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
+    public String getSingleStringValueFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace) {
+        validateCacheSet(cacheScope);
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
+        String cachedSecretValue = retrieveSecretFromCache(cacheScope, fullAwsKey);
+        
+        if (StringUtils.isNotBlank(cachedSecretValue)) {
+            return cachedSecretValue;
+        } else {
+            LOG.debug("getSingleStringValueFromAwsSecret, in cache " + cacheScope + " there was no value for " + fullAwsKey);
+            String secretValue = retrieveSecretFromAws(fullAwsKey);
+            updateCacheValue(cacheScope, fullAwsKey, secretValue);
+            return secretValue;
+        }
+    }
+
+    private void validateCacheSet(Class cacheScope) {
+        if (awsSecretsCache == null || !awsSecretsCache.containsKey(cacheScope)) {
+            throw new RuntimeException("The AWS secret cache has not been initialized for " + cacheScope);
+        }
+    }
+    
+    private String retrieveSecretFromCache(Class cacheScope, String fullAwsKey) {
+        Map<String, String> cache = awsSecretsCache.get(cacheScope);
+        if (cache.containsKey(fullAwsKey)) {
+            LOG.debug("retrieveSecretFromCache, in cache " + cacheScope + " found a secret value for " + fullAwsKey);
+            return cache.get(fullAwsKey);
+        } else {
+            return null;
+        }
+    }
+    
+    private void updateCacheValue(Class cacheScope, String fullAwsKey, String secretValue) {
+        LOG.debug("updateCacheValue, in cache " + cacheScope + " setting value for secret key " + fullAwsKey);
+        Map<String, String> cache = awsSecretsCache.get(cacheScope);
+        cache.put(fullAwsKey, secretValue);
+    }
+    
+    protected String retrieveSecretFromAws(String fullAwsKey) {
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(fullAwsKey);
         GetSecretValueResult getSecretValueResult = null;
         
@@ -53,7 +129,8 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     }
     
     @Override
-    public void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
+    public void updateSecretValue(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
+        validateCacheSet(cacheScope);
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
         UpdateSecretRequest updateSecretRequest = new UpdateSecretRequest ().withSecretId(fullAwsKey);
         updateSecretRequest.setSecretString(keyValue);
@@ -61,6 +138,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
             performUpdate(updateSecretRequest, client);
+            updateCacheValue(cacheScope, fullAwsKey, keyValue);
         } catch (SdkClientException e) {
             LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
@@ -104,53 +182,53 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     }
     
     @Override
-    public Date getSingleDateValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException {
-        String dateString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
+    public Date getSingleDateValueFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException {
+        String dateString = getSingleStringValueFromAwsSecret(cacheScope, awsKeyName, useKfsInstanceNamespace);
         return convertStringToDate(dateString);
     }
     
     @Override
-    public void updateSecretDate(String awsKeyName, boolean useKfsInstanceNamespace, Date date) {
-        updateSecretValue(awsKeyName, useKfsInstanceNamespace, convertDateToString(date));
+    public void updateSecretDate(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Date date) {
+        updateSecretValue(cacheScope, awsKeyName, useKfsInstanceNamespace, convertDateToString(date));
     }
     
     @Override
-    public boolean getSingleBooleanFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
-        String booleanString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
+    public boolean getSingleBooleanFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace) {
+        String booleanString = getSingleStringValueFromAwsSecret(cacheScope, awsKeyName, useKfsInstanceNamespace);
         Boolean secretBooleanValue = Boolean.valueOf(booleanString);
         return secretBooleanValue.booleanValue();
     }
 
     @Override
-    public void updateSecretBoolean(String awsKeyName, boolean useKfsInstanceNamespace, boolean booleanValue) {
-        updateSecretValue(awsKeyName, useKfsInstanceNamespace, String.valueOf(booleanValue));
+    public void updateSecretBoolean(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, boolean booleanValue) {
+        updateSecretValue(cacheScope, awsKeyName, useKfsInstanceNamespace, String.valueOf(booleanValue));
         
     }
     
     @Override
-    public float getSingleNumberValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
-        String floatString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
+    public float getSingleNumberValueFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace) {
+        String floatString = getSingleStringValueFromAwsSecret(cacheScope, awsKeyName, useKfsInstanceNamespace);
         return Float.valueOf(floatString);
     }
     
     @Override
-    public void updateSecretNumber(String awsKeyName, boolean useKfsInstanceNamespace,  float numericValue) {
-        updateSecretValue(awsKeyName, useKfsInstanceNamespace, String.valueOf(numericValue));
+    public void updateSecretNumber(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace,  float numericValue) {
+        updateSecretValue(cacheScope, awsKeyName, useKfsInstanceNamespace, String.valueOf(numericValue));
     }
 
     @Override
-    public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException {
-        String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
+    public <T> T getPojoFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException {
+        String pojoJsonString = getSingleStringValueFromAwsSecret(cacheScope, awsKeyName, useKfsInstanceNamespace);
         ObjectMapper objectMapper = new ObjectMapper();
         T object = objectMapper.readValue(pojoJsonString, objectType);
         return object;
     }
     
     @Override
-    public void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException {
+    public void updatePojo(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(pojo);
-        updateSecretValue(awsKeyName, useKfsInstanceNamespace, jsonString);
+        updateSecretValue(cacheScope, awsKeyName, useKfsInstanceNamespace, jsonString);
     }
     
     public String convertDateToString(Date date) {
