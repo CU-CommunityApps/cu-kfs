@@ -9,8 +9,8 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,9 +19,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
-import net.bull.javamelody.internal.common.LOG;
 
 class AwsSecretServiceImplIntegrationTest {
+    private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImplIntegrationTest.class);
+    
     private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
     private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";
     private static final String KFS_SHARED_NAMESPACE = "kfs/kfs-shared/";
@@ -42,13 +43,12 @@ class AwsSecretServiceImplIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        LogManager.getLogger(AwsSecretServiceImpl.class).setLevel(Level.DEBUG);
+        org.apache.log4j.LogManager.getLogger(AwsSecretServiceImpl.class).setLevel(org.apache.log4j.Level.DEBUG);
         awsSecretServiceImpl = new AwsSecretServiceImpl();
         awsSecretServiceImpl.setAwsRegion(AWS_US_EAST_ONE_REGION);
         awsSecretServiceImpl.setKfsSharedNamespace(KFS_SHARED_NAMESPACE);
         awsSecretServiceImpl.setKfsInstanceNamespace(KFS_INSTANCE_NAMESPACE);
         awsSecretServiceImpl.setRetryCount(AWS_SECRET_UPDATE_RETRY_COUNT);
-        awsSecretServiceImpl.initializeCache(this.getClass());
     }
 
     @AfterEach
@@ -58,38 +58,38 @@ class AwsSecretServiceImplIntegrationTest {
 
     @Test
     void testGetSingleStringValueFromAwsSecret() {
-        String actualSecretValue = awsSecretServiceImpl.getSingleStringValueFromAwsSecret(this.getClass(), SINGLE_STRING_SECRET_KEY_NAME, false);
+        String actualSecretValue = awsSecretServiceImpl.getSingleStringValueFromAwsSecret(SINGLE_STRING_SECRET_KEY_NAME, false);
         assertEquals(SINGLE_STRING_SECRET_VALUE, actualSecretValue);
     }
     
     @Test
     void testDateSetAndGet() throws ParseException {
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
-        awsSecretServiceImpl.updateSecretDate(this.getClass(), SINGLE_DATE_SECRET_KEY_NAME, false, date);
+        awsSecretServiceImpl.updateSecretDate(SINGLE_DATE_SECRET_KEY_NAME, false, date);
         
-        Date secretDate = awsSecretServiceImpl.getSingleDateValueFromAwsSecret(this.getClass(), SINGLE_DATE_SECRET_KEY_NAME, false);
+        Date secretDate = awsSecretServiceImpl.getSingleDateValueFromAwsSecret(SINGLE_DATE_SECRET_KEY_NAME, false);
         assertEquals(date, secretDate);
     }
     
     @Test
     void testBooleanSetAndGetWithCache() {
-        boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(this.getClass(), SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
+        boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         boolean expectedNewBoolean = !initialValue;
-        awsSecretServiceImpl.updateSecretBoolean(this.getClass(), SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
+        awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
         
-        boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(this.getClass(), SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
+        boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         
         assertEquals(expectedNewBoolean, actualNewBoolean);
     }
     
     @Test
     void testBooleanSetAndGetWithOutCache() {
-        boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(this.getClass(), SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
+        boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         boolean expectedNewBoolean = !initialValue;
-        awsSecretServiceImpl.updateSecretBoolean(this.getClass(), SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
-        awsSecretServiceImpl.clearCache(this.getClass());
+        awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
+        awsSecretServiceImpl.clearCache();
         
-        boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(this.getClass(), SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
+        boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         
         assertEquals(expectedNewBoolean, actualNewBoolean);
     }
@@ -99,15 +99,15 @@ class AwsSecretServiceImplIntegrationTest {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
         
-        AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret(this.getClass(), BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        LOG.info("testPojo, pojo: " + pojo);
+        AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+        LOG.info("testPojoWithCache, pojo: " + pojo);
         pojo.setChangeable_string(newUniqueString);
         pojo.setUpdate_date(newDate);
         boolean newBooleanTest = !pojo.isBoolean_test();
         pojo.setBoolean_test(newBooleanTest);
-        awsSecretServiceImpl.updatePojo(this.getClass(), BASIC_POJO_SECRET_KEY_NAME, false, pojo);
+        awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
         
-        AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(this.getClass(), BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+        AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
@@ -120,16 +120,16 @@ class AwsSecretServiceImplIntegrationTest {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
         
-        AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret(this.getClass(), BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        LOG.info("testPojo, pojo: " + pojo);
+        AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret( BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+        LOG.info("testPojoWithOutCache, pojo: " + pojo);
         pojo.setChangeable_string(newUniqueString);
         pojo.setUpdate_date(newDate);
         boolean newBooleanTest = !pojo.isBoolean_test();
         pojo.setBoolean_test(newBooleanTest);
-        awsSecretServiceImpl.updatePojo(this.getClass(), BASIC_POJO_SECRET_KEY_NAME, false, pojo);
-        awsSecretServiceImpl.clearCache(this.getClass());
+        awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
+        awsSecretServiceImpl.clearCache();
         
-        AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(this.getClass(), BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+        AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
@@ -158,9 +158,9 @@ class AwsSecretServiceImplIntegrationTest {
     void testNumber() {
         Random rand = new Random();
         float floatNumber = rand.nextFloat();
-        awsSecretServiceImpl.updateSecretNumber(this.getClass(), SINGLE_FLOAT_SECRET_KEY_NAME, true, floatNumber);
+        awsSecretServiceImpl.updateSecretNumber(SINGLE_FLOAT_SECRET_KEY_NAME, true, floatNumber);
         
-        float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(this.getClass(), SINGLE_FLOAT_SECRET_KEY_NAME, true);
+        float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(SINGLE_FLOAT_SECRET_KEY_NAME, true);
         assertEquals(floatNumber, returnedNumber);
     }
 

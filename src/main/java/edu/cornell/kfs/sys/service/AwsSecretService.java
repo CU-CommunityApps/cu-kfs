@@ -8,28 +8,28 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public interface AwsSecretService {
     
-    String getSingleStringValueFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace);
+    String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
     
-    void updateSecretValue(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, String keyValue);
+    void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue);
     
-    Date getSingleDateValueFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException;
+    Date getSingleDateValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) throws ParseException;
     
-    void updateSecretDate(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Date date);
+    void updateSecretDate(String awsKeyName, boolean useKfsInstanceNamespace, Date date);
     
-    boolean getSingleBooleanFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace);
+    boolean getSingleBooleanFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
     
-    void updateSecretBoolean(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace,  boolean booleanValue);
+    void updateSecretBoolean(String awsKeyName, boolean useKfsInstanceNamespace,  boolean booleanValue);
     
-    float getSingleNumberValueFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace);
+    float getSingleNumberValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace);
     
-    void updateSecretNumber(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace,  float numericValue);
+    void updateSecretNumber(String awsKeyName, boolean useKfsInstanceNamespace,  float numericValue);
 
-    <T> T getPojoFromAwsSecret(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException;
+    <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException;
     
-    void updatePojo(Class cacheScope, String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException;
+    void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException;
     
-    void initializeCache(Class cacheScope);
+    void clearCache();
     
-    void clearCache(Class cacheScope);
+    void logCacheStatus();
 
 }

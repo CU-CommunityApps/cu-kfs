@@ -198,12 +198,13 @@
 		</property>
 	</bean>
 
-	<bean id="awsSecretValidationStep" class="org.kuali.kfs.sys.aws.batch.AwsSecretValidationStep" parent="step">
+	<bean id="awsSecretValidationStep" class="org.kuali.kfs.sys.aws.batch.AwsSecretValidationStep" parent="step" >
 		<property name="awsSecretService" ref="awsSecretService" />
 	</bean>
 
 	<bean id="awsSecretService" parent="awsSecretService-parentBean" />
 	<bean id="awsSecretService-parentBean" abstract="true" class="edu.cornell.kfs.sys.service.impl.AwsSecretServiceImpl"
+		scope="prototype"
 		p:awsRegion="${aws.secret.region}"
 		p:kfsInstanceNamespace="${aws.secret.kfs.instance.namespace}"
 		p:kfsSharedNamespace="${aws.secret.kfs.shared.namespace}"

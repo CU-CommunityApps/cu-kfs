@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.aws.AmazonSecretValidationInstance;
 import org.kuali.kfs.sys.aws.AmazonSecretValidationShared;
 import org.kuali.kfs.sys.batch.AbstractStep;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -34,36 +35,39 @@ public class AwsSecretValidationStep extends AbstractStep {
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("execute, starting job");
-        initializeAmazonSecretCache();
 
         try {
-            AmazonSecretValidationShared sharedSpaceSecrets = awsSecretService.getPojoFromAwsSecret(this.getClass(),
-                    AWS_SECRET_NAME_VALIDATION_SHARED, false, AmazonSecretValidationShared.class);
+            AmazonSecretValidationShared sharedSpaceSecrets = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
+                    false, AmazonSecretValidationShared.class);
             LOG.info("execute, sharedSpaceSecrets: " + sharedSpaceSecrets);
-            AmazonSecretValidationInstance instanceSpaceSecrets = awsSecretService.getPojoFromAwsSecret(this.getClass(),
-                    AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
+            AmazonSecretValidationInstance instanceSpaceSecrets = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
+                    true, AmazonSecretValidationInstance.class);
             LOG.info("execute, instanceSpaceSecrets: " + instanceSpaceSecrets);
-            AmazonSecretValidationInstance instanceDifferentCacheScope = awsSecretService.getPojoFromAwsSecret(AmazonSecretValidationInstance.class,
-                    AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
-            LOG.info("execute, instanceDifferentCacheScope: " + instanceDifferentCacheScope);
+            
+            //AmazonSecretValidationInstance instanceDifferentCacheScope = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
+              //      true, AmazonSecretValidationInstance.class);
+            //LOG.info("execute, instanceDifferentCacheScope: " + instanceDifferentCacheScope);
 
             Map<String, Object> newSecretValues = buildNewSecretValue();
 
             updateAmazonSecretValidationInstance(instanceSpaceSecrets, newSecretValues);
 
-            awsSecretService.updatePojo(this.getClass(), AWS_SECRET_NAME_VALIDATION_INSTANCE, true, instanceSpaceSecrets);
+            awsSecretService.updatePojo(AWS_SECRET_NAME_VALIDATION_INSTANCE, true, instanceSpaceSecrets);
 
-            confirmInstanceSecetValues(newSecretValues, awsSecretService.getPojoFromAwsSecret(this.getClass(),
-                    AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class));
+            confirmInstanceSecetValues(newSecretValues, awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
+                    true, AmazonSecretValidationInstance.class));
 
             LOG.info("excute, The values were retrieved from cache as expected");
+            awsSecretService.logCacheStatus();
+            awsSecretService.clearCache();
 
-            awsSecretService.clearCache(this.getClass());
-
-            confirmInstanceSecetValues(newSecretValues, awsSecretService.getPojoFromAwsSecret(this.getClass(),
-                    AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class));
+            AmazonSecretValidationInstance amazonInstanceSpaceSecretsAfterProcessing = awsSecretService.getPojoFromAwsSecret(
+                    AWS_SECRET_NAME_VALIDATION_INSTANCE,true, AmazonSecretValidationInstance.class);
+            confirmInstanceSecetValues(newSecretValues, amazonInstanceSpaceSecretsAfterProcessing);
+            LOG.info("execute, instanceSpaceSecrets after done testing steps: " + amazonInstanceSpaceSecretsAfterProcessing);
 
             LOG.info("excute, The values were retrieved from Amazon Secret Manager as expected");
+            awsSecretService.logCacheStatus();
 
         } catch (JsonMappingException e) {
             LOG.error("execute, had an error mapping AWS Secrets to POJO", e);
@@ -72,15 +76,12 @@ public class AwsSecretValidationStep extends AbstractStep {
             LOG.error("execute, had an error process AWS Secrets", e);
             throw new RuntimeException(e);
         }
+        
+        validateUsingNewAWSServiceFromSpring();
 
-        awsSecretService.clearCache(this.getClass());
+        awsSecretService.clearCache();
         LOG.info("execute, ending job");
         return true;
-    }
-
-    protected void initializeAmazonSecretCache() {
-        awsSecretService.initializeCache(this.getClass());
-        awsSecretService.initializeCache(AmazonSecretValidationInstance.class);
     }
 
     private Map<String, Object> buildNewSecretValue() {
@@ -116,6 +117,20 @@ public class AwsSecretValidationStep extends AbstractStep {
 
         if (StringUtils.isNotBlank(errorMessage)) {
             throw new RuntimeException(errorMessage);
+        }
+    }
+    
+    protected void validateUsingNewAWSServiceFromSpring() {
+        AwsSecretService service = SpringContext.getBean(AwsSecretService.class);
+        AmazonSecretValidationShared sharedSpaceSecrets;
+        try {
+            sharedSpaceSecrets = service.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
+                    false, AmazonSecretValidationShared.class);
+            LOG.info("validateUsingNewAWSServiceFromSpring, sharedSpaceSecrets: " + sharedSpaceSecrets);
+            service.logCacheStatus();
+        } catch (JsonProcessingException e) {
+            LOG.error("validateUsingNewAWSServiceFromSpring, has en error calling secret service ", e);
+            throw new RuntimeException(e);
         }
     }
 
