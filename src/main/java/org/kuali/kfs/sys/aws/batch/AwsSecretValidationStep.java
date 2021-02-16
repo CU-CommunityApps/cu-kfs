@@ -23,9 +23,9 @@ public class AwsSecretValidationStep extends AbstractStep {
     private static final String AWS_SECRET_NAME_VALIDATION_SHARED = "AWS_VALIDATION_SHARED";
     private static final String AWS_SECRET_NAME_VALIDATION_INSTANCE = "AWS_VALIDATION_INSTANCE";
 
-    private static final String NEW_ACCESS_TOKEN = "NEW_ACCESS_TOKEN";
-    private static final String NEW_REFRESH_TOKEN = "NEW_REFRESH_TOKEN";
-    private static final String NEW_ACCESS_TOKEN_EXPIRATION_DATE = "NEW_ACCESS_TOKEN_EXPIRATION_DATE";
+    private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
+    private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
+    private static final String ACCESS_TOKEN_EXPIRATION_DATE = "ACCESS_TOKEN_EXPIRATION_DATE";
 
     private static final Logger LOG = LogManager.getLogger(AwsSecretValidationStep.class);
 
@@ -34,21 +34,24 @@ public class AwsSecretValidationStep extends AbstractStep {
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("execute, starting job");
-        awsSecretService.initializeCache(this.getClass());
+        initializeAmazonSecretCache();
 
         try {
-            AmazonSecretValidationShared shared = awsSecretService.getPojoFromAwsSecret(this.getClass(),
+            AmazonSecretValidationShared sharedSpaceSecrets = awsSecretService.getPojoFromAwsSecret(this.getClass(),
                     AWS_SECRET_NAME_VALIDATION_SHARED, false, AmazonSecretValidationShared.class);
-            AmazonSecretValidationInstance instance = awsSecretService.getPojoFromAwsSecret(this.getClass(),
+            LOG.info("execute, sharedSpaceSecrets: " + sharedSpaceSecrets);
+            AmazonSecretValidationInstance instanceSpaceSecrets = awsSecretService.getPojoFromAwsSecret(this.getClass(),
                     AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
+            LOG.info("execute, instanceSpaceSecrets: " + instanceSpaceSecrets);
+            AmazonSecretValidationInstance instanceDifferentCacheScope = awsSecretService.getPojoFromAwsSecret(AmazonSecretValidationInstance.class,
+                    AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
+            LOG.info("execute, instanceDifferentCacheScope: " + instanceDifferentCacheScope);
 
             Map<String, Object> newSecretValues = buildNewSecretValue();
 
-            instance.setAccess_token(newSecretValues.get(NEW_ACCESS_TOKEN).toString());
-            instance.setRefresh_token(newSecretValues.get(NEW_REFRESH_TOKEN).toString());
-            instance.setAccess_token_expiration_date((Date) newSecretValues.get(NEW_ACCESS_TOKEN_EXPIRATION_DATE));
+            updateAmazonSecretValidationInstance(instanceSpaceSecrets, newSecretValues);
 
-            awsSecretService.updatePojo(this.getClass(), AWS_SECRET_NAME_VALIDATION_INSTANCE, true, instance);
+            awsSecretService.updatePojo(this.getClass(), AWS_SECRET_NAME_VALIDATION_INSTANCE, true, instanceSpaceSecrets);
 
             confirmInstanceSecetValues(newSecretValues, awsSecretService.getPojoFromAwsSecret(this.getClass(),
                     AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class));
@@ -63,39 +66,51 @@ public class AwsSecretValidationStep extends AbstractStep {
             LOG.info("excute, The values were retrieved from Amazon Secret Manager as expected");
 
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error("execute, had an error mapping AWS Secrets to POJO", e);
+            throw new RuntimeException(e);
         } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error("execute, had an error process AWS Secrets", e);
+            throw new RuntimeException(e);
         }
 
         awsSecretService.clearCache(this.getClass());
-        LOG.info("execute, starting ending job");
+        LOG.info("execute, ending job");
         return true;
+    }
+
+    protected void initializeAmazonSecretCache() {
+        awsSecretService.initializeCache(this.getClass());
+        awsSecretService.initializeCache(AmazonSecretValidationInstance.class);
     }
 
     private Map<String, Object> buildNewSecretValue() {
         Map<String, Object> values = new HashMap<String, Object>();
-        values.put(NEW_ACCESS_TOKEN, UUID.randomUUID().toString());
-        values.put(NEW_REFRESH_TOKEN, UUID.randomUUID().toString());
-        values.put(NEW_ACCESS_TOKEN_EXPIRATION_DATE, Calendar.getInstance(Locale.US).getTime());
+        values.put(ACCESS_TOKEN, UUID.randomUUID().toString());
+        values.put(REFRESH_TOKEN, UUID.randomUUID().toString());
+        values.put(ACCESS_TOKEN_EXPIRATION_DATE, Calendar.getInstance(Locale.US).getTime());
         return values;
+    }
+    
+    protected void updateAmazonSecretValidationInstance(AmazonSecretValidationInstance instance,
+            Map<String, Object> newSecretValues) {
+        instance.setAccess_token(newSecretValues.get(ACCESS_TOKEN).toString());
+        instance.setRefresh_token(newSecretValues.get(REFRESH_TOKEN).toString());
+        instance.setAccess_token_expiration_date((Date) newSecretValues.get(ACCESS_TOKEN_EXPIRATION_DATE));
     }
 
     protected void confirmInstanceSecetValues(Map<String, Object> expectedSecretValues,
             AmazonSecretValidationInstance instanceValues) {
         String errorMessage = StringUtils.EMPTY;
         if (!StringUtils.equals(instanceValues.getAccess_token(),
-                expectedSecretValues.get(NEW_ACCESS_TOKEN).toString())) {
+                expectedSecretValues.get(ACCESS_TOKEN).toString())) {
             errorMessage = errorMessage + "Did not update ACCESS token as expected.";
         }
         if (!StringUtils.equals(instanceValues.getRefresh_token(),
-                expectedSecretValues.get(NEW_REFRESH_TOKEN).toString())) {
+                expectedSecretValues.get(REFRESH_TOKEN).toString())) {
             errorMessage = errorMessage + " Did not update REFRESH token as expected.";
         }
         if (!instanceValues.getAccess_token_expiration_date()
-                .equals((Date) expectedSecretValues.get(NEW_ACCESS_TOKEN_EXPIRATION_DATE))) {
+                .equals((Date) expectedSecretValues.get(ACCESS_TOKEN_EXPIRATION_DATE))) {
             errorMessage = errorMessage + " Did not update access token EXPIRATION DATE as expected.";
         }
 

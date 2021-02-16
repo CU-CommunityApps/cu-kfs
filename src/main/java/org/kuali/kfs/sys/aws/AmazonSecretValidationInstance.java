@@ -2,6 +2,9 @@ package org.kuali.kfs.sys.aws;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -36,6 +39,11 @@ public class AmazonSecretValidationInstance {
 
     public void setAccess_token_expiration_date(Date access_token_expiration_date) {
         this.access_token_expiration_date = access_token_expiration_date;
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
     }
 
 }
