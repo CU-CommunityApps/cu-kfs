@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 
@@ -96,7 +97,7 @@ class AwsSecretServiceImplIntegrationTest {
     @Test
     void testPojoWithCache() throws JsonMappingException, JsonProcessingException {
         String newUniqueString = UUID.randomUUID().toString();
-        Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
+        Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
         
         AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret(this.getClass(), BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         LOG.info("testPojo, pojo: " + pojo);
