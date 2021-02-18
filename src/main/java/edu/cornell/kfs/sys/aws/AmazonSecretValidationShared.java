@@ -1,4 +1,4 @@
-package org.kuali.kfs.sys.aws;
+package edu.cornell.kfs.sys.aws;
 
 public class AmazonSecretValidationShared {
     private String login_username;

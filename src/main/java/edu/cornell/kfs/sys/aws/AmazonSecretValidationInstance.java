@@ -1,4 +1,4 @@
-package org.kuali.kfs.sys.aws;
+package edu.cornell.kfs.sys.aws;
 
 import java.util.Date;
 

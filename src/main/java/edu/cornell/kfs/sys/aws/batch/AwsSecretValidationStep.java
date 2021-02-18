@@ -1,4 +1,4 @@
-package org.kuali.kfs.sys.aws.batch;
+package edu.cornell.kfs.sys.aws.batch;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -10,14 +10,14 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.aws.AmazonSecretValidationInstance;
-import org.kuali.kfs.sys.aws.AmazonSecretValidationShared;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import edu.cornell.kfs.sys.aws.AmazonSecretValidationInstance;
+import edu.cornell.kfs.sys.aws.AmazonSecretValidationShared;
 import edu.cornell.kfs.sys.service.AwsSecretService;
 
 public class AwsSecretValidationStep extends AbstractStep {
@@ -35,6 +35,7 @@ public class AwsSecretValidationStep extends AbstractStep {
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("execute, starting job");
+        awsSecretService.clearCache();
 
         try {
             AmazonSecretValidationShared sharedSpaceSecrets = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
@@ -51,7 +52,7 @@ public class AwsSecretValidationStep extends AbstractStep {
             confirmInstanceSecretValues(newSecretValues, awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
                     true, AmazonSecretValidationInstance.class));
 
-            LOG.info("excute, The values were retrieved from cache as expected");
+            LOG.info("execute, The values were retrieved from cache as expected");
             awsSecretService.logCacheStatus();
             awsSecretService.clearCache();
 
