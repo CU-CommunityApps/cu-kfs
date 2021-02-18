@@ -28,7 +28,7 @@ public class AwsSecretValidationStep extends AbstractStep {
     private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
     private static final String ACCESS_TOKEN_EXPIRATION_DATE = "ACCESS_TOKEN_EXPIRATION_DATE";
 
-    private static final Logger LOG = LogManager.getLogger(AwsSecretValidationStep.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     protected AwsSecretService awsSecretService;
 
@@ -39,22 +39,16 @@ public class AwsSecretValidationStep extends AbstractStep {
         try {
             AmazonSecretValidationShared sharedSpaceSecrets = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
                     false, AmazonSecretValidationShared.class);
-            LOG.info("execute, sharedSpaceSecrets: " + sharedSpaceSecrets);
             AmazonSecretValidationInstance instanceSpaceSecrets = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
                     true, AmazonSecretValidationInstance.class);
-            LOG.info("execute, instanceSpaceSecrets: " + instanceSpaceSecrets);
             
-            //AmazonSecretValidationInstance instanceDifferentCacheScope = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
-              //      true, AmazonSecretValidationInstance.class);
-            //LOG.info("execute, instanceDifferentCacheScope: " + instanceDifferentCacheScope);
-
             Map<String, Object> newSecretValues = buildNewSecretValue();
 
             updateAmazonSecretValidationInstance(instanceSpaceSecrets, newSecretValues);
 
             awsSecretService.updatePojo(AWS_SECRET_NAME_VALIDATION_INSTANCE, true, instanceSpaceSecrets);
 
-            confirmInstanceSecetValues(newSecretValues, awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
+            confirmInstanceSecretValues(newSecretValues, awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
                     true, AmazonSecretValidationInstance.class));
 
             LOG.info("excute, The values were retrieved from cache as expected");
@@ -63,8 +57,7 @@ public class AwsSecretValidationStep extends AbstractStep {
 
             AmazonSecretValidationInstance amazonInstanceSpaceSecretsAfterProcessing = awsSecretService.getPojoFromAwsSecret(
                     AWS_SECRET_NAME_VALIDATION_INSTANCE,true, AmazonSecretValidationInstance.class);
-            confirmInstanceSecetValues(newSecretValues, amazonInstanceSpaceSecretsAfterProcessing);
-            LOG.info("execute, instanceSpaceSecrets after done testing steps: " + amazonInstanceSpaceSecretsAfterProcessing);
+            confirmInstanceSecretValues(newSecretValues, amazonInstanceSpaceSecretsAfterProcessing);
 
             LOG.info("excute, The values were retrieved from Amazon Secret Manager as expected");
             awsSecretService.logCacheStatus();
@@ -99,7 +92,7 @@ public class AwsSecretValidationStep extends AbstractStep {
         instance.setAccess_token_expiration_date((Date) newSecretValues.get(ACCESS_TOKEN_EXPIRATION_DATE));
     }
 
-    protected void confirmInstanceSecetValues(Map<String, Object> expectedSecretValues,
+    protected void confirmInstanceSecretValues(Map<String, Object> expectedSecretValues,
             AmazonSecretValidationInstance instanceValues) {
         String errorMessage = StringUtils.EMPTY;
         if (!StringUtils.equals(instanceValues.getAccess_token(),
@@ -122,9 +115,8 @@ public class AwsSecretValidationStep extends AbstractStep {
     
     protected void validateUsingNewAWSServiceFromSpring() {
         AwsSecretService service = SpringContext.getBean(AwsSecretService.class);
-        AmazonSecretValidationShared sharedSpaceSecrets;
         try {
-            sharedSpaceSecrets = service.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
+            AmazonSecretValidationShared sharedSpaceSecrets = service.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
                     false, AmazonSecretValidationShared.class);
             LOG.info("validateUsingNewAWSServiceFromSpring, sharedSpaceSecrets: " + sharedSpaceSecrets);
             service.logCacheStatus();

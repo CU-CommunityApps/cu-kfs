@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
 
 class AwsSecretServiceImplIntegrationTest {
-    private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImplIntegrationTest.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
     private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";
@@ -118,7 +118,7 @@ class AwsSecretServiceImplIntegrationTest {
     @Test
     void testPojoWithOutCache() throws JsonMappingException, JsonProcessingException {
         String newUniqueString = UUID.randomUUID().toString();
-        Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
+        Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
         
         AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret( BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         LOG.info("testPojoWithOutCache, pojo: " + pojo);
