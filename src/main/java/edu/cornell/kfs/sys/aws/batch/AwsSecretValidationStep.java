@@ -85,7 +85,7 @@ public class AwsSecretValidationStep extends AbstractStep {
     private void confirmAmazonSecretValidationShared(AmazonSecretValidationShared sharedSpaceSecrets) {
         String errorMessage = StringUtils.EMPTY;
         if (!StringUtils.equals(sharedSpaceSecrets.getLogin_password(), EXPECTED_SHARED_PASSWORD)) {
-            errorMessage = errorMessage + "The expected passwword was not found.";
+            errorMessage = errorMessage + "The expected password was not found.";
         }
         if (!StringUtils.equals(sharedSpaceSecrets.getLogin_username(), EXPECTED_SHARED_USER_NAME)) {
             errorMessage = errorMessage + " The expected user name was not found.";
@@ -99,7 +99,7 @@ public class AwsSecretValidationStep extends AbstractStep {
     }
 
     private Map<String, Object> buildNewSecretValue() {
-        Map<String, Object> values = new HashMap<String, Object>();
+        Map<String, Object> values = new HashMap<>();
         values.put(ACCESS_TOKEN, UUID.randomUUID().toString());
         values.put(REFRESH_TOKEN, UUID.randomUUID().toString());
         values.put(ACCESS_TOKEN_EXPIRATION_DATE, Calendar.getInstance(Locale.US).getTime());

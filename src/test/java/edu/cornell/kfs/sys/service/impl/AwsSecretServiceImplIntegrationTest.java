@@ -16,7 +16,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.amazonaws.util.AWSServiceMetrics;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -169,12 +168,11 @@ class AwsSecretServiceImplIntegrationTest {
     @Test
     void testRetrieveSecretFromCacheNull() {
         awsSecretServiceImpl.clearCache();
-        
         Exception exception = assertThrows(RuntimeException.class, () -> {
             awsSecretServiceImpl.retrieveSecretFromCache(null);
         });
 
-        String actualMessage = exception.getMessage();
+        assertEquals(AwsSecretServiceImpl.A_NULL_AWS_KEY_IS_NOT_ALLOWED, exception.getMessage());
     }
     
     @Test
