@@ -218,6 +218,7 @@
             <list>
                 <bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
                 <bean parent="FieldDefinition" p:attributeName="subFundGroupDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="extension.subFundGroupDetailedDescr"/>
                 <bean parent="FieldDefinition" p:attributeName="subFundGroupTypeCode"/>
                 <bean parent="FieldDefinition" p:attributeName="fundGroupCode"/>
                 <bean parent="FieldDefinition" p:attributeName="subFundGroupWagesIndicator"/>
