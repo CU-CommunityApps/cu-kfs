@@ -27,6 +27,9 @@ public class AwsSecretValidationStep extends AbstractStep {
     private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
     private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
     private static final String ACCESS_TOKEN_EXPIRATION_DATE = "ACCESS_TOKEN_EXPIRATION_DATE";
+    
+    private static final String EXPECTED_SHARED_USER_NAME = "test user";
+    private static final String EXPECTED_SHARED_PASSWORD = "test password";
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -38,8 +41,9 @@ public class AwsSecretValidationStep extends AbstractStep {
         awsSecretService.clearCache();
 
         try {
-            AmazonSecretValidationShared sharedSpaceSecrets = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
-                    false, AmazonSecretValidationShared.class);
+            confirmAmazonSecretValidationShared(awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
+                    false, AmazonSecretValidationShared.class));
+            
             AmazonSecretValidationInstance instanceSpaceSecrets = awsSecretService.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_INSTANCE, 
                     true, AmazonSecretValidationInstance.class);
             
@@ -57,7 +61,7 @@ public class AwsSecretValidationStep extends AbstractStep {
             awsSecretService.clearCache();
 
             AmazonSecretValidationInstance amazonInstanceSpaceSecretsAfterProcessing = awsSecretService.getPojoFromAwsSecret(
-                    AWS_SECRET_NAME_VALIDATION_INSTANCE,true, AmazonSecretValidationInstance.class);
+                    AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
             confirmInstanceSecretValues(newSecretValues, amazonInstanceSpaceSecretsAfterProcessing);
 
             LOG.info("excute, The values were retrieved from Amazon Secret Manager as expected");
@@ -76,6 +80,22 @@ public class AwsSecretValidationStep extends AbstractStep {
         awsSecretService.clearCache();
         LOG.info("execute, ending job");
         return true;
+    }
+    
+    private void confirmAmazonSecretValidationShared(AmazonSecretValidationShared sharedSpaceSecrets) {
+        String errorMessage = StringUtils.EMPTY;
+        if (!StringUtils.equals(sharedSpaceSecrets.getLogin_password(), EXPECTED_SHARED_PASSWORD)) {
+            errorMessage = errorMessage + "The expected passwword was not found.";
+        }
+        if (!StringUtils.equals(sharedSpaceSecrets.getLogin_username(), EXPECTED_SHARED_USER_NAME)) {
+            errorMessage = errorMessage + " The expected user name was not found.";
+        }
+
+        if (StringUtils.isNotBlank(errorMessage)) {
+            throw new RuntimeException(errorMessage);
+        } else {
+            LOG.info("confirmAmazonSecretValidationShared, the shared secrets contained the expected values");
+        }
     }
 
     private Map<String, Object> buildNewSecretValue() {
@@ -119,10 +139,10 @@ public class AwsSecretValidationStep extends AbstractStep {
         try {
             AmazonSecretValidationShared sharedSpaceSecrets = service.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
                     false, AmazonSecretValidationShared.class);
-            LOG.info("validateUsingNewAWSServiceFromSpring, sharedSpaceSecrets: " + sharedSpaceSecrets);
+            confirmAmazonSecretValidationShared(sharedSpaceSecrets);
             service.logCacheStatus();
         } catch (JsonProcessingException e) {
-            LOG.error("validateUsingNewAWSServiceFromSpring, has en error calling secret service ", e);
+            LOG.error("validateUsingNewAWSServiceFromSpring, had an error calling AWS Secret Service ", e);
             throw new RuntimeException(e);
         }
     }

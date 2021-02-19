@@ -29,6 +29,8 @@ import edu.cornell.kfs.sys.service.AwsSecretService;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 
 public class AwsSecretServiceImpl implements AwsSecretService {
+    protected static final String A_NULL_AWS_KEY_IS_NOT_ALLOWED = "A null AWS key is not allowed.";
+
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
     
     protected String awsRegion;
@@ -81,7 +83,10 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         }
     }
     
-    private String retrieveSecretFromCache(String fullAwsKey) {
+    protected String retrieveSecretFromCache(String fullAwsKey) {
+        if (fullAwsKey == null) {
+            throw new RuntimeException(A_NULL_AWS_KEY_IS_NOT_ALLOWED);
+        }
         if (awsSecretsCache.containsKey(fullAwsKey)) {
             LOG.debug("retrieveSecretFromCache, in cache found a secret value for " + fullAwsKey);
             return awsSecretsCache.get(fullAwsKey);
@@ -92,7 +97,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     
     private void updateCacheValue(String fullAwsKey, String secretValue) {
         if (fullAwsKey == null) {
-            LOG.debug("updateCacheValue, the AWS key provide was null, so can't cache it.");
+            LOG.debug("updateCacheValue, the AWS key provided was null, so can't cache it.");
         } else if (secretValue == null) {
             LOG.debug("updateCacheValue, a null value was provided for AWS key " + fullAwsKey + " so it can not be cached");
         } else {

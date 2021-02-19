@@ -9,12 +9,14 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.amazonaws.util.AWSServiceMetrics;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -162,6 +164,24 @@ class AwsSecretServiceImplIntegrationTest {
         
         float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(SINGLE_FLOAT_SECRET_KEY_NAME, true);
         assertEquals(floatNumber, returnedNumber);
+    }
+    
+    @Test
+    void testRetrieveSecretFromCacheNull() {
+        awsSecretServiceImpl.clearCache();
+        
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            awsSecretServiceImpl.retrieveSecretFromCache(null);
+        });
+
+        String actualMessage = exception.getMessage();
+    }
+    
+    @Test
+    void testRetrieveSecretFromCacheEmpty() {
+        awsSecretServiceImpl.clearCache();
+        String results = awsSecretServiceImpl.retrieveSecretFromCache(StringUtils.EMPTY);
+        assertTrue(StringUtils.isBlank(results));
     }
 
 }
