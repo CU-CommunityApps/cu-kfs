@@ -37,6 +37,7 @@
 				<value>documentReindexerJob</value>
 				<value>autoCancelBatchJob</value>
 				<value>kimFeedJob</value>
+				<value>awsSecretValidationJob</value>
             </list>
         </property>
 		<property name="batchFileDirectories">
@@ -188,6 +189,27 @@
 		</property>
 	</bean>
 
+	<bean id="awsSecretValidationJob"
+		parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="awsSecretValidationStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="awsSecretValidationStep" class="edu.cornell.kfs.sys.aws.batch.AwsSecretValidationStep" parent="step" >
+		<property name="awsSecretService" ref="awsSecretService" />
+	</bean>
+
+	<bean id="awsSecretService" parent="awsSecretService-parentBean" scope="prototype"/>
+	<bean id="awsSecretService-parentBean" abstract="true" class="edu.cornell.kfs.sys.service.impl.AwsSecretServiceImpl"
+		scope="prototype"
+		p:awsRegion="${aws.secret.region}"
+		p:kfsInstanceNamespace="${aws.secret.kfs.instance.namespace}"
+		p:kfsSharedNamespace="${aws.secret.kfs.shared.namespace}"
+		p:retryCount="${aws.secret.retry.count}" />
+
 <!-- KFSPTS-985 : User Favorites Profile -->
 
     <bean id="userProcurementProfileValidationService" class="edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl">
@@ -274,6 +296,7 @@
 				<ref bean="lockSECModuleStep"/>
 				<ref bean="lockCRModuleStep"/>
 				<ref bean="lockTAXModuleStep"/>
+				
 			</list>
 		</property>
 	</bean>
