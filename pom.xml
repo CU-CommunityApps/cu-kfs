@@ -80,9 +80,6 @@
                     **/CuRequisitionServiceImplTest.java,
                     **/IWantDocumentServiceImplTest.java,
                     **/CuElectronicInvoiceHelperServiceImplTest.java,
-                    **/ezraUpdateAwardImplTest.java,
-                    **/ezraUpdateProposalImplTest.java,
-                    **/ezraUpdateSponsorImplTest.java,
                 </test.excludes>
             </properties>
         </profile>

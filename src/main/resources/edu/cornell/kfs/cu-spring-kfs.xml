@@ -24,7 +24,6 @@
 	 
 	<import resource="pdp/cu-spring-pdp.xml" />
 	<import resource="module/cam/cu-spring-cam.xml" />
-	<import resource="module/ezra/cu-spring-ezra.xml" />
 	<import resource="module/receiptProcessing/cu-spring-receiptProcessing.xml" />
 	<import resource="rass/cu-spring-rass.xml" />
 	
