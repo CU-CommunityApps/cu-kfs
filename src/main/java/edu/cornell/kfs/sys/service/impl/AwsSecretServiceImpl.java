@@ -11,15 +11,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.PredefinedClientConfigurations;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.secretsmanager.AWSSecretsManager;
-import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
-import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
-import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
-import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
-import com.amazonaws.services.secretsmanager.model.UpdateSecretResult;
+//import com.amazonaws.ClientConfiguration;
+//import com.amazonaws.PredefinedClientConfigurations;
+//import com.amazonaws.SdkClientException;
+//import com.amazonaws.services.secretsmanager.AWSSecretsManager;
+//import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
+//import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
+//import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
+//import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
+//import com.amazonaws.services.secretsmanager.model.UpdateSecretResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +27,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
+import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerException;
+import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
 
 public class AwsSecretServiceImpl implements AwsSecretService {
     protected static final String A_NULL_AWS_KEY_IS_NOT_ALLOWED = "A null AWS key is not allowed.";
@@ -107,63 +114,65 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     }
     
     protected String retrieveSecretFromAws(String fullAwsKey) {
-        GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(fullAwsKey);
-        GetSecretValueResult getSecretValueResult = null;
+        SecretsManagerClient client = buildSecretsManagerClient();
         
-        AWSSecretsManager client = buildAWSSecretsManager();
         try {
-            getSecretValueResult = client.getSecretValue(getSecretValueRequest);
-        } catch (SdkClientException e) {
+            GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
+                    .secretId(fullAwsKey)
+                    .build();
+            GetSecretValueResponse valueResponse = client.getSecretValue(valueRequest);
+            return valueResponse.secretString();
+        } catch (SecretsManagerException e) {
             LOG.error("getSingleStringValueFromAwsSecret, had an error getting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
         } finally {
-            client.shutdown();
+            client.close();
         }
-
-        return getSecretValueResult.getSecretString();
+    }
+    
+    protected SecretsManagerClient buildSecretsManagerClient() {
+        Region region = Region.of(awsRegion);
+        SecretsManagerClient secretsClient = SecretsManagerClient.builder()
+                .region(region)
+                .build();
+        return secretsClient;
     }
     
     @Override
     public void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
-        createCacheIfNotPresent();
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
-        UpdateSecretRequest updateSecretRequest = new UpdateSecretRequest ().withSecretId(fullAwsKey);
-        updateSecretRequest.setSecretString(keyValue);
-        
-        AWSSecretsManager client = buildAWSSecretsManager();
+        UpdateSecretRequest updateSecretRequest = UpdateSecretRequest.builder()
+                .secretId(fullAwsKey)
+                .secretString(keyValue)
+                .build();
+        SecretsManagerClient client = buildSecretsManagerClient();
         try {
             performUpdate(updateSecretRequest, client);
             updateCacheValue(fullAwsKey, keyValue);
-        } catch (SdkClientException e) {
+        } catch (SecretsManagerException e) {
             LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
         } finally {
-            client.shutdown();
+            client.close();
         }
     }
-
-    protected void performUpdate(UpdateSecretRequest updateSecretRequest, AWSSecretsManager client) {
+    
+    protected void performUpdate(UpdateSecretRequest updateSecretRequest, SecretsManagerClient client) {
         boolean processed = false;
         int tryCount = 0;
         while (!processed) {
-            UpdateSecretResult result = client.updateSecret(updateSecretRequest);
-            if (result.getSdkHttpMetadata().getHttpStatusCode() == 200) {
+            UpdateSecretResponse result = client.updateSecret(updateSecretRequest);
+            if (result.sdkHttpResponse().isSuccessful()) {
                 processed = true;
             } else {
                 tryCount++;
                 if (tryCount >= retryCount) {
                     throw new RuntimeException("performUpdate, unable to update secret: " + result.toString());
+                } else {
+                    LOG.info("performUpdate, try number " + tryCount + " failed trying to update secret, will try again.");
                 }
             }
         }
-    }
-    
-    protected AWSSecretsManager buildAWSSecretsManager() {
-        ClientConfiguration config = PredefinedClientConfigurations.defaultConfig();
-        config.setCacheResponseMetadata(false);
-        AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard().withRegion(awsRegion).withClientConfiguration(config).build();
-        return client;
-        
     }
     
     protected String buildFullAwsKeyName(String awsKeyName, boolean useKfsInstanceNamespace) {
