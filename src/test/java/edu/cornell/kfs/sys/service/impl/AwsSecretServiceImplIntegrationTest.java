@@ -5,13 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,10 +16,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
+import net.bull.javamelody.internal.common.LOG;
 
 class AwsSecretServiceImplIntegrationTest {
-    private static final Logger LOG = LogManager.getLogger();
-    
     private static final String AWS_US_EAST_ONE_REGION = "us-east-1";
     private static final String KFS_INSTANCE_NAMESPACE = "kfs/local-dev/";
     private static final String KFS_SHARED_NAMESPACE = "kfs/kfs-shared/";
@@ -44,7 +39,6 @@ class AwsSecretServiceImplIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        org.apache.log4j.LogManager.getLogger(AwsSecretServiceImpl.class).setLevel(org.apache.log4j.Level.DEBUG);
         awsSecretServiceImpl = new AwsSecretServiceImpl();
         awsSecretServiceImpl.setAwsRegion(AWS_US_EAST_ONE_REGION);
         awsSecretServiceImpl.setKfsSharedNamespace(KFS_SHARED_NAMESPACE);
@@ -73,7 +67,7 @@ class AwsSecretServiceImplIntegrationTest {
     }
     
     @Test
-    void testBooleanSetAndGetWithCache() {
+    void testBooleanSetAndGet() {
         boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         boolean expectedNewBoolean = !initialValue;
         awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
@@ -84,24 +78,12 @@ class AwsSecretServiceImplIntegrationTest {
     }
     
     @Test
-    void testBooleanSetAndGetWithOutCache() {
-        boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
-        boolean expectedNewBoolean = !initialValue;
-        awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
-        awsSecretServiceImpl.clearCache();
-        
-        boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
-        
-        assertEquals(expectedNewBoolean, actualNewBoolean);
-    }
-    
-    @Test
-    void testPojoWithCache() throws JsonMappingException, JsonProcessingException {
+    void testPojo() throws JsonMappingException, JsonProcessingException {
         String newUniqueString = UUID.randomUUID().toString();
-        Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
+        Date newDate = new Date(Calendar.getInstance().getTimeInMillis());
         
         AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        LOG.info("testPojoWithCache, pojo: " + pojo);
+        LOG.info("testPojo, pojo: " + pojo);
         pojo.setChangeable_string(newUniqueString);
         pojo.setUpdate_date(newDate);
         boolean newBooleanTest = !pojo.isBoolean_test();
@@ -114,29 +96,6 @@ class AwsSecretServiceImplIntegrationTest {
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
         assertEquals(pojo.getUpdate_date(), pojoNew.getUpdate_date());
         assertEquals(pojo.isBoolean_test(), pojoNew.isBoolean_test());
-    }
-    
-    @Test
-    void testPojoWithOutCache() throws JsonMappingException, JsonProcessingException {
-        String newUniqueString = UUID.randomUUID().toString();
-        Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
-        
-        AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret( BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        LOG.info("testPojoWithOutCache, pojo: " + pojo);
-        pojo.setChangeable_string(newUniqueString);
-        pojo.setUpdate_date(newDate);
-        boolean newBooleanTest = !pojo.isBoolean_test();
-        pojo.setBoolean_test(newBooleanTest);
-        awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
-        awsSecretServiceImpl.clearCache();
-        
-        AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        assertEquals(newUniqueString, pojoNew.getChangeable_string());
-        assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
-        assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
-        assertEquals(pojo.getUpdate_date(), pojoNew.getUpdate_date());
-        assertEquals(pojo.isBoolean_test(), pojoNew.isBoolean_test());
-        awsSecretServiceImpl.logCacheStatus();
     }
     
     @Test 
@@ -163,23 +122,6 @@ class AwsSecretServiceImplIntegrationTest {
         
         float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(SINGLE_FLOAT_SECRET_KEY_NAME, true);
         assertEquals(floatNumber, returnedNumber);
-    }
-    
-    @Test
-    void testRetrieveSecretFromCacheNull() {
-        awsSecretServiceImpl.clearCache();
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            awsSecretServiceImpl.retrieveSecretFromCache(null);
-        });
-
-        assertEquals(AwsSecretServiceImpl.A_NULL_AWS_KEY_IS_NOT_ALLOWED, exception.getMessage());
-    }
-    
-    @Test
-    void testRetrieveSecretFromCacheEmpty() {
-        awsSecretServiceImpl.clearCache();
-        String results = awsSecretServiceImpl.retrieveSecretFromCache(StringUtils.EMPTY);
-        assertTrue(StringUtils.isBlank(results));
     }
 
 }
