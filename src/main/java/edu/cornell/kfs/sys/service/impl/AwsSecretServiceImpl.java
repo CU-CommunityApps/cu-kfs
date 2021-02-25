@@ -4,8 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -26,11 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.AwsSecretService;
-import edu.cornell.kfs.sys.util.CUJsonUtils;
 
 public class AwsSecretServiceImpl implements AwsSecretService {
-    protected static final String A_NULL_AWS_KEY_IS_NOT_ALLOWED = "A null AWS key is not allowed.";
-
     private static final Logger LOG = LogManager.getLogger(AwsSecretServiceImpl.class);
     
     protected String awsRegion;
@@ -38,75 +33,9 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     protected String kfsSharedNamespace;
     protected int retryCount;
     
-    private Map<String, String> awsSecretsCache;
-    
-    @Override
-    public void clearCache() {
-        awsSecretsCache = new ConcurrentHashMap<>();
-    }
-    
-    @Override
-    public void logCacheStatus() {
-        if (LOG.isDebugEnabled()) {
-            if (awsSecretsCache == null) {
-                LOG.debug("logCacheStatus, the cache has not been set");
-            } else if (awsSecretsCache.isEmpty()) {
-                LOG.debug("logCacheStatus, the cache has been set, but is empty");
-            } else {
-                for (String key : awsSecretsCache.keySet()) {
-                    LOG.debug("logCacheStatus, AWS secret key: " + key);
-                }
-            }
-        }
-    }
-    
     @Override
     public String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
-        createCacheIfNotPresent();
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
-        String cachedSecretValue = retrieveSecretFromCache(fullAwsKey);
-        
-        if (StringUtils.isNotBlank(cachedSecretValue)) {
-            return cachedSecretValue;
-        } else {
-            LOG.debug("getSingleStringValueFromAwsSecret, in cache there was no value for " + fullAwsKey);
-            String secretValue = retrieveSecretFromAws(fullAwsKey);
-            updateCacheValue(fullAwsKey, secretValue);
-            return secretValue;
-        }
-    }
-
-    private void createCacheIfNotPresent() {
-        if (awsSecretsCache == null) {
-            LOG.debug("createCacheIfNotPresent, Cache has not been setup, so run the clear cache to create a new cache element");
-            clearCache();
-        }
-    }
-    
-    protected String retrieveSecretFromCache(String fullAwsKey) {
-        if (fullAwsKey == null) {
-            throw new RuntimeException(A_NULL_AWS_KEY_IS_NOT_ALLOWED);
-        }
-        if (awsSecretsCache.containsKey(fullAwsKey)) {
-            LOG.debug("retrieveSecretFromCache, in cache found a secret value for " + fullAwsKey);
-            return awsSecretsCache.get(fullAwsKey);
-        } else {
-            return null;
-        }
-    }
-    
-    private void updateCacheValue(String fullAwsKey, String secretValue) {
-        if (fullAwsKey == null) {
-            LOG.debug("updateCacheValue, the AWS key provided was null, so can't cache it.");
-        } else if (secretValue == null) {
-            LOG.debug("updateCacheValue, a null value was provided for AWS key " + fullAwsKey + " so it can not be cached");
-        } else {
-            LOG.debug("updateCacheValue, in cache setting value for secret key " + fullAwsKey);
-            awsSecretsCache.put(fullAwsKey, secretValue);
-        }
-    }
-    
-    protected String retrieveSecretFromAws(String fullAwsKey) {
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(fullAwsKey);
         GetSecretValueResult getSecretValueResult = null;
         
@@ -125,7 +54,6 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     
     @Override
     public void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
-        createCacheIfNotPresent();
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
         UpdateSecretRequest updateSecretRequest = new UpdateSecretRequest ().withSecretId(fullAwsKey);
         updateSecretRequest.setSecretString(keyValue);
@@ -133,7 +61,6 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
             performUpdate(updateSecretRequest, client);
-            updateCacheValue(fullAwsKey, keyValue);
         } catch (SdkClientException e) {
             LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
@@ -212,17 +139,16 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     }
 
     @Override
-    public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) 
-            throws JsonMappingException, JsonProcessingException {
+    public <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException {
         String pojoJsonString = getSingleStringValueFromAwsSecret(awsKeyName, useKfsInstanceNamespace);
-        ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
+        ObjectMapper objectMapper = new ObjectMapper();
         T object = objectMapper.readValue(pojoJsonString, objectType);
         return object;
     }
     
     @Override
     public void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException {
-        ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
+        ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(pojo);
         updateSecretValue(awsKeyName, useKfsInstanceNamespace, jsonString);
     }
