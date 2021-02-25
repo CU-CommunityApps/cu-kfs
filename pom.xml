@@ -795,15 +795,10 @@
             </exclusions>
         </dependency>
         <dependency>
-	          <groupId>com.amazonaws</groupId>
-	          <artifactId>aws-java-sdk-secretsmanager</artifactId>
-	          <version>${aws-java-sdk.version}</version>
+          <groupId>com.amazonaws</groupId>
+          <artifactId>aws-java-sdk-secretsmanager</artifactId>
+          <version>${aws-java-sdk.version}</version>
         </dependency>
-        <dependency>
-					  <groupId>com.amazonaws.secretsmanager</groupId>
-					  <artifactId>aws-secretsmanager-caching-java</artifactId>
-					  <version>1.0.1</version>
-				</dependency>
         <dependency>
             <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>
