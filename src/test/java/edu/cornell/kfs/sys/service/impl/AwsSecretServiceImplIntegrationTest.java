@@ -164,22 +164,5 @@ class AwsSecretServiceImplIntegrationTest {
         float returnedNumber = awsSecretServiceImpl.getSingleNumberValueFromAwsSecret(SINGLE_FLOAT_SECRET_KEY_NAME, true);
         assertEquals(floatNumber, returnedNumber);
     }
-    
-    @Test
-    void testRetrieveSecretFromCacheNull() {
-        awsSecretServiceImpl.clearCache();
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            awsSecretServiceImpl.retrieveSecretFromCache(null);
-        });
-
-        assertEquals(AwsSecretServiceImpl.A_NULL_AWS_KEY_IS_NOT_ALLOWED, exception.getMessage());
-    }
-    
-    @Test
-    void testRetrieveSecretFromCacheEmpty() {
-        awsSecretServiceImpl.clearCache();
-        String results = awsSecretServiceImpl.retrieveSecretFromCache(StringUtils.EMPTY);
-        assertTrue(StringUtils.isBlank(results));
-    }
 
 }

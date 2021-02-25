@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.PredefinedClientConfigurations;
 import com.amazonaws.SdkClientException;
+import com.amazonaws.secretsmanager.caching.SecretCache;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
@@ -38,25 +40,18 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     protected String kfsSharedNamespace;
     protected int retryCount;
     
-    private Map<String, String> awsSecretsCache;
+    private SecretCache cache;
+
     
     @Override
     public void clearCache() {
-        awsSecretsCache = new ConcurrentHashMap<>();
+        cache = new SecretCache(buildAWSSecretsManager());
     }
     
     @Override
     public void logCacheStatus() {
         if (LOG.isDebugEnabled()) {
-            if (awsSecretsCache == null) {
-                LOG.debug("logCacheStatus, the cache has not been set");
-            } else if (awsSecretsCache.isEmpty()) {
-                LOG.debug("logCacheStatus, the cache has been set, but is empty");
-            } else {
-                for (String key : awsSecretsCache.keySet()) {
-                    LOG.debug("logCacheStatus, AWS secret key: " + key);
-                }
-            }
+            cache.toString();
         }
     }
     
@@ -64,25 +59,23 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     public String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
         createCacheIfNotPresent();
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
-        String cachedSecretValue = retrieveSecretFromCache(fullAwsKey);
+        String secretValue = cache.getSecretString(fullAwsKey);
         
-        if (StringUtils.isNotBlank(cachedSecretValue)) {
-            return cachedSecretValue;
-        } else {
-            LOG.debug("getSingleStringValueFromAwsSecret, in cache there was no value for " + fullAwsKey);
-            String secretValue = retrieveSecretFromAws(fullAwsKey);
-            updateCacheValue(fullAwsKey, secretValue);
-            return secretValue;
-        }
+        /*
+         * @todo remove this log statement
+         */
+        LOG.debug("getSingleStringValueFromAwsSecret, the secret Value: " + secretValue);
+        
+        return secretValue;
     }
 
     private void createCacheIfNotPresent() {
-        if (awsSecretsCache == null) {
+        if (cache == null) {
             LOG.debug("createCacheIfNotPresent, Cache has not been setup, so run the clear cache to create a new cache element");
             clearCache();
         }
     }
-    
+    /*
     protected String retrieveSecretFromCache(String fullAwsKey) {
         if (fullAwsKey == null) {
             throw new RuntimeException(A_NULL_AWS_KEY_IS_NOT_ALLOWED);
@@ -94,7 +87,8 @@ public class AwsSecretServiceImpl implements AwsSecretService {
             return null;
         }
     }
-    
+    */
+    /*
     private void updateCacheValue(String fullAwsKey, String secretValue) {
         if (fullAwsKey == null) {
             LOG.debug("updateCacheValue, the AWS key provided was null, so can't cache it.");
@@ -105,7 +99,8 @@ public class AwsSecretServiceImpl implements AwsSecretService {
             awsSecretsCache.put(fullAwsKey, secretValue);
         }
     }
-    
+    */
+    /*
     protected String retrieveSecretFromAws(String fullAwsKey) {
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(fullAwsKey);
         GetSecretValueResult getSecretValueResult = null;
@@ -121,7 +116,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         }
 
         return getSecretValueResult.getSecretString();
-    }
+    }*/
     
     @Override
     public void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
@@ -133,8 +128,10 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         AWSSecretsManager client = buildAWSSecretsManager();
         try {
             performUpdate(updateSecretRequest, client);
-            updateCacheValue(fullAwsKey, keyValue);
-        } catch (SdkClientException e) {
+            TimeUnit.SECONDS.sleep(5);
+            cache.refreshNow(fullAwsKey);
+            //updateCacheValue(fullAwsKey, keyValue);
+        } catch (SdkClientException | InterruptedException e) {
             LOG.error("updateSecretValue, had an error setting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
         } finally {
