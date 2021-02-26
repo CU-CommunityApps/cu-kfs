@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +60,8 @@ public class AwsSecretValidationStep extends AbstractStep {
             LOG.info("execute, The values were retrieved from cache as expected");
             awsSecretService.logCacheStatus();
             awsSecretService.clearCache();
+            
+            waitAfterUpdatingSecretBeforeGettingSecret();
 
             AmazonSecretValidationInstance amazonInstanceSpaceSecretsAfterProcessing = awsSecretService.getPojoFromAwsSecret(
                     AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
@@ -143,6 +146,16 @@ public class AwsSecretValidationStep extends AbstractStep {
             service.logCacheStatus();
         } catch (JsonProcessingException e) {
             LOG.error("validateUsingNewAWSServiceFromSpring, had an error calling AWS Secret Service ", e);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    protected void waitAfterUpdatingSecretBeforeGettingSecret() {
+        LOG.info("waitAfterUpdatingSecretBeforeGettingSecret, waiting 5 seconds");
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            LOG.error("waitAfterUpdatingSecretBeforeGettingSecret. had an error waiting", e);
             throw new RuntimeException(e);
         }
     }

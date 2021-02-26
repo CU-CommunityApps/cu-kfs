@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -45,6 +46,16 @@ class AwsSecretServiceImplIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         org.apache.log4j.LogManager.getLogger(AwsSecretServiceImpl.class).setLevel(org.apache.log4j.Level.DEBUG);
+        
+        /* 
+         * This logging was helpful in debugging things.  we don't want this logging long term, but it would be helpful to 
+         * keep them to be easily recovered
+         * 
+        org.apache.log4j.LogManager.getLogger("software.amazon.awssdk").setLevel(org.apache.log4j.Level.DEBUG);
+        org.apache.log4j.LogManager.getLogger("software.amazon.awssdk.request").setLevel(org.apache.log4j.Level.DEBUG);
+        org.apache.log4j.LogManager.getLogger("org.apache.http.wire").setLevel(org.apache.log4j.Level.DEBUG);
+        */
+        
         awsSecretServiceImpl = new AwsSecretServiceImpl();
         awsSecretServiceImpl.setAwsRegion(AWS_US_EAST_ONE_REGION);
         awsSecretServiceImpl.setKfsSharedNamespace(KFS_SHARED_NAMESPACE);
@@ -90,9 +101,21 @@ class AwsSecretServiceImplIntegrationTest {
         awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
         awsSecretServiceImpl.clearCache();
         
+        waitAfterUpdatingSecretBeforeGettingSecret();
+        
         boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         
         assertEquals(expectedNewBoolean, actualNewBoolean);
+    }
+
+    protected void waitAfterUpdatingSecretBeforeGettingSecret() {
+        LOG.info("waitAfterUpdatingSecretBeforeGettingSecret, waiting 5 seconds");
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            LOG.error("waitAfterUpdatingSecretBeforeGettingSecret. had an error waiting", e);
+            throw new RuntimeException(e);
+        }
     }
     
     @Test
@@ -129,6 +152,8 @@ class AwsSecretServiceImplIntegrationTest {
         pojo.setBoolean_test(newBooleanTest);
         awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
         awsSecretServiceImpl.clearCache();
+        
+        waitAfterUpdatingSecretBeforeGettingSecret();
         
         AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         assertEquals(newUniqueString, pojoNew.getChangeable_string());

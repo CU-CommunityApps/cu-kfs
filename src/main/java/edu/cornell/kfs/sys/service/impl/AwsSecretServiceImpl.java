@@ -11,15 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-//import com.amazonaws.ClientConfiguration;
-//import com.amazonaws.PredefinedClientConfigurations;
-//import com.amazonaws.SdkClientException;
-//import com.amazonaws.services.secretsmanager.AWSSecretsManager;
-//import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
-//import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
-//import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
-//import com.amazonaws.services.secretsmanager.model.UpdateSecretRequest;
-//import com.amazonaws.services.secretsmanager.model.UpdateSecretResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,6 +58,13 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         }
     }
     
+    private void createCacheIfNotPresent() {
+        if (awsSecretsCache == null) {
+            LOG.debug("createCacheIfNotPresent, Cache has not been setup, so run the clear cache to create a new cache element");
+            clearCache();
+        }
+    }
+    
     @Override
     public String getSingleStringValueFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace) {
         createCacheIfNotPresent();
@@ -83,13 +81,6 @@ public class AwsSecretServiceImpl implements AwsSecretService {
         }
     }
 
-    private void createCacheIfNotPresent() {
-        if (awsSecretsCache == null) {
-            LOG.debug("createCacheIfNotPresent, Cache has not been setup, so run the clear cache to create a new cache element");
-            clearCache();
-        }
-    }
-    
     protected String retrieveSecretFromCache(String fullAwsKey) {
         if (fullAwsKey == null) {
             throw new RuntimeException(A_NULL_AWS_KEY_IS_NOT_ALLOWED);
@@ -140,6 +131,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
     
     @Override
     public void updateSecretValue(String awsKeyName, boolean useKfsInstanceNamespace, String keyValue) {
+        createCacheIfNotPresent();
         String fullAwsKey = buildFullAwsKeyName(awsKeyName, useKfsInstanceNamespace);
         UpdateSecretRequest updateSecretRequest = UpdateSecretRequest.builder()
                 .secretId(fullAwsKey)
