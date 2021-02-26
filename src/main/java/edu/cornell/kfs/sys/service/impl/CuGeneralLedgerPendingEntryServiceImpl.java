@@ -12,7 +12,6 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.document.GeneralLedgerPendingEntrySource;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.GENERAL_LEDGER_PENDING_ENTRY_CODE;
-import org.kuali.kfs.sys.service.HomeOriginationService;
 import org.kuali.kfs.sys.service.impl.GeneralLedgerPendingEntryServiceImpl;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -21,7 +20,6 @@ import edu.cornell.kfs.sys.service.CuGeneralLedgerPendingEntryService;
 public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPendingEntryServiceImpl
         implements CuGeneralLedgerPendingEntryService {
     private static final Logger LOG = LogManager.getLogger(CuGeneralLedgerPendingEntryServiceImpl.class);
-    protected HomeOriginationService homeOriginationService;
 
     /*
      * With the 11/12/2020 patch, this function was removed from GeneralLedgerPendingEntryServiceImpl, 
@@ -91,11 +89,6 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
         }
 
         return explicitEntry;
-    }
-
-    public void setHomeOriginationService(HomeOriginationService homeOriginationService) {
-        this.homeOriginationService = homeOriginationService;
-        super.setHomeOriginationService(homeOriginationService);
     }
 
 }
