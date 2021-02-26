@@ -108,7 +108,8 @@ public class GeneralLedgerPendingEntryServiceImpl implements GeneralLedgerPendin
     protected OffsetDefinitionService offsetDefinitionService;
     protected ObjectTypeService objectTypeService;
     private BusinessObjectService businessObjectService;
-    private HomeOriginationService homeOriginationService;
+    // access relaxed for Cornell
+    protected HomeOriginationService homeOriginationService;
     private ObjectCodeService objectCodeService;
     private ParameterEvaluatorService parameterEvaluatorService;
 
