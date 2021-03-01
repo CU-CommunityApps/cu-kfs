@@ -143,6 +143,7 @@ public class AwsSecretValidationStep extends AbstractStep {
             AmazonSecretValidationShared sharedSpaceSecrets = service.getPojoFromAwsSecret(AWS_SECRET_NAME_VALIDATION_SHARED, 
                     false, AmazonSecretValidationShared.class);
             confirmAmazonSecretValidationShared(sharedSpaceSecrets);
+            LOG.info("validateUsingNewAWSServiceFromSpring, confirmed that shared secrets were retrieved correctly using a new instance of AwsSecretService");
             service.logCacheStatus();
         } catch (JsonProcessingException e) {
             LOG.error("validateUsingNewAWSServiceFromSpring, had an error calling AWS Secret Service ", e);
