@@ -67,7 +67,7 @@ public class AwsSecretValidationStep extends AbstractStep {
                     AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
             confirmInstanceSecretValues(newSecretValues, amazonInstanceSpaceSecretsAfterProcessing);
 
-            LOG.info("excute, The values were retrieved from Amazon Secret Manager as expected");
+            LOG.info("execute, The values were retrieved from Amazon Secret Manager as expected");
             awsSecretService.logCacheStatus();
 
         } catch (JsonMappingException e) {

@@ -114,7 +114,7 @@ public class AwsSecretServiceImpl implements AwsSecretService {
             GetSecretValueResponse valueResponse = client.getSecretValue(valueRequest);
             return valueResponse.secretString();
         } catch (SecretsManagerException e) {
-            LOG.error("getSingleStringValueFromAwsSecret, had an error getting value for secret " + fullAwsKey, e);
+            LOG.error("retrieveSecretFromAws, had an error getting value for secret " + fullAwsKey, e);
             throw new RuntimeException(e);
         } finally {
             client.close();

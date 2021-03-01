@@ -122,12 +122,6 @@ class AwsSecretServiceImplIntegrationTest {
     }
     
     @Test
-    void testPojo() throws JsonMappingException, JsonProcessingException {
-        testPojoWithCache();
-        awsSecretServiceImpl.clearCache();
-        testPojoWithOutCache();
-    }
-    
     void testPojoWithCache() throws JsonMappingException, JsonProcessingException {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
@@ -148,7 +142,9 @@ class AwsSecretServiceImplIntegrationTest {
         assertEquals(pojo.isBoolean_test(), pojoNew.isBoolean_test());
     }
     
+    @Test
     void testPojoWithOutCache() throws JsonMappingException, JsonProcessingException {
+        waitForAwsSecretUpdateToFullyPost();
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
         
