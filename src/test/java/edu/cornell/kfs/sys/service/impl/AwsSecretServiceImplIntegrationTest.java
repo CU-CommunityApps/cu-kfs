@@ -45,22 +45,25 @@ class AwsSecretServiceImplIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        org.apache.log4j.LogManager.getLogger(AwsSecretServiceImpl.class).setLevel(org.apache.log4j.Level.DEBUG);
-        
-        /* 
-         * This logging was helpful in debugging things.  we don't want this logging long term, but it would be helpful to 
-         * keep them to be easily recovered
-         * 
-        org.apache.log4j.LogManager.getLogger("software.amazon.awssdk").setLevel(org.apache.log4j.Level.DEBUG);
-        org.apache.log4j.LogManager.getLogger("software.amazon.awssdk.request").setLevel(org.apache.log4j.Level.DEBUG);
-        org.apache.log4j.LogManager.getLogger("org.apache.http.wire").setLevel(org.apache.log4j.Level.DEBUG);
-        */
-        
+        enableLogging(false);
         awsSecretServiceImpl = new AwsSecretServiceImpl();
         awsSecretServiceImpl.setAwsRegion(AWS_US_EAST_ONE_REGION);
         awsSecretServiceImpl.setKfsSharedNamespace(KFS_SHARED_NAMESPACE);
         awsSecretServiceImpl.setKfsInstanceNamespace(KFS_INSTANCE_NAMESPACE);
         awsSecretServiceImpl.setRetryCount(AWS_SECRET_UPDATE_RETRY_COUNT);
+    }
+    
+    /* 
+     * If you need see debug statements from Amazon libraries or what is being sent in the HTTP packets, 
+     * set enableExtraLogging to true, this should only be enabled locally.
+     */
+    private void enableLogging(boolean enableExtraLogging) {
+        org.apache.log4j.LogManager.getLogger(AwsSecretServiceImpl.class).setLevel(org.apache.log4j.Level.DEBUG);
+        if (enableExtraLogging) {
+            org.apache.log4j.LogManager.getLogger("software.amazon.awssdk").setLevel(org.apache.log4j.Level.DEBUG);
+            org.apache.log4j.LogManager.getLogger("software.amazon.awssdk.request").setLevel(org.apache.log4j.Level.DEBUG);
+            org.apache.log4j.LogManager.getLogger("org.apache.http.wire").setLevel(org.apache.log4j.Level.DEBUG);
+        }
     }
 
     @AfterEach
@@ -101,14 +104,14 @@ class AwsSecretServiceImplIntegrationTest {
         awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
         awsSecretServiceImpl.clearCache();
         
-        waitAfterUpdatingSecretBeforeGettingSecret();
+        waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws();
         
         boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         
         assertEquals(expectedNewBoolean, actualNewBoolean);
     }
 
-    protected void waitAfterUpdatingSecretBeforeGettingSecret() {
+    protected void waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws() {
         LOG.info("waitAfterUpdatingSecretBeforeGettingSecret, waiting 5 seconds");
         try {
             TimeUnit.SECONDS.sleep(5);
@@ -119,6 +122,12 @@ class AwsSecretServiceImplIntegrationTest {
     }
     
     @Test
+    void testPojo() throws JsonMappingException, JsonProcessingException {
+        testPojoWithCache();
+        awsSecretServiceImpl.clearCache();
+        testPojoWithOutCache();
+    }
+    
     void testPojoWithCache() throws JsonMappingException, JsonProcessingException {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
@@ -139,12 +148,12 @@ class AwsSecretServiceImplIntegrationTest {
         assertEquals(pojo.isBoolean_test(), pojoNew.isBoolean_test());
     }
     
-    @Test
     void testPojoWithOutCache() throws JsonMappingException, JsonProcessingException {
         String newUniqueString = UUID.randomUUID().toString();
         Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
         
         AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret( BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+        String oldChangeableString = pojo.getChangeable_string();
         LOG.info("testPojoWithOutCache, pojo: " + pojo);
         pojo.setChangeable_string(newUniqueString);
         pojo.setUpdate_date(newDate);
@@ -153,9 +162,10 @@ class AwsSecretServiceImplIntegrationTest {
         awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
         awsSecretServiceImpl.clearCache();
         
-        waitAfterUpdatingSecretBeforeGettingSecret();
+        waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws();
         
         AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
+        assertNotEquals(oldChangeableString, pojoNew.getChangeable_string());
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());

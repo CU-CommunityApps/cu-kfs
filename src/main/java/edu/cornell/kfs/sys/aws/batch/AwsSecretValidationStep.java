@@ -61,7 +61,7 @@ public class AwsSecretValidationStep extends AbstractStep {
             awsSecretService.logCacheStatus();
             awsSecretService.clearCache();
             
-            waitAfterUpdatingSecretBeforeGettingSecret();
+            waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws();
 
             AmazonSecretValidationInstance amazonInstanceSpaceSecretsAfterProcessing = awsSecretService.getPojoFromAwsSecret(
                     AWS_SECRET_NAME_VALIDATION_INSTANCE, true, AmazonSecretValidationInstance.class);
@@ -150,12 +150,12 @@ public class AwsSecretValidationStep extends AbstractStep {
         }
     }
     
-    protected void waitAfterUpdatingSecretBeforeGettingSecret() {
-        LOG.info("waitAfterUpdatingSecretBeforeGettingSecret, waiting 5 seconds");
+    protected void waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws() {
+        LOG.info("waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws, waiting 5 seconds");
         try {
             TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
-            LOG.error("waitAfterUpdatingSecretBeforeGettingSecret. had an error waiting", e);
+            LOG.error("waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws. had an error waiting", e);
             throw new RuntimeException(e);
         }
     }
