@@ -116,7 +116,7 @@ class AwsSecretServiceImplIntegrationTest {
         try {
             TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
-            LOG.error("waitAfterUpdatingSecretBeforeGettingSecret. had an error waiting", e);
+            LOG.error("waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws. had an error waiting", e);
             throw new RuntimeException(e);
         }
     }
@@ -153,7 +153,6 @@ class AwsSecretServiceImplIntegrationTest {
         Date newDate = new Date(Calendar.getInstance(Locale.US).getTimeInMillis());
         
         AwsSecretPojo pojo = awsSecretServiceImpl.getPojoFromAwsSecret( BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        String oldChangeableString = pojo.getChangeable_string();
         LOG.info("testPojoWithOutCache, pojo: " + pojo);
         pojo.setChangeable_string(newUniqueString);
         pojo.setUpdate_date(newDate);
@@ -165,7 +164,6 @@ class AwsSecretServiceImplIntegrationTest {
         waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws();
         
         AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
-        assertNotEquals(oldChangeableString, pojoNew.getChangeable_string());
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
         assertEquals(BASIC_POJO_STATIC_STRING_VALUE, pojoNew.getStatic_string());
         assertEquals(BASIC_POJO_NUMBER_VALUE, pojoNew.getNumber_test());
