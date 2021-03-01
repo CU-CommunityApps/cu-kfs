@@ -104,19 +104,19 @@ class AwsSecretServiceImplIntegrationTest {
         awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
         awsSecretServiceImpl.clearCache();
         
-        waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws();
+        waitForAwsSecretUpdateToFullyPost();
         
         boolean actualNewBoolean = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         
         assertEquals(expectedNewBoolean, actualNewBoolean);
     }
 
-    protected void waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws() {
-        LOG.info("waitAfterUpdatingSecretBeforeGettingSecret, waiting 5 seconds");
+    protected void waitForAwsSecretUpdateToFullyPost() {
+        LOG.info("waitForAwsSecretUpdateToFullyPost, waiting 5 seconds");
         try {
             TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
-            LOG.error("waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws. had an error waiting", e);
+            LOG.error("waitForAwsSecretUpdateToFullyPost. had an error waiting", e);
             throw new RuntimeException(e);
         }
     }
@@ -161,7 +161,7 @@ class AwsSecretServiceImplIntegrationTest {
         awsSecretServiceImpl.updatePojo(BASIC_POJO_SECRET_KEY_NAME, false, pojo);
         awsSecretServiceImpl.clearCache();
         
-        waitFiveSecondsAfterUpdatingSecretAndClearingCacheBeforeRetrieveSecretFromAws();
+        waitForAwsSecretUpdateToFullyPost();
         
         AwsSecretPojo pojoNew = awsSecretServiceImpl.getPojoFromAwsSecret(BASIC_POJO_SECRET_KEY_NAME, false, AwsSecretPojo.class);
         assertEquals(newUniqueString, pojoNew.getChangeable_string());
