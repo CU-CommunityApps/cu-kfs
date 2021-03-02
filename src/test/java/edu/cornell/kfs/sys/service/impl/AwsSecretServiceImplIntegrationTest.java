@@ -99,6 +99,7 @@ class AwsSecretServiceImplIntegrationTest {
     
     @Test
     void testBooleanSetAndGetWithOutCache() {
+        waitForAwsSecretUpdateToFullyPost();
         boolean initialValue = awsSecretServiceImpl.getSingleBooleanFromAwsSecret(SINGLE_BOOLEAN_SECRET_KEY_NAME, false);
         boolean expectedNewBoolean = !initialValue;
         awsSecretServiceImpl.updateSecretBoolean(SINGLE_BOOLEAN_SECRET_KEY_NAME, false, expectedNewBoolean);
