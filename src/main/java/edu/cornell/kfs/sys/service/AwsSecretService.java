@@ -27,5 +27,9 @@ public interface AwsSecretService {
     <T> T getPojoFromAwsSecret(String awsKeyName, boolean useKfsInstanceNamespace, Class<T> objectType) throws JsonMappingException, JsonProcessingException;
     
     void updatePojo(String awsKeyName, boolean useKfsInstanceNamespace, Object pojo) throws JsonProcessingException;
+    
+    void clearCache();
+    
+    void logCacheStatus();
 
 }
