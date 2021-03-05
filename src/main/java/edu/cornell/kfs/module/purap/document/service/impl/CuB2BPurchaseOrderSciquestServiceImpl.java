@@ -635,6 +635,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 		if (includeNewFields) {
 			cxml.append(addCustomFieldValueSet("DeliveryPhone", "Delivery Phone", purchaseOrder.getDeliveryToPhoneNumber()));
 			cxml.append(addCustomFieldValueSet("DeliveryEmail", "Delivery Email", purchaseOrder.getDeliveryToEmailAddress()));
+			cxml.append(addCustomFieldValueSet("ShipTitle", "Ship Title", getVendorShipTitle(purchaseOrder)));
 			cxml.append(addCustomFieldValueSet("ShipPayTerms", "Ship Pay Termse", getVendorShipPayTerms(purchaseOrder)));
 			cxml.append(addCustomFieldValueSet("SupplierAddress2", "Supplier Address 2", purchaseOrder.getVendorLine2Address()));
 			cxml.append(addCustomFieldValueSet("SupplierCountry", "Supplier Country", getVendorCountry(purchaseOrder)));
@@ -995,6 +996,17 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
        customField.append("      </CustomFieldValueSet>\n");
        return customField.toString();
  
+   }
+    
+   private String getVendorShipTitle(PurchaseOrderDocument purchaseOrder) {
+       if (purchaseOrder.getVendorShippingTitle() == null) {
+           purchaseOrder.refreshReferenceObject("vendorShippingTitle");
+       }
+       if (purchaseOrder.getVendorShippingTitle() == null) {
+           return KFSConstants.EMPTY_STRING;
+       } else {
+           return purchaseOrder.getVendorShippingTitle().getVendorShippingTitleDescription();
+       }
    }
    
     /*
