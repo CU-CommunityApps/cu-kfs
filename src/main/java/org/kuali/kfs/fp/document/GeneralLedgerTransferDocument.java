@@ -42,6 +42,10 @@ import org.kuali.kfs.sys.service.OptionsService;
 
 import java.sql.Timestamp;
 
+/*
+ * Backported KualiCo fix:
+ * Added the FINP-7382 fix from the 2021-03-11 financials patch. This can be removed once we upgrade to this release.
+ */
 public class GeneralLedgerTransferDocument extends CapitalAccountingLinesDocumentBase implements AmountTotaling,
     CapitalAssetEditable {
 
