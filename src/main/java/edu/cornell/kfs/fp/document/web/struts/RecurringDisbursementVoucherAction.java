@@ -28,8 +28,6 @@ import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
-
-
 public class RecurringDisbursementVoucherAction extends CuDisbursementVoucherAction implements Serializable {
 
     private static final long serialVersionUID = -6417266354906825200L;
