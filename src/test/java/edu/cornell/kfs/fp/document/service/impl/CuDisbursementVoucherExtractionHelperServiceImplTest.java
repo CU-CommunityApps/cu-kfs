@@ -88,7 +88,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImplTest extends KualiI
 			
 			accountingLine.setChartOfAccountsCode("IT");
 			accountingLine.setAccountNumber("G081040");
-			accountingLine.setFinancialObjectCode("2045");
+			accountingLine.setFinancialObjectCode("8462");
 			accountingLine.setAmount((new KualiDecimal(86.00)));
 			
 			
