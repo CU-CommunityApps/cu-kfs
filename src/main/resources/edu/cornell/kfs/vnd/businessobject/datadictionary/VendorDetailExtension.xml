@@ -50,11 +50,14 @@
 <!-- Attribute Definitions -->
 
   <bean id="VendorDetailExtension-einvoiceVendorIndicator" parent="VendorDetailExtension-einvoiceVendorIndicator-parentBean"/>
-  
-  <bean id="VendorDetailExtension-einvoiceVendorIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
+  <bean id="VendorDetailExtension-einvoiceVendorIndicator-parentBean" abstract="true" parent="AttributeDefinition">
   	<property name="name" value="einvoiceVendorIndicator"/>
     <property name="label" value="eInvoice Indicator"/>
     <property name="shortLabel" value="eInvoice"/>
+    <property name="control" >
+      <bean parent="SelectControlDefinition"
+            p:valuesFinder-ref="einvoiceIndicatorValuesFinder" />
+    </property>
     <property name="attributeSecurity">
     	<bean parent="AttributeSecurity">
     		<property name="readOnly" value="true" />
@@ -301,5 +304,7 @@
 
   <bean id="cuProcurementMethodValuesFinder"
         class="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder"/>
+        
+  <bean id="einvoiceIndicatorValuesFinder" class="edu.cornell.kfs.vnd.businessobject.options.EinvoiceIndicatorValuesFinder"/>
           
 </beans>
