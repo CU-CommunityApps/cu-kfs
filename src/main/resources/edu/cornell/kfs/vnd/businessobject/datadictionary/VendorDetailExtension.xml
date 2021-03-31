@@ -54,9 +54,12 @@
   	<property name="name" value="einvoiceVendorIndicator"/>
     <property name="label" value="eInvoice Indicator"/>
     <property name="shortLabel" value="eInvoice"/>
-    <property name="control" >
-      <bean parent="SelectControlDefinition"
-            p:valuesFinder-ref="einvoiceIndicatorValuesFinder" />
+    <property name="maxLength" value="1" />
+    <property name="validationPattern">
+	    <bean parent="AnyCharacterValidationPattern" />
+	  </property>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="einvoiceIndicatorValuesFinder" p:includeKeyInLabel="false"/>
     </property>
     <property name="attributeSecurity">
     	<bean parent="AttributeSecurity">
@@ -64,6 +67,7 @@
     	</bean>
     </property>
    </bean>
+   <bean id="einvoiceIndicatorValuesFinder" class="edu.cornell.kfs.vnd.businessobject.options.EinvoiceIndicatorValuesFinder"/>
 
   <bean id="VendorDetailExtension-vendorHeaderGeneratedIdentifier" parent="VendorDetail-vendorHeaderGeneratedIdentifier-parentBean"/>
 
@@ -305,6 +309,4 @@
   <bean id="cuProcurementMethodValuesFinder"
         class="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder"/>
         
-  <bean id="einvoiceIndicatorValuesFinder" class="edu.cornell.kfs.vnd.businessobject.options.EinvoiceIndicatorValuesFinder"/>
-          
 </beans>

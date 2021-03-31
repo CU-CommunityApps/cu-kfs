@@ -62,7 +62,7 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
         this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
     }
 
-    public String isEinvoiceVendorIndicator() {
+    public String getEinvoiceVendorIndicator() {
         return einvoiceVendorIndicator;
     }
 
