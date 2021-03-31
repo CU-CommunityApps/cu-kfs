@@ -38,7 +38,6 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConv
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
-import edu.cornell.kfs.vnd.businessobject.options.EinvoiceIndicatorValuesFinder;
 
 public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements PaymentWorksVendorToKfsVendorDetailConversionService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class);
@@ -362,7 +361,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod);
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(dateTimeService.getCurrentTimestamp());
-        vendorDetailExtension.setEinvoiceVendorIndicator(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.NONE.code);
         return vendorDetailExtension;
     }
     
