@@ -308,5 +308,5 @@
 
   <bean id="cuProcurementMethodValuesFinder"
         class="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder"/>
-
+          
 </beans>
