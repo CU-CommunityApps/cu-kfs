@@ -15,12 +15,12 @@ class EinvoiceIndicatorValuesFinderTest {
     private EinvoiceIndicatorValuesFinder valuesFinder;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         valuesFinder = new EinvoiceIndicatorValuesFinder();
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         valuesFinder = null;
     }
 
