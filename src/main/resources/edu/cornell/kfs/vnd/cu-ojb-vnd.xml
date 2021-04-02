@@ -42,7 +42,7 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
 
-	<field-descriptor name="einvoiceVendorIndicator" column="EINV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+	<field-descriptor name="einvoiceVendorIndicator" column="EINV_IND" jdbc-type="VARCHAR" />
     <field-descriptor name="defaultB2BPaymentMethodCode" column="DFLT_B2B_PMT_MTHD_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceRequiredIndicator" column="INS_REQ_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="insuranceRequirementsCompleteIndicator" column="INS_REQ_COMPLETE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>

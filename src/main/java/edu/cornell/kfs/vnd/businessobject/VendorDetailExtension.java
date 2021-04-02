@@ -17,7 +17,7 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
 
 	protected Integer vendorHeaderGeneratedIdentifier;
     protected Integer vendorDetailAssignedIdentifier;
-    protected boolean einvoiceVendorIndicator;
+    protected String einvoiceVendorIndicator;
     protected String  defaultB2BPaymentMethodCode;
     
     protected boolean insuranceRequiredIndicator;
@@ -62,11 +62,11 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
         this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
     }
 
-    public boolean isEinvoiceVendorIndicator() {
+    public String getEinvoiceVendorIndicator() {
         return einvoiceVendorIndicator;
     }
 
-    public void setEinvoiceVendorIndicator(boolean eInvoiceVendorIndicator) {
+    public void setEinvoiceVendorIndicator(String eInvoiceVendorIndicator) {
         this.einvoiceVendorIndicator = eInvoiceVendorIndicator;
     }
     

@@ -183,7 +183,7 @@
     <extension class='edu.cornell.kfs.vnd.businessobject.VendorDetailExtension'>
       <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
       <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
-      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
       <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
       <versionNumber>3</versionNumber>
       <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
@@ -374,7 +374,7 @@
     <extension class='edu.cornell.kfs.vnd.businessobject.VendorDetailExtension'>
       <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
       <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
-      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
       <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
       <versionNumber>3</versionNumber>
       <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
@@ -611,7 +611,7 @@
     <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
       <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
       <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
-      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
       <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
       <versionNumber>3</versionNumber>
       <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
@@ -773,7 +773,7 @@
     <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
       <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
       <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
-      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <einvoiceVendorIndicator>N</einvoiceVendorIndicator>
       <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
       <versionNumber>3</versionNumber>
       <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
