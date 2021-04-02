@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.businessobject.options;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,12 +35,10 @@ public class EinvoiceIndicatorValuesFinder extends KeyValuesBase {
         }
         
         public static EinvoiceIndicator getEinvoiceIndicatorFromCode(String code) {
-            for (EinvoiceIndicator indicator : EinvoiceIndicator.values()) {
-                if (StringUtils.equalsIgnoreCase(code, indicator.code) ) {
-                    return indicator;
-                }
-            }
-            return EinvoiceIndicator.NONE;
+            return Arrays.stream(EinvoiceIndicator.values())
+                    .filter(indicator -> StringUtils.equalsIgnoreCase(code, indicator.code))
+                    .findFirst()
+                    .orElse(EinvoiceIndicator.NONE);
         }
         
     }

@@ -1,6 +1,6 @@
 package edu.cornell.kfs.vnd.businessobject.options;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -43,6 +43,20 @@ class EinvoiceIndicatorValuesFinderTest {
         EinvoiceIndicatorValuesFinder.EinvoiceIndicator results = EinvoiceIndicatorValuesFinder.EinvoiceIndicator.getEinvoiceIndicatorFromCode("S");
         assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.SFTP.description, results.description);
         assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.SFTP.code, results.code);
+    }
+    
+    @Test
+    void testGetEinvoiceIndicatorFromCodeWeb() {
+        EinvoiceIndicatorValuesFinder.EinvoiceIndicator results = EinvoiceIndicatorValuesFinder.EinvoiceIndicator.getEinvoiceIndicatorFromCode("W");
+        assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.WEB.description, results.description);
+        assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.WEB.code, results.code);
+    }
+    
+    @Test
+    void testGetEinvoiceIndicatorFromCodeNone() {
+        EinvoiceIndicatorValuesFinder.EinvoiceIndicator results = EinvoiceIndicatorValuesFinder.EinvoiceIndicator.getEinvoiceIndicatorFromCode("N");
+        assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.NONE.description, results.description);
+        assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.NONE.code, results.code);
     }
     
     @Test
