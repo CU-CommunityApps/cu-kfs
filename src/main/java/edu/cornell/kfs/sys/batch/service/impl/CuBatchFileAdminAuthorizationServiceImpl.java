@@ -2,6 +2,9 @@ package edu.cornell.kfs.sys.batch.service.impl;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
@@ -16,6 +19,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * permission to download files without necessarily granting permission to delete them.
  */
 public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuthorizationService {
+    private static final Logger LOG = LogManager.getLogger();
+    private String preventDownloadDirectories;
 
     /**
      * Overridden to also check the "Download Batch File" template, as an alternative means
@@ -28,6 +33,9 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
     @SuppressWarnings("deprecation")
     @Override
     public boolean canDownload(BatchFile batchFile, Person user) {
+        if (isDownloadOfFilePrevented(batchFile)) {
+            return false;
+        }
         boolean isAuthorized = false;
         if (batchFile.getFileName().indexOf(PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX) >= 0) {
             isAuthorized = getPermissionService().hasPermissionByTemplate(user.getPrincipalId(),
@@ -39,6 +47,29 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
                     generatePermissionDetails(batchFile), new HashMap<>());
         }
         return isAuthorized || super.canDownload(batchFile, user);
+    }
+    
+    public boolean isDownloadOfFilePrevented(BatchFile batchFile) {
+        LOG.debug("isDownloadOfFilePrevented, checking batch file " + batchFile.getFileName());
+        if (StringUtils.isNotBlank(preventDownloadDirectories)) {
+            for(String individualDirectory : StringUtils.split(preventDownloadDirectories, KFSConstants.COMMA)) {
+                LOG.debug("isDownloadOfFilePrevented, individualDirectory: " + individualDirectory);
+                if (StringUtils.containsIgnoreCase(batchFile.getFileName(), individualDirectory)) {
+                    LOG.debug("isDownloadOfFilePrevented. batchFile " + batchFile.getFileName() + " can NOT be downloaded");
+                    return true;
+                }
+            }
+        }
+        LOG.debug("isDownloadOfFilePrevented. batchFile " + batchFile.getFileName() + " CAN be downloaded");
+        return false;
+    }
+
+    public String getPreventDownloadDirectories() {
+        return preventDownloadDirectories;
+    }
+
+    public void setPreventDownloadDirectories(String preventDownloadDirectories) {
+        this.preventDownloadDirectories = preventDownloadDirectories;
     }
 
 }
