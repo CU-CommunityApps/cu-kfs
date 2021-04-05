@@ -52,10 +52,10 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
     public boolean isDownloadOfFilePrevented(BatchFile batchFile) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("isDownloadOfFilePrevented, checking batch file " + batchFile.getFileName());
+            LOG.debug("isDownloadOfFilePrevented, directories that are configured to prevent download: " + preventDownloadDirectories);
         }
         if (StringUtils.isNotBlank(preventDownloadDirectories)) {
             for(String individualDirectory : StringUtils.split(preventDownloadDirectories, KFSConstants.COMMA)) {
-                LOG.debug("isDownloadOfFilePrevented, individualDirectory: " + individualDirectory);
                 if (StringUtils.containsIgnoreCase(batchFile.getPath(), individualDirectory)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("isDownloadOfFilePrevented. batchFile can NOT be downloaded with a name of " + batchFile.getFileName() + 
