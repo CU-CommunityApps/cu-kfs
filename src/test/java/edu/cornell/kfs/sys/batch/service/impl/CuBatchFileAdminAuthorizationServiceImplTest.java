@@ -1,8 +1,6 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -17,6 +15,9 @@ class CuBatchFileAdminAuthorizationServiceImplTest {
     private CuBatchFileAdminAuthorizationServiceImpl cuBatchFileAdminAuthorizationServiceImpl;
     private static final String TEST_BATCH_BASE_DIRECTORY = "src/test/resources/edu/cornell/kfs/sys/batch/service/impl/CuBatchFileAdminAuthorizationServiceImplTest/";
     private static final String CONDITIONALLY_PREVENT_DIRECTORY_NAME = "conditionallyPreventDownload";
+    private static final String ALLOWED_DIRECTORY_NAME = "allowDownload";
+    private static final String ALLOW_FILE_NAME = "allow_test.txt";
+    private static final String PREVENT_FILE_NAME = "prevent_test.txt";
     
     private BatchFile allowedFile;
     private BatchFile conditionallyPreventedFile;
@@ -25,13 +26,14 @@ class CuBatchFileAdminAuthorizationServiceImplTest {
     void setUp() throws Exception {
         Logger.getLogger(CuBatchFileAdminAuthorizationServiceImpl.class.getName()).setLevel(Level.DEBUG);
         cuBatchFileAdminAuthorizationServiceImpl = new CuBatchFileAdminAuthorizationServiceImpl();
-        allowedFile = buildMockBatchFile(new File(TEST_BATCH_BASE_DIRECTORY  + "allowDownload/test.txt"));
-        conditionallyPreventedFile =  buildMockBatchFile(new File(TEST_BATCH_BASE_DIRECTORY + CONDITIONALLY_PREVENT_DIRECTORY_NAME + "/test.txt"));
+        allowedFile = buildMockBatchFile(TEST_BATCH_BASE_DIRECTORY + ALLOWED_DIRECTORY_NAME, ALLOW_FILE_NAME);
+        conditionallyPreventedFile = buildMockBatchFile(TEST_BATCH_BASE_DIRECTORY + CONDITIONALLY_PREVENT_DIRECTORY_NAME, PREVENT_FILE_NAME);
     }
     
-    private BatchFile buildMockBatchFile(File file) {
+    private BatchFile buildMockBatchFile(String patch, String fileName) {
         BatchFile batchFile = Mockito.mock(BatchFile.class);
-        Mockito.when(batchFile.getFileName()).thenReturn(file.getAbsolutePath());
+        Mockito.when(batchFile.getFileName()).thenReturn(fileName);
+        Mockito.when(batchFile.getPath()).thenReturn(patch);
         return batchFile;
     }
 
@@ -62,13 +64,13 @@ class CuBatchFileAdminAuthorizationServiceImplTest {
     
     @Test
     void testIsDownloadOfFilePreventedTwoDirectories() {
-        cuBatchFileAdminAuthorizationServiceImpl.setPreventDownloadDirectories(CONDITIONALLY_PREVENT_DIRECTORY_NAME + ",fooDirectory");
+        cuBatchFileAdminAuthorizationServiceImpl.setPreventDownloadDirectories("fooDirectory/," + CONDITIONALLY_PREVENT_DIRECTORY_NAME);
         verifyDownloadPreventedResults(false, true);
     }
     
     @Test
     void testIsDownloadOfFilePreventedTwoDirectoriesNotRelatedToTestFiles() {
-        cuBatchFileAdminAuthorizationServiceImpl.setPreventDownloadDirectories("fooDirectory,barDirectory");
+        cuBatchFileAdminAuthorizationServiceImpl.setPreventDownloadDirectories("fooDirectory/,barDirectory/");
         verifyDownloadPreventedResults(false, false);
     }
     

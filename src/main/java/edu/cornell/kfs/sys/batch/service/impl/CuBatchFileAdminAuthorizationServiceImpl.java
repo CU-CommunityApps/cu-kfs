@@ -50,17 +50,25 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
     }
     
     public boolean isDownloadOfFilePrevented(BatchFile batchFile) {
-        LOG.debug("isDownloadOfFilePrevented, checking batch file " + batchFile.getFileName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isDownloadOfFilePrevented, checking batch file " + batchFile.getFileName());
+        }
         if (StringUtils.isNotBlank(preventDownloadDirectories)) {
             for(String individualDirectory : StringUtils.split(preventDownloadDirectories, KFSConstants.COMMA)) {
                 LOG.debug("isDownloadOfFilePrevented, individualDirectory: " + individualDirectory);
-                if (StringUtils.containsIgnoreCase(batchFile.getFileName(), individualDirectory)) {
-                    LOG.debug("isDownloadOfFilePrevented. batchFile " + batchFile.getFileName() + " can NOT be downloaded");
+                if (StringUtils.containsIgnoreCase(batchFile.getPath(), individualDirectory)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("isDownloadOfFilePrevented. batchFile can NOT be downloaded with a name of " + batchFile.getFileName() + 
+                                " and a path of " + batchFile.getPath());
+                    }
                     return true;
                 }
             }
         }
-        LOG.debug("isDownloadOfFilePrevented. batchFile " + batchFile.getFileName() + " CAN be downloaded");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isDownloadOfFilePrevented. batchFile can be downloaded with a name of " + batchFile.getFileName() + 
+                    " and a path of " + batchFile.getPath());
+        }
         return false;
     }
 
