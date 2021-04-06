@@ -92,16 +92,7 @@
           p:dateTimeService-ref="dateTimeService" />
           
     <bean id="contractsGrantsBillingAwardVerificationService"
-          parent="contractsGrantsBillingAwardVerificationService-parentBean"/>
-    <bean id="contractsGrantsBillingAwardVerificationService-parentBean" abstract="true"
-          class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsBillingAwardVerificationServiceImpl"
-          p:accountingPeriodService-ref="accountingPeriodService" p:businessObjectService-ref="businessObjectService"
-          p:customerService-ref="customerService"
-          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
-          p:financialSystemDocumentService-ref="financialSystemDocumentService"
-          p:kualiModuleService-ref="kualiModuleService" p:parameterService-ref="parameterService"
-          p:verifyBillingFrequencyService-ref="verifyBillingFrequencyService"
-          p:universityDateService-ref="universityDateService" p:optionsService-ref="optionsService"
-          p:financialSystemUserService-ref="financialSystemUserService"/>
+          parent="contractsGrantsBillingAwardVerificationService-parentBean" 
+          class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsBillingAwardVerificationServiceImpl"/>
 
 </beans>
