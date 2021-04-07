@@ -1,0 +1,1 @@
+Simple text file to test that downloads are allowed
