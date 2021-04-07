@@ -2,7 +2,7 @@ package edu.cornell.kfs.sys.batch.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -30,10 +30,10 @@ class CuBatchFileAdminAuthorizationServiceImplTest {
         conditionallyPreventedFile = buildMockBatchFile(TEST_BATCH_BASE_DIRECTORY + CONDITIONALLY_PREVENT_DIRECTORY_NAME, PREVENT_FILE_NAME);
     }
     
-    private BatchFile buildMockBatchFile(String patch, String fileName) {
+    private BatchFile buildMockBatchFile(String path, String fileName) {
         BatchFile batchFile = Mockito.mock(BatchFile.class);
         Mockito.when(batchFile.getFileName()).thenReturn(fileName);
-        Mockito.when(batchFile.getPath()).thenReturn(patch);
+        Mockito.when(batchFile.getPath()).thenReturn(path);
         return batchFile;
     }
 
