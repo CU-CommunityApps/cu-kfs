@@ -11,7 +11,6 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -28,8 +27,6 @@ import java.util.List;
 
 public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvoiceDao {
     private static final Logger LOG = LogManager.getLogger(CuEinvoiceDaoOjb.class);
-    
-    protected BusinessObjectService businessObjectService;
     
     @Override
     public List<VendorDetail> getVendors(List<String> vendorNumbers) {
