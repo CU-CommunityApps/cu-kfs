@@ -176,7 +176,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     protected List<ContractsAndGrantsBillingAwardAccount> getValidAwardAccounts(
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
-        LOG.info("getValidAwardAccounts: CU Customization invoked with creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(award.getCgInvoiceDocumentCreationProcessTypeCode()));
+        LOG.info("getValidAwardAccounts: CU Customization invoked with creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(creationProcessType.getCode()));
         if (!ArConstants.BillingFrequencyValues.isMilestone(award)
                 && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts = new ArrayList<>();
