@@ -52,7 +52,6 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import edu.cornell.kfs.module.ar.CuArConstants;
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
-import edu.cornell.kfs.module.ar.batch.service.CuVerifyBillingFrequencyService;
 import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
 import edu.cornell.kfs.module.ar.service.CuContractsGrantsInvoiceCreateDocumentService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
@@ -62,7 +61,6 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     private static final Logger LOG = LogManager.getLogger();
     
     protected CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService;
-    protected CuVerifyBillingFrequencyService cuVerifyBillingFrequencyService;
     
     /**
      * Fixes NullPointerException that can occur when getting the award total amount.
@@ -189,7 +187,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
                     boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
                     //CUMod KFSPTS-13256
-                    if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award, awardAccount, checkGracePeriod)
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod)
                             && isNotExpenditureAccount(awardAccount)) {
                         LOG.info("getValidAwardAccounts: Evaluation of account sub-fund not being an expenditure was performed.");
                         validAwardAccounts.add(awardAccount);
@@ -384,8 +382,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             Timestamp ts = new Timestamp(new java.util.Date().getTime());
             java.sql.Date today = new java.sql.Date(ts.getTime());
             AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
-            //CUMod: KFSPTS-14970
-            BillingPeriod billingPeriod = getCuVerifyBillingFrequencyService().getStartDateAndEndDateOfPreviousBillingPeriod(award, calculatedLastBilledDate, currPeriod, award.getCgInvoiceDocumentCreationProcessTypeCode());
+            BillingPeriod billingPeriod = verifyBillingFrequencyService
+                    .getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod);
             invoiceGeneralDetail.setBillingPeriod(getDateTimeService().toDateString(billingPeriod.getStartDate()) + " to " +
                     getDateTimeService().toDateString(billingPeriod.getEndDate()));
             invoiceGeneralDetail.setLastBilledDate(billingPeriod.getEndDate());
@@ -640,7 +638,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                                 && getContractsGrantsBillingAwardVerificationService()
                                     .isValueOfBillingFrequencyValid(award)) {
                             boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
-                            if (getCuVerifyBillingFrequencyService().validateBillingFrequency(award, checkGracePeriod)) {
+                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)) {
                                 validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
@@ -678,14 +676,6 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     public void setCuContractsGrantsInvoiceDocumentService(
             CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService) {
         this.cuContractsGrantsInvoiceDocumentService = cuContractsGrantsInvoiceDocumentService;
-    }
-
-    public CuVerifyBillingFrequencyService getCuVerifyBillingFrequencyService() {
-        return cuVerifyBillingFrequencyService;
-    }
-
-    public void setCuVerifyBillingFrequencyService(CuVerifyBillingFrequencyService cuVerifyBillingFrequencyService) {
-        this.cuVerifyBillingFrequencyService = cuVerifyBillingFrequencyService;
     }
 
 }
