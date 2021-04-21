@@ -1253,18 +1253,4 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         this.invoiceLink = invoiceLink;
     }
 
-    /*
-     * CUMod: KFSPTS-14970
-     */
-    public String getCgInvoiceDocumentCreationProcessTypeCode() {
-        return cgInvoiceDocumentCreationProcessTypeCode;
-    }
-
-    /*
-     * CUMod: KFSPTS-14970
-     */
-    public void setCgInvoiceDocumentCreationProcessTypeCode(String cgInvoiceDocumentCreationProcessTypeCode) {
-        this.cgInvoiceDocumentCreationProcessTypeCode = cgInvoiceDocumentCreationProcessTypeCode;
-    }
-
 }
