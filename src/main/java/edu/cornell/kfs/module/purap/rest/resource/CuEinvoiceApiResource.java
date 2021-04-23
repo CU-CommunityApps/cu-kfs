@@ -110,17 +110,12 @@ public class CuEinvoiceApiResource {
         }
     }
     
-    private String buildVendorNumberList(List<String> vendorNumbers) {
-        StringBuilder sb = new StringBuilder();
-        //String singleQuote = "'";
-        for (String vendorNumber : vendorNumbers) {
-            if (sb.length() > 0) {
-                sb.append(KFSConstants.COMMA);
-            }
-            sb.append(vendorNumber);
+    protected String buildVendorNumberList(List<String> vendorNumbers) {
+        String vendorNumbersList = StringUtils.EMPTY;
+        if (CollectionUtils.isNotEmpty(vendorNumbers)) {
+            vendorNumbersList = vendorNumbers.stream().collect(Collectors.joining(KFSConstants.COMMA));
         }
-        String vendorList =  sb.toString();
-        return vendorList;
+        return vendorNumbersList;
     }
 
     @GET

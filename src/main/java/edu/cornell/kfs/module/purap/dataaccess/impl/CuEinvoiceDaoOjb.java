@@ -81,7 +81,9 @@ public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvo
         sb.append("AND (UPPER(DETAIL.VNDR_NM) LIKE ? ");
         sb.append("OR UPPER(DETAIL.VNDR_DUNS_NBR) LIKE ?)");
         String sql = sb.toString();
-        LOG.debug("buildSQl, generated SQL: " + sql);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildSQl, generated SQL: " + sql);
+        }
         return sql;
     }
 
