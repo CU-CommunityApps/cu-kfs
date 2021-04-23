@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import edu.cornell.kfs.vnd.businessobject.options.EinvoiceIndicatorValuesFinder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -246,6 +247,14 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         } catch (Exception e) {
             assertEquals(IllegalArgumentException.class, e.getClass());
         }
+    }
+
+    @Test
+    void testbuildVendorDetailExtensionDefaultEinvoiceIndicator() {
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor,  buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.NONE.code, actualDetail.getEinvoiceVendorIndicator());
     }
     
     @Test

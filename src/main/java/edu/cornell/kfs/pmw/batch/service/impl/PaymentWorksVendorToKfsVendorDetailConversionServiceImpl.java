@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.cornell.kfs.vnd.businessobject.options.EinvoiceIndicatorValuesFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -361,6 +362,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod);
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(dateTimeService.getCurrentTimestamp());
+        vendorDetailExtension.setEinvoiceVendorIndicator(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.NONE.code);
         return vendorDetailExtension;
     }
     
