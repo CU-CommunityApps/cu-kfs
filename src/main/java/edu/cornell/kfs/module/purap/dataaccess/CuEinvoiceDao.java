@@ -7,5 +7,5 @@ import java.util.List;
 public interface CuEinvoiceDao {
     List<VendorDetail> getVendors(List<String> vendorNumbers);
     
-    List<String> getFilteredVendorNumbers(String searchCritiera);
+    List<String> getFilteredVendorNumbers(String searchCriteria);
 }

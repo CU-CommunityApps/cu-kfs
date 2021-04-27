@@ -96,10 +96,10 @@ public class CuEinvoiceApiResource {
     
     @GET
     @Path("vendornumbers/search/{searchcriteria}")
-    public Response getVendorNumbersSearchCriteria(@PathParam("searchcriteria") String searchcriteria, @Context HttpHeaders headers) {
-        LOG.debug("getVendorNumbersSearchCriteria, searchcriteria: " + searchcriteria);
+    public Response getVendorNumbersSearchCriteria(@PathParam("searchcriteria") String searchCriteria, @Context HttpHeaders headers) {
+        LOG.debug("getVendorNumbersSearchCriteria, searchCriteria: " + searchCriteria);
         try {
-            List<String> vendorNumbers = cuEinvoiceDao.getFilteredVendorNumbers(searchcriteria);
+            List<String> vendorNumbers = cuEinvoiceDao.getFilteredVendorNumbers(searchCriteria);
             if (ObjectUtils.isNull(vendorNumbers)) {
                 return respondNotFound();
             }

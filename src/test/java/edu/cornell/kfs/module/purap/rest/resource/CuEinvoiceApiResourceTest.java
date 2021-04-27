@@ -15,7 +15,7 @@ class CuEinvoiceApiResourceTest {
     CuEinvoiceApiResource eInvoiceResource;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         eInvoiceResource = new CuEinvoiceApiResource();
     }
 

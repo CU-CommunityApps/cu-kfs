@@ -37,9 +37,9 @@ public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvo
     }
     
     @Override
-    public List<String> getFilteredVendorNumbers(String searchCritiera) {
+    public List<String> getFilteredVendorNumbers(String searchCriteria) {
         List<String> vendorNumbers = new ArrayList<>();
-        ResultSet results = queryVendors(searchCritiera);
+        ResultSet results = queryVendors(searchCriteria);
         
         try {
             while(results.next()) {
@@ -56,12 +56,12 @@ public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvo
         return vendorNumbers;
     }
 
-    protected ResultSet queryVendors(String searchCritiera) {
+    protected ResultSet queryVendors(String searchCriteria) {
         ResultSet queryResults;
         try {
             Connection connection = getPersistenceBroker(true).serviceConnectionManager().getConnection();
-            PreparedStatement query = connection.prepareCall(buildSQl());
-            String formattedSearchCriteria = KFSConstants.PERCENTAGE_SIGN +  StringUtils.upperCase(searchCritiera).trim() + KFSConstants.PERCENTAGE_SIGN;
+            PreparedStatement query = connection.prepareCall(buildParameterizedVendorNumberQueryByVendorNameAndDunsNumber());
+            String formattedSearchCriteria = KFSConstants.PERCENTAGE_SIGN +  StringUtils.upperCase(searchCriteria).trim() + KFSConstants.PERCENTAGE_SIGN;
             query.setString(1, formattedSearchCriteria);
             query.setString(2, formattedSearchCriteria);
             queryResults = query.executeQuery();
@@ -72,7 +72,7 @@ public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvo
         return queryResults;
     }
     
-    protected String buildSQl() {
+    protected String buildParameterizedVendorNumberQueryByVendorNameAndDunsNumber() {
         StringBuilder sb = new StringBuilder("SELECT DETAIL.VNDR_HDR_GNRTD_ID, DETAIL.VNDR_DTL_ASND_ID ");
         sb.append("FROM KFS.PUR_VNDR_DTL_T DETAIL, KFS.PUR_VNDR_DTL_TX EXTENSION ");
         sb.append("WHERE DETAIL.VNDR_HDR_GNRTD_ID = EXTENSION.VNDR_HDR_GNRTD_ID ");
@@ -82,7 +82,7 @@ public class CuEinvoiceDaoOjb extends PlatformAwareDaoBaseOjb implements CuEinvo
         sb.append("OR UPPER(DETAIL.VNDR_DUNS_NBR) LIKE ?)");
         String sql = sb.toString();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("buildSQl, generated SQL: " + sql);
+            LOG.debug("buildParameterizedVendorNumberQueryByVendorNameAndDunsNumber, generated SQL: " + sql);
         }
         return sql;
     }
