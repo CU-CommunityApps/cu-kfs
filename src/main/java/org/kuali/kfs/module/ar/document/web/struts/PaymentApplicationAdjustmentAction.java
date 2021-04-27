@@ -462,8 +462,6 @@ public class PaymentApplicationAdjustmentAction extends FinancialSystemTransacti
 
         updateAdHocRouting(request, appaForm, appaRequest.getAdHocRoutingRequest());
         updateDocumentWithRequestData(appaForm, appaRequest);
-        //getPaymentApplicationAdjustmentDocumentService().removeZeroAmountInvoicePaidAppliedsFromDocument(appaForm.getPaymentApplicationAdjustmentDocument());
-        //getPaymentApplicationAdjustmentDocumentService().removeZeroAmountNonAppliedHoldingsFromDocument(appaForm.getPaymentApplicationAdjustmentDocument());
 
         try {
             super.route(mapping, form, request, response);
@@ -471,10 +469,10 @@ public class PaymentApplicationAdjustmentAction extends FinancialSystemTransacti
             putErrorMessagesInResponse(response, appaForm, "route");
         }
         
-        LOG.info("CU Customization KFSPTS-21426, remove zero amounts after super.route");
-        
-        getPaymentApplicationAdjustmentDocumentService().removeZeroAmountInvoicePaidAppliedsFromDocument(appaForm.getPaymentApplicationAdjustmentDocument());
-        getPaymentApplicationAdjustmentDocumentService().removeZeroAmountNonAppliedHoldingsFromDocument(appaForm.getPaymentApplicationAdjustmentDocument());
+        getPaymentApplicationAdjustmentDocumentService()
+                .removeZeroAmountInvoicePaidAppliedsFromDocument(appaForm.getPaymentApplicationAdjustmentDocument());
+        getPaymentApplicationAdjustmentDocumentService()
+                .removeZeroAmountNonAppliedHoldingsFromDocument(appaForm.getPaymentApplicationAdjustmentDocument());
         
         return null;
     }
