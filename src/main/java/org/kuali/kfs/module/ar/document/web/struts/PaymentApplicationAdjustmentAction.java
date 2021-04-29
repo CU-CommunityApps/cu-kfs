@@ -105,7 +105,7 @@ import java.util.stream.IntStream;
 import static java.util.Map.entry;
 
 /**
- * CU Customization KFSPTS-21426 - FINP 7302 - APPA GLPEs are not created correctly
+ * KFSPTS-21426 - back port FINP 7302? - APPA GLPEs are not created correctly
  * 
  * A Struts {@link org.apache.struts.actions.DispatchAction} instance associated
  * with the "Payment Application Adjustment" transactional document.
@@ -424,7 +424,7 @@ public class PaymentApplicationAdjustmentAction extends FinancialSystemTransacti
     }
     
     /*
-     * CU Customization KFSPTS-21426
+     * KFSPTS-21426 - back port FINP 7302?
      */
     @Override
     public ActionForward route(
