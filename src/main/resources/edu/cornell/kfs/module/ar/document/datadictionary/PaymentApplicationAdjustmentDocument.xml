@@ -27,12 +27,12 @@
     <bean abstract="true"
           id="PaymentApplicationAdjustmentDocument-workflowAttributes-parentBean"
           parent="WorkflowAttributes">
-        <!-- KFSPTS-21431, backport FINP-7323, removing 
-          <ref bean="SearchingType-PaymentApplicationAdjustmentDocument-chartOfAccountsCode-sourceOnly"/> 
-          <ref bean="SearchingType-PaymentApplicationAdjustmentDocument-accountNumber-sourceOnly"/>
-        -->
         <property name="searchingTypeDefinitions">
             <list>
+            <!-- KFSPTS-21431, backport FINP-7323, removing 
+		            <ref bean="SearchingType-PaymentApplicationAdjustmentDocument-chartOfAccountsCode-sourceOnly"/> 
+		            <ref bean="SearchingType-PaymentApplicationAdjustmentDocument-accountNumber-sourceOnly"/>
+		        -->
                 <ref bean="SearchingType-AccountsReceivableDocument-createDate-resultsOnly"/>
                 <ref bean="SearchingType-AccountsReceivableDocument-initiatorId-resultsOnly"/>
                 <ref bean="SearchingType-AccountsReceivableDocument-documentStatus-resultsOnly"/>
