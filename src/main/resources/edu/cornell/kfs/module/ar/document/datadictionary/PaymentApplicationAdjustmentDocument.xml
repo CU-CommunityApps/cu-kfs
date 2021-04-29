@@ -25,7 +25,7 @@
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
     <!--
-      KFSPTS-21431, back-port FINP-7323, removing 
+      KFSPTS-21431, backport FINP-7323, removing 
         <ref bean="SearchingType-PaymentApplicationAdjustmentDocument-chartOfAccountsCode-sourceOnly"/> 
         <ref bean="SearchingType-PaymentApplicationAdjustmentDocument-accountNumber-sourceOnly"/>
      -->
