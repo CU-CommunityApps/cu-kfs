@@ -5,10 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.coreservice.api.parameter.Parameter;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.vnd.VendorParameterConstants;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
@@ -158,5 +159,11 @@ public class MockParameterServiceImpl implements ParameterService {
     @Override
     public Collection<String> getSubParameterValuesAsString(String namespaceCode, String componentCode, String parameterName, String subParameterName) {
         return null;
+    }
+
+    @Override
+    public void watchParameter(String namespaceCode, String componentCode, String parameterName,
+            Consumer<Parameter> consumer) {
+        // Do nothing.
     }
 }

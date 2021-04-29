@@ -10,7 +10,7 @@ import org.kuali.kfs.pdp.batch.service.impl.ProcessIndividualPdpCancelPaidServic
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.batch.service.PaymentSourceToExtractService;
 import org.kuali.kfs.sys.document.PaymentSource;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;

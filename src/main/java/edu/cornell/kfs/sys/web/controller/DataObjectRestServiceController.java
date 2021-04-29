@@ -28,28 +28,28 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.TypeUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.permission.PermissionService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.datadictionary.InquirySectionDefinition;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.service.XmlObjectSerializerService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.datadictionary.FinancialSystemBusinessObjectEntry;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.core.api.util.type.TypeUtils;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.permission.PermissionService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.krad.bo.BusinessObject;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -182,7 +182,7 @@ public class DataObjectRestServiceController {
 
     protected boolean isAuthorized(FinancialSystemBusinessObjectEntry boe) throws Exception {
         if (boe != null) {
-            return getPermissionService().isAuthorizedByTemplate( GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(boe.getBusinessObjectClass()), Collections.<String, String> emptyMap());
+            return getPermissionService().isAuthorizedByTemplate( GlobalVariables.getUserSession().getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS, KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS, KRADUtils.getNamespaceAndComponentSimpleName(boe.getBusinessObjectClass()), Collections.<String, String> emptyMap());
         } else {
             if (boe == null) {
                 LOG.warn("boe is null");

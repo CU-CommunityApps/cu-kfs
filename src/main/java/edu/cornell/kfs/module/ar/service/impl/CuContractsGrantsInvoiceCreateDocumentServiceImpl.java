@@ -46,8 +46,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.ar.CuArConstants;
 import edu.cornell.kfs.module.ar.CuArParameterConstants;

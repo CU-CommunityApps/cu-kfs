@@ -3,7 +3,7 @@ package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;

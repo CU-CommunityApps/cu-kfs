@@ -32,8 +32,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.LocationService;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
-import org.kuali.rice.core.api.encryption.EncryptionService;
+import org.kuali.kfs.core.api.CoreApiServiceLocator;
+import org.kuali.kfs.core.api.encryption.EncryptionService;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;

@@ -26,7 +26,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.service.impl.FinancialSystemDocumentServiceImpl;
-import org.kuali.rice.core.api.search.SearchOperator;
+import org.kuali.kfs.core.api.search.SearchOperator;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;

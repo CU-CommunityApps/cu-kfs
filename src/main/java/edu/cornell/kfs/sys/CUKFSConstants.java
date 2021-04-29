@@ -177,6 +177,8 @@ public class CUKFSConstants {
 
     public static final String LOCATION_SERVICE_BEAN_NAME = "locationService-fin";
 
+    public static final String LEGACY_PERMIT_NAMESPACE = "PERMIT";
+
     public static final class FILE_EXTENSIONS {
         public static final String CSV_FILE_EXTENSION = ".csv";
     }

@@ -5,7 +5,7 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import edu.cornell.kfs.module.cg.dataaccess.AwardAccountDao;
 

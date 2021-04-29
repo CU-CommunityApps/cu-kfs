@@ -30,9 +30,9 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
+import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.InfrastructureException;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -472,7 +472,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * Overridden to also require that the associated PO's amount must be within auto-approval limits.
      * 
      * @see org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl#isEligibleForAutoApproval(
-     * org.kuali.kfs.module.purap.document.PaymentRequestDocument, org.kuali.rice.core.api.util.type.KualiDecimal)
+     * org.kuali.kfs.module.purap.document.PaymentRequestDocument, org.kuali.kfs.core.api.util.type.KualiDecimal)
      */
     @Override
     protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {

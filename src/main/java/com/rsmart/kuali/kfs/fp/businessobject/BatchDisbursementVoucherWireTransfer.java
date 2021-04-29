@@ -18,7 +18,7 @@ package com.rsmart.kuali.kfs.fp.businessobject;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 //import org.kuali.kfs.fp.businessobject.DisbursementVoucherWireTransfer;
-import org.kuali.rice.core.web.format.BooleanFormatter;
+import org.kuali.kfs.core.web.format.BooleanFormatter;
 
 /**
  * Provides String setter methods for population from XML (batch)

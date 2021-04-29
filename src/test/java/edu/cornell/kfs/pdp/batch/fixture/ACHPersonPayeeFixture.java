@@ -1,7 +1,7 @@
 package edu.cornell.kfs.pdp.batch.fixture;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
 
 public enum ACHPersonPayeeFixture {

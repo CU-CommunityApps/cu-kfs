@@ -15,9 +15,9 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 

@@ -16,12 +16,12 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.role.RoleMembership;
-import org.kuali.rice.kim.api.role.RoleService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.role.RoleMembership;
+import org.kuali.kfs.kim.api.role.RoleService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -108,8 +108,9 @@ public class CuAdvanceDepositAccountingLineAuthorizer extends FinancialProcessin
         List<String> roleIds = new ArrayList<String>();
         roleIds.add(roleId);
         
+        // TODO: Determine if we switched to the correct RoleService method call for the KEW-to-KFS upgrade.
         List<Map<String, String>> qualifiers = new ArrayList<Map<String, String>>();
-        qualifiers.addAll(getRoleService().getRoleQualifersForPrincipalByRoleIds(currentUser.getPrincipalId(), roleIds, new HashMap<String, String>()));
+        qualifiers.addAll(getRoleService().getNestedRoleQualifiersForPrincipalByRoleIds(currentUser.getPrincipalId(), roleIds, new HashMap<String, String>()));
         
         if (qualifiers == null || qualifiers.isEmpty()) {
         	 qualifiers.addAll(getRoleService().getNestedRoleQualifiersForPrincipalByRoleIds(currentUser.getPrincipalId(), roleIds, new HashMap<String, String>()));

@@ -19,17 +19,17 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.action.ActionTaken;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.actiontaken.ActionTaken;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 
 public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocument {
 	private static final Logger LOG = LogManager.getLogger(CuPurchaseOrderAmendmentDocument.class);
@@ -103,7 +103,7 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
         Set<Person> persons = new HashSet<Person>();
 
         for (ActionTaken actionTaken : actionsTaken) {
-            if (KewApiConstants.ACTION_TAKEN_APPROVED_CD.equals(actionTaken.getActionTaken().getCode())) {
+            if (KewApiConstants.ACTION_TAKEN_APPROVED_CD.equals(actionTaken.getActionTaken())) {
                 String principalId = actionTaken.getPrincipalId();
                 if (!principalIds.contains(principalId)) {
                     principalIds.add(principalId);

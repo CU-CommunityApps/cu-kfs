@@ -8,10 +8,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kns.datadictionary.DocumentEntry;
-import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.core.api.util.RiceKeyConstants;
-import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.util.WebUtils;
@@ -21,15 +19,17 @@ import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.datadictionary.legacy.DataDictionary;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.AddNoteEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.NoteType;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
  * Custom subclass of KualiMaintenanceDocumentAction that adds some BO-level note
@@ -67,7 +67,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
                     String.format("%s.%s",
                             KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
                             KRADConstants.NOTE_ATTACHMENT_FILE_PROPERTY_NAME),
-                    RiceKeyConstants.ERROR_UPLOADFILE_NULL);
+                    KFSKeyConstants.ERROR_UPLOADFILE_NULL);
         }
 
         if (newNote.getAttachment() != null) {
@@ -89,7 +89,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
                         String.format("%s.%s",
                                 KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
                                 KRADConstants.NOTE_ATTACHMENT_FILE_PROPERTY_NAME),
-                        RiceKeyConstants.ERROR_UPLOADFILE_EMPTY,
+                        CUKFSKeyConstants.ERROR_UPLOADFILE_EMPTY,
                         attachmentFile.getFileName());
             } else {
                 String attachmentType = null;
@@ -111,7 +111,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
                         String.format("%s.%s",
                                 KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
                                 KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME),
-                        RiceKeyConstants.ERROR_REQUIRED,
+                        KFSKeyConstants.ERROR_REQUIRED,
                         "Note Topic (Note Topic)");
             }
         }
@@ -177,7 +177,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
         }
 
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     /**
@@ -230,7 +230,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
             }
         }
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     /**

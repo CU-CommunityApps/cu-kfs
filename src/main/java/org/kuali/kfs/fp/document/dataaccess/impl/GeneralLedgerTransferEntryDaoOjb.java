@@ -28,7 +28,7 @@ import org.kuali.kfs.fp.businessobject.GeneralLedgerTransferSourceAccountingLine
 import org.kuali.kfs.fp.document.dataaccess.GeneralLedgerTransferEntryDao;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import java.util.ArrayList;
 import java.util.List;

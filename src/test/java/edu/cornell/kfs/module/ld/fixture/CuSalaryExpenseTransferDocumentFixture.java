@@ -4,7 +4,7 @@ import org.kuali.kfs.module.ld.businessobject.ExpenseTransferSourceAccountingLin
 import org.kuali.kfs.sys.DocumentTestUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.sys.fixture.CuAccountingLineFixture;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.module.ld.document.CuSalaryExpenseTransferDocument;

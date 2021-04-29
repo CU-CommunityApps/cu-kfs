@@ -26,8 +26,8 @@ import org.kuali.kfs.module.cg.businessobject.lookup.AwardLookupableHelperServic
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.permission.PermissionService;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.kim.api.permission.PermissionService;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -118,7 +118,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     private boolean canViewInvoiceLink() {
         Map<String, String> permissionDetails = new HashMap<String, String>();
         permissionDetails.put(KFSPropertyConstants.DOCUMENT_TYPE_NAME, ArConstants.ArDocumentTypeCodes.CONTRACTS_GRANTS_INVOICE);
-        boolean canOpenInvoices = permissionService.hasPermissionByTemplate(GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, 
+        boolean canOpenInvoices = permissionService.hasPermissionByTemplate(GlobalVariables.getUserSession().getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS, 
                 KimConstants.PermissionTemplateNames.OPEN_DOCUMENT, permissionDetails);
         LOG.debug("canViewInvoiceLink: " + canOpenInvoices);
         return canOpenInvoices;

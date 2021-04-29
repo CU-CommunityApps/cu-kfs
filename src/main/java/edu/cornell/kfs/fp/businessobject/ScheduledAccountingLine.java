@@ -3,7 +3,7 @@ package edu.cornell.kfs.fp.businessobject;
 import java.sql.Date;
 
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public interface ScheduledAccountingLine extends AccountingLine {
 	public abstract String getPartialTransactionCount();

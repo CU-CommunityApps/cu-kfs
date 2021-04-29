@@ -1,8 +1,11 @@
 package edu.cornell.kfs.coa.businessobject;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
-public class HigherEducationFunctionExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class HigherEducationFunctionExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
+
 	protected String financialHigherEdFunctionCd;
 	protected String financialHigherEdFunctionDescription;
 

@@ -24,8 +24,8 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.FileStorageService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;

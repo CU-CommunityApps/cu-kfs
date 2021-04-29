@@ -20,7 +20,7 @@ import org.kuali.kfs.module.ar.document.validation.SuspensionCategoryBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
-import org.kuali.rice.core.api.search.SearchOperator;
+import org.kuali.kfs.core.api.search.SearchOperator;
 
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 

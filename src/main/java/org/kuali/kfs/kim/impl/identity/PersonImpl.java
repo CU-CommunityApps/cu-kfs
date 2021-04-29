@@ -18,41 +18,34 @@
  */
 package org.kuali.kfs.kim.impl.identity;
 
+import org.kuali.kfs.core.api.membership.MemberType;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.kim.impl.common.delegate.DelegateMemberBo;
-import org.kuali.kfs.kim.impl.common.delegate.DelegateTypeBo;
-import org.kuali.kfs.kim.impl.group.GroupMemberBo;
-import org.kuali.kfs.kim.impl.identity.address.EntityAddressBo;
-import org.kuali.kfs.kim.impl.identity.affiliation.EntityAffiliationBo;
-import org.kuali.kfs.kim.impl.identity.email.EntityEmailBo;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentStatusBo;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentTypeBo;
-import org.kuali.kfs.kim.impl.identity.name.EntityNameBo;
-import org.kuali.kfs.kim.impl.identity.phone.EntityPhoneBo;
-import org.kuali.kfs.kim.impl.identity.type.EntityTypeContactInfoBo;
-import org.kuali.kfs.kim.impl.role.RoleMemberBo;
+import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
+import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
+import org.kuali.kfs.kim.impl.group.GroupMember;
+import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
+import org.kuali.kfs.kim.impl.identity.affiliation.EntityAffiliation;
+import org.kuali.kfs.kim.impl.identity.email.EntityEmail;
+import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
+import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentStatus;
+import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentType;
+import org.kuali.kfs.kim.impl.identity.entity.Entity;
+import org.kuali.kfs.kim.impl.identity.external.EntityExternalIdentifier;
+import org.kuali.kfs.kim.impl.identity.name.EntityName;
+import org.kuali.kfs.kim.impl.identity.phone.EntityPhone;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.impl.identity.type.EntityTypeContactInfo;
+import org.kuali.kfs.kim.impl.role.RoleMember;
+import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.membership.MemberType;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.identity.address.EntityAddress;
-import org.kuali.rice.kim.api.identity.affiliation.EntityAffiliation;
-import org.kuali.rice.kim.api.identity.email.EntityEmailContract;
-import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
-import org.kuali.rice.kim.api.identity.entity.Entity;
-import org.kuali.rice.kim.api.identity.entity.EntityDefault;
-import org.kuali.rice.kim.api.identity.external.EntityExternalIdentifier;
-import org.kuali.rice.kim.api.identity.name.EntityName;
-import org.kuali.rice.kim.api.identity.phone.EntityPhoneContract;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.identity.type.EntityTypeContactInfoDefault;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.krad.bo.TransientBusinessObjectBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,16 +91,16 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
     protected boolean suppressPersonal = false;
     protected boolean suppressEmail = false;
     // affiliation data
-    protected List<EntityAffiliationBo> affiliations;
+    protected List<EntityAffiliation> affiliations;
     protected String campusCode = "";
     //protected Campus campus;
     // external identifier data
     protected Map<String, String> externalIdentifiers = null;
     // employment data
     protected String employeeStatusCode = "";
-    protected EntityEmploymentStatusBo employeeStatus;
+    protected EntityEmploymentStatus employeeStatus;
     protected String employeeTypeCode = "";
-    protected EntityEmploymentTypeBo employeeType;
+    protected EntityEmploymentType employeeType;
     protected String primaryDepartmentCode = "";
     protected String employeeId = "";
     protected KualiDecimal baseSalaryAmount = KualiDecimal.ZERO;
@@ -115,14 +108,14 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
     protected boolean active = true;
     private String lookupRoleNamespaceCode;
     private String lookupRoleName;
-    protected List<EntityNameBo> names = null;
-    protected List<EntityTypeContactInfoBo> entityTypeContactInfos = null;
-    protected List<EntityAddressBo> addresses = null;
-    protected List<EntityPhoneBo> phoneNumbers = null;
-    protected List<EntityEmailBo> emailAddresses = null;
-    protected List<GroupMemberBo> groupMembers = null;
-    protected List<RoleMemberBo> roleMembers = null;
-    protected List<DelegateMemberBo> delegateMembers = null;
+    protected List<EntityName> names = null;
+    protected List<EntityTypeContactInfo> entityTypeContactInfos = null;
+    protected List<EntityAddress> addresses = null;
+    protected List<EntityPhone> phoneNumbers = null;
+    protected List<EntityEmail> emailAddresses = null;
+    protected List<GroupMember> groupMembers = null;
+    protected List<RoleMember> roleMembers = null;
+    protected List<DelegateMember> delegateMembers = null;
 
     protected static BusinessObjectService businessObjectService;
     protected static IdentityService identityService;
@@ -135,7 +128,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this(principal, null, personEntityTypeCode);
     }
 
-    public PersonImpl(Principal principal, EntityDefault entity, String personEntityTypeCode) {
+    public PersonImpl(Principal principal, Entity entity, String personEntityTypeCode) {
         setPrincipal(principal, entity, personEntityTypeCode);
     }
 
@@ -143,37 +136,13 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this(getIdentityService().getPrincipal(principalId), personEntityTypeCode);
     }
 
-    public PersonImpl(EntityDefaultInfoCacheBo p) {
-        entityId = p.getEntityId();
-        principalId = p.getPrincipalId();
-        principalName = p.getPrincipalName();
-        entityTypeCode = p.getEntityTypeCode();
-        firstName = p.getFirstName();
-        middleName = p.getMiddleName();
-        lastName = p.getLastName();
-        name = p.getName();
-        campusCode = p.getCampusCode();
-        primaryDepartmentCode = p.getPrimaryDepartmentCode();
-        employeeId = p.getEmployeeId();
-        affiliations = new ArrayList<>(0);
-        externalIdentifiers = new HashMap<>(0);
-        names = new ArrayList<>(0);
-        entityTypeContactInfos = new ArrayList<>(0);
-        addresses = new ArrayList<>(0);
-        phoneNumbers = new ArrayList<>(0);
-        emailAddresses = new ArrayList<>(0);
-        groupMembers = new ArrayList<>(0);
-        roleMembers = new ArrayList<>(0);
-        delegateMembers = new ArrayList<>(0);
-    }
-
     /**
      * Sets the principal object and populates the person object from that.
      */
-    public void setPrincipal(Principal principal, EntityDefault entity, String personEntityTypeCode) {
+    public void setPrincipal(Principal principal, Entity entity, String personEntityTypeCode) {
         populatePrincipalInfo(principal);
         if (entity == null) {
-            entity = getIdentityService().getEntityDefault(principal.getEntityId());
+            entity = getIdentityService().getEntity(principal.getEntityId());
         }
         populateEntityInfo(entity, principal, personEntityTypeCode);
     }
@@ -185,10 +154,11 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         active = principal.isActive();
     }
 
-    protected void populateEntityInfo(EntityDefault entity, Principal principal, String personEntityTypeCode) {
+    protected void populateEntityInfo(Entity entity, Principal principal, String personEntityTypeCode) {
         if (entity != null) {
             populatePrivacyInfo(entity);
-            EntityTypeContactInfoDefault entityTypeContactInfoDefault = entity.getEntityType(personEntityTypeCode);
+            EntityTypeContactInfo entityTypeContactInfoDefault =
+                    entity.getEntityTypeContactInfoByTypeCode(personEntityTypeCode);
             entityTypeCode = personEntityTypeCode;
             populateNameInfo(personEntityTypeCode, entity, principal);
             populateAddressInfo(entityTypeContactInfoDefault);
@@ -201,9 +171,9 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         }
     }
 
-    protected void populateNameInfo(String entityTypeCode, EntityDefault entity, Principal principal) {
+    protected void populateNameInfo(String entityTypeCode, Entity entity, Principal principal) {
         if (entity != null) {
-            EntityName entityName = entity.getName();
+            EntityName entityName = entity.getDefaultName();
             if (entityName != null) {
                 firstName = unNullify(entityName.getFirstNameUnmasked());
                 middleName = unNullify(entityName.getMiddleNameUnmasked());
@@ -212,7 +182,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
                     name = principal.getPrincipalName().toUpperCase(Locale.US);
                 } else {
                     name = unNullify(entityName.getCompositeNameUnmasked());
-                    if ("".equals(name) || name == null) {
+                    if ("".equals(name)) {
                         name = lastName + ", " + firstName;
                     }
                 }
@@ -236,7 +206,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         populateDelegateMembers();
     }
 
-    protected void populatePrivacyInfo(EntityDefault entity) {
+    protected void populatePrivacyInfo(Entity entity) {
         if (entity != null) {
             if (entity.getPrivacyPreferences() != null) {
                 suppressName = entity.getPrivacyPreferences().isSuppressName();
@@ -248,30 +218,30 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         }
     }
 
-    protected void populateAddressInfo(EntityTypeContactInfoDefault contactInfoDefault) {
+    protected void populateAddressInfo(EntityTypeContactInfo contactInfoDefault) {
         if (contactInfoDefault != null) {
             EntityAddress defaultAddress = contactInfoDefault.getDefaultAddress();
             if (defaultAddress != null) {
                 address = defaultAddress;
             } else {
-                EntityAddress.Builder builder = EntityAddress.Builder.create();
-                builder.setCity("");
-                builder.setCountryCode("");
-                builder.setLine1("");
-                builder.setLine2("");
-                builder.setLine3("");
-                builder.setCity("");
-                builder.setPostalCode("");
-                builder.setStateProvinceCode("");
-                builder.setActive(true);
-                address = builder.build();
+                address = new EntityAddress();
+                address.setEntityId(contactInfoDefault.getEntityId());
+                address.setCity("");
+                address.setCountryCode("");
+                address.setLine1("");
+                address.setLine2("");
+                address.setLine3("");
+                address.setCity("");
+                address.setPostalCode("");
+                address.setStateProvinceCode("");
+                address.setActive(true);
             }
         }
     }
 
-    protected void populateEmailInfo(EntityTypeContactInfoDefault contactInfoDefault) {
+    protected void populateEmailInfo(EntityTypeContactInfo contactInfoDefault) {
         if (contactInfoDefault != null) {
-            EntityEmailContract entityEmail = contactInfoDefault.getDefaultEmailAddress();
+            EntityEmail entityEmail = contactInfoDefault.getDefaultEmailAddress();
             if (entityEmail != null) {
                 emailAddress = unNullify(entityEmail.getEmailAddressUnmasked());
             } else {
@@ -280,9 +250,9 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         }
     }
 
-    protected void populatePhoneInfo(EntityTypeContactInfoDefault contactInfoDefault) {
+    protected void populatePhoneInfo(EntityTypeContactInfo contactInfoDefault) {
         if (contactInfoDefault != null) {
-            EntityPhoneContract entityPhone = contactInfoDefault.getDefaultPhoneNumber();
+            EntityPhone entityPhone = contactInfoDefault.getDefaultPhoneNumber();
             if (entityPhone != null) {
                 phoneNumber = unNullify(entityPhone.getFormattedPhoneNumberUnmasked());
             } else {
@@ -291,12 +261,12 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         }
     }
 
-    protected void populateAffiliationInfo(EntityDefault entity) {
+    protected void populateAffiliationInfo(Entity entity) {
         if (entity != null) {
             if (affiliations == null) {
                 affiliations = new ArrayList<>();
             }
-            entity.getAffiliations().forEach(affiliation -> affiliations.add(EntityAffiliationBo.from(affiliation)));
+            affiliations.addAll(entity.getAffiliations());
 
             EntityAffiliation defaultAffiliation = entity.getDefaultAffiliation();
             if (defaultAffiliation != null) {
@@ -307,9 +277,9 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         }
     }
 
-    protected void populateEmploymentInfo(EntityDefault entity) {
+    protected void populateEmploymentInfo(Entity entity) {
         if (entity != null) {
-            EntityEmployment employmentInformation = entity.getEmployment();
+            EntityEmployment employmentInformation = entity.getPrimaryEmployment();
             if (employmentInformation != null) {
                 employeeStatusCode = unNullify(employmentInformation.getEmployeeStatus() != null ?
                         employmentInformation.getEmployeeStatus().getCode() : null);
@@ -333,7 +303,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         }
     }
 
-    protected void populateExternalIdentifiers(EntityDefault entity) {
+    protected void populateExternalIdentifiers(Entity entity) {
         if (entity != null) {
             List<? extends EntityExternalIdentifier> externalIds = entity.getExternalIdentifiers();
             externalIdentifiers = new HashMap<>(externalIds.size());
@@ -359,15 +329,14 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         if (names == null) {
             names = new ArrayList<>();
         }
-        entity.getNames().forEach(name -> names.add(EntityNameBo.from(name)));
+        names.addAll(entity.getNames());
     }
 
     private void populateEntityTypeContactInfo(Entity entity) {
         if (entityTypeContactInfos == null) {
             entityTypeContactInfos = new ArrayList<>();
         }
-        entity.getEntityTypeContactInfos().forEach(entityTypeContactInfo ->
-                entityTypeContactInfos.add(EntityTypeContactInfoBo.from(entityTypeContactInfo)));
+        entityTypeContactInfos.addAll(entity.getEntityTypeContactInfos());
     }
 
     private void populateAddresses(Entity entity) {
@@ -375,8 +344,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
             addresses = new ArrayList<>();
         }
         entity.getEntityTypeContactInfos().forEach(entityTypeContactInfo ->
-                entityTypeContactInfo.getAddresses().forEach(address ->
-                        addresses.add(EntityAddressBo.from(address))));
+                addresses.addAll(entityTypeContactInfo.getAddresses()));
     }
 
     private void populatePhoneNumbers(Entity entity) {
@@ -384,8 +352,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
             phoneNumbers = new ArrayList<>();
         }
         entity.getEntityTypeContactInfos().forEach(entityTypeContactInfo ->
-                entityTypeContactInfo.getPhoneNumbers().forEach(phoneNumber ->
-                        phoneNumbers.add(EntityPhoneBo.from(phoneNumber))));
+                phoneNumbers.addAll(entityTypeContactInfo.getPhoneNumbers()));
     }
 
     private void populateEmailAddresses(Entity entity) {
@@ -393,8 +360,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
             emailAddresses = new ArrayList<>();
         }
         entity.getEntityTypeContactInfos().forEach(entityTypeContactInfo ->
-                entityTypeContactInfo.getEmailAddresses().forEach(emailAddress ->
-                        emailAddresses.add(EntityEmailBo.from(emailAddress))));
+                emailAddresses.addAll(entityTypeContactInfo.getEmailAddresses()));
     }
 
     private void populateGroupMembers() {
@@ -402,7 +368,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         criteria.put(KIMPropertyConstants.GroupMember.MEMBER_ID, principalId);
         criteria.put(KIMPropertyConstants.GroupMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.getCode());
-        groupMembers = (List<GroupMemberBo>) getBusinessObjectService().findMatching(GroupMemberBo.class, criteria);
+        groupMembers = (List<GroupMember>) getBusinessObjectService().findMatching(GroupMember.class, criteria);
     }
 
     private void populateRoleMembers() {
@@ -410,19 +376,19 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         criteria.put(KIMPropertyConstants.RoleMember.MEMBER_ID, principalId);
         criteria.put(KIMPropertyConstants.RoleMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.getCode());
-        roleMembers = (List<RoleMemberBo>) getBusinessObjectService().findMatching(RoleMemberBo.class, criteria);
+        roleMembers = (List<RoleMember>) getBusinessObjectService().findMatching(RoleMember.class, criteria);
     }
 
     private void populateDelegateMembers() {
         Map<String, String> criteria = new HashMap<>(2);
         criteria.put(KIMPropertyConstants.DelegationMember.MEMBER_ID, principalId);
         criteria.put(KIMPropertyConstants.DelegationMember.MEMBER_TYPE_CODE, MemberType.PRINCIPAL.getCode());
-        delegateMembers = (List<DelegateMemberBo>) getBusinessObjectService().findMatching(DelegateMemberBo.class,
+        delegateMembers = (List<DelegateMember>) getBusinessObjectService().findMatching(DelegateMember.class,
                 criteria);
         criteria.clear();
-        for (DelegateMemberBo dmb: delegateMembers) {
+        for (DelegateMember dmb: delegateMembers) {
             criteria.put(KIMPropertyConstants.Delegation.DELEGATION_ID, dmb.getDelegationId());
-            DelegateTypeBo delegate = getBusinessObjectService().findByPrimaryKey(DelegateTypeBo.class, criteria);
+            DelegateType delegate = getBusinessObjectService().findByPrimaryKey(DelegateType.class, criteria);
             dmb.setDelegationType(delegate.getDelegationTypeCode());
         }
     }
@@ -578,11 +544,11 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.suppressEmail = suppressEmail;
     }
 
-    public List<EntityAffiliationBo> getAffiliations() {
+    public List<EntityAffiliation> getAffiliations() {
         return affiliations;
     }
 
-    public void setAffiliations(List<EntityAffiliationBo> affiliations) {
+    public void setAffiliations(List<EntityAffiliation> affiliations) {
         this.affiliations = affiliations;
     }
 
@@ -597,7 +563,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         if (affiliationTypeCode == null) {
             return campusCodes;
         }
-        for (EntityAffiliationBo a : getAffiliations()) {
+        for (EntityAffiliation a : getAffiliations()) {
             if (a.getAffiliationType().getCode().equals(affiliationTypeCode)) {
                 campusCodes.add(a.getCampusCode());
             }
@@ -741,6 +707,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.active = active;
     }
 
+    @Override
     public String getLookupRoleNamespaceCode() {
         return this.lookupRoleNamespaceCode;
     }
@@ -749,6 +716,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.lookupRoleNamespaceCode = lookupRoleNamespaceCode;
     }
 
+    @Override
     public String getLookupRoleName() {
         return this.lookupRoleName;
     }
@@ -757,75 +725,75 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.lookupRoleName = lookupRoleName;
     }
 
-    public EntityEmploymentStatusBo getEmployeeStatus() {
+    public EntityEmploymentStatus getEmployeeStatus() {
         return this.employeeStatus;
     }
 
-    public EntityEmploymentTypeBo getEmployeeType() {
+    public EntityEmploymentType getEmployeeType() {
         return this.employeeType;
     }
 
-    public List<EntityNameBo> getNames() {
+    public List<EntityName> getNames() {
         return names;
     }
 
-    public void setNames(List<EntityNameBo> names) {
+    public void setNames(List<EntityName> names) {
         this.names = names;
     }
 
-    public List<EntityTypeContactInfoBo> getEntityTypeContactInfos() {
+    public List<EntityTypeContactInfo> getEntityTypeContactInfos() {
         return entityTypeContactInfos;
     }
 
-    public void setEntityTypeContactInfos(List<EntityTypeContactInfoBo> entityTypeContactInfos) {
+    public void setEntityTypeContactInfos(List<EntityTypeContactInfo> entityTypeContactInfos) {
         this.entityTypeContactInfos = entityTypeContactInfos;
     }
 
-    public List<EntityAddressBo> getAddresses() {
+    public List<EntityAddress> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(List<EntityAddressBo> addresses) {
+    public void setAddresses(List<EntityAddress> addresses) {
         this.addresses = addresses;
     }
 
-    public List<EntityPhoneBo> getPhoneNumbers() {
+    public List<EntityPhone> getPhoneNumbers() {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(List<EntityPhoneBo> phoneNumbers) {
+    public void setPhoneNumbers(List<EntityPhone> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
 
-    public List<EntityEmailBo> getEmailAddresses() {
+    public List<EntityEmail> getEmailAddresses() {
         return emailAddresses;
     }
 
-    public void setEmailAddresses(List<EntityEmailBo> emailAddresses) {
+    public void setEmailAddresses(List<EntityEmail> emailAddresses) {
         this.emailAddresses = emailAddresses;
     }
 
-    public List<GroupMemberBo> getGroupMembers() {
+    public List<GroupMember> getGroupMembers() {
         return groupMembers;
     }
 
-    public void setGroupMembers(List<GroupMemberBo> groupMembers) {
+    public void setGroupMembers(List<GroupMember> groupMembers) {
         this.groupMembers = groupMembers;
     }
 
-    public List<RoleMemberBo> getRoleMembers() {
+    public List<RoleMember> getRoleMembers() {
         return roleMembers;
     }
 
-    public void setRoleMembers(List<RoleMemberBo> roleMembers) {
+    public void setRoleMembers(List<RoleMember> roleMembers) {
         this.roleMembers = roleMembers;
     }
 
-    public List<DelegateMemberBo> getDelegateMembers() {
+    public List<DelegateMember> getDelegateMembers() {
         return delegateMembers;
     }
 
-    public void setDelegateMembers(List<DelegateMemberBo> delegateMembers) {
+    public void setDelegateMembers(List<DelegateMember> delegateMembers) {
         this.delegateMembers = delegateMembers;
     }
 

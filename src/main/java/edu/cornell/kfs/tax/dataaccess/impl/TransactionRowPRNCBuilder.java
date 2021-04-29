@@ -16,16 +16,17 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
-import org.kuali.rice.kew.api.document.Document;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
-import org.kuali.rice.kew.service.KEWServiceLocator;
+import org.kuali.kfs.core.api.CoreApiServiceLocator;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
-import edu.cornell.cynergy.kew.routeheader.service.CynergyRouteHeaderService;
+import edu.cornell.kfs.kew.routeheader.service.CuRouteHeaderService;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
@@ -69,7 +70,7 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
         endDateTime.set(Calendar.SECOND, FIFTY_NINE);
         
         // Find all PRNC documents that were finalized between the start and end dates.
-        CynergyRouteHeaderService routeHeaderService = (CynergyRouteHeaderService) SpringContext.getBean(
+        CuRouteHeaderService routeHeaderService = (CuRouteHeaderService) SpringContext.getBean(
                 RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
         Map<String,java.sql.Timestamp> datesMap = routeHeaderService.getFinalizedDatesForDocumentType(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT,
                 new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
@@ -243,7 +244,7 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
         String paymentMethodCode;
         String vendorTaxNumber;
         java.sql.Date dateFinalized;
-        Document document;
+        DocumentRouteHeaderValue document;
         DocumentStatus documentStatus = null;
         boolean processCurrentRow;
         boolean useDateFinalized;
@@ -472,7 +473,7 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
         @Override
         String getTaxTypeSpecificConditionForSelect(Transaction1042SSummary summary) {
             // No extra conditions needed to filter out DV rows for 1042S processing.
-            return KRADConstants.EMPTY_STRING;
+            return KFSConstants.EMPTY_STRING;
         }
         
         @Override
