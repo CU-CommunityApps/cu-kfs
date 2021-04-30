@@ -136,11 +136,17 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
      * CUMod: KFSPTS-12866
      */
     protected void populateDocumentDescription(ContractsGrantsInvoiceDocument cgInvoiceDocument) {
-        String proposalNumber = cgInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
-        if (StringUtils.isNotBlank(proposalNumber)) {
-            String contractControlAccount = findContractControlAccountNumber(cgInvoiceDocument.getAccountDetails());
-            String newTitle =  MessageFormat.format(findTitleFormatString(), proposalNumber, contractControlAccount);
-            cgInvoiceDocument.getDocumentHeader().setDocumentDescription(newTitle);
+        if (ObjectUtils.isNotNull(cgInvoiceDocument) && ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail())) {
+            String proposalNumber = cgInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
+            if (StringUtils.isNotBlank(proposalNumber)) {
+                String contractControlAccount = findContractControlAccountNumber(cgInvoiceDocument.getAccountDetails());
+                String newTitle =  MessageFormat.format(findTitleFormatString(), proposalNumber, contractControlAccount);
+                cgInvoiceDocument.getDocumentHeader().setDocumentDescription(newTitle);
+            } else {
+                LOG.error("populateDocumentDescription, unable to set the document description due to the proposal number being null");
+            }
+        } else {
+            LOG.error("populateDocumentDescription, unable to set the document description due to the document or invoice general details being null");
         }
     }
     
@@ -234,7 +240,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         ContractsGrantsInvoiceDocument cgInvoiceDocument = super.createCGInvoiceDocumentByAwardInfo(awd, accounts, chartOfAccountsCode, 
                 organizationCode, errorMessages, accountDetails, locCreationType);
         //CUMod: KFSPTS-12866
-        populateDocumentDescription(cgInvoiceDocument);
+        if (CollectionUtils.isEmpty(errorMessages)) {
+            populateDocumentDescription(cgInvoiceDocument);
+        }
         return cgInvoiceDocument;
     }
     
