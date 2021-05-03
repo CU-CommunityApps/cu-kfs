@@ -1,12 +1,8 @@
 package edu.cornell.kfs.module.purap.rest.resource;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,9 +11,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import javax.json.JsonArray;
-import javax.json.JsonException;
-import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
@@ -32,11 +25,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.cornell.kfs.sys.web.service.CuApiJsonWebRequestReader;
-import edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -102,6 +92,30 @@ public class CuEinvoiceApiResource {
             LOG.error("getVendors", ex);
             return ex instanceof BadRequestException ? respondGetVendorsBadRequest() : respondInternalServerError(ex);
         }
+    }
+    
+    @GET
+    @Path("vendornumbers/search/{searchcriteria}")
+    public Response getVendorNumbersSearchCriteria(@PathParam("searchcriteria") String searchCriteria, @Context HttpHeaders headers) {
+        LOG.debug("getVendorNumbersSearchCriteria, searchCriteria: " + searchCriteria);
+        try {
+            List<String> vendorNumbers = cuEinvoiceDao.getFilteredVendorNumbers(searchCriteria);
+            if (ObjectUtils.isNull(vendorNumbers)) {
+                return respondNotFound();
+            }
+            return Response.ok(buildVendorNumberList(vendorNumbers)).build();
+        } catch (Exception ex) {
+            LOG.error("getVendorNumbersSearchCriteria", ex);
+            return ex instanceof BadRequestException ? respondGetVendorBadRequest() : respondInternalServerError(ex);
+        }
+    }
+    
+    protected String buildVendorNumberList(List<String> vendorNumbers) {
+        String vendorNumbersList = StringUtils.EMPTY;
+        if (CollectionUtils.isNotEmpty(vendorNumbers)) {
+            vendorNumbersList = vendorNumbers.stream().collect(Collectors.joining(KFSConstants.COMMA));
+        }
+        return vendorNumbersList;
     }
 
     @GET
