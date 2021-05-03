@@ -10,9 +10,6 @@ import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditRevie
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.ContractsGrantsInvoiceCreateDocumentService;
 
-/* 
- * @todo may be able to remove this entirly 
- */
 public interface CuContractsGrantsInvoiceCreateDocumentService extends ContractsGrantsInvoiceCreateDocumentService {
-
+    public void populateDocumentDescription(ContractsGrantsInvoiceDocument cgInvoiceDocument);
 }

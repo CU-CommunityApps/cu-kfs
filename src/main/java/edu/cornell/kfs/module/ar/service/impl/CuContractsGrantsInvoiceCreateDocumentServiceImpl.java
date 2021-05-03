@@ -133,9 +133,10 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     }
 
     /*
-     * CUMod: KFSPTS-12866
+     * CUMod: KFSPTS-12866 
      */
-    protected void populateDocumentDescription(ContractsGrantsInvoiceDocument cgInvoiceDocument) {
+    @Override
+    public void populateDocumentDescription(ContractsGrantsInvoiceDocument cgInvoiceDocument) {
         if (ObjectUtils.isNotNull(cgInvoiceDocument) && ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail())) {
             String proposalNumber = cgInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
             if (StringUtils.isNotBlank(proposalNumber)) {
