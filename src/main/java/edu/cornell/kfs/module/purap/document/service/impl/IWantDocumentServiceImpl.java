@@ -234,7 +234,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         BodyMailMessage message = new BodyMailMessage();
 
         message.addToAddress(initiatorEmail);
-        message.setFromAddress(initiatorEmail);
+        message.setFromAddress(emailService.getDefaultFromAddress());
 
         message.setSubject("I Want document: " + documentNumber + " has been finalized");
 
