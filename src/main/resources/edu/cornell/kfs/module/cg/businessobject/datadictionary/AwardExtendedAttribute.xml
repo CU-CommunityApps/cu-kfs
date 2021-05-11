@@ -35,7 +35,7 @@
 		<property name="control">
 			<bean parent="CheckboxControlDefinition" />
 		</property>    	
-		<property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
+		<property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter"/>
   	</bean>
   	
   	<bean id="AwardExtendedAttribute-finalFinancialReportRequired" parent="AttributeDefinition">
@@ -47,7 +47,7 @@
   		<property name="control">
 			<bean parent="CheckboxControlDefinition" />
 		</property>
-  		<property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
+  		<property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter"/>
   	</bean>
   	
   	 <bean id="AwardExtendedAttribute-finalFiscalReportDate" parent="GenericAttributes-genericTimestamp">
@@ -88,7 +88,7 @@
         <property name="name" value="budgetTotalAmount"/>
         <property name="label" value="Budget Total Amount"/>
         <property name="shortLabel" value="Budget Total"/>
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.CurrencyFormatter" />
+        <property name="formatterClass" value="org.kuali.kfs.core.web.format.CurrencyFormatter" />
     </bean>
     
     <bean id="AwardExtendedAttribute-everify" parent="AttributeDefinition">
@@ -100,7 +100,7 @@
         <property name="control">
             <bean parent="CheckboxControlDefinition" />
         </property>
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
+        <property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter"/>
   	</bean>
 
 	<bean id="AwardExtendedAttribute-primeAgreementNumber" parent="AwardExtendedAttribute-primeAgreementNumber-parentBean" />

@@ -74,7 +74,7 @@
     <bean id="CreateDoneBatchFile-lastModifiedDate" parent="CreateDoneBatchFile-lastModifiedDate-parentBean"/>
     <bean id="CreateDoneBatchFile-lastModifiedDate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp"
           p:name="lastModifiedDate" p:label="Last Modified Date" p:shortLabel="Last Modified Date"
-          p:formatterClass="org.kuali.rice.core.web.format.TimestampAMPMFormatter" p:type="DATE_RANGE"/>
+          p:formatterClass="org.kuali.kfs.core.web.format.TimestampAMPMFormatter" p:type="DATE_RANGE"/>
 
     <bean id="CreateDoneBatchFile-fileSize" parent="CreateDoneBatchFile-fileSize-parentBean"/>
     <bean id="CreateDoneBatchFile-fileSize-parentBean" abstract="true" parent="AttributeDefinition" p:name="fileSize"

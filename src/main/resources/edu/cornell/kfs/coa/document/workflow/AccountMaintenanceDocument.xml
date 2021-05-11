@@ -69,7 +69,7 @@
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         <simple name="InitiatorAccountFYIDoNothing">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="InitiatorAccountFYIJoin"/>
       </routeNodes>

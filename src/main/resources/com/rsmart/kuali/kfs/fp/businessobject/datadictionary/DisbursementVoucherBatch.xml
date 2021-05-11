@@ -49,7 +49,7 @@
     <property name="name" value="processTimestamp" />
     <property name="label" value="Process Timestamp" />
     <property name="shortLabel" value="Timestamp" />
-    <property name="formatterClass" value="org.kuali.rice.core.web.format.DateViewTimestampObjectFormatter" />
+    <property name="formatterClass" value="org.kuali.kfs.core.web.format.DateViewTimestampObjectFormatter" />
   </bean>  
   
   <bean id="DisbursementVoucherBatch-processUser.name" parent="DisbursementVoucherBatch-processUser.name-parentBean" />

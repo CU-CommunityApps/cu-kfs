@@ -53,7 +53,7 @@
           <activationType>P</activationType>
         </role>        
         <simple name="NoOpSubAccountCGResponsibilityApproval">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="JoinRequiresCGResponsibilityApproval"/>
       </routeNodes>

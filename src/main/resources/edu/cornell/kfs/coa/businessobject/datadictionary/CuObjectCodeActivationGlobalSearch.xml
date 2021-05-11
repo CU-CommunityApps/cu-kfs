@@ -22,7 +22,7 @@
 		<property name="name" value="calculatedBalance" />
 		<property name="label" value="Calculated Balance" />
 		<property name="shortLabel" value="Balance" />
-		<property name="formatterClass" value="org.kuali.rice.core.web.format.CurrencyFormatter" />
+		<property name="formatterClass" value="org.kuali.kfs.core.web.format.CurrencyFormatter" />
 	</bean>
 
 	<bean id="CuObjectCodeActivationGlobalSearch-lookupDefinition" parent="CuObjectCodeActivationGlobalSearch-lookupDefinition-parentBean" />

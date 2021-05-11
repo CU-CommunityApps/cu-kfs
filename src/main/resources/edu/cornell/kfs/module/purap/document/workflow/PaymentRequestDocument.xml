@@ -111,7 +111,7 @@
            </role>
            <join name="JoinRequiresImageAttachment" />
            <simple name="NoOpRequiresImageAttachment">
-             <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
            </simple>
            <split name="PurchaseWasReceived">
              <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
@@ -122,7 +122,7 @@
            </role>
            <join name="JoinReceiving" />
            <simple name="NoOpReceiving">
-             <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
            </simple>
            <role name="SubAccount">
              <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
@@ -154,11 +154,11 @@
            </split>
            <join name="JoinVendorIsEmployeeOrNonresident" />
            <simple name="NoOpVendorIsEmployeeOrNonresident">
-             <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
            </simple>
                    <!-- KFSPTS-1891 -->
            <simple name="NoOpTreasury">
-             <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
            </simple>
            <join name="JoinTreasury"/>
           <split name="RequiresAutoApprovalNotification">
@@ -175,7 +175,7 @@
         <join name="joinOnAutoApproval"/>
         <simple name="NoOpAutoApproval">
           <type>
-            org.kuali.rice.kew.engine.node.NoOpNode
+            org.kuali.kfs.kew.engine.node.NoOpNode
           </type>
         </simple>
          </routeNodes>

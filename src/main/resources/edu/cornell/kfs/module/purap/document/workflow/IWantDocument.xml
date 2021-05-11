@@ -55,10 +55,10 @@
         </role>
         
         <simple name="NoOpIsOrderCompleted">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <simple name="NoOpComplete">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="JoinIsOrderCompleted"/>
       </routeNodes>

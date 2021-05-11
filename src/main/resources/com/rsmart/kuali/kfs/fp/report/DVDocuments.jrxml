@@ -29,7 +29,7 @@
 	<field name="postingYear" class="java.lang.Integer"/>
 	<field name="dvPayeeDetail.disbVchrPayeeIdNumber" class="java.lang.String"/>
 	<field name="dvPayeeDetail.disbVchrPaymentReasonCode" class="java.lang.String"/>
-	<field name="disbVchrCheckTotalAmount" class="org.kuali.rice.core.api.util.type.KualiDecimal"/>
+	<field name="disbVchrCheckTotalAmount" class="org.kuali.kfs.core.api.util.type.KualiDecimal"/>
 	<field name="disbursementVoucherDocumentationLocationCode" class="java.lang.String"/>
 	<field name="disbVchrContactEmailId" class="java.lang.String"/>
 	<field name="disbVchrContactPersonName" class="java.lang.String"/>
@@ -266,7 +266,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[((org.kuali.rice.core.api.util.type.KualiDecimal)$F{disbVchrCheckTotalAmount}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[((org.kuali.kfs.core.api.util.type.KualiDecimal)$F{disbVchrCheckTotalAmount}).toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

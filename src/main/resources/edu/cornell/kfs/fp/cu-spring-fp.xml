@@ -662,7 +662,7 @@
                                 <list>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="1" p:propertyName="totalTransactionSets"
-                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"/>
+                                          p:formatterClass="org.kuali.kfs.core.web.format.IntegerFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="2" p:propertyName="groupControlNumber"/>
                                 </list>
@@ -677,7 +677,7 @@
                                 <list>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="1" p:propertyName="totalGroups"
-                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"/>
+                                          p:formatterClass="org.kuali.kfs.core.web.format.IntegerFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="2" p:propertyName="interchangeControlNumber"/>
                                 </list>

@@ -47,7 +47,7 @@
     	<property name="control">
 			<bean parent="CheckboxControlDefinition" />
 		</property>
-    	<property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
+    	<property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter"/>
   	</bean>    
 
     <bean id="AccountExtendedAttribute-accountClosedDate" parent="AccountExtendedAttribute-accountClosedDate-parentBean" />

@@ -12,7 +12,7 @@
 
   <!-- Added currency-related config to this property, in order for EIRT doc searches to work correctly. -->
   <bean id="ElectronicInvoiceRejectDocument-grandTotalAmount" parent="ElectronicInvoiceRejectDocument-grandTotalAmount-parentBean">
-    <property name="formatterClass" value="org.kuali.rice.core.web.format.CurrencyFormatter"/>
+    <property name="formatterClass" value="org.kuali.kfs.core.web.format.CurrencyFormatter"/>
     <property name="control">
       <bean parent="GenericAmountControl" p:size="21" />
     </property>
