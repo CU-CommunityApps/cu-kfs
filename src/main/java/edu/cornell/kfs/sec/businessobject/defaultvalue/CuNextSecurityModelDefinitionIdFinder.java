@@ -9,12 +9,12 @@ import edu.cornell.kfs.sec.CUSecConstants;
 /**
  * Sequence-based values finder that returns the next PK to use for security model definition BOs.
  */
-// TODO: SequenceValueFinder no longer exists in KFS. Determine if we still need this customization!
+// TODO: KFSPTS-21562: SequenceValueFinder no longer exists in KFS. Determine if we still need this customization!
 public class CuNextSecurityModelDefinitionIdFinder /*extends SequenceValueFinder*/ implements DefaultValueFinder {
 
     @Override
     public String getDefaultValue() {
-        // TODO: Implement this method or re-define SequenceValueFinder appropriately!
+        // TODO: KFSPTS-21562: Implement this method or re-define SequenceValueFinder appropriately!
         return null;
     }
 

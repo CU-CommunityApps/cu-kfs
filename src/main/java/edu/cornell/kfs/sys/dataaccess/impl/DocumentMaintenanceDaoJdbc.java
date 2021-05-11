@@ -121,7 +121,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 		try {
 			Annotation[] annotations = className.getDeclaredField(fieldName).getAnnotations();
 			for(Annotation annotation: annotations) {
-			    // TODO: Change this to find the column name in the OJB metadata,
+			    // TODO: KFSPTS-21563: Change this to find the column name in the OJB metadata,
 	            // or update the calling code to just use literals for the column names.
 				/*if(annotation instanceof Column) {
 					columnName = ((Column) annotation).name();
@@ -140,7 +140,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
 		Annotation[] annotations = className.getDeclaredAnnotations();
 		for (Annotation annotation: annotations) {
-		    // TODO: Change this to find the table name in the OJB metadata,
+		    // TODO: KFSPTS-21563: Change this to find the table name in the OJB metadata,
 		    // or update the calling code to just use literals for the table names.
 			/*if (annotation instanceof Table) {
 				tableName = ((Table) annotation).name();

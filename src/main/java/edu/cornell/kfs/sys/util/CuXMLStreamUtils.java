@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang3.StringUtils;
 
-// TODO: Remove any unneeded methods from this copied-over Cynergy class.
+// TODO: KFSPTS-21135 (or its follow-up tickets): Remove any unneeded methods from this copied-over Cynergy class.
 /**
  * Utility class for performing various streaming operations on XML,
  * as well as for quietly closing StAX readers/writers.

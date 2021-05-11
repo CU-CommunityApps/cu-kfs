@@ -22,7 +22,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 
-// TODO: Rename this class to avoid Cynergy references, or just merge it into the CuMaintenanceXMLConverter class.
+// TODO: KFSPTS-21135 (or follow-up ticket): Rename this class to avoid Cynergy references, or just merge it into the CuMaintenanceXMLConverter class.
 /**
  * Helper class for converting maintenance XML via StAX, and which provides
  * extra conversion features beyond those in the Rice-delivered converter.

@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
 
 import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 
-// TODO: Either rename this class, or merge it into the CuMaintainableXMLConversionServiceImpl class.
+// TODO: KFSPTS-21135 (or follow-up ticket): Either rename this class, or merge it into the CuMaintainableXMLConversionServiceImpl class.
 /**
  * Alternative implementation of MaintainableXMLConversionService that supports
  * more advanced conversion features.

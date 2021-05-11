@@ -108,7 +108,7 @@ public class CuAdvanceDepositAccountingLineAuthorizer extends FinancialProcessin
         List<String> roleIds = new ArrayList<String>();
         roleIds.add(roleId);
         
-        // TODO: Determine if we switched to the correct RoleService method call for the KEW-to-KFS upgrade.
+        // TODO: KFSPTS-21561: Determine if we switched to the correct RoleService method call for the KEW-to-KFS upgrade.
         List<Map<String, String>> qualifiers = new ArrayList<Map<String, String>>();
         qualifiers.addAll(getRoleService().getNestedRoleQualifiersForPrincipalByRoleIds(currentUser.getPrincipalId(), roleIds, new HashMap<String, String>()));
         
