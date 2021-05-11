@@ -105,7 +105,7 @@
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
         </split>
         <simple name="NoOpHasAccountingLines">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="JoinHasAccountingLines"/>
         <role name="Initiator">
@@ -153,10 +153,10 @@
           <activationType>P</activationType>
         </role>
         <simple name="NoOpRequiresAwardReview">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <simple name="NoOpSOD">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
       </routeNodes>
     </documentType>

@@ -109,7 +109,7 @@
     -->
     <rule name="maint_doc_changed_class_properties">
         <pattern>
-            <class>org.kuali.rice.location.impl.campus.CampusBo</class>
+            <class>org.kuali.kfs.location.impl.campus.CampusBo</class>
             <pattern>
                 <match>campusName</match>
                 <replacement>name</replacement>
@@ -124,7 +124,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.coreservice.impl.parameter.ParameterBo</class>
+            <class>org.kuali.kfs.coreservice.impl.parameter.ParameterBo</class>
             <pattern>
                 <match>parameterNamespaceCode</match>
                 <replacement>namespaceCode</replacement>
@@ -167,7 +167,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.rule.RuleDelegationBo</class>
+            <class>org.kuali.kfs.kew.rule.RuleDelegationBo</class>
             <pattern>
                 <match>delegationType</match>
                 <replacement>delegationTypeCode</replacement>
@@ -178,7 +178,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.rule.RuleBaseValues</class>
+            <class>org.kuali.kfs.kew.rule.RuleBaseValues</class>
             <pattern>
                 <match>ruleBaseValuesId</match>
                 <replacement>id</replacement>
@@ -213,14 +213,14 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.rule.bo.RuleTemplateBo</class>
+            <class>org.kuali.kfs.kew.rule.bo.RuleTemplateBo</class>
             <pattern>
                 <match>ruleTemplateId</match>
                 <replacement>id</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.location.impl.campus.CampusTypeBo</class>
+            <class>org.kuali.kfs.location.impl.campus.CampusTypeBo</class>
             <pattern>
                 <match>campusTypeCode</match>
                 <replacement>code</replacement>
@@ -235,14 +235,14 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.coreservice.impl.namespace.NamespaceBo</class>
+            <class>org.kuali.kfs.coreservice.impl.namespace.NamespaceBo</class>
             <pattern>
                 <match>applicationNamespaceCode</match>
                 <replacement>applicationId</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.coreservice.impl.component.ComponentBo</class>
+            <class>org.kuali.kfs.coreservice.impl.component.ComponentBo</class>
             <pattern>
                 <match>parameterNamespaceCode</match>
                 <replacement>namespaceCode</replacement>
@@ -261,7 +261,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.location.impl.country.CountryBo</class>
+            <class>org.kuali.kfs.location.impl.country.CountryBo</class>
             <pattern>
                 <match>postalCountryCode</match>
                 <replacement>code</replacement>
@@ -280,14 +280,14 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kim.impl.permission.GenericPermissionBo</class>
+            <class>org.kuali.kfs.kim.impl.permission.GenericPermissionBo</class>
             <pattern>
                 <match>permissionId</match>
                 <replacement>id</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.doctype.bo.DocumentType</class>
+            <class>org.kuali.kfs.kew.doctype.bo.DocumentType</class>
             <pattern>
                 <match>routeHeaderId</match>
                 <replacement>documentId</replacement>
@@ -298,21 +298,21 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.rule.PersonRuleResponsibility</class>
+            <class>org.kuali.kfs.kew.rule.PersonRuleResponsibility</class>
             <pattern>
                 <match>ruleResponsibilityKey</match>
                 <replacement>id</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.rule.GroupRuleResponsibility</class>
+            <class>org.kuali.kfs.kew.rule.GroupRuleResponsibility</class>
             <pattern>
                 <match>ruleResponsibilityKey</match>
                 <replacement>id</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.rule.RoleRuleResponsibility</class>
+            <class>org.kuali.kfs.kew.rule.RoleRuleResponsibility</class>
             <pattern>
                 <match>ruleResponsibilityKey</match>
                 <replacement>id</replacement>
@@ -387,14 +387,14 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</class>
+            <class>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibilityBo</class>
             <pattern>
                 <match>responsibilityId</match>
                 <replacement>id</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.location.impl.state.StateBo</class>
+            <class>org.kuali.kfs.location.impl.state.StateBo</class>
             <pattern>
                 <match>postalCountryCode</match>
                 <replacement>countryCode</replacement>
@@ -417,7 +417,7 @@
         </pattern>
         <!-- ==== CU Customization ==== -->
         <pattern>
-            <class>org.kuali.rice.kns.util.TypedArrayList</class>
+            <class>org.kuali.kfs.kns.util.TypedArrayList</class>
             <pattern>
                 <match>class(ATTR)</match>
                 <replacement/>
@@ -427,7 +427,7 @@
                 <replacement/>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.util.TypedArrayList</match>
+                <match>org.kuali.kfs.kns.util.TypedArrayList</match>
                 <replacement/>
             </pattern>
             <pattern>
@@ -503,47 +503,47 @@
             </pattern>
             <!-- Moved the following entries over from the "maint_doc_classname_changes" section. -->
             <pattern>
-                <match>org.kuali.rice.kns.bo.CampusImpl</match>
-                <replacement>org.kuali.rice.location.impl.campus.CampusBo</replacement>
+                <match>org.kuali.kfs.kns.bo.CampusImpl</match>
+                <replacement>org.kuali.kfs.location.impl.campus.CampusBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.Parameter</match>
-                <replacement>org.kuali.rice.coreservice.impl.parameter.ParameterBo</replacement>
+                <match>org.kuali.kfs.kns.bo.Parameter</match>
+                <replacement>org.kuali.kfs.coreservice.impl.parameter.ParameterBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kew.rule.RuleDelegation</match>
-                <replacement>org.kuali.rice.kew.rule.RuleDelegationBo</replacement>
+                <match>org.kuali.kfs.kew.rule.RuleDelegation</match>
+                <replacement>org.kuali.kfs.kew.rule.RuleDelegationBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.CampusTypeImpl</match>
-                <replacement>org.kuali.rice.location.impl.campus.CampusTypeBo</replacement>
+                <match>org.kuali.kfs.kns.bo.CampusTypeImpl</match>
+                <replacement>org.kuali.kfs.location.impl.campus.CampusTypeBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.Namespace</match>
-                <replacement>org.kuali.rice.coreservice.impl.namespace.NamespaceBo</replacement>
+                <match>org.kuali.kfs.kns.bo.Namespace</match>
+                <replacement>org.kuali.kfs.coreservice.impl.namespace.NamespaceBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.ParameterDetailType</match>
-                <replacement>org.kuali.rice.coreservice.impl.component.ComponentBo</replacement>
+                <match>org.kuali.kfs.kns.bo.ParameterDetailType</match>
+                <replacement>org.kuali.kfs.coreservice.impl.component.ComponentBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.CountryImpl</match>
-                <replacement>org.kuali.rice.location.impl.country.CountryBo</replacement>
+                <match>org.kuali.kfs.kns.bo.CountryImpl</match>
+                <replacement>org.kuali.kfs.location.impl.country.CountryBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kim.bo.impl.GenericPermission</match>
-                <replacement>org.kuali.rice.kim.impl.permission.GenericPermissionBo</replacement>
+                <match>org.kuali.kfs.kim.bo.impl.GenericPermission</match>
+                <replacement>org.kuali.kfs.kim.impl.permission.GenericPermissionBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.KualiCodeBase</match>
+                <match>org.kuali.kfs.kns.bo.KualiCodeBase</match>
                 <replacement>org.kuali.kfs.krad.bo.KualiCodeBase</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
+                <match>org.kuali.kfs.kim.bo.impl.PersonImpl</match>
                 <replacement/>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kim.impl.identity.PersonImpl</match>
+                <match>org.kuali.kfs.kim.impl.identity.PersonImpl</match>
                 <replacement/>
             </pattern>
             <pattern>
@@ -559,31 +559,31 @@
                 <replacement>org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.StateImpl</match>
-                <replacement>org.kuali.rice.location.impl.state.StateBo</replacement>
+                <match>org.kuali.kfs.kns.bo.StateImpl</match>
+                <replacement>org.kuali.kfs.location.impl.state.StateBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kim.bo.impl.ReviewResponsibility</match>
-                <replacement>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</replacement>
+                <match>org.kuali.kfs.kim.bo.impl.ReviewResponsibility</match>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibilityBo</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kns.bo.Note</match>
+                <match>org.kuali.kfs.kns.bo.Note</match>
                 <replacement>org.kuali.kfs.krad.bo.Note</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.krad.bo.Note</match>
+                <match>org.kuali.kfs.krad.bo.Note</match>
                 <replacement>org.kuali.kfs.krad.bo.Note</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.krad.bo.NoteType</match>
+                <match>org.kuali.kfs.krad.bo.NoteType</match>
                 <replacement>org.kuali.kfs.krad.bo.NoteType</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.krad.bo.AdHocRoutePerson</match>
+                <match>org.kuali.kfs.krad.bo.AdHocRoutePerson</match>
                 <replacement>org.kuali.kfs.krad.bo.AdHocRoutePerson</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.krad.bo.AdHocRouteWorkgroup</match>
+                <match>org.kuali.kfs.krad.bo.AdHocRouteWorkgroup</match>
                 <replacement>org.kuali.kfs.krad.bo.AdHocRouteWorkgroup</replacement>
             </pattern>
             <pattern>

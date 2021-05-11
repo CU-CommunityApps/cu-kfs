@@ -151,7 +151,7 @@
                                     	p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
                                     	p:dateFormat="yyyy-MM-dd"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="recordCount"
-                                    	p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"/>
+                                    	p:formatterClass="org.kuali.kfs.core.web.format.IntegerFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="3" p:propertyName="journalAmountTotal"
                                     	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="batchId"/>
@@ -189,7 +189,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="60" p:propertyName="reportEntryId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="62" p:propertyName="expenseType"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="67" p:propertyName="reportEntryIsPersonalFlag"
-                                        p:formatterClass="org.kuali.rice.core.web.format.BooleanFormatter"/>
+                                        p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="125" p:propertyName="paymentCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="162" p:propertyName="journalPayerPaymentTypeName"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="164" p:propertyName="journalPayeePaymentTypeName"/>
@@ -458,7 +458,7 @@
                                           p:propertyName="batchDate"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="2"
-                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"
+                                          p:formatterClass="org.kuali.kfs.core.web.format.IntegerFormatter"
                                           p:propertyName="recordCount"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="3"
@@ -550,7 +550,7 @@
                                 <list>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="1"
-                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"
+                                          p:formatterClass="org.kuali.kfs.core.web.format.IntegerFormatter"
                                           p:propertyName="sequenceNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="2"

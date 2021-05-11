@@ -7,7 +7,7 @@
 	<!-- Import KEW RouteHeaderService, which is not auto-GRL-loaded by the base KFS beans. -->
 	<bean id="enDocumentRouteHeaderService" p:serviceName="enDocumentRouteHeaderService" parent="grlBeanImporter" />
 	
-	<bean id="rice.kew.documentProcessingQueue" p:serviceName="rice.kew.documentProcessingQueue" parent="grlBeanImporter" />
+	<bean id="documentProcessingQueue" p:serviceName="documentProcessingQueue" parent="grlBeanImporter" />
 	
 	<import resource="cu-kfs-cache-config.xml" />
 	<import resource="kim/cu-spring-kim.xml" />

@@ -51,7 +51,7 @@
 	 	<property name="moduleConfiguration" ref="cu-sys"/>
 	</bean>
 
-    <bean id="CUKFSConstants" class="org.kuali.rice.core.api.util.collect.ConstantsMap">
+    <bean id="CUKFSConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap">
 		<property name="constantClass" value="edu.cornell.kfs.sys.CUKFSConstants" />
 	</bean>
 

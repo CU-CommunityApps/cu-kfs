@@ -62,7 +62,7 @@
         </role>
         <join name="JoinRequiresImageAttachment" />
         <simple name="NoOpRequiresImageAttachment">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <role name="Account">
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
@@ -77,7 +77,7 @@
          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
        </split>
        <simple name="NoOpTreasury">
-         <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+         <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
        </simple>
        <join name="JoinTreasury"/>
       </routeNodes>

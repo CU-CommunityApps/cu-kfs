@@ -8,16 +8,18 @@
 
     <bean id="dummyAntiVirusService" class="edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl" />
 
-    <bean id="antiVirusService" class="edu.cornell.cynergy.clamav.ClamAVService">
+    <!-- TODO: Update this bean for KEW-to-KFS compatibility and then uncomment it! -->
+
+    <!--<bean id="antiVirusService" class="edu.cornell.cynergy.clamav.ClamAVService">
         <property name="host" value="127.0.0.1" />
         <property name="port" value="3310" />
         <property name="timeout" value="60000" />
-    </bean>
+    </bean>-->
 
-    <bean id="cf.attachmentService" parent="cf.attachmentService-parentBean"/>
-    <bean id="cf.attachmentService-parentBean" class="edu.cornell.kfs.krad.service.impl.CuAttachmentServiceImpl" abstract="true">
+    <bean id="attachmentService" parent="attachmentService-parentBean"/>
+    <bean id="attachmentService-parentBean" class="edu.cornell.kfs.krad.service.impl.CuAttachmentServiceImpl" abstract="true">
         <property name="kualiConfigurationService">
-            <ref bean="cf.kualiConfigurationService" />
+            <ref bean="kualiConfigurationService" />
         </property>
         <property name="attachmentDao">
             <ref bean="cuAttachmentDaoOjb"/>
@@ -26,41 +28,41 @@
             <ref bean="${cynergy.antivirus.service}" />
         </property>
         <property name="noteService">
-            <ref bean="cf.noteService" />
+            <ref bean="noteService" />
         </property>
     </bean>
 
-    <bean id="cf.maintainableXMLConversionService" class="edu.cornell.kfs.krad.service.impl.NoOpMaintainableXMLConversionServiceImpl" />
+    <bean id="maintainableXMLConversionService" class="edu.cornell.kfs.krad.service.impl.NoOpMaintainableXMLConversionServiceImpl" />
 
     <bean id="cuMaintainableXMLConversionService" parent="cuMaintainableXMLConversionService-parentBean"/>
     <bean id="cuMaintainableXMLConversionService-parentBean" abstract="true" class="edu.cornell.kfs.krad.service.impl.CuMaintainableXMLConversionServiceImpl">
         <property name="conversionRuleFile" value="classpath:edu/cornell/kfs/krad/config/MaintainableXMLUpgradeRules.xml"/>
     </bean>
 
-    <bean id="cf.documentService" class="edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl">
+    <bean id="documentService" class="edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl">
         <property name="documentDao">
-            <ref bean="cf.documentDao"/>
+            <ref bean="documentDao"/>
         </property>
         <property name="dateTimeService">
-            <ref bean="cf.dateTimeService"/>
+            <ref bean="dateTimeService"/>
         </property>
         <property name="workflowDocumentService">
-            <ref bean="cf.workflowDocumentService"/>
+            <ref bean="workflowDocumentService"/>
         </property>
         <property name="documentHeaderService">
-            <ref bean="cf.documentHeaderService"/>
+            <ref bean="documentHeaderService"/>
         </property>
         <property name="businessObjectService">
-            <ref bean="cf.businessObjectService"/>
+            <ref bean="businessObjectService"/>
         </property>
         <property name="noteService">
-            <ref bean="cf.noteService"/>
+            <ref bean="noteService"/>
         </property>
         <property name="dataDictionaryService">
-            <ref bean="cf.dataDictionaryService"/>
+            <ref bean="dataDictionaryService"/>
         </property>
         <property name="kualiConfigurationService">
-            <ref bean="cf.kualiConfigurationService"/>
+            <ref bean="kualiConfigurationService"/>
         </property>
         <property name="maintainableXMLConversionService">
             <ref bean="cuMaintainableXMLConversionService"/>
@@ -70,7 +72,12 @@
     <bean id="documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>
 
-    <bean id="cf.businessObjectAuthorizationService"
+    <bean id="businessObjectAuthorizationService"
           class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"/>
+
+    <bean id="encryptionService" class="edu.cornell.cynergy.service.impl.AESEncryptionServiceImpl">
+        <property name="key" value="${cynergy.encryption.key}"/>
+        <property name="enabled" value="${cynergy.encryption.busEncryption}"/>
+    </bean>
 
 </beans>
