@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;

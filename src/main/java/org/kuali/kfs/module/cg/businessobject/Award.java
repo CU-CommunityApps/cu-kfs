@@ -40,10 +40,10 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.CGPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kim.api.identity.PersonService;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -160,7 +160,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     private transient String lookupPersonUniversalIdentifier;
     private transient PersonImpl lookupPerson;
 
-    private final String userLookupRoleNamespaceCode = KFSConstants.ParameterNamespaces.KFS;
+    private final String userLookupRoleNamespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
     private final String userLookupRoleName = KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR;
 
     private transient String lookupFundMgrPersonUniversalIdentifier;
@@ -379,8 +379,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      * bypasses the getter.
      */
     @Override
-    protected void prePersist() {
-        super.prePersist();
+    protected void beforeInsert() {
+        super.beforeInsert();
         awardTotalAmount = getAwardTotalAmount();
     }
 
@@ -390,8 +390,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      * bypasses the getter.
      */
     @Override
-    protected void preUpdate() {
-        super.preUpdate();
+    protected void beforeUpdate() {
+        super.beforeUpdate();
         awardTotalAmount = getAwardTotalAmount();
     }
 

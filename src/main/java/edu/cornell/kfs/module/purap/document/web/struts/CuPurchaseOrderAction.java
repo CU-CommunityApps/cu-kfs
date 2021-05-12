@@ -29,9 +29,9 @@ import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
+import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 
 public class CuPurchaseOrderAction extends PurchaseOrderAction {

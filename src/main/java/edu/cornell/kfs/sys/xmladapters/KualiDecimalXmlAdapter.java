@@ -2,7 +2,7 @@ package edu.cornell.kfs.sys.xmladapters;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class KualiDecimalXmlAdapter extends XmlAdapter<String, KualiDecimal> {
 

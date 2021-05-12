@@ -17,7 +17,7 @@ import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.businessobject.actions.BatchFileActionsProvider;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import org.kuali.kfs.krad.util.KRADConstants;
 

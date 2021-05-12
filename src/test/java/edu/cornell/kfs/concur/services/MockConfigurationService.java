@@ -3,7 +3,7 @@ package edu.cornell.kfs.concur.services;
 import java.util.Map;
 
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 public class MockConfigurationService implements ConfigurationService {
     public static final String ERROR_REQUIRED_MESSAGE ="{0} is a required field.";

@@ -16,9 +16,9 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.role.RoleMembership;
+import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.module.ld.CuLaborParameterConstants;

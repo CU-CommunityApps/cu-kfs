@@ -17,10 +17,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
@@ -712,7 +713,7 @@ abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
         String tempValue;
         int tempLen;
         
-        final String defaultStringIfBlank = helper.useExactLengths ? KRADConstants.BLANK_SPACE : KRADConstants.EMPTY_STRING;
+        final String defaultStringIfBlank = helper.useExactLengths ? KRADConstants.BLANK_SPACE : KFSConstants.EMPTY_STRING;
         
         // Append the String values of the pieces in order, right-padding or truncating as needed.
         for (RecordPiece piece : helper.outputPieces) {

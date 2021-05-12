@@ -22,9 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.kim.impl.common.attribute.KimAttributeDataBo;
+import org.kuali.kfs.kim.impl.common.attribute.KimAttributeData;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
-import org.kuali.kfs.kim.impl.type.KimTypeAttributeBo;
+import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
 import org.kuali.kfs.kns.datadictionary.InquirySectionDefinition;
 import org.kuali.kfs.kns.inquiry.InquiryRestrictions;
 import org.kuali.kfs.kns.inquiry.KualiInquirableImpl;
@@ -35,10 +35,10 @@ import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.kns.web.ui.Section;
 import org.kuali.kfs.kns.web.ui.SectionBridge;
 import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -134,8 +134,8 @@ public class PersonInquirableImpl extends KualiInquirableImpl {
     }
 
     private List<Row> buildRowsWithQualifierFields(String sectionId, PersonImpl person, int memberIndex) {
-        List<KimTypeAttributeBo> attributeDefinitions;
-        List<KimAttributeDataBo> attributeDetails;
+        List<KimTypeAttribute> attributeDefinitions;
+        List<KimAttributeData> attributeDetails;
         if (StringUtils.equals(sectionId, "rolesSection")) {
             attributeDefinitions = person.getRoleMembers().get(memberIndex).getRole().getKimType()
                     .getAttributeDefinitions();
@@ -154,10 +154,10 @@ public class PersonInquirableImpl extends KualiInquirableImpl {
         return qualifierRows;
     }
 
-    private Map<String, Field> buildQualifierAttributeFieldMap(List<KimTypeAttributeBo> attributeDefinitions) {
+    private Map<String, Field> buildQualifierAttributeFieldMap(List<KimTypeAttribute> attributeDefinitions) {
         Map<String, Field> fieldsToAdd = new LinkedHashMap<>();
-        attributeDefinitions.sort(Comparator.comparing(KimTypeAttributeBo::getSortCode));
-        attributeDefinitions.stream().map(KimTypeAttributeBo::getKimAttribute).forEach(kimAttribute -> {
+        attributeDefinitions.sort(Comparator.comparing(KimTypeAttribute::getSortCode));
+        attributeDefinitions.stream().map(KimTypeAttribute::getKimAttribute).forEach(kimAttribute -> {
             String componentName = kimAttribute.getComponentName();
             String attributeName = kimAttribute.getAttributeName();
             DataDictionaryService dataDictionaryService = getDataDictionaryService();
@@ -171,10 +171,10 @@ public class PersonInquirableImpl extends KualiInquirableImpl {
         return fieldsToAdd;
     }
 
-    private void setFieldValuesForMember(List<KimAttributeDataBo> attributeDetails, Map<String, Field> fieldsToAdd) {
-        attributeDetails.forEach(memberAttributeDataBo -> fieldsToAdd
-                .get(memberAttributeDataBo.getKimAttribute().getAttributeName())
-                .setPropertyValue(memberAttributeDataBo.getAttributeValue()));
+    private void setFieldValuesForMember(List<KimAttributeData> attributeDetails, Map<String, Field> fieldsToAdd) {
+        attributeDetails.forEach(memberAttributeData -> fieldsToAdd
+                .get(memberAttributeData.getKimAttribute().getAttributeName())
+                .setPropertyValue(memberAttributeData.getAttributeValue()));
     }
 
     private Field buildSeparatorField(String fieldLabel) {

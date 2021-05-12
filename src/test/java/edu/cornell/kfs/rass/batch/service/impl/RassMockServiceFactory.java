@@ -27,12 +27,12 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.EmailService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.document.DocumentProcessingQueue;
-import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.document.DocumentProcessingQueue;
+import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -45,8 +45,8 @@ import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
-import org.kuali.rice.kim.api.role.RoleService;
-import org.kuali.kfs.kim.impl.role.RoleBo;
+import org.kuali.kfs.kim.api.role.RoleService;
+import org.kuali.kfs.kim.impl.role.RoleLite;
 
 
 public class RassMockServiceFactory {
@@ -250,7 +250,7 @@ public class RassMockServiceFactory {
     }
     
     public RoleService buildMockRoleService() {
-        RoleBo projectDirectRole = new RoleBo();
+        RoleLite projectDirectRole = new RoleLite();
         projectDirectRole.setId("123");
         projectDirectRole.setName(KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR);
         projectDirectRole.setNamespaceCode(KFSConstants.CoreModuleNamespaces.KFS);
@@ -258,7 +258,7 @@ public class RassMockServiceFactory {
         
         RoleService roleService = Mockito.mock(RoleService.class);
         Mockito.when(roleService.getRoleByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.KFS,
-                KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR)).thenReturn(RoleBo.to(projectDirectRole));
+                KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR)).thenReturn(projectDirectRole);
         Mockito.when(roleService.principalHasRole(Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(true);
         
         return roleService;

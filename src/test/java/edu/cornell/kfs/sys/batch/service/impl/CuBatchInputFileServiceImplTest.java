@@ -17,8 +17,8 @@ import org.kuali.kfs.fp.batch.ProcurementCardInputFileType;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
 
 import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;

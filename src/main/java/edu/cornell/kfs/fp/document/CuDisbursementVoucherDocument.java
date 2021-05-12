@@ -42,17 +42,16 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.actiontaken.ActionTakenValue;
-import org.kuali.rice.kew.api.action.ActionTaken;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.engine.RouteContext;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.actiontaken.ActionTaken;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.engine.RouteContext;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.address.EntityAddress;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
@@ -875,9 +874,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
     protected boolean isCampusReviewRequired() {
 
-        List<ActionTakenValue> actions = RouteContext.getCurrentRouteContext().getDocument().getActionsTaken();
+        List<ActionTaken> actions = RouteContext.getCurrentRouteContext().getDocument().getActionsTaken();
         List<String> people = new ArrayList<String>();
-        for(ActionTakenValue atv: actions) {
+        for(ActionTaken atv: actions) {
             if( !people.contains(atv.getPrincipalId())) {
                 people.add(atv.getPrincipalId());
             }

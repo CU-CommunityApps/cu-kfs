@@ -26,42 +26,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
+import org.kuali.kfs.core.api.delegation.DelegationType;
+import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.group.GroupService;
+import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.role.RoleContract;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.type.KimTypeInfoService;
 import org.kuali.kfs.kim.framework.role.RoleTypeService;
-import org.kuali.kfs.kim.framework.type.KimTypeService;
-import org.kuali.kfs.kim.impl.common.attribute.KimAttributeBo;
-import org.kuali.kfs.kim.impl.common.delegate.DelegateMemberBo;
-import org.kuali.kfs.kim.impl.common.delegate.DelegateTypeBo;
+import org.kuali.kfs.kim.impl.common.attribute.KimAttribute;
+import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
+import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
+import org.kuali.kfs.kim.impl.group.Group;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.impl.responsibility.ResponsibilityInternalService;
 import org.kuali.kfs.kim.impl.services.KimImplServiceLocator;
-import org.kuali.kfs.kim.impl.type.KimTypeBo;
+import org.kuali.kfs.kim.impl.type.KimType;
+import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.service.LookupService;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.rice.core.api.criteria.CriteriaLookupService;
-import org.kuali.rice.core.api.delegation.DelegationType;
-import org.kuali.rice.core.api.membership.MemberType;
-import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.kim.api.group.Group;
-import org.kuali.rice.kim.api.group.GroupService;
-import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.role.Role;
-import org.kuali.rice.kim.api.role.RoleContract;
-import org.kuali.rice.kim.api.role.RoleMember;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kim.api.type.KimType;
-import org.kuali.rice.kim.api.type.KimTypeAttribute;
-import org.kuali.rice.kim.api.type.KimTypeInfoService;
 
 /**
  * CU Customization:
@@ -78,13 +71,17 @@ abstract class RoleServiceBase {
     private ResponsibilityInternalService responsibilityInternalService;
     private RoleDao roleDao;
     protected CriteriaLookupService criteriaLookupService;
+    // CU Customization: Added kimTypeInfoService reference.
     protected KimTypeInfoService kimTypeInfoService;
 
     /**
+     * CU Customization: Modified this method to accept an attributeName-to-attributeId map,
+     * and to use that map when performing the qualifier key conversion.
+     * 
      * Converts the Qualifier Name/Value Role qualification set into Qualifier AttributeID/Value set
      *
      * @param qualification The original role qualification attribute set
-     * @param validAttributeIds The mapping of attribute names to their matching attribute ids
+     * @param validAttributeIds validAttributeIds The mapping of attribute names to their matching attribute ids
      * @return Converted Map<String, String> containing ID/value pairs
      */
     protected Map<String, String> convertQualifierKeys(
@@ -104,9 +101,9 @@ abstract class RoleServiceBase {
     protected void getNestedRoleTypeMemberIds(String roleId, Set<String> members) {
         ArrayList<String> roleList = new ArrayList<>(1);
         roleList.add(roleId);
-        List<RoleMemberBo> firstLevelMembers = getStoredRoleMembersForRoleIds(roleList, MemberType.ROLE.getCode(),
+        List<RoleMember> firstLevelMembers = getStoredRoleMembersForRoleIds(roleList, MemberType.ROLE.getCode(),
                 Collections.emptyMap());
-        for (RoleMemberBo member : firstLevelMembers) {
+        for (RoleMember member : firstLevelMembers) {
             if (MemberType.ROLE.equals(member.getType())) {
                 if (!members.contains(member.getMemberId())) {
                     members.add(member.getMemberId());
@@ -116,11 +113,11 @@ abstract class RoleServiceBase {
         }
     }
 
-    protected List<RoleMemberBo> getRoleMembersForPrincipalId(String roleId, String principalId) {
+    protected List<RoleMember> getRoleMembersForPrincipalId(String roleId, String principalId) {
         return roleDao.getRolePrincipalsForPrincipalIdAndRoleIds(Collections.singletonList(roleId), principalId, null);
     }
 
-    protected List<RoleMemberBo> getRoleMembersForGroupIds(String roleId, List<String> groupIds) {
+    protected List<RoleMember> getRoleMembersForGroupIds(String roleId, List<String> groupIds) {
         if (CollectionUtils.isEmpty(groupIds)) {
             return new ArrayList<>();
         }
@@ -128,10 +125,10 @@ abstract class RoleServiceBase {
     }
 
     /**
-     * Retrieves a list of RoleMemberBo instances from the KimRoleDao.
+     * Retrieves a list of RoleMember instances from the KimRoleDao.
      *
      * @param daoActionToTake An indicator for which KimRoleDao method should be used to get the results if the
-     *                        desired RoleMemberBos are not cached.
+     *                        desired RoleMembers are not cached.
      * @param roleIds         The role IDs to filter by; may get used as the IDs for members that are also roles,
      *                        depending on the daoActionToTake value.
      * @param principalId     The principal ID to filter by; may get ignored depending on the daoActionToTake value.
@@ -139,12 +136,13 @@ abstract class RoleServiceBase {
      * @param memberTypeCode  The member type code to filter by; may get overridden depending on the daoActionToTake
      *                       value.
      * @param qualification   The original role qualification attribute set
-     * @return A list of RoleMemberBo instances based on the provided parameters.
+     * @return A list of RoleMember instances based on the provided parameters.
      * @throws IllegalArgumentException if daoActionToTake refers to an enumeration constant that is not
      * role-member-related.
      */
-    protected List<RoleMemberBo> getRoleMemberBoList(RoleDaoAction daoActionToTake, Collection<String> roleIds,
-            String principalId, Collection<String> groupIds, String memberTypeCode, Map<String, String> qualification) {
+    protected List<RoleMember> getRoleMemberList(RoleDaoAction daoActionToTake, Collection<String> roleIds,
+                                                 String principalId, Collection<String> groupIds, String memberTypeCode, Map<String, String> qualification) {
+        // CU Customization: Update the qualifier conversion to use an attributeName-to-attributeId map.
         Map<String, String> validAttributeIds = getAttributeNameToAttributeIdMappings(roleIds, qualification);
         Map<String, String> convertedQualification = convertQualifierKeys(qualification, validAttributeIds);
 
@@ -194,9 +192,9 @@ abstract class RoleServiceBase {
         Map<String, String> validAttributeIds = new HashMap<>();
 
         roleIds.stream()
-                .map(this::getRoleBoLite)
+                .map(this::getRoleLite)
                 .filter(ObjectUtils::isNotNull)
-                .map(RoleBoLite::getKimTypeId)
+                .map(RoleLite::getKimTypeId)
                 .distinct()
                 .map(typeInfoService::getKimType)
                 .filter(ObjectUtils::isNotNull)
@@ -214,13 +212,14 @@ abstract class RoleServiceBase {
         return validAttributeIds;
     }
 
+
     /**
      * Calls the KimRoleDao's "getRolePrincipalsForPrincipalIdAndRoleIds" method and/or retrieves any corresponding
      * members from the cache.
      */
-    protected List<RoleMemberBo> getStoredRolePrincipalsForPrincipalIdAndRoleIds(Collection<String> roleIds,
-            String principalId, Map<String, String> qualification) {
-        return getRoleMemberBoList(RoleDaoAction.ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS, roleIds, principalId,
+    protected List<RoleMember> getStoredRolePrincipalsForPrincipalIdAndRoleIds(Collection<String> roleIds,
+                                                                               String principalId, Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS, roleIds, principalId,
                 Collections.emptyList(), null, qualification);
     }
 
@@ -228,9 +227,9 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleGroupsForGroupIdsAndRoleIds" method and/or retrieves any corresponding members
      * from the cache.
      */
-    protected List<RoleMemberBo> getStoredRoleGroupsForGroupIdsAndRoleIds(Collection<String> roleIds,
-            Collection<String> groupIds, Map<String, String> qualification) {
-        return getRoleMemberBoList(RoleDaoAction.ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS, roleIds, null, groupIds,
+    protected List<RoleMember> getStoredRoleGroupsForGroupIdsAndRoleIds(Collection<String> roleIds,
+                                                                        Collection<String> groupIds, Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS, roleIds, null, groupIds,
                 null, qualification);
     }
 
@@ -238,9 +237,9 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleMembersForRoleIds" method and/or retrieves any corresponding members from the
      * cache.
      */
-    protected List<RoleMemberBo> getStoredRoleMembersForRoleIds(Collection<String> roleIds, String memberTypeCode,
-            Map<String, String> qualification) {
-        return getRoleMemberBoList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS, roleIds, null, Collections.emptyList(),
+    protected List<RoleMember> getStoredRoleMembersForRoleIds(Collection<String> roleIds, String memberTypeCode,
+                                                              Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS, roleIds, null, Collections.emptyList(),
                 memberTypeCode, qualification);
     }
 
@@ -248,9 +247,9 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleMembershipsForRoleIdsAsMembers" method and/or retrieves any corresponding
      * members from the cache.
      */
-    protected List<RoleMemberBo> getStoredRoleMembershipsForRoleIdsAsMembers(Collection<String> roleIds,
-            Map<String, String> qualification) {
-        return getRoleMemberBoList(RoleDaoAction.ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS, roleIds, null,
+    protected List<RoleMember> getStoredRoleMembershipsForRoleIdsAsMembers(Collection<String> roleIds,
+                                                                           Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS, roleIds, null,
                 Collections.emptyList(), null, qualification);
     }
 
@@ -258,35 +257,35 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleMembersForRoleIdsWithFilters" method and/or retrieves any corresponding members
      * from the cache.
      */
-    protected List<RoleMemberBo> getStoredRoleMembersForRoleIdsWithFilters(Collection<String> roleIds,
-            String principalId, List<String> groupIds, Map<String, String> qualification) {
-        return getRoleMemberBoList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS_WITH_FILTERS, roleIds, principalId,
+    protected List<RoleMember> getStoredRoleMembersForRoleIdsWithFilters(Collection<String> roleIds,
+                                                                         String principalId, List<String> groupIds, Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS_WITH_FILTERS, roleIds, principalId,
                 groupIds, null, qualification);
     }
 
     /**
-     * @return a RoleMemberBo object by its ID. If the role member already exists in the cache, this method will
+     * @return a RoleMember object by its ID. If the role member already exists in the cache, this method will
      *         return the cached version; otherwise, it will retrieve the uncached version from the database and then
      *         cache it (if it belongs to a role that allows its members to be cached) before returning it.
      */
-    protected RoleMemberBo getRoleMemberBo(String roleMemberId) {
+    protected RoleMember getRoleMember(String roleMemberId) {
         if (StringUtils.isBlank(roleMemberId)) {
             return null;
         }
 
-        return getBusinessObjectService().findByPrimaryKey(RoleMemberBo.class, Collections.singletonMap(
+        return getBusinessObjectService().findByPrimaryKey(RoleMember.class, Collections.singletonMap(
                 KimConstants.PrimaryKeyConstants.ID, roleMemberId));
     }
 
     /**
-     * Retrieves a RoleResponsibilityActionBo object by its ID.
+     * Retrieves a RoleResponsibilityAction object by its ID.
      */
-    protected RoleResponsibilityActionBo getRoleResponsibilityActionBo(String roleResponsibilityActionId) {
+    protected RoleResponsibilityAction getRoleResponsibilityAction(String roleResponsibilityActionId) {
         if (StringUtils.isBlank(roleResponsibilityActionId)) {
             return null;
         }
 
-        return getBusinessObjectService().findByPrimaryKey(RoleResponsibilityActionBo.class, Collections.singletonMap(
+        return getBusinessObjectService().findByPrimaryKey(RoleResponsibilityAction.class, Collections.singletonMap(
                 KimConstants.PrimaryKeyConstants.ID, roleResponsibilityActionId));
     }
 
@@ -294,7 +293,7 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getDelegationImplMapFromRoleIds" method and/or retrieves any corresponding delegations
      * from the cache.
      */
-    protected Map<String, DelegateTypeBo> getStoredDelegationImplMapFromRoleIds(Collection<String> roleIds) {
+    protected Map<String, DelegateType> getStoredDelegationImplMapFromRoleIds(Collection<String> roleIds) {
         if (roleIds != null && !roleIds.isEmpty()) {
             return roleDao.getDelegationImplMapFromRoleIds(roleIds);
         }
@@ -306,7 +305,7 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getDelegationBosForRoleIds" method and/or retrieves any corresponding delegations from
      * the cache.
      */
-    protected List<DelegateTypeBo> getStoredDelegationImplsForRoleIds(Collection<String> roleIds) {
+    protected List<DelegateType> getStoredDelegationImplsForRoleIds(Collection<String> roleIds) {
         if (roleIds != null && !roleIds.isEmpty()) {
             return roleDao.getDelegationBosForRoleIds(roleIds);
         }
@@ -322,12 +321,12 @@ abstract class RoleServiceBase {
      *                        RoleDaoAction value.
      * @param groupIds        The group IDs of the group delegation members; may get ignored depending on the
      *                        RoleDaoAction value.
-     * @return A List of DelegateMemberBo objects based on the provided parameters.
+     * @return A List of DelegateMember objects based on the provided parameters.
      * @throws IllegalArgumentException if daoActionToTake does not represent a delegation-member-list-related
      * enumeration value.
      */
-    protected List<DelegateMemberBo> getDelegationMemberBoList(RoleDaoAction daoActionToTake,
-            Collection<String> delegationIds, String principalId, List<String> groupIds) {
+    protected List<DelegateMember> getDelegationMemberList(RoleDaoAction daoActionToTake,
+                                                           Collection<String> delegationIds, String principalId, List<String> groupIds) {
         if (delegationIds == null || delegationIds.isEmpty()) {
             delegationIds = Collections.emptyList();
         }
@@ -353,37 +352,37 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getDelegationPrincipalsForPrincipalIdAndDelegationIds" method and/or retrieves any
      * corresponding members from the cache.
      */
-    protected List<DelegateMemberBo> getStoredDelegationPrincipalsForPrincipalIdAndDelegationIds(
+    protected List<DelegateMember> getStoredDelegationPrincipalsForPrincipalIdAndDelegationIds(
             Collection<String> delegationIds, String principalId) {
-        return getDelegationMemberBoList(RoleDaoAction.DELEGATION_PRINCIPALS_FOR_PRINCIPAL_ID_AND_DELEGATION_IDS,
+        return getDelegationMemberList(RoleDaoAction.DELEGATION_PRINCIPALS_FOR_PRINCIPAL_ID_AND_DELEGATION_IDS,
                 delegationIds, principalId, null);
     }
 
     /**
-     * @return a DelegateMemberBo object by its ID. If the delegation member already exists in the cache, this method
+     * @return a DelegateMember object by its ID. If the delegation member already exists in the cache, this method
      *         will return the cached version; otherwise, it will retrieve the uncached version from the database and
      *         then cache it before returning it.
      */
-    protected DelegateMemberBo getDelegateMemberBo(String delegationMemberId) {
+    protected DelegateMember getDelegateMember(String delegationMemberId) {
         if (StringUtils.isBlank(delegationMemberId)) {
             return null;
         }
 
-        return getBusinessObjectService().findByPrimaryKey(DelegateMemberBo.class,
+        return getBusinessObjectService().findByPrimaryKey(DelegateMember.class,
                 Collections.singletonMap(KimConstants.PrimaryKeyConstants.DELEGATION_MEMBER_ID, delegationMemberId));
     }
 
     /**
-     * @return a DelegateMemberBo List by (principal/group/role) member ID and delegation ID. If the List already
+     * @return a DelegateMember List by (principal/group/role) member ID and delegation ID. If the List already
      *         exists in the cache, this method will return the cached one; otherwise, it will retrieve the uncached
      *         version from the database and then cache it before returning it.
      */
-    protected List<DelegateMemberBo> getDelegationMemberBoListByMemberAndDelegationId(String memberId,
-            String delegationId) {
+    protected List<DelegateMember> getDelegationMemberListByMemberAndDelegationId(String memberId,
+                                                                                  String delegationId) {
         Map<String, String> searchCriteria = new HashMap<>();
         searchCriteria.put(KimConstants.PrimaryKeyConstants.MEMBER_ID, memberId);
         searchCriteria.put(KimConstants.PrimaryKeyConstants.DELEGATION_ID, delegationId);
-        return new ArrayList<>(getBusinessObjectService().findMatching(DelegateMemberBo.class, searchCriteria));
+        return new ArrayList<>(getBusinessObjectService().findMatching(DelegateMember.class, searchCriteria));
     }
 
     protected Object getMember(String memberTypeCode, String memberId) {
@@ -395,7 +394,7 @@ abstract class RoleServiceBase {
         } else if (MemberType.GROUP.getCode().equals(memberTypeCode)) {
             return getGroupService().getGroup(memberId);
         } else if (MemberType.ROLE.getCode().equals(memberTypeCode)) {
-            return getRoleBo(memberId);
+            return getRole(memberId);
         }
         return null;
     }
@@ -410,28 +409,28 @@ abstract class RoleServiceBase {
         if (member instanceof Group) {
             return ((Group) member).getName();
         }
-        if (member instanceof Role) {
-            return ((Role) member).getName();
+        if (member instanceof RoleContract) {
+            return ((RoleContract) member).getName();
         }
         return member.toString();
     }
 
-    protected RoleBo getRoleBo(String roleId) {
+    protected Role getRole(String roleId) {
         if (StringUtils.isBlank(roleId)) {
             return null;
         }
-        return getBusinessObjectService().findBySinglePrimaryKey(RoleBo.class, roleId);
+        return getBusinessObjectService().findBySinglePrimaryKey(Role.class, roleId);
     }
 
-    protected RoleBoLite getRoleBoLite(String roleId) {
+    protected RoleLite getRoleLite(String roleId) {
         if (StringUtils.isBlank(roleId)) {
             return null;
         }
-        return getBusinessObjectService().findBySinglePrimaryKey(RoleBoLite.class, roleId);
+        return getBusinessObjectService().findBySinglePrimaryKey(RoleLite.class, roleId);
     }
 
-    protected DelegateTypeBo getDelegationOfType(String roleId, DelegationType delegationType) {
-        List<DelegateTypeBo> roleDelegates = getRoleDelegations(roleId);
+    protected DelegateType getDelegationOfType(String roleId, DelegationType delegationType) {
+        List<DelegateType> roleDelegates = getRoleDelegations(roleId);
         if (isDelegationPrimary(delegationType)) {
             return getPrimaryDelegation(roleId, roleDelegates);
         } else {
@@ -439,43 +438,43 @@ abstract class RoleServiceBase {
         }
     }
 
-    private DelegateTypeBo getSecondaryDelegation(String roleId, List<DelegateTypeBo> roleDelegates) {
-        DelegateTypeBo secondaryDelegate = null;
-        RoleBoLite roleBo = getRoleBoLite(roleId);
-        for (DelegateTypeBo delegate : roleDelegates) {
+    private DelegateType getSecondaryDelegation(String roleId, List<DelegateType> roleDelegates) {
+        DelegateType secondaryDelegate = null;
+        RoleLite roleLite = getRoleLite(roleId);
+        for (DelegateType delegate : roleDelegates) {
             if (isDelegationSecondary(delegate.getDelegationType())) {
                 secondaryDelegate = delegate;
             }
         }
         if (secondaryDelegate == null) {
-            secondaryDelegate = new DelegateTypeBo();
+            secondaryDelegate = new DelegateType();
             secondaryDelegate.setRoleId(roleId);
             secondaryDelegate.setDelegationType(DelegationType.SECONDARY);
-            secondaryDelegate.setKimTypeId(roleBo.getKimTypeId());
+            secondaryDelegate.setKimTypeId(roleLite.getKimTypeId());
         }
         return secondaryDelegate;
     }
 
-    protected DelegateTypeBo getPrimaryDelegation(String roleId, List<DelegateTypeBo> roleDelegates) {
-        DelegateTypeBo primaryDelegate = null;
-        RoleBoLite roleBo = getRoleBoLite(roleId);
-        for (DelegateTypeBo delegate : roleDelegates) {
+    protected DelegateType getPrimaryDelegation(String roleId, List<DelegateType> roleDelegates) {
+        DelegateType primaryDelegate = null;
+        RoleLite roleLite = getRoleLite(roleId);
+        for (DelegateType delegate : roleDelegates) {
             if (isDelegationPrimary(delegate.getDelegationType())) {
                 primaryDelegate = delegate;
             }
         }
         if (primaryDelegate == null) {
-            primaryDelegate = new DelegateTypeBo();
+            primaryDelegate = new DelegateType();
             primaryDelegate.setRoleId(roleId);
             primaryDelegate.setDelegationType(DelegationType.PRIMARY);
-            primaryDelegate.setKimTypeId(roleBo.getKimTypeId());
+            primaryDelegate.setKimTypeId(roleLite.getKimTypeId());
         }
         return primaryDelegate;
     }
 
-    protected RoleMemberBo matchingMemberRecord(List<RoleMemberBo> roleMembers, String memberId,
-            String memberTypeCode, Map<String, String> qualifier) {
-        for (RoleMemberBo rm : roleMembers) {
+    protected RoleMember matchingMemberRecord(List<RoleMember> roleMembers, String memberId,
+                                              String memberTypeCode, Map<String, String> qualifier) {
+        for (RoleMember rm : roleMembers) {
             if (doesMemberMatch(rm, memberId, memberTypeCode, qualifier)) {
                 return rm;
             }
@@ -491,7 +490,7 @@ abstract class RoleServiceBase {
         return DelegationType.SECONDARY.equals(delegationType);
     }
 
-    private List<DelegateTypeBo> getRoleDelegations(String roleId) {
+    private List<DelegateType> getRoleDelegations(String roleId) {
         if (roleId == null) {
             return new ArrayList<>();
         }
@@ -499,7 +498,7 @@ abstract class RoleServiceBase {
 
     }
 
-    protected RoleBo getRoleBoByName(String namespaceCode, String roleName) {
+    protected Role getRoleByName(String namespaceCode, String roleName) {
         if (StringUtils.isBlank(namespaceCode) || StringUtils.isBlank(roleName)) {
             return null;
         }
@@ -508,10 +507,10 @@ abstract class RoleServiceBase {
         criteria.put(KimConstants.UniqueKeyConstants.NAME, roleName);
         criteria.put(KRADPropertyConstants.ACTIVE, "Y");
         // while this is not actually the primary key - there will be at most one row with these criteria
-        return getBusinessObjectService().findByPrimaryKey(RoleBo.class, criteria);
+        return getBusinessObjectService().findByPrimaryKey(Role.class, criteria);
     }
 
-    protected RoleBoLite getRoleBoLiteByName(String namespaceCode, String roleName) {
+    protected RoleLite getRoleLiteByName(String namespaceCode, String roleName) {
         if (StringUtils.isBlank(namespaceCode) || StringUtils.isBlank(roleName)) {
             return null;
         }
@@ -520,27 +519,17 @@ abstract class RoleServiceBase {
         criteria.put(KimConstants.UniqueKeyConstants.NAME, roleName);
         criteria.put(KRADPropertyConstants.ACTIVE, "Y");
         // while this is not actually the primary key - there will be at most one row with these criteria
-        return getBusinessObjectService().findByPrimaryKey(RoleBoLite.class, criteria);
+        return getBusinessObjectService().findByPrimaryKey(RoleLite.class, criteria);
     }
 
     protected List<RoleMember> doAnyMemberRecordsMatchByExactQualifier(RoleContract role, String memberId,
-            RoleDaoAction daoActionToTake, Map<String, String> qualifier) {
-        List<RoleMemberBo> roleMemberBos = getRoleMembersByExactQualifierMatch(role, memberId, daoActionToTake,
-                qualifier);
-        List<RoleMember> roleMembers = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(roleMemberBos)) {
-            for (RoleMemberBo bo : roleMemberBos) {
-                roleMembers.add(RoleMemberBo.to(bo));
-            }
-            return roleMembers;
-        }
-
-        return Collections.emptyList();
+                                                                       RoleDaoAction daoActionToTake, Map<String, String> qualifier) {
+        return getRoleMembersByExactQualifierMatch(role, memberId, daoActionToTake, qualifier);
     }
 
-    protected List<RoleMemberBo> getRoleMembersByExactQualifierMatch(RoleContract role, String memberId,
-            RoleDaoAction daoActionToTake, Map<String, String> qualifier) {
-        List<RoleMemberBo> rms = new ArrayList<>();
+    protected List<RoleMember> getRoleMembersByExactQualifierMatch(RoleContract role, String memberId,
+                                                                   RoleDaoAction daoActionToTake, Map<String, String> qualifier) {
+        List<RoleMember> rms = new ArrayList<>();
         RoleTypeService roleTypeService = getRoleTypeService(role.getId());
         if (roleTypeService != null) {
             List<String> attributesForExactMatch = roleTypeService.getQualifiersForExactMatch();
@@ -559,10 +548,10 @@ abstract class RoleServiceBase {
                         break;
                     case ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS:
                         // Search for roles as role members only.
-                        List<RoleMemberBo> allRoleMembers = getStoredRoleMembershipsForRoleIdsAsMembers(
+                        List<RoleMember> allRoleMembers = getStoredRoleMembershipsForRoleIdsAsMembers(
                                 Collections.singletonList(role.getId()), populateQualifiersForExactMatch(qualifier,
                                         attributesForExactMatch));
-                        for (RoleMemberBo rm : allRoleMembers) {
+                        for (RoleMember rm : allRoleMembers) {
                             if (rm.getMemberId().equals(memberId)) {
                                 rms.add(rm);
                             }
@@ -579,18 +568,18 @@ abstract class RoleServiceBase {
     }
 
     //return roleMemberId of match or null if no match
-    protected RoleMember doAnyMemberRecordsMatch(List<RoleMemberBo> roleMembers, String memberId,
-            String memberTypeCode, Map<String, String> qualifier) {
-        for (RoleMemberBo rm : roleMembers) {
+    protected RoleMember doAnyMemberRecordsMatch(List<RoleMember> roleMembers, String memberId,
+                                                 String memberTypeCode, Map<String, String> qualifier) {
+        for (RoleMember rm : roleMembers) {
             if (rm.isActive() && doesMemberMatch(rm, memberId, memberTypeCode, qualifier)) {
-                return RoleMemberBo.to(rm);
+                return rm;
             }
         }
         return null;
     }
 
-    protected boolean doesMemberMatch(RoleMemberBo roleMember, String memberId, String memberTypeCode,
-            Map<String, String> qualifier) {
+    protected boolean doesMemberMatch(RoleMember roleMember, String memberId, String memberTypeCode,
+                                      Map<String, String> qualifier) {
         if (roleMember.getMemberId().equals(memberId) && roleMember.getType().getCode().equals(memberTypeCode)) {
             // member ID/type match
             Map<String, String> roleQualifier = roleMember.getAttributes();
@@ -612,11 +601,7 @@ abstract class RoleServiceBase {
      */
     protected RoleTypeService getRoleTypeServiceByName(String serviceName) {
         try {
-            KimTypeService service = GlobalResourceLoader.getService(QName.valueOf(serviceName));
-            if (service instanceof RoleTypeService) {
-                return (RoleTypeService) service;
-            }
-            return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");
+            return (RoleTypeService) KimImplServiceLocator.getService(serviceName);
         } catch (Exception ex) {
             LOG.warn("Unable to find role type service with name: " + serviceName, ex);
             return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");
@@ -630,9 +615,9 @@ abstract class RoleServiceBase {
      * @return the Role Type Service
      */
     protected RoleTypeService getRoleTypeService(String roleId) {
-        RoleBoLite roleBo = getRoleBoLite(roleId);
-        if (roleBo != null) {
-            KimType roleType = KimTypeBo.to(roleBo.getKimRoleType());
+        RoleLite roleLite = getRoleLite(roleId);
+        if (roleLite != null) {
+            KimType roleType = roleLite.getKimRoleType();
             if (roleType != null) {
                 return getRoleTypeService(roleType);
             }
@@ -644,11 +629,7 @@ abstract class RoleServiceBase {
         String serviceName = typeInfo.getServiceName();
         if (serviceName != null) {
             try {
-                KimTypeService service = GlobalResourceLoader.getService(QName.valueOf(serviceName));
-                if (service instanceof RoleTypeService) {
-                    return (RoleTypeService) service;
-                }
-                return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");
+                return (RoleTypeService) KimImplServiceLocator.getService(serviceName);
             } catch (Exception ex) {
                 LOG.error("Unable to find role type service with name: " + serviceName, ex);
                 return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");
@@ -709,7 +690,7 @@ abstract class RoleServiceBase {
     protected String getAttributeIdByName(String attributeName) {
         Map<String, Object> critieria = new HashMap<>(1);
         critieria.put("attributeName", attributeName);
-        Collection<KimAttributeBo> defs = getBusinessObjectService().findMatching(KimAttributeBo.class, critieria);
+        Collection<KimAttribute> defs = getBusinessObjectService().findMatching(KimAttribute.class, critieria);
         String result = null;
         if (CollectionUtils.isNotEmpty(defs)) {
             result = defs.iterator().next().getId();
@@ -779,11 +760,13 @@ abstract class RoleServiceBase {
         this.criteriaLookupService = criteriaLookupService;
     }
 
-    protected KimTypeInfoService getKimTypeInfoService() {
-        if (kimTypeInfoService == null) {
-            kimTypeInfoService = KimApiServiceLocator.getKimTypeInfoService();
-        }
+    // CU Customization: Add KimTypeInfoService getter and setter.
+    public KimTypeInfoService getKimTypeInfoService() {
         return kimTypeInfoService;
+    }
+
+    public void setKimTypeInfoService(KimTypeInfoService kimTypeInfoService) {
+        this.kimTypeInfoService = kimTypeInfoService;
     }
 
     /**

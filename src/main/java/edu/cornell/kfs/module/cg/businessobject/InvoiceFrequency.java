@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.cg.businessobject;
 
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class InvoiceFrequency extends PersistableBusinessObjectBase implements MutableInactivatable {

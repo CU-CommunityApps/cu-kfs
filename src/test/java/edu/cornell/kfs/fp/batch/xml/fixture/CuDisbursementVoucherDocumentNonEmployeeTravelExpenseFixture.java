@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public enum CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture {
     DELTA("A", "DELTA", 55.55),

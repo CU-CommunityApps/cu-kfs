@@ -13,8 +13,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
-import org.kuali.rice.kew.api.document.Document;
+import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
@@ -300,7 +301,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
         String initiatorPrincipalId;
         String initiatorPrincipalName;
         String vendorTaxNumber;
-        Document document;
+        DocumentRouteHeaderValue document;
         
         
         
@@ -431,7 +432,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
         @Override
         String getTaxTypeSpecificConditionForSelect(Transaction1042SSummary summary) {
             // No extra conditions needed to filter out PDP rows for 1042S processing.
-            return KRADConstants.EMPTY_STRING;
+            return KFSConstants.EMPTY_STRING;
         }
         
         @Override

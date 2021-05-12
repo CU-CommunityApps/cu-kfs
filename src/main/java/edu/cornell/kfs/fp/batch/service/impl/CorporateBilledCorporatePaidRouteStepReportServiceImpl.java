@@ -15,7 +15,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;

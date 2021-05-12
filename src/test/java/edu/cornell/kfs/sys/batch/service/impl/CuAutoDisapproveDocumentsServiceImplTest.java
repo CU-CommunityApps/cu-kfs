@@ -15,9 +15,9 @@ import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
 import org.kuali.kfs.sys.context.IntegTestUtils;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.kew.api.doctype.DocumentType;
-import org.kuali.rice.kew.api.doctype.DocumentTypeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
+import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 
 @ConfigureContext(session = kfs)
 public class CuAutoDisapproveDocumentsServiceImplTest extends KualiIntegTestBase {

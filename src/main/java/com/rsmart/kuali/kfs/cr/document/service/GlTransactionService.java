@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 

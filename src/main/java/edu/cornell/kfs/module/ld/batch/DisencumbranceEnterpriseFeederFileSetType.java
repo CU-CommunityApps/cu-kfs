@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.EnterpriseFeederFileSetType;
 import org.kuali.kfs.module.ld.batch.service.EnterpriseFeederService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
@@ -53,7 +53,7 @@ public class DisencumbranceEnterpriseFeederFileSetType extends EnterpriseFeederF
      * @param user Person object representing user who uploaded file
      * @param fileUserIdentifer String representing user who uploaded file
      * @return String enterprise feeder formated file name string using information from user and file user identifier
-     * @see org.kuali.kfs.sys.batch.BatchInputFileSetType#getFileName(java.lang.String, org.kuali.rice.kim.bo.Person,
+     * @see org.kuali.kfs.sys.batch.BatchInputFileSetType#getFileName(java.lang.String, org.kuali.kfs.kim.bo.Person,
      *      java.lang.String)
      */
     public String getFileName(String fileType, String principalName, String fileUserIdentifer, Date creationDate) {
@@ -74,7 +74,7 @@ public class DisencumbranceEnterpriseFeederFileSetType extends EnterpriseFeederF
      * @param user the user who uploaded or will upload the file
      * @param fileUserIdentifier the file identifier
      * @return String done file name
-     * @see org.kuali.kfs.sys.batch.BatchInputFileSetType#getDoneFileName(org.kuali.rice.kim.bo.Person, java.lang.String)
+     * @see org.kuali.kfs.sys.batch.BatchInputFileSetType#getDoneFileName(org.kuali.kfs.kim.bo.Person, java.lang.String)
      */
     public String getDoneFileName(Person user, String fileUserIdentifer, Date creationDate) {
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);

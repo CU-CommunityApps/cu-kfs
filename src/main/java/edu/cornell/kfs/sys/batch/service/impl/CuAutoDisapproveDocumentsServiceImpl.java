@@ -10,9 +10,19 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kew.actiontaken.ActionTaken;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
+import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -25,16 +35,6 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.action.ActionTaken;
-import org.kuali.rice.kew.api.doctype.DocumentType;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
-import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -138,7 +138,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     	List<ActionTaken> actions;
 //    	try {
 //    		actions = KEWServiceLocator.getActionTakenService().findByDocumentId(document.getDocumentHeader().getWorkflowDocument().getDocumentId());
-		actions = KewApiServiceLocator.getWorkflowDocumentService().getAllActionsTaken(document.getDocumentNumber());
+		actions = KEWServiceLocator.getActionTakenService().findByDocumentIdIgnoreCurrentInd(document.getDocumentNumber());
 		ActionTaken max = null;
 		for (ActionTaken at : actions) {
 
@@ -157,7 +157,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 		headerBuilder.append(TAB);
 		headerBuilder.append(max.getActionDate());
 		headerBuilder.append(TAB);
-		headerBuilder.append(max.getActionTaken().getLabel());
+		headerBuilder.append(max.getActionTakenLabel());
 		headerBuilder.append(TAB);
 
 //    	} catch (WorkflowException e) {
@@ -324,7 +324,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
    }
 
     /**
-     * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.rice.krad.bo.DocumentHeader)
+     * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.kfs.krad.bo.DocumentHeader)
      */
     @Override
     protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {

@@ -3,7 +3,7 @@ package edu.cornell.kfs.gl.service;
 import java.sql.Date;
 import java.util.TreeMap;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.businessobject.ScheduledSourceAccountingLine;
 
