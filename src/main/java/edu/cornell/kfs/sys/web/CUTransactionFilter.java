@@ -76,8 +76,8 @@ public class CUTransactionFilter implements Filter {
 					
         
 					BodyMailMessage mm = new BodyMailMessage();
-					mm.addToAddress("kwk43@cornell.edu");
-					mm.setFromAddress("kwk43@cornell.edu");
+					mm.addToAddress(SpringContext.getBean(EmailService.class).getDefaultToAddress());
+					mm.setFromAddress(SpringContext.getBean(EmailService.class).getDefaultFromAddress());
 					mm.setSubject("There might be a closed connection problem.  Please check the logs. Seach for the following phrase: SOOO BAD");
 					mm.setMessage("Request URL which had the problem: " + httpReq.getRequestURL() + "    errorText = " + errorText);
 
