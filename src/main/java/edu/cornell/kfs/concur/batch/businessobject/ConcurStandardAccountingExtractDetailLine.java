@@ -2,7 +2,7 @@ package edu.cornell.kfs.concur.batch.businessobject;
 
 import java.sql.Date;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 

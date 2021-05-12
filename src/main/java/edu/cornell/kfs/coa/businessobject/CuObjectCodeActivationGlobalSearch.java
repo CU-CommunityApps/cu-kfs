@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.gl.businessobject.Balance;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class CuObjectCodeActivationGlobalSearch extends ObjectCode {
     private static final long serialVersionUID = 7461668856007571783L;

@@ -1,7 +1,7 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import edu.cornell.cynergy.antivirus.service.AntiVirusService;
-import edu.cornell.cynergy.antivirus.service.ScanResult;
+import edu.cornell.kfs.antivirus.service.AntiVirusService;
+import edu.cornell.kfs.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.dao.CuAttachmentDao;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +11,7 @@ import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
-import org.kuali.rice.core.api.mo.common.GloballyUnique;
+import org.kuali.kfs.core.api.mo.common.GloballyUnique;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedInputStream;

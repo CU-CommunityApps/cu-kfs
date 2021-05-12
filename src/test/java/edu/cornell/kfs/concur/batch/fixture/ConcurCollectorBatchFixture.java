@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;

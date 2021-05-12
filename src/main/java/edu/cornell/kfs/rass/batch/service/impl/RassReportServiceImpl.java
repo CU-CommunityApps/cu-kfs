@@ -18,7 +18,7 @@ import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;

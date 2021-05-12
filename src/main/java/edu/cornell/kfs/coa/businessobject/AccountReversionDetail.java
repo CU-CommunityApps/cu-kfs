@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.sys.businessobject.FiscalYearBasedBusinessObject;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
 /**
  * 

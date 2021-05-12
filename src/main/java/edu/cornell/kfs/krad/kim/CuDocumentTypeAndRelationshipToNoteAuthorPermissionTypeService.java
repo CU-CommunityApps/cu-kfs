@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.impl.permission.PermissionBo;
+import org.kuali.kfs.kim.impl.permission.Permission;
 import org.kuali.kfs.krad.kim.DocumentTypeAndNodeAndRouteStatusPermissionTypeServiceImpl;
-import org.kuali.rice.kim.api.permission.Permission;
 
 /**
  * Custom DocumentTypeAndNodeAndRouteStatusPermissionTypeServiceImpl subclass
@@ -33,13 +32,12 @@ public class CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService
 
         // loop over the permissions, checking the non-document-related ones
         for (Permission permission : permissionsList) {
-            PermissionBo bo = PermissionBo.from(permission);
             if (Boolean.parseBoolean(requestedDetails.get(KimConstants.AttributeConstants.CREATED_BY_SELF))) {
-                if (Boolean.parseBoolean(bo.getDetails().get(KimConstants.AttributeConstants.CREATED_BY_SELF_ONLY))) {
+                if (Boolean.parseBoolean(permission.getDetails().get(KimConstants.AttributeConstants.CREATED_BY_SELF_ONLY))) {
                     matchingPermissions.add(permission);
                 }
             } else {
-                if (!Boolean.parseBoolean(bo.getDetails().get(KimConstants.AttributeConstants.CREATED_BY_SELF_ONLY))) {
+                if (!Boolean.parseBoolean(permission.getDetails().get(KimConstants.AttributeConstants.CREATED_BY_SELF_ONLY))) {
                     matchingPermissions.add(permission);
                 }
             }

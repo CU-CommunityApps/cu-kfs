@@ -3,7 +3,7 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 import java.util.function.BiConsumer;
 
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 

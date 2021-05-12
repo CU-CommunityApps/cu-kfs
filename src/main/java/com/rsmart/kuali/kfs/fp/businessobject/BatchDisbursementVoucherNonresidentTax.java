@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
-import org.kuali.rice.core.web.format.BooleanFormatter;
+import org.kuali.kfs.core.web.format.BooleanFormatter;
 
 
 /**

@@ -1,8 +1,8 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import com.thoughtworks.xstream.core.BaseException;
-import org.kuali.rice.core.framework.persistence.jta.TransactionalNoValidationExceptionRollback;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.core.framework.persistence.jta.TransactionalNoValidationExceptionRollback;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.MaintainableXMLConversionService;

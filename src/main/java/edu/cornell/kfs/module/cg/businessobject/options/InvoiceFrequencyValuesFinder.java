@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
-import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.kfs.core.api.util.ConcreteKeyValue;
+import org.kuali.kfs.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.krad.service.KeyValuesService;
 

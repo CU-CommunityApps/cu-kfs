@@ -3,7 +3,7 @@ package edu.cornell.kfs.sys.batch.dto.fixture;
 import java.sql.Date;
 
 import org.joda.time.DateTime;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 

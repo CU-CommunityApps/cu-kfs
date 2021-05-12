@@ -17,15 +17,17 @@ package com.rsmart.kuali.kfs.fp.businessobject;
 
 import java.util.LinkedHashMap;
 
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**
  * Extension attributes for Disbursement Voucher Document
  */
-public class DisbursementVoucherDocumentExtension extends PersistableBusinessObjectExtensionBase {
+public class DisbursementVoucherDocumentExtension extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
     private String documentNumber;
     private KualiInteger batchId;
 

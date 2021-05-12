@@ -4,8 +4,8 @@ import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
-import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.kfs.core.api.util.ConcreteKeyValue;
+import org.kuali.kfs.core.api.util.KeyValue;
 
 import java.io.File;
 import java.io.IOException;

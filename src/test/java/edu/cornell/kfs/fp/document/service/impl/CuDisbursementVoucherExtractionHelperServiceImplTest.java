@@ -19,10 +19,10 @@ import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;

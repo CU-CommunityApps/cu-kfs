@@ -4,14 +4,16 @@
 package edu.cornell.kfs.fp.businessobject;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
 
 /**
  * @author Admin-dwf5
  *
  */
-public class CuDisbursementVoucherPayeeDetailExtension extends PersistableBusinessObjectExtensionBase {
+public class CuDisbursementVoucherPayeeDetailExtension extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
 
     private String documentNumber;
 

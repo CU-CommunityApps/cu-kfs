@@ -21,9 +21,23 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ObjectType;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.web.format.FormatException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.AdvanceDepositDetail;
 import org.kuali.kfs.fp.document.AdvanceDepositDocument;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchResult;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchResults;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.docsearch.service.DocumentSearchService;
+import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -48,20 +62,6 @@ import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.util.GlobalVariablesUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.web.format.FormatException;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.Document;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.document.WorkflowDocumentService;
-import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
@@ -235,10 +235,10 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         criteria.setDocumentStatuses(routeStatuses);
         criteria.setInitiatorPrincipalName(principalName);
 
-        DocumentSearchResults results = getWorkflowDocumentService().documentSearch(systemUser.getPrincipalId(), criteria.build());
+        DocumentSearchResults results = getDocumentSearchService().lookupDocuments(systemUser.getPrincipalId(), criteria.build());
 
         for (DocumentSearchResult resultRow : results.getSearchResults()) {
-            Document document = resultRow.getDocument();
+            DocumentRouteHeaderValue document = resultRow.getDocument();
             if (ObjectUtils.isNotNull(document)) {
                 documentIds.add(document.getDocumentId());
             }
@@ -1143,8 +1143,8 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         return null;
     }
 
-    protected WorkflowDocumentService getWorkflowDocumentService() {
-        return KewApiServiceLocator.getWorkflowDocumentService();
+    protected DocumentSearchService getDocumentSearchService() {
+        return KEWServiceLocator.getDocumentSearchService();
     }
 
     public AttachmentService getAttachmentService() {

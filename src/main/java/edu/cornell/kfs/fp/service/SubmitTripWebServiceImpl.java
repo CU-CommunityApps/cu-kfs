@@ -6,11 +6,11 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.identity.affiliation.EntityAffiliationContract;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.affiliation.EntityAffiliation;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.service.DocumentHelperService;
@@ -144,7 +144,7 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
 			// Set vendor to traveler using netID provided
 			Person traveler = SpringContext.getBean(PersonService.class).getPersonByPrincipalName(travelerNetId);
 
-	        for(EntityAffiliationContract entityAffiliation : ((PersonImpl)traveler).getAffiliations()) {
+	        for(EntityAffiliation entityAffiliation : ((PersonImpl)traveler).getAffiliations()) {
 	        	if(entityAffiliation.isDefaultValue()) {
 	       
 		    		if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {

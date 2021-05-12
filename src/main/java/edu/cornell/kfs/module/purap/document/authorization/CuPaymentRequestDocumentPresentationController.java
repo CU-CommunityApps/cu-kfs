@@ -9,7 +9,7 @@ import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.authorization.PaymentRequestDocumentPresentationController;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ObjectUtils;
 

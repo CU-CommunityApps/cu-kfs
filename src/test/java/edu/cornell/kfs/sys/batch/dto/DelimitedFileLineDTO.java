@@ -2,7 +2,7 @@ package edu.cornell.kfs.sys.batch.dto;
 
 import java.sql.Date;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class DelimitedFileLineDTO {
 

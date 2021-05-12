@@ -96,11 +96,10 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.util.RiceKeyConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -305,7 +304,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             else {
                 // returning from a building lookup in a capital asset tab location (update location address)
                 String buildingCodeParam = findBuildingCodeFromCapitalAssetBuildingLookup(request);
-                if (!StringUtils.isEmpty(buildingCodeParam)) {
+                if (StringUtils.isNotEmpty(buildingCodeParam)) {
                     PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
                     updateCapitalAssetLocation(request, purchasingForm, document, buildingCodeParam);
                 }
@@ -911,7 +910,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                             foundCommodityCodeDistributionError = true;
                         }
                     } else if (item.getItemType().isLineItemIndicator()
-                            && !StringUtils.isBlank(((PurchasingItemBase) item).getPurchasingCommodityCode())
+                            && StringUtils.isNotBlank(((PurchasingItemBase) item).getPurchasingCommodityCode())
                             && itemIsActive) {
                         // could not apply to line, as it wasn't blank
                         foundCommodityCodeDistributionError = true;
@@ -1863,7 +1862,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             // logic for close question
             if (question == null) {
                 // ask question if not already asked
-                return this.performQuestionWithoutInput(mapping, form, request, response, KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION, getKualiConfigurationService().getPropertyValueAsString(RiceKeyConstants.QUESTION_SAVE_BEFORE_CLOSE), KRADConstants.CONFIRMATION_QUESTION, KRADConstants.MAPPING_CLOSE, "");
+                return this.performQuestionWithoutInput(mapping, form, request, response, KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION, getKualiConfigurationService().getPropertyValueAsString(KFSKeyConstants.QUESTION_SAVE_BEFORE_CLOSE), KRADConstants.CONFIRMATION_QUESTION, KRADConstants.MAPPING_CLOSE, "");
             }
             else {
                 Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);

@@ -20,13 +20,15 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 /**
  * This class is used to represent a procurement card transaction detail business object.
  */
-public class ProcurementCardTransactionDetailExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class ProcurementCardTransactionDetailExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
 
     private static final long serialVersionUID = 1L;
     private String documentNumber;
@@ -69,7 +71,7 @@ public class ProcurementCardTransactionDetailExtendedAttribute extends Persistab
     }
 
     /**
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.krad.bo.BusinessObjectBase#toStringMapper()
      */
     @SuppressWarnings("rawtypes")
     protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {

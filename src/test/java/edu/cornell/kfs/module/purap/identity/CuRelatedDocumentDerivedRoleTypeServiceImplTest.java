@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.IntegTestUtils;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.rice.kim.api.role.RoleMembership;
+import org.kuali.kfs.kim.api.role.RoleMembership;
 
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuRelatedDocumentDerivedRoleTypeServiceImplTest extends KualiIntegTestBase {

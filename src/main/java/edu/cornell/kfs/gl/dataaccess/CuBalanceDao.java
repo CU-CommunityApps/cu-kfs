@@ -3,7 +3,7 @@ package edu.cornell.kfs.gl.dataaccess;
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.gl.dataaccess.BalanceDao;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
 
 import java.util.Iterator;
 import java.util.List;

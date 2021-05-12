@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;

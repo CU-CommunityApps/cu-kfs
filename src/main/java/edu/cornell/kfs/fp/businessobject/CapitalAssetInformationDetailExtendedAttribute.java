@@ -6,8 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 /**
@@ -15,7 +16,8 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
  *
  */
 @SuppressWarnings("serial")
-public class CapitalAssetInformationDetailExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class CapitalAssetInformationDetailExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
  
 	private String documentNumber;
     private Integer capitalAssetLineNumber;

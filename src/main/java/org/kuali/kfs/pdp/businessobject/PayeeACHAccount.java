@@ -30,13 +30,13 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.entity.EntityDefault;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.entity.Entity;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -137,9 +137,9 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
             // for Entity, retrieve from Entity table by entity ID
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                EntityDefault entity = KimApiServiceLocator.getIdentityService().getEntityDefault(payeeIdNumber);
-                if (ObjectUtils.isNotNull(entity) && ObjectUtils.isNotNull(entity.getName())) {
-                    return entity.getName().getCompositeName();
+                Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
+                if (ObjectUtils.isNotNull(entity) && ObjectUtils.isNotNull(entity.getDefaultName())) {
+                    return entity.getDefaultName().getCompositeName();
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.VENDOR_ID)) {

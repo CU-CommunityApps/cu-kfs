@@ -32,7 +32,7 @@ import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.ObjectPopulationUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

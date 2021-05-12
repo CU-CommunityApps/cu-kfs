@@ -3,7 +3,7 @@ package edu.cornell.kfs.pdp.batch.fixture;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 import edu.cornell.kfs.pdp.CUPdpTestConstants;
 

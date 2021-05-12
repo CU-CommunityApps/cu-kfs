@@ -23,8 +23,8 @@ import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.AchService;
 import org.kuali.kfs.pdp.service.impl.FormatServiceImpl;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.pdp.dataaccess.CuFormatPaymentDao;
 import edu.cornell.kfs.pdp.service.CuFormatService;

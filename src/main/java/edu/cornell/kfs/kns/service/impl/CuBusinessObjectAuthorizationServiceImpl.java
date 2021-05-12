@@ -13,32 +13,32 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.permission.PermissionService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.document.IdentityManagementKimDocument;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.kim.impl.identity.address.EntityAddressBo;
-import org.kuali.kfs.kim.impl.identity.email.EntityEmailBo;
-import org.kuali.kfs.kim.impl.identity.name.EntityNameBo;
-import org.kuali.kfs.kim.impl.identity.phone.EntityPhoneBo;
+import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
+import org.kuali.kfs.kim.impl.identity.email.EntityEmail;
+import org.kuali.kfs.kim.impl.identity.name.EntityName;
+import org.kuali.kfs.kim.impl.identity.phone.EntityPhone;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.impl.identity.privacy.EntityPrivacyPreferences;
 import org.kuali.kfs.kim.service.KIMServiceLocatorInternal;
 import org.kuali.kfs.kim.service.UiDocumentService;
 import org.kuali.kfs.kns.inquiry.InquiryRestrictions;
 import org.kuali.kfs.kns.service.impl.BusinessObjectAuthorizationServiceImpl;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.document.DocumentAuthorizer;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.identity.privacy.EntityPrivacyPreferences;
-import org.kuali.rice.kim.api.permission.PermissionService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.krad.CUKRADPropertyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
@@ -59,10 +59,10 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
         super();
         this.kimPrivacyMappings =
                 Stream.<Pair<Class<?>, Predicate<EntityPrivacyPreferences>>>of(
-                        Pair.of(EntityNameBo.class, EntityPrivacyPreferences::isSuppressName),
-                        Pair.of(EntityAddressBo.class, EntityPrivacyPreferences::isSuppressAddress),
-                        Pair.of(EntityPhoneBo.class, EntityPrivacyPreferences::isSuppressPhone),
-                        Pair.of(EntityEmailBo.class, EntityPrivacyPreferences::isSuppressEmail)
+                        Pair.of(EntityName.class, EntityPrivacyPreferences::isSuppressName),
+                        Pair.of(EntityAddress.class, EntityPrivacyPreferences::isSuppressAddress),
+                        Pair.of(EntityPhone.class, EntityPrivacyPreferences::isSuppressPhone),
+                        Pair.of(EntityEmail.class, EntityPrivacyPreferences::isSuppressEmail)
                 ).collect(
                         Collectors.toMap(Pair::getKey, Pair::getValue));
     }
@@ -172,7 +172,7 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
     private boolean shouldHideAttachmentLinkOnVendorInquiry(Person user) {
         Map<String, String> permissionDetails = Collections.singletonMap(
                 KewApiConstants.DOCUMENT_TYPE_NAME_DETAIL, CUVendorConstants.VENDOR_DOCUMENT_TYPE_NAME);
-        return !getPermissionService().hasPermissionByTemplate(user.getPrincipalId(), KRADConstants.KNS_NAMESPACE,
+        return !getPermissionService().hasPermissionByTemplate(user.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.VIEW_NOTE_ATTACHMENT, permissionDetails);
     }
 

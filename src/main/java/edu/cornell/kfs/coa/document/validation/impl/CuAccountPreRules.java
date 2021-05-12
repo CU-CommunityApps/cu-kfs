@@ -4,7 +4,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import org.kuali.kfs.coa.document.validation.impl.AccountPreRules;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
