@@ -1,4 +1,4 @@
-//CU MOD: Back port of 2021-02-11 fix for FINP-7342 into pre-KEW 2021-01-14 version of file to obtain fix before we implement KEW-to-KFS.
+//CU MOD: Back port of 2021-02-11 fix for FINP-7342 into 2021-01-28 version of file.
 
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
@@ -23,14 +23,15 @@ package org.kuali.kfs.kns.web.ui;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.kuali.kfs.core.api.CoreConstants;
+import org.kuali.kfs.core.api.util.KeyValue;
+import org.kuali.kfs.core.web.format.Formatter;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.krad.datadictionary.mask.Mask;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.core.web.format.Formatter;
-import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,7 +119,7 @@ public class Field implements java.io.Serializable, PropertyRenderingConfigEleme
 
     //FIXME: this one definitely seems iffy, could be confused with regular fieldType, is there another better name or
     // can this go away?
-    private String fieldDataType = KewApiConstants.SearchableAttributeConstants.DEFAULT_SEARCHABLE_ATTRIBUTE_TYPE_NAME;
+    private String fieldDataType = CoreConstants.DATA_TYPE_STRING;
 
     //used by multibox/select etc
     private String[] propertyValues;
@@ -173,7 +174,7 @@ public class Field implements java.io.Serializable, PropertyRenderingConfigEleme
     private String userIdAttributeName;
     private String personNameAttributeName;
     private String personNameValue;
-    private String defaultValue = KRADConstants.EMPTY_STRING;
+    private String defaultValue = KFSConstants.EMPTY_STRING;
     private boolean keyField;
     private String displayEditMode;
     private Mask displayMask;
@@ -499,10 +500,10 @@ public class Field implements java.io.Serializable, PropertyRenderingConfigEleme
 
     public Map<String, String> getFieldConversionMap() {
         Map<String, String> fieldConversionMap = new HashMap<>();
-        if (!StringUtils.isBlank(fieldConversions)) {
+        if (StringUtils.isNotBlank(fieldConversions)) {
             String[] splitFieldConversions = fieldConversions.split(KRADConstants.FIELD_CONVERSIONS_SEPARATOR);
             for (String fieldConversion : splitFieldConversions) {
-                if (!StringUtils.isBlank(fieldConversion)) {
+                if (StringUtils.isNotBlank(fieldConversion)) {
                     String[] splitFieldConversion = fieldConversion.split(KRADConstants.FIELD_CONVERSION_PAIR_SEPARATOR,
                             2);
                     String originalFieldName = splitFieldConversion[0];
@@ -566,7 +567,7 @@ public class Field implements java.io.Serializable, PropertyRenderingConfigEleme
     @Override
     public String getPropertyValue() {
         if (propertyValue == null) {
-            propertyValue = KRADConstants.EMPTY_STRING;
+            propertyValue = KFSConstants.EMPTY_STRING;
         }
 
         return propertyValue;
@@ -577,8 +578,7 @@ public class Field implements java.io.Serializable, PropertyRenderingConfigEleme
     }
 
     public String getCleanPropertyValue() {
-        //CU Mod: FINP-7342 back port fix.
-        //return Jsoup.clean(getPropertyValue(), Whitelist.basic());
+        // CU Mod: FINP-7342 back port fix.
         return Jsoup.clean(getPropertyValue(), Whitelist.basic()).replace("&amp;", "&");
     }
 
@@ -761,7 +761,7 @@ public class Field implements java.io.Serializable, PropertyRenderingConfigEleme
 
     @Override
     public void setPropertyName(String propertyName) {
-        String newPropertyName = KRADConstants.EMPTY_STRING;
+        String newPropertyName = KFSConstants.EMPTY_STRING;
         if (propertyName != null) {
             newPropertyName = propertyName;
         }
@@ -1133,7 +1133,7 @@ public class Field implements java.io.Serializable, PropertyRenderingConfigEleme
     }
 
     public boolean getHasLookupable() {
-        return !StringUtils.isBlank(quickFinderClassNameImpl);
+        return StringUtils.isNotBlank(quickFinderClassNameImpl);
     }
 
     @Override

@@ -3,15 +3,16 @@
  */
 package edu.cornell.kfs.module.cam.businessobject;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
-
 import java.sql.Timestamp;
+
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
 /**
  * @author kwk43
  *
  */
-public class AssetExtension extends PersistableBusinessObjectExtensionBase {
+public class AssetExtension extends PersistableBusinessObjectBase implements PersistableBusinessObjectExtension {
 
     private Long capitalAssetNumber;
     private boolean serviceRateIndicator;

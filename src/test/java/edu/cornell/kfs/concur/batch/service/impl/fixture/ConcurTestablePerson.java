@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kim.api.identity.Person;
 
 public class ConcurTestablePerson implements Person {
     private static final long serialVersionUID = 156464309384726378L;
@@ -246,6 +246,16 @@ public class ConcurTestablePerson implements Person {
     @Override
     public boolean isActive() {
         return false;
+    }
+
+    @Override
+    public String getLookupRoleNamespaceCode() {
+        return null;
+    }
+
+    @Override
+    public String getLookupRoleName() {
+        return null;
     }
 
 }

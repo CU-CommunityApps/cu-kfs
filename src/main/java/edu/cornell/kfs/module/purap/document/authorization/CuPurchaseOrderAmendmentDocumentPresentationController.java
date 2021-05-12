@@ -12,7 +12,7 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.authorization.PurchaseOrderAmendmentDocumentPresentationController;
 import org.kuali.kfs.module.purap.util.PurApItemUtils;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;

@@ -12,8 +12,8 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherDetail;

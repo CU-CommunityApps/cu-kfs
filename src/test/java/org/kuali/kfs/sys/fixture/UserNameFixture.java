@@ -19,7 +19,7 @@
 package org.kuali.kfs.sys.fixture;
 
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.Person;
 
 public enum UserNameFixture {
     NO_SESSION, // This is not a user name. It is a Sentinal value telling KualiTestBase not to create a session. (It's needed
@@ -55,6 +55,6 @@ static {
 }
 
 public Person getPerson() {
-return SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class).getPersonByPrincipalName(toString());
+return SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class).getPersonByPrincipalName(toString());
 }
 }

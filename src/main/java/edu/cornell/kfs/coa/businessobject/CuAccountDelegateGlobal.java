@@ -38,7 +38,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 public class CuAccountDelegateGlobal extends AccountDelegateGlobal implements GlobalBusinessObject {
     
     /**
-     * @see org.kuali.kfs.krad.document.GlobalBusinessObject#applyGlobalChanges(org.kuali.rice.krad.bo.BusinessObject)
+     * @see org.kuali.kfs.krad.document.GlobalBusinessObject#applyGlobalChanges(org.kuali.kfs.krad.bo.BusinessObject)
      */
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
 

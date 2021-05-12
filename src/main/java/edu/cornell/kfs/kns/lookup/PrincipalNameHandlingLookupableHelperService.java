@@ -10,9 +10,9 @@ import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 public interface PrincipalNameHandlingLookupableHelperService extends LookupableHelperService {
 

@@ -8,7 +8,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.IntegTestUtils;
 import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.fixture.RequisitionFixture;
 import edu.cornell.kfs.module.purap.fixture.RequisitionItemFixture;

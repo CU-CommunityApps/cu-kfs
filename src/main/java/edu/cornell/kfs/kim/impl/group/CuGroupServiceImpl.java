@@ -1,119 +1,83 @@
 package edu.cornell.kfs.kim.impl.group;
 
-import javax.jws.WebParam;
-
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.kim.impl.group.GroupBo;
+import org.kuali.kfs.kim.impl.group.Group;
+import org.kuali.kfs.kim.impl.group.GroupMember;
 import org.kuali.kfs.kim.impl.group.GroupServiceImpl;
+import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.rice.core.api.exception.RiceIllegalArgumentException;
-import org.kuali.rice.kim.api.group.Group;
-import org.kuali.rice.kim.api.group.GroupContract;
-import org.kuali.rice.kim.api.group.GroupMember;
-import org.kuali.rice.kim.api.group.GroupMemberContract;
+import org.springframework.cache.annotation.CacheEvict;
 
-import edu.cornell.cynergy.CynergyConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuGroupServiceImpl extends GroupServiceImpl {
 
+    @CacheEvict(value = {GroupMember.CACHE_NAME, Role.CACHE_NAME}, allEntries = true)
     @Override
-    public boolean addGroupToGroup(String childId, String parentId) throws RiceIllegalArgumentException {
+    public boolean addGroupToGroup(String childId, String parentId) throws IllegalArgumentException {
         checkGroupEditability(parentId, "parentId");
         return super.addGroupToGroup(childId, parentId);
     }
 
+    @CacheEvict(value = {GroupMember.CACHE_NAME, Role.CACHE_NAME}, allEntries = true)
     @Override
-    public boolean addPrincipalToGroup(String principalId, String groupId) throws RiceIllegalArgumentException {
+    public boolean addPrincipalToGroup(String principalId, String groupId) throws IllegalArgumentException {
         checkGroupEditability(groupId, "groupId");
         return super.addPrincipalToGroup(principalId, groupId);
     }
 
+    @CacheEvict(value = {Group.CACHE_NAME, GroupMember.CACHE_NAME}, allEntries = true)
     @Override
-    public Group createGroup(Group group) throws RiceIllegalArgumentException {
+    public Group createGroup(Group group) throws IllegalArgumentException {
         checkGroupEditability(group, "group");
         return super.createGroup(group);
     }
 
+    @CacheEvict(value = {Group.CACHE_NAME, GroupMember.CACHE_NAME}, allEntries = true)
     @Override
-    public Group updateGroup(Group group) throws RiceIllegalArgumentException {
+    public Group updateGroup(Group group) throws IllegalArgumentException {
         checkGroupEditability(group, "group");
         return super.updateGroup(group);
     }
 
+    @CacheEvict(value = {Group.CACHE_NAME, GroupMember.CACHE_NAME}, allEntries = true)
     @Override
-    public Group updateGroup(String groupId, Group group) throws RiceIllegalArgumentException {
+    public Group updateGroup(String groupId, Group group) throws IllegalArgumentException {
         checkGroupEditability(groupId, "groupId");
         checkGroupEditability(group, "group");
         return super.updateGroup(groupId, group);
     }
 
+    @CacheEvict(value = {GroupMember.CACHE_NAME, Role.CACHE_NAME}, allEntries = true)
     @Override
-    public GroupMember createGroupMember(GroupMember groupMember) throws RiceIllegalArgumentException {
-        checkMemberEditability(groupMember, "groupMember");
-        return super.createGroupMember(groupMember);
-    }
-
-    @Override
-    public GroupMember updateGroupMember(
-            @WebParam(name = "groupMember") GroupMember groupMember) throws RiceIllegalArgumentException {
-        checkMemberEditability(groupMember, "groupMember");
-        return super.updateGroupMember(groupMember);
-    }
-
-    @Override
-    public void removeAllMembers(String groupId) throws RiceIllegalArgumentException {
+    public void removeAllMembers(String groupId) throws IllegalArgumentException {
         checkGroupEditability(groupId, "groupId");
         super.removeAllMembers(groupId);
     }
 
     @Override
-    public boolean removeGroupFromGroup(String childId, String parentId) throws RiceIllegalArgumentException {
-        checkGroupEditability(parentId, "parentId");
-        return super.removeGroupFromGroup(childId, parentId);
-    }
-
-    @Override
-    public boolean removePrincipalFromGroup(String principalId, String groupId) throws RiceIllegalArgumentException {
-        checkGroupEditability(groupId, "groupId");
-        return super.removePrincipalFromGroup(principalId, groupId);
-    }
-
-    @Override
-    protected GroupBo saveGroup(GroupBo group) {
+    protected Group saveGroup(Group group) {
         checkGroupEditability(group, "group");
         return super.saveGroup(group);
     }
 
-    private void checkMemberEditability(GroupMemberContract groupMember, String fieldName) {
-        if (ObjectUtils.isNotNull(groupMember)) {
-            String groupId = groupMember.getGroupId();
-            if (StringUtils.isNotBlank(groupId)) {
-                GroupBo group = getGroupBo(groupId);
-                if (isPermitGroup(group)) {
-                    throw new RiceIllegalArgumentException(
-                            fieldName + " cannot be a member of a group that has the 'PERMIT' namespace");
-                }
-            }
-        }
-    }
-
     private void checkGroupEditability(String groupId, String fieldName) {
         if (StringUtils.isNotBlank(groupId)) {
-            GroupBo group = getGroupBo(groupId);
+            Group group = getGroupUncached(groupId);
             checkGroupEditability(group, fieldName);
         }
     }
 
-    private void checkGroupEditability(GroupContract group, String fieldName) {
+    private void checkGroupEditability(Group group, String fieldName) {
         if (isPermitGroup(group)) {
-            throw new RiceIllegalArgumentException(
+            throw new IllegalArgumentException(
                     fieldName + " cannot be a reference to a group with the 'PERMIT' namespace");
         }
     }
 
-    private boolean isPermitGroup(GroupContract group) {
+    private boolean isPermitGroup(Group group) {
         return ObjectUtils.isNotNull(group)
-                && StringUtils.equalsIgnoreCase(CynergyConstants.DEFAULT_PERMIT_NAMESPACE, group.getNamespaceCode());
+                && StringUtils.equalsIgnoreCase(CUKFSConstants.LEGACY_PERMIT_NAMESPACE, group.getNamespaceCode());
     }
 
 }

@@ -16,12 +16,12 @@ import org.kuali.kfs.kim.bo.ui.PersonDocumentGroup;
 import org.kuali.kfs.kim.document.IdentityManagementGroupDocument;
 import org.kuali.kfs.kim.document.IdentityManagementPersonDocument;
 import org.kuali.kfs.kim.document.IdentityManagementRoleDocument;
-import org.kuali.kfs.kim.impl.group.GroupMemberBo;
-import org.kuali.kfs.kim.impl.role.RoleBo;
-import org.kuali.kfs.kim.impl.role.RoleMemberBo;
+import org.kuali.kfs.kim.impl.group.GroupMember;
+import org.kuali.kfs.kim.impl.role.Role;
+import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl;
 
-import edu.cornell.cynergy.CynergyConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
 
@@ -29,9 +29,9 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
      * Overridden to exclude PERMIT groups from membership updates by the Person Document.
      */
     @Override
-    protected List<GroupMemberBo> populateGroupMembers(
+    protected List<GroupMember> populateGroupMembers(
             IdentityManagementPersonDocument identityManagementPersonDocument) {
-        List<GroupMemberBo> groupMembers = super.populateGroupMembers(identityManagementPersonDocument);
+        List<GroupMember> groupMembers = super.populateGroupMembers(identityManagementPersonDocument);
         Set<String> groupIdWhitelist = getIdsOfUpdatableGroups(identityManagementPersonDocument);
         return groupMembers.stream()
                 .filter(groupMember -> groupIdWhitelist.contains(groupMember.getGroupId()))
@@ -44,7 +44,7 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
         }
         return identityManagementPersonDocument.getGroups().stream()
                 .filter(group -> !StringUtils.equalsIgnoreCase(
-                        CynergyConstants.DEFAULT_PERMIT_NAMESPACE, group.getNamespaceCode()))
+                        CUKFSConstants.LEGACY_PERMIT_NAMESPACE, group.getNamespaceCode()))
                 .map(PersonDocumentGroup::getGroupId)
                 .collect(Collectors.toSet());
     }
@@ -57,12 +57,12 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
     public void setMembersInDocument(IdentityManagementRoleDocument identityManagementRoleDocument) {
         Map<String, String> criteria = new HashMap<>();
         criteria.put(KimConstants.PrimaryKeyConstants.ROLE_ID, identityManagementRoleDocument.getRoleId());
-        RoleBo roleBo = getBusinessObjectService().findByPrimaryKey(RoleBo.class, criteria);
-        List<RoleMemberBo> members = new ArrayList<>(roleBo.getMembers());
-        List<RoleMemberBo> membersToRemove = new ArrayList<>();
+        Role roleBo = getBusinessObjectService().findByPrimaryKey(Role.class, criteria);
+        List<RoleMember> members = new ArrayList<>(roleBo.getMembers());
+        List<RoleMember> membersToRemove = new ArrayList<>();
         boolean found = false;
         for (KimDocumentRoleMember modifiedMember : identityManagementRoleDocument.getModifiedMembers()) {
-            for (RoleMemberBo member : members) {
+            for (RoleMember member : members) {
                 if (modifiedMember.getRoleMemberId().equals(member.getId())) {
                     membersToRemove.add(member);
                     found = true;
@@ -72,7 +72,7 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
                 }
             }
         }
-        for (RoleMemberBo memberToRemove : membersToRemove) {
+        for (RoleMember memberToRemove : membersToRemove) {
             members.remove(memberToRemove);
         }
 
@@ -86,7 +86,7 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
     @Override
     public void saveGroup(IdentityManagementGroupDocument identityManagementGroupDocument) {
         if (StringUtils.equalsIgnoreCase(
-                CynergyConstants.DEFAULT_PERMIT_NAMESPACE, identityManagementGroupDocument.getGroupNamespace())) {
+                CUKFSConstants.LEGACY_PERMIT_NAMESPACE, identityManagementGroupDocument.getGroupNamespace())) {
             throw new UnsupportedOperationException("Cannot modify PERMIT groups using the Group Document");
         }
         super.saveGroup(identityManagementGroupDocument);

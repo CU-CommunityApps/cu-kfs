@@ -30,8 +30,8 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -162,7 +162,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         if (ObjectUtils.isNotNull(this.vendorDetailAssignedIdentifier)) {
             detailId = this.vendorDetailAssignedIdentifier.toString();
         }
-        if (!StringUtils.isEmpty(headerId) && !StringUtils.isEmpty(detailId)) {
+        if (StringUtils.isNotEmpty(headerId) && StringUtils.isNotEmpty(detailId)) {
             vendorNumber = headerId + "-" + detailId;
         }
 
@@ -232,7 +232,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         if (this.vendorSoldToAssignedIdentifier != null) {
             detailId = this.vendorSoldToAssignedIdentifier.toString();
         }
-        if (!StringUtils.isEmpty(headerId) && !StringUtils.isEmpty(detailId)) {
+        if (StringUtils.isNotEmpty(headerId) && StringUtils.isNotEmpty(detailId)) {
             vendorSoldToNumber = headerId + "-" + detailId;
         }
 
@@ -609,7 +609,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     public Person getVendorRestrictedPerson() {
-        vendorRestrictedPerson = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class)
+        vendorRestrictedPerson = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
                 .updatePersonIfNecessary(vendorRestrictedPersonIdentifier, vendorRestrictedPerson);
         return vendorRestrictedPerson;
     }

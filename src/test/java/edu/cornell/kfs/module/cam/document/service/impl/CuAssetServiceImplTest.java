@@ -18,8 +18,8 @@ import org.kuali.kfs.module.cam.document.service.impl.AssetServiceImpl;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.coreservice.api.parameter.Parameter;
-import org.kuali.kfs.coreservice.api.parameter.ParameterType;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
+import org.kuali.kfs.coreservice.impl.parameter.ParameterType;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.coreservice.impl.parameter.ParameterServiceImpl;
 

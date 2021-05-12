@@ -6,13 +6,12 @@ import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
-import org.kuali.rice.core.api.config.property.ConfigContext;
-import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.util.KeyValue;
+import org.kuali.kfs.kew.api.KewApiConstants.SearchableAttributeConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -316,7 +315,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonProperty("methodToCall.createRequisition");
         clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
         clearButton.setExtraButtonAltText("Create Req");
-        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.APPLICATION_URL_KEY)
+        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                 + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + getDocument().getDocumentNumber()
                 + "');return false;");
         return clearButton;
@@ -327,7 +326,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonProperty("methodToCall.createDV");
         clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_DV.gif");
         clearButton.setExtraButtonAltText("Create DV");
-        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.APPLICATION_URL_KEY)
+        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                 + "/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId=" + getDocument().getDocumentNumber()
                 + "');return false;");
         clearButton.setExtraButtonParams("_blank");

@@ -9,7 +9,7 @@ import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 /**
  * Base utility class for serializing specific objects into single-line fixed-length Strings,
