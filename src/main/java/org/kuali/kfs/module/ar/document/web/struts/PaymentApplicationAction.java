@@ -24,6 +24,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -51,8 +53,6 @@ import org.kuali.kfs.module.ar.document.validation.impl.PaymentApplicationDocume
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import org.kuali.kfs.module.ar.dataaccess.InvoicePaidAppliedDao;
 import org.kuali.kfs.module.ar.document.web.struts.PaymentApplicationForm;

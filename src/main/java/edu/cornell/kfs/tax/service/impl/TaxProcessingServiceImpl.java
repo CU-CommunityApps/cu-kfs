@@ -11,18 +11,18 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.CoreApiServiceLocator;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
+import org.kuali.kfs.core.api.criteria.PredicateFactory;
+import org.kuali.kfs.core.api.criteria.QueryByCriteria;
+import org.kuali.kfs.core.api.util.CoreUtilities;
+import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
-import org.kuali.rice.core.api.config.property.ConfigContext;
-import org.kuali.rice.core.api.criteria.CriteriaLookupService;
-import org.kuali.rice.core.api.criteria.PredicateFactory;
-import org.kuali.rice.core.api.criteria.QueryByCriteria;
-import org.kuali.rice.core.api.util.RiceUtilities;
-import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
@@ -196,7 +196,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         
         // Parse the definition from the file, in a manner similar to our CU VendorBatchServiceImpl.safelyLoadFileBytes() method.
         try {
-            definitionStream = RiceUtilities.getResourceAsStream(definitionFilePath);
+            definitionStream = CoreUtilities.getResourceAsStream(definitionFilePath);
             definitionContent = IOUtils.toByteArray(definitionStream);
         } catch (IOException e) {
             throw new RuntimeException(e);

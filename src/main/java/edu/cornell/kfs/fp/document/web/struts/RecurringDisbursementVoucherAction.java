@@ -6,25 +6,24 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.cornell.kfs.sys.CUKFSConstants;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants;
-import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
@@ -92,7 +91,7 @@ public class RecurringDisbursementVoucherAction extends CuDisbursementVoucherAct
             reportCanceledItemsToBrowser(canceledPaymentGroups, canceledDVs);
             forceRefreshOfPDPStatuses(recurringForm);
         }
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
     private void reportCanceledItemsToBrowser (Set<String> canceledPaymentGroups, Set<String> canceledDVs) {

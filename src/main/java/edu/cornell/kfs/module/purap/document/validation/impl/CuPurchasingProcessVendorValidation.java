@@ -26,7 +26,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;

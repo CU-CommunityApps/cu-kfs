@@ -33,7 +33,7 @@ import org.kuali.kfs.module.ar.batch.service.impl.VerifyBillingFrequencyServiceI
 import org.kuali.kfs.module.ar.businessobject.BillingFrequency;
 import org.kuali.kfs.module.ar.businessobject.BillingPeriod;
 import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.module.ar.CuArConstants;
 import edu.cornell.kfs.module.ar.batch.service.CuVerifyBillingFrequencyService;

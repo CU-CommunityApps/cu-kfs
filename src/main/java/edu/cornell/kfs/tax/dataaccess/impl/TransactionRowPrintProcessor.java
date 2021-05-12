@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
-import org.kuali.rice.core.api.encryption.EncryptionService;
+import org.kuali.kfs.core.api.CoreApiServiceLocator;
+import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;

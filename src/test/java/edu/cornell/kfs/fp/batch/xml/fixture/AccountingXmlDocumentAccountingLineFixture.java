@@ -5,7 +5,7 @@ import static edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils.defaultToEmpty
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 

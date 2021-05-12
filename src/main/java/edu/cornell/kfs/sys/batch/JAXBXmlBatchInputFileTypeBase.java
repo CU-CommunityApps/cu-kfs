@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.sys.service.CUMarshalService;
 

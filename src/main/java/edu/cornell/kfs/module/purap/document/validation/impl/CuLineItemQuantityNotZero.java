@@ -9,7 +9,7 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.validation.impl.LineItemQuantityNotZero;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
 public class CuLineItemQuantityNotZero extends LineItemQuantityNotZero {

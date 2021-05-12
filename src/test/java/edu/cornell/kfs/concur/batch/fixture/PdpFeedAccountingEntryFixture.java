@@ -1,6 +1,6 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurTestConstants.PdpFeedFileConstants;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;

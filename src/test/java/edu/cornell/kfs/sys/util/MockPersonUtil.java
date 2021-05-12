@@ -2,7 +2,7 @@ package edu.cornell.kfs.sys.util;
 
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
 
 import edu.cornell.kfs.sys.util.fixture.TestUserFixture;

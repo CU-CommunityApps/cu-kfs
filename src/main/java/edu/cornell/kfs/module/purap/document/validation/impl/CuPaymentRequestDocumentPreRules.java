@@ -7,7 +7,7 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestDocumentPreRules;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.document.Document;
 
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;

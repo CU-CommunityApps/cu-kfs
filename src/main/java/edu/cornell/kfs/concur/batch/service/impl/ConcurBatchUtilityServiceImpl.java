@@ -20,7 +20,7 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.FileStorageException;
 import org.kuali.kfs.sys.service.FileStorageService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;

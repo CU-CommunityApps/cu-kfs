@@ -14,8 +14,8 @@ import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.mo.common.active.Inactivatable;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.mo.common.active.Inactivatable;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurUtils;

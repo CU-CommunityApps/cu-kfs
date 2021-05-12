@@ -25,9 +25,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;

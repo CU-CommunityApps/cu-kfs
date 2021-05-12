@@ -45,7 +45,7 @@ public class PurchasingDataDetail extends PurchasingDataBase {
     }
 
     /**
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
+     * @see org.kuali.kfs.krad.bo.BusinessObjectBase#toStringMapper()
      */
     @SuppressWarnings("rawtypes")
     protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {

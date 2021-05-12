@@ -18,40 +18,12 @@
  */
 package org.kuali.kfs.sys.rest.resource.businessobject;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.datadictionary.BusinessObjectAdminService;
-import org.kuali.kfs.datadictionary.Control;
-import org.kuali.kfs.datadictionary.FormAttribute;
-import org.kuali.kfs.datadictionary.LookupDictionary;
-import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
-import org.kuali.kfs.kns.service.BusinessObjectMetaDataService;
-import org.kuali.kfs.kns.service.KNSServiceLocator;
-import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.bo.BusinessObjectBase;
-import org.kuali.kfs.krad.bo.DataObjectRelationship;
-import org.kuali.kfs.krad.datadictionary.RelationshipDefinition;
-import org.kuali.kfs.krad.exception.AuthorizationException;
-import org.kuali.kfs.krad.keyvalues.HierarchicalControlValuesFinder;
-import org.kuali.kfs.krad.keyvalues.HierarchicalData;
-import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.sys.businessobject.service.SearchService;
-import org.kuali.kfs.krad.service.PersistenceStructureService;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.KRADUtils;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.rest.resource.responses.LookupResponse;
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
-import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.permission.PermissionService;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -64,12 +36,41 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.ConcreteKeyValue;
+import org.kuali.kfs.core.api.util.KeyValue;
+import org.kuali.kfs.datadictionary.BusinessObjectAdminService;
+import org.kuali.kfs.datadictionary.Control;
+import org.kuali.kfs.datadictionary.FormAttribute;
+import org.kuali.kfs.datadictionary.LookupDictionary;
+import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.permission.PermissionService;
+import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
+import org.kuali.kfs.kns.service.BusinessObjectMetaDataService;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.BusinessObjectBase;
+import org.kuali.kfs.krad.bo.DataObjectRelationship;
+import org.kuali.kfs.krad.datadictionary.RelationshipDefinition;
+import org.kuali.kfs.krad.exception.AuthorizationException;
+import org.kuali.kfs.krad.keyvalues.HierarchicalControlValuesFinder;
+import org.kuali.kfs.krad.keyvalues.HierarchicalData;
+import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
+import org.kuali.kfs.krad.service.PersistenceStructureService;
+import org.kuali.kfs.krad.util.KRADUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.service.SearchService;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.rest.resource.responses.LookupResponse;
 
 /*
  * CU Customization:
@@ -313,7 +314,7 @@ public class LookupResource {
     }
 
     private boolean isAuthorizedForLookup(Class boClass) {
-        return getPermissionService().isAuthorizedByTemplate(getPrincipalId(), KRADConstants.KNS_NAMESPACE,
+        return getPermissionService().isAuthorizedByTemplate(getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS,
                 getNamespaceAndComponentSimpleName(boClass), Collections.emptyMap());
     }

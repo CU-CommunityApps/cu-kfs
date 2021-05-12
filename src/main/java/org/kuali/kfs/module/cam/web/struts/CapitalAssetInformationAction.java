@@ -31,8 +31,8 @@ import org.kuali.kfs.module.cam.businessobject.GeneralLedgerEntry;
 import org.kuali.kfs.module.cam.document.service.GlAndPurApHelperService;
 import org.kuali.kfs.module.cam.document.service.GlLineService;
 import org.kuali.kfs.module.cam.document.web.struts.CabActionBase;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.util.RiceConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +67,7 @@ public class CapitalAssetInformationAction extends CabActionBase {
         if (ObjectUtils.isNotNull(entry)) {
             prepareRecordsForDisplay(capitalAssetForm, entry);
         }
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     protected void prepareRecordsForDisplay(CapitalAssetInformationForm capitalAssetForm, GeneralLedgerEntry entry) {
@@ -169,7 +169,7 @@ public class CapitalAssetInformationAction extends CabActionBase {
         GeneralLedgerEntry entry = capitalAssetForm.getGeneralLedgerEntry();
         prepareRecordsForDisplay(capitalAssetForm, entry);
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     protected GlAndPurApHelperService getGlAndPurApHelperService() {

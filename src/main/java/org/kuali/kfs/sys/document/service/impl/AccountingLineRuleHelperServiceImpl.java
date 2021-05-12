@@ -45,8 +45,8 @@ import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.document.service.AccountingLineRuleHelperService;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentTypeService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kew.doctype.bo.DocumentTypeEBO;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -481,7 +481,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
             );
         }
         if (StringUtils.isNotBlank(accountingLine.getReferenceTypeCode())) {
-            DocumentTypeEBO referenceType = accountingLine.getReferenceFinancialSystemDocumentTypeCode();
+            DocumentType referenceType = accountingLine.getReferenceFinancialSystemDocumentType();
             validationErrors.addAll(
                     getReferenceTypeCodeValidationErrors(accountingLine.getReferenceTypeCode(), referenceType, accountIdentifyingPropertyName, useShortMessages)
             );
@@ -509,7 +509,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
      * @param referenceType
      * @return List the validation errors
      */
-    protected List<AccountingLineValidationError> getReferenceTypeCodeValidationErrors(String documentTypeCode, DocumentTypeEBO referenceType,
+    protected List<AccountingLineValidationError> getReferenceTypeCodeValidationErrors(String documentTypeCode, DocumentType referenceType,
                                                                                        String errorPropertyIdentifyingName, boolean useShortMessages) {
         if (!StringUtils.isBlank(documentTypeCode)
                 && !financialSystemDocumentTypeService.isCurrentActiveAccountingDocumentType(documentTypeCode)) {

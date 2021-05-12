@@ -17,7 +17,7 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.exception.FileStorageException;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;

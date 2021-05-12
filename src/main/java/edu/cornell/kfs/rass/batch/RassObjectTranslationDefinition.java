@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
 import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 

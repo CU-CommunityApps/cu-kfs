@@ -14,7 +14,7 @@ import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.kns.lookup.PrincipalNameHandlingLookupableHelperServiceBase;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;

@@ -6,7 +6,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.businessobject.TestableRequisitionAccount;
 

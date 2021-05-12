@@ -23,10 +23,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.gl.service.SufficientFundsService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.action.ActionRequestType;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.dao.DocumentDao;
@@ -39,18 +56,17 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
-import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
-import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.QuoteTypeDescriptions;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
+import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.CreditMemoView;
 import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
@@ -94,23 +110,6 @@ import org.kuali.kfs.vnd.businessobject.ShippingPaymentTerms;
 import org.kuali.kfs.vnd.businessobject.ShippingTitle;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.action.ActionRequestType;
-import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.framework.postprocessor.ActionTakenEvent;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -120,7 +119,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -780,7 +778,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             permissionDetails.put(KimConstants.AttributeConstants.ACTION_REQUEST_CD,
                     KewApiConstants.ACTION_REQUEST_FYI_REQ);
             boolean canReceiveAdHocRequest = KimApiServiceLocator.getPermissionService()
-                    .isAuthorizedByTemplate(routePrincipalId, KewApiConstants.KEW_NAMESPACE,
+                    .isAuthorizedByTemplate(routePrincipalId, KFSConstants.CoreModuleNamespaces.WORKFLOW,
                             KewApiConstants.AD_HOC_REVIEW_PERMISSION, permissionDetails, new HashMap<>());
             if (!isActiveUser || !canReceiveAdHocRequest) {
                 String principalName = SpringContext.getBean(PersonService.class).getPerson(
@@ -1164,19 +1162,19 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         if (this.alternateVendorDetailAssignedIdentifier != null) {
             detAssgndId = this.alternateVendorDetailAssignedIdentifier.toString();
         }
-        if (!StringUtils.isEmpty(hdrGenId) && !StringUtils.isEmpty(detAssgndId)) {
+        if (StringUtils.isNotEmpty(hdrGenId) && StringUtils.isNotEmpty(detAssgndId)) {
             vendorNumber = hdrGenId + VendorConstants.DASH + detAssgndId;
         }
         return vendorNumber;
     }
 
     public void setAlternateVendorNumber(String vendorNumber) {
-        if (!StringUtils.isEmpty(vendorNumber)) {
+        if (StringUtils.isNotEmpty(vendorNumber)) {
             int dashInd = vendorNumber.indexOf(VendorConstants.DASH);
             if (vendorNumber.length() >= dashInd) {
                 String vndrHdrGenId = vendorNumber.substring(0, dashInd);
                 String vndrDetailAssignedId = vendorNumber.substring(dashInd + 1);
-                if (!StringUtils.isEmpty(vndrHdrGenId) && !StringUtils.isEmpty(vndrDetailAssignedId)) {
+                if (StringUtils.isNotEmpty(vndrHdrGenId) && StringUtils.isNotEmpty(vndrDetailAssignedId)) {
                     this.alternateVendorHeaderGeneratedIdentifier = new Integer(vndrHdrGenId);
                     this.alternateVendorDetailAssignedIdentifier = new Integer(vndrDetailAssignedId);
                 }
@@ -1653,7 +1651,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     public String getDocumentTitleForResult() throws WorkflowException {
-        return KewApiServiceLocator.getDocumentTypeService().getDocumentTypeByName(
+        return KEWServiceLocator.getDocumentTypeService().getDocumentTypeByName(
                 this.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName()).getLabel();
     }
 

@@ -10,9 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.PayeeACHService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;

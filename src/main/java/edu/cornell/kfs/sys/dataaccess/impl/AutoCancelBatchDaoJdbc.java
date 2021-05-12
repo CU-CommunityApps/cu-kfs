@@ -1,26 +1,5 @@
 package edu.cornell.kfs.sys.dataaccess.impl;
 
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
-import edu.cornell.kfs.sys.batch.AutoCancelBatchStep;
-import edu.cornell.kfs.sys.dataaccess.AutoCancelBatchDao;
-import edu.cornell.kfs.sys.dataaccess.DbmsOutput;
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.SessionDocumentService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
-import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.doctype.DocumentType;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,6 +9,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.SessionDocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
+
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.sys.batch.AutoCancelBatchStep;
+import edu.cornell.kfs.sys.dataaccess.AutoCancelBatchDao;
+import edu.cornell.kfs.sys.dataaccess.DbmsOutput;
 
 public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements AutoCancelBatchDao {
 
@@ -150,7 +151,7 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
         DocumentType docType = docTypes.get(docTypeId);
 
         if (ObjectUtils.isNull(docType)) {
-            docType = KewApiServiceLocator.getDocumentTypeService().getDocumentTypeById(docTypeId);
+            docType = KEWServiceLocator.getDocumentTypeService().getDocumentTypeById(docTypeId);
             docTypes.put(docTypeId, docType);
         }
 

@@ -6,7 +6,7 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public interface CuGeneralLedgerPendingEntryService extends GeneralLedgerPendingEntryService {
 

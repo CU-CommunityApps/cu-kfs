@@ -3,7 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import java.util.List;
 
 import org.kuali.kfs.gl.batch.CollectorBatch;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 /**
  * Helper service for serializing CollectorBatch objects to Collector flat files.

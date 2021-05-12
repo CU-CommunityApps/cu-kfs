@@ -3,7 +3,7 @@ package edu.cornell.kfs.kim.impl.responsibility;
 import java.util.Set;
 
 import org.kuali.kfs.kim.impl.responsibility.ResponsibilityInternalServiceImpl;
-import org.kuali.kfs.kim.impl.role.RoleMemberBo;
+import org.kuali.kfs.kim.impl.role.RoleMember;
 
 /**
  * ====
@@ -23,17 +23,17 @@ public class CuResponsibilityInternalServiceImpl extends ResponsibilityInternalS
      * Overridden to only perform the member-saving portion from the superclass and not the action request updates.
      */
     @Override
-    public RoleMemberBo saveRoleMember(RoleMemberBo roleMember) {
-        return getBusinessObjectService().save(roleMember);
+    public RoleMember saveRoleMember(RoleMember roleMember) {
+        return businessObjectService.save(roleMember);
     }
 
     /**
      * Overridden to only perform the inactivation portion from the superclass and not the action request updates.
      */
     @Override
-    public void removeRoleMember(RoleMemberBo roleMember) {
+    public void removeRoleMember(RoleMember roleMember) {
         roleMember.setActiveToDateValue(new java.sql.Timestamp(System.currentTimeMillis()));
-        getBusinessObjectService().save(roleMember);
+        businessObjectService.save(roleMember);
     }
 
     /**

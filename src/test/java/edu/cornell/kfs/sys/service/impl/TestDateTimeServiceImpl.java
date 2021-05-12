@@ -1,8 +1,8 @@
 package edu.cornell.kfs.sys.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.rice.core.api.CoreConstants;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.kfs.core.api.CoreConstants;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 

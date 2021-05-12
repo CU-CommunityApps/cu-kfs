@@ -7,7 +7,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;

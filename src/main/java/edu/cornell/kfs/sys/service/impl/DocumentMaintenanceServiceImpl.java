@@ -1,30 +1,29 @@
 package edu.cornell.kfs.sys.service.impl;
 
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
-import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
-import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kew.actionitem.ActionItem;
+import org.kuali.kfs.kew.actionlist.dao.impl.ActionListPriorityComparator;
+import org.kuali.kfs.kew.api.document.DocumentRefreshQueue;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.criteria.PredicateFactory;
-import org.kuali.rice.core.api.criteria.QueryByCriteria;
-import org.kuali.rice.kew.actionitem.ActionItem;
-import org.kuali.rice.kew.actionitem.ActionItemExtension;
-import org.kuali.rice.kew.actionlist.dao.impl.ActionListPriorityComparator;
-import org.kuali.rice.kew.api.document.DocumentRefreshQueue;
-import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import edu.cornell.kfs.kew.actionitem.ActionItemExtension;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
+import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
+import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
     private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceServiceImpl.class);
@@ -63,16 +62,16 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
                     actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
                     LOG.info("requeueDocumentByDocumentId, updating note details " + detailDto.toString() + " to action item " + actionItem.getId());
                 }
-                KRADServiceLocator.getDataObjectService().save(actionItemExtension);
+                KRADServiceLocator.getBusinessObjectService().save(actionItemExtension);
             }
         }
     }
     
     private ActionItem findActionItem(ActionItemNoteDetailDto detailDto) {
-        QueryByCriteria query = QueryByCriteria.Builder.fromPredicates(
-                PredicateFactory.equal(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipalId()),
-                PredicateFactory.equal(CUKFSConstants.DOCUMENT_ID, detailDto.getDocHeaderId()));
-        List<ActionItem> actionItems = KRADServiceLocator.getDataObjectService().findMatching(ActionItem.class, query).getResults();
+        Map<String, Object> query = Map.ofEntries(
+                Map.entry(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipalId()),
+                Map.entry(CUKFSConstants.DOCUMENT_ID, detailDto.getDocHeaderId()));
+        Collection<ActionItem> actionItems = KRADServiceLocator.getBusinessObjectService().findMatching(ActionItem.class, query);
         ActionItem selectedActionItem = null;
         if (LOG.isDebugEnabled() ) {
             LOG.debug("findActionItem, number of action items for principal " +  detailDto.getPrincipalId() + " and document number " 
@@ -85,7 +84,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     }
     
     private ActionItemExtension findActionItemExtension(String actionItemId) {
-        return KRADServiceLocator.getDataObjectService().find(ActionItemExtension.class, actionItemId);
+        return KRADServiceLocator.getBusinessObjectService().findBySinglePrimaryKey(ActionItemExtension.class, actionItemId);
     }
 
     private ActionItemExtension buildActionItemExtension(ActionItemNoteDetailDto detailDto, ActionItem item) {

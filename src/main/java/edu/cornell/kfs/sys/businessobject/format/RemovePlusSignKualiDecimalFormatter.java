@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter;
-import org.kuali.rice.core.web.format.FormatException;
+import org.kuali.kfs.core.web.format.FormatException;
 
 public class RemovePlusSignKualiDecimalFormatter extends ExplicitKualiDecimalFormatter {
     private static final long serialVersionUID = 5281313124678744980L;

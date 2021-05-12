@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
+import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTransactionType;

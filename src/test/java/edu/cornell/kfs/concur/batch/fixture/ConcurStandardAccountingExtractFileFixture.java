@@ -3,7 +3,7 @@ package edu.cornell.kfs.concur.batch.fixture;
 import java.sql.Date;
 import java.util.Calendar;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;

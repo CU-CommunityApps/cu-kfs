@@ -22,23 +22,25 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.OrganizationService;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.CoreApiServiceLocator;
-import org.kuali.rice.core.api.encryption.EncryptionService;
+import org.kuali.kfs.core.api.CoreApiServiceLocator;
+import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.KEWPropertyConstants;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.Document;
-import org.kuali.rice.kew.api.document.WorkflowDocumentService;
-import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
-import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.identity.principal.EntityNamePrincipalName;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kew.api.KEWPropertyConstants;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchResult;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchResults;
+import org.kuali.kfs.kew.docsearch.service.DocumentSearchService;
+import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
+import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.name.EntityName;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
@@ -67,9 +69,9 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
     // Helper variables for batch-related processing.
     private List<String> documentIds;
     private Iterator<String> documentIdsForBulkQuery;
-    private List<Document> documentsForBatch;
-    private Iterator<Document> documentsForProcessing;
-    private Document currentDocument;
+    private List<DocumentRouteHeaderValue> documentsForBatch;
+    private Iterator<DocumentRouteHeaderValue> documentsForProcessing;
+    private DocumentRouteHeaderValue currentDocument;
 
     // Other statistics.
     private int numNullDocumentHeaders;
@@ -79,7 +81,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
     private int numNoOrg;
 
     // The various services used by all builders.
-    private WorkflowDocumentService workflowDocumentService;
+    private DocumentSearchService documentSearchService;
     private IdentityService identityService;
     private EncryptionService encryptionService;
     private AccountService accountService;
@@ -224,7 +226,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
         if (builder != null) {
             this.nullTaxNumberReplacementsByPayeeId = builder.nullTaxNumberReplacementsByPayeeId;
             this.autoGenTaxNumFormat = builder.autoGenTaxNumFormat;
-            this.workflowDocumentService = builder.workflowDocumentService;
+            this.documentSearchService = builder.documentSearchService;
             this.identityService = builder.identityService;
             this.encryptionService = builder.encryptionService;
             this.accountService = builder.accountService;
@@ -233,7 +235,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
             this.nullTaxNumberReplacementsByPayeeId = new HashMap<String,String>();
             this.autoGenTaxNumFormat = new DecimalFormat("~00000000", new DecimalFormatSymbols(Locale.US));
             this.autoGenTaxNumFormat.setMaximumIntegerDigits(MAX_AUTO_TAXNUM_DIGITS);
-            this.workflowDocumentService = KewApiServiceLocator.getWorkflowDocumentService();
+            this.documentSearchService = KEWServiceLocator.getDocumentSearchService();
             this.identityService = KimApiServiceLocator.getIdentityService();
             this.encryptionService = CoreApiServiceLocator.getEncryptionService();
             this.accountService = SpringContext.getBean(AccountService.class);
@@ -304,13 +306,14 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      * @param uniqueDocumentIds The document IDs from the created transaction rows; cannot be null or contain null/blank values.
      */
     void prepareForSecondPass(T summary, Set<String> uniqueDocumentIds) {
+        DocumentRouteHeaderValue dummyDocument = new DocumentRouteHeaderValue();
+        dummyDocument.setDocumentId(CUTaxConstants.DOC_ID_ZERO);
         // Create and sort the document IDs list.
         documentIds = new ArrayList<String>(uniqueDocumentIds);
         Collections.sort(documentIds);
         // Prepare the iterators and other variables.
         documentIdsForBulkQuery = documentIds.iterator();
-        currentDocument = Document.Builder.create(
-                CUTaxConstants.DOC_ID_ZERO, CUTaxConstants.DOC_ID_ZERO, CUTaxConstants.DOC_ID_ZERO, CUTaxConstants.DOC_ID_ZERO).build();
+        currentDocument = dummyDocument;
         documentsForBatch = null;
         documentsForProcessing = Collections.emptyIterator();
     }
@@ -331,7 +334,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      * @return The workflow document for the current tax row, or null if no such document exists.
      */
     @SuppressWarnings("unchecked")
-    Document getWorkflowDocumentForTaxRow(String documentId, T summary) {
+    DocumentRouteHeaderValue getWorkflowDocumentForTaxRow(String documentId, T summary) {
         if (StringUtils.isNotBlank(documentId)) {
             int idCompareResult = documentId.compareTo(currentDocument.getDocumentId());
             if (idCompareResult > 0) {
@@ -354,12 +357,12 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
                         // Get and sort the documents.
                         DocumentSearchCriteria.Builder criteria = DocumentSearchCriteria.Builder.create();
                         criteria.setDocumentId(docIdCriteria.toString());
-                        DocumentSearchResults results = workflowDocumentService.documentSearch(null, criteria.build());
-                        documentsForBatch = new ArrayList<Document>(results.getSearchResults().size());
+                        DocumentSearchResults results = documentSearchService.lookupDocuments(null, criteria.build());
+                        documentsForBatch = new ArrayList<DocumentRouteHeaderValue>(results.getSearchResults().size());
                         for (DocumentSearchResult result : results.getSearchResults()) {
                             documentsForBatch.add(result.getDocument());
                         }
-                        Collections.sort(documentsForBatch, new BeanPropertyComparator(Collections.singletonList(KEWPropertyConstants.DOCUMENT_ID)));
+                        Collections.sort(documentsForBatch, new BeanPropertyComparator(Collections.singletonList(KEWPropertyConstants.DOC_SEARCH_RESULT_PROPERTY_NAME_DOCUMENT_ID)));
                         documentsForProcessing = documentsForBatch.iterator();
                         // Select and compare first document from new batch, if non-empty.
                         if (documentsForProcessing.hasNext()) {
@@ -397,7 +400,8 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      */
     String checkForEntityAndAccountAndOrgExistence(String initiatorPrincipalId, String chartCode, String accountNumber, T summary) {
         Account account;
-        EntityNamePrincipalName entityName;
+        EntityName entityName;
+        Principal principal;
         
         // Check for null entity name info.
         entityName = (StringUtils.isNotBlank(initiatorPrincipalId)) ? identityService.getDefaultNamesForPrincipalId(initiatorPrincipalId) : null;
@@ -417,7 +421,8 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
         }
         
         // Return the initiator's principal name, if found.
-        return (entityName != null) ? entityName.getPrincipalName() : null;
+        principal = (StringUtils.isNotBlank(initiatorPrincipalId)) ? identityService.getPrincipal(initiatorPrincipalId) : null;
+        return (principal != null && entityName != null) ? principal.getPrincipalName() : null;
     }
 
     /**
@@ -461,7 +466,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
 
     protected int getMaxSearchSize() {
     	if (maxSearchResultSize == null) {
-	    	String searchLimit = getParameterService().getParameterValueAsString(KewApiConstants.KEW_NAMESPACE,
+	    	String searchLimit = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.WORKFLOW,
 	        		KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.DOC_SEARCH_RESULT_CAP);
 	    	try {
 	    		LOG.debug("Found a value for KewApiConstants.DOC_SEARCH_RESULT_CAP, and it is '" + searchLimit + "'");
