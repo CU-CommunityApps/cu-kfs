@@ -37,8 +37,8 @@ import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
 import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -290,7 +290,7 @@ public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelp
     }
 
     /**
-     * @see org.kuali.rice.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)
+     * @see org.kuali.kfs.kns.lookup.AbstractLookupableHelperServiceImpl#validateSearchParameters(java.util.Map)
      */
     @Override
     public void validateSearchParameters(Map fieldValues) {

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.fp.CuFPKeyConstants;

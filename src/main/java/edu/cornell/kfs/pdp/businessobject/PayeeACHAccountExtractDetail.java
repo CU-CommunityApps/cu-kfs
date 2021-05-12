@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.sql.Date;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 /**
  * Transient BO representing the a parsed line from a Payee ACH Account Extract .csv file.

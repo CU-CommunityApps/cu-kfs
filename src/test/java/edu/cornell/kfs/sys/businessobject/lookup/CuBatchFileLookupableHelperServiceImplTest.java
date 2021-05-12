@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;

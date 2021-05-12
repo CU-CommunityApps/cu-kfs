@@ -4,7 +4,7 @@ import static org.kuali.kfs.module.purap.PurapConstants.HUNDRED;
 import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
-import static org.kuali.rice.core.api.util.type.KualiDecimal.ZERO;
+import static org.kuali.kfs.core.api.util.type.KualiDecimal.ZERO;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -67,9 +67,9 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;

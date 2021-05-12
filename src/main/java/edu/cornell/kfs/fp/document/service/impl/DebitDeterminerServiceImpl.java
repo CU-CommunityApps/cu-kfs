@@ -4,7 +4,7 @@ import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.NonCheckDisbursementDocument;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.document.GeneralLedgerPendingEntrySource;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class DebitDeterminerServiceImpl extends	org.kuali.kfs.sys.document.service.impl.DebitDeterminerServiceImpl {
 

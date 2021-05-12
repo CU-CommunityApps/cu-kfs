@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kim.api.identity.Person;
 
 
 public class CuObjectCodeActivationGlobalAuthorizer extends MaintenanceDocumentAuthorizerBase {

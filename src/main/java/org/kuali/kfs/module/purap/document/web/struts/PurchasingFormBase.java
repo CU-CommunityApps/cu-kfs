@@ -35,8 +35,8 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;

@@ -19,10 +19,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
-import org.kuali.rice.core.api.util.RiceKeyConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
@@ -234,7 +233,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 } else if (maxLength < propertyValue.length()) {
                     String errorLabel = dataDictionaryService.getAttributeErrorLabel(PaymentDetail.class, propertyName);
                     errorLabel += " with the value '" + propertyValue + "'";
-                    errorMap.putError(KFSConstants.GLOBAL_ERRORS, RiceKeyConstants.ERROR_MAX_LENGTH,
+                    errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_MAX_LENGTH,
                             errorLabel, maxLength.toString());
                 }
             }

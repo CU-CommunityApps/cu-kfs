@@ -26,7 +26,7 @@ import org.kuali.kfs.kns.document.authorization.BusinessObjectRestrictions;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 /**
  * This class overrides the getBackLocation, getReturnUrl, setFieldConversions and getActionUrls for {@link OrganizationRoutingModelName}

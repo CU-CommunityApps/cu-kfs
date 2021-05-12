@@ -34,10 +34,10 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -884,8 +884,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
     
     @Override
-    public void prePersist() {
-        super.prePersist();
+    public void beforeInsert() {
+        super.beforeInsert();
         Timestamp lastUpdateTemp = this.getLastUpdatedTimestamp();
 
         if (ObjectUtils.isNull(lastUpdateTemp)) {
@@ -895,10 +895,9 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         }
     }
 
-
     @Override
-    public void preUpdate() {
-        super.preUpdate();
+    public void beforeUpdate() {
+        super.beforeUpdate();
         Timestamp lastUpdateTemp = this.getLastUpdatedTimestamp();
 
         if (ObjectUtils.isNull(lastUpdateTemp)) {

@@ -1,7 +1,7 @@
 package edu.cornell.kfs.concur.batch.businessobject;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 

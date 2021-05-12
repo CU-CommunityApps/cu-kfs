@@ -6,8 +6,7 @@ import java.util.Set;
 
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherDetail;
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherPDPStatus;

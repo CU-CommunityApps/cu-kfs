@@ -2,7 +2,7 @@ package edu.cornell.kfs.concur.service.impl;
 
 import java.text.ParseException;
 
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
 import edu.cornell.kfs.concur.eventnotification.rest.plain.xmlObjects.ConcurEventNotificationDTO;

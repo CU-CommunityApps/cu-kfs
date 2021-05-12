@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 public class UnitOfMeasureLookupableHelperServiceImpl extends KualiLookupableHelperServiceImpl {
 

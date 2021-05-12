@@ -36,8 +36,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.WorkflowDocumentFactory;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.WorkflowDocumentFactory;
 
 import java.util.HashMap;
 import java.util.Map;

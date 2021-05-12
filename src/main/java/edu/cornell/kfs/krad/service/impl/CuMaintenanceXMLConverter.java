@@ -1,8 +1,8 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import edu.cornell.cynergy.krad.service.impl.CynergyMaintenanceXMLConverter;
+import edu.cornell.kfs.krad.service.impl.CynergyMaintenanceXMLConverter;
 import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.HashSet;

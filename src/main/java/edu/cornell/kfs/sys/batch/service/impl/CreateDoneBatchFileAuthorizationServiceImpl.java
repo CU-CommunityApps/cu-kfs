@@ -7,12 +7,12 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.service.KualiModuleService;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminAuthorizationService implements CreateDoneBatchFileAuthorizationService {
 	

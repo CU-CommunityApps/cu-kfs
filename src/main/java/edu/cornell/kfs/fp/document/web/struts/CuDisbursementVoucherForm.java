@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
@@ -83,7 +83,7 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
         String tripID = getIwantDocID();
         LOG.info("getIWantDocUrl() called");
         StringBuffer url = new StringBuffer();
-        url.append(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=").append(tripID).append("&command=displayDocSearchView");
+        url.append(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/DocHandler.do?docId=").append(tripID).append("&command=displayDocSearchView");
         return url.toString();
     }
     

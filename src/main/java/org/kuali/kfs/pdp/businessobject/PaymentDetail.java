@@ -34,9 +34,9 @@ import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 
@@ -235,8 +235,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     @Override
-    public void postPersist() {
-        super.postPersist();
+    public void beforeInsert() {
+        super.beforeInsert();
         // add extended attribute
         PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = new PaymentDetailExtendedAttribute();
         paymentDetailExtendedAttribute.setId(this.getId());

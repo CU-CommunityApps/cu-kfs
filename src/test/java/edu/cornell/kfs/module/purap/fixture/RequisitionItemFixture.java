@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public enum RequisitionItemFixture {
 	REQ_ITEM(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
