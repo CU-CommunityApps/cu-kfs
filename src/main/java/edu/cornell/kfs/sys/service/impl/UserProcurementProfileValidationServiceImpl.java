@@ -17,7 +17,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.service.DictionaryValidationService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;

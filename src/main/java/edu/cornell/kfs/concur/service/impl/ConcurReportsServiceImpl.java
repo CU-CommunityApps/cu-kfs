@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.springframework.beans.factory.DisposableBean;
 
 import edu.cornell.kfs.concur.ConcurConstants;

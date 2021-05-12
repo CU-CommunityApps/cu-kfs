@@ -9,10 +9,10 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.Tax1042SParameterNames;
@@ -213,13 +213,13 @@ class Transaction1042SSummary extends TransactionDetailSummary {
                 CUTaxConstants.TAX_NAMESPACE, CUTaxConstants.TAX_1042S_PARM_DETAIL, Tax1042SParameterNames.CHAPTER3_EXEMPTION_CODES));
         // Not-exempt code.
         tempValue = tempMap.get(CUTaxConstants.CH3_EXEMPTION_NOT_EXEMPT_KEY);
-        this.chapter3NotExemptExemptionCode = StringUtils.isNotBlank(tempValue) ? tempValue : KRADConstants.EMPTY_STRING;
+        this.chapter3NotExemptExemptionCode = StringUtils.isNotBlank(tempValue) ? tempValue : KFSConstants.EMPTY_STRING;
         // Tax-treaty code.
         tempValue = tempMap.get(CUTaxConstants.CH3_EXEMPTION_TAX_TREATY_KEY);
-        this.chapter3TaxTreatyExemptionCode = StringUtils.isNotBlank(tempValue) ? tempValue : KRADConstants.EMPTY_STRING;
+        this.chapter3TaxTreatyExemptionCode = StringUtils.isNotBlank(tempValue) ? tempValue : KFSConstants.EMPTY_STRING;
         // Foreign-source code.
         tempValue = tempMap.get(CUTaxConstants.CH3_EXEMPTION_FOREIGN_SOURCE_KEY);
-        this.chapter3ForeignSourceExemptionCode = StringUtils.isNotBlank(tempValue) ? tempValue : KRADConstants.EMPTY_STRING;
+        this.chapter3ForeignSourceExemptionCode = StringUtils.isNotBlank(tempValue) ? tempValue : KFSConstants.EMPTY_STRING;
     }
 
 

@@ -6,6 +6,12 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.impl.config.property.Config;
+import org.kuali.kfs.core.web.format.CurrencyFormatter;
+import org.kuali.kfs.core.web.format.DateFormatter;
+import org.kuali.kfs.core.web.format.Formatter;
+import org.kuali.kfs.core.web.format.IntegerFormatter;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.ACHBank;
@@ -15,11 +21,6 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.pdp.service.impl.PdpEmailServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.web.format.CurrencyFormatter;
-import org.kuali.rice.core.web.format.DateFormatter;
-import org.kuali.rice.core.web.format.Formatter;
-import org.kuali.rice.core.web.format.IntegerFormatter;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
@@ -70,8 +71,8 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
 	public void sendAchAdviceEmail(PaymentGroup paymentGroup, List<PaymentDetail> paymentDetails, CustomerProfile customer) {		
         LOG.debug("sendAchAdviceEmail() with payment details list starting");	     
         Integer numPayments = 0;
-        String productionEnvironmentCode = kualiConfigurationService.getPropertyValueAsString(KFSConstants.PROD_ENVIRONMENT_CODE_KEY);
-        String environmentCode = kualiConfigurationService.getPropertyValueAsString(KFSConstants.ENVIRONMENT_KEY);
+        String productionEnvironmentCode = kualiConfigurationService.getPropertyValueAsString(Config.PROD_ENVIRONMENT_CODE);
+        String environmentCode = kualiConfigurationService.getPropertyValueAsString(Config.ENVIRONMENT);
         boolean shouldBundleAchPayments = this.getAchBundlerHelperService().shouldBundleAchPayments();
         if (shouldBundleAchPayments) {
         	//Send out one email to the payee listing all the payment details for the specified payment group

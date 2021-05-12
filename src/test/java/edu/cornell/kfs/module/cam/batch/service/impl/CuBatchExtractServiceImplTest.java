@@ -24,7 +24,7 @@ import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;

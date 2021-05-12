@@ -16,7 +16,7 @@
 package com.rsmart.kuali.kfs.fp.businessobject;
 
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 
 /**

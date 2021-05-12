@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.role.service.impl.RouteLogDerivedRoleTypeServiceImpl;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.role.RoleMembership;
+import org.kuali.kfs.kim.api.role.RoleMembership.Builder;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.identity.PurapKimAttributes;
 import org.kuali.kfs.module.purap.identity.RelatedDocumentDerivedRoleTypeServiceImpl;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.role.service.impl.RouteLogDerivedRoleTypeServiceImpl;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.role.RoleMembership;
-import org.kuali.rice.kim.api.role.RoleMembership.Builder;
-import org.kuali.kfs.krad.util.KRADConstants;
 
 public class CuRelatedDocumentDerivedRoleTypeServiceImpl extends RelatedDocumentDerivedRoleTypeServiceImpl {
 
@@ -45,7 +45,7 @@ public class CuRelatedDocumentDerivedRoleTypeServiceImpl extends RelatedDocument
                 if (!qualification.containsKey(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER)) {
                     Map<String,String> tempQualification = new HashMap<String,String>(1);
                     tempQualification.put(KFSPropertyConstants.DOCUMENT_NUMBER, qualification.get("documentNumber"));
-                    for ( String principalId : getRoleService().getRoleMemberPrincipalIds(KRADConstants.KUALI_RICE_WORKFLOW_NAMESPACE, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
+                    for ( String principalId : getRoleService().getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.WORKFLOW, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
                         Builder roleMember = RoleMembership.Builder.create(null,null,principalId,KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE,tempQualification);
                         members.add( roleMember.build());
 
@@ -54,7 +54,7 @@ public class CuRelatedDocumentDerivedRoleTypeServiceImpl extends RelatedDocument
                     for (String documentId : getPurapService().getRelatedDocumentIds(new Integer(qualification.get(PurapKimAttributes.ACCOUNTS_PAYABLE_PURCHASING_DOCUMENT_LINK_IDENTIFIER)))) {
                         Map<String,String> tempQualification = new HashMap<String,String>(1);
                         tempQualification.put(KFSPropertyConstants.DOCUMENT_NUMBER, documentId);
-                        for ( String principalId : getRoleService().getRoleMemberPrincipalIds(KRADConstants.KUALI_RICE_WORKFLOW_NAMESPACE, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
+                        for ( String principalId : getRoleService().getRoleMemberPrincipalIds(KFSConstants.CoreModuleNamespaces.WORKFLOW, RouteLogDerivedRoleTypeServiceImpl.INITIATOR_OR_REVIEWER_ROLE_NAME, tempQualification) ) {
                             Builder roleMember = RoleMembership.Builder.create(null,null,principalId,KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE,tempQualification);
                             members.add( roleMember.build());
 

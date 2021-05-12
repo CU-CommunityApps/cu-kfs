@@ -2,12 +2,14 @@ package edu.cornell.kfs.vnd.businessobject;
 
 import java.util.HashMap;
 
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
-public class CuVendorAddressExtension extends PersistableBusinessObjectExtensionBase {
+public class CuVendorAddressExtension extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
 
     private Integer vendorAddressGeneratedIdentifier;
     private String purchaseOrderTransmissionMethodCode;

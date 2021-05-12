@@ -10,7 +10,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.springframework.beans.factory.InitializingBean;
 
 import edu.cornell.kfs.module.cg.CuCGPropertyConstants;

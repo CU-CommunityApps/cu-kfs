@@ -27,7 +27,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 

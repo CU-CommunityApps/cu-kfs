@@ -34,7 +34,7 @@ import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;

@@ -38,8 +38,8 @@ import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;

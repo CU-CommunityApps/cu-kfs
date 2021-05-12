@@ -13,7 +13,7 @@ import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

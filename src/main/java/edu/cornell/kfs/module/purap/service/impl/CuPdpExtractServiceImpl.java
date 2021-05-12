@@ -12,13 +12,13 @@ import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
-import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.doctype.DocumentType;
-import org.kuali.rice.kew.api.doctype.DocumentTypeService;
-import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
+import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
+import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
@@ -34,7 +34,7 @@ public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
             
             //RICE20 replaced searchableAttributeProcessingService.indexDocument with DocumentAttributeIndexingQueue.indexDocument
             DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());
-            DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue(documentType.getApplicationId());
+            DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
             queue.indexDocument(doc.getDocumentNumber());
 
         } catch (WorkflowException e) {

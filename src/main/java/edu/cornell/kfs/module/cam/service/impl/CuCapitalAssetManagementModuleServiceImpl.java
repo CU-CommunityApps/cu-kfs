@@ -20,7 +20,7 @@ import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Campus;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.rice.kew.service.KEWServiceLocator;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
 
 import java.util.HashMap;
 import java.util.List;

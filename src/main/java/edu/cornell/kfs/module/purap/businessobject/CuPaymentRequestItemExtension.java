@@ -1,12 +1,15 @@
 package edu.cornell.kfs.module.purap.businessobject;
 
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-public class CuPaymentRequestItemExtension extends PersistableBusinessObjectExtensionBase {
+public class CuPaymentRequestItemExtension extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
+
     private Integer itemIdentifier;
     // KFSPTS-1719
     private Integer invLineNumber;

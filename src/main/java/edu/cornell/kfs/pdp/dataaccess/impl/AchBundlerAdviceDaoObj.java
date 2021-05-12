@@ -14,7 +14,7 @@ import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.DynamicCollectionComparator;
-import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.pdp.dataaccess.AchBundlerAdviceDao;

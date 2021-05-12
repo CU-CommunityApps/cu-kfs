@@ -1,6 +1,6 @@
 package edu.cornell.kfs.concur.batch.service;
 
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 /**
  * Base interface for services that can serialize a BO into a flat file.

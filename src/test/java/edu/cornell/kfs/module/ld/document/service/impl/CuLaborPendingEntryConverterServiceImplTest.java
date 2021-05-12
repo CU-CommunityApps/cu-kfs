@@ -9,8 +9,8 @@ import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.ld.document.CuSalaryExpenseTransferDocument;
 import edu.cornell.kfs.module.ld.fixture.CuSalaryExpenseTransferDocumentFixture;

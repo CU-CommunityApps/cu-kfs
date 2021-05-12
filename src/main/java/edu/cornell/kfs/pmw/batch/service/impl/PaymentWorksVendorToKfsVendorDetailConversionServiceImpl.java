@@ -22,9 +22,9 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.web.format.FormatException;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.web.format.FormatException;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption;

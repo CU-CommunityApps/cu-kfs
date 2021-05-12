@@ -38,8 +38,8 @@ import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import org.kuali.kfs.fp.FPKeyConstants;
@@ -97,7 +97,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     /**
      * No additional information is added to procurement card batch files.
      * 
-     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileName(org.kuali.rice.kim.bo.Person, java.lang.Object,
+     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileName(org.kuali.kfs.kim.bo.Person, java.lang.Object,
      *      java.lang.String)
      */
     public String getFileName(String principalName, Object parsedFileContents, String userIdentifier) {

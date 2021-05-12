@@ -39,9 +39,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.CuRequisitionDocument;
@@ -149,7 +148,7 @@ public class CuRequisitionAction extends RequisitionAction {
             kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());
             SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDocument);
                      
-            forward = mapping.findForward(RiceConstants.MAPPING_BASIC);   
+            forward = mapping.findForward(KFSConstants.MAPPING_BASIC);   
         }
         return forward;
     }
@@ -205,7 +204,7 @@ public class CuRequisitionAction extends RequisitionAction {
         iWantDocument.setReqsDocId(requisitionDocument.getDocumentNumber());
         SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     @Override

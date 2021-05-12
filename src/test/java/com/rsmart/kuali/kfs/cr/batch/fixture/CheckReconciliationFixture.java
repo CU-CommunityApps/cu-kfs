@@ -2,8 +2,8 @@ package com.rsmart.kuali.kfs.cr.batch.fixture;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.CrTestConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 public enum CheckReconciliationFixture {
 

@@ -10,9 +10,9 @@ import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.sys.KFSConstants.RouteLevelNames;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.action.ActionRequest;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.actionrequest.ActionRequest;
+import org.kuali.kfs.kim.api.identity.Person;
 
 public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAccountingLineAuthorizer {
 
