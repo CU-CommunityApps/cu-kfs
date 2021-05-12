@@ -9,8 +9,8 @@ import org.kuali.kfs.gl.service.impl.BalanceServiceImpl;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.OptionsService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 
 import edu.cornell.kfs.coa.businessobject.Reversion;
 import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;

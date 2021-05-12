@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 

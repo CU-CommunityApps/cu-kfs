@@ -1,18 +1,19 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.StringBuilderWriter;
-import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.kuali.rice.core.api.util.RiceUtilities;
+import static org.junit.Assert.assertEquals;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.StringBuilderWriter;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.kuali.kfs.core.api.util.CoreUtilities;
 
 /**
  * This test class is based on its Cynergy counterpart, edu.cornell.cynergy.krad.service.impl.CynergyMaintainableXMLConversionServiceImplTest
@@ -133,7 +134,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
         StringBuilderWriter writer = null;
 
         try {
-            fileStream = RiceUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileLocalName);
+            fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileLocalName);
             reader = new InputStreamReader(fileStream);
             writer = new StringBuilderWriter();
 

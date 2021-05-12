@@ -9,8 +9,8 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 
 import edu.cornell.kfs.concur.batch.fixture.PdpFeedDetailEntryFixture;
 import edu.cornell.kfs.concur.batch.fixture.PdpFeedFileBaseEntryFixture;

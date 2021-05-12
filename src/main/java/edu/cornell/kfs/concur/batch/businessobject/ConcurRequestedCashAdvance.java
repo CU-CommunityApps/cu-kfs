@@ -4,7 +4,7 @@ import java.sql.Date;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class ConcurRequestedCashAdvance extends PersistableBusinessObjectBase{
     protected int concurRequestedCashAdvanceId;

@@ -1,8 +1,10 @@
 package edu.cornell.kfs.module.cg.businessobject;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
-public class AwardAccountExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class AwardAccountExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
     private static final long serialVersionUID = 4036900233631513201L;
 
     private String proposalNumber;

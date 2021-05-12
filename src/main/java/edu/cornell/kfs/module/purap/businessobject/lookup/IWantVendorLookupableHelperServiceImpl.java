@@ -6,8 +6,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl;
-import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.kew.api.KewApiConstants.SearchableAttributeConstants;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 public class IWantVendorLookupableHelperServiceImpl extends VendorLookupableHelperServiceImpl {
     

@@ -18,14 +18,16 @@ package edu.cornell.kfs.coa.businessobject;
 import java.sql.Date;
 import java.util.HashMap;
 
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
 
-public class AccountExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class AccountExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
 
     /**
 	 * 

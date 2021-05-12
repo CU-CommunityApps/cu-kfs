@@ -3,7 +3,7 @@ package edu.cornell.kfs.pdp.batch;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 public class PDPBadEmailRecord {
     private static final Logger LOG = LogManager.getLogger(PDPBadEmailRecord.class);

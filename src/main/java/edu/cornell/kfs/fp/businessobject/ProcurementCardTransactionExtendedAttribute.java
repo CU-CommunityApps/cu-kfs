@@ -6,9 +6,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
-public class ProcurementCardTransactionExtendedAttribute extends PersistableBusinessObjectExtensionBase{
+public class ProcurementCardTransactionExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
 
     private static final long serialVersionUID = 1L;
     private Integer transactionSequenceRowNumber;

@@ -4,7 +4,7 @@ import edu.cornell.kfs.sys.fixture.CuAccountingLineFixture;
 import org.kuali.kfs.fp.document.IndirectCostAdjustmentDocument;
 import org.kuali.kfs.sys.DocumentTestUtils;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.service.DocumentService;
 
 public enum IndirectCostAdjustmentDocumentFixture {

@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.fp.document.BudgetAdjustmentDocument;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class CuBudgetAdjustmentDocument extends BudgetAdjustmentDocument {
 

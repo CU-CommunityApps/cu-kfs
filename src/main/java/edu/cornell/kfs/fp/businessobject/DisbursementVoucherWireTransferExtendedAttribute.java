@@ -1,10 +1,12 @@
 package edu.cornell.kfs.fp.businessobject;
 
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
 
 
-public class DisbursementVoucherWireTransferExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class DisbursementVoucherWireTransferExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
     
     protected String documentNumber;
     protected String disbVchrBankStreetAddress;

@@ -11,8 +11,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
-import org.kuali.kfs.coreservice.api.parameter.Parameter;
-import org.kuali.kfs.coreservice.api.parameter.ParameterType;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.PersistenceService;
@@ -21,13 +20,12 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.OrganizationParameter;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.impl.parameter.ParameterEvaluatorServiceImpl;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.impl.parameter.ParameterEvaluatorServiceImpl;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
@@ -268,13 +266,14 @@ public class CuPurapServiceImplTest {
     }
 
     private Parameter buildCostSourceParameterDTO(String parameterName, String parameterValue, EvaluationOperator evaluationOperator) {
-        ParameterType.Builder typeBuilder = ParameterType.Builder.create(KfsParameterConstants.PARAMETER_CONFIG_TYPE_CODE);
-        Parameter.Builder parameterBuilder = Parameter.Builder.create(
-                KFSConstants.APPLICATION_NAMESPACE_CODE, PurapConstants.PURAP_NAMESPACE, "Requisition",
-                parameterName, typeBuilder);
-        parameterBuilder.setValue(parameterValue);
-        parameterBuilder.setEvaluationOperator(evaluationOperator);
-        return parameterBuilder.build();
+        Parameter parameter = new Parameter();
+        parameter.setNamespaceCode(PurapConstants.PURAP_NAMESPACE);
+        parameter.setComponentCode("Requisition");
+        parameter.setParameterTypeCode(KfsParameterConstants.PARAMETER_CONFIG_TYPE_CODE);
+        parameter.setName(parameterName);
+        parameter.setValue(parameterValue);
+        parameter.setEvaluationOperatorCode(evaluationOperator.getCode());
+        return parameter;
     }
 
 }

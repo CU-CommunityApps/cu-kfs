@@ -1,6 +1,6 @@
 package edu.cornell.kfs.tax.businessobject;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
 /**

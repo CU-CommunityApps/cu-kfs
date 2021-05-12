@@ -6,12 +6,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.util.RiceKeyConstants;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.coa.businessobject.OrganizationGlobal;
 import edu.cornell.kfs.coa.businessobject.OrganizationGlobalDetail;
@@ -78,7 +78,7 @@ public class OrganizationGlobalRule extends GlobalDocumentRuleBase {
     protected boolean checkOrganizationManager(MaintenanceDocument document, Person orgManager) {
         if (ObjectUtils.isNotNull(orgManager) && StringUtils.isNotBlank(orgManager.getPrincipalName()) && StringUtils.isBlank(orgManager.getEntityId())) {
             // If org manager has a non-blank principal name but a blank entity ID, then it's not actually tied to a valid principal.
-            putFieldError(ORG_MANAGER_PRINCIPAL_NAME, RiceKeyConstants.ERROR_EXISTENCE,
+            putFieldError(ORG_MANAGER_PRINCIPAL_NAME, KFSKeyConstants.ERROR_EXISTENCE,
                     getDataDictionaryService().getAttributeLabel(OrganizationGlobal.class, ORG_MANAGER_PRINCIPAL_NAME));
             return false;
         }
