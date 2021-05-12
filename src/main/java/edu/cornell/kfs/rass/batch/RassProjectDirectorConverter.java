@@ -6,15 +6,15 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.role.RoleService;
+import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.CGProjectDirector;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.role.Role;
-import org.kuali.rice.kim.api.role.RoleService;
 
 import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 
@@ -73,7 +73,7 @@ public class RassProjectDirectorConverter extends RassValueConverterBase {
     }
 
     protected boolean doesPersonHaveProjectDirectorRole(Person person) {
-        Role orojectDirectRole = roleService.getRoleByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.KFS,
+        RoleLite orojectDirectRole = roleService.getRoleByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.KFS,
                 KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR);
         if (ObjectUtils.isNull(orojectDirectRole)) {
             throw new RuntimeException("Unable to find Contracts and Greants project director role");

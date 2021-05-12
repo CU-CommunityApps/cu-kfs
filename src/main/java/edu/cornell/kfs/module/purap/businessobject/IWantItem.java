@@ -12,7 +12,7 @@ import org.kuali.kfs.module.purap.businessobject.PurApSummaryItem;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.module.purap.document.IWantDocument;

@@ -20,73 +20,63 @@ package org.kuali.kfs.kim.impl.identity.name;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.kuali.rice.kim.api.KimApiConstants;
-import org.kuali.rice.kim.api.identity.name.EntityNameContract;
-import org.kuali.rice.kim.api.identity.privacy.EntityPrivacyPreferences;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.core.api.mo.common.Defaultable;
+import org.kuali.kfs.core.api.mo.common.Identifiable;
+import org.kuali.kfs.core.api.mo.common.active.Inactivatable;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.privacy.EntityPrivacyPreferences;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 import java.sql.Timestamp;
 
 /*
  * CU Customization:
  * Fixed a few areas that were not referencing the unmasked values as expected.
  */
-@MappedSuperclass
-public abstract class EntityNameBase extends PersistableBusinessObjectBase implements EntityNameContract {
+public class EntityName extends PersistableBusinessObjectBase implements Defaultable, Inactivatable, Identifiable {
 
-    private static final long serialVersionUID = 7102034794623577359L;
+    public static final String CACHE_NAME = "EntityNameType";
 
-    @Column(name = "ENTITY_ID")
+    private static final long serialVersionUID = -1449221117942310530L;
+
+    private String id;
+
+    private EntityNameType nameType;
     private String entityId;
-
-    @Column(name = "NM_TYP_CD")
     private String nameCode;
-
-    @Column(name = "FIRST_NM")
     private String firstName;
-
-    @Column(name = "MIDDLE_NM")
     private String middleName;
-
-    @Column(name = "LAST_NM")
     private String lastName;
-
-    @Column(name = "PREFIX_NM")
     private String namePrefix;
-
-    @Column(name = "TITLE_NM")
     private String nameTitle;
-
-    @Column(name = "SUFFIX_NM")
     private String nameSuffix;
-
-    @Convert(converter = BooleanYNConverter.class)
-    @Column(name = "ACTV_IND")
     private boolean active;
-
-    @Convert(converter = BooleanYNConverter.class)
-    @Column(name = "DFLT_IND")
     private boolean defaultValue;
-
-    @Column(name = "NOTE_MSG")
     private String noteMessage;
-
-    @Column(name = "NM_CHNG_DT")
     private Timestamp nameChangedDate;
-
-    @Transient
     private boolean suppressName;
 
+    public EntityNameType getNameType() {
+        return this.nameType;
+    }
+
+    public void setNameType(EntityNameType nameType) {
+        this.nameType = nameType;
+    }
+
     @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getFirstName() {
         if (isSuppressName()) {
-            return KimApiConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+            return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
         return this.firstName;
@@ -96,10 +86,9 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.firstName = firstName;
     }
 
-    @Override
     public String getMiddleName() {
         if (isSuppressName()) {
-            return KimApiConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+            return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
         return this.middleName;
@@ -109,10 +98,9 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.middleName = middleName;
     }
 
-    @Override
     public String getLastName() {
         if (isSuppressName()) {
-            return KimApiConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+            return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
         return this.lastName;
@@ -122,10 +110,9 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.lastName = lastName;
     }
 
-    @Override
     public String getNamePrefix() {
         if (isSuppressName()) {
-            return KimApiConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+            return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
         return this.namePrefix;
@@ -135,10 +122,9 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.namePrefix = namePrefix;
     }
 
-    @Override
     public String getNameTitle() {
         if (isSuppressName()) {
-            return KimApiConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+            return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
         return this.nameTitle;
@@ -148,52 +134,43 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.nameTitle = nameTitle;
     }
 
-    @Override
     public String getFirstNameUnmasked() {
         return this.firstName;
     }
 
-    @Override
     public String getMiddleNameUnmasked() {
         return this.middleName;
     }
 
-    @Override
     public String getLastNameUnmasked() {
         return this.lastName;
     }
 
-    @Override
     public String getNamePrefixUnmasked() {
         return this.namePrefix;
     }
 
-    @Override
     public String getNameTitleUnmasked() {
         return this.nameTitle;
     }
 
-    @Override
     public String getNameSuffixUnmasked() {
         return this.nameSuffix;
     }
 
-    @Override
     public String getCompositeName() {
         if (isSuppressName()) {
-            return KimApiConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+            return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
         return getCompositeNameUnmasked();
     }
 
-    @Override
     public String getCompositeNameUnmasked() {
-        return getLastNameUnmasked() + ", " + getFirstNameUnmasked()
-                + (StringUtils.isBlank(getMiddleNameUnmasked()) ? "" : " " + getMiddleNameUnmasked());
+        return getLastNameUnmasked() + ", " + getFirstNameUnmasked() + (StringUtils.isBlank(getMiddleNameUnmasked()) ? "" : " " +
+                getMiddleNameUnmasked());
     }
 
-    @Override
     public DateTime getNameChangedDate() {
         return nameChangedDate != null ? new DateTime(nameChangedDate.getTime()) : null;
     }
@@ -214,7 +191,6 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.nameChangedDate = nameChangedDate;
     }
 
-    @Override
     public boolean isSuppressName() {
         try {
             EntityPrivacyPreferences privacy = KimApiServiceLocator.getIdentityService().getEntityPrivacyPreferences(
@@ -231,7 +207,6 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         return this.suppressName;
     }
 
-    @Override
     public String getEntityId() {
         return entityId;
     }
@@ -248,12 +223,7 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.nameCode = nameCode;
     }
 
-    @Override
     public String getNameSuffix() {
-        if (isSuppressName()) {
-            return KimApiConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-        }
-
         return nameSuffix;
     }
 
@@ -287,7 +257,6 @@ public abstract class EntityNameBase extends PersistableBusinessObjectBase imple
         this.defaultValue = defaultValue;
     }
 
-    @Override
     public String getNoteMessage() {
         return noteMessage;
     }

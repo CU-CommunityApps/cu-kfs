@@ -19,7 +19,7 @@ package edu.cornell.kfs.sys.service;
 import java.io.File;
 import java.util.Set;
 
-import org.kuali.rice.kim.api.role.RoleService;
+import org.kuali.kfs.kim.api.role.RoleService;
 
 /**
  * Extension to ReportWriterService to add email properties and expose some

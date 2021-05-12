@@ -2,9 +2,9 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
-import org.kuali.rice.kew.api.action.ActionRequestType;
+import org.kuali.kfs.kew.api.action.ActionRequestType;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAdHocRecipient;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;

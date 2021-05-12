@@ -23,17 +23,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.util.KimCommonUtilsInternal;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.role.RoleContract;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.service.impl.ModuleServiceBase;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.rice.core.api.config.module.RunMode;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kim.api.KimApiConstants;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.role.RoleContract;
-import org.kuali.rice.kim.api.type.KimType;
-import org.kuali.rice.kim.api.type.KimTypeContract;
+import org.kuali.kfs.sys.KFSConstants;
+
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /*
  * CU Customization:
@@ -46,10 +45,6 @@ public class KimModuleService extends ModuleServiceBase {
         // for Person objects (which are not real PersistableBOs) pull them through the person service
         if (Person.class.isAssignableFrom(businessObjectInterfaceClass)) {
             return Collections.singletonList(KimConstants.PrimaryKeyConstants.PRINCIPAL_ID);
-        } else if (KimType.class.isAssignableFrom(businessObjectInterfaceClass)) {
-            return Collections.singletonList(KimConstants.PrimaryKeyConstants.KIM_TYPE_ID);
-        } else if (KimTypeContract.class.isAssignableFrom(businessObjectInterfaceClass)) {
-            return Collections.singletonList(KimConstants.PrimaryKeyConstants.KIM_TYPE_CODE);
         }
 
         // otherwise, use the default implementation
@@ -96,17 +91,17 @@ public class KimModuleService extends ModuleServiceBase {
     @Override
     public String getInquiryUrl(Class inquiryBusinessObjectClass) {
         if (Person.class.isAssignableFrom(inquiryBusinessObjectClass)) {
-            return KimCommonUtilsInternal.getKimBasePath() + KimConstants.KimUIConstants.KIM_PERSON_INQUIRY_ACTION;
+            return getCustomKimInquiryBaseUrl() + KimConstants.KimUIConstants.KIM_PERSON_INQUIRY_ACTION;
         } else if (RoleContract.class.isAssignableFrom(inquiryBusinessObjectClass)) {
-            return KimCommonUtilsInternal.getKimBasePath() + KimConstants.KimUIConstants.KIM_ROLE_INQUIRY_ACTION;
+            return getCustomKimInquiryBaseUrl() + KimConstants.KimUIConstants.KIM_ROLE_INQUIRY_ACTION;
         } else {
             return super.getInquiryUrl(inquiryBusinessObjectClass);
         }
     }
 
-    @Override
-    public boolean goToCentralRiceForInquiry() {
-        RunMode runMode = getRunMode(KimApiConstants.Namespaces.MODULE_NAME);
-        return RunMode.EMBEDDED.equals(runMode);
+    // CU Customization. Added helper method to simplify building the custom inquiry URLs.
+    protected String getCustomKimInquiryBaseUrl() {
+        return KRADServiceLocator.getKualiConfigurationService().getPropertyValueAsString(
+                KFSConstants.APPLICATION_URL_KEY) + CUKFSConstants.SLASH;
     }
 }

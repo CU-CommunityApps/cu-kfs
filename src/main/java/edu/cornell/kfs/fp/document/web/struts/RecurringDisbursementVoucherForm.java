@@ -11,8 +11,8 @@ import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants.DisbursementVoucherEditMode;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.util.GlobalVariables;
 

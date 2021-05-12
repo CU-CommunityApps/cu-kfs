@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPConstants.ScheduledSourceAccountingLineConstants.ScheduleTypes;

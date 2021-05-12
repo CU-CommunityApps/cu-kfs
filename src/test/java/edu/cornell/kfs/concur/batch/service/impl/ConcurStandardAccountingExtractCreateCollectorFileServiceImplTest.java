@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +39,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;
 import org.kuali.kfs.sys.businessobject.service.impl.BatchFileSearchService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.concur.ConcurConstants;

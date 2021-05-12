@@ -3,7 +3,7 @@ package edu.cornell.kfs.fp.businessobject;
 import java.sql.Date;
 import java.util.LinkedHashMap;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class ProcurementCardSummaryEntry extends PersistableBusinessObjectBase {

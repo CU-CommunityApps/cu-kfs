@@ -18,6 +18,16 @@
  */
 package org.kuali.kfs.kns.web.struts.action;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +36,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.RedirectingActionForward;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.service.impl.KimModuleService;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.kns.inquiry.Inquirable;
@@ -35,6 +47,7 @@ import org.kuali.kfs.kns.web.struts.form.InquiryForm;
 import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.kns.web.ui.Section;
 import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.Exporter;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableAttachment;
@@ -48,20 +61,8 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
-import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.core.api.util.RiceKeyConstants;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.krad.bo.BusinessObject;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 /**
  * This class handles actions for inquiries of business objects.
@@ -80,7 +81,7 @@ public class KualiInquiryAction extends KualiAction {
                 if (!KRADConstants.DOWNLOAD_BO_ATTACHMENT_METHOD.equals(methodToCall)) {
                     Class businessObjectClass = Class.forName(((InquiryForm) form).getBusinessObjectClassName());
                     if (!KimApiServiceLocator.getPermissionService().isAuthorizedByTemplate(
-                        GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE,
+                        GlobalVariables.getUserSession().getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                         KimConstants.PermissionTemplateNames.INQUIRE_INTO_RECORDS,
                         KRADUtils.getNamespaceAndComponentSimpleName(businessObjectClass), Collections.emptyMap())) {
 
@@ -267,7 +268,7 @@ public class KualiInquiryAction extends KualiAction {
             return null;
         }
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     public ActionForward continueWithInquiry(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -284,7 +285,7 @@ public class KualiInquiryAction extends KualiAction {
 
         populateSections(mapping, request, inquiryForm, bo);
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     /**
@@ -321,7 +322,7 @@ public class KualiInquiryAction extends KualiAction {
             WebUtils.reopenInactiveRecords(inquiryForm.getSections(), inquiryForm.getTabStates(), collectionName);
         }
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     @Override
@@ -400,7 +401,7 @@ public class KualiInquiryAction extends KualiAction {
             } else {
                 //show the empty section with error
                 populateSections(mapping, request, inquiryForm, bo);
-                return mapping.findForward(RiceConstants.MAPPING_BASIC);
+                return mapping.findForward(KFSConstants.MAPPING_BASIC);
             }
         }
 
@@ -428,7 +429,7 @@ public class KualiInquiryAction extends KualiAction {
         BusinessObject bo = kualiInquirable.getBusinessObject(inquiryForm.retrieveInquiryDecryptedPrimaryKeys());
         if (bo == null) {
             LOG.error("No records found in inquiry action.");
-            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, RiceKeyConstants.ERROR_INQUIRY);
+            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_INQUIRY);
         }
         return bo;
     }

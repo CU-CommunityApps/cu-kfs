@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.purap.fixture;
 
 import java.math.BigDecimal;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 

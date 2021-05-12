@@ -20,8 +20,8 @@ import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.validation.event.PurchasingAccountsPayableItemPreCalculateEvent;
 import org.kuali.kfs.module.purap.service.impl.PurapAccountingServiceImpl;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl {

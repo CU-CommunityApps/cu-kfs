@@ -23,7 +23,7 @@ import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import java.sql.Date;
 import java.util.List;

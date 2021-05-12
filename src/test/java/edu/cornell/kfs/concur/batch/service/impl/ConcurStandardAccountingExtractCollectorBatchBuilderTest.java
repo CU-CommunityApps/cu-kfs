@@ -33,10 +33,10 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.concur.ConcurConstants;

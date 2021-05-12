@@ -46,7 +46,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import com.google.gson.Gson;
 

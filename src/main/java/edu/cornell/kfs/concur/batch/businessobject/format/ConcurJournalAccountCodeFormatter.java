@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.web.format.Formatter;
+import org.kuali.kfs.core.web.format.Formatter;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;

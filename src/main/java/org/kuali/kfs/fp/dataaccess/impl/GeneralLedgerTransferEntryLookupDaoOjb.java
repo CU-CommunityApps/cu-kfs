@@ -32,7 +32,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
-import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import java.util.Arrays;
 import java.util.Collection;

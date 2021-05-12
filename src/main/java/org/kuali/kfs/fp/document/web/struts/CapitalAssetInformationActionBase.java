@@ -49,7 +49,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.SegmentedLookupResultsService;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

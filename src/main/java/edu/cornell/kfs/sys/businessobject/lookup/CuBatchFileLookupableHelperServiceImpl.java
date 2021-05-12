@@ -10,7 +10,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 public class CuBatchFileLookupableHelperServiceImpl extends BatchFileLookupableHelperServiceImpl {
 

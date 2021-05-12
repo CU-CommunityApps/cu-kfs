@@ -7,7 +7,7 @@ import java.util.List;
 import edu.cornell.kfs.fp.CuFPConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 /**
  * Portions Modified 04/2016 and Copyright Cornell University
  * <p/>

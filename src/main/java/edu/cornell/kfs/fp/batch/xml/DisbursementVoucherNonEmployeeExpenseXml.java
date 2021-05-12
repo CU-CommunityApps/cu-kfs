@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 

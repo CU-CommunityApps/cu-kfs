@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.kuali.rice.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 

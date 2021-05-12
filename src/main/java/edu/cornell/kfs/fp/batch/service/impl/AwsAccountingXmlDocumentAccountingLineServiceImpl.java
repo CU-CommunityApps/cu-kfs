@@ -18,7 +18,7 @@ import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;

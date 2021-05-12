@@ -4,7 +4,7 @@ import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherTaxServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;

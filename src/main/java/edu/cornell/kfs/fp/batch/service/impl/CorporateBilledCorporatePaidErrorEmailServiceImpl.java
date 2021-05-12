@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 

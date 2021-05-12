@@ -9,8 +9,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
-import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.kfs.core.api.util.ConcreteKeyValue;
+import org.kuali.kfs.core.api.util.KeyValue;
 
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;

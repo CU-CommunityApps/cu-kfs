@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
-import org.kuali.rice.kns.service.KNSServiceLocator;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.kns.rules.DocumentRuleBase;
 import org.kuali.kfs.krad.document.Document;

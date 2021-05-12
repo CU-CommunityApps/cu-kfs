@@ -22,7 +22,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PostalCode;
 import org.kuali.kfs.sys.businessobject.State;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
 public class ACHBank extends PersistableBusinessObjectBase implements MutableInactivatable {
 

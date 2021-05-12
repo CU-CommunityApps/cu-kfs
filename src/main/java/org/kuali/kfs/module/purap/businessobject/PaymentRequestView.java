@@ -23,8 +23,8 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.web.format.CurrencyFormatter;
-import org.kuali.rice.core.web.format.DateFormatter;
+import org.kuali.kfs.core.web.format.CurrencyFormatter;
+import org.kuali.kfs.core.web.format.DateFormatter;
 
 import java.sql.Date;
 import java.sql.Timestamp;

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;

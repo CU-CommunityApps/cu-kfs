@@ -32,17 +32,16 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
-import org.kuali.rice.core.api.config.property.ConfigContext;
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
-import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
-import org.kuali.rice.kim.api.identity.entity.Entity;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.util.ConcreteKeyValue;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
+import org.kuali.kfs.kim.impl.identity.entity.Entity;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -453,7 +452,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         // If addition of IWNT item or account failed, then skip the rest of the validation.
         if (!added) {
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
         KualiRuleService ruleService = SpringContext.getBean(KualiRuleService.class);
@@ -654,7 +653,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         boolean added = true;
         
         if (initiatorEnteredOwnNetidAsApprover(form)) {
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
         
         //add new item and new accounting line if not empty
@@ -676,7 +675,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         // Do not route if there were failures adding new items or accounts.
         if (!added) {
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
         iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
@@ -778,7 +777,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             HttpServletResponse response) throws Exception {
         
         if (approverEnteredOwnNetidAsApprover(form)) {
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
@@ -807,7 +806,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(note, iWantDocumentForm.getDocument(),
                 iWantDocumentForm.getAttachmentFile(), getDocumentHelperService().getDocumentAuthorizer(iWantDocumentForm.getDocument()))) {
             // Just return without adding the note/attachment. The ConfidentialAttachmentUtil method will handle updating the message map accordingly.
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
         
         // If the note text is blank, set the attachment description as the text. Otherwise, concatenate both to form the text.
@@ -853,7 +852,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());
             UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(), workflowDocument);
 
-            forward = mapping.findForward(RiceConstants.MAPPING_BASIC);
+            forward = mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
         return forward;
     }
@@ -971,7 +970,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         // Do not save if item or account additions failed.
         if (!added) {
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
         iWantDocument.setExplanation(iWantDocument.getDocumentHeader().getExplanation());
@@ -996,7 +995,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             document.setFavoriteAccountLineIdentifier(null);
         }
         
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     /**
@@ -1014,10 +1013,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         // Make sure a related requisition does not already exist before creating one.
         if (StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
             GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_IWNT_REQUISITION_EXISTS);
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
-        String url = ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.APPLICATION_URL_KEY)
+        String url = ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                 + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + iWantDocument.getDocumentNumber();
 
         ActionForward actionForward = new ActionForward(url, true);

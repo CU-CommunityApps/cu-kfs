@@ -28,13 +28,13 @@ import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.util.Guid;
 import org.kuali.kfs.vnd.businessobject.PhoneType;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import edu.cornell.cynergy.antivirus.service.AntiVirusService;
-import edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl;
-import edu.cornell.cynergy.antivirus.service.ScanResult;
+import edu.cornell.kfs.antivirus.service.AntiVirusService;
+import edu.cornell.kfs.antivirus.service.impl.DummyAntiVirusServiceImpl;
+import edu.cornell.kfs.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
 
 public class CuAttachmentServiceImplTest {

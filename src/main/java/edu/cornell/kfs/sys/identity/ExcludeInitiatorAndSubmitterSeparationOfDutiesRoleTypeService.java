@@ -6,10 +6,10 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.identity.ExclusionRoleTypeServiceBase;
-import org.kuali.rice.kew.api.action.ActionTaken;
-import org.kuali.rice.kew.api.document.WorkflowDocumentService;
-import org.kuali.rice.kim.api.KimConstants;
-import org.kuali.rice.kim.api.role.RoleMembership;
+import org.kuali.kfs.kew.actiontaken.ActionTaken;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.role.RoleMembership;
 
 public class ExcludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService extends ExclusionRoleTypeServiceBase {
     

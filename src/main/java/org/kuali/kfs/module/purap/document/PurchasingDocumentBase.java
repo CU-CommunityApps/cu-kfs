@@ -69,8 +69,8 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import java.sql.Date;
 import java.util.ArrayList;

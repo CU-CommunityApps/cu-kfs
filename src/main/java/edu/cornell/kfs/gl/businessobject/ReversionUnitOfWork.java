@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.gl.businessobject.Balance;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;

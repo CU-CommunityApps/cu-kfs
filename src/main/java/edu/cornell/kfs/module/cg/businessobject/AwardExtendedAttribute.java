@@ -5,15 +5,17 @@ package edu.cornell.kfs.module.cg.businessobject;
 
 import java.sql.Date;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
 
 /**
  * @author kwk43
  *
  */
-public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class AwardExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
 
 	private static final long serialVersionUID = 1L;
 	private boolean costShareRequired;

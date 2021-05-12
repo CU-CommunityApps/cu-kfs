@@ -16,8 +16,7 @@ import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminAction;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminForm;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.util.RiceConstants;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -38,7 +37,7 @@ public class CreateDoneKualiBatchFileAdminAction extends KualiBatchFileAdminActi
         
         String status = createDoneFile(filePath);
         request.setAttribute("status", status);
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
     /**
