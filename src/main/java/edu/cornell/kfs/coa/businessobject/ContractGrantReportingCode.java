@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 
 import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class ContractGrantReportingCode extends PersistableBusinessObjectBase implements MutableInactivatable {

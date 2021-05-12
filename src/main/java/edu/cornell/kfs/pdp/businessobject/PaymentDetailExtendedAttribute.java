@@ -1,9 +1,11 @@
 package edu.cornell.kfs.pdp.businessobject;
 
-import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 
-public class PaymentDetailExtendedAttribute extends PersistableBusinessObjectExtensionBase {
+public class PaymentDetailExtendedAttribute extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension {
     
     private KualiInteger id;
     private Boolean crCancelledPayment;

@@ -10,7 +10,7 @@ import org.kuali.kfs.gl.businessobject.lookup.CurrentAccountBalanceLookupableHel
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 

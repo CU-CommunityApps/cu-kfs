@@ -12,7 +12,7 @@ import org.kuali.kfs.gl.dataaccess.impl.BalanceDaoOjb;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

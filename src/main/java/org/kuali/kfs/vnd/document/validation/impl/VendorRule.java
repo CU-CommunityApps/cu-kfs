@@ -63,9 +63,9 @@ import org.kuali.kfs.vnd.businessobject.W8TypeOwnershipType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
 import org.kuali.kfs.vnd.service.TaxNumberService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.springframework.util.AutoPopulatingList;
 
 import java.lang.reflect.Field;
@@ -464,7 +464,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     protected boolean validateTaxTypeAndTaxNumberBlankness(VendorDetail vendorDetail) {
         boolean valid = true;
         boolean isParent = vendorDetail.isVendorParentIndicator();
-        if (!StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxNumber())
+        if (StringUtils.isNotBlank(vendorDetail.getVendorHeader().getVendorTaxNumber())
                 && (StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxTypeCode()))) {
             if (isParent) {
                 putFieldError(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE,
@@ -472,7 +472,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             }
             valid = false;
         } else if (StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxNumber())
-                && !StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxTypeCode())) {
+                && StringUtils.isNotBlank(vendorDetail.getVendorHeader().getVendorTaxTypeCode())) {
             if (isParent) {
                 putFieldError(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE,
                         VendorKeyConstants.ERROR_VENDOR_TAX_TYPE_CANNOT_BE_SET);
@@ -522,8 +522,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         } else {
             // Both of the two ways of entering vendor name (One vendor name field vs VendorFirstName/VendorLastName)
             // cannot be used
-            if (!StringUtils.isBlank(vendorDetail.getVendorFirstName())
-                    || !StringUtils.isBlank(vendorDetail.getVendorLastName())) {
+            if (StringUtils.isNotBlank(vendorDetail.getVendorFirstName())
+                    || StringUtils.isNotBlank(vendorDetail.getVendorLastName())) {
                 putFieldError(VendorPropertyConstants.VENDOR_NAME, VendorKeyConstants.ERROR_VENDOR_NAME_INVALID);
                 valid = false;
             }
@@ -684,7 +684,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         boolean isParent = vendorDetail.isVendorParentIndicator();
         String taxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
         String taxType = vendorDetail.getVendorHeader().getVendorTaxTypeCode();
-        if (!StringUtils.isEmpty(taxType) && !StringUtils.isEmpty(taxNumber)) {
+        if (StringUtils.isNotEmpty(taxType) && StringUtils.isNotEmpty(taxNumber)) {
             valid = SpringContext.getBean(TaxNumberService.class).isValidTaxNumber(taxNumber, taxType);
             if (!valid && isParent) {
                 putFieldError(VendorPropertyConstants.VENDOR_TAX_NUMBER, VendorKeyConstants.ERROR_TAX_NUMBER_INVALID);
@@ -822,7 +822,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
         // validate Address Type
         String vendorAddressTabPrefix = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
-        if (!StringUtils.isBlank(vendorTypeCode) && !StringUtils.isBlank(vendorAddressTypeRequiredCode)
+        if (StringUtils.isNotBlank(vendorTypeCode) && StringUtils.isNotBlank(vendorAddressTypeRequiredCode)
                 && !validAddressType) {
             String[] parameters = new String[]{vendorTypeCode, vendorAddressTypeRequiredCode};
             putFieldError(vendorAddressTabPrefix + VendorPropertyConstants.VENDOR_ADDRESS_TYPE_CODE,
@@ -1145,7 +1145,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         // The chart and org must exist in the database.
         String chartOfAccountsCode = customerNumber.getChartOfAccountsCode();
         String orgCode = customerNumber.getVendorOrganizationCode();
-        if (!StringUtils.isBlank(chartOfAccountsCode) && !StringUtils.isBlank(orgCode)) {
+        if (StringUtils.isNotBlank(chartOfAccountsCode) && StringUtils.isNotBlank(orgCode)) {
             Map<String, String> chartOrgMap = new HashMap<>();
             chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
             if (getBusinessObjectService().countMatching(Chart.class, chartOrgMap) < 1) {
@@ -1358,7 +1358,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         // The chart and org must exist in the database.
         String chartOfAccountsCode = organization.getChartOfAccountsCode();
         String orgCode = organization.getOrganizationCode();
-        if (!StringUtils.isBlank(chartOfAccountsCode) && !StringUtils.isBlank(orgCode)) {
+        if (StringUtils.isNotBlank(chartOfAccountsCode) && StringUtils.isNotBlank(orgCode)) {
             Map<String, String> chartOrgMap = new HashMap<>();
             chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
             if (getBusinessObjectService().countMatching(Chart.class, chartOrgMap) < 1) {
@@ -1652,7 +1652,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                         VendorKeyConstants.ERROR_VENDOR_W8TYPE_REQUIRED);
                 valid = false;
             }
-        } else if (!StringUtils.isBlank(vDetail.getVendorHeader().getVendorW8TypeCode())
+        } else if (StringUtils.isNotBlank(vDetail.getVendorHeader().getVendorW8TypeCode())
                 || !ObjectUtils.isNull(vDetail.getVendorHeader().getVendorW8SignedDate())) {
             putFieldError(VendorPropertyConstants.VENDOR_W8_BEN_RECEIVED_INDICATOR,
                     VendorKeyConstants.ERROR_VENDOR_W8TYPE_AND_SIGNED_DATE_INVALID);

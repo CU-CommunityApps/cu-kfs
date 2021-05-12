@@ -3,8 +3,8 @@ package edu.cornell.kfs.tax.businessobject.options;
 import java.util.List;
 
 import org.kuali.kfs.fp.businessobject.options.PaymentReasonValuesFinder;
-import org.kuali.rice.core.api.util.ConcreteKeyValue;
-import org.kuali.rice.core.api.util.KeyValue;
+import org.kuali.kfs.core.api.util.ConcreteKeyValue;
+import org.kuali.kfs.core.api.util.KeyValue;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 

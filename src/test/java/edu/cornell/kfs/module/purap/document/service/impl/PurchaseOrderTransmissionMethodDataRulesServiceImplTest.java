@@ -17,7 +17,6 @@ import org.kuali.kfs.vnd.service.impl.PhoneNumberServiceImpl;
 import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
 import org.kuali.kfs.sys.businessobject.State;
 import org.kuali.kfs.sys.service.LocationService;
-import org.kuali.rice.location.impl.state.StateBo;
 import org.springframework.util.StringUtils;
 
 import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;

@@ -12,7 +12,7 @@ import org.kuali.kfs.kns.web.struts.action.KualiAction;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;

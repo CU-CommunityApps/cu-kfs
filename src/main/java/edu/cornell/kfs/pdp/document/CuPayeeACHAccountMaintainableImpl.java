@@ -11,11 +11,11 @@ import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.identity.entity.EntityDefault;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.entity.Entity;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
 
@@ -42,7 +42,7 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
               // for Entity, retrieve from Entity table by entity ID then from Person table
               else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
                   if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                      EntityDefault entity = KimApiServiceLocator.getIdentityService().getEntityDefault(payeeIdNumber);
+                      Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
                       if (ObjectUtils.isNotNull(entity)) {
                           List<Principal> principals = entity.getPrincipals();
                           if (principals.size() > 0 && ObjectUtils.isNotNull(principals.get(0))) {

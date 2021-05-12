@@ -22,19 +22,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.persistence.annotations.JoinFetch;
-import org.eclipse.persistence.annotations.JoinFetchType;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.responsibility.ResponsibilityService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.type.KimAttributeField;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleMember;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRolePermission;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleQualifier;
@@ -44,21 +37,15 @@ import org.kuali.kfs.kim.bo.ui.RoleDocumentDelegation;
 import org.kuali.kfs.kim.bo.ui.RoleDocumentDelegationMember;
 import org.kuali.kfs.kim.bo.ui.RoleDocumentDelegationMemberQualifier;
 import org.kuali.kfs.kim.impl.responsibility.ResponsibilityInternalService;
-import org.kuali.kfs.kim.impl.role.RoleBo;
+import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.services.KimImplServiceLocator;
 import org.kuali.kfs.kim.impl.type.IdentityManagementTypeAttributeTransactionalDocument;
+import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.service.KIMServiceLocatorInternal;
 import org.kuali.kfs.kim.web.struts.form.IdentityManagementRoleDocumentForm;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
-import org.kuali.rice.kim.api.responsibility.ResponsibilityService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.rice.kim.api.type.KimAttributeField;
-import org.kuali.rice.kim.api.type.KimType;
-import org.kuali.rice.krad.data.jpa.converters.BooleanYNConverter;
-import org.kuali.rice.krad.data.platform.MaxValueIncrementerFactory;
-import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.AutoPopulatingList;
 
 /*
@@ -67,73 +54,40 @@ import org.springframework.util.AutoPopulatingList;
  * for delegation members that are not tied to a specific role member (such as for
  * derived delegation members on the Fiscal Officer role).
  */
-@Entity
-@Table(name = "KRIM_ROLE_DOCUMENT_T")
 public class IdentityManagementRoleDocument extends IdentityManagementTypeAttributeTransactionalDocument {
 
     private static final long serialVersionUID = 1L;
 
     // principal data
-    @Column(name = "ROLE_ID")
     protected String roleId;
 
-    @Column(name = "ROLE_TYP_ID")
     protected String roleTypeId;
 
-    @Transient
     protected String roleTypeName;
 
-    @Column(name = "ROLE_NMSPC")
     protected String roleNamespace = "";
 
-    @Column(name = "ROLE_NM")
     protected String roleName = "";
 
-    @Column(name = "DESC_TXT")
     protected String roleDescription = "";
 
-    @Column(name = "ACTV_IND")
-    @Convert(converter = BooleanYNConverter.class)
     protected boolean active = true;
 
-    @Transient
     protected boolean editing;
 
-    @JoinFetch(value = JoinFetchType.OUTER)
-    @OneToMany(targetEntity = KimDocumentRolePermission.class, orphanRemoval = true,
-            cascade = {CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.PERSIST})
-    @JoinColumn(name = "FDOC_NBR", referencedColumnName = "FDOC_NBR", insertable = false, updatable = false)
     protected List<KimDocumentRolePermission> permissions = new AutoPopulatingList<>(KimDocumentRolePermission.class);
 
-    @JoinFetch(value = JoinFetchType.OUTER)
-    @OneToMany(targetEntity = KimDocumentRoleResponsibility.class, orphanRemoval = true,
-            cascade = {CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.PERSIST})
-    @JoinColumn(name = "FDOC_NBR", referencedColumnName = "FDOC_NBR", insertable = false, updatable = false)
     protected List<KimDocumentRoleResponsibility> responsibilities =
             new AutoPopulatingList<>(KimDocumentRoleResponsibility.class);
 
-    @JoinFetch(value = JoinFetchType.OUTER)
-    @OneToMany(targetEntity = KimDocumentRoleMember.class, orphanRemoval = true,
-            cascade = {CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.PERSIST})
-    @JoinColumn(name = "FDOC_NBR", referencedColumnName = "FDOC_NBR", insertable = false, updatable = false)
     protected List<KimDocumentRoleMember> modifiedMembers = new AutoPopulatingList<>(KimDocumentRoleMember.class);
-    @Transient
     protected List<KimDocumentRoleMember> searchResultMembers = new ArrayList<>();
-    @Transient
     protected List<KimDocumentRoleMember> members = new ArrayList<>();
-    @Transient
     protected RoleMemberMetaDataType memberMetaDataType = RoleMemberMetaDataType.MEMBER_NAME;
-    @Transient
     private List<RoleDocumentDelegationMember> delegationMembers =
             new AutoPopulatingList<>(RoleDocumentDelegationMember.class);
-    @JoinFetch(value = JoinFetchType.OUTER)
-    @OneToMany(targetEntity = RoleDocumentDelegation.class, orphanRemoval = true,
-            cascade = {CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.PERSIST})
-    @JoinColumn(name = "FDOC_NBR", referencedColumnName = "FDOC_NBR", insertable = false, updatable = false)
     private List<RoleDocumentDelegation> delegations = new AutoPopulatingList<>(RoleDocumentDelegation.class);
-    @Transient
     private transient ResponsibilityService responsibilityService;
-    @Transient
     private transient ResponsibilityInternalService responsibilityInternalService;
 
     public IdentityManagementRoleDocument() {
@@ -304,9 +258,12 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
     }
 
     public void addMember(KimDocumentRoleMember member) {
-        DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                KimImplServiceLocator.getDataSource(), KimConstants.SequenceNames.KRIM_ROLE_MBR_ID_S);
-        member.setRoleMemberId(incrementer.nextStringValue());
+        SequenceAccessorService sas = getSequenceAccessorService();
+        Long nextSeq = sas.getNextAvailableSequenceNumber(
+                KimConstants.SequenceNames.KRIM_ROLE_MBR_ID_S,
+                KimDocumentRoleMember.class);
+        String roleMemberId = nextSeq.toString();
+        member.setRoleMemberId(roleMemberId);
         setupMemberRspActions(member);
         getModifiedMembers().add(member);
     }
@@ -391,9 +348,10 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
 
     public void initializeDocumentForNewRole() {
         if (StringUtils.isBlank(this.roleId)) {
-            DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                    KimImplServiceLocator.getDataSource(), KimConstants.SequenceNames.KRIM_ROLE_ID_S);
-            this.roleId = incrementer.nextStringValue();
+            SequenceAccessorService sas = getSequenceAccessorService();
+            Long nextSeq = sas.getNextAvailableSequenceNumber(
+                    KimConstants.SequenceNames.KRIM_ROLE_ID_S, this.getClass());
+            this.roleId = nextSeq.toString();
         }
         if (StringUtils.isBlank(this.roleTypeId)) {
             this.roleTypeId = "1";
@@ -413,72 +371,67 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
 
     @Override
     public void prepareForSave() {
+        SequenceAccessorService sas = getSequenceAccessorService();
+
         String roleId;
         if (StringUtils.isBlank(getRoleId())) {
-            DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                    KimImplServiceLocator.getDataSource(), KimConstants.SequenceNames.KRIM_ROLE_ID_S);
-            roleId = incrementer.nextStringValue();
+            Long nextSeq = sas.getNextAvailableSequenceNumber(
+                    KimConstants.SequenceNames.KRIM_ROLE_ID_S, this.getClass());
+            roleId = nextSeq.toString();
             setRoleId(roleId);
         } else {
             roleId = getRoleId();
         }
         if (getPermissions() != null) {
+            String rolePermissionId;
             for (KimDocumentRolePermission permission : getPermissions()) {
                 permission.setRoleId(roleId);
                 permission.setDocumentNumber(getDocumentNumber());
                 if (StringUtils.isBlank(permission.getRolePermissionId())) {
-                    DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                            KimImplServiceLocator.getDataSource(), KimConstants.SequenceNames.KRIM_ROLE_PERM_ID_S);
-                    permission.setRolePermissionId(incrementer.nextStringValue());
+                    Long nextSeq = sas.getNextAvailableSequenceNumber(
+                            KimConstants.SequenceNames.KRIM_ROLE_PERM_ID_S,
+                            KimDocumentRolePermission.class);
+                    rolePermissionId = nextSeq.toString();
+                    permission.setRolePermissionId(rolePermissionId);
                 }
             }
         }
         if (getResponsibilities() != null) {
-            for (KimDocumentRoleResponsibility responsibility : getResponsibilities()) {
-                String nextRoleResponsibilityId = null;
-
+            String roleResponsibilityId;
+            for (KimDocumentRoleResponsibility responsibility: getResponsibilities()) {
                 if (StringUtils.isBlank(responsibility.getRoleResponsibilityId())) {
-                    DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                            KimImplServiceLocator.getDataSource(), KimConstants.SequenceNames.KRIM_ROLE_RSP_ID_S);
-                    nextRoleResponsibilityId = incrementer.nextStringValue();
-                    responsibility.setRoleResponsibilityId(nextRoleResponsibilityId);
-                } else {
-                    responsibility.setDocumentNumber(getDocumentNumber());
-                    responsibility.setVersionNumber(null);
+                    Long nextSeq = sas.getNextAvailableSequenceNumber(
+                            KimConstants.SequenceNames.KRIM_ROLE_RSP_ID_S,
+                            KimDocumentRoleResponsibility.class);
+                    roleResponsibilityId = nextSeq.toString();
+                    responsibility.setRoleResponsibilityId(roleResponsibilityId);
                 }
-
                 responsibility.setRoleId(roleId);
-                if (!getResponsibilityInternalService().areActionsAtAssignmentLevelById(
-                        responsibility.getResponsibilityId())) {
+                if (!getResponsibilityInternalService().areActionsAtAssignmentLevelById(responsibility.getResponsibilityId())) {
                     if (StringUtils.isBlank(responsibility.getRoleRspActions().get(0).getRoleResponsibilityActionId())) {
-                        DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                                KimImplServiceLocator.getDataSource(), KimConstants.SequenceNames.KRIM_ROLE_RSP_ACTN_ID_S);
-                        responsibility.getRoleRspActions().get(0).setRoleResponsibilityActionId(
-                                incrementer.nextStringValue());
+                        Long nextSeq = sas.getNextAvailableSequenceNumber(
+                                KimConstants.SequenceNames.KRIM_ROLE_RSP_ACTN_ID_S,
+                                KimDocumentRoleResponsibilityAction.class);
+                        String roleResponsibilityActionId = nextSeq.toString();
+                        responsibility.getRoleRspActions().get(0).setRoleResponsibilityActionId(roleResponsibilityActionId);
                     }
-
-                    if (StringUtils.isBlank(responsibility.getRoleRspActions().get(0).getRoleResponsibilityId())) {
-                        if (StringUtils.isBlank(nextRoleResponsibilityId)) {
-                            responsibility.getRoleRspActions().get(0).setRoleResponsibilityId(
-                                    responsibility.getRoleResponsibilityId());
-                        } else {
-                            responsibility.getRoleRspActions().get(0).setRoleResponsibilityId(nextRoleResponsibilityId);
-                        }
-                    }
-
                     responsibility.getRoleRspActions().get(0).setRoleMemberId("*");
                     responsibility.getRoleRspActions().get(0).setDocumentNumber(getDocumentNumber());
                 }
             }
         }
         if (getModifiedMembers() != null) {
+            String roleMemberId;
+            String roleResponsibilityActionId;
             for (KimDocumentRoleMember member : getModifiedMembers()) {
                 member.setDocumentNumber(getDocumentNumber());
                 member.setRoleId(roleId);
                 if (StringUtils.isBlank(member.getRoleMemberId())) {
-                    DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                            KimImplServiceLocator.getDataSource(), KimConstants.SequenceNames.KRIM_ROLE_MBR_ID_S);
-                    member.setRoleMemberId(incrementer.nextStringValue());
+                    Long nextSeq = sas.getNextAvailableSequenceNumber(
+                            KimConstants.SequenceNames.KRIM_ROLE_MBR_ID_S,
+                            KimDocumentRoleMember.class);
+                    roleMemberId = nextSeq.toString();
+                    member.setRoleMemberId(roleMemberId);
                 }
                 for (KimDocumentRoleQualifier qualifier : member.getQualifiers()) {
                     qualifier.setDocumentNumber(getDocumentNumber());
@@ -487,11 +440,11 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
                 }
                 for (KimDocumentRoleResponsibilityAction roleRespAction : member.getRoleRspActions()) {
                     if (StringUtils.isBlank(roleRespAction.getRoleResponsibilityActionId())) {
-                        DataFieldMaxValueIncrementer incrementer = MaxValueIncrementerFactory.getIncrementer(
-                                KimImplServiceLocator.getDataSource(),
-                                KimConstants.SequenceNames.KRIM_ROLE_RSP_ACTN_ID_S);
-                        roleRespAction.setRoleResponsibilityActionId(incrementer.nextStringValue());
-                        roleRespAction.setDocumentNumber(getDocumentNumber());
+                        Long nextSeq = sas.getNextAvailableSequenceNumber(
+                                KimConstants.SequenceNames.KRIM_ROLE_RSP_ACTN_ID_S,
+                                KimDocumentRoleResponsibilityAction.class);
+                        roleResponsibilityActionId = nextSeq.toString();
+                        roleRespAction.setRoleResponsibilityActionId(roleResponsibilityActionId);
                     }
                     roleRespAction.setRoleMemberId(member.getRoleMemberId());
                     roleRespAction.setDocumentNumber(getDocumentNumber());
@@ -598,13 +551,13 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
     }
 
     protected void initializeMinimalRoleBoForDelegationMember(RoleDocumentDelegationMember delegationMember) {
-        RoleBo roleBo = delegationMember.getRoleBo();
-        if (ObjectUtils.isNull(roleBo)) {
-            roleBo = new RoleBo();
+        Role role = delegationMember.getMemberRole();
+        if (ObjectUtils.isNull(role)) {
+            role = new Role();
         }
-        roleBo.setId(getRoleId());
-        roleBo.setKimTypeId(getRoleTypeId());
-        delegationMember.setRoleBo(roleBo);
+        role.setId(getRoleId());
+        role.setKimTypeId(getRoleTypeId());
+        delegationMember.setMemberRole(role);
     }
 
     public enum RoleMemberMetaDataType implements Comparator<KimDocumentRoleMember> {

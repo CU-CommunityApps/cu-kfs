@@ -28,8 +28,8 @@ import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import java.util.List;
 

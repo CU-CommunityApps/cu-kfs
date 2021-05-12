@@ -2,13 +2,13 @@ package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Map;
 
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
@@ -51,7 +51,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     @Override
     public boolean canEditDocumentOverview(Document document, Person user) {
         return isAuthorizedByTemplate(document,
-                KRADConstants.KNS_NAMESPACE,
+                KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.EDIT_DOCUMENT,
                 user.getPrincipalId());
     }

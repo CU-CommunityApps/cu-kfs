@@ -17,7 +17,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.ld.service.LaborLedgerEnterpriseFeedService;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 
 @ConfigureContext
 public class LaborLedgerEnterpriseFeedServiceImplTest extends TestCase {

@@ -44,14 +44,14 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.permission.PermissionService;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.permission.PermissionService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
@@ -394,7 +394,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
     }
     
     /**
-     * @see org.kuali.kfs.module.purap.document.RequisitionDocument#doRouteLevelChange(org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange)
+     * @see org.kuali.kfs.module.purap.document.RequisitionDocument#doRouteLevelChange(org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange)
      */
     @Override
     public void doRouteLevelChange(DocumentRouteLevelChange change) {

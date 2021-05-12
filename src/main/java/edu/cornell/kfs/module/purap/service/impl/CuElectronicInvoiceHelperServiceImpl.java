@@ -44,7 +44,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.gl.service.impl.StringHelper;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchResult;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchResults;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
@@ -54,7 +65,6 @@ import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
@@ -87,16 +97,6 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AutoPopulatingList;
 import org.w3c.dom.Attr;
@@ -615,7 +615,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             criteria.setStartAtIndex(maxResults * i);
             crit = criteria.build();
             LOG.debug("Max Results: "+criteria.getStartAtIndex());
-            DocumentSearchResults results = KewApiServiceLocator.getWorkflowDocumentService().documentSearch(
+            DocumentSearchResults results = KEWServiceLocator.getDocumentSearchService().lookupDocuments(
                     GlobalVariables.getUserSession().getPrincipalId(), crit);
             if (results.getSearchResults().isEmpty()) {
                 break;
@@ -1003,7 +1003,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                if (tempMatcher.find()) {
 			                    LOG.warn("Found document ref payload ID with special or whitespace characters; these will be removed. Order: "
 			                            + order.getOrderReferenceOrderID());
-			                    order.setOrderReferenceDocumentRefPayloadID(tempMatcher.replaceAll(KRADConstants.EMPTY_STRING));
+			                    order.setOrderReferenceDocumentRefPayloadID(tempMatcher.replaceAll(KFSConstants.EMPTY_STRING));
 			                }
 			            }
 			            
@@ -1012,7 +1012,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                if (tempMatcher.find()) {
 			                    LOG.warn("Found ref order ID with special or whitespace characters; these will be removed. Order: "
 			                            + order.getOrderReferenceOrderID());
-			                    order.setOrderReferenceOrderID(tempMatcher.replaceAll(KRADConstants.EMPTY_STRING));
+			                    order.setOrderReferenceOrderID(tempMatcher.replaceAll(KFSConstants.EMPTY_STRING));
 			                }
 			            }
 			            
@@ -1022,7 +1022,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                    if (tempMatcher.find()) {
 			                        LOG.warn("Found item description with special characters; these will be removed. Line number: "
 			                                + item.getInvoiceLineNumber());
-			                        item.setReferenceDescription(tempMatcher.replaceAll(KRADConstants.EMPTY_STRING));
+			                        item.setReferenceDescription(tempMatcher.replaceAll(KFSConstants.EMPTY_STRING));
 			                    }
 			                }
 			            }

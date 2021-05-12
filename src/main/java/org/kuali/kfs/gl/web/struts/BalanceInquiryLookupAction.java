@@ -45,8 +45,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -212,7 +212,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         parameters.put(KFSConstants.DOC_FORM_KEY, multipleValueLookupForm.getFormKey());
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.RETURN_METHOD_TO_CALL);
         parameters.put(KFSConstants.REFRESH_CALLER, KFSConstants.MULTIPLE_VALUE);
-        if (!StringUtils.isBlank(multipleValueLookupForm.getLookupAnchor())) {
+        if (StringUtils.isNotBlank(multipleValueLookupForm.getLookupAnchor())) {
             parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());
         }
 
@@ -248,7 +248,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         parameters.put(KFSConstants.DOC_FORM_KEY, multipleValueLookupForm.getFormKey());
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.RETURN_METHOD_TO_CALL);
         parameters.put(KFSConstants.REFRESH_CALLER, KFSConstants.MULTIPLE_VALUE);
-        if (!StringUtils.isBlank(multipleValueLookupForm.getLookupAnchor())) {
+        if (StringUtils.isNotBlank(multipleValueLookupForm.getLookupAnchor())) {
             parameters.put(KFSConstants.ANCHOR, multipleValueLookupForm.getLookupAnchor());
         }
         String backUrl = UrlFactory.parameterizeUrl(multipleValueLookupForm.getBackLocation(), parameters);

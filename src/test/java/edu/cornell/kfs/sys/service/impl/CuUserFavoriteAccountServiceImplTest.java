@@ -15,8 +15,8 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

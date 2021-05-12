@@ -36,9 +36,8 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
@@ -283,7 +282,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         iWantDocument.setDvDocId(disbursementVoucherDocument.getDocumentNumber()); 
         SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
 
-        return mapping.findForward(RiceConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     /**
@@ -301,7 +300,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(newNote, dvForm.getDocument(), dvForm.getAttachmentFile(),
                 getDocumentHelperService().getDocumentAuthorizer(dvForm.getDocument()))) {
             // Just return without adding the note/attachment. The ConfidentialAttachmentUtil method will handle updating the message map accordingly.
-            return mapping.findForward(RiceConstants.MAPPING_BASIC);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
         
         // If not "Confidential" or if authorized to add such attachments, then proceed with the superclass processing.

@@ -29,11 +29,11 @@ import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.KewApiConstants.SearchableAttributeConstants;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.KewApiConstants.SearchableAttributeConstants;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.document.Copyable;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -951,7 +951,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     /**
      * Override this method to send out an email to the initiator when the document reached the final status.
      * 
-     * @see org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase#doRouteStatusChange(org.kuali.rice.kew.dto.DocumentRouteStatusChangeDTO)
+     * @see org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase#doRouteStatusChange(org.kuali.kfs.kew.dto.DocumentRouteStatusChangeDTO)
      */
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
@@ -1494,7 +1494,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
     
     public String getDvUrl() {
-        return SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.WORKFLOW_URL_KEY) + "/DocHandler.do?docId=" + getDvDocId() + "&command=displayDocSearchView";
+        return SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/DocHandler.do?docId=" + getDvDocId() + "&command=displayDocSearchView";
     }
     
     public Integer getFavoriteAccountLineIdentifier() {

@@ -2,9 +2,9 @@ package edu.cornell.kfs.sys.document.authorization;
 
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;

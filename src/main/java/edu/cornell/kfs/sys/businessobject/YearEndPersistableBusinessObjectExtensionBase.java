@@ -3,8 +3,9 @@
  */
 package edu.cornell.kfs.sys.businessobject;
 
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.sys.businessobject.FiscalYearBasedBusinessObject;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
 
 
 
@@ -12,7 +13,8 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
  * @author kwk43
  *
  */
-public class YearEndPersistableBusinessObjectExtensionBase extends PersistableBusinessObjectExtensionBase implements FiscalYearBasedBusinessObject {
+public class YearEndPersistableBusinessObjectExtensionBase extends PersistableBusinessObjectBase
+        implements PersistableBusinessObjectExtension, FiscalYearBasedBusinessObject {
 
 	private Integer universityFiscalYear;
 

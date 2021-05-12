@@ -26,7 +26,7 @@ import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherDocumentPreR
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.KFSKeyConstants;
 

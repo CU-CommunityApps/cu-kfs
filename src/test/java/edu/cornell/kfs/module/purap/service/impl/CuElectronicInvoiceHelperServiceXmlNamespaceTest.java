@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoad;
 
-import edu.cornell.cynergy.core.xml.CynergyXMLStreamUtils;
+import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.fixture.CuElectronicInvoiceHelperServiceFixture;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -179,7 +179,7 @@ public class CuElectronicInvoiceHelperServiceXmlNamespaceTest {
             streamReader = inputFactory.createXMLStreamReader(reader);
             return getAttributesFromRootElement(streamReader);
         } finally {
-            CynergyXMLStreamUtils.closeQuietly(streamReader);
+            CuXMLStreamUtils.closeQuietly(streamReader);
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(xmlStream);
         }

@@ -23,7 +23,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
 import com.rsmart.kuali.kfs.fp.FPConstants;
