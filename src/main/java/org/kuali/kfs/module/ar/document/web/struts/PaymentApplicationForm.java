@@ -46,10 +46,10 @@ import org.kuali.kfs.module.ar.document.service.CustomerInvoiceDocumentService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -773,10 +773,10 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
             final String[] checkboxesToReset = request.getParameterValues("checkboxToReset");
             if (checkboxesToReset != null && checkboxesToReset.length > 0) {
                 for (String propertyName : checkboxesToReset) {
-                    if (!StringUtils.isBlank(propertyName) && parameterMap.get(propertyName) == null) {
+                    if (StringUtils.isNotBlank(propertyName) && parameterMap.get(propertyName) == null) {
                         populateForProperty(propertyName, KimConstants.KIM_ATTRIBUTE_BOOLEAN_FALSE_STR_VALUE_DISPLAY,
                                 parameterMap);
-                    } else if (!StringUtils.isBlank(propertyName)
+                    } else if (StringUtils.isNotBlank(propertyName)
                             && parameterMap.get(propertyName) != null
                             && parameterMap.get(propertyName).length >= 1
                             && parameterMap.get(propertyName)[0].equalsIgnoreCase("on")) {

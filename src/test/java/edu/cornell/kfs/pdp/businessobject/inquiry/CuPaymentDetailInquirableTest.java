@@ -16,17 +16,6 @@ import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.kns.web.ui.Section;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.service.LocationService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.krad.data.DataObjectService;
-import org.kuali.rice.location.api.country.CountryService;
-import org.kuali.rice.location.impl.country.CountryBo;
-import org.kuali.rice.location.impl.country.CountryServiceImpl;
-
-import org.mockito.AdditionalMatchers;
-import org.mockito.Matchers;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 
@@ -126,34 +115,6 @@ public class CuPaymentDetailInquirableTest {
                 .collect(Collectors.toMap(Field::getPropertyName, Field::getPropertyValue));
         
         assertEquals("Wrong property value mappings from inquiry section", expectedPropertyValues, actualPropertyValues);
-    }
-
-    private ParameterService buildMockRiceParameterServiceExpectingNoCalls() {
-        ParameterService parameterService = mock(ParameterService.class);
-        return parameterService;
-    }
-
-    private DataObjectService buildMockDataObjectService() {
-        DataObjectService dataObjectService = mock(DataObjectService.class);
-        
-        when(dataObjectService.find(CountryBo.class, KFSConstants.COUNTRY_CODE_UNITED_STATES))
-                .thenReturn(buildUnitedStatesCountryBo());
-        
-        when(
-                dataObjectService.find(Matchers.eq(CountryBo.class), AdditionalMatchers
-                        .not(Matchers.eq(KFSConstants.COUNTRY_CODE_UNITED_STATES))))
-                .thenReturn(null);
-
-        return dataObjectService;
-    }
-
-    private CountryBo buildUnitedStatesCountryBo() {
-        CountryBo country = new CountryBo();
-        country.setCode(KFSConstants.COUNTRY_CODE_UNITED_STATES);
-        country.setName(COUNTRY_NAME_UNITED_STATES);
-        country.setRestricted(false);
-        country.setActive(true);
-        return country;
     }
 
     private Section buildSectionWithCountryPropertyValue(String countryValue) {

@@ -43,8 +43,8 @@ import org.kuali.kfs.sys.businessobject.State;
 import org.kuali.kfs.sys.businessobject.serialization.PersistableBusinessObjectSerializer;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -706,7 +706,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountFiscalOfficerUser() {
-        accountFiscalOfficerUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class)
+        accountFiscalOfficerUser = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
                 .updatePersonIfNecessary(accountFiscalOfficerSystemIdentifier, accountFiscalOfficerUser);
         return accountFiscalOfficerUser;
     }
@@ -731,7 +731,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountManagerUser() {
-        accountManagerUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class)
+        accountManagerUser = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
                 .updatePersonIfNecessary(accountManagerSystemIdentifier, accountManagerUser);
         return accountManagerUser;
     }
@@ -744,7 +744,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountSupervisoryUser() {
-        accountSupervisoryUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class)
+        accountSupervisoryUser = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
                 .updatePersonIfNecessary(accountsSupervisorySystemsIdentifier, accountSupervisoryUser);
         return accountSupervisoryUser;
     }
@@ -1161,8 +1161,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    protected void preUpdate() {
-        super.preUpdate();
+    protected void beforeUpdate() {
+        super.beforeUpdate();
         try {
             // KULCOA-549: update the sufficient funds table get the current data from the database
             BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);

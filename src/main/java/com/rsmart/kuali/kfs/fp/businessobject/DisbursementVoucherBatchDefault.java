@@ -15,22 +15,17 @@
  */
 package com.rsmart.kuali.kfs.fp.businessobject;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
-import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.krad.service.KualiModuleService;
-import org.kuali.kfs.krad.service.ModuleService;
-import org.kuali.rice.location.api.LocationConstants;
-import org.kuali.rice.location.framework.campus.CampusEbo;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
+import org.kuali.kfs.sys.businessobject.Bank;
+import org.kuali.kfs.sys.businessobject.Campus;
+import org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation;
 
 import com.rsmart.kuali.kfs.fp.FPPropertyConstants;
 
@@ -54,7 +49,7 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
     private String financialObjectCode;
     private String financialDocumentLineDescription;
 
-    private CampusEbo campus;
+    private Campus campus;
     private PaymentDocumentationLocation documentationLocation;
     private Bank bank;
     private Chart chart;
@@ -307,19 +302,12 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
      * 
      * @return Returns the campus.
      */
-    public CampusEbo getCampus() {
+    public Campus getCampus() {
         if ( StringUtils.isBlank(campusCode) ) {
             campus = null;
         } else {
-            if ( campus == null || !StringUtils.equals( campus.getCode(),campusCode) ) {
-                ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(CampusEbo.class);
-                if ( moduleService != null ) {
-                    Map<String,Object> keys = new HashMap<String, Object>(1);
-                    keys.put(LocationConstants.PrimaryKeyConstants.CODE, campusCode);
-                    campus = moduleService.getExternalizableBusinessObject(CampusEbo.class, keys);
-                } else {
-                    throw new RuntimeException( "CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed." );
-                }
+            if ( campus == null || !StringUtils.equals( campus.getCode(), campusCode) ) {
+                campus = KRADServiceLocator.getBusinessObjectService().findBySinglePrimaryKey(Campus.class, campusCode);
             }
         }
         return campus;
@@ -330,7 +318,7 @@ public class DisbursementVoucherBatchDefault extends PersistableBusinessObjectBa
      * 
      * @param campus The campus to set.
      */
-    public void setCampus(CampusEbo campus) {
+    public void setCampus(Campus campus) {
         this.campus = campus;
     }
 

@@ -7,9 +7,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.document.web.struts.DistributionOfIncomeAndExpenseAction;
-import org.kuali.rice.core.api.util.RiceConstants;
-
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
@@ -28,7 +27,7 @@ public class CuDistributionOfIncomeAndExpenseAction extends DistributionOfIncome
         
          if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(newNote, diForm.getDocument(), diForm.getAttachmentFile(),
                 getDocumentHelperService().getDocumentAuthorizer(diForm.getDocument()))) {
-             return mapping.findForward(RiceConstants.MAPPING_BASIC);
+             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
         
         return super.insertBONote(mapping, form, request, response);

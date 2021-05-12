@@ -26,8 +26,8 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
-import org.kuali.rice.core.api.util.ClassLoaderUtils;
-import org.kuali.rice.core.api.util.ContextClassLoaderBinder;
+import org.kuali.kfs.core.api.util.ClassLoaderUtils;
+import org.kuali.kfs.core.api.util.ContextClassLoaderBinder;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;

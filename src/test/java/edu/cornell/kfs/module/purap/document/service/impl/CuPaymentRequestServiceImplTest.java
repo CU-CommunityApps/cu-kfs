@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -20,8 +20,8 @@ import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
@@ -48,11 +48,10 @@ public class CuPaymentRequestServiceImplTest extends KualiIntegTestBase {
         // Override auto-approval-limit parameter for the duration of the test. The old value will be restored by the post-test rollback.
         // NOTE: If this test class ever gets configured to not roll back, then this override should change accordingly to restore the old param value.
         ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        Parameter oldAmountLimit = parameterService.getParameter(
+        Parameter amountLimit = parameterService.getParameter(
                 PaymentRequestDocument.class, CUPurapParameterConstants.DEFAULT_PURCHASE_ORDER_POS_APRVL_LMT_FOR_PREQ);
-        Parameter.Builder newAmountLimit = Parameter.Builder.create(oldAmountLimit);
-        newAmountLimit.setValue(RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_5K.extendedPrice.toString());
-        parameterService.updateParameter(newAmountLimit.build());
+        amountLimit.setValue(RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_5K.extendedPrice.toString());
+        parameterService.updateParameter(amountLimit);
     }
 
     public void testRemoveIneligibleAdditionalCharges_NoEligibleItems()

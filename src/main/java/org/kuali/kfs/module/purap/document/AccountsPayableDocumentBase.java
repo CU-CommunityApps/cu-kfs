@@ -37,9 +37,9 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.CampusParameter;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
-import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
+import org.kuali.kfs.kim.api.identity.Person;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -384,7 +384,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
      * Retrieves the universal user object for the last person to perform an action on the document.
      */
     public Person getLastActionPerformedByUser() {
-        return SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class).getPerson(
+        return SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class).getPerson(
                 getLastActionPerformedByPersonId());
     }
 

@@ -58,10 +58,10 @@ import org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
 import org.kuali.kfs.sys.exception.AccountingLineParserException;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluator;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -695,7 +695,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             parameters.put("projectCode", line.getProjectCode());
         }
         if (StringUtils.isNotBlank(getObjectTypeCodeFromLine(line))) {
-            if (!StringUtils.isBlank(line.getObjectTypeCode())) {
+            if (StringUtils.isNotBlank(line.getObjectTypeCode())) {
                 parameters.put("objectTypeCode", line.getObjectTypeCode());
             } else {
                 line.refreshReferenceObject("objectCode");
@@ -841,7 +841,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
             // get the object code and account
             String objCd = accountingLine.getFinancialObjectCode();
             String account = accountingLine.getAccountNumber();
-            if (!StringUtils.isEmpty(objCd) && !StringUtils.isEmpty(account)) {
+            if (StringUtils.isNotEmpty(objCd) && StringUtils.isNotEmpty(account)) {
                 String compare = account + ":" + objCd;
                 ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator =
                         parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,

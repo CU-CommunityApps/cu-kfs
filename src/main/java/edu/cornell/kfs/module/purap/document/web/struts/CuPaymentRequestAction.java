@@ -30,7 +30,7 @@ import org.kuali.kfs.module.purap.document.web.struts.PaymentRequestForm;
 import org.kuali.kfs.module.purap.service.PurapAccountRevisionService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 

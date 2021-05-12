@@ -24,7 +24,7 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.context.IntegTestUtils;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public enum CuAccountingLineFixture {
     ST_LINE_1(1, "IT", "R704750", "AC", "", "5200", "", "", "", "", "", "", "", GL_DEBIT_CODE, "6916.68"),

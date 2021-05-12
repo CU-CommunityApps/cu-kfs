@@ -30,7 +30,7 @@ import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
+import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 import org.kuali.kfs.krad.dao.BusinessObjectDao;
 import org.kuali.kfs.krad.dao.impl.LookupDaoOjb;
 

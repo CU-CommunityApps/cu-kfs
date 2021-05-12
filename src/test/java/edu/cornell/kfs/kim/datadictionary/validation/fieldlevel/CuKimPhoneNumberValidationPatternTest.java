@@ -11,7 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.util.RiceUtilities;
+import org.kuali.kfs.core.api.util.CoreUtilities;
 
 public class CuKimPhoneNumberValidationPatternTest {
 
@@ -28,7 +28,7 @@ public class CuKimPhoneNumberValidationPatternTest {
 
     private Properties getCuKimProperties() throws IOException {
         try (
-            InputStream propertyFileStream = RiceUtilities.getResourceAsStream(CU_KIM_RESOURCES_PATH);
+            InputStream propertyFileStream = CoreUtilities.getResourceAsStream(CU_KIM_RESOURCES_PATH);
         ) {
             Properties properties = new Properties();
             properties.load(propertyFileStream);

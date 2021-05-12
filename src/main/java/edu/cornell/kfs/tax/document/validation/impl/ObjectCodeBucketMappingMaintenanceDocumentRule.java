@@ -10,7 +10,7 @@ import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxPropertyConstants;
@@ -36,7 +36,7 @@ public class ObjectCodeBucketMappingMaintenanceDocumentRule extends MaintenanceD
                 boClass.asSubclass(PersistableBusinessObject.class), convertedValues);
         if (!existingObjects.isEmpty()) {
             putDocumentError(KRADConstants.DOCUMENT_ERRORS,
-                    RiceKeyConstants.ERROR_DOCUMENT_MAINTENANCE_KEYS_ALREADY_EXIST_ON_CREATE_NEW,
+                    KFSKeyConstants.ERROR_DOCUMENT_MAINTENANCE_KEYS_ALREADY_EXIST_ON_CREATE_NEW,
                     getHumanReadablePrimaryKeyFieldNames(boClass));
             return false;
         } else {

@@ -10,8 +10,8 @@ import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
+import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 
 import edu.cornell.kfs.sys.batch.CuAbstractStep;
 

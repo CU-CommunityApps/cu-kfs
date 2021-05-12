@@ -24,6 +24,12 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.impl.config.property.Config;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -38,11 +44,6 @@ import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Country;
-import org.kuali.rice.core.api.config.property.ConfigContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.api.util.type.KualiInteger;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
@@ -1626,7 +1627,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
     
     protected boolean isProduction() {
-        return ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.PROD_ENVIRONMENT_CODE_KEY).equalsIgnoreCase(
+        return ConfigContext.getCurrentContextConfig().getProperty(Config.PROD_ENVIRONMENT_CODE).equalsIgnoreCase(
                 ConfigContext.getCurrentContextConfig().getEnvironment());
     }
 

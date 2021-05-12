@@ -9,7 +9,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DocumentNoteRow;
@@ -364,7 +364,7 @@ final class TaxSqlUtils {
         if (size <= MAX_IN_LIST_SIZE) {
             appendQueryInternal(builder, includeColumnPrefixes,
                     field,
-                    positive ? KRADConstants.EMPTY_STRING : SqlText.NOT,
+                    positive ? KFSConstants.EMPTY_STRING : SqlText.NOT,
                     SqlText.IN, SqlText.PAREN_OPEN, Integer.valueOf(size), SqlText.PAREN_CLOSE);
             return;
         }
@@ -375,9 +375,9 @@ final class TaxSqlUtils {
         // Append blocks of max-size number of parameter placeholders.
         for (int i = size / MAX_IN_LIST_SIZE; i > 0; i--) {
             appendQueryInternal(builder, includeColumnPrefixes,
-                    beyondFirst ? (positive ? SqlText.OR : SqlText.AND) : KRADConstants.EMPTY_STRING,
+                    beyondFirst ? (positive ? SqlText.OR : SqlText.AND) : KFSConstants.EMPTY_STRING,
                     field,
-                    positive ? KRADConstants.EMPTY_STRING : SqlText.NOT,
+                    positive ? KFSConstants.EMPTY_STRING : SqlText.NOT,
                     SqlText.IN, SqlText.PAREN_OPEN, Integer.valueOf(MAX_IN_LIST_SIZE), SqlText.PAREN_CLOSE);
             beyondFirst = true;
         }
@@ -386,7 +386,7 @@ final class TaxSqlUtils {
             appendQueryInternal(builder, includeColumnPrefixes,
                     positive ? SqlText.OR : SqlText.AND,
                     field,
-                    positive ? KRADConstants.EMPTY_STRING : SqlText.NOT,
+                    positive ? KFSConstants.EMPTY_STRING : SqlText.NOT,
                     SqlText.IN, SqlText.PAREN_OPEN, Integer.valueOf(size % MAX_IN_LIST_SIZE), SqlText.PAREN_CLOSE);
         }
         // Close the block.
@@ -652,7 +652,7 @@ final class TaxSqlUtils {
     static String getVendorOwnershipCriteria(Map<String,Set<String>> ownerMappings, TaxSourceRowWithVendorData vendorDataRow) {
         if (ownerMappings.isEmpty()) {
             // Just return an empty string if there are no ownership mappings.
-            return KRADConstants.EMPTY_STRING;
+            return KFSConstants.EMPTY_STRING;
         }
         StringBuilder criteria = new StringBuilder(SB_START_SIZE);
         int numOwnerMappingsWithoutCategories = 0;

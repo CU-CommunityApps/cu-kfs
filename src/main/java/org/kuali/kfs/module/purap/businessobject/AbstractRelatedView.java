@@ -18,10 +18,19 @@
  */
 package org.kuali.kfs.module.purap.businessobject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
+import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.datadictionary.exception.UnknownDocumentTypeException;
@@ -31,14 +40,6 @@ import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.doctype.DocumentType;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * Base class for Related View Business Objects.
@@ -98,7 +99,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
 
     public String getUrl() {
         String documentTypeName = this.getDocumentTypeName();
-        DocumentType docType = KewApiServiceLocator.getDocumentTypeService().getDocumentTypeByName(documentTypeName);
+        DocumentType docType = KEWServiceLocator.getDocumentTypeService().getDocumentTypeByName(documentTypeName);
         String docHandlerUrl = docType.getResolvedDocumentHandlerUrl();
         int endSubString = docHandlerUrl.lastIndexOf("/");
         String serverName = docHandlerUrl.substring(0, endSubString);
@@ -145,7 +146,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         return documentHeader.getApplicationDocumentStatus();
     }
 
-    public org.kuali.rice.kew.api.document.Document findWorkflowDocument(String documentId){
+    public DocumentRouteHeaderValue findWorkflowDocument(String documentId){
         return KewApiServiceLocator.getWorkflowDocumentService().getDocument(documentId);
     }
 
@@ -166,7 +167,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     public DateTime getCreateDate() {
-        org.kuali.rice.kew.api.document.Document document = findWorkflowDocument(this.getDocumentNumber());
+        DocumentRouteHeaderValue document = findWorkflowDocument(this.getDocumentNumber());
         return document.getDateCreated();
 
     }

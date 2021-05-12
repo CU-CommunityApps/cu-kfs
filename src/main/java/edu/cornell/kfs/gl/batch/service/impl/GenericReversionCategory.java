@@ -18,7 +18,7 @@ package edu.cornell.kfs.gl.batch.service.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;
 import edu.cornell.kfs.gl.batch.service.ReversionCategoryLogic;

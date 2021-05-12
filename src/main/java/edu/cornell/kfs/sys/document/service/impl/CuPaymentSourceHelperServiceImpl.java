@@ -9,7 +9,7 @@ import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.sys.document.service.impl.PaymentSourceHelperServiceImpl;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 

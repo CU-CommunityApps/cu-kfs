@@ -22,8 +22,8 @@ import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.AdditionalAnswers;
 
 import java.io.File;
