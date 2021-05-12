@@ -4,25 +4,14 @@ import org.kuali.kfs.krad.service.impl.KualiExceptionIncidentServiceImpl;
 
 public class CuKualiExceptionIncidentServiceImpl extends KualiExceptionIncidentServiceImpl {
     
-    //Cornell Customization: Base code implemenation override required due to AppSMTP 
+    //Cornell Customization: Base code implementation override required due to AppSMTP 
     //                       restriction where From email address must be a registered EGA.
     @Override
     protected String getFromAddress() {
-    /* Base code at time of cutomization creation
-     * 
-        Person actualUser = GlobalVariables.getUserSession().getActualPerson();
-
-        String fromEmail = actualUser.getEmailAddress();
-        if (StringUtils.isNotBlank(fromEmail)) {
-            return fromEmail;
-        } else {
-            return this.getMessageTemplate().getFromAddress();
-        }
-     *
-     */
-        
-        // "kr.incident.mailing.list" is set to @incident_email in file kfs-config.properties.erb
-        // @incident_email is then defined in each environment's puppet configuration file
+        /* KRADSpringBeans.xml contains the bean definition that sets the fromAddress to the value for property "kr.incident.mailing.list". 
+         * File "kfs-config.properties" contains this property reference :   kr.incident.mailing.list=<%= @incident_email %>
+         * The incident_email property is then defined in each environment's puppet configuration file to be a specific email address.
+         */
         return this.getMessageTemplate().getFromAddress();
     }
 }

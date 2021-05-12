@@ -72,5 +72,7 @@
 
     <bean id="cf.businessObjectAuthorizationService"
           class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"/>
+          
+   <bean id="cf.kradExceptionIncidentService" class="edu.cornell.kfs.krad.service.impl.CuKualiExceptionIncidentServiceImpl"/>
 
 </beans>
