@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    TODO: Update or remove this file once we're ready to use the new distributed cache setup!
+    TODO: KFSPTS-20795 (or follow-up story): Update or remove this file once we're ready to use the new distributed cache setup!
     (It has been removed from the configured Spring source files list until then.)
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"

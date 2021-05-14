@@ -8,12 +8,9 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="cu-ld" parent="ldModuleConfiguration-parentBean">
-		<property name="scriptConfigurationFilePaths">
-			<list/>
-		</property>
+	<bean id="ldModuleConfiguration" parent="ldModuleConfiguration-parentBean">
 		<property name="dataDictionaryPackages">
-             <list>
+             <list merge="true">
                  <value>classpath:edu/cornell/kfs/module/ld/businessobject/datadictionary/*.xml</value>
                  <value>classpath:edu/cornell/kfs/module/ld/document/datadictionary/*.xml</value>
              </list>
@@ -23,17 +20,6 @@
 				<value>edu/cornell/kfs/module/ld/cu-ojb-ld.xml</value>
 			</list>
 		</property>
-		<property name="jobNames">
-			<list/>
-		</property>
-		<property name="fiscalYearMakers">
-			<list/>
-		</property>
-		
-	</bean>
-
-	<bean id="cu-ldModuleService" parent="ldModuleService-parentBean">
-	 	<property name="moduleConfiguration" ref="cu-ld"/>
 	</bean>
 
 
@@ -109,6 +95,4 @@
    <import resource="document/validation/configuration/CuYearEndBenefitExpenseTransferValidations.xml" />
    <import resource="document/validation/configuration/CuYearEndSalaryExpenseTransferValidations.xml" />
     
-   <import resource="cu-spring-ld-bus-exports.xml" />
-
 </beans>

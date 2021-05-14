@@ -7,19 +7,17 @@
                            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
-							  	
-	<bean id="cu-coa" parent="coaModuleConfiguration-parentBean">
-		
+
+	<bean id="coaModuleConfiguration" parent="coaModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.coa</value>
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list>
+			<list merge="true">
                 <value>classpath:edu/cornell/kfs/coa/document/datadictionary/*.xml</value>
                 <value>classpath:edu/cornell/kfs/coa/businessobject/datadictionary/*.xml</value>
-                <value>classpath:org/kuali/kfs/coa/businessobject/datadictionary/AccountDelegateModel.xml</value>
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">
@@ -28,16 +26,13 @@
 			</list>
 		</property>
 		<property name="fiscalYearMakers">
-			<list>
+			<list merge="true">
 				<ref bean="accountReversionFiscalYearMaker" />
             	<ref bean="accountReversionDetailFiscalYearMaker" />
 			</list>
 		</property>
-		<property name="scriptConfigurationFilePaths">
-			<list/>
-		</property>
 		<property name="jobNames">
-			<list>
+			<list merge="true">
 				<value>accountReversionImportJob</value>
                 <value>createClosedAccountsCsvJob</value>
 			</list>
@@ -50,10 +45,6 @@
              </list>
          </property>
 	</bean>
-
-	<bean id="cu-coaModuleService" parent="coaModuleService-parentBean">
-	 	<property name="moduleConfiguration" ref="cu-coa"/>
-	</bean>
 	
 	<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl"/>
 	
@@ -65,7 +56,7 @@
 	
 	<bean id="accountGlobalLookupableHelperService"
 		class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
-		scope="prototype" parent="cf.lookupableHelperService"
+		scope="prototype" parent="lookupableHelperService"
 		p:accountGlobalSearchDao-ref="accountGlobalSearchDao" />
 
 	<bean id="accountGlobalLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
@@ -75,28 +66,10 @@
 		</property>
 	</bean>
 
-	<!--
-	<bean id="businessObjectDao" class="org.kuali.kfs.krad.dao.BusinessObjectDao">
-	    <!- - Constructor injection only please to help enforce completeness of instances - ->
-	    <property name="businessObjectDaoOjb" ref="businessObjectDaoOjb"/>
-	</bean>
-	-->
-
-	<bean id="businessObjectDaoOjb" parent="platformAwareDao" class="org.kuali.kfs.krad.dao.impl.BusinessObjectDaoOjb">
-		<!-- Constructor injection only please to help enforce completeness of instances -->
-		<constructor-arg ref="persistenceStructureService"/>
-	</bean>
-
-    <bean id="lookupDaoOjb" parent="platformAwareDao" class="org.kuali.kfs.krad.dao.impl.LookupDaoOjb">
-        <property name="persistenceStructureService" ref="persistenceStructureService"/>
-        <property name="dateTimeService" ref="dateTimeService"/>
-        <property name="dataDictionaryService" ref="dataDictionaryService"/>
-     </bean>
-  
  	<bean id="accountGlobalSearchDao" parent="platformAwareDao"
       class="edu.cornell.kfs.coa.dataaccess.impl.AccountGlobalSearchDaoOjb"
-      p:lookupDao-ref="lookupDaoOjb"
-      p:businessObjectDao-ref="businessObjectDaoOjb"/>
+      p:lookupDao-ref="lookupDao"
+      p:businessObjectDao-ref="businessObjectDao"/>
  
  	<bean id="accountReversionImportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.dataaccess.impl.AccountReversionImportDaoJdbc"/>
 	
@@ -120,7 +93,8 @@
         <property name="boService" ref="businessObjectService" />
 	</bean>
 	    
-    <bean id="organizationRoutingModelLookupableHelperService" class="edu.cornell.kfs.coa.businessobject.lookup.CuOrganizationRoutingModelNameLookupableHelperServiceImpl" />	
+    <bean id="organizationRoutingModelLookupableHelperService" class="edu.cornell.kfs.coa.businessobject.lookup.CuOrganizationRoutingModelNameLookupableHelperServiceImpl"
+          parent="organizationRoutingModelLookupableHelperService-parentBean" scope="prototype"/>	
 
     <bean id="accountDelegateService"  class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl" parent="accountDelegateService-parentBean"/>
     
@@ -144,7 +118,7 @@
 			<ref bean="documentHeaderService" />
 		</property>
     	<property name="kualiConfigurationService">
-    		<ref bean="kualiConfigurationService"/>
+    		<ref bean="configurationService"/>
     	</property>
     </bean>
     
@@ -175,7 +149,7 @@
 			<ref bean="noteService" />
 		</property>
 		<property name="configurationService">
-			<ref bean="kualiConfigurationService" />
+			<ref bean="configurationService" />
 		</property>
 		<property name="documentHeaderService">
 			<ref bean="documentHeaderService" />

@@ -1,33 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" 
-	   xmlns:p="http://www.springframework.org/schema/p"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-	
-	<!-- Import KEW RouteHeaderService, which is not auto-GRL-loaded by the base KFS beans. -->
-	<bean id="enDocumentRouteHeaderService" p:serviceName="enDocumentRouteHeaderService" parent="grlBeanImporter" />
-	
-	<bean id="documentProcessingQueue" p:serviceName="documentProcessingQueue" parent="grlBeanImporter" />
-	
-	<import resource="cu-kfs-cache-config.xml" />
-	<import resource="kim/cu-spring-kim.xml" />
-	<import resource="sys/cu-spring-sys.xml" />
-	<import resource="coa/cu-spring-coa.xml" />
-	<import resource="module/cg/cu-spring-cg.xml" />
-	<import resource="gl/cu-spring-gl.xml" />
-	<import resource="fp/cu-spring-fp.xml" />
-	<import resource="sec/cu-spring-sec.xml"/>
-	<import resource="vnd/cu-spring-vnd.xml" />
-	<import resource="module/purap/cu-spring-purap.xml" />
-	<import resource="module/ld/cu-spring-ld.xml" />
-	<import resource="module/ar/cu-spring-ar.xml" />
-	 
-	<import resource="pdp/cu-spring-pdp.xml" />
-	<import resource="module/cam/cu-spring-cam.xml" />
-	<import resource="module/receiptProcessing/cu-spring-receiptProcessing.xml" />
-	<import resource="rass/cu-spring-rass.xml" />
-	
-	<import resource="tax/cu-spring-tax.xml" />
-	<import resource="concur/cu-spring-concur.xml" />
-	<import resource="pmw/cu-spring-pmw.xml" />
+
+    <!-- Overridden to allow for parameterizing the database platform implementation classname. -->
+    <bean id="dbPlatform" class="org.kuali.kfs.core.BeanHolder"
+          p:objectType="org.kuali.kfs.core.framework.persistence.platform.${datasource.ojb.platform}DatabasePlatform"/>
+
 </beans>

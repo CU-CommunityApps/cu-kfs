@@ -80,7 +80,7 @@
 			p:dataDictionaryService-ref="dataDictionaryService"
 			p:configurationService-ref="configurationService"
 			p:routeHeaderService-ref="enDocumentRouteHeaderService"
-			p:documentProcessingQueue-ref="rice.kew.documentProcessingQueue"
+			p:documentProcessingQueue-ref="documentProcessingQueue"
 			p:documentStatusCheckDelayMillis="1000"
 			p:maxStatusCheckAttempts="60"/>
 			

@@ -40,14 +40,14 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="cu-fp" parent="fpModuleConfiguration-parentBean">
+	<bean id="fpModuleConfiguration" parent="rsmartFpModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.fp</value>
             </list>
         </property>
         <property name="dataDictionaryPackages">
-            <list>
+            <list merge="true">
                 <value>classpath:edu/cornell/kfs/fp/document/datadictionary/*.xml</value>
                 <value>classpath:edu/cornell/kfs/fp/businessobject/datadictionary/*.xml</value>
             </list>
@@ -56,12 +56,6 @@
             <list merge ="true">
                 <value>edu/cornell/kfs/fp/cu-ojb-fp.xml</value>
             </list>
-        </property>
-        <property name="fiscalYearMakers">
-            <list/>
-        </property>
-        <property name="scriptConfigurationFilePaths">
-            <list/>
         </property>
         <property name="jobNames">
             <list merge="true">
@@ -78,10 +72,6 @@
                 <value>${staging.directory}/fp</value>
             </list>
         </property>
-    </bean>
-
-    <bean id="cu-fpModuleService" parent="fpModuleService-parentBean">
-        <property name="moduleConfiguration" ref="cu-fp"/>
     </bean>
 
     <bean id="procurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" parent="procurementCardCreateDocumentService-parentBean"/>
@@ -360,7 +350,7 @@
     <bean id="yearEndGeneralLedgerPendingEntriesService" parent="yearEndGeneralLedgerPendingEntriesService-parentBean"/>
 
     <bean id="yearEndGeneralLedgerPendingEntriesService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.YearEndGeneralLedgerPendingEntriesServiceImpl" abstract="true">      
-    	<property name="configurationService" ref="kualiConfigurationService" />
+    	<property name="configurationService" ref="configurationService" />
     	<property name="dateTimeService" ref="dateTimeService" />  	
     	<property name="homeOriginationService" ref="homeOriginationService" />
         <property name="objectTypeService" ref="objectTypeService" />
@@ -411,7 +401,7 @@
         <property name="objectCodeService" ref="objectCodeService"/>
         <property name="subObjectCodeService" ref="subObjectCodeService"/>
         <property name="projectCodeService" ref="projectCodeService"/>
-        <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="configurationService" ref="configurationService"/>
     </bean>
 
     <bean id="incomingACHandWiresBatchJob" parent="scheduledJobDescriptor">
@@ -830,7 +820,7 @@
     </bean>
 
     <bean id="createAccountingDocumentValidationService" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentValidationServiceImpl">
-        <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="configurationService" ref="configurationService"/>
     </bean>
 
     <bean id="createAccountingDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImpl">
@@ -838,7 +828,7 @@
         <property name="accountingDocumentBatchInputFileType" ref="accountingXmlDocumentInputFileType"/>
         <property name="documentService" ref="documentService"/>
         <property name="fileStorageService" ref="fileStorageService"/>
-        <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="configurationService" ref="configurationService"/>
         <property name="createAccountingDocumentReportService" ref="createAccountingDocumentReportService"/>
         <property name="parameterService" ref="parameterService"/>
         <property name="createAccountingDocumentValidationService" ref="createAccountingDocumentValidationService"/>

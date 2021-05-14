@@ -8,7 +8,12 @@
 
     <bean id="dummyAntiVirusService" class="edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl" />
 
-    <!-- TODO: Update this bean for KEW-to-KFS compatibility and then uncomment it! -->
+    <!--
+        TODO: KFSPTS-21559: Update the "antiVirusService" bean for KEW-to-KFS compatibility
+        and remove the temporary workaround below!
+     -->
+
+    <bean id="antiVirusService" parent="dummyAntiVirusService"/>
 
     <!--<bean id="antiVirusService" class="edu.cornell.cynergy.clamav.ClamAVService">
         <property name="host" value="127.0.0.1" />
@@ -16,16 +21,15 @@
         <property name="timeout" value="60000" />
     </bean>-->
 
-    <bean id="attachmentService" parent="attachmentService-parentBean"/>
-    <bean id="attachmentService-parentBean" class="edu.cornell.kfs.krad.service.impl.CuAttachmentServiceImpl" abstract="true">
+    <bean id="attachmentService" class="edu.cornell.kfs.krad.service.impl.CuAttachmentServiceImpl">
         <property name="kualiConfigurationService">
-            <ref bean="kualiConfigurationService" />
+            <ref bean="configurationService" />
         </property>
         <property name="attachmentDao">
             <ref bean="cuAttachmentDaoOjb"/>
         </property>
         <property name="antiVirusService">
-            <ref bean="${cynergy.antivirus.service}" />
+            <ref bean="${cu.antivirus.service}" />
         </property>
         <property name="noteService">
             <ref bean="noteService" />
@@ -62,7 +66,7 @@
             <ref bean="dataDictionaryService"/>
         </property>
         <property name="kualiConfigurationService">
-            <ref bean="kualiConfigurationService"/>
+            <ref bean="configurationService"/>
         </property>
         <property name="maintainableXMLConversionService">
             <ref bean="cuMaintainableXMLConversionService"/>
@@ -75,9 +79,9 @@
     <bean id="businessObjectAuthorizationService"
           class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"/>
 
-    <bean id="encryptionService" class="edu.cornell.cynergy.service.impl.AESEncryptionServiceImpl">
-        <property name="key" value="${cynergy.encryption.key}"/>
-        <property name="enabled" value="${cynergy.encryption.busEncryption}"/>
+    <bean id="encryptionService" class="edu.cornell.kfs.core.impl.encryption.AESEncryptionServiceImpl">
+        <property name="key" value="${cu.encryption.key}"/>
+        <property name="enabled" value="${cu.encryption.busEncryption}"/>
     </bean>
 
 </beans>
