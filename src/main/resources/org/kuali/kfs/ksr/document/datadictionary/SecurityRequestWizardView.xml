@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	CU Customization:
+	Added a KRAD view for the KSR "wizard" page.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+							http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+							http://www.springframework.org/schema/tx
+							http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+							http://www.springframework.org/schema/aop
+							http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<bean id="SecurityRequestWizardView" parent="Uif-FormView">
+		<property name="formClass" value="org.kuali.kfs.ksr.web.form.SecurityRequestWizardForm" />
+		<property name="entryPageId" value="SecurityRequestWizard-MainPage" />
+		<property name="headerText" value="Security Request Wizard" />
+		<property name="applyDirtyCheck" value="false" />
+		<property name="items">
+			<list>
+				<ref bean="SecurityRequestWizard-MainPage" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityRequestWizard-MainPage" parent="Uif-Page">
+		<property name="layoutManager.orientation" value="VERTICAL"/>
+		<property name="items">
+			<bean parent="Uif-VerticalBoxGroup" p:style="width:100%;">
+				<property name="items">
+					<list>
+						<ref bean="SecurityRequestWizard-MainPageBody" />
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="SecurityRequestWizard-MainPageBody" parent="Uif-GridGroup">
+		<property name="additionalCssClasses" value="uif-gridGroup-plain" />
+		<property name="layoutManager.numberOfColumns" value="1" />
+		<property name="items">
+			<list>
+				<bean parent="Uif-HeaderThree" p:headerText="Select System" p:align="center"/>
+				<bean parent="Uif-InputField" p:propertyName="securityGroupId" p:label="Select System"
+						p:fieldLabel.renderColon="false" p:fieldLabel.render="false" p:align="center">
+					<property name="control">
+						<bean parent="Uif-VerticalRadioControl" />
+					</property>
+					<property name="optionsFinder">
+						<bean class="org.kuali.kfs.ksr.bo.options.SecurityGroupValuesFinder" p:addBlankOption="false" />
+					</property>
+				</bean>
+			</list>
+		</property>
+		<property name="footer">
+			<bean parent="Uif-FooterBase">
+				<property name="items">
+					<list>
+						<bean id="SecurityRequestWizard-Cancel" parent="Uif-SecondaryActionButton" p:actionLabel="Cancel"
+								p:methodToCall="cancel" p:ajaxSubmit="false"/>
+						<bean id="SecurityRequestWizard-Submit" parent="Uif-PrimaryActionButton" p:actionLabel="Submit"
+								p:methodToCall="processWizard" p:disabled="@{#empty(securityGroupId)}" />
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+</beans>

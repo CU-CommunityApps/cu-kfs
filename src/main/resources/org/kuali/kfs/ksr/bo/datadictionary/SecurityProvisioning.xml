@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	CU Customization: Converted the SecurityProvisioning DD beans from KNS to KRAD.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<!-- Copyright 2007-2009 The Kuali Foundation Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain 
+		a copy of the License at http://www.opensource.org/licenses/ecl2.php Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, 
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. -->
+
+	<bean id="SecurityProvisioning" parent="SecurityProvisioning-parentBean" />
+	<bean id="SecurityProvisioning-parentBean" abstract="true" parent="BusinessObjectEntry">
+		<property name="businessObjectClass" value="org.kuali.kfs.ksr.bo.SecurityProvisioning" />
+		<property name="titleAttribute" value="provisioningId" />
+		<property name="objectLabel" value="SecurityProvisioning" />
+		<property name="attributes">
+			<list>
+				<ref bean="SecurityProvisioning-securityGroupId" />
+				<ref bean="SecurityProvisioning-securityGroup-securityGroupName" />
+				<ref bean="SecurityProvisioning-securityGroup-securityGroupDescription" />
+				<ref bean="SecurityProvisioning-securityGroup-active" />
+				<ref bean="SecurityProvisioning-versionNumber" />
+			</list>
+		</property>
+		<property name="collections">
+			<list>
+				<bean parent="CollectionDefinition" p:name="securityProvisioningGroups" p:label="securityProvisioningGroups" p:shortLabel="securityProvisioningGroups" p:elementLabel="securityProvisioningGroups" />
+			</list>
+		</property>
+		<property name="relationships">
+			<list>
+				<bean parent="RelationshipDefinition">
+					<property name="objectAttributeName" value="securityGroup" />
+					<property name="primitiveAttributes">
+						<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="securityGroupId" p:targetName="securityGroupId" />
+						</list>
+					</property>
+					<property name="supportAttributes">
+						<list>
+							<bean parent="SupportAttributeDefinition" p:sourceName="securityGroup.securityGroupName" p:targetName="securityGroupName" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-securityGroupId" parent="SecurityProvisioning-securityGroupId-parentBean" />
+	<bean id="SecurityProvisioning-securityGroupId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupId" />
+		<property name="label" value="Security Group Id" />
+		<property name="shortLabel" value="Security Group Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Id" />
+		<property name="description" value="Security Group Id" />
+		<property name="controlField">
+			<bean parent="Uif-HiddenControl" />
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-securityGroup-securityGroupName" parent="SecurityProvisioning-securityGroup-securityGroupName-parentBean" />
+	<bean id="SecurityProvisioning-securityGroup-securityGroupName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroup.securityGroupName" />
+		<property name="label" value="Security Group" />
+		<property name="shortLabel" value="Security Group" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group" />
+		<property name="description" value="Security Group" />
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="50" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioning-securityGroup-securityGroupDescription" parent="SecurityProvisioning-securityGroup-securityGroupDescription-parentBean" />
+	<bean id="SecurityProvisioning-securityGroup-securityGroupDescription-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroup.securityGroupDescription" />
+		<property name="label" value="Security Group Description" />
+		<property name="shortLabel" value="Group Description" />
+		<property name="maxLength" value="400" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Description" />
+		<property name="description" value="Security Group Description" />
+		<property name="controlField">
+			<bean parent="Uif-TextAreaControl" p:rows="4" p:cols="100" />
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-securityGroup-active" parent="SecurityProvisioning-securityGroup-active-parentBean" />
+	<bean id="SecurityProvisioning-securityGroup-active-parentBean" abstract="true" parent="AttributeReferenceDummy-activeIndicator">
+		<property name="name" value="securityGroup.active" />
+	</bean>
+
+	<bean id="SecurityProvisioning-versionNumber" parent="SecurityProvisioning-versionNumber-parentBean" />
+	<bean id="SecurityProvisioning-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+
+	<bean id="SecurityProvisioning-InquiryView" parent="SecurityProvisioning-InquiryView-parentBean" />
+	<bean id="SecurityProvisioning-InquiryView-parentBean" abstract="true" parent="Uif-InquiryView">
+		<property name="headerText" value="Security Provisioning Inquiry" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityProvisioning" />
+		<property name="items">
+			<list>
+				<bean parent="Uif-Disclosure-GridSection">
+					<property name="headerText" value="Security Provisioning Inquiry" />
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="securityGroup.securityGroupName" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="Uif-Disclosure-StackedCollectionSection">
+					<property name="headerText" value="Security Provisioning Group" />
+					<property name="collectionObjectClass" value="org.kuali.kfs.ksr.bo.SecurityProvisioningGroup" />
+					<property name="propertyName" value="securityProvisioningGroups" />
+					<property name="layoutManager.summaryTitle" value="Roles" />
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="securityGroup.securityGroupName" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-LookupView" parent="SecurityProvisioning-LookupView-parentBean" />
+	<bean id="SecurityProvisioning-LookupView-parentBean" abstract="true" parent="Uif-LookupView">
+		<property name="headerText" value="Security Provisioning Lookup" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityProvisioning" />
+		<property name="criteriaFields">
+			<list>
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="securityGroupId" />
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="securityGroup.securityGroupName" />
+			</list>
+		</property>
+		<property name="resultFields">
+			<list>
+				<bean parent="Uif-DataField" p:propertyName="securityGroup.securityGroupName" />
+			</list>
+		</property>
+	</bean>
+</beans>

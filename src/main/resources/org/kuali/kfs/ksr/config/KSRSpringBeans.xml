@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2006-2007 The Kuali Foundation Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain 
+	a copy of the License at http://www.opensource.org/licenses/ecl2.php Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, 
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. -->
+<!--
+	CU Customization:
+
+	Updated beans as needed for Rice 2.x compatibility, and to convert the module to use JPA.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util-3.1.xsd
+                           http://www.springframework.org/schema/cache
+                           http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<import resource="classpath:org/kuali/rice/core/CommonSpringBeans.xml" />
+	<import resource="classpath:org/kuali/rice/krad/config/KRADDependentModuleCommonImports.xml" />
+	<import resource="classpath:edu/cornell/cynergy/krad/config/CynergyKRADControllerServiceCommonImports.xml" />
+
+    <util:constant id="rice.kim.serviceNamespace"
+            static-field="org.kuali.rice.kim.api.KimApiConstants$Namespaces.KIM_NAMESPACE_2_0"/>
+
+	<bean id="ksrDataSource" class="org.kuali.rice.core.framework.persistence.jdbc.datasource.PrimaryDataSourceFactoryBean" lazy-init="true">
+		<property name="preferredDataSourceParams">
+			<list>
+				<value>ksr.datasource</value>
+			</list>
+		</property>
+		<property name="preferredDataSourceJndiParams">
+			<list>
+				<value>ksr.datasource.jndi.location</value>
+			</list>
+		</property>
+		<property name="serverDataSource" value="true" />
+	</bean>
+
+	<import resource="classpath:org/kuali/rice/ksr/config/_KsrJpaSpringBeans.xml" />
+	<import resource="classpath:edu/cornell/cynergy/krad/config/CynergyKRADJpaCommonOverrideSpringBeans.xml" />
+
+	<bean id="dataDictionaryService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+		<property name="serviceName" value="dataDictionaryService" />
+	</bean>
+
+	<bean id="kualiModuleService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+		<property name="serviceName" value="kualiModuleService" />
+	</bean>
+
+	<bean id="personService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+		<property name="serviceName" value="personService" />
+	</bean>
+
+	<bean id="kimRoleService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+		<property name="serviceName" value="kimRoleService" />
+	</bean>
+
+	<bean id="ksrModuleConfiguration" parent="ksrModuleConfiguration-parentBean" />
+	<bean id="ksrModuleConfiguration-parentBean" class="org.kuali.rice.krad.bo.ModuleConfiguration" abstract="true">
+		<property name="namespaceCode" value="KR-SR" />
+		<property name="dataSourceName" value="ksrDataSource" />
+		<property name="initializeDataDictionary" value="true" />
+		<property name="dataDictionaryService" ref="dataDictionaryService" />
+		<property name="dataDictionaryPackages">
+			<list>
+				<value>classpath:org/kuali/rice/ksr/bo/datadictionary/SecurityGroup.xml</value>
+				<value>classpath:org/kuali/rice/ksr/bo/datadictionary/SecurityGroupTab.xml</value>
+				<value>classpath:org/kuali/rice/ksr/bo/datadictionary/SecurityProvisioning.xml</value>
+				<value>classpath:org/kuali/rice/ksr/bo/datadictionary/SecurityProvisioningGroup.xml</value>
+				<value>classpath:org/kuali/rice/ksr/bo/datadictionary/SecurityProvisioningGroupDependentRoles.xml</value>
+				<value>classpath:org/kuali/rice/ksr/document/datadictionary/SecurityGroupMaintenanceDocument.xml</value>
+				<value>classpath:org/kuali/rice/ksr/document/datadictionary/SecurityProvisioningMaintenanceDocument.xml</value>
+                <value>classpath:org/kuali/rice/ksr/document/datadictionary/SecurityRequestDocument.xml</value>
+                <value>classpath:org/kuali/rice/ksr/document/datadictionary/SecurityRequestView.xml</value>
+                <value>classpath:org/kuali/rice/ksr/document/datadictionary/SecurityRequestWizardView.xml</value>
+			</list>
+		</property>
+		<property name="packagePrefixes">
+			<list>
+				<value>org.kuali.kfs.ksr.</value>
+			</list>
+		</property>
+		<property name="providers">
+			<list>
+				<ref bean="jpaPersistenceProvider"/>
+				<ref bean="metadataProvider"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="ksrModule" class="org.kuali.rice.krad.service.impl.ModuleServiceBase" p:moduleConfiguration-ref="ksrModuleConfiguration" p:kualiModuleService-ref="kualiModuleService" />
+
+	<bean id="securityRequestDocumentControllerService" parent="transactionalDocumentControllerService"
+			class="org.kuali.kfs.ksr.web.controller.SecurityRequestDocumentControllerServiceImpl"
+			p:dataObjectService-ref="dataObjectService"
+			p:securityRequestDocumentService-ref="securityRequestDocumentService"
+			p:securityRequestRoleTypeService-ref="securityRequestRoleTypeService"/>
+
+	<bean id="securityRequestDocumentRefreshControllerService" parent="refreshControllerService"
+			class="org.kuali.kfs.ksr.service.impl.SecurityRequestDocumentRefreshControllerServiceImpl"
+			p:securityRequestDocumentService-ref="securityRequestDocumentService"/>
+
+	<bean id="securityRequestDocumentService" class="org.kuali.kfs.ksr.service.impl.SecurityRequestDocumentServiceImpl"
+			p:personService-ref="personService" p:dataObjectService-ref="dataObjectService"/>
+
+	<bean id="securityRequestPostProcessingService" class="org.kuali.kfs.ksr.service.impl.SecurityRequestPostProcessingServiceImpl"
+			p:roleService-ref="kfs.kimRoleService"/>
+
+    <bean id="kfs.kimRoleService"
+            class="edu.cornell.cynergy.core.api.resourceloader.LazyRemoteApplicationResourceFactoryBean"
+            p:serviceName="roleService"
+            p:serviceNamespace-ref="rice.kim.serviceNamespace"
+            p:objectType="org.kuali.rice.kim.api.role.RoleService"
+            p:applicationId="KFS"/>
+
+    <bean id="securityRequestRoleTypeService" class="org.kuali.kfs.ksr.identity.SecurityRequestDerivedRoleTypeServiceImpl" />
+
+</beans>                           

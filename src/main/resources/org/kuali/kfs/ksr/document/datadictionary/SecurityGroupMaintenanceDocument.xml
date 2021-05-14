@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	CU Customization: Converted SecurityGroupMaintenanceDocument DD beans from KNS to KRAD.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://rice.kuali.org/dd
+                           http://rice.kuali.org/dd/dd.xsd">
+
+	<bean id="SecurityGroupMaintenanceDocument" parent="SecurityGroupMaintenanceDocument-parentBean" />
+	<bean id="SecurityGroupMaintenanceDocument-parentBean" abstract="true" parent="uifMaintenanceDocumentEntry">
+		<property name="dataObjectClass" value="org.kuali.kfs.ksr.bo.SecurityGroup" />
+		<property name="maintainableClass" value="org.kuali.kfs.ksr.maintenance.SecurityGroupMaintainable" />
+		<property name="allowsNewOrCopy" value="true" />
+		<property name="lockingKeys">
+			<list>
+				<value>securityGroupId</value>
+			</list>
+		</property>
+		<property name="documentTypeName" value="SecurityGroupDocumentType" />
+		<property name="documentPresentationControllerClass" value="org.kuali.kfs.ksr.document.authorization.KSRMaintenanceDocumentPresentationController" />
+		<property name="documentAuthorizerClass" value="org.kuali.kfs.ksr.document.authorization.KSRMaintenanceDocumentAuthorizer" />
+		<property name="businessRulesClass" value="org.kuali.kfs.ksr.document.validation.impl.SecurityGroupRule" />
+		<property name="workflowProperties">
+			<ref bean="SecurityGroupMaintenanceDocument-workflowProperties" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-MaintenanceView" parent="SecurityGroup-MaintenanceView-parentBean" />
+	<bean id="SecurityGroup-MaintenanceView-parentBean" abstract="true" parent="Uif-MaintenanceView">
+		<property name="headerText" value="Security Group Maintenance" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityGroup" />
+		<property name="items">
+			<list merge="true">
+				<!-- "Security Group" section. -->
+				<bean parent="Uif-MaintenanceGridSection">
+					<property name="headerText" value="Security Group" />
+					<property name="items">
+						<list>
+							<bean parent="Cynergy-Uif-InputField-NoAutoLink" p:propertyName="securityGroupId" 
+									p:defaultValueFinderClass="org.kuali.kfs.ksr.bo.options.SecurityGroupIDFinder"
+									p:required="true" p:readOnly="true"/>
+							<bean parent="Cynergy-Uif-InputField-NoAutoLink" p:propertyName="securityGroupName" p:required="true"/>
+							<bean parent="Uif-InputField" p:propertyName="securityGroupDescription" p:required="true" />
+							<bean parent="Uif-InputField" p:propertyName="active" />
+						</list>
+					</property>
+				</bean>
+				<!-- "Tabs" section -->
+				<bean parent="Uif-MaintenanceStackedCollectionSection">
+					<property name="headerText" value="Tabs" />
+					<property name="collectionObjectClass" value="org.kuali.kfs.ksr.bo.SecurityGroupTab" />
+					<property name="propertyName" value="securityGroupTabs" />
+					<property name="showInactiveLines" value="true" />
+					<property name="renderInactiveToggleButton" value="false" />
+					<property name="layoutManager.summaryTitle" value="Tab" />
+					<property name="layoutManager.summaryFields">
+						<list>
+							<value>tabName</value>
+						</list>
+					</property>
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="tabId" 
+									p:defaultValueFinderClass="org.kuali.kfs.ksr.bo.options.SecurityGroupTabIDFinder"
+									p:required="true" p:readOnly="true">
+							</bean>
+							<bean parent="Uif-InputField" p:propertyName="tabName" p:required="true" />
+							<bean parent="Uif-InputField" p:propertyName="tabOrder" p:required="true" />
+							<bean parent="Uif-InputField" p:propertyName="active" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityGroupMaintenanceDocument-workflowProperties" parent="SecurityGroupMaintenanceDocument-workflowProperties-parentBean" />
+
+	<bean id="SecurityGroupMaintenanceDocument-workflowProperties-parentBean" abstract="true" parent="WorkflowProperties">
+		<property name="workflowPropertyGroups">
+			<list>
+				<bean parent="WorkflowPropertyGroup">
+					<property name="workflowProperties">
+						<list>
+							<bean parent="WorkflowProperty" p:path="oldMaintainableObject.businessObject" />
+							<bean parent="WorkflowProperty" p:path="newMaintainableObject.businessObject" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

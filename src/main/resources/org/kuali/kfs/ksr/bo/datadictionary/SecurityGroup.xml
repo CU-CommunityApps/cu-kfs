@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	CU Customization: Converted the SecurityGroup DD beans from KNS to KRAD.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<!-- Copyright 2007-2009 The Kuali Foundation Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain 
+		a copy of the License at http://www.opensource.org/licenses/ecl2.php Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, 
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. -->
+
+	<bean id="SecurityGroup" parent="SecurityGroup-parentBean" />
+	<bean id="SecurityGroup-parentBean" abstract="true" parent="BusinessObjectEntry">
+		<property name="businessObjectClass" value="org.kuali.kfs.ksr.bo.SecurityGroup" />
+		<property name="titleAttribute" value="securityGroupName" />
+		<property name="objectLabel" value="SecurityGroup" />
+		<property name="attributes">
+			<list>
+				<ref bean="SecurityGroup-securityGroupId" />
+				<ref bean="SecurityGroup-securityGroupName" />
+				<ref bean="SecurityGroup-securityGroupDescription" />
+				<ref bean="SecurityGroup-versionNumber" />
+				<ref bean="SecurityGroup-active" />
+			</list>
+		</property>
+		<property name="collections">
+			<list>
+				<bean parent="CollectionDefinition" p:name="securityGroupTabs" p:label="securityGroupTabs" p:shortLabel="securityGroupTabs" p:elementLabel="securityGroupTabs" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-securityGroupId" parent="SecurityGroup-securityGroupId-parentBean" />
+	<bean id="SecurityGroup-securityGroupId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupId" />
+		<property name="label" value="Security Group Id" />
+		<property name="shortLabel" value="Security Group Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Id" />
+		<property name="description" value="Security Group Id" />
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="4" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-securityGroupName" parent="SecurityGroup-securityGroupName-parentBean" />
+	<bean id="SecurityGroup-securityGroupName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupName" />
+		<property name="label" value="Security Group Name" />
+		<property name="shortLabel" value="Security Group" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Name" />
+		<property name="description" value="Security Group Name" />
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="40" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-securityGroupDescription" parent="SecurityGroup-securityGroupDescription-parentBean" />
+	<bean id="SecurityGroup-securityGroupDescription-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupDescription" />
+		<property name="label" value="Security Group Description" />
+		<property name="shortLabel" value="Group Description" />
+		<property name="maxLength" value="400" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Description" />
+		<property name="description" value="Security Group Description" />
+		<property name="controlField">
+			<bean parent="Uif-TextAreaControl" p:rows="4" p:cols="100" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-active" parent="SecurityGroup-active-parentBean" />
+	<bean id="SecurityGroup-active-parentBean" abstract="true" parent="AttributeReferenceDummy-activeIndicator">
+		<property name="name" value="active" />
+	</bean>
+
+	<bean id="SecurityGroup-versionNumber" parent="SecurityGroup-versionNumber-parentBean" />
+	<bean id="SecurityGroup-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+
+	<bean id="SecurityGroup-InquiryView" parent="SecurityGroup-InquiryView-parentBean" />
+	<bean id="SecurityGroup-InquiryView-parentBean" abstract="true" parent="Uif-InquiryView">
+		<property name="headerText" value="Security Group Inquiry" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityGroup" />
+		<property name="items">
+			<list>
+				<bean parent="Uif-Disclosure-GridSection">
+					<property name="headerText" value="Security Group Inquiry" />
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="securityGroupId" />
+							<bean parent="Uif-InputField" p:propertyName="securityGroupName" />
+							<bean parent="Uif-InputField" p:propertyName="securityGroupDescription" />
+							<bean parent="Uif-InputField" p:propertyName="active" />
+						</list>
+					</property>
+				</bean>
+				<bean parent="Uif-Disclosure-StackedCollectionSection">
+					<property name="headerText" value="Security Group Tabs" />
+					<property name="collectionObjectClass" value="org.kuali.kfs.ksr.bo.SecurityGroupTab" />
+					<property name="propertyName" value="securityGroupTabs" />
+					<property name="layoutManager.summaryTitle" value="Tab" />
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="tabId" />
+							<bean parent="Uif-InputField" p:propertyName="tabName" />
+							<bean parent="Uif-InputField" p:propertyName="tabOrder" />
+							<bean parent="Uif-InputField" p:propertyName="active" />
+						</list>
+					</property>
+					<property name="layoutManager.summaryFields">
+						<list>
+							<value>tabName</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-LookupView" parent="SecurityGroup-LookupView-parentBean" />
+	<bean id="SecurityGroup-LookupView-parentBean" abstract="true" parent="Uif-LookupView">
+		<property name="headerText" value="Security Group Lookup" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityGroup" />
+		<property name="viewHelperServiceClass" value="org.kuali.kfs.ksr.bo.lookup.SecurityGroupLookupViewHelperServiceImpl" />
+		<property name="criteriaFields">
+			<list>
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="securityGroupId" p:enableAutoDirectInquiry="false" />
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="securityGroupName" p:enableAutoDirectInquiry="false" />
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="active" />
+			</list>
+		</property>
+		<property name="resultFields">
+			<list>
+				<bean parent="Uif-DataField" p:propertyName="securityGroupName" />
+				<bean parent="Uif-DataField" p:propertyName="securityGroupDescription" />
+				<bean parent="Uif-DataField" p:propertyName="active" />
+			</list>
+		</property>
+		<!-- Add a line action to create a maintenance document for editing provisioning. -->
+		<property name="resultsGroup">
+			<bean parent="Uif-LookupResultsCollectionSection">
+				<property name="lineActions">
+					<list merge="true">
+						<bean parent="Uif-Link" p:order="100">
+							<property name="linkText" value="edit&amp;nbsp;provisioning"/>
+							<property name="finalizeMethodToCall" value="buildMaintenanceActionLink"/>
+							<property name="finalizeMethodAdditionalArguments">
+								<list>
+									<value>editProvisioning</value>
+								</list>
+							</property>
+							<property name="render" value="@{#ViewHelper.allowsMaintenanceEditAction(#line) and #view.renderMaintenanceLinks}"/>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+</beans>

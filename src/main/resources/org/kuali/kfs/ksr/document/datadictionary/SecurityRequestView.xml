@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<!--
+		====
+		CU Customization:
+		Created a new "view" for rendering SecurityRequestDocuments via KRAD.
+		====
+	 -->
+
+	<!-- The main "view" bean. -->
+	<bean id="SecurityRequest" parent="Uif-TransactionalDocumentView">
+		<property name="headerText" value="Security Request Document" />
+		<property name="formClass" value="org.kuali.kfs.ksr.web.struts.form.SecurityRequestDocumentForm" />
+		<property name="documentClass" value="org.kuali.kfs.ksr.document.SecurityRequestDocument" />
+		<property name="viewHelperServiceClass" value="org.kuali.kfs.ksr.service.impl.SecurityRequestDocumentViewHelperServiceImpl" />
+		<property name="items">
+			<list merge="true">
+				<ref bean="SecurityRequest-MainPage" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- The main page bean. It is important to use merge="true" on this particular items list to preserve the parent bean's items. -->
+	<bean id="SecurityRequest-MainPage" parent="Uif-DocumentPage">
+		<property name="items">
+			<list merge="true">
+				<ref bean="SecurityRequest-RequestPrincipal" />
+			</list>
+		</property>
+		<property name="componentModifiers">
+			<list merge="true">
+				<!-- This component modifier will add the security request tabs to the document page once a user has been selected. -->
+				<bean class="org.kuali.kfs.ksr.uif.modifier.SecurityRequestDocumentTabGenerationModifier">
+					<property name="groupPrototypeId"><idref local="SecurityRequest-RequestTabSectionBase"/></property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- The section for entering the user's principal name and primary department code. -->
+	<bean id="SecurityRequest-RequestPrincipal" parent="Uif-Disclosure-GridSection">
+		<property name="headerText" value="Access Requested For: @{document.securityGroup.securityGroupName}" />
+		<property name="items">
+			<list>
+				<bean parent="Uif-InputField" p:propertyName="requestPerson.principalName" p:widgetInputOnly="true">
+					<property name="control">
+						<bean parent="Uif-KimPersonControl" p:principalIdPropertyName="principalId" p:personNamePropertyName="requestPerson.name" />
+					</property>
+				</bean>
+				<bean parent="Uif-InputField" p:propertyName="primaryDepartmentCode" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- The request tab section prototype, which has each tab's request roles. Contains active flag and qualification data (if applicable). -->
+
+	<bean id="SecurityRequest-RequestTabSectionBase" parent="Uif-Disclosure-StackedCollectionSection">
+		<property name="propertyName" value="securityRequestRoles" />
+		<property name="collectionObjectClass" value="org.kuali.kfs.ksr.bo.SecurityRequestRole" />
+		<property name="renderAddLine" value="false" />
+		<property name="renderLineActions" value="false" />
+		<property name="showInactiveLines" value="true" />
+		<property name="renderInactiveToggleButton" value="false" />
+		<property name="collectionGroupBuilder">
+			<bean class="org.kuali.kfs.ksr.uif.container.SecurityRequestRoleCollectionGroupBuilder"/>
+		</property>
+		<property name="layoutManager.summaryTitle" value="Role @{#line.roleId}: @{#line.roleInfo.namespaceCode} - @{#line.roleInfo.name}" />
+		<!-- The two lines below are needed to display the "Qualifications" label to the left of visible request qualification tables. -->
+		<property name="layoutManager.subCollectionFieldGroupPrototype.label" value="Qualifications" />
+		<property name="layoutManager.subCollectionFieldGroupPrototype.fieldLabel.render" value="@{#line.qualifiedRole}" />
+		<!-- To get the "Qualifications" section to render correctly, we need to set the sub-collection colSpan to 1 when the section needs to be visible. -->
+		<property name="layoutManager.subCollectionFieldGroupPrototype.colSpan" value="@{#line.qualifiedRole ? 1 : 2}" />
+		<property name="items">
+			<list>
+				<bean parent="Uif-InputField" p:propertyName="active"
+						p:dictionaryObjectEntry="org.kuali.rice.krad.datadictionary.AttributeReference"
+						p:dictionaryAttributeName="activeIndicator"
+						p:propertyNamesForAdditionalDisplay="currentActiveFlagForDisplay,currentQualificationsForDisplay"
+						p:readOnlyDisplayReplacement="@{#line.active ? 'Yes' : 'No'}"/>
+			</list>
+		</property>
+		<property name="subCollections">
+			<list>
+				<ref bean="SecurityRequest-RequestQualificationsSection" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- The section for the role qualifiers. Qualification detail sub-collection fields are rendered by this section, rather than a sub-section. -->
+	<bean id="SecurityRequest-RequestQualificationsSection" parent="Uif-TableCollectionSubSection">
+		<property name="propertyName" value="requestRoleQualifications" />
+		<property name="collectionObjectClass" value="org.kuali.kfs.ksr.bo.SecurityRequestRoleQualification" />
+		<property name="renderAddLine" value="@{#parentLine.qualifiedRole}" />
+		<property name="addLinePropertyName" value="newRequestRoleQualification" />
+		<property name="showInactiveLines" value="true" />
+		<property name="renderInactiveToggleButton" value="false" />
+		<property name="collectionGroupBuilder">
+			<bean class="org.kuali.kfs.ksr.uif.container.SecurityRequestRoleQualificationCollectionGroupBuilder"/>
+		</property>
+		
+		<!-- We need to customize the properties below to keep the table display simple and to print line numbers correctly. -->
+		<property name="layoutManager.showPageTotal" value="false" />
+		<property name="layoutManager.showTotal" value="false" />
+		<property name="layoutManager.richTable.render" value="false" />
+		<property name="layoutManager.generateAutoSequence" value="true" />
+		<property name="layoutManager.sequenceFieldPrototype">
+			<bean parent="Uif-MessageField" />
+		</property>
+
+		<!--
+			For this collection, we have to disable ajax submission by the add/save/delete buttons,
+			otherwise some unexpected exceptions related to invalid property paths will occur.
+		 -->
+		<property name="addLineActions">
+			<list>
+				<bean parent="Uif-AddLineAction" p:ajaxSubmit="false" />
+			</list>
+		</property>
+		<property name="lineActions">
+			<list>
+				<bean parent="Uif-DeleteLineAction" p:ajaxSubmit="false" />
+				<bean parent="Uif-SaveLineAction" p:ajaxSubmit="false" />
+			</list>
+		</property>
+
+		<property name="items">
+			<list>
+				<bean parent="Uif-RemotableFieldsPlaceholderConfig" class="org.kuali.kfs.ksr.uif.field.KsrRemoteFieldsHolder"
+						p:fetchingMethodToCall="getFieldsForQualificationDetails" />
+			</list>
+		</property>
+	</bean>
+	
+</beans>

@@ -1,7 +1,7 @@
 <xmlConversionTestCase>
 
 <oldData>
-<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><org.kuali.kfs.ksr.bo.SecurityGroup>
   <newCollectionRecord>false</newCollectionRecord>
   <autoIncrementSet>false</autoIncrementSet>
   <active>true</active>
@@ -12,25 +12,25 @@
         <size>2</size>
       </default>
       <int>10</int>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>false</newCollectionRecord>
         <autoIncrementSet>false</autoIncrementSet>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>false</newCollectionRecord>
         <autoIncrementSet>false</autoIncrementSet>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
     </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
     <org.kuali.rice.kns.util.TypedArrayList>
       <default>
-        <listObjectType>org.kuali.rice.ksr.bo.SecurityGroupTab</listObjectType>
+        <listObjectType>org.kuali.kfs.ksr.bo.SecurityGroupTab</listObjectType>
       </default>
     </org.kuali.rice.kns.util.TypedArrayList>
   </securityGroupTabs>
-</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+</org.kuali.kfs.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.ksr.bo.SecurityGroup>
   <newCollectionRecord>false</newCollectionRecord>
   <autoIncrementSet>false</autoIncrementSet>
   <securityGroupId>
@@ -46,7 +46,7 @@
         <size>2</size>
       </default>
       <int>10</int>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>true</newCollectionRecord>
         <autoIncrementSet>false</autoIncrementSet>
         <tabId>
@@ -57,8 +57,8 @@
           <value>1</value>
         </tabOrder>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>true</newCollectionRecord>
         <autoIncrementSet>false</autoIncrementSet>
         <tabId>
@@ -69,34 +69,34 @@
           <value>2</value>
         </tabOrder>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
     </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
     <org.kuali.rice.kns.util.TypedArrayList>
       <default>
-        <listObjectType>org.kuali.rice.ksr.bo.SecurityGroupTab</listObjectType>
+        <listObjectType>org.kuali.kfs.ksr.bo.SecurityGroupTab</listObjectType>
       </default>
     </org.kuali.rice.kns.util.TypedArrayList>
   </securityGroupTabs>
-</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</org.kuali.kfs.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </oldData>
 
 <expectedResult>
-<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><org.kuali.kfs.ksr.bo.SecurityGroup>
   <newCollectionRecord>false</newCollectionRecord>
   <active>true</active>
   <securityGroupTabs>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>false</newCollectionRecord>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>false</newCollectionRecord>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
   </securityGroupTabs>
-</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+</org.kuali.kfs.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.ksr.bo.SecurityGroup>
   <newCollectionRecord>false</newCollectionRecord>
   <securityGroupId>
     <value>1</value>
@@ -105,7 +105,7 @@
   <securityGroupDescription>This security group is only for testing purposes</securityGroupDescription>
   <active>true</active>
   <securityGroupTabs>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>true</newCollectionRecord>
         <tabId>
           <value>2</value>
@@ -115,8 +115,8 @@
           <value>1</value>
         </tabOrder>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
+      <org.kuali.kfs.ksr.bo.SecurityGroupTab>
         <newCollectionRecord>true</newCollectionRecord>
         <tabId>
           <value>3</value>
@@ -126,9 +126,9 @@
           <value>2</value>
         </tabOrder>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </org.kuali.kfs.ksr.bo.SecurityGroupTab>
   </securityGroupTabs>
-</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</org.kuali.kfs.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
 

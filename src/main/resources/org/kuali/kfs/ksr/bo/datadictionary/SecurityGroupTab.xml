@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	CU Customization: Converted the SecurityGroupTab DD beans from KNS to KRAD.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<!-- Copyright 2007-2009 The Kuali Foundation Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain 
+		a copy of the License at http://www.opensource.org/licenses/ecl2.php Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, 
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. -->
+
+	<bean id="SecurityGroupTab" parent="SecurityGroupTab-parentBean" />
+	<bean id="SecurityGroupTab-parentBean" abstract="true" parent="BusinessObjectEntry">
+		<property name="businessObjectClass" value="org.kuali.kfs.ksr.bo.SecurityGroupTab" />
+		<property name="titleAttribute" value="securityGroupId" />
+		<property name="objectLabel" value="SecurityGroupTab" />
+		<property name="attributes">
+			<list>
+				<ref bean="SecurityGroupTab-securityGroupId" />
+				<ref bean="SecurityGroupTab-tabId" />
+				<ref bean="SecurityGroupTab-tabName" />
+				<ref bean="SecurityGroupTab-tabOrder" />
+				<ref bean="SecurityGroupTab-versionNumber" />
+				<ref bean="SecurityGroupTab-active" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityGroupTab-securityGroupId" parent="SecurityGroupTab-securityGroupId-parentBean" />
+	<bean id="SecurityGroupTab-securityGroupId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupId" />
+		<property name="label" value="Security Group Id" />
+		<property name="shortLabel" value="Security Group Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="false" />
+		<property name="summary" value="Security Group Id" />
+		<property name="description" value="Security Group Id" />
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="40" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroupTab-tabId" parent="SecurityGroupTab-tabId-parentBean" />
+	<bean id="SecurityGroupTab-tabId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="tabId" />
+		<property name="label" value="Tab Id" />
+		<property name="shortLabel" value="Tab Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="true" />
+		<property name="summary" value="Tab Id" />
+		<property name="description" value="Tab Id" />
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="4" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroupTab-tabName" parent="SecurityGroupTab-tabName-parentBean" />
+	<bean id="SecurityGroupTab-tabName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="tabName" />
+		<property name="label" value="Tab Name" />
+		<property name="shortLabel" value="Name" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Tab Name" />
+		<property name="description" value="Tab Name" />
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="40" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroupTab-tabOrder" parent="SecurityGroupTab-tabOrder-parentBean" />
+	<bean id="SecurityGroupTab-tabOrder-parentBean" parent="AttributeDefinition">
+		<property name="name" value="tabOrder" />
+		<property name="label" value="Tab Order" />
+		<property name="shortLabel" value="Order" />
+		<property name="maxLength" value="2" />
+		<property name="required" value="true" />
+		<property name="summary" value="Tab Order" />
+		<property name="description" value="Tab Order" />
+		<property name="validCharactersConstraint">
+			<bean parent="NumericPatternConstraint" />
+		</property>
+		<property name="controlField">
+			<bean parent="Uif-TextControl" p:size="2" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroupTab-active" parent="SecurityGroup-active-parentBean" />
+	<bean id="SecurityGroupTab-active-parentBean" abstract="true" parent="AttributeReferenceDummy-activeIndicator">
+		<property name="name" value="active" />
+	</bean>
+
+	<bean id="SecurityGroupTab-versionNumber" parent="SecurityGroupTab-versionNumber-parentBean" />
+	<bean id="SecurityGroupTab-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+
+	<bean id="SecurityGroupTab-InquiryView" parent="SecurityGroupTab-InquiryView-parentBean" />
+	<bean id="SecurityGroupTab-InquiryView-parentBean" abstract="true" parent="Uif-InquiryView">
+		<property name="headerText" value="Security Group Inquiry" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityGroupTab" />
+		<property name="items">
+			<list>
+				<bean parent="Uif-Disclosure-GridSection">
+					<property name="headerText" value="Security Group Tab Inquiry" />
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="securityGroupId" />
+							<bean parent="Uif-InputField" p:propertyName="tabId" />
+							<bean parent="Uif-InputField" p:propertyName="tabName" />
+							<bean parent="Uif-InputField" p:propertyName="tabOrder" />
+							<bean parent="Uif-InputField" p:propertyName="active" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityGroupTab-LookupView" parent="SecurityGroupTab-LookupView-parentBean" />
+	<bean id="SecurityGroupTab-LookupView-parentBean" abstract="true" parent="Uif-LookupView">
+		<property name="headerText" value="Security Group Tab Lookup" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityGroupTab" />
+		<property name="criteriaFields">
+			<list>
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="securityGroupId" />
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="tabId" />
+			</list>
+		</property>
+		<property name="resultFields">
+			<list>
+				<bean parent="Uif-DataField" p:propertyName="securityGroupId" />
+				<bean parent="Uif-DataField" p:propertyName="tabId" />
+				<bean parent="Uif-DataField" p:propertyName="tabName" />
+				<bean parent="Uif-DataField" p:propertyName="tabOrder" />
+				<bean parent="Uif-DataField" p:propertyName="active" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

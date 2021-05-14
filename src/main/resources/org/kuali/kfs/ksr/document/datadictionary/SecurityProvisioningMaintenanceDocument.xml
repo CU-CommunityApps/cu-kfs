@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	CU Customization: Converted the SecurityProvisioningMaintenanceDocument DD beans from KNS to KRAD.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://rice.kuali.org/dd
+                           http://rice.kuali.org/dd/dd.xsd">
+
+	<bean id="SecurityProvisioningMaintenanceDocument" parent="SecurityProvisioningMaintenanceDocument-parentBean" />
+	<bean id="SecurityProvisioningMaintenanceDocument-parentBean" abstract="true" parent="uifMaintenanceDocumentEntry">
+		<property name="dataObjectClass" value="org.kuali.kfs.ksr.bo.SecurityProvisioning" />
+		<property name="maintainableClass" value="org.kuali.kfs.ksr.maintenance.SecurityProvisioningMaintainable" />
+		<property name="allowsNewOrCopy" value="true" />
+		<property name="lockingKeys">
+			<list>
+				<value>securityGroupId</value>
+			</list>
+		</property>
+		<property name="documentTypeName" value="SecurityProvisioningGroupDocumentType" />
+		<property name="documentPresentationControllerClass" value="org.kuali.kfs.ksr.document.authorization.KSRMaintenanceDocumentPresentationController" />
+		<property name="documentAuthorizerClass" value="org.kuali.kfs.ksr.document.authorization.KSRMaintenanceDocumentAuthorizer" />
+		<property name="businessRulesClass" value="org.kuali.kfs.ksr.document.validation.impl.SecurityProvisioningGroupRule" />
+	</bean>
+
+	<bean id="SecurityProvisioning-MaintenanceView" parent="SecurityProvisioning-MaintenanceView-parentBean" />
+	<bean id="SecurityProvisioning-MaintenanceView-parentBean" abstract="true" parent="Uif-MaintenanceView">
+		<property name="headerText" value="Security Provisioning Maintenance" />
+		<property name="dataObjectClassName" value="org.kuali.kfs.ksr.bo.SecurityProvisioning" />
+		<property name="items">
+			<list>
+				<!-- "Security Group" section. -->
+				<bean parent="Uif-MaintenanceGridSection">
+					<property name="headerText" value="Security Group" />
+					<property name="items">
+						<list>
+							<bean parent="Uif-DataField" p:propertyName="securityGroupId" p:readOnly="true" p:enableAutoInquiry="false" />
+							<bean parent="Uif-DataField" p:propertyName="securityGroup.securityGroupName" p:readOnly="true" p:enableAutoInquiry="false" />
+							<bean parent="Uif-DataField" p:propertyName="securityGroup.securityGroupDescription" p:readOnly="true" />
+							<bean parent="Uif-DataField" p:propertyName="securityGroup.active" p:readOnly="true" />
+						</list>
+					</property>
+				</bean>
+				<!-- "Edit Role Provisioning" section. -->
+				<bean parent="Uif-MaintenanceStackedCollectionSection">
+					<property name="headerText" value="Edit Role Provisioning" />
+					<property name="collectionObjectClass" value="org.kuali.kfs.ksr.bo.SecurityProvisioningGroup" />
+					<property name="propertyName" value="securityProvisioningGroups" />
+					<property name="showInactiveLines" value="true" />
+					<property name="renderInactiveToggleButton" value="false" />
+					<property name="layoutManager.summaryTitle" value="Role Provisioning" />
+					<property name="layoutManager.summaryFields">
+						<list>
+							<value>provisioningId</value>
+						</list>
+					</property>
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="provisioningId"
+									p:defaultValueFinderClass="org.kuali.kfs.ksr.bo.options.SecurityProvisioningGroupIDFinder"
+									p:required="true" p:readOnly="true" />
+							<bean parent="Uif-InputField" p:propertyName="roleId" p:required="true" p:widgetInputOnly="true" />
+							<bean parent="Uif-DataField" p:propertyName="roleName" p:required="false" p:readOnly="true" />
+							<bean parent="Uif-InputField" p:propertyName="tabId" p:required="true" />
+							<bean parent="Uif-InputField" p:propertyName="roleTabOrder" p:required="true" />
+							<bean parent="Uif-InputField" p:propertyName="distributedAuthorizerRoleId" p:required="false" />
+							<bean parent="Uif-DataField" p:propertyName="distributedAuthorizerRoleName" p:required="false" p:readOnly="true" />
+							<bean parent="Uif-InputField" p:propertyName="additionalAuthorizerRoleId" p:required="false" />
+							<bean parent="Uif-DataField" p:propertyName="additionalAuthorizerRoleName" p:required="false" p:readOnly="true" />
+							<bean parent="Uif-InputField" p:propertyName="centralAuthorizerRoleId" p:required="false" />
+							<bean parent="Uif-DataField" p:propertyName="centralAuthorizerRoleName" p:required="false" p:readOnly="true" />
+							<bean parent="Uif-InputField" p:propertyName="active" p:required="false" />
+						</list>
+					</property>
+					<property name="subCollections">
+						<list>
+							<!-- "Dependent Roles" sub-section. -->
+							<bean parent="Uif-MaintenanceStackedSubCollection-WithinSection">
+								<property name="headerText" value="Dependent Roles" />
+								<property name="collectionObjectClass" value="org.kuali.kfs.ksr.bo.SecurityProvisioningGroupDependentRoles" />
+								<property name="propertyName" value="dependentRoles" />
+								<property name="showInactiveLines" value="true" />
+								<property name="renderInactiveToggleButton" value="false" />
+								<property name="layoutManager.summaryTitle" value="Dependent Role" />
+								<property name="layoutManager.summaryFields">
+									<list>
+										<value>provisioningId</value>
+									</list>
+								</property>
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:propertyName="roleId" p:required="false" p:widgetInputOnly="true" />
+										<bean parent="Uif-DataField" p:propertyName="roleName" p:required="false" p:readOnly="true" />
+									</list>
+								</property>
+								<property name="duplicateLinePropertyNames">
+									<list>
+										<value>roleId</value>
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+</beans>
