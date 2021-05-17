@@ -69,7 +69,7 @@
 											property="document.invoicePaidApplieds" indexId="ctr">
 											<tr>
 												<td>
-													<a href="${ConfigProperties.workflow.url}/DocHandler.do?docId=${invoicePaidApplied.financialDocumentReferenceInvoiceNumber}&command=displayDocSearchView" target="blank">
+													<a href="${ConfigProperties.application.url}/DocHandler.do?docId=${invoicePaidApplied.financialDocumentReferenceInvoiceNumber}&command=displayDocSearchView" target="blank">
 														<c:out value="${invoicePaidApplied.financialDocumentReferenceInvoiceNumber}" />
 													</a>
 												</td>

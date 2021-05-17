@@ -51,7 +51,7 @@
         </property>
     </bean>
 	
-	<bean id="laborLedgerBatchFileLookupableHelperService" class="edu.cornell.kfs.module.ld.businessobject.lookup.LaborLedgerBatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService">
+	<bean id="laborLedgerBatchFileLookupableHelperService" class="edu.cornell.kfs.module.ld.businessobject.lookup.LaborLedgerBatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService">
          <property name="dateTimeService" ref="dateTimeService" />
          <property name="batchFileAdminAuthorizationService" ref="batchFileAdminAuthorizationService"/>
      </bean>

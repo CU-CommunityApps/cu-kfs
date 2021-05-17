@@ -54,7 +54,7 @@
                     <%-- Show the information about the business object. --%>
                 <c:forEach items="${FieldSections}" var="section">
                     <%-- call helper tag to look ahead through fields for old to new changes, and highlight tab if so --%>
-                    <kul:checkTabHighlight rows="${section.rows}" addHighlighting="${isMaintenance && (Constants.MAINTENANCE_EDIT_ACTION eq KualiForm.maintenanceAction)}"/>
+                    <kul:checkTabHighlight rows="${section.rows}" addHighlighting="${isMaintenance && (KRADConstants.MAINTENANCE_EDIT_ACTION eq KualiForm.maintenanceAction)}"/>
 
                     <kul:tab tabTitle="${section.sectionTitle}" defaultOpen="${section.defaultOpen}" tabErrorKey="${section.errorKey}" highlightTab="${tabHighlight}" extraButtonSource="${section.extraButtonSource}" hidden="${section.hidden}" helpUrl="${section.helpUrl }">
                         <div class="tab-container" align="center"

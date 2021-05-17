@@ -1,4 +1,4 @@
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <%@ attribute name="readOnly" required="true" %>
 
@@ -22,7 +22,7 @@
                 <kul:htmlControlAttribute
                         property="document.documentHeader.documentDescription"
                         attributeEntry="${docHeaderAttributes.documentDescription}"
-                        readOnly="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT_DOCUMENT_OVERVIEW]}"/>
+                        readOnly="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT_DOCUMENT_OVERVIEW]}"/>
             </td>
             <kul:htmlAttributeHeaderCell
                     labelFor="document.documentHeader.explanation"

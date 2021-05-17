@@ -137,7 +137,7 @@
 	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl"/>
 	
 	<!-- Lookupables -->
-   <bean id="unitOfMeasureLookupHelperService" class="edu.cornell.kfs.module.purap.businessobject.lookup.UnitOfMeasureLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" />
+   <bean id="unitOfMeasureLookupHelperService" class="edu.cornell.kfs.module.purap.businessobject.lookup.UnitOfMeasureLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" />
 	
     <bean id="unitOfMeasureLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
 		<property name="lookupableHelperService">

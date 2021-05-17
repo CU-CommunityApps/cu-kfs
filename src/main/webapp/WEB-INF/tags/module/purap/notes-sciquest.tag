@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 --%>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <%@ attribute name="notesBo" required="false" type="java.util.List" %>
 <%@ attribute name="noteType" required="false" type="java.lang.Enum" %>
@@ -28,7 +28,7 @@
 
 <c:if test="${empty noteType}">
     <%-- default to document header notes this default should probably be set somewhere else --%>
-    <c:set var="noteType" value="${Constants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE}"/>
+    <c:set var="noteType" value="${KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE}"/>
     <c:set var="notesBo" value="${KualiForm.document.notes}"/>
 </c:if>
 
@@ -48,7 +48,7 @@
 <c:set var="poCreated" value="${KualiForm.docFinal and KualiForm.document.documentHeader.applicationDocumentStatus eq 'Closed'}"/>
 
 <kul:tab tabTitle="${tabTitle}" defaultOpen="${!empty notesBo or (not empty defaultOpen and defaultOpen)}"
-         tabErrorKey="${Constants.DOCUMENT_NOTES_ERRORS}" tabItemCount="${fn:length(notesBo)}"
+         tabErrorKey="${KRADConstants.DOCUMENT_NOTES_ERRORS}" tabItemCount="${fn:length(notesBo)}"
          transparentBackground="${transparentBackground}">
     <c:set var="notesAttributes" value="${DataDictionary.Note.attributes}"/>
     <c:set var="noteExtensionAttributes" value="${DataDictionary.NoteExtendedAttribute.attributes}"/>
@@ -94,7 +94,7 @@
                                     <c:otherwise>
                                         <html:select property="newNote.noteTopicText">
                                             <html:optionsCollection
-                                                    property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
+                                                    property="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
                                                     label="value" value="key"/>
                                         </html:select>
                                     </c:otherwise>
@@ -194,7 +194,7 @@
                                             <span>
                                                 <c:if test="${kfunc:canViewNoteAttachment(KualiForm.document, attachmentTypeCode)}">
                                                 	<html:image property="methodToCall.downloadBOAttachment.attachment[${status.index}]" 
-                                                		src="${ConfigProperties.kr.externalizable.images.url}${kfunc:getAttachmentImageForUrl(mimeTypeCode)}"  
+                                                		src="${ConfigProperties.externalizable.images.url}${kfunc:getAttachmentImageForUrl(mimeTypeCode)}"  
                                                 		title="download attachment" alt="download attachment" style="padding:5px;margin-bottom:-10px;"
                                                 		onclick="excludeSubmitRestriction=true"/>
                                                 </c:if>
@@ -219,7 +219,7 @@
                                                 <c:otherwise>
                                                     <html:select property="document.notes[${status.index}].noteTopicText">
                                                         <html:optionsCollection
-                                                                property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
+                                                                property="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
                                                                 label="value" value="key"/>
                                                     </html:select>
                                                 </c:otherwise>
@@ -264,7 +264,7 @@
 
                             <c:if test="${allowsNoteFYI}">
                                 <td class="infoline">
-                                    <c:if test="${!empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
+                                    <c:if test="${!empty KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
                                         <kul:user userIdFieldName="document.notes[${status.index}].adHocRouteRecipient.id"
                                                   userId="${note.adHocRouteRecipient.id}"
                                                   universalIdFieldName=""
@@ -275,7 +275,7 @@
                                                   fieldConversions="principalName:document.notes[${status.index}].adHocRouteRecipient.id,name:document.notes[${status.index}].adHocRouteRecipient.name"
                                                   lookupParameters="document.notes[${status.index}].adHocRouteRecipient.id:principalName"/>
                                     </c:if>
-                                    <c:if test="${empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
+                                    <c:if test="${empty KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
                                         &nbsp;
                                     </c:if>
                                 </td>
@@ -285,7 +285,7 @@
                                 <c:if test="${kfunc:canDeleteNoteAttachment(KualiForm.document, attachmentTypeCode, authorUniversalIdentifier)}">
                                     <html:submit property="methodToCall.deleteBONote.line${status.index}" title="Delete a Note" alt="Delete a Note" styleClass="tinybutton btn btn-red" value="Delete"/>
                                 </c:if>
-                                <c:if test="${allowsNoteFYI && !empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
+                                <c:if test="${allowsNoteFYI && !empty KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
                                     <html:submit property="methodToCall.sendNoteWorkflowNotification.line${status.index}" title="Send FYI" alt="Send FYI" styleClass="tinybutton btn btn-default" value="Send"/>
                                 </c:if>
                             </td>
