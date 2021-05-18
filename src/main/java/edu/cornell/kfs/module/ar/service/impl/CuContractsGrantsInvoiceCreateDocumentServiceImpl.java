@@ -122,7 +122,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             if (StringUtils.isNotBlank(proposalNumber)) {
                 String contractControlAccount = findContractControlAccountNumber(cgInvoiceDocument.getAccountDetails());
                 String newTitle =  MessageFormat.format(findTitleFormatString(), proposalNumber, contractControlAccount);
-                LOG.debug("populateDocumentDescription, setting docuemnt description to " + newTitle);
+                LOG.info("populateDocumentDescription, setting document description to " + newTitle);
                 cgInvoiceDocument.getDocumentHeader().setDocumentDescription(newTitle);
             } else {
                 LOG.error("populateDocumentDescription, unable to set the document description due to the proposal number being null");
@@ -222,9 +222,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         ContractsGrantsInvoiceDocument cgInvoiceDocument = super.createCGInvoiceDocumentByAwardInfo(awd, accounts, chartOfAccountsCode, 
                 organizationCode, errorMessages, accountDetails, locCreationType);
         //CUMod: KFSPTS-12866
-        if (CollectionUtils.isEmpty(errorMessages)) {
-            populateDocumentDescription(cgInvoiceDocument);
-        }
+        populateDocumentDescription(cgInvoiceDocument);
         return cgInvoiceDocument;
     }
     
