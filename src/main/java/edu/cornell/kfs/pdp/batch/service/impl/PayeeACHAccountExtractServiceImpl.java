@@ -588,6 +588,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
     protected String createAndRoutePayeeACHAccountDocument(
             PayeeACHData achData, BiConsumer<MaintenanceDocument, PayeeACHData> documentConfigurer) {
+        LOG.info("createAndRoutePayeeACHAccountDocument, processing " +  achData.getPayee().getPrincipalName());
         try {
             MaintenanceDocument paatDocument = (MaintenanceDocument) documentService.getNewDocument(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_MAINT_DOC_TYPE);
             documentConfigurer.accept(paatDocument, achData);
