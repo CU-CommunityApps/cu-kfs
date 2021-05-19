@@ -6,7 +6,7 @@
 
     <bean id="cuAttachmentDaoOjb" parent="platformAwareDao" class="edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb"/>
 
-    <bean id="dummyAntiVirusService" class="edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl" />
+    <bean id="dummyAntiVirusService" class="edu.cornell.kfs.antivirus.service.impl.DummyAntiVirusServiceImpl" />
 
     <!--
         TODO: KFSPTS-21559: Update the "antiVirusService" bean for KEW-to-KFS compatibility

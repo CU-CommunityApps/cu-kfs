@@ -51,7 +51,7 @@
 
     <bean id="personService" factory-bean="testServiceFactory" factory-method="buildMockPersonService"/>
     
-    <bean id="kimRoleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
+    <bean id="roleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
     
     <bean id="rice.kew.documentProcessingQueue" factory-bean="testServiceFactory" factory-method="buildMockDocumentProcessingQueue"/>
 
@@ -114,7 +114,7 @@
                 <idref bean="parameterService"/>
                 <idref bean="configurationService"/>
                 <idref bean="personService"/>
-                <idref bean="kimRoleService"/>
+                <idref bean="roleService"/>
                 <idref bean="rice.kew.documentProcessingQueue"/>
             </set>
         </property>

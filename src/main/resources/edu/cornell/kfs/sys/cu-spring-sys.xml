@@ -397,7 +397,6 @@
     <bean id="excludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService-parentBean" abstract="true"
           class="edu.cornell.kfs.sys.identity.ExcludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService"
           p:workflowDocumentService-ref="workflowDocumentService"/>
-    <import resource="cu-spring-sys-bus-exports.xml"/>
 
     <bean id="cuGeneralLedgerPendingEntryService" parent="cuGeneralLedgerPendingEntryService-parentBean"/>
     <bean id="cuGeneralLedgerPendingEntryService-parentBean" parent="generalLedgerPendingEntryService-parentBean"
