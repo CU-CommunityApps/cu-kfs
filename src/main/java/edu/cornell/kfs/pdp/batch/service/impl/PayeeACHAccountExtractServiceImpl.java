@@ -585,7 +585,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         paatDocument.getNewMaintainableObject().setDataObject(newAccount);
         paatDocument.getNewMaintainableObject().setMaintenanceAction(KFSConstants.MAINTENANCE_EDIT_ACTION);
     }
-
+    
+    @Transactional
     protected String createAndRoutePayeeACHAccountDocument(
             PayeeACHData achData, BiConsumer<MaintenanceDocument, PayeeACHData> documentConfigurer) {
         LOG.info("createAndRoutePayeeACHAccountDocument, processing " +  achData.getPayee().getPrincipalName());
