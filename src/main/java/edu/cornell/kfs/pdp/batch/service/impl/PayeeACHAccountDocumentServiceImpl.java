@@ -61,7 +61,9 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     @Transactional
     @Override
     public String addACHAccount(Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType) {
-        LOG.info("addACHAccount, adding account for " + payee.getName());
+        if (ObjectUtils.isNotNull(payee)) {
+            LOG.info("addACHAccount, adding account for " + payee.getName());
+        }
         PayeeACHData achData = new PayeeACHData(payee, achDetail, payeeType);
         return createAndRoutePayeeACHAccountDocument(achData, this::setupDocumentForACHCreate);
     }
@@ -70,7 +72,9 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     @Override
     public String updateACHAccountIfNecessary(Person payee, PayeeACHAccountExtractDetail achDetail,
             PayeeACHAccount achAccount) {
-        LOG.info("updateACHAccountIfNecessary, updating account for " + payee.getName());
+        if (ObjectUtils.isNotNull(payee)) {
+            LOG.info("updateACHAccountIfNecessary, updating account for " + payee.getName());
+        }
         StringBuilder processingResults = new StringBuilder();
 
         if (accountHasChanged(achDetail, achAccount)) {

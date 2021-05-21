@@ -195,14 +195,11 @@
                 <ref bean="payeeACHAccountExtractCsvInputFileType" />
             </list>
         </property>
-        <property name="configurationService">
-            <ref bean="kualiConfigurationService" />
-        </property>
     </bean>
     
     <bean id="payeeACHAccountDocumentService" parent="payeeACHAccountDocumentService-parentBean" />
     <bean id="payeeACHAccountDocumentService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountDocumentServiceImpl">
-      <property name="configurationService" ref="configurationService" />
+      <property name="configurationService" ref="kualiConfigurationService" />
       <property name="dataDictionaryService" ref="dataDictionaryService" />
       <property name="documentService" ref="documentService" />
       <property name="emailService" ref="emailService" />
