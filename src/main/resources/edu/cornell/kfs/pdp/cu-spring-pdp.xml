@@ -183,16 +183,13 @@
     <bean id="payeeACHAccountExtractService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountExtractServiceImpl">
         <property name="batchInputFileService" ref="batchInputFileService" />
         <property name="parameterService" ref="parameterService" />
-        <property name="emailService" ref="emailService"/>
-        <property name="documentService" ref="documentService" />
-        <property name="dataDictionaryService" ref="dataDictionaryService" />
         <property name="personService" ref="personService" />
-        <property name="sequenceAccessorService" ref="sequenceAccessorService" />
         <property name="achService" ref="pdpAchService" />
         <property name="achBankService" ref="pdpAchBankService" />
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="payeeACHAccountExtractReportService" ref="payeeACHAccountExtractReportService" />
+        <property name="payeeACHAccountDocumentService" ref="payeeACHAccountDocumentService" />
         <property name="batchInputFileTypes">
             <list>
                 <ref bean="payeeACHAccountExtractCsvInputFileType" />
@@ -201,6 +198,17 @@
         <property name="configurationService">
             <ref bean="kualiConfigurationService" />
         </property>
+    </bean>
+    
+    <bean id="payeeACHAccountDocumentService" parent="payeeACHAccountDocumentService-parentBean" />
+    <bean id="payeeACHAccountDocumentService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountDocumentServiceImpl">
+      <property name="configurationService" ref="configurationService" />
+      <property name="dataDictionaryService" ref="dataDictionaryService" />
+      <property name="documentService" ref="documentService" />
+      <property name="emailService" ref="emailService" />
+      <property name="parameterService" ref="parameterService" />
+      <property name="personService" ref="personService" />
+      <property name="sequenceAccessorService" ref="sequenceAccessorService" />
     </bean>
 
     <bean id="payeeACHAccountExtractReportService" parent="payeeACHAccountExtractReportService-parentBean"/>
