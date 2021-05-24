@@ -71,6 +71,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
@@ -133,17 +134,13 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.setBatchInputFileTypes(
                 Collections.singletonList(createACHBatchInputFileType()));
         payeeACHAccountExtractService.setParameterService(createMockParameterService());
-        payeeACHAccountExtractService.setEmailService(new TestEmailService());
-        payeeACHAccountExtractService.setDocumentService(createMockDocumentService());
-        payeeACHAccountExtractService.setDataDictionaryService(createMockDataDictionaryService());
         payeeACHAccountExtractService.setPersonService(createMockPersonService());
-        payeeACHAccountExtractService.setSequenceAccessorService(createMockSequenceAccessorService());
         payeeACHAccountExtractService.setAchService(createAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
-        payeeACHAccountExtractService.setConfigurationService(createMockConfigurationService());
         payeeACHAccountExtractService.setBusinessObjectService(createMockBusinessObjectService());
         payeeACHAccountExtractService.setPayeeACHAccountExtractReportService(createMockPayeeACHAccountExtractReportService());
         payeeACHAccountExtractService.setDateTimeService(createMockDateTimeService());
+        payeeACHAccountExtractService.setPayeeACHAccountDocumentService(buildPayeeACHAccountDocumentServiceImpl());
     }
 
     @After
@@ -211,7 +208,8 @@ public class PayeeACHAccountExtractServiceImplTest {
         String expectedPayeeIdTypeLabel = payeeIdTypeKeyValues.getKeyLabel(achAccount.getPayeeIdentifierTypeCode());
         String expectedBody = MessageFormat.format(EMAIL_STRING_AS_FORMAT, expectedPayeeIdTypeLabel,
                 achAccount.getPayeeIdNumber(), PERSONAL_SAVINGS_ACCOUNT_TYPE_LABEL, achAccount.getBankRouting().getBankName());
-        String actualBody = payeeACHAccountExtractService.getResolvedEmailBody(achAccount, UNRESOLVED_EMAIL_STRING);
+        PayeeACHAccountDocumentServiceImpl payeeDocumentService = (PayeeACHAccountDocumentServiceImpl) payeeACHAccountExtractService.payeeACHAccountDocumentService;
+        String actualBody = payeeDocumentService.getResolvedEmailBody(achAccount, UNRESOLVED_EMAIL_STRING);
         
         assertEquals("Email body placeholders and special characters were not resolved properly", expectedBody, actualBody);
     }
@@ -555,6 +553,20 @@ public class PayeeACHAccountExtractServiceImplTest {
         when(dateTimeService.getCurrentSqlDate()).thenReturn(currentDate);
         return dateTimeService;
     }
+    
+    private PayeeACHAccountDocumentServiceImpl buildPayeeACHAccountDocumentServiceImpl() throws Exception {
+        PayeeACHAccountDocumentServiceImpl payeeACHAccountDocumentService = Mockito.spy(new PayeeACHAccountDocumentServiceImpl());
+        Mockito.doNothing().when(payeeACHAccountDocumentService).addNote(Mockito.any(), Mockito.anyString());
+        
+        payeeACHAccountDocumentService.setConfigurationService(createMockConfigurationService());
+        payeeACHAccountDocumentService.setDataDictionaryService(createMockDataDictionaryService());
+        payeeACHAccountDocumentService.setDocumentService(createMockDocumentService());
+        payeeACHAccountDocumentService.setEmailService(new TestEmailService());
+        payeeACHAccountDocumentService.setParameterService(createMockParameterService());
+        payeeACHAccountDocumentService.setPersonService(createMockPersonService());
+        payeeACHAccountDocumentService.setSequenceAccessorService(createMockSequenceAccessorService());
+        return payeeACHAccountDocumentService;
+    }
 
     private Map<String, Object> createPropertiesMapForMatching(PayeeACHAccountFixture achFixture) {
         Map<String, Object> propertiesMap = new HashMap<>();
@@ -649,21 +661,6 @@ public class PayeeACHAccountExtractServiceImplTest {
                 currentFileResult.addRowResult(currentRowResult);
                 currentRowResult = null;
             }
-        }
-        
-        @Override
-        protected Note createEmptyNote() {
-            Note note = mock(Note.class, CALLS_REAL_METHODS);
-            doNothing().when(note).setNotePostedTimestampToCurrent();
-            note.setNoteText(StringUtils.EMPTY);
-            note.setNoteTypeCode(NoteType.DOCUMENT_HEADER.getCode());
-            return note;
-        }
-        
-        // Increase visibility to "public" for testing convenience.
-        @Override
-        public String getResolvedEmailBody(PayeeACHAccount achAccount, String emailBody) {
-            return super.getResolvedEmailBody(achAccount, emailBody);
         }
         
         public void addRoutedDocument(MaintenanceDocument routedDocument) {
