@@ -38,6 +38,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
@@ -58,7 +59,7 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     private PersonService personService;
     private SequenceAccessorService sequenceAccessorService;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public String addACHAccount(Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType) {
         if (ObjectUtils.isNotNull(payee)) {
@@ -68,7 +69,7 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
         return createAndRoutePayeeACHAccountDocument(achData, this::setupDocumentForACHCreate);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public String updateACHAccountIfNecessary(Person payee, PayeeACHAccountExtractDetail achDetail,
             PayeeACHAccount achAccount) {
