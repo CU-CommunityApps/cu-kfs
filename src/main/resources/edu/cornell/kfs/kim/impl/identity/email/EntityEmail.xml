@@ -4,16 +4,16 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans         
             http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="EntityEmailBo" parent="EntityEmailBo-parentBean">
+    <bean id="EntityEmail" parent="EntityEmail-parentBean">
         <property name="attributes">
             <list merge="true">
-                <ref bean="EntityEmailBo-emailAddressUnmasked"/>
+                <ref bean="EntityEmail-emailAddressUnmasked"/>
             </list>
         </property>
     </bean>
 
-    <bean id="EntityEmailBo-emailAddressUnmasked" parent="EntityEmailBo-emailAddressUnmasked-parentBean"/>
-    <bean id="EntityEmailBo-emailAddressUnmasked-parentBean" abstract="true" parent="GenericAttributes-emailAddress"
+    <bean id="EntityEmail-emailAddressUnmasked" parent="EntityEmail-emailAddressUnmasked-parentBean"/>
+    <bean id="EntityEmail-emailAddressUnmasked-parentBean" abstract="true" parent="GenericAttributes-emailAddress"
           p:name="emailAddressUnmasked"
           p:attributeSecurity-ref="CuKimBaseBeans-GenericAttributeSecurity"/>
 

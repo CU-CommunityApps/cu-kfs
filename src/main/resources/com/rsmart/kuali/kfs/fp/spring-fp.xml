@@ -93,7 +93,7 @@
 		<property name="sequenceAccessorService" ref="sequenceAccessorService"/>
 		<property name="dateTimeService" ref="dateTimeService"/>
 		<property name="personService" ref="personService"/>
-		<property name="kualiConfigurationService" ref="kualiConfigurationService"/>
+		<property name="kualiConfigurationService" ref="configurationService"/>
 		<property name="universityDateService" ref="universityDateService"/>
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="disbursementVoucherBatchReportInfo" ref="disbursementVoucherBatchReportInfo"/>
