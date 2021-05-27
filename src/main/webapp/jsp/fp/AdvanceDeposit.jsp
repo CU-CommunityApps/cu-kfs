@@ -23,7 +23,7 @@
 <c:set var="advanceDepositAttributes"
        value="${DataDictionary['AdvanceDepositDocument'].attributes}"/>
 <c:set var="readOnly"
-       value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+       value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 
 <kul:documentPage showDocumentInfo="true"
                   htmlFormAction="financialAdvanceDeposit"
@@ -47,7 +47,7 @@
         </sys-java:accountingLines>
     </kul:tab>
 
-    <c:set var="readOnly" value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+    <c:set var="readOnly" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
     <fp:capitalAccountingLines readOnly="${readOnly}"/>
 
     <c:if test="${KualiForm.capitalAccountingLine.canCreateAsset}">

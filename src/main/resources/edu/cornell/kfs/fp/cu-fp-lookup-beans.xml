@@ -27,13 +27,13 @@
 
     <bean id="paymentMethodValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodValuesFinder"
-          p:businessObjectService-ref="businessObjectService"/>
+          p:businessObjectService-ref="grl.businessObjectService"/>
 
     <bean id="paymentMethodsForDVValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForDVValuesFinder"
-          p:businessObjectService-ref="businessObjectService"/>
+          p:businessObjectService-ref="grl.businessObjectService"/>
 
     <bean id="paymentMethodsForVendorValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForVendorValuesFinder"
-          p:businessObjectService-ref="businessObjectService"/>
+          p:businessObjectService-ref="grl.businessObjectService"/>
 </beans>

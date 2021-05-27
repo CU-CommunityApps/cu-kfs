@@ -103,7 +103,7 @@
 	
 	<bean id="checkReconciliationImportStep" class="com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep" parent="step">
 		<property name="businessObjectService"      ref="businessObjectService" />
-		<property name="kualiConfigurationService"  ref="kualiConfigurationService" />
+		<property name="kualiConfigurationService"  ref="configurationService" />
 		<property name="glTransactionService"       ref="crGlTransactionService" />
 	</bean>
 		
