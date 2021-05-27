@@ -4,7 +4,7 @@
               description="The DataDictionary entry containing attributes for this row's fields." %>
 <%@ attribute name="wizard" required="false" %>
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 <c:set var="tabindexOverrideBase" value="30"/>
 
 <div class="tab-container">

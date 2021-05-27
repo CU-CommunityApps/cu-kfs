@@ -670,7 +670,7 @@
         <property name="name" value="processTimestamp" />
         <property name="label" value="Process Timestamp" />
         <property name="shortLabel" value="Timestamp" />
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.DateViewTimestampObjectFormatter" />
+        <property name="formatterClass" value="org.kuali.kfs.core.web.format.DateViewTimestampObjectFormatter" />
     </bean>
 
     <bean id="PaymentWorksVendor-supplierUploadStatus" parent="PaymentWorksVendor-supplierUploadStatus-parentBean" />
@@ -890,7 +890,7 @@
             <bean parent="CheckboxControlDefinition" />
         </property>
         <property name="formatterClass"
-            value="org.kuali.rice.core.web.format.BooleanFormatter" />
+            value="org.kuali.kfs.core.web.format.BooleanFormatter" />
     </bean>
 
     <bean id="PaymentWorksVendor-conflictOfInterestRelationshipToEmployee" parent="PaymentWorksVendor-conflictOfInterestRelationshipToEmployee-parentBean" />
@@ -1111,7 +1111,7 @@
         <property name="control">
             <bean parent="CheckboxControlDefinition" />
         </property>
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter" />
+        <property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter" />
     </bean>
 
     <bean id="PaymentWorksVendor-lookupDefinition" parent="PaymentWorksVendor-lookupDefinition-parentBean" />

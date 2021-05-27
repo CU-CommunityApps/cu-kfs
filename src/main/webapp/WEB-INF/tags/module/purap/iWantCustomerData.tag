@@ -3,7 +3,7 @@
 <%@ attribute name="documentAttributes" required="true" type="java.util.Map"
               description="The DataDictionary entry containing attributes for this row's fields." %>
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 <c:set var="tabindexOverrideBase" value="30"/>
 
 <h3>Organization Information</h3>

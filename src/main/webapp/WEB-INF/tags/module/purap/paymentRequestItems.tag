@@ -28,7 +28,7 @@
     description="show the amount if true else percent" %>
 <%@ attribute name="mainColumnCount" required="true" %>
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="lockTaxAmountEntry" value="${(not empty KualiForm.editingMode['lockTaxAmountEntry'])}" />
 <c:set var="clearAllTaxes" value="${(not empty KualiForm.editingMode['clearAllTaxes'])}" />
 <c:set var="purapTaxEnabled" value="${(not empty KualiForm.editingMode['purapTaxEnabled'])}" />
@@ -204,7 +204,7 @@
 								title="Recalculate Item's accounts amounts distributions"
 								styleClass="btn clean"
 								value="Calculate"
-								innerHTML="<img src='${ConfigProperties.kr.externalizable.images.url}calculator.png' height='18px'/>"/>
+								innerHTML="<img src='${ConfigProperties.externalizable.images.url}calculator.png' height='18px'/>"/>
 						<html:html-button
 								property="methodToCall.restoreItemAccountsAmounts.line${ctr}.Anchor"
 								alt="Restore Item's accounts percents/amounts from Purchase Order"
