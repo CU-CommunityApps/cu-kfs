@@ -23,7 +23,7 @@
 <c:set var="journalVoucherAttributes"
        value="${DataDictionary['JournalVoucherDocument'].attributes}"/>
 <c:set var="readOnly"
-       value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+       value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 
 
 <c:set var="documentTypeName" value="JournalVoucherDocument"/>

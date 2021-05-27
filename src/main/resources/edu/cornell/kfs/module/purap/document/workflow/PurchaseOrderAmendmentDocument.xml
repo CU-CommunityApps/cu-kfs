@@ -146,7 +146,7 @@
         </role>
         <join name="JoinNewUnorderedItems" />
         <simple name="NoOpNewUnorderedItems">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <role name="SubAccount">
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
@@ -165,7 +165,7 @@
         </role>
         <join name="JoinRequiresAwardReview" />
         <simple name="NoOpRequiresAwardReview">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <role name="Commodity">
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
@@ -180,7 +180,7 @@
         </role>
         <join name="JoinSOD" />
         <simple name="NoOp">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <split name="RequiresContractManagementReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
@@ -191,7 +191,7 @@
         </role>
         <join name="JoinRequiresContractManagementReview" />
         <simple name="NoOpRequiresContractManagementReview">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <split name="RequiresBudgetReview">
           <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
@@ -202,14 +202,14 @@
         </role>
         <join name="JoinRequiresBudgetReview" />
         <simple name="NoOpBudget">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <role name="AccountingOrganizationHierarchy">
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
           <activationType>P</activationType>
         </role>
         <simple name="NoOpFinal">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
       </routeNodes>
     </documentType>

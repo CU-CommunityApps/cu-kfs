@@ -21,7 +21,7 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <c:set var="inquiry" scope="request" value="${KualiForm.inquiry}" />
-<c:set var="readOnly" scope="request" value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] || inquiry}" />
+<c:set var="readOnly" scope="request" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] || inquiry}" />
 <c:set var="readOnlyEntity" scope="request" value="${!KualiForm.canModifyEntity || readOnly}" />
 
 <c:set var="formAction" value="identityManagementPersonDocument" />

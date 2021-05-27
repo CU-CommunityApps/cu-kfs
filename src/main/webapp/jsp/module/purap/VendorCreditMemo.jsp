@@ -23,7 +23,7 @@
 <kul:documentPage showDocumentInfo="true" documentTypeName="VendorCreditMemoDocument"
                   htmlFormAction="purapVendorCreditMemo" renderMultipart="true" showTabButtons="true">
 
-    <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
+    <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
 
     <!-- KFSPTS-1891 -->
     <c:set var="wireEntryMode" value="${KualiForm.editingMode['wireEntry']}" scope="request"/>

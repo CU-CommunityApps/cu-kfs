@@ -31,7 +31,7 @@
 	
 	<fp:corporateBilledCorporatePaidTransactions editingMode="${KualiForm.editingMode}" editableAccounts="${KualiForm.editableAccounts}" />
 	
-	<c:set var="readOnly" value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
+	<c:set var="readOnly" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" />
 	<fp:capitalAccountingLines readOnly="${readOnly}" />
 
 	<c:if test="${KualiForm.capitalAccountingLine.canCreateAsset}">

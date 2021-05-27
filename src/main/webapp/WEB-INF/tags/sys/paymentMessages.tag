@@ -69,7 +69,7 @@
      if (specialHandlingIndicator.checked == true) {
 		alert('<bean:message key="message.payment.specialhandling"/>');
      } else {
-		<c:if test="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && KualiForm.editingMode['specialHandlingChangingEntry']}">
+		<c:if test="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && KualiForm.editingMode['specialHandlingChangingEntry']}">
 			clearSpecialHandlingTab();
 		</c:if>
 	 }

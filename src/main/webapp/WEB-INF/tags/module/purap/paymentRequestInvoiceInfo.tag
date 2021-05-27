@@ -26,7 +26,7 @@
 <%@ attribute name="displayPaymentRequestInvoiceInfoFields" required="false"
               description="Boolean to indicate if Invoice Info PREQ specific fields should be displayed" %>
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="fullDocumentEntryCompleted" value="${not empty KualiForm.editingMode['fullDocumentEntryCompleted']}" />
 <c:set var="purchaseOrderAttributes" value="${DataDictionary.PurchaseOrderDocument.attributes}" />
 <c:set var="editPreExtract"	value="${(not empty KualiForm.editingMode['editPreExtract'])}" />
