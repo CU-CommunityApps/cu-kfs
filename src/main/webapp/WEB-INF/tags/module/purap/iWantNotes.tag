@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 --%>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <%@ attribute name="displayTopicFieldInNotes" required="false"
               description="Whether to display the note topic column in the table of notes." %>
@@ -59,7 +59,7 @@
 </c:if>
 
 <kul:tab tabTitle="${tabTitle}" defaultOpen="${!empty documentNotes or (not empty defaultOpen and defaultOpen)}"
-         tabErrorKey="${Constants.DOCUMENT_NOTES_ERRORS},attachmentFile" tabItemCount="${fn:length(documentNotes)}"
+         tabErrorKey="${KRADConstants.DOCUMENT_NOTES_ERRORS},attachmentFile" tabItemCount="${fn:length(documentNotes)}"
          transparentBackground="${transparentBackground}">
     <c:set var="notesAttributes" value="${DataDictionary.Note.attributes}"/>
     <div class="tab-container" id="G4">
@@ -143,7 +143,7 @@
                             <br/>
                             <html:select property="newNote.attachment.attachmentTypeCode">
                                 <html:optionsCollection
-                                        property="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
+                                        property="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"
                                         label="value" value="key"/>
                             </html:select>
                         </td>
@@ -243,7 +243,7 @@
                                                 <c:if test="${kfunc:canViewNoteAttachment(KualiForm.document, attachmentTypeCode)}">
                                                     <html:image
                                                             property="methodToCall.downloadBOAttachment.attachment[${status.index}]"
-                                                            src="${ConfigProperties.kr.externalizable.images.url}${kfunc:getAttachmentImageForUrl(mimeTypeCode)}"
+                                                            src="${ConfigProperties.externalizable.images.url}${kfunc:getAttachmentImageForUrl(mimeTypeCode)}"
                                                             title="download attachment" alt="download attachment"
                                                             style="padding:5px;margin-bottom:-10px;"
                                                             onclick="excludeSubmitRestriction=true"/>
@@ -264,7 +264,7 @@
                                     <td class="datacell">
                                         &nbsp;
                                         <c:set var="mapKey"
-                                               value="getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+                                               value="getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
                                         <c:set var="attachmentTypeFinderMap"
                                                value="${KualiForm.actionFormUtilMap[mapKey]}"/>
                                         <c:forEach items="${attachmentTypeFinderMap}" var="type">
@@ -283,7 +283,7 @@
 
                         <c:if test="${allowsNoteFYI}">
                             <td class="infoline">
-                                <c:if test="${!empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
+                                <c:if test="${!empty KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
                                     <kul:user
                                             userIdFieldName="${propPrefix}note[${status.index}].adHocRouteRecipient.id"
                                             userId="${note.adHocRouteRecipient.id}"
@@ -295,7 +295,7 @@
                                             fieldConversions="principalName:${propPrefix}note[${status.index}].adHocRouteRecipient.id,name:${propPrefix}note[${status.index}].adHocRouteRecipient.name"
                                             lookupParameters="${propPrefix}note[${status.index}].adHocRouteRecipient.id:principalName"/>
                                 </c:if>
-                                <c:if test="${empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
+                                <c:if test="${empty KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
                                     &nbsp;
                                 </c:if>
                             </td>
@@ -307,7 +307,7 @@
                                              title="Delete a Note" alt="Delete a Note"
                                              styleClass="tinybutton btn btn-red" value="Delete"/>
                             </c:if> &nbsp;
-                            <c:if test="${allowsNoteFYI && !empty KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
+                            <c:if test="${allowsNoteFYI && !empty KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
                                 <html:submit property="methodToCall.sendNoteWorkflowNotification.line${status.index}"
                                              title="Send FYI" alt="Send FYI" styleClass="tinybutton btn btn-default"
                                              value="Send"/>

@@ -28,7 +28,7 @@
                             <property name="inquiryFields">
                                 <list>
                                     <bean parent="InquiryCollectionDefinition" p:attributeName="names"
-                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.name.EntityNameBo"
+                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.name.EntityName"
                                           p:numberOfColumns="1">
                                         <property name="inquiryFields">
                                             <list>
@@ -57,7 +57,7 @@
                             <property name="inquiryFields">
                                 <list>
                                     <bean parent="InquiryCollectionDefinition" p:attributeName="addresses"
-                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.address.EntityAddressBo"
+                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.address.EntityAddress"
                                           p:numberOfColumns="1">
                                         <property name="inquiryFields">
                                             <list>
@@ -88,7 +88,7 @@
                             <property name="inquiryFields">
                                 <list>
                                     <bean parent="InquiryCollectionDefinition" p:attributeName="phoneNumbers"
-                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.phone.EntityPhoneBo"
+                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.phone.EntityPhone"
                                           p:numberOfColumns="1">
                                         <property name="inquiryFields">
                                             <list>
@@ -115,7 +115,7 @@
                             <property name="inquiryFields">
                                 <list>
                                     <bean parent="InquiryCollectionDefinition" p:attributeName="emailAddresses"
-                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.email.EntityEmailBo"
+                                          p:businessObjectClass="org.kuali.kfs.kim.impl.identity.email.EntityEmail"
                                           p:numberOfColumns="1">
                                         <property name="inquiryFields">
                                             <list>

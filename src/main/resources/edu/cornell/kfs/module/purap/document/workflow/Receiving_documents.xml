@@ -72,7 +72,7 @@
         </role>
         <join name="Join" />
         <simple name="NoOp">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
       </routeNodes>
     </documentType>

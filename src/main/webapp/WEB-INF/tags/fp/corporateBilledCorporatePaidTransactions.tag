@@ -7,7 +7,7 @@
               description="Map of accounting line fields which this user is allowed to edit" %>
 
 <c:set var="columnCountUntilAmount" value="8" />
-<c:set var="columnCount" value="${columnCountUntilAmount + 1 + (KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] ? 1 : 0)}" />
+<c:set var="columnCount" value="${columnCountUntilAmount + 1 + (KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] ? 1 : 0)}" />
 <c:set var="accountingLineAttributes" value="${DataDictionary['TargetAccountingLine'].attributes}" />
 
 <kul:tab tabTitle="Accounting Lines" defaultOpen="true" tabErrorKey="${KFSConstants.TARGET_ACCOUNTING_LINE_ERROR_PATTERN},document.transactionEntries*"
@@ -69,7 +69,7 @@
           </td>
           <th colspan="2"> <div align="left">
 		  <c:choose>
-			<c:when test="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}">
+			<c:when test="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}">
 				<a href="${KualiForm.disputeURL}" target="_blank"><img src="${ConfigProperties.externalizable.images.url}buttonsmall_dispute.gif"/></a>
 			</c:when>
 			<c:otherwise>&nbsp;</c:otherwise>

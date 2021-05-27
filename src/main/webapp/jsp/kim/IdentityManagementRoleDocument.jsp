@@ -21,7 +21,7 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <c:set var="inquiry" scope="request" value="${KualiForm.inquiry}" />
-<c:set var="readOnly" scope="request" value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] || inquiry}" />
+<c:set var="readOnly" scope="request" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] || inquiry}" />
 <c:set var="readOnlyAssignees" scope="request" value="${!KualiForm.canAssignRole || readOnly}" />
 <c:set var="canModifyAssignees" scope="request" value="${KualiForm.canModifyAssignees && !readOnlyAssignees}" />
 <c:set var="editingDocument" scope="request" value="${KualiForm.document.editing}" />

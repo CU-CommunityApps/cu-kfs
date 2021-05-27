@@ -18,11 +18,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <%@ attribute name="active" required="true" description="The selector used to find the body element." %>
 
-<c:if test="${active && (empty KualiForm.documentActions || !KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT])}">
+<c:if test="${active && (empty KualiForm.documentActions || !KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT])}">
     <c:set var="active" value="false"/>
 </c:if>
 

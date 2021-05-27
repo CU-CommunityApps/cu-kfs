@@ -25,10 +25,10 @@
                   htmlFormAction="purapPaymentRequest" renderMultipart="true"
                   showTabButtons="true">
 
-    <c:set var="canEdit" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
-    <c:set var="canSave" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SAVE]}" scope="request"/>
+    <c:set var="canEdit" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
+    <c:set var="canSave" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SAVE]}" scope="request"/>
     <c:set var="fullEntryMode"
-           value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"
+           value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"
            scope="request"/>
     <c:set var="displayInitTab" value="${KualiForm.editingMode['displayInitTab']}" scope="request"/>
     <c:set var="taxInfoViewable" value="${KualiForm.editingMode['taxInfoViewable']}" scope="request"/>
