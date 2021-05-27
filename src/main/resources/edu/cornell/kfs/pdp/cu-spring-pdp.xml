@@ -28,25 +28,22 @@
                            
    
 
-     <bean id="cu-pdp" parent="pdpModuleConfiguration-parentBean" >
+     <bean id="pdpModuleConfiguration" parent="pdpModuleConfiguration-parentBean" >
         <property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.pdp</value>
             </list>
         </property>
         <property name="dataDictionaryPackages">
-            <list>
+            <list merge="true">
                 <value>classpath:edu/cornell/kfs/pdp/businessobject/datadictionary/*.xml</value>
                 <value>classpath:edu/cornell/kfs/pdp/document/datadictionary/*.xml</value>
             </list>
         </property>
         <property name="databaseRepositoryFilePaths">
-            <list>
+            <list merge="true">
                 <value>edu/cornell/kfs/pdp/cu-ojb-pdp.xml</value>
             </list>
-        </property>
-        <property name="scriptConfigurationFilePaths">
-            <list/>
         </property>
         <property name="jobNames">
             <list merge="true">
@@ -58,10 +55,6 @@
                 <value>${staging.directory}/pdp</value>
             </list>
         </property>
-    </bean>
-    
-    <bean id="cu-pdpModuleService" parent="pdpModuleService-parentBean">
-        <property name="moduleConfiguration" ref="cu-pdp"/>
     </bean>
 
     <bean id="pdpGlPendingTransactionService" parent="pdpGlPendingTransactionService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl" >
@@ -199,7 +192,7 @@
     
     <bean id="payeeACHAccountDocumentService" parent="payeeACHAccountDocumentService-parentBean" />
     <bean id="payeeACHAccountDocumentService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountDocumentServiceImpl">
-      <property name="configurationService" ref="kualiConfigurationService" />
+      <property name="configurationService" ref="configurationService" />
       <property name="dataDictionaryService" ref="dataDictionaryService" />
       <property name="documentService" ref="documentService" />
       <property name="emailService" ref="emailService" />

@@ -26,13 +26,17 @@
     </bean>
 
     <bean id="kimAuthenticationService" class="edu.cornell.kfs.kim.impl.identity.CUWebAuthAuthenticationService"
-          p:useHttpHeaders="${cynergy.cuwal.useHttpHeaders}"/>
+          p:useHttpHeaders="${cu.cuwal.useHttpHeaders}"/>
 
     <bean id="responsibilityInternalService"
-          class="edu.cornell.kfs.kim.impl.responsibility.CuResponsibilityInternalServiceImpl"/>
+          class="edu.cornell.kfs.kim.impl.responsibility.CuResponsibilityInternalServiceImpl"
+          p:businessObjectService-ref="businessObjectService"
+          p:responsibilityChangeQueue-ref="responsibilityChangeQueue"
+          p:responsibilityService-ref="kimResponsibilityService"/>
 
     <bean id="kfs.documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
-          class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>
+          class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"
+          parent="kfs.documentTypePermissionTypeService"/>
 
     <bean id="kimGroupService" class="edu.cornell.kfs.kim.impl.group.CuGroupServiceImpl"
           p:businessObjectService-ref="businessObjectService"
@@ -41,11 +45,11 @@
     <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"
           class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"/>
 
-    <bean id="groupLookupable" class="org.kuali.kfs.kim.lookup.GroupLookupableImpl"
-          parent="cf.kualiLookupable" scope="prototype">
+    <bean id="groupLookupable" class="org.kuali.kfs.kim.lookup.GroupLookupableImpl" parent="kualiLookupable"
+          scope="prototype"  p:configurationService-ref="configurationService">
         <property name="lookupableHelperService">
             <bean class="edu.cornell.kfs.kim.lookup.CuGroupLookupableHelperServiceImpl"
-                  parent="cf.lookupableHelperService">
+                  parent="lookupableHelperService">
             </bean>
         </property>
     </bean>

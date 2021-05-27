@@ -292,10 +292,10 @@
 	
  	<bean id="invoiceFrequencyValuesFinder"
           class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder"
-          p:keyValuesService-ref="keyValuesService"/>
+          p:keyValuesService-ref="grl.keyValuesService"/>
     <bean id="invoiceTypeValuesFinder"
           class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder"
-          p:keyValuesService-ref="keyValuesService"/>
+          p:keyValuesService-ref="grl.keyValuesService"/>
       
 </beans>
 

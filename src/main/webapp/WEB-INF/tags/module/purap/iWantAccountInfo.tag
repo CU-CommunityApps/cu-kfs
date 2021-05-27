@@ -6,7 +6,7 @@
 
 <c:set var="hasAccounts" value="${fn:length(KualiForm.document.accounts) > 0}"/>
 <c:set var="accountAttributes" value="${DataDictionary.IWantAccount.attributes}"/>
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 <c:set var="accountsNbr" value="${fn:length(KualiForm.document.accounts)}"/>
 <c:set var="nbrOfItems" value="${fn:length(KualiForm.document.items)}"/>
 <c:set var="mainColumnCount" value="10"/>
@@ -49,7 +49,7 @@
             <c:if test="${not empty favoriteAccountsFinder}">
                 <%-- Use the ActionFormUtilMap's custom method-invoking feature to retrieve the user's favorite accounts. --%>
                 <c:set var="optionsMapMethodCallString"
-                       value="getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${favoriteAccountsFinder}"/>
+                       value="getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${favoriteAccountsFinder}"/>
                 <c:set var="favoriteAccountsValues" value="${KualiForm.actionFormUtilMap[optionsMapMethodCallString]}"/>
                 <c:if test="${not empty favoriteAccountsValues && fn:length(favoriteAccountsValues) > 1}">
                     <tr>

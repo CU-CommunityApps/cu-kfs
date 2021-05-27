@@ -30,7 +30,7 @@
     <c:set var="assetAttributes" value="${DataDictionary.Asset.attributes}"/>
     <c:set var="assetOrgAttributes" value="${DataDictionary.AssetOrganization.attributes}"/>
     <c:set var="organizationAttributes" value="${DataDictionary.Organization.attributes}"/>
-    <c:set var="readOnly" value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+    <c:set var="readOnly" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
     <c:set var="accountsCanCrossCharts" value="<%=SpringContext.getBean(AccountService.class).accountsCanCrossCharts()%>"/>
     <c:set var="readOnlyChartCode" value="${readOnly or !accountsCanCrossCharts}"/>
 
@@ -168,10 +168,10 @@
                         <c:if test="${not readOnly}">
                             &nbsp;
                             <input type="hidden" name="docType" value="TF"/>
-                            <kul:lookup boClassName="org.kuali.rice.kew.impl.document.search.DocumentSearchCriteriaBo"
+                            <kul:lookup boClassName="org.kuali.kfs.kew.impl.document.search.DocumentSearchCriteriaBo"
                                         fieldConversions="documentId:document.transferOfFundsFinancialDocumentNumber"
                                         lookupParameters="docType:documentTypeName,document.transferOfFundsFinancialDocumentNumber:documentId"
-                                        baseLookupUrl="${ConfigProperties.workflow.url}/DocumentSearch.do"/>
+                                        baseLookupUrl="${ConfigProperties.application.url}/DocumentSearch.do"/>
                         </c:if>
                     </td>
                 </tr>

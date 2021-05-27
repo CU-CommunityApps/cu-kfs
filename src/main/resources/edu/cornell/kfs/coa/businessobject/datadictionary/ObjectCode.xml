@@ -348,9 +348,9 @@
   
     <bean id="federalFundedCodeValuesFinder"
           class="org.kuali.kfs.coa.businessobject.options.FederalFundedCodeValuesFinder"
-          p:keyValuesService-ref="keyValuesService"/>
+          p:keyValuesService-ref="grl.keyValuesService"/>
     <bean id="mandatoryTransferEliminationCodeValuesFinder"
           class="org.kuali.kfs.coa.businessobject.options.MandatoryTransferEliminationCodeValuesFinder"
-          p:keyValuesService-ref="keyValuesService"/>
+          p:keyValuesService-ref="grl.keyValuesService"/>
 </beans>
     

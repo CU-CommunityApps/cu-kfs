@@ -8,13 +8,15 @@
     <module name="SuppressionFilter">
         <property name="file" value="${config_loc}/checkstyle-suppressions.xml"/>
     </module>
+    <!-- This one enables annotations to disable a rule for a scope -->
+    <module name="SuppressWarningsFilter" />
     <module name="FileTabCharacter">
         <!-- This may be somewhat redundant with the resourceIncludes property in the checkstyle plugin config in the pom,
              but it seemed to be necessary in order for the Checkstyle-IDEA plugin to review these extensions but not .dat files -->
         <property name="fileExtensions" value="java,xml,properties"/>
     </module>
     <module name="NewlineAtEndOfFile">
-        <property name="fileExtensions" value="css, csv, dat, dtd, groovy, handlers, html, java, jrxml, js, json, jsp,
+        <property name="fileExtensions" value="css, csv, dat, dtd, handlers, html, java, jrxml, js, json, jsp,
             properties, rb, schemas, sql, readme, tag, txt, vm, xml, xsd"/>
     </module>
     <module name="TreeWalker">
@@ -44,10 +46,10 @@
         <module name="GenericWhitespace"/>
         <module name="HideUtilityClassConstructor"/>
         <!--
-            Check that none of the following imports have found their way into the Kuali Financials code. These are
-            generally obsolete libraries that have been replaced by newer versions or something better. However, they
-            are often included by maven as transitive dependencies (from Rice, OJB, etc.) so it is fairly easy as a
-            developer to inadvertently include them. This configuration is meant to prevent that.
+            The following packages are considered illegal within the KFS codebase; no classes contained in these
+            (sub-)packages can be imported. These are generally obsolete libraries that have been replaced by newer
+            versions or something better; however, they are often included by Maven as transitive dependencies
+            (from Rice, OJB, etc.) so it is fairly easy as a developer to inadvertently include them.
 
             aj.org.objectweb.asm	                aspectj - removed rice transitive dependency
             com.google.common	                    guava - removed from financials, rice transitive dependency
@@ -69,24 +71,39 @@
             org.eclipse.persistence	                unused in financials, rice transitive dependency, includes Assert class
             org.hsqldb	                            unused in financials, ojb transitive dependency, includes ArrayUtils class
             org.jdom	                            removed from financials, rice transitive dependency
-            org.kuali.rice.location                 replaced in financials, rice transitive dependency
+            org.kuali.rice                          pulled into financials, replaced with org.kuali.kfs
             org.objectweb.asm.signature	            aspectj - removed rice transitive dependency
             org.w3c.dom.html	                    xerces / xml related - replaced by java xml handling
             org.apache.log4j	                    log4j version 1 package - replaced by version 2
+
+
+            The following classes are considered illegal within the KFS codebase; they cannot be imported. These
+            classes live in otherwise legal (sub-)packages; however, they generally contain functionality similar to
+            another legal class and it was decided to prefer the other class.
+
+            org.springframework.util.StringUtils     Use commons-lang3's StringUtils.
+        -->
+        <!--
+               For KEW, temporarily allowing the following imports
+                    com.google.common,
+                    org.apache.commons.dbcp,
+                    org.apache.commons.pool
+               These will be addresses by separate jiras and re-enabled shortly
         -->
         <module name="IllegalImport">
+            <property name="illegalClasses"
+                      value="org.springframework.util.StringUtils,
+                        org.apache.log4j.Logger"
+            />
             <property name="illegalPkgs"
                       value="aj.org.objectweb.asm,
-                        com.google.common,
                         com.google.thirdparty,
                         com.sun.org.apache.xerces.internal,
                         com.sun.org.apache.xml.internal,
                         org.apache.commons.collections,
-                        org.apache.commons.dbcp,
                         org.apache.commons.digester,
                         org.apache.commons.lang,
                         org.apache.commons.logging,
-                        org.apache.commons.pool,
                         org.apache.commons.transaction,
                         org.apache.html.dom,
                         org.apache.taglibs.standard,
@@ -97,7 +114,7 @@
                         org.eclipse.persistence,
                         org.hsqldb,
                         org.jdom,
-                        org.kuali.rice.location,
+                        org.kuali.rice,
                         org.objectweb.asm.signature,
                         org.w3c.dom.html,
                         org.apache.log4j"
@@ -150,6 +167,7 @@
         <module name="StringLiteralEquality"/>
         <module name="SuperClone"/>
         <module name="SuperFinalize"/>
+        <module name="SuppressWarningsHolder" />
         <module name="ThrowsCount"/>
         <module name="TrailingComment"/>
         <module name="TypecastParenPad"/>

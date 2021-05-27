@@ -8,44 +8,36 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="cu-vnd" parent="vndModuleConfiguration-parentBean">
-		
+	<bean id="vndModuleConfiguration" parent="vndModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.vnd</value>
             </list>
         </property>
 		<property name="dataDictionaryPackages">
-			<list merge ="true">
+			<list merge="true">
                 <value>classpath:edu/cornell/kfs/vnd/businessobject/datadictionary/*.xml</value>
                 <value>classpath:edu/cornell/kfs/vnd/document/datadictionary/*.xml</value>
 			</list>
 		</property>
 		<property name="databaseRepositoryFilePaths">
-			<list merge ="true">
+			<list merge="true">
 				<value>edu/cornell/kfs/vnd/cu-ojb-vnd.xml</value>
 			</list>
 		</property>
-		<property name="scriptConfigurationFilePaths">
-			<list/>
-		</property>
 		<property name="jobNames">
-			<list>
+			<list merge="true">
 				<value>commodityCodeUpdateJob</value>
 				<value>vendorInactivateConvertBatchJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
-          <list>
-            <value>${reports.directory}/vnd</value>
+          <list merge="true">
             <value>${staging.directory}/vnd</value>
           </list>
         </property>
 	</bean>
 
-	<bean id="cu-vndModuleService" parent="vndModuleService-parentBean">
-	 	<property name="moduleConfiguration" ref="cu-vnd"/>
-	</bean>
   <bean id="vendorDao" parent="platformAwareDao" class="edu.cornell.kfs.vnd.dataaccess.impl.CuVendorDaoOjb" />
 
 	<bean id="commodityCodeUpdateService" class="edu.cornell.kfs.vnd.batch.service.impl.CommodityCodeUpdateServiceImpl">
@@ -65,7 +57,7 @@
 			<ref bean="businessObjectService" />
 		</property>
 		<property name="configurationService">
-			<ref bean="kualiConfigurationService" />
+			<ref bean="configurationService" />
 		</property>
 		<property name="commodityCodeReportWriterService">
 			<ref bean="commodityCodeReportWriterService" />
