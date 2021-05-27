@@ -103,20 +103,20 @@
 		        </split>
 		        
 				<simple name="NoOpTaxReview">
-					<type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+					<type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
 				</simple>
 				<simple name="NoOpTravelReview">
-					<type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+					<type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
 				</simple>
 				<simple name="NoOpAwardReview">
-					<type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+					<type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
 				</simple>
 				<simple name="NoOpCampusReview">
-					<type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+					<type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
 				</simple>
 				<simple name="NoOp">
 		          <type>
-		            org.kuali.rice.kew.engine.node.NoOpNode
+		            org.kuali.kfs.kew.engine.node.NoOpNode
 		          </type>
 		        </simple>
 		        

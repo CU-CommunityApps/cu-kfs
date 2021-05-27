@@ -113,7 +113,7 @@
                             readOnly="true" />
                     &nbsp;&nbsp;&nbsp;
                     <c:if test="${!empty KualiForm.document.invoiceGeneralDetail.proposalNumber
-							&& KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]
+							&& KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]
 							&& empty KualiForm.document.invoiceMilestones
 							&& empty KualiForm.document.invoiceBills}">
                         <html:submit

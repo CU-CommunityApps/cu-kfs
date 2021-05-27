@@ -28,7 +28,7 @@
           class="edu.cornell.kfs.fp.businessobject.options.CuCurrencyTypeValuesFinder"/>
           
     <bean id="bankAccountTypeValuesFinder"
-          class="org.kuali.kfs.fp.businessobject.options.BankAccountTypeValuesFinder"/>
+          class="edu.cornell.kfs.fp.businessobject.options.CuBankAccountTypeValuesFinder"/>
     
     <bean id="requisitionAttachmentTypeValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.RequisitionAttachmentTypeValuesFinder"/>

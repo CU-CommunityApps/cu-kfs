@@ -27,7 +27,7 @@
 <c:set var="purchaseOrderAttributes" value="${DataDictionary.PurchaseOrderDocument.attributes}"/>
 <c:set var="purchaseOrderStatusAttributes" value="${DataDictionary.PurchaseOrderStatus.attributes}"/>
 
-<c:set var="fullEntryMode" value="${ KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+<c:set var="fullEntryMode" value="${ KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 
 <kul:documentPage showDocumentInfo="true"
                   documentTypeName="ElectronicInvoiceRejectDocument"

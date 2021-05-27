@@ -20,7 +20,7 @@
 --%>
 <%@ tag import="java.util.ArrayList" %>
 <%@ tag import="java.util.Map" %>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 <%@ attribute name="property" required="true" description="The property being rendered." %>
 <%@ attribute name="attributeEntry" required="true" type="java.util.Map" description="The Map of data dictionary attributes about the property to render a control for." %>
 <%@ attribute name="onblur" required="false" description="If set, this will be used as the onblur method on the control." %>
@@ -99,7 +99,7 @@ if (attributeEntry == null) {
 <%-- Define variable that will hold the Title of the html control --%>
 <c:set var="accessibleTitle" value="${attributeEntry.label}"/>
 <c:if test="${(attributeEntry.required == true || forceRequired) && readOnly != true}">
-<c:set var="accessibleTitle" value="${Constants.REQUIRED_FIELD_SYMBOL} ${accessibleTitle}"/>
+<c:set var="accessibleTitle" value="${KRADConstants.REQUIRED_FIELD_SYMBOL} ${accessibleTitle}"/>
   </c:if>
   <c:if test="${!(empty accessibilityHint)}">
 <c:set var="accessibleTitle" value="${accessibleTitle} ${accessibilityHint}"/>
@@ -165,10 +165,10 @@ if (attributeEntry == null) {
                <c:set var="keyLabelMapEntries" value="<%=java.util.Collections.EMPTY_SET%>"/>
                <c:choose>
 	               <c:when test="${not empty businessObjectClass}">
-	                 <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
+	                 <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
 	               </c:when>
 	               <c:otherwise>
-	                 <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+	                 <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
 	               </c:otherwise>
                </c:choose>
              </c:when>
@@ -201,16 +201,16 @@ if (attributeEntry == null) {
               if (methodAndParms.length() > 0) {
 			   	      collection = (java.util.List) TagUtils.lookup(pageCtx, "org.apache.struts.taglib.html.BEAN", methodAndParms, null);
               } else {
-                collection = new ArrayList<org.kuali.rice.core.api.util.KeyValue>();
+                collection = new ArrayList<org.kuali.kfs.core.api.util.KeyValue>();
                 for (Map.Entry<String, String> entry : ((java.util.Set<Map.Entry<String, String>>)keyLabelMapEntries)) {
-                  collection.add(new org.kuali.rice.core.api.util.ConcreteKeyValue(entry));
+                  collection.add(new org.kuali.kfs.core.api.util.ConcreteKeyValue(entry));
                 }
               }
 
 			   	    if(collection != null && collection.size() > 0) {
 				   	  for (Object val : propertyValue) {
                 for (Object obj : collection) {
-                  org.kuali.rice.core.api.util.KeyValue pair = (org.kuali.rice.core.api.util.KeyValue) obj;
+                  org.kuali.kfs.core.api.util.KeyValue pair = (org.kuali.kfs.core.api.util.KeyValue) obj;
 					   	    if(pair.getKey() != null && pair.getKey().equals(val)) {
 					   	      if (!selectedOptionDescription.trim().equals("")) {
 					   	        selectedOptionDescription += "<br />";
@@ -271,13 +271,13 @@ if (attributeEntry == null) {
             <html:select styleId="${property}" property="${property}" title="${accessibleTitle}" tabindex="${tabindex}" style="${textStyle}" disabled="${disableField}" onblur="${onblur}" onchange="${onchange}" styleClass="${styleClass}">
               <c:choose>
                 <c:when test="${not empty businessObjectClass}">
-                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
+                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
                   <html:optionsCollection property="${methodAndParms}" label="value" value="key"/>
                 </c:when>
               	<c:otherwise>
                   <c:choose>
                     <c:when test="${not empty finderClass}">
-                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
                       <html:optionsCollection property="${methodAndParms}" label="value" value="key"/>
                     </c:when>
                     <c:when test="${not empty attributeEntry.keyLabelMap}">
@@ -286,7 +286,7 @@ if (attributeEntry == null) {
                       </c:forEach>
                     </c:when>
                     <c:otherwise>
-                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
                       <html:optionsCollection property="${methodAndParms}" label="value" value="key"/>
                     </c:otherwise>
                   </c:choose>
@@ -303,13 +303,13 @@ if (attributeEntry == null) {
 			<html:select styleId="${property}" property="${property}" title="${accessibleTitle}" tabindex="${tabindex}" style="${textStyle}" size="${attributeEntry.control.size}" disabled="${disableField}" onblur="${onblur}" onchange="${onchange}" styleClass="${styleClass}" multiple="multiple" >
 			  <c:choose>
               	<c:when test="${not empty businessObjectClass}">
-                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
+                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
                   <html:optionsCollection property="${methodAndParms}" label="value" value="key"/>
                 </c:when>
               	<c:otherwise>
                   <c:choose>
                     <c:when test="${not empty finderClass}">
-                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
                       <html:optionsCollection property="${methodAndParms}" label="value" value="key"/>
                     </c:when>
                     <c:when test="${not empty attributeEntry.keyLabelMap}">
@@ -318,7 +318,7 @@ if (attributeEntry == null) {
                       </c:forEach>
                     </c:when>
                     <c:otherwise>
-                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+                      <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
                       <html:optionsCollection property="${methodAndParms}" label="value" value="key"/>
                     </c:otherwise>
                   </c:choose>
@@ -338,19 +338,19 @@ if (attributeEntry == null) {
 
 		    <c:choose>
       		<c:when test="${not empty businessObjectClass}">
-            	<c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
+            	<c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${businessObjectClass}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.keyAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.labelAttribute}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeBlankRow}${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${attributeEntry.control.includeKeyInLabel}"/>
       	  	</c:when>
       	  	<c:otherwise>
               <c:choose>
                 <c:when test="${not empty finderClass}">
-                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
 
                 </c:when>
                 <c:when test="${not empty attributeEntry.keyLabelMap}">
                   <c:set var="methodAndParms" value=""/>
                 </c:when>
                 <c:otherwise>
-                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${Constants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
+                  <c:set var="methodAndParms" value="actionFormUtilMap.getOptionsMap${KRADConstants.ACTION_FORM_UTIL_MAP_METHOD_PARM_DELIMITER}${finderClass}"/>
 
                 </c:otherwise>
               </c:choose>
@@ -410,7 +410,7 @@ if (attributeEntry == null) {
   </c:if>
   <%-- datePicker icon --%>
   	<c:if test="${attributeEntry.control.text == true && (datePicker == true || (attributeEntry.control.datePicker == true && datePicker != false))}">
-        <img src="${ConfigProperties.kr.externalizable.images.url}cal.gif" id="${property}_datepicker" style="cursor: pointer;"
+        <img src="${ConfigProperties.externalizable.images.url}cal.gif" id="${property}_datepicker" style="cursor: pointer;"
              title="Date selector" alt="Date selector"
              onmouseover="this.style.backgroundColor='red';" onmouseout="this.style.backgroundColor='transparent';" />
              <script type="text/javascript">

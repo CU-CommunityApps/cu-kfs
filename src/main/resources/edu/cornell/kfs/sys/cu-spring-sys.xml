@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="cu-sys" parent="financialSystemModuleConfiguration-parentBean">
+	<bean id="financialSystemModuleConfiguration" parent="rsmartFinancialSystemModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.sys</value>
@@ -20,14 +20,8 @@
                 <value>classpath:edu/cornell/kfs/sys/document/datadictionary/*.xml</value>
 			</list>
 		</property>
-		<property name="fiscalYearMakers">
-			<list/>
-		</property>
-		<property name="scriptConfigurationFilePaths">
-			<list/>
-		</property>
 		<property name="databaseRepositoryFilePaths">
-            <list>
+            <list merge="true">
                 <value>edu/cornell/kfs/sys/cu-ojb-sys.xml</value>
             </list>
         </property>
@@ -47,11 +41,7 @@
 		</property>
 	</bean>
 	
-	<bean id="cu-financialSystemModuleService" parent="financialSystemModuleService-parentBean">
-	 	<property name="moduleConfiguration" ref="cu-sys"/>
-	</bean>
-
-    <bean id="CUKFSConstants" class="org.kuali.rice.core.api.util.collect.ConstantsMap">
+    <bean id="CUKFSConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap">
 		<property name="constantClass" value="edu.cornell.kfs.sys.CUKFSConstants" />
 	</bean>
 
@@ -260,7 +250,7 @@
 	</bean>
 	
 	<bean id="createDoneBatchFileLookupableHelperService" parent="createDoneBatchFileLookupableHelperService-parentBean" scope="prototype" />	
-	<bean id="createDoneBatchFileLookupableHelperService-parentBean" class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" abstract="true">
+	<bean id="createDoneBatchFileLookupableHelperService-parentBean" class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl" scope="prototype" parent="lookupableHelperService" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
 	
@@ -301,14 +291,11 @@
 				<ref bean="lockSECModuleStep"/>
 				<ref bean="lockCRModuleStep"/>
 				<ref bean="lockTAXModuleStep"/>
-				
 			</list>
 		</property>
 	</bean>
 
-	<bean id="lockCoreServiceModuleStep" parent="lockModuleStep">
-		<property name="namespaceCode" value="KR-CR"/>
-	</bean>
+	<bean id="lockCoreServiceModuleStep" class="edu.cornell.kfs.sys.batch.NoOpStep"/>
 
 	<bean id="lockSECModuleStep" parent="lockModuleStep">
 		<property name="namespaceCode" value="KFS-SEC"/>
@@ -333,9 +320,7 @@
 		</property>
 	</bean>
 
-	<bean id="unlockCoreServiceModuleStep" parent="unlockModuleStep">
-		<property name="namespaceCode" value="KR-CR"/>
-	</bean>
+	<bean id="unlockCoreServiceModuleStep" class="edu.cornell.kfs.sys.batch.NoOpStep"/>
 
 	<bean id="unlockSECModuleStep" parent="unlockModuleStep">
 		<property name="namespaceCode" value="KFS-SEC"/>
@@ -353,7 +338,7 @@
           scope="prototype"/>
     <bean id="batchFileLookupableHelperService-parentBean"
           class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl" scope="prototype"
-          parent="cf.lookupableHelperService" abstract="true" p:dateTimeService-ref="dateTimeService"
+          parent="lookupableHelperService" abstract="true" p:dateTimeService-ref="dateTimeService"
           p:batchFileAdminAuthorizationService-ref="batchFileAdminAuthorizationService"/>
           
     <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype"/>
@@ -417,8 +402,7 @@
           parent="excludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService-parentBean"/>
     <bean id="excludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService-parentBean" abstract="true"
           class="edu.cornell.kfs.sys.identity.ExcludeInitiatorAndSubmitterSeparationOfDutiesRoleTypeService"
-          p:workflowDocumentService-ref="rice.kew.workflowDocumentService"/>
-    <import resource="cu-spring-sys-bus-exports.xml"/>
+          p:workflowDocumentService-ref="workflowDocumentService"/>
 
     <bean id="cuGeneralLedgerPendingEntryService" parent="cuGeneralLedgerPendingEntryService-parentBean"/>
     <bean id="cuGeneralLedgerPendingEntryService-parentBean" parent="generalLedgerPendingEntryService-parentBean"

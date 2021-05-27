@@ -80,7 +80,7 @@
 			p:dataDictionaryService-ref="dataDictionaryService"
 			p:configurationService-ref="configurationService"
 			p:routeHeaderService-ref="enDocumentRouteHeaderService"
-			p:documentProcessingQueue-ref="rice.kew.documentProcessingQueue"
+			p:documentProcessingQueue-ref="documentProcessingQueue"
 			p:documentStatusCheckDelayMillis="1000"
 			p:maxStatusCheckAttempts="60"/>
 			
@@ -150,11 +150,11 @@
 			p:parameterService-ref="parameterService"/>
 			
 	<bean id="rassProposalProjectDirectorConverter" class="edu.cornell.kfs.rass.batch.RassProjectDirectorConverter"
-			p:personService-ref="personService" p:roleService-ref="kimRoleService"
+			p:personService-ref="personService" p:roleService-ref="roleService"
 			p:projectDirectorImplementationClass="org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector"
 			p:projectDirectorPrimaryIndicatorPropertyName="proposalPrimaryProjectDirectorIndicator"/>
 	<bean id="rassAwardProjectDirectorConverter" class="edu.cornell.kfs.rass.batch.RassProjectDirectorConverter"
-			p:personService-ref="personService" p:roleService-ref="kimRoleService"
+			p:personService-ref="personService" p:roleService-ref="roleService"
 			p:projectDirectorImplementationClass="org.kuali.kfs.module.cg.businessobject.AwardProjectDirector"
 			p:projectDirectorPrimaryIndicatorPropertyName="awardPrimaryProjectDirectorIndicator"/>
 

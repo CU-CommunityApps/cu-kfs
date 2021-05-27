@@ -1,6 +1,6 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 <c:set var="step" value="${KualiForm.step}"/>
 <c:set var="isAdHocApprover" value="${KualiForm.editingMode['completeOrder']}"/>
 <%-- TODO: We have to use a hard-coded 'A' since constants from KewApiConstants can't be accessed when KEW is not in LOCAL mode. Should we fix this? --%>
@@ -22,7 +22,7 @@
 
     <%-- Display "Document Overview" tab, if at the regular or customer data steps. --%>
     <c:if test="${isRegularStep or (step eq 'customerDataStep')}">
-        <kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${Constants.DOCUMENT_ERRORS}">
+        <kul:tabTop tabTitle="Document Overview" defaultOpen="true" tabErrorKey="${KRADConstants.DOCUMENT_ERRORS}">
             <purap:iWantDocumentOverview readOnly="${not fullEntryMode}"/>
             <purap:iWantCustomerData documentAttributes="${DataDictionary.IWantDocument.attributes}"/>
         </kul:tabTop>

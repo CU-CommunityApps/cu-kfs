@@ -60,7 +60,7 @@
                             <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="lineAmount"
                                   p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                             <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="5" p:propertyName="lineFlag"
-                                  p:formatterClass="org.kuali.rice.core.web.format.BooleanFormatter"/>
+                                  p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter"/>
                         </list>
                     </property>
                 </bean>

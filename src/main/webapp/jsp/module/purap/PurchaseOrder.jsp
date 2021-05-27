@@ -20,7 +20,7 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
-<c:set var="camsFullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
+<c:set var="camsFullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
 <c:set var="purchaseOrderPrintRequested" value="${KualiForm.purchaseOrderPrintRequested}"/>
 
 <kul:documentPage showDocumentInfo="true"
@@ -28,7 +28,7 @@
                   htmlFormAction="purapPurchaseOrder" renderMultipart="true"
                   showTabButtons="true">
 
-    <c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+    <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 
     <c:if test="${!empty KualiForm.editingMode['amendmentEntry']}">
         <c:set var="amendmentEntry" value="true" scope="request"/>
@@ -164,7 +164,7 @@
 
                 <purap:ponotesSciquest
                         notesBo="${KualiForm.document.notes}"
-                        noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
+                        noteType="${KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
                         attachmentTypesValuesFinder="${DataDictionary.PurchaseOrderDocument.attachmentTypesValuesFinder}">
                     <html:messages id="warnings" property="noteWarning" message="true">
                         &nbsp;&nbsp;&nbsp;<bean:write name="warnings"/><br><br>

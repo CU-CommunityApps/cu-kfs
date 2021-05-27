@@ -59,7 +59,7 @@
         </role>
         <join name="JoinRetiredAssetTransferredExternally" />
         <simple name="NoOpExternal">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <role name="OrganizationHierarchy">
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
