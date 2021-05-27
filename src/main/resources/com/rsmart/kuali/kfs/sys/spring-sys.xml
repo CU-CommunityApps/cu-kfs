@@ -49,7 +49,7 @@
        <property name="batchInputFileService" ref="batchInputFileService"/>
        <property name="dataDictionaryService" ref="dataDictionaryService"/>
        <property name="personService" ref="personService"/>
-       <property name="kualiConfigurationService" ref="kualiConfigurationService"/>
+       <property name="kualiConfigurationService" ref="configurationService"/>
        <property name="attachmentService" ref="attachmentService"/>
        <property name="reportGenerationService" ref="reportGenerationService"/>
        <property name="dateTimeService" ref="dateTimeService"/>

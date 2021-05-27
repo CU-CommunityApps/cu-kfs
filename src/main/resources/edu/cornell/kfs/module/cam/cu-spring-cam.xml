@@ -8,8 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="cu-cam" parent="camModuleConfiguration-parentBean">
-		
+	<bean id="camModuleConfiguration" parent="camModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.module.cam</value>
@@ -26,18 +25,8 @@
 				<value>edu/cornell/kfs/module/cam/cu-ojb-cam.xml</value>
 			</list>
 		</property>
-		<property name="fiscalYearMakers">
-			<list/>
-		</property>
-		<property name="scriptConfigurationFilePaths">
-			<list/>
-		</property>
 	</bean>
  	
-	<bean id="cu-camModuleService" parent="camModuleService-parentBean">
-	 	<property name="moduleConfiguration" ref="cu-cam"/>
-	</bean>
-	
  	<bean id="assetGlobalService"  parent="assetGlobalService-parentBean"
  	     class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetGlobalServiceImpl" />
  	<bean id="assetLookupableHelperService" parent="assetLookupableHelperService-parentBean"

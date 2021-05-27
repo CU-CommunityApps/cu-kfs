@@ -238,6 +238,13 @@
             <forward name="basic" path="/jsp/module/ar/ContractsGrantsInvoiceDocument.jsp"/>
         </action>
         
+        <!-- Override of maintenance document mapping to use a CU-specific action class. -->
+        <action path="/maintenance" name="KualiMaintenanceForm" attribute="KualiForm" scope="request"
+                parameter="methodToCall" validate="false" input="/WEB-INF/jsp/KualiMaintenanceDocument.jsp"
+                type="edu.cornell.kfs.sys.document.web.struts.CuFinancialMaintenanceDocumentAction">
+            <forward name="basic" path="/WEB-INF/jsp/KualiMaintenanceDocument.jsp" />
+        </action>
+        
     </action-mappings>
     
 </struts-config>

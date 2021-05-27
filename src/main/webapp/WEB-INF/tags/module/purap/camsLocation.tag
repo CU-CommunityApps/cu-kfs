@@ -27,7 +27,7 @@
 <%@ attribute name="poItemInactive" required="false" description="True if the PO item this is a part of is inactive"%>
 <!--  KFSPTS-1792 : allow FO to edit REQ capital asset tab add 'enableCa' in purCams.tag-->
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 
 <c:if test="${empty availability}">
     <c:set var="availability" value="${PurapConstants.CapitalAssetAvailability.EACH}"/>

@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <%@ attribute name="formAction" required="false" description="form action" %>
 
@@ -40,7 +40,7 @@
                                    buttonExtraParams=".anchor${currentTabIndex}"/>
     </c:if>
 
-    <input type="hidden" name="memberTableMetadata.${Constants.TableRenderConstants.PREVIOUSLY_SORTED_COLUMN_INDEX_PARAM}" value="${KualiForm.memberTableMetadata.columnToSortIndex}"/>
+    <input type="hidden" name="memberTableMetadata.${KRADConstants.TableRenderConstants.PREVIOUSLY_SORTED_COLUMN_INDEX_PARAM}" value="${KualiForm.memberTableMetadata.columnToSortIndex}"/>
     <input type="hidden" name="memberTableMetadata.sortDescending" value="${KualiForm.memberTableMetadata.sortDescending}"/>
     <input type="hidden" name="memberTableMetadata.viewedPageNumber" value="${KualiForm.memberTableMetadata.viewedPageNumber}"/>
     <table class="standard side-margins">
@@ -105,7 +105,7 @@
                   attributeEntry="${roleMemberAttributes.memberTypeCode}" 
                   onchange="changeMemberTypeCode(this.form)" disabled="${!canModifyAssignees}" />
                   <NOSCRIPT>
-                      <input type="image" tabindex="32768" name="methodToCall.changeMemberTypeCode" src="${ConfigProperties.kr.externalizable.images.url}tinybutton-refresh.gif" class="tinybutton" title="Click to refresh the page after changing the member type." alt="Click to refresh the page after changing the member type." />
+                      <input type="image" tabindex="32768" name="methodToCall.changeMemberTypeCode" src="${ConfigProperties.externalizable.images.url}tinybutton-refresh.gif" class="tinybutton" title="Click to refresh the page after changing the member type." alt="Click to refresh the page after changing the member type." />
                   </NOSCRIPT>              
               </div>
               <c:set var="bo" value="${KualiForm.memberBusinessObjectName}"/>
@@ -166,17 +166,14 @@
                       <kul:htmlControlAttribute property="member.qualifier(${qualifier.kimAttribute.id}).attrVal"  attributeEntry="${attrEntry}" readOnly="${!canModifyAssignees}" />
 
                       <c:if test="${canModifyAssignees}">
-                        <c:forEach var="widget" items="${attrDefinition.attributeField.widgets}" >
-                          <c:if test="${widget['class'].name == 'org.kuali.rice.core.api.uif.RemotableQuickFinder'}">
-                            <c:if test="${!empty widget.dataObjectClass and not readOnlyAssignees}">
-                              <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}" pathPrefix="member" attr="${widget}" />
-                            </c:if>
+                        <c:if test="${attrDefinition.quickFinder != null}" >
+                          <c:if test="${!empty attrDefinition.quickFinder.dataObjectClass and not readOnlyAssignees}">
+                            <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}"
+                                                 pathPrefix="member" attr="${attrDefinition.quickFinder}" />
                           </c:if>
-                        </c:forEach>
+                        </c:if>
                       </c:if>
-
-                      </div>
-
+                    </div>
                   </td>
               </c:forEach>
 
@@ -227,15 +224,14 @@
             <c:if test="${fn:length(member.roleRspActions) == 0}">
               <c:set var="rows" value="1"/>
             </c:if>
-            <%-- CU Customization: Change default inquiry class to PersonImpl --%>
             <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.identity.PersonImpl" />
             <c:set var="keyValue" value="principalId" />
             <c:if test='${member.memberTypeCode == "G"}'>
-              <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.GroupBo" />
+              <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.Group" />
               <c:set var="keyValue" value="id" />
             </c:if>
             <c:if test='${member.memberTypeCode == "R"}'>
-              <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.RoleBo" />
+              <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.Role" />
               <c:set var="keyValue" value="id" />
             </c:if>
 
@@ -292,13 +288,13 @@
                       <kul:htmlControlAttribute property="document.modifiedMembers[${statusMember.index}].qualifier(${qualifier.kimAttribute.id}).attrVal"  attributeEntry="${attrEntry}" readOnly="${attrReadOnly}" />
 
                       <c:if test="${!attrReadOnly}">
-                        <c:forEach var="widget" items="${attrDefinition.attributeField.widgets}" >
-                          <c:if test="${widget['class'].name == 'org.kuali.rice.core.api.uif.RemotableQuickFinder'}">
-                            <c:if test="${!empty widget.dataObjectClass and not readOnlyAssignees}">
-                              <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}" pathPrefix="document.modifiedMembers[${statusMember.index}]" attr="${widget}" />
-                            </c:if>
+                        <c:if test="${attrDefinition.quickFinder != null}" >
+                          <c:if test="${!empty attrDefinition.quickFinder.dataObjectClass and not readOnlyAssignees}">
+                            <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}"
+                                                 pathPrefix="document.modifiedMembers[${statusMember.index}]"
+                                                 attr="${attrDefinition.quickFinder}" />
                           </c:if>
-                        </c:forEach>
+                        </c:if>
                       </c:if>
                     </c:if>
                   </div>
@@ -365,15 +361,14 @@
           <c:if test="${fn:length(member.roleRspActions) == 0}">
             <c:set var="rows" value="1"/>
           </c:if>
-          <%-- CU Customization: Change default inquiry class to PersonImpl --%>
           <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.identity.PersonImpl" />
           <c:set var="keyValue" value="principalId" />
           <c:if test='${member.memberTypeCode == "G"}'>
-            <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.GroupBo" />
+            <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.Group" />
             <c:set var="keyValue" value="id" />
           </c:if>
           <c:if test='${member.memberTypeCode == "R"}'>
-            <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.RoleBo" />
+            <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.Role" />
             <c:set var="keyValue" value="id" />
           </c:if>
 
@@ -430,13 +425,13 @@
                     <kul:htmlControlAttribute property="document.searchResultMembers[${statusMember.index}].qualifier(${qualifier.kimAttribute.id}).attrVal"  attributeEntry="${attrEntry}" readOnly="${attrReadOnly}" />
 
                     <c:if test="${!attrReadOnly}">
-                      <c:forEach var="widget" items="${attrDefinition.attributeField.widgets}" >
-                        <c:if test="${widget['class'].name == 'org.kuali.rice.core.api.uif.RemotableQuickFinder'}">
-                          <c:if test="${!empty widget.dataObjectClass and not readOnlyAssignees}">
-                            <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}" pathPrefix="document.searchResultMembers[${statusMember.index}]" attr="${widget}" />
-                          </c:if>
+                      <c:if test="${attrDefinition.quickFinder != null}" >
+                        <c:if test="${!empty attrDefinition.quickFinder.dataObjectClass and not readOnlyAssignees}">
+                          <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}"
+                                               pathPrefix="document.searchResultMembers[${statusMember.index}]"
+                                               attr="${attrDefinition.quickFinder}" />
                         </c:if>
-                      </c:forEach>
+                      </c:if>
                     </c:if>
                   </c:if>
                 </div>
@@ -502,15 +497,14 @@
             <c:if test="${fn:length(member.roleRspActions) == 0}">  
                    <c:set var="rows" value="1"/>
             </c:if> 
-            <%-- CU Customization: Change default inquiry class to PersonImpl --%>
             <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.identity.PersonImpl" />
             <c:set var="keyValue" value="principalId" />
             <c:if test='${member.memberTypeCode == "G"}'>
-                <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.GroupBo" />
+                <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.Group" />
                 <c:set var="keyValue" value="id" />
             </c:if>
             <c:if test='${member.memberTypeCode == "R"}'>
-                <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.RoleBo" />
+                <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.Role" />
                 <c:set var="keyValue" value="id" />
             </c:if>
 
@@ -571,13 +565,13 @@
                         <kul:htmlControlAttribute property="document.members[${statusMember.index}].qualifier(${qualifier.kimAttribute.id}).attrVal"  attributeEntry="${attrEntry}" readOnly="${attrReadOnly}" />
 
                         <c:if test="${!attrReadOnly}">
-                          <c:forEach var="widget" items="${attrDefinition.attributeField.widgets}" >
-                            <c:if test="${widget['class'].name == 'org.kuali.rice.core.api.uif.RemotableQuickFinder'}">
-                              <c:if test="${!empty widget.dataObjectClass and not readOnlyAssignees}">
-                                <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}" pathPrefix="document.members[${statusMember.index}]" attr="${widget}" />
-                              </c:if>
+                          <c:if test="${attrDefinition.quickFinder != null}" >
+                            <c:if test="${!empty attrDefinition.quickFinder.dataObjectClass and not readOnlyAssignees}">
+                              <kim:attributeLookup attributeDefinitions="${KualiForm.document.definitions}"
+                                                   pathPrefix="document.members[${statusMember.index}]"
+                                                   attr="${attrDefinition.quickFinder}" />
                             </c:if>
-                          </c:forEach>
+                          </c:if>
                         </c:if>
                       </c:if>
                     </div>

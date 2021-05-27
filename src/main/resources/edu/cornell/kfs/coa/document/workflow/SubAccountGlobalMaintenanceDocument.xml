@@ -42,7 +42,7 @@
         </role>
         <join name="JoinRequiresCGResponsibilityApproval" />
         <simple name="NoOpSubAccountCGResponsibilityApproval">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
       </routeNodes>
     </documentType>

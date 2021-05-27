@@ -33,7 +33,7 @@
           <activationType>P</activationType>
         </role>
         <simple name="NoOpPdpApproval">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
         </simple>
         <join name="JoinPdpApproval"/>
       </routeNodes>
