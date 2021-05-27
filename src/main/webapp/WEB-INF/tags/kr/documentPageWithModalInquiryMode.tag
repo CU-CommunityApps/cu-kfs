@@ -2,7 +2,7 @@
     Custom variant of documentPage that supports showing the document content as a modal inquiry,
     if the document is set up to be used as an inquiry page in certain cases.
 --%>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <%@ attribute name="modalInquiryMode" required="true" description="Boolean value of whether this page should be rendered as an inquiry within a modal popup box." %>
 <%@ attribute name="documentTypeName" required="true" description="The name of the document type this document page is rendering." %>

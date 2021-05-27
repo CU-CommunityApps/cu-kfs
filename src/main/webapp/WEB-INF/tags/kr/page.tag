@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <%@ attribute name="docTitle" required="true" description="The title to display for the page." %>
 <%@ attribute name="docTitleClass" required="false" description="The class added to the title of the page." %>
@@ -36,7 +36,6 @@
 
 <%-- for non-lookup pages --%>
 <%@ attribute name="headerTabActive" required="false" description="The name of the active header tab, if header navigation is used." %>
-<%@ attribute name="feedbackKey" required="false" description="application resources key that contains feedback contact address only used when lookup attribute is false"%>
 <%@ attribute name="defaultMethodToCall" required="false" description="The name of default methodToCall on the action for this page." %>
 <%@ attribute name="errorKey" required="false" description="If present, this is the key which will be used to match errors that need to be rendered at the top of the page." %>
 <%@ attribute name="auditCount" required="false" description="The number of audit errors displayed on this page." %>
@@ -51,7 +50,7 @@
 <%@ attribute name="additionalBodyClass" required="false" description="Additional css class to add to the body tag."%>
 
 <%-- Is the screen an inquiry? --%>
-<c:set var="_isInquiry" value="${requestScope[Constants.PARAM_MAINTENANCE_VIEW_MODE] eq Constants.PARAM_MAINTENANCE_VIEW_MODE_INQUIRY}" />
+<c:set var="_isInquiry" value="${requestScope[KRADConstants.PARAM_MAINTENANCE_VIEW_MODE] eq KRADConstants.PARAM_MAINTENANCE_VIEW_MODE_INQUIRY}" />
 
 <!DOCTYPE html>
 <html:html>
@@ -99,7 +98,7 @@
 					<link href="kr/css/${KualiForm.navigationCss}" rel="stylesheet" type="text/css" />
 				</c:if>
 
-				<script language="JavaScript" type="text/javascript" src="${pageContext.request.contextPath}/kr/scripts/lookup.js"></script>
+				<script language="JavaScript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/lookup.js"></script>
 			</c:when>
 			<c:otherwise>
 				<c:forEach items="${additionalScriptFiles}" var="scriptFile" >
@@ -145,7 +144,7 @@
 				</c:if>
 				setTimeout(restoreScrollPosition, 1);
 			"
-			onKeyPress="return isReturnKeyAllowed('${Constants.DISPATCH_REQUEST_PARAMETER}.' , event);">
+			onKeyPress="return isReturnKeyAllowed('${KRADConstants.DISPATCH_REQUEST_PARAMETER}.' , event);">
 		</c:otherwise>
 	</c:choose>
 
@@ -156,7 +155,7 @@
 				  renderMultipart="${renderMultipart}" showTabButtons="${showTabButtons}" headerDispatch="${headerDispatch}"
 				  defaultMethodToCall="${defaultMethodToCall}" lookup="${lookup}" extraTopButtons="${extraTopButtons}"
 				  headerMenuBar="${headerMenuBar}" headerTabActive="${headerTabActive}" alternativeHelp="${alternativeHelp}"
-				  feedbackKey="${feedbackKey}" errorKey="${errorKey}" auditCount="${auditCount}"
+				  errorKey="${errorKey}" auditCount="${auditCount}"
 				  documentWebScope="${documentWebScope}" maintenanceDocument="${maintenanceDocument}"
 				  renderInnerDiv="${renderInnerDiv}" cachingTimestamp="${cachingTimestamp}" openNav="${openNav}"
 				  additionalBodyClass="${additionalBodyClass}">

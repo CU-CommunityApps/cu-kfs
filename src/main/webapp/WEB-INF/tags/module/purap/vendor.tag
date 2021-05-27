@@ -38,12 +38,12 @@
 <%@ attribute name="purchaseOrderAwarded" required="false"
               description="Boolean to indicate if this is a PO that has been awarded" %>              
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="vendorReadOnly" value="${(not empty KualiForm.editingMode['lockVendorEntry'])}" />
 <c:set var="amendmentEntry" value="${(not empty KualiForm.editingMode['amendmentEntry'])}" />
 <c:set var="lockB2BEntry" value="${(not empty KualiForm.editingMode['lockB2BEntry'])}" />
 <c:set var="editPreExtract"	value="${(not empty KualiForm.editingMode['editPreExtract'])}" />
-<c:set var="currentUserCampusCode" value="${sessionScope['cf.UserSession'].person.campusCode}" />
+<c:set var="currentUserCampusCode" value="${sessionScope['userSession'].person.campusCode}" />
 <c:set var="restrictFullEntry" value="${(not empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="tabindexOverrideBase" value="30" />
 

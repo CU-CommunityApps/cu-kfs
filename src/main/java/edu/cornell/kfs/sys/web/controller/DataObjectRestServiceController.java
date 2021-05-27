@@ -71,7 +71,7 @@ import edu.cornell.kfs.sys.util.RestXmlUtil;
 @Controller
 public class DataObjectRestServiceController {
 
-    private static final String LOOKUPABLE_HELPER_SERVICE = "cf.lookupableHelperService";
+    private static final String LOOKUPABLE_HELPER_SERVICE = "lookupableHelperService";
     private static final String MAX_OBJECTS_TO_RETURN = "maxObjectsToReturn";
     private static final String LIMIT_BY_PARAMETER = "limitByParameter";
 

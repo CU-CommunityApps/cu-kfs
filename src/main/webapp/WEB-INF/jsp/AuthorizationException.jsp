@@ -21,7 +21,7 @@
 <%--
     Modified by Cornell University 2013-2016 to add custom error message.
 --%>
-<%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <c:set var="parameters"
        value="<%=request.getAttribute(\"org.kuali.kfs.kns.web.struts.action.AuthorizationExceptionAction\")%>"/>

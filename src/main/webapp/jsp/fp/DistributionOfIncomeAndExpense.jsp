@@ -43,7 +43,7 @@
         </sys-java:accountingLines>
     </kul:tab>
 
-    <c:set var="readOnly" value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}"/>
+    <c:set var="readOnly" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 
     <fp:capitalAccountingLines readOnly="${readOnly}"/>
 

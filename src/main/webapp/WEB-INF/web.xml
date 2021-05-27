@@ -69,7 +69,7 @@
 
     <filter>
         <filter-name>BootstrapFilter</filter-name>
-        <filter-class>org.kuali.rice.krad.web.filter.BootstrapFilter</filter-class>
+        <filter-class>org.kuali.kfs.krad.web.filter.BootstrapFilter</filter-class>
     </filter>
 
     <filter>
@@ -114,8 +114,6 @@
         <servlet-name>action</servlet-name>
         <servlet-name>dwr-invoker</servlet-name>
         <servlet-name>batchFileUpload</servlet-name>
-        <servlet-name>remote</servlet-name>
-        <servlet-name>goto</servlet-name>
         <url-pattern>/monitoring/*</url-pattern>
         <url-pattern>/purap/*</url-pattern>
         <url-pattern>/app/*</url-pattern>
@@ -128,8 +126,6 @@
         <servlet-name>action</servlet-name>
         <servlet-name>dwr-invoker</servlet-name>
         <servlet-name>batchFileUpload</servlet-name>
-        <servlet-name>remote</servlet-name>
-        <servlet-name>goto</servlet-name>
         <url-pattern>/monitoring/*</url-pattern>
         <url-pattern>/purap/*</url-pattern>
         <url-pattern>/app/*</url-pattern>
@@ -160,8 +156,6 @@
     <filter-mapping>
         <filter-name>UserLoginFilter</filter-name>
         <servlet-name>action</servlet-name>
-        <servlet-name>remote</servlet-name>
-        <servlet-name>goto</servlet-name>
         <url-pattern>/index.jsp</url-pattern>
         <url-pattern>/webapp/*</url-pattern>
     </filter-mapping>
@@ -214,15 +208,11 @@
     <!-- Listeners -->
 
     <listener>
-        <listener-class>org.kuali.kfs.krad.web.session.NonSerializableSessionListener</listener-class>
-    </listener>
-
-    <listener>
         <listener-class>org.kuali.kfs.sys.context.KFSInitializeListener</listener-class>
     </listener>
 
     <listener>
-        <listener-class>org.kuali.rice.core.web.listener.BootstrapListener</listener-class>
+        <listener-class>org.kuali.kfs.core.web.listener.BootstrapListener</listener-class>
     </listener>
 
     <listener>
@@ -272,41 +262,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>remoting</servlet-name>
-        <servlet-class>org.kuali.rice.ksb.messaging.servlet.KSBDispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>classpath:org/kuali/rice/ksb/config/remoting-servlet.xml</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>export</servlet-name>
-        <servlet-class>org.kuali.rice.core.web.impex.ExportServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>exportsecurity</servlet-name>
-        <servlet-class>org.kuali.rice.ksb.security.admin.ExportServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>attachment</servlet-name>
-        <servlet-class>org.kuali.rice.kew.notes.web.AttachmentServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>remote</servlet-name>
-        <jsp-file>/WEB-INF/jsp/remote.jsp</jsp-file>
-    </servlet>
-
-    <servlet>
-        <servlet-name>goto</servlet-name>
-        <jsp-file>/WEB-INF/jsp/goto.jsp</jsp-file>
-    </servlet>
-
-    <servlet>
         <servlet-name>webapp</servlet-name>
         <jsp-file>/webapp.jsp</jsp-file>
     </servlet>
@@ -314,11 +269,6 @@
     <servlet-mapping>
         <servlet-name>webapp</servlet-name>
         <url-pattern>/webapp/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>remoting</servlet-name>
-        <url-pattern>/remoting/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -331,21 +281,6 @@
         <url-pattern>/dwr/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>export</servlet-name>
-        <url-pattern>/export/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>exportsecurity</servlet-name>
-        <url-pattern>/exportsecurity/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>attachment</servlet-name>
-        <url-pattern>/kew/attachment/*</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>batchFileUpload</servlet-name>
         <servlet-class>org.kuali.kfs.sys.web.servlet.BatchFileUploadServlet</servlet-class>
@@ -355,15 +290,6 @@
         <servlet-name>batchFileUpload</servlet-name>
         <url-pattern>/batchFileUpload</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>remote</servlet-name>
-        <url-pattern>/remote</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>goto</servlet-name>
-        <url-pattern>/goto</url-pattern>
-    </servlet-mapping>
-
 
     <!-- ******************* END Embedded KEW Servlet Mappings ********************* -->
 
