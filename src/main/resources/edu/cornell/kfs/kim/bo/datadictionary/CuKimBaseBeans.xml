@@ -9,16 +9,16 @@
                            http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <util:constant id="cu.kim.genericDataMask"
-          static-field="org.kuali.kfs.kim.api.KimApiConstants$RestrictedMasks.RESTRICTED_DATA_MASK"/>
+          static-field="org.kuali.kfs.kim.api.KimConstants$RestrictedMasks.RESTRICTED_DATA_MASK"/>
 
     <util:constant id="cu.kim.codeDataMask"
-          static-field="org.kuali.kfs.kim.api.KimApiConstants$RestrictedMasks.RESTRICTED_DATA_MASK_CODE"/>
+          static-field="org.kuali.kfs.kim.api.KimConstants$RestrictedMasks.RESTRICTED_DATA_MASK_CODE"/>
 
     <util:constant id="cu.kim.zipDataMask"
-          static-field="org.kuali.kfs.kim.api.KimApiConstants$RestrictedMasks.RESTRICTED_DATA_MASK_ZIP"/>
+          static-field="org.kuali.kfs.kim.api.KimConstants$RestrictedMasks.RESTRICTED_DATA_MASK_ZIP"/>
 
     <util:constant id="cu.kim.phoneDataMask"
-          static-field="org.kuali.kfs.kim.api.KimApiConstants$RestrictedMasks.RESTRICTED_DATA_MASK_PHONE"/>
+          static-field="org.kuali.kfs.kim.api.KimConstants$RestrictedMasks.RESTRICTED_DATA_MASK_PHONE"/>
 
     <bean id="CuKimBaseBeans-GenericAttributeSecurity"
           parent="CuKimBaseBeans-GenericAttributeSecurity-parentBean" scope="prototype"/>

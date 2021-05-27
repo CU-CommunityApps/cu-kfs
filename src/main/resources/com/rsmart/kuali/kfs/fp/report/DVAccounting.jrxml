@@ -47,7 +47,7 @@
 	<field name="financialSubObjectCode" class="java.lang.String"/>
 	<field name="projectCode" class="java.lang.String"/>
 	<field name="organizationReferenceId" class="java.lang.String"/>
-	<field name="amount" class="org.kuali.rice.core.api.util.type.KualiDecimal"/>
+	<field name="amount" class="org.kuali.kfs.core.api.util.type.KualiDecimal"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -326,7 +326,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[((org.kuali.rice.core.api.util.type.KualiDecimal)$F{amount}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[((org.kuali.kfs.core.api.util.type.KualiDecimal)$F{amount}).toString()]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

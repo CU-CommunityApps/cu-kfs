@@ -26,7 +26,7 @@
                   showTabButtons="true">
 
     <c:set var="fullEntryMode"
-           value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
+           value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
 
     <sys:documentOverview editingMode="${KualiForm.editingMode}"
                           includePostingYear="true"
@@ -81,7 +81,7 @@
     <%--KFSPTS-974:   --%>
 
     <purap:notes-sciquest notesBo="${KualiForm.document.notes}"
-                          noteType="${Constants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
+                          noteType="${KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE}"
                           allowsNoteFYI="true"
                           defaultOpen="true"
                           attachmentTypesValuesFinder="${DataDictionary.RequisitionDocument.attachmentTypesValuesFinder}"/>

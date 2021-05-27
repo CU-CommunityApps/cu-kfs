@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
                            
-    <bean id="cu-gl" parent="glModuleConfiguration-parentBean">
+    <bean id="glModuleConfiguration" parent="glModuleConfiguration-parentBean">
 		
 		<property name="packagePrefixes">
             <list merge="true">
@@ -28,15 +28,8 @@
 			</list>
 		</property>
 		
-	    <property name="fiscalYearMakers">
-			<list/>
-		</property>
-		<property name="scriptConfigurationFilePaths">
-			<list/>
-		</property>
-
 		<property name="jobNames">
-			<list>
+			<list merge="true">
 				<value>accountReversionPriorYearAccountJob</value>
 				<value>accountReversionCurrentYearAccountJob</value>
 			</list>
@@ -75,10 +68,6 @@
 		</property>
 	</bean>  
 
-	<bean id="cu-glModuleService" parent="glModuleService-parentBean">
-	 	<property name="moduleConfiguration" ref="cu-gl"/>
-	</bean>
-
     <bean id="glBalanceDao" parent="platformAwareDao" class="edu.cornell.kfs.gl.dataaccess.impl.CuBalanceDaoOjb"/>
     
     <bean id="glBalanceService" class="edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl" parent="glBalanceService-parentBean"/>
@@ -93,7 +82,7 @@
 		<property name="reversionUnitOfWorkService" ref="glAcctReversionUnitOfWorkService" />
 		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
 		<property name="parameterService" ref="parameterService" />
-		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="configurationService" ref="configurationService" />
 		<property name="cashReversionCategoryLogic">
 			<ref bean="glCashReversionCategoryLogic" />
 		</property>
@@ -120,7 +109,7 @@
 		<property name="reversionUnitOfWorkService" ref="glOrgReversionUnitOfWorkService" />
 		<property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
 		<property name="parameterService" ref="parameterService" />
-		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="configurationService" ref="configurationService" />
 		<property name="cashReversionCategoryLogic">
 			<ref bean="glCashReversionCategoryLogic" />
 		</property>
@@ -132,7 +121,7 @@
 		<property name="parameterService">
 			<ref bean="parameterService" />
 		</property>
-		<property name="configurationService" ref="kualiConfigurationService" />
+		<property name="configurationService" ref="configurationService" />
 		<property name="accountReversionReportWriterService" ref="accountReversionReportWriterService" />
 	</bean>
 
@@ -206,7 +195,7 @@
           p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
           p:expenditureTransactionDao-ref="glExpenditureTransactionDao"
           p:indirectCostRecoveryRateDetailDao-ref="indirectCostRecoveryRateDetailDao"
-          p:objectCodeService-ref="objectCodeService" p:configurationService-ref="kualiConfigurationService"
+          p:objectCodeService-ref="objectCodeService" p:configurationService-ref="configurationService"
           p:parameterService-ref="parameterService" p:runDateService-ref="glRunDateService"
           p:offsetDefinitionService-ref="offsetDefinitionService" p:dataDictionaryService-ref="dataDictionaryService"
           p:businessObjectService-ref="businessObjectService"

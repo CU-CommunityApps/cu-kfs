@@ -26,7 +26,7 @@
 <%@ attribute name="disbursementOnly" required="false" description="boolean indicating whether the bank lookup call should request only disbursement banks" %>
 <%@ attribute name="readOnly" required="false" description="boolean indicating whether the document is readOnly. If not an additional check is made to verify the bank edit mode was exported." %>
 <%@ attribute name="style" required="false" description="style class for the cell" %>
-<c:set var="tmEditBank" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_APPROVE] && (not empty KualiForm.editingMode['waiveWireFeeEditable'])}" />
+<c:set var="tmEditBank" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_APPROVE] && (not empty KualiForm.editingMode['waiveWireFeeEditable'])}" />
 
 
 <c:if test="${KualiForm.editingMode[KFSConstants.BANK_ENTRY_VIEWABLE_EDITING_MODE]}">

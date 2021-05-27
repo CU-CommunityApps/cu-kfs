@@ -51,9 +51,9 @@
 
     <bean id="personService" factory-bean="testServiceFactory" factory-method="buildMockPersonService"/>
     
-    <bean id="kimRoleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
+    <bean id="roleService" factory-bean="testServiceFactory" factory-method="buildMockRoleService"/>
     
-    <bean id="rice.kew.documentProcessingQueue" factory-bean="testServiceFactory" factory-method="buildMockDocumentProcessingQueue"/>
+    <bean id="documentProcessingQueue" factory-bean="testServiceFactory" factory-method="buildMockDocumentProcessingQueue"/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
@@ -114,8 +114,8 @@
                 <idref bean="parameterService"/>
                 <idref bean="configurationService"/>
                 <idref bean="personService"/>
-                <idref bean="kimRoleService"/>
-                <idref bean="rice.kew.documentProcessingQueue"/>
+                <idref bean="roleService"/>
+                <idref bean="documentProcessingQueue"/>
             </set>
         </property>
     </bean>

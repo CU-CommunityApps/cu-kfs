@@ -91,7 +91,7 @@
         <property name="reportsDirectory">
             <value>${reports.directory}/tax</value>
         </property>
-        <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="configurationService" ref="configurationService"/>
     </bean>
 
     <bean id="taxTableMetadataService" class="edu.cornell.kfs.tax.dataaccess.impl.TaxTableMetadataServiceOjbImpl" />
