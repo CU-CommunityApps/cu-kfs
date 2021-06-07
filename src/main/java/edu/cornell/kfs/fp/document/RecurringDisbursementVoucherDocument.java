@@ -40,6 +40,10 @@ public class RecurringDisbursementVoucherDocument extends CuDisbursementVoucherD
 		//Intentionally left blank as we don't need to create GLPE from a recurring DV
     }
 	
+	/*
+	 * KFSPTS-21650 just a dumb change to test unit testing on kfs-kew-upgrade
+	 */
+	
 	
 	@Override
     public boolean generateGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySourceDetail glpeSourceDetail,
