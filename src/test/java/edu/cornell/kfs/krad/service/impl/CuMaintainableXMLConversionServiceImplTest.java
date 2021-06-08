@@ -116,6 +116,10 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected("VendorTest.xml");
     }
 
+    @Test
+    void testConversionOfKfsParameterFromBeforeKewUpgrade() throws Exception {
+        assertXMLFromTestFileConvertsAsExpected("PreKewUpgradeParameterTest.xml");
+    }
 
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
         readTestFile(fileLocalName);
