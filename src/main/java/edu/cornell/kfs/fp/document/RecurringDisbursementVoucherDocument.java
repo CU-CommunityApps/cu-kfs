@@ -45,6 +45,7 @@ public class RecurringDisbursementVoucherDocument extends CuDisbursementVoucherD
 	 * a change
 	 * another change
 	 * foo
+	 * bar
 	 */
 	
 	
