@@ -470,14 +470,6 @@
                 <replacement>org.kuali.kfs.coreservice.impl.parameter.Parameter</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kew.rule.RuleDelegation</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>org.kuali.rice.kew.rule.RuleDelegationBo</match>
-                <replacement/>
-            </pattern>
-            <pattern>
                 <match>org.kuali.rice.kns.bo.CampusTypeImpl</match>
                 <replacement>org.kuali.kfs.sys.businessobject.CampusType</replacement>
             </pattern>
