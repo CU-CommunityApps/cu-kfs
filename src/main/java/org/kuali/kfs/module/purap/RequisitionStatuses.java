@@ -19,6 +19,7 @@
 package org.kuali.kfs.module.purap;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public final class RequisitionStatuses {
 
@@ -73,8 +74,8 @@ public final class RequisitionStatuses {
     private RequisitionStatuses() {
     }
 
-    public static HashMap<String, String> getAllAppDocStatuses() {
-        HashMap<String, String> appDocStatusMap = new HashMap<>();
+    public static Map<String, String> getAllAppDocStatuses() {
+        final Map<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(APPDOC_IN_PROCESS, APPDOC_IN_PROCESS);
         appDocStatusMap.put(APPDOC_CANCELLED, APPDOC_CANCELLED);
@@ -101,10 +102,9 @@ public final class RequisitionStatuses {
         return appDocStatusMap;
     }
 
-    public static HashMap<String, String> getRequistionAppDocStatuses() {
-        HashMap<String, String> reqAppDocStatusMap;
+    public static Map<String, String> getRequistionAppDocStatuses() {
+        final Map<String, String> reqAppDocStatusMap = new HashMap<>();
 
-        reqAppDocStatusMap = new HashMap<>();
         // CU Customization: Added mapping for NODE_AWARD
         reqAppDocStatusMap.put(NODE_AWARD, APPDOC_DAPRVD_AWARD);
         // End CU Customization
