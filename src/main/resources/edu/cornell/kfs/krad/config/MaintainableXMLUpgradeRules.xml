@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2005-2013 The Kuali Foundation
+    The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Licensed under the Educational Community License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+    Copyright 2005-2021 Kuali, Inc.
 
-    http://www.opensource.org/licenses/ecl2.php
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <!--
     ====
-    CU Customization (KFSUPGRADE-204):
-    Added IU's just-in-time maintainable XML conversion feature,
-    available at https://github.com/ewestfal/rice-xml-converter
+    CU Customization:
+    Added our own version of the just-in-time maintainable XML conversion feature,
+    formerly an IU feature from https://github.com/ewestfal/rice-xml-converter
+    that is now a part of base financials code.
     
     Also added extra conversion rules, and updated the comments
     below to mention the new rules as well as some other
@@ -28,24 +32,18 @@
     
     Another note is that our CU updates will cause the XML
     conversion process to also consider nested elements of
-    interest plus elements that rely on "class" attributes
+    interest, plus elements that rely on "class" attributes
     for type identification.
     ====
  -->
 <rules>
 
     <!-- Rules for any changes to the fully qualified class name
-         Uses regex to match.
 
          ====
          CU Notes:
 
-         Although the comment above implies that regex-based matching is performed,
-         in reality both IU's and Rice's MaintainableXMLConversionServiceImpl
-         implementations appear to be using exact matching instead. For the moment,
-         the CU changes to this class are sticking with exact matching as well.
-
-         Furthermore, the patterns below have been consolidated into the
+         We have consolidated all of the needed classname changes into the
          "maint_doc_changed_class_properties" section under the "*" entry,
          to keep the CU version of the processing simpler due to our "class"
          attribute value replacement feature.
@@ -61,7 +59,7 @@
          ====
          CU Notes:
 
-         Despite the XPath matching implied above, both IU's and Rice's
+         Despite the XPath matching implied above, both IU's and KFS's
          MaintainableXMLConversionServiceImpl implementations appear
          to be using exact matching instead, and rely on an entry with
          a class of "*" to perform global replacements on its own pass
@@ -85,6 +83,10 @@
          then that non-"*" map will be used instead of any non-"*" map
          match for the element's converted name.
 
+         (NOTE: As a result of item [1] above, many of the entries below
+         have been adjusted so that the "class" element contains the replacement
+         classname, rather than the classname to be replaced.)
+
          [2] Adding "(ATTR)" to the end of a key will indicate that it
          should match on an attribute name instead of a sub-element name
          or "class" attribute value. (Note, however, that such keys will
@@ -103,13 +105,13 @@
          replacement value to "(CONVERT_TO_MAP_ENTRIES)" will wrap
          that element and its next sibling inside of an "entry"
          element. Needed for implementing the string-map-conversion
-         behavior from IU's and Rice's conversion code. (NOTE: Nested
+         behavior from IU's and KFS's conversion code. (NOTE: Nested
          map handling of this type is not supported at the moment.)
          ====
     -->
     <rule name="maint_doc_changed_class_properties">
         <pattern>
-            <class>org.kuali.rice.location.impl.campus.CampusBo</class>
+            <class>org.kuali.kfs.sys.businessobject.Campus</class>
             <pattern>
                 <match>campusName</match>
                 <replacement>name</replacement>
@@ -124,7 +126,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.coreservice.impl.parameter.ParameterBo</class>
+            <class>org.kuali.kfs.coreservice.impl.parameter.Parameter</class>
             <pattern>
                 <match>parameterNamespaceCode</match>
                 <replacement>namespaceCode</replacement>
@@ -139,7 +141,11 @@
             </pattern>
             <pattern>
                 <match>parameterApplicationNamespaceCode</match>
-                <replacement>applicationId</replacement>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>applicationId</match>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>parameterValue</match>
@@ -167,60 +173,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.rule.RuleDelegationBo</class>
-            <pattern>
-                <match>delegationType</match>
-                <replacement>delegationTypeCode</replacement>
-            </pattern>
-            <pattern>
-                <match>delegationRuleBaseValues</match>
-                <replacement>delegationRule</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>org.kuali.rice.kew.rule.RuleBaseValues</class>
-            <pattern>
-                <match>ruleBaseValuesId</match>
-                <replacement>id</replacement>
-            </pattern>
-            <pattern>
-                <match>previousVersionId</match>
-                <replacement>previousRuleId</replacement>
-            </pattern>
-            <pattern>
-                <match>activeInd</match>
-                <replacement>active</replacement>
-            </pattern>
-            <pattern>
-                <match>routeHeaderId</match>
-                <replacement>documentId</replacement>
-            </pattern>
-            <pattern>
-                <match>toDate</match>
-                <replacement>toDateValue</replacement>
-            </pattern>
-            <pattern>
-                <match>fromDate</match>
-                <replacement>fromDateValue</replacement>
-            </pattern>
-            <pattern>
-                <match>activeInd</match>
-                <replacement>active</replacement>
-            </pattern>
-            <pattern>
-                <match>ignorePrevious</match>
-                <replacement>forceAction</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>org.kuali.rice.kew.rule.bo.RuleTemplateBo</class>
-            <pattern>
-                <match>ruleTemplateId</match>
-                <replacement>id</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>org.kuali.rice.location.impl.campus.CampusTypeBo</class>
+            <class>org.kuali.kfs.sys.businessobject.CampusType</class>
             <pattern>
                 <match>campusTypeCode</match>
                 <replacement>code</replacement>
@@ -235,14 +188,18 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.coreservice.impl.namespace.NamespaceBo</class>
+            <class>org.kuali.kfs.coreservice.impl.namespace.Namespace</class>
             <pattern>
                 <match>applicationNamespaceCode</match>
-                <replacement>applicationId</replacement>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>applicationId</match>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.coreservice.impl.component.ComponentBo</class>
+            <class>org.kuali.kfs.coreservice.impl.component.Component</class>
             <pattern>
                 <match>parameterNamespaceCode</match>
                 <replacement>namespaceCode</replacement>
@@ -261,7 +218,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.location.impl.country.CountryBo</class>
+            <class>org.kuali.kfs.sys.businessobject.Country</class>
             <pattern>
                 <match>postalCountryCode</match>
                 <replacement>code</replacement>
@@ -280,42 +237,25 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kim.impl.permission.GenericPermissionBo</class>
+            <class>org.kuali.kfs.kim.impl.permission.GenericPermission</class>
             <pattern>
                 <match>permissionId</match>
                 <replacement>id</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kew.doctype.bo.DocumentType</class>
+            <class>org.kuali.kfs.kew.doctype.bo.DocumentType</class>
             <pattern>
                 <match>routeHeaderId</match>
                 <replacement>documentId</replacement>
             </pattern>
             <pattern>
                 <match>actualServiceNamespace</match>
-                <replacement>actualApplicationId</replacement>
+                <replacement/>
             </pattern>
-        </pattern>
-        <pattern>
-            <class>org.kuali.rice.kew.rule.PersonRuleResponsibility</class>
             <pattern>
-                <match>ruleResponsibilityKey</match>
-                <replacement>id</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>org.kuali.rice.kew.rule.GroupRuleResponsibility</class>
-            <pattern>
-                <match>ruleResponsibilityKey</match>
-                <replacement>id</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>org.kuali.rice.kew.rule.RoleRuleResponsibility</class>
-            <pattern>
-                <match>ruleResponsibilityKey</match>
-                <replacement>id</replacement>
+                <match>actualApplicationId</match>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -387,14 +327,14 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</class>
+            <class>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</class>
             <pattern>
                 <match>responsibilityId</match>
                 <replacement>id</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.rice.location.impl.state.StateBo</class>
+            <class>org.kuali.kfs.sys.businessobject.State</class>
             <pattern>
                 <match>postalCountryCode</match>
                 <replacement>countryCode</replacement>
@@ -409,13 +349,20 @@
             </pattern>
         </pattern>
         <pattern>
+            <class>org.kuali.kfs.module.ar.businessobject.CustomerAddress</class>
+            <pattern>
+                <match>customerEmailAddress</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute</class>
             <pattern>
                 <match>laborBenefitRateCategoryCode</match>
                 <replacement>(MOVE_NODES_TO_PARENT)</replacement>
             </pattern>
         </pattern>
-        <!-- ==== CU Customization ==== -->
+        <!-- Special entries for converting archaic TypedArrayList elements. -->
         <pattern>
             <class>org.kuali.rice.kns.util.TypedArrayList</class>
             <pattern>
@@ -470,7 +417,7 @@
                 <replacement/>
             </pattern>
         </pattern>
-        <!-- Added global matches. -->
+        <!-- Added global matches; behaves similarly to the omitted "maint_doc_classname_changes" rule. -->
         <pattern>
             <class>*</class>
             <pattern>
@@ -501,38 +448,70 @@
                 <match>edu.cornell.kfs.module.cg.businessobject.CuAward</match>
                 <replacement>org.kuali.kfs.module.cg.businessobject.Award</replacement>
             </pattern>
-            <!-- Moved the following entries over from the "maint_doc_classname_changes" section. -->
+            <!-- Moved entries over from the "maint_doc_classname_changes" section, and made updates as needed. -->
             <pattern>
                 <match>org.kuali.rice.kns.bo.CampusImpl</match>
-                <replacement>org.kuali.rice.location.impl.campus.CampusBo</replacement>
+                <replacement>org.kuali.kfs.sys.businessobject.Campus</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.location.impl.campus.CampusBo</match>
+                <replacement>org.kuali.kfs.sys.businessobject.Campus</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.Parameter</match>
-                <replacement>org.kuali.rice.coreservice.impl.parameter.ParameterBo</replacement>
+                <replacement>org.kuali.kfs.coreservice.impl.parameter.Parameter</replacement>
             </pattern>
             <pattern>
-                <match>org.kuali.rice.kew.rule.RuleDelegation</match>
-                <replacement>org.kuali.rice.kew.rule.RuleDelegationBo</replacement>
+                <match>org.kuali.rice.coreservice.impl.parameter.ParameterBo</match>
+                <replacement>org.kuali.kfs.coreservice.impl.parameter.Parameter</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.coreservice.impl.parameter.ParameterBo</match>
+                <replacement>org.kuali.kfs.coreservice.impl.parameter.Parameter</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.CampusTypeImpl</match>
-                <replacement>org.kuali.rice.location.impl.campus.CampusTypeBo</replacement>
+                <replacement>org.kuali.kfs.sys.businessobject.CampusType</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.location.impl.campus.CampusTypeBo</match>
+                <replacement>org.kuali.kfs.sys.businessobject.CampusType</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.Namespace</match>
-                <replacement>org.kuali.rice.coreservice.impl.namespace.NamespaceBo</replacement>
+                <replacement>org.kuali.kfs.coreservice.impl.namespace.Namespace</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.coreservice.impl.namespace.NamespaceBo</match>
+                <replacement>org.kuali.kfs.coreservice.impl.namespace.Namespace</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.ParameterDetailType</match>
-                <replacement>org.kuali.rice.coreservice.impl.component.ComponentBo</replacement>
+                <replacement>org.kuali.kfs.coreservice.impl.component.Component</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.coreservice.impl.component.ComponentBo</match>
+                <replacement>org.kuali.kfs.coreservice.impl.component.Component</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.CountryImpl</match>
-                <replacement>org.kuali.rice.location.impl.country.CountryBo</replacement>
+                <replacement>org.kuali.kfs.sys.businessobject.Country</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.location.impl.country.CountryBo</match>
+                <replacement>org.kuali.kfs.sys.businessobject.Country</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.GenericPermission</match>
-                <replacement>org.kuali.rice.kim.impl.permission.GenericPermissionBo</replacement>
+                <replacement>org.kuali.kfs.kim.impl.permission.GenericPermission</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.impl.permission.GenericPermissionBo</match>
+                <replacement>org.kuali.kfs.kim.impl.permission.GenericPermission</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.permission.GenericPermissionBo</match>
+                <replacement>org.kuali.kfs.kim.impl.permission.GenericPermission</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.KualiCodeBase</match>
@@ -560,11 +539,23 @@
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.StateImpl</match>
-                <replacement>org.kuali.rice.location.impl.state.StateBo</replacement>
+                <replacement>org.kuali.kfs.sys.businessobject.State</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.location.impl.state.StateBo</match>
+                <replacement>org.kuali.kfs.sys.businessobject.State</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.ReviewResponsibility</match>
-                <replacement>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</replacement>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</match>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibilityBo</match>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.Note</match>
@@ -695,7 +686,6 @@
                 <replacement/>
             </pattern>
         </pattern>
-        <!-- ==== End CU Customization ==== -->
     </rule>
 
     <!-- Rules for any changes Dates from the format YYYY-MM-DD to other format.  The
@@ -723,5 +713,22 @@
             <match>notePostedTimestamp</match>
             <replacement>.0</replacement>
         </pattern>
+    </rule>
+
+    <!-- Rules for any class nodes to be removed from the document entirely.
+         Class node removals should only be used for reference objects that can be materialized from
+         a reference ID, anyway.  A good example is PersonImpl, whose structure has changed so much that it
+         cannot be converted without significantly more complex logic.
+
+         ====
+         CU Notes:
+
+         Our customized XML conversion process will already handle full node/element removal
+         when an entry from "maint_doc_changed_class_properties" specifies a blank replacement
+         for a particular class or element. Therefore, we don't use the "maint_doc_classname_removals"
+         element at all.
+         ====
+    -->
+    <rule name="maint_doc_classname_removals">
     </rule>
 </rules>

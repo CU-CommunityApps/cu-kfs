@@ -136,31 +136,29 @@
     </adHocRouteRecipient>
     <newCollectionRecord>false</newCollectionRecord>
   </org.kuali.kfs.krad.bo.Note>
-</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
   <versionNumber>4</versionNumber>
   <objectId>00000000-1111-2222-3333-444444444444</objectId>
   <newCollectionRecord>false</newCollectionRecord>
   <namespaceCode>KR-WKFLW</namespaceCode>
   <componentCode>All</componentCode>
   <name>TEST_PARAMETER_1</name>
-  <applicationId>KUALI</applicationId>
   <description>This parameter is only for testing!</description>
   <parameterTypeCode>CONFG</parameterTypeCode>
   <evaluationOperatorCode>A</evaluationOperatorCode>
-</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
   <versionNumber>4</versionNumber>
   <objectId>00000000-1111-2222-3333-444444444444</objectId>
   <newCollectionRecord>false</newCollectionRecord>
   <namespaceCode>KR-WKFLW</namespaceCode>
   <componentCode>All</componentCode>
   <name>TEST_PARAMETER_1</name>
-  <applicationId>KUALI</applicationId>
   <value>Some New Value</value>
   <description>This parameter is only for testing!</description>
   <parameterTypeCode>CONFG</parameterTypeCode>
   <evaluationOperatorCode>A</evaluationOperatorCode>
-</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
 
