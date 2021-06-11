@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
@@ -39,39 +40,18 @@
     <bean id="maintainableXMLConversionService" class="edu.cornell.kfs.krad.service.impl.NoOpMaintainableXMLConversionServiceImpl" />
 
     <bean id="cuMaintainableXMLConversionService" parent="cuMaintainableXMLConversionService-parentBean"/>
-    <bean id="cuMaintainableXMLConversionService-parentBean" abstract="true" class="edu.cornell.kfs.krad.service.impl.CuMaintainableXMLConversionServiceImpl">
-        <property name="conversionRuleFile" value="classpath:edu/cornell/kfs/krad/config/MaintainableXMLUpgradeRules.xml"/>
-    </bean>
+    <bean id="cuMaintainableXMLConversionService-parentBean" abstract="true"
+          class="edu.cornell.kfs.krad.service.impl.CuMaintainableXMLConversionServiceImpl"
+          p:conversionRuleFile="classpath:edu/cornell/kfs/krad/config/MaintainableXMLUpgradeRules.xml"/>
 
-    <bean id="documentService" class="edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl">
-        <property name="documentDao">
-            <ref bean="documentDao"/>
-        </property>
-        <property name="dateTimeService">
-            <ref bean="dateTimeService"/>
-        </property>
-        <property name="workflowDocumentService">
-            <ref bean="workflowDocumentService"/>
-        </property>
-        <property name="documentHeaderService">
-            <ref bean="documentHeaderService"/>
-        </property>
-        <property name="businessObjectService">
-            <ref bean="businessObjectService"/>
-        </property>
-        <property name="noteService">
-            <ref bean="noteService"/>
-        </property>
-        <property name="dataDictionaryService">
-            <ref bean="dataDictionaryService"/>
-        </property>
-        <property name="kualiConfigurationService">
-            <ref bean="configurationService"/>
-        </property>
-        <property name="maintainableXMLConversionService">
-            <ref bean="cuMaintainableXMLConversionService"/>
-        </property>
-    </bean>
+    <bean id="documentService" class="edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl"
+          p:documentDao-ref="documentDao" p:dateTimeService-ref="dateTimeService"
+          p:workflowDocumentService-ref="workflowDocumentService"
+          p:documentHeaderService-ref="documentHeaderService"
+          p:businessObjectService-ref="businessObjectService" p:noteService-ref="noteService"
+          p:dataDictionaryService-ref="dataDictionaryService"
+          p:kualiConfigurationService-ref="configurationService"
+          p:maintainableXMLConversionService-ref="cuMaintainableXMLConversionService"/>
 
     <bean id="documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>
