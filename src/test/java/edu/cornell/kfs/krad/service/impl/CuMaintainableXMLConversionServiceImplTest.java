@@ -1,6 +1,6 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,14 +11,18 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.kuali.kfs.core.api.util.CoreUtilities;
 
 /**
  * This test class is based on its Cynergy counterpart, edu.cornell.cynergy.krad.service.impl.CynergyMaintainableXMLConversionServiceImplTest
  * and includes some of the same tests (with occasionally tweaked test files, along with some additional KFS-specific tests.
  */
+@Execution(ExecutionMode.SAME_THREAD)
 public class CuMaintainableXMLConversionServiceImplTest {
 
     protected static final String CONVERSION_RULE_FILE = "classpath:edu/cornell/kfs/krad/config/MaintainableXMLUpgradeRules.xml";
@@ -31,80 +35,91 @@ public class CuMaintainableXMLConversionServiceImplTest {
     protected String oldData;
     protected String expectedResult;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         conversionService = new TestMaintainableXMLConversionServiceImpl();
         conversionService.setConversionRuleFile(CONVERSION_RULE_FILE);
         conversionService.afterPropertiesSet();
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        conversionService = null;
+        oldData = null;
+        expectedResult = null;
+    } 
+
     @Test
-    public void testConversionOfSimpleBusinessObject() throws Exception {
+    void testConversionOfSimpleBusinessObject() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("BasicConversionTest.xml");
     }
 
     @Test
-    public void testAdvancedRulesForConvertingTypedArrayList() throws Exception {
+    void testAdvancedRulesForConvertingTypedArrayList() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("TypedArrayListTest.xml");
     }
 
     @Test
-    public void testAdvancedRulesForConvertingAttributeSet() throws Exception {
+    void testAdvancedRulesForConvertingAttributeSet() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("AttributeSetTest.xml");
     }
 
     @Test
-    public void testMoveNodesToParentWhenExcludedNodeDoesNotHaveCustomPropertyRules() throws Exception {
+    void testMoveNodesToParentWhenExcludedNodeDoesNotHaveCustomPropertyRules() throws Exception {
         conversionService.addEntryToRuleMap(CuMaintenanceXMLConverter.DEFAULT_PROPERTY_RULE_KEY,
                 MOVE_TO_PARENT_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_NODES_TO_PARENT_INDICATOR);
         assertXMLFromTestFileConvertsAsExpected("MoveNodesToParentTest.xml");
     }
 
     @Test
-    public void testConversionOfLegacyNotesXML() throws Exception {
+    void testConversionOfLegacyNotesXML() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("LegacyNotesTest.xml");
     }
 
     @Test
-    public void testConversionOfRice2xNotesXML() throws Exception {
+    void testConversionOfRice2xNotesXML() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("Rice2xNotesTest.xml");
     }
 
     @Test
-    public void testConversionOfDateFields() throws Exception {
+    void testConversionOfDateFields() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("DateFieldTest.xml");
     }
 
     @Test
-    public void testConversionOfAccount() throws Exception {
+    void testConversionOfAccount() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("AccountTest.xml");
     }
 
     @Test
-    public void testConversionOfAccountCustomAddress() throws Exception {
+    void testConversionOfAccountCustomAddress() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("AccountCustomAddressTest.xml");
     }
 
     @Test
-    public void testConversionOfAccountReversion() throws Exception {
+    void testConversionOfAccountReversion() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("AccountReversionTest.xml");
     }
 
     @Test
-    public void testConversionOfNoteTypeReference() throws Exception {
+    void testConversionOfNoteTypeReference() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("NoteTypeReferenceTest.xml");
     }
 
     @Test
-    public void testConversionOfObjectCodeGlobal() throws Exception {
+    void testConversionOfObjectCodeGlobal() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("ObjectCodeGlobalTest.xml");
     }
 
     @Test
-    public void testConversionOfVendor() throws Exception {
+    void testConversionOfVendor() throws Exception {
         assertXMLFromTestFileConvertsAsExpected("VendorTest.xml");
     }
 
+    @Test
+    void testConversionOfKfsParameterFromBeforeKewUpgrade() throws Exception {
+        assertXMLFromTestFileConvertsAsExpected("PreKewUpgradeParameterTest.xml");
+    }
 
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
         readTestFile(fileLocalName);
@@ -115,7 +130,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
     protected void assertConversionResultsAreCorrect(String expectedXml, String actualXml) throws Exception {
         expectedXml = StringUtils.normalizeSpace(expectedXml);
         actualXml = StringUtils.normalizeSpace(actualXml);
-        assertEquals("Wrong XML conversion result", expectedXml, actualXml);
+        assertEquals(expectedXml, actualXml, "Wrong XML conversion result");
     }
 
     /**
