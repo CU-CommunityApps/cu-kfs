@@ -40,14 +40,13 @@
 </oldData>
 
 <expectedResult>
-<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
   <versionNumber>4</versionNumber>
   <objectId>00000000-1111-2222-3333-444444444444</objectId>
   <newCollectionRecord>false</newCollectionRecord>
   <namespaceCode>KR-WKFLW</namespaceCode>
   <componentCode>All</componentCode>
   <name>TEST_PARAMETER_1</name>
-  <applicationId>KUALI</applicationId>
   <description>This parameter is only for testing!</description>
   <parameterTypeCode>CONFG</parameterTypeCode>
   <evaluationOperatorCode>A</evaluationOperatorCode>
@@ -55,15 +54,14 @@
   <toDateValue>2013-01-31 00:00:00.0</toDateValue>
   <activeFromDate>2014-07-15 00:00:00 GMT-08:00</activeFromDate>
   <activeToDate>2014-07-16 00:00:00 GMT-08:00</activeToDate>
-</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
   <versionNumber>4</versionNumber>
   <objectId>00000000-1111-2222-3333-444444444444</objectId>
   <newCollectionRecord>false</newCollectionRecord>
   <namespaceCode>KR-WKFLW</namespaceCode>
   <componentCode>All</componentCode>
   <name>TEST_PARAMETER_1</name>
-  <applicationId>KUALI</applicationId>
   <value>Some New Value</value>
   <description>This parameter is only for testing!</description>
   <parameterTypeCode>CONFG</parameterTypeCode>
@@ -72,7 +70,7 @@
   <toDateValue>2013-01-31 08:35:22.1</toDateValue>
   <activeFromDate>2014-07-15 15:14:13 GMT-08:00</activeFromDate>
   <activeToDate>2014-07-16 03:02:01 GMT-08:00</activeToDate>
-</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
 
