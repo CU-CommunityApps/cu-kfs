@@ -121,6 +121,11 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected("PreKewUpgradeParameterTest.xml");
     }
 
+    @Test
+    void testConversionOfLegacyCountry() throws Exception {
+        assertXMLFromTestFileConvertsAsExpected("LegacyCountryTest.xml");
+    }
+
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
         readTestFile(fileLocalName);
         String actualResult = conversionService.transformMaintainableXML(oldData);
