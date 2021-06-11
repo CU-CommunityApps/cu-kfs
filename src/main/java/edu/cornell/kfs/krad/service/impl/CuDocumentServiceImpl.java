@@ -18,7 +18,7 @@ import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
  * the default MaintainableXMLConversionService has been switched over
  * to a no-op implementation, and instead this class will perform
  * the XML conversion on the entire maintenance XML payload if necessary.
- * This allows for adding the features without overlaying Rice code.
+ * This allows for adding the features without overlaying KFS code.
  *
  * This KFS version is based on its Cynergy counterpart:
  * edu.cornell.cynergy.krad.service.impl.CynergyDocumentServiceImpl
@@ -36,6 +36,7 @@ public class CuDocumentServiceImpl extends DocumentServiceImpl {
      * @param document
      * @return
      */
+    @Override
     protected Document postProcessDocument(String documentHeaderId, WorkflowDocument workflowDocument, Document document) {
         try {
             return super.postProcessDocument(documentHeaderId, workflowDocument, document);

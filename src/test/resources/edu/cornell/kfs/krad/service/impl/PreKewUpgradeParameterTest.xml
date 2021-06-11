@@ -1,0 +1,63 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coreservice.web.parameter.ParameterMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>2</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KFS-FP</namespaceCode>
+  <componentCode>GeneralLedgerTransferEntry</componentCode>
+  <name>TEST_TYPE_LIST</name>
+  <applicationId>KFS</applicationId>
+  <value>AB;LM;EF;IJ;EF;EG</value>
+  <description>Test list of types to be transferred.</description>
+  <parameterTypeCode>VALID</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.kfs.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>2</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KFS-FP</namespaceCode>
+  <componentCode>GeneralLedgerTransferEntry</componentCode>
+  <name>TEST_TYPE_LIST</name>
+  <applicationId>KFS</applicationId>
+  <value>AB;LM;EF;EG;EH;IJ;IK</value>
+  <description>Test list of types to be transferred.</description>
+  <parameterTypeCode>VALID</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.kfs.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coreservice.web.parameter.ParameterMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
+  <versionNumber>2</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KFS-FP</namespaceCode>
+  <componentCode>GeneralLedgerTransferEntry</componentCode>
+  <name>TEST_TYPE_LIST</name>
+  
+  <value>AB;LM;EF;IJ;EF;EG</value>
+  <description>Test list of types to be transferred.</description>
+  <parameterTypeCode>VALID</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
+  <versionNumber>2</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KFS-FP</namespaceCode>
+  <componentCode>GeneralLedgerTransferEntry</componentCode>
+  <name>TEST_TYPE_LIST</name>
+  
+  <value>AB;LM;EF;EG;EH;IJ;IK</value>
+  <description>Test list of types to be transferred.</description>
+  <parameterTypeCode>VALID</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
