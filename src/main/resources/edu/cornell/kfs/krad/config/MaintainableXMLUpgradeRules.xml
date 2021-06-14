@@ -239,11 +239,6 @@
                 <match>restricted</match>
                 <replacement/>
             </pattern>
-            <!-- CU-specific pattern for removing a legacy CynergyCountryBo field. -->
-            <pattern>
-                <match>isoCountryCode</match>
-                <replacement/>
-            </pattern>
         </pattern>
         <pattern>
             <class>org.kuali.kfs.kim.impl.permission.GenericPermission</class>
@@ -553,10 +548,6 @@
                 <replacement>org.kuali.kfs.sys.businessobject.Country</replacement>
             </pattern>
             <pattern>
-                <match>edu.cornell.cynergy.location.impl.country.CynergyCountryBo</match>
-                <replacement>org.kuali.kfs.sys.businessobject.Country</replacement>
-            </pattern>
-            <pattern>
                 <match>org.kuali.rice.kim.bo.impl.GenericPermission</match>
                 <replacement>org.kuali.kfs.kim.impl.permission.GenericPermission</replacement>
             </pattern>
@@ -601,10 +592,6 @@
                 <replacement>org.kuali.kfs.sys.businessobject.State</replacement>
             </pattern>
             <pattern>
-                <match>edu.cornell.cynergy.location.impl.state.CynergyStateBo</match>
-                <replacement>org.kuali.kfs.sys.businessobject.State</replacement>
-            </pattern>
-            <pattern>
                 <match>org.kuali.rice.kns.bo.CountyImpl</match>
                 <replacement>org.kuali.kfs.sys.businessobject.County</replacement>
             </pattern>
@@ -613,19 +600,11 @@
                 <replacement>org.kuali.kfs.sys.businessobject.County</replacement>
             </pattern>
             <pattern>
-                <match>edu.cornell.cynergy.location.impl.county.CynergyCountyBo</match>
-                <replacement>org.kuali.kfs.sys.businessobject.County</replacement>
-            </pattern>
-            <pattern>
                 <match>org.kuali.rice.kns.bo.PostalCodeImpl</match>
                 <replacement>org.kuali.kfs.sys.businessobject.PostalCode</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.location.impl.postalcode.PostalCodeBo</match>
-                <replacement>org.kuali.kfs.sys.businessobject.PostalCode</replacement>
-            </pattern>
-            <pattern>
-                <match>edu.cornell.cynergy.location.impl.postalcode.CynergyPostalCodeBo</match>
                 <replacement>org.kuali.kfs.sys.businessobject.PostalCode</replacement>
             </pattern>
             <pattern>
