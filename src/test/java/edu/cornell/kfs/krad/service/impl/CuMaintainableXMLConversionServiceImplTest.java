@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.core.api.util.CoreUtilities;
 
 /**
@@ -121,9 +123,21 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected("PreKewUpgradeParameterTest.xml");
     }
 
-    @Test
-    void testConversionOfLegacyCountry() throws Exception {
-        assertXMLFromTestFileConvertsAsExpected("LegacyCountryTest.xml");
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "LegacyCampusTest.xml",
+        "RiceCampusTest.xml",
+        "LegacyCountryTest.xml",
+        "RiceCountryTest.xml",
+        "LegacyCountyTest.xml",
+        "RiceCountyTest.xml",
+        "LegacyPostalCodeTest.xml",
+        "RicePostalCodeTest.xml",
+        "LegacyStateTest.xml",
+        "RiceStateTest.xml"
+    })
+    void testConversionOfLocationMaintenanceDocuments(String locationTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(locationTestFile);
     }
 
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {

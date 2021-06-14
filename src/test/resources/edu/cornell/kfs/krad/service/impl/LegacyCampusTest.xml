@@ -1,0 +1,55 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.rice.kns.bo.CampusImpl>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F004110</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <campusCode>01</campusCode>
+  <campusName>Default Campus</campusName>
+  <campusShortName>Campus</campusShortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.rice.kns.bo.CampusImpl><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.CampusImpl>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F004110</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <campusCode>01</campusCode>
+  <campusName>Default Campus</campusName>
+  <campusShortName>DefCamp</campusShortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.rice.kns.bo.CampusImpl><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.Campus>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F004110</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <code>01</code>
+  <name>Default Campus</name>
+  <shortName>Campus</shortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.Campus><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.Campus>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F004110</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <code>01</code>
+  <name>Default Campus</name>
+  <shortName>DefCamp</shortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.Campus><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
