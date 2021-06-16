@@ -1,0 +1,51 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.rice.kns.bo.CountryImpl>
+  <versionNumber>3</versionNumber>
+  <objectId>A1A2A3A4A5A6A7A8B1B2B3B4B5B6B7B8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>MP</postalCountryCode>
+  <postalCountryName>MAURITIUS</postalCountryName>
+  <postalCountryRestrictedIndicator>false</postalCountryRestrictedIndicator>
+  <active>false</active>
+</org.kuali.rice.kns.bo.CountryImpl><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.CountryImpl>
+  <versionNumber>3</versionNumber>
+  <objectId>A1A2A3A4A5A6A7A8B1B2B3B4B5B6B7B8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>MP</postalCountryCode>
+  <postalCountryName>MAURITIUS</postalCountryName>
+  <postalCountryRestrictedIndicator>false</postalCountryRestrictedIndicator>
+  <active>true</active>
+</org.kuali.rice.kns.bo.CountryImpl><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.Country>
+  <versionNumber>3</versionNumber>
+  <objectId>A1A2A3A4A5A6A7A8B1B2B3B4B5B6B7B8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <code>MP</code>
+  <name>MAURITIUS</name>
+  
+  <active>false</active>
+</org.kuali.kfs.sys.businessobject.Country><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.Country>
+  <versionNumber>3</versionNumber>
+  <objectId>A1A2A3A4A5A6A7A8B1B2B3B4B5B6B7B8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <code>MP</code>
+  <name>MAURITIUS</name>
+  
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.Country><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
