@@ -1,0 +1,55 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.rice.kns.bo.CountyImpl>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>US</postalCountryCode>
+  <countyCode>109</countyCode>
+  <stateCode>NY</stateCode>
+  <countyName>Tompkins</countyName>
+  <active>true</active>
+</org.kuali.rice.kns.bo.CountyImpl><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.CountyImpl>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>US</postalCountryCode>
+  <countyCode>109</countyCode>
+  <stateCode>NY</stateCode>
+  <countyName>TOMPKINS 2.0</countyName>
+  <active>true</active>
+</org.kuali.rice.kns.bo.CountyImpl><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.County>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <countryCode>US</countryCode>
+  <code>109</code>
+  <stateCode>NY</stateCode>
+  <name>Tompkins</name>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.County><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.County>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF8</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <countryCode>US</countryCode>
+  <code>109</code>
+  <stateCode>NY</stateCode>
+  <name>TOMPKINS 2.0</name>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.County><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

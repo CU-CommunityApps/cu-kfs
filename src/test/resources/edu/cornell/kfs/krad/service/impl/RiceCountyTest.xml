@@ -1,0 +1,51 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.county.CountyMaintainableImpl"><oldMaintainableObject><org.kuali.rice.location.impl.county.CountyBo>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF7</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>109</code>
+  <countryCode>US</countryCode>
+  <stateCode>NY</stateCode>
+  <name>Tompkins</name>
+  <active>true</active>
+</org.kuali.rice.location.impl.county.CountyBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.location.impl.county.CountyBo>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF7</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>109</code>
+  <countryCode>US</countryCode>
+  <stateCode>NY</stateCode>
+  <name>TOMPKINS 2.0</name>
+  <active>true</active>
+</org.kuali.rice.location.impl.county.CountyBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.county.CountyMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.County>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF7</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>109</code>
+  <countryCode>US</countryCode>
+  <stateCode>NY</stateCode>
+  <name>Tompkins</name>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.County><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.County>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78C566B6602E04054802FC21FF7</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>109</code>
+  <countryCode>US</countryCode>
+  <stateCode>NY</stateCode>
+  <name>TOMPKINS 2.0</name>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.County><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
