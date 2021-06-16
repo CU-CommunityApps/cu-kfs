@@ -1,0 +1,59 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.rice.kns.bo.PostalCodeImpl>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA81AA05467EE04054802FC207C2</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>US</postalCountryCode>
+  <postalCode>14850-1030</postalCode>
+  <postalStateCode>NY</postalStateCode>
+  <postalCityName>ITHACA</postalCityName>
+  <active>true</active>
+  <countyCode>109</countyCode>
+</org.kuali.rice.kns.bo.PostalCodeImpl><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.PostalCodeImpl>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA81AA05467EE04054802FC207C2</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>US</postalCountryCode>
+  <postalCode>14850-1030</postalCode>
+  <postalStateCode>NY</postalStateCode>
+  <postalCityName>ITHACKA</postalCityName>
+  <active>true</active>
+  <countyCode>109</countyCode>
+</org.kuali.rice.kns.bo.PostalCodeImpl><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.PostalCode>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA81AA05467EE04054802FC207C2</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <countryCode>US</countryCode>
+  <code>14850-1030</code>
+  <stateCode>NY</stateCode>
+  <cityName>ITHACA</cityName>
+  <active>true</active>
+  <countyCode>109</countyCode>
+</org.kuali.kfs.sys.businessobject.PostalCode><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.PostalCode>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA81AA05467EE04054802FC207C2</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <countryCode>US</countryCode>
+  <code>14850-1030</code>
+  <stateCode>NY</stateCode>
+  <cityName>ITHACKA</cityName>
+  <active>true</active>
+  <countyCode>109</countyCode>
+</org.kuali.kfs.sys.businessobject.PostalCode><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
