@@ -411,7 +411,7 @@
 	<bean id="cuApiJsonWebRequestReader" class="edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl" />
 
     <!--
-        Override of daily and weekly email reminder batch steps to backport changes from the 2021-04-01 patch.
+        Override of daily and weekly email reminder batch steps to backport FINP-7413 changes from the 2021-04-01 patch.
         These two bean overrides should be removed when we upgrade to the 2021-04-01 patch or later.
         
         NOTE: For compatibility with the 2021-01-28 financials patch, the beans below have to reference

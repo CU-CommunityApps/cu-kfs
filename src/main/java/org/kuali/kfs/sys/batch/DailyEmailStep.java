@@ -23,7 +23,8 @@ import org.kuali.kfs.kew.mail.service.ActionListEmailService;
 import java.util.Date;
 
 /**
- * CU Customization: Backported the version of this class from the 2021-04-01 financials patch.
+ * CU Customization: Backported the version of this class from the 2021-04-01 financials patch,
+ * to bring in part of the FINP-7413 changes.
  * 
  * Batch step implementation for the Daily Email
  */
