@@ -1,0 +1,47 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.state.StateMaintainableImpl"><oldMaintainableObject><org.kuali.rice.location.impl.state.StateBo>
+  <versionNumber>1</versionNumber>
+  <objectId>56908AA37A29661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>NY</code>
+  <countryCode>US</countryCode>
+  <name>NEW YORK</name>
+  <active>true</active>
+</org.kuali.rice.location.impl.state.StateBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.location.impl.state.StateBo>
+  <versionNumber>1</versionNumber>
+  <objectId>56908AA37A29661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>NY</code>
+  <countryCode>US</countryCode>
+  <name>NEWEST YORK</name>
+  <active>true</active>
+</org.kuali.rice.location.impl.state.StateBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.state.StateMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.State>
+  <versionNumber>1</versionNumber>
+  <objectId>56908AA37A29661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>NY</code>
+  <countryCode>US</countryCode>
+  <name>NEW YORK</name>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.State><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.State>
+  <versionNumber>1</versionNumber>
+  <objectId>56908AA37A29661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>NY</code>
+  <countryCode>US</countryCode>
+  <name>NEWEST YORK</name>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.State><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
