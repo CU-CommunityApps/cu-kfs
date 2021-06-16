@@ -233,7 +233,11 @@
             </pattern>
             <pattern>
                 <match>postalCountryRestrictedIndicator</match>
-                <replacement>restricted</replacement>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>restricted</match>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -346,6 +350,48 @@
             <pattern>
                 <match>postalStateName</match>
                 <replacement>name</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.sys.businessobject.County</class>
+            <pattern>
+                <match>postalCountryCode</match>
+                <replacement>countryCode</replacement>
+            </pattern>
+            <pattern>
+                <match>countyCode</match>
+                <replacement>code</replacement>
+            </pattern>
+            <pattern>
+                <match>countyName</match>
+                <replacement>name</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.sys.businessobject.PostalCode</class>
+            <pattern>
+                <match>postalCountryCode</match>
+                <replacement>countryCode</replacement>
+            </pattern>
+            <pattern>
+                <match>postalCode</match>
+                <replacement>code</replacement>
+            </pattern>
+            <pattern>
+                <match>postalStateCode</match>
+                <replacement>stateCode</replacement>
+            </pattern>
+            <pattern>
+                <match>postalCityName</match>
+                <replacement>cityName</replacement>
+            </pattern>
+            <pattern>
+                <match>buildingCode</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>buildingRoomNumber</match>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -544,6 +590,22 @@
             <pattern>
                 <match>org.kuali.rice.location.impl.state.StateBo</match>
                 <replacement>org.kuali.kfs.sys.businessobject.State</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.CountyImpl</match>
+                <replacement>org.kuali.kfs.sys.businessobject.County</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.location.impl.county.CountyBo</match>
+                <replacement>org.kuali.kfs.sys.businessobject.County</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.PostalCodeImpl</match>
+                <replacement>org.kuali.kfs.sys.businessobject.PostalCode</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.location.impl.postalcode.PostalCodeBo</match>
+                <replacement>org.kuali.kfs.sys.businessobject.PostalCode</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.ReviewResponsibility</match>

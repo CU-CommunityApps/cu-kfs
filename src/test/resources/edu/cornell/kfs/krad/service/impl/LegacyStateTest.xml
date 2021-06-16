@@ -1,0 +1,51 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.rice.kns.bo.StateImpl>
+  <versionNumber>2</versionNumber>
+  <objectId>56908AA37A06661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>US</postalCountryCode>
+  <postalStateCode>--</postalStateCode>
+  <postalStateName>OUT OF COUNTRY</postalStateName>
+  <active>false</active>
+</org.kuali.rice.kns.bo.StateImpl><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.StateImpl>
+  <versionNumber>2</versionNumber>
+  <objectId>56908AA37A06661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <postalCountryCode>US</postalCountryCode>
+  <postalStateCode>--</postalStateCode>
+  <postalStateName>OUT OF COUNTRY</postalStateName>
+  <active>true</active>
+</org.kuali.rice.kns.bo.StateImpl><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.State>
+  <versionNumber>2</versionNumber>
+  <objectId>56908AA37A06661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <countryCode>US</countryCode>
+  <code>--</code>
+  <name>OUT OF COUNTRY</name>
+  <active>false</active>
+</org.kuali.kfs.sys.businessobject.State><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.State>
+  <versionNumber>2</versionNumber>
+  <objectId>56908AA37A06661BE0404F8189D81F46</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <countryCode>US</countryCode>
+  <code>--</code>
+  <name>OUT OF COUNTRY</name>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.State><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
