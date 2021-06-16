@@ -1,0 +1,51 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.campus.CampusMaintainableImpl"><oldMaintainableObject><org.kuali.rice.location.impl.campus.CampusBo>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F00411E</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>01</code>
+  <name>Default Campus</name>
+  <shortName>Campus</shortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.rice.location.impl.campus.CampusBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.location.impl.campus.CampusBo>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F00411E</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>01</code>
+  <name>Default Campus</name>
+  <shortName>DefCamp</shortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.rice.location.impl.campus.CampusBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.campus.CampusMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.Campus>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F00411E</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>01</code>
+  <name>Default Campus</name>
+  <shortName>Campus</shortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.Campus><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.Campus>
+  <versionNumber>1</versionNumber>
+  <objectId>7ECD903B6AD648C0E04400144F00411E</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>01</code>
+  <name>Default Campus</name>
+  <shortName>DefCamp</shortName>
+  <campusTypeCode>F</campusTypeCode>
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.Campus><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

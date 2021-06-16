@@ -1,0 +1,49 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.country.CountryMaintainableImpl"><oldMaintainableObject><org.kuali.rice.location.impl.country.CountryBo>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7A7852467EE04054802FC207C1</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>EG</code>
+  <name>Egypt</name>
+  <restricted>false</restricted>
+  <active>true</active>
+</org.kuali.rice.location.impl.country.CountryBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.location.impl.country.CountryBo>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7A7852467EE04054802FC207C1</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>EG</code>
+  <alternateCode>EFG</alternateCode>
+  <name>Egypt</name>
+  <restricted>false</restricted>
+  <active>true</active>
+</org.kuali.rice.location.impl.country.CountryBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.location.web.country.CountryMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sys.businessobject.Country>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7A7852467EE04054802FC207C1</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>EG</code>
+  <name>Egypt</name>
+  
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.Country><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sys.businessobject.Country>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7A7852467EE04054802FC207C1</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <code>EG</code>
+  <alternateCode>EFG</alternateCode>
+  <name>Egypt</name>
+  
+  <active>true</active>
+</org.kuali.kfs.sys.businessobject.Country><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
