@@ -28,8 +28,8 @@
 	</bean>
 	
     <bean id="SecurityGroupMaintenanceDocument-Edit"
-          parent="CustomerMaintenanceDocument-Edit-parentBean"/>
-    <bean id="CustomerMaintenanceDocument-Edit-parentBean" abstract="true"
+          parent="SecurityGroupMaintenanceDocument-Edit-parentBean"/>
+    <bean id="SecurityGroupMaintenanceDocument-Edit-parentBean" abstract="true"
           parent="MaintainableSectionDefinition" p:id="generalInformationSection" p:title="Security Group">
         <property name="maintainableItems">
             <list>
@@ -44,7 +44,6 @@
         <!-- workflow attributes -->
     <bean id="SecurityGroupMaintenanceDocument-workflowAttributes"
           parent="SecurityGroupMaintenanceDocument-workflowAttributes-parentBean"/>
-    <bean id="SecurityGroupMaintenanceDocument-workflowAttributes-parentBean"
-          class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+    <bean id="SecurityGroupMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes"/>
 
 </beans>
