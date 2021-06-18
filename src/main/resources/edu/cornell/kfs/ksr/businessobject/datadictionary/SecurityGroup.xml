@@ -9,11 +9,11 @@
 		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. -->
 
 	<bean id="SecurityGroup" parent="SecurityGroup-parentBean" />
-	<bean id="SecurityGroup-parentBean" abstract="true" parent="BusinessObjectEntry"
+	<bean id="SecurityGroup-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
           p:actionsProvider-ref="businessObjectActionsProvider"
           p:boNotesEnabled="true"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroup"
-          p:businessObjectAdminService-ref="customerAdminService"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
           p:inquiryDefinition-ref="SecurityGroup-inquiryDefinition"
           p:lookupDefinition-ref="SecurityGroup-lookupDefinition"
           p:name="SecurityGroup"
