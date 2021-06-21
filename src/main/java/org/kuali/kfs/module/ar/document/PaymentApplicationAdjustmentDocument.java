@@ -195,6 +195,9 @@ public class PaymentApplicationAdjustmentDocument extends AccountingDocumentBase
         return totalDollarAmount;
     }
     
+    /*
+     * back-port FINP 7310
+     */
     private boolean anAppaIsBeingAdjusted(final PaymentApplicationAdjustableDocument adjusteeDocument) {
         return adjusteeDocument instanceof PaymentApplicationAdjustmentDocument;
     }
