@@ -15,6 +15,9 @@
  */
 package edu.cornell.kfs.ksr.businessobject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.kfs.core.api.mo.common.active.Inactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
@@ -32,10 +35,10 @@ public class SecurityGroup extends PersistableBusinessObjectBase implements Inac
     private String securityGroupDescription;
     private boolean active;
 
-    // private List<SecurityGroupTab> securityGroupTabs;
+    private List<SecurityGroupTab> securityGroupTabs;
 
     public SecurityGroup() {
-        // securityGroupTabs = new ArrayList<>();
+        securityGroupTabs = new ArrayList<>();
         active = true;
     }
 
@@ -72,12 +75,12 @@ public class SecurityGroup extends PersistableBusinessObjectBase implements Inac
         this.active = active;
     }
 
-    // public List<SecurityGroupTab> getSecurityGroupTabs() {
-    // return securityGroupTabs;
-    // }
-    //
-    // public void setSecurityGroupTabs(List<SecurityGroupTab> securityGroupTabs) {
-    // this.securityGroupTabs = securityGroupTabs;
-    // }
+    public List<SecurityGroupTab> getSecurityGroupTabs() {
+        return securityGroupTabs;
+    }
+
+    public void setSecurityGroupTabs(List<SecurityGroupTab> securityGroupTabs) {
+        this.securityGroupTabs = securityGroupTabs;
+    }
 
 }

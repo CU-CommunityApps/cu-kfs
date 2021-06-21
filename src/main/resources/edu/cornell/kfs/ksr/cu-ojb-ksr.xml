@@ -25,6 +25,22 @@
 		<field-descriptor name="active" column="actv_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		
+	    <collection-descriptor name="securityGroupTabs" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroupTab" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+			<inverse-foreignkey field-ref="securityGroupId" />
+		</collection-descriptor>
+	</class-descriptor>
+	
+    <class-descriptor class="edu.cornell.kfs.ksr.businessobject.SecurityGroupTab" table="KRSR_SEC_GRP_TB_T">
+		<field-descriptor name="securityGroupId" column="SEC_GRP_ID" jdbc-type="BIGINT" primarykey="true" />
+		<field-descriptor name="tabId" column="TB_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="KRSR_SEC_GRP_TB_ID_SEQ" autoincrement="true" />
+		<field-descriptor name="tabName" column="TB_NM" jdbc-type="VARCHAR" />
+		<field-descriptor name="tabOrder" column="TB_ORD" jdbc-type="BIGINT" />
+		<field-descriptor name="active" column="actv_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+
 	</class-descriptor>
 
 </descriptor-repository>

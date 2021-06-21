@@ -18,6 +18,7 @@
         <property name="maintainableSections">
         	<list>
         		<ref bean="SecurityGroupMaintenanceDocument-Edit"/>
+        		<ref bean="SecurityGroupMaintenanceDocument-Tabs"/>
         	</list>
         </property>
 		<property name="lockingKeys">
@@ -40,6 +41,35 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="SecurityGroupMaintenanceDocument-Tabs" parent="SecurityGroupMaintenanceDocument-Tabs-parentBean"/>
+    <bean id="SecurityGroupMaintenanceDocument-Tabs-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="tabsSection" p:title="Tabs">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableCollectionDefinition" p:name="securityGroupTabs"
+                      p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroupTab">
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabName"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabId"
+                                  p:unconditionallyReadOnly="true" p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabName"
+                                  p:noLookup="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabOrder"
+                                  p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="active" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
     
         <!-- workflow attributes -->
     <bean id="SecurityGroupMaintenanceDocument-workflowAttributes"

@@ -31,7 +31,7 @@
 		</property>
 		<property name="collections">
 			<list>
-				<!--  <bean parent="CollectionDefinition" p:name="securityGroupTabs" p:label="securityGroupTabs" p:shortLabel="securityGroupTabs" p:elementLabel="securityGroupTabs" /> -->
+			  <bean parent="CollectionDefinition" p:name="securityGroupTabs" p:label="securityGroupTabs" p:shortLabel="Tab" p:elementLabel="Security Group Tab" />
 			</list>
 		</property>
 	</bean>
@@ -90,11 +90,11 @@
 
     <bean id="SecurityGroup-inquiryDefinition" parent="SecurityGroup-inquiryDefinition-parentBean"/>
     <bean id="SecurityGroup-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
-          p:title="Security Group Inquiry"
-          p:inquirableClass="org.kuali.kfs.module.ar.businessobject.inquiry.CustomerInquirableImpl">
+          p:title="Security Group Inquiry" >
         <property name="inquirySections">
             <list>
                 <ref bean="SecurityGroup-inquirySectionDefinition"/>
+                <ref bean="SecurityGroup-inquirySectionDefinition-securityGroupTab"/>
             </list>
         </property>
     </bean>
@@ -107,11 +107,42 @@
                 <bean parent="FieldDefinition" p:attributeName="securityGroupId"/>
                 <bean parent="FieldDefinition" p:attributeName="securityGroupName"/>
                 <bean parent="FieldDefinition" p:attributeName="securityGroupDescription"/>
-                <bean parent="FieldDefinition" p:attributeName="versionNumber"/>
                 <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
     </bean>
+    
+    <bean id="SecurityGroup-inquirySectionDefinition-securityGroupTab"
+          parent="SecurityGroup-inquirySectionDefinition-securityGroupTab-parentBean"/>
+    <bean id="SecurityGroup-inquirySectionDefinition-securityGroupTab-parentBean" abstract="true" parent="InquirySectionDefinition"
+          p:id="securityGroupTabSection" p:title="Security Group Tabs">
+        <property name="inquiryFields">
+            <list>
+                <ref bean="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs"
+          parent="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs-parentBean"/>
+    <bean id="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs-parentBean" abstract="true"
+          parent="InquiryCollectionDefinition" p:attributeName="securityGroupTabs"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroupTab">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="tabId"/>
+                <bean parent="FieldDefinition" p:attributeName="tabName"/>
+                <bean parent="FieldDefinition" p:attributeName="tabOrder"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="summaryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="tabName"/>
+            </list>
+        </property>
+    </bean>
+    
     
     <!-- Business Object Lookup Definition -->
 
@@ -139,7 +170,6 @@
         </property>
         <property name="displayAttributeDefinitions">
             <list>
-                <ref bean="SecurityGroup-securityGroupId" />
                 <ref bean="SecurityGroup-securityGroupName" />
                 <ref bean="SecurityGroup-securityGroupDescription" />
                 <ref bean="activeIndicatorAttributeDefinition"/>
@@ -155,7 +185,6 @@
         </property>
         <property name="resultFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="securityGroupId"/>
                 <bean parent="FieldDefinition" p:attributeName="securityGroupName"/>
                 <bean parent="FieldDefinition" p:attributeName="securityGroupDescription"/>
                 <bean parent="FieldDefinition" p:attributeName="active"/>
