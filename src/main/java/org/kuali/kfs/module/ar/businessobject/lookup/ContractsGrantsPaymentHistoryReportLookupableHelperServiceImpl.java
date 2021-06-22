@@ -19,6 +19,8 @@
 package org.kuali.kfs.module.ar.businessobject.lookup;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
 import org.kuali.kfs.kns.web.ui.ResultRow;
@@ -46,10 +48,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /*
- * back-port FINP 7396
+ * back-port FINP-7396
  */
 public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl extends
         ContractsGrantsReportLookupableHelperServiceImplBase {
+    
+    private static final Logger LOG = LogManager.getLogger();
 
     protected DateTimeService dateTimeService;
     protected DocumentService documentService;
@@ -76,11 +80,12 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
     }
 
     /*
-     * back-port FINP 7396
+     * back-port FINP-7396
      */
     @Override
     public Collection<ContractsGrantsPaymentHistoryReport> performLookup(LookupForm lookupForm,
             Collection<ResultRow> resultTable, boolean bounded) {
+        LOG.info("performLookup, back-port FINP 7396");
         Map<String, String> lookupFormFields = lookupForm.getFieldsForLookup();
 
         setBackLocation(lookupForm.getFieldsForLookup().get(KRADConstants.BACK_LOCATION));
