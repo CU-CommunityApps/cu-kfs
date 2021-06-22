@@ -19,6 +19,7 @@
 package org.kuali.kfs.module.ar.businessobject.lookup;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
 import org.kuali.kfs.kns.web.ui.ResultRow;
 import org.kuali.kfs.krad.document.Document;
@@ -44,6 +45,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * back-port FINP 7396
+ */
 public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl extends
         ContractsGrantsReportLookupableHelperServiceImplBase {
 
@@ -71,6 +75,9 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
         super.validateSearchParameters(fieldValues);
     }
 
+    /*
+     * back-port FINP 7396
+     */
     @Override
     public Collection<ContractsGrantsPaymentHistoryReport> performLookup(LookupForm lookupForm,
             Collection<ResultRow> resultTable, boolean bounded) {
@@ -137,24 +144,29 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
                             useInvoicePaidApplied = false;
                         }
                     }
-                    final Date paymentAppFinalDate = paymentApp.getDocumentHeader().getWorkflowDocument()
-                            .getDateFinalized().toDate();
+                    final DateTime dateFinalized = paymentApp.getDocumentHeader().getWorkflowDocument()
+                            .getDateFinalized();
+                    Date paymentAppFinalDate = null;
+                    if (dateFinalized != null) {
+                        paymentAppFinalDate = dateFinalized.toDate();
+                    }
                     if (!StringUtils.isBlank(lookupFormFields.get(ArPropertyConstants.PAYMENT_DATE))) {
                         final Date toPaymentDate = getDateTimeService().convertToDate(
                                 lookupFormFields.get(ArPropertyConstants.PAYMENT_DATE));
-                        if (!KfsDateUtils.isSameDay(paymentAppFinalDate, toPaymentDate)
-                                && toPaymentDate.before(paymentAppFinalDate)) {
+                        if (paymentAppFinalDate == null ||
+                                !KfsDateUtils.isSameDay(paymentAppFinalDate, toPaymentDate)
+                                        && toPaymentDate.before(paymentAppFinalDate)) {
                             useInvoicePaidApplied = false;
                         }
                     }
-                    if (!StringUtils.isBlank(
-                            lookupFormFields.get(ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
-                                    + ArPropertyConstants.PAYMENT_DATE))) {
+                    if (StringUtils.isNotBlank(lookupFormFields.get(ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
+                            + ArPropertyConstants.PAYMENT_DATE))) {
                         final Date fromPaymentDate = getDateTimeService().convertToDate(
                                 lookupFormFields.get(ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
                                         + ArPropertyConstants.PAYMENT_DATE));
-                        if (!KfsDateUtils.isSameDay(paymentAppFinalDate, fromPaymentDate)
-                                && fromPaymentDate.after(paymentAppFinalDate)) {
+                        if (paymentAppFinalDate == null ||
+                                !KfsDateUtils.isSameDay(paymentAppFinalDate, fromPaymentDate)
+                                        && fromPaymentDate.after(paymentAppFinalDate)) {
                             useInvoicePaidApplied = false;
                         }
                     }
@@ -203,8 +215,10 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
                         cgPaymentHistoryReport.setInvoiceNumber(invoicePaidApplied
                                 .getFinancialDocumentReferenceInvoiceNumber());
 
-                        cgPaymentHistoryReport.setPaymentDate(new java.sql.Date(paymentApp.getDocumentHeader()
-                                .getWorkflowDocument().getDateFinalized().getMillis()));
+                        if (dateFinalized != null) {
+                            cgPaymentHistoryReport.setPaymentDate(new java.sql.Date(
+                                    dateFinalized.getMillis()));
+                        }
                         cgPaymentHistoryReport.setAppliedIndicator(getFinancialSystemDocumentService()
                                 .getSuccessfulDocumentStatuses().contains(paymentApp.getFinancialSystemDocumentHeader()
                                         .getWorkflowDocumentStatusCode()));
