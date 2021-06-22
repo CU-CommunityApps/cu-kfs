@@ -20,6 +20,8 @@ package org.kuali.kfs.module.ar.businessobject.lookup;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
 import org.kuali.kfs.kns.web.ui.ResultRow;
 import org.kuali.kfs.krad.document.Document;
@@ -35,8 +37,6 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -64,10 +64,10 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
             validateDateField(fieldValues.get(ArPropertyConstants.PAYMENT_DATE), ArPropertyConstants.PAYMENT_DATE,
                     getDateTimeService());
         }
-        if (!StringUtils.isBlank(fieldValues.get(ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
+        if (!StringUtils.isBlank(fieldValues.get(KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
                 + ArPropertyConstants.PAYMENT_DATE))) {
-            validateDateField(fieldValues.get(ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
-                    + ArPropertyConstants.PAYMENT_DATE), ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
+            validateDateField(fieldValues.get(KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
+                    + ArPropertyConstants.PAYMENT_DATE), KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
                     + ArPropertyConstants.PAYMENT_DATE, getDateTimeService());
         }
 
@@ -159,10 +159,10 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
                             useInvoicePaidApplied = false;
                         }
                     }
-                    if (StringUtils.isNotBlank(lookupFormFields.get(ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
+                    if (StringUtils.isNotBlank(lookupFormFields.get(KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
                             + ArPropertyConstants.PAYMENT_DATE))) {
                         final Date fromPaymentDate = getDateTimeService().convertToDate(
-                                lookupFormFields.get(ArPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
+                                lookupFormFields.get(KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
                                         + ArPropertyConstants.PAYMENT_DATE));
                         if (paymentAppFinalDate == null ||
                                 !KfsDateUtils.isSameDay(paymentAppFinalDate, fromPaymentDate)
