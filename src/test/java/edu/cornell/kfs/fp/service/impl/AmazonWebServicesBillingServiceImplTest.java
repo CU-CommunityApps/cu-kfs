@@ -89,7 +89,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     public void testBuildDocumentDescription1() {
         String departmentName = "CIT";
         String results = amazonService.buildDocumentDescription(departmentName);
-        String expected = "AWS July-2016 invoice for CIT FOO";
+        String expected = "AWS July-2016 invoice for CIT";
         assertEquals(expected, results);
     }
     
