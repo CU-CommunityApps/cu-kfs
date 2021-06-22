@@ -174,7 +174,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     @Test
     public void testParseDepartmentNameFromCloudCheckrGroupValue() {
         String cloudCheckrAWSAccount = "98643985626 (Cornell Departmental Account)";
-        String expectedCornellDepartment = "Cornell Departmental Account FOO";
+        String expectedCornellDepartment = "Cornell Departmental Account";
         String actualCornellDepartment = amazonService.parseDepartmentNameFromCloudCheckrGroupValue(cloudCheckrAWSAccount);
         assertEquals(expectedCornellDepartment, actualCornellDepartment);
     }
