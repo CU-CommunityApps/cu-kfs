@@ -31,7 +31,7 @@
 		</property>
 		<property name="collections">
 			<list>
-			  <bean parent="CollectionDefinition" p:name="securityGroupTabs" p:label="securityGroupTabs" p:shortLabel="Tab" p:elementLabel="Security Group Tab" />
+			  <bean parent="CollectionDefinition" p:name="securityGroupTabs" p:label="securityGroupTabs" p:shortLabel="Tab" p:elementLabel="Tab" />
 			</list>
 		</property>
 	</bean>
