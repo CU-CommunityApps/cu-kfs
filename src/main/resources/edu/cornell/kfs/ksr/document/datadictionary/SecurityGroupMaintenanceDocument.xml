@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-	CU Customization: Converted SecurityGroupMaintenanceDocument DD beans from KNS to KRAD.
- -->
+
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
@@ -76,7 +74,7 @@
     </bean>
     
     
-        <!-- workflow attributes -->
+    <!-- workflow attributes -->
     <bean id="SecurityGroupMaintenanceDocument-workflowAttributes"
           parent="SecurityGroupMaintenanceDocument-workflowAttributes-parentBean"/>
     <bean id="SecurityGroupMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes"/>
