@@ -96,4 +96,9 @@ public class ConcurUtilsTest {
         Assert.assertEquals(STRING_FORMATTED_FOR_ERROR_MESSAGE, ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, CHART, ACCOUNT_NUMBER));
     }  
 
+    @Test
+    public void testSuccess() {
+        Assert.assertTrue("This test should have succeeded!", true);
+    }
+
 }
