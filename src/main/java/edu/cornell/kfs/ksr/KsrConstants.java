@@ -119,7 +119,7 @@ public class KsrConstants {
 	
     public static final String SECURITY_REQUEST_WIZARD = "wizard";
     
-    public static final String SECURITY_PROVISIONING_URL_NAME = "edit provisioning";
+    public static final String SECURITY_PROVISIONING_URL_NAME = "Edit Provisioning";
     
     
     

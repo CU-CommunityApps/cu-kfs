@@ -10,7 +10,7 @@
 
 	<bean id="SecurityGroup" parent="SecurityGroup-parentBean" />
 	<bean id="SecurityGroup-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
-          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:actionsProvider-ref="securityGroupActionsProvider"
           p:boNotesEnabled="true"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroup"
           p:businessObjectAdminService-ref="defaultBoAdminService"
@@ -191,5 +191,8 @@
             </list>
         </property>
     </bean>
+    
+        <bean id="securityGroupActionsProvider" parent="businessObjectActionsProvider"
+          class="edu.cornell.kfs.ksr.businessobject.actions.SecurityGroupActionsProvider" />
 
 </beans>
