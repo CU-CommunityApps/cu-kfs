@@ -655,6 +655,14 @@
                 <match>map</match>
                 <replacement>(MOVE_NODES_TO_PARENT)</replacement>
             </pattern>
+            <pattern>
+                <match>com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition</match>
+                <replacement>org.kuali.kfs.sec.businessobject.SecurityDefinition</replacement>
+            </pattern>
+            <pattern>
+                <match>com.rsmart.kuali.kfs.sec.businessobject.SecurityModel</match>
+                <replacement>org.kuali.kfs.sec.businessobject.SecurityModel</replacement>
+            </pattern>
         </pattern>
         <!-- KDO-873 -->
         <pattern>
