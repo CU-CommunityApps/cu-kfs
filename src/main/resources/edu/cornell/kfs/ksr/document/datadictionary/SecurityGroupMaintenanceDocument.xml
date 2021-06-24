@@ -11,7 +11,7 @@
     <bean id="SecurityGroupMaintenanceDocument" parent="SecurityGroupMaintenanceDocument-parentBean"/>
     <bean id="SecurityGroupMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroup"
-          p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"
+          p:maintainableClass="edu.cornell.kfs.ksr.document.SecurityGroupMaintainable"
           p:encryptDocumentDataInPersistentSessionStorage="true" p:documentTypeName="SecurityGroupDocumentType"
           p:businessRulesClass="edu.cornell.kfs.ksr.document.validation.impl.SecurityGroupRule"
           p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
