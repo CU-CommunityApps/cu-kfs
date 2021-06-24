@@ -7,6 +7,7 @@
 		<field-descriptor name="active" column="actv_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 		
 	    <collection-descriptor name="securityGroupTabs" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroupTab" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
 			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
@@ -22,6 +23,7 @@
 		<field-descriptor name="active" column="actv_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
 	</class-descriptor>
 

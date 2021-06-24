@@ -46,7 +46,7 @@
     
     <bean id="SecurityGroupMaintenanceDocument-Tabs" parent="SecurityGroupMaintenanceDocument-Tabs-parentBean"/>
     <bean id="SecurityGroupMaintenanceDocument-Tabs-parentBean" abstract="true"
-          parent="MaintainableSectionDefinition" p:id="tabsSection" p:title="Tabs">
+          parent="MaintainableSectionDefinition" p:id="SecurityGroupTabs" p:title="Tabs">
         <property name="maintainableItems">
             <list>
                 <bean parent="MaintainableCollectionDefinition" p:name="securityGroupTabs"
