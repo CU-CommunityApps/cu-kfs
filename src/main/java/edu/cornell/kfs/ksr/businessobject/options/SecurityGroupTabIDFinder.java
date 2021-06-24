@@ -4,7 +4,7 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import edu.cornell.kfs.ksr.KsrConstants;
+import edu.cornell.kfs.ksr.KSRConstants;
 
 public class SecurityGroupTabIDFinder implements DefaultValueFinder {
     
@@ -19,7 +19,7 @@ public class SecurityGroupTabIDFinder implements DefaultValueFinder {
      */
     public static Long getLongValue() {
         SequenceAccessorService sas = SpringContext.getBean(SequenceAccessorService.class);
-        return sas.getNextAvailableSequenceNumber(KsrConstants.SECURITY_GROUP_TAB_SEQ_NAME);
+        return sas.getNextAvailableSequenceNumber(KSRConstants.SECURITY_GROUP_TAB_SEQ_NAME);
     }
 
 }

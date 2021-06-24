@@ -11,7 +11,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.businessobject.actions.BusinessObjectActionsProvider;
 
-import edu.cornell.kfs.ksr.KsrConstants;
+import edu.cornell.kfs.ksr.KSRConstants;
 
 public class SecurityGroupActionsProvider extends BusinessObjectActionsProvider {
 
@@ -20,7 +20,7 @@ public class SecurityGroupActionsProvider extends BusinessObjectActionsProvider 
         final List<Action> actions = super.getActionLinks(businessObject, user);
 
         String securityProvisioningUrl = generateSecurityProvisioningUrl();
-        final Action action = new Action(KsrConstants.SECURITY_PROVISIONING_URL_NAME, "GET", securityProvisioningUrl);
+        final Action action = new Action(KSRConstants.SECURITY_PROVISIONING_URL_NAME, "GET", securityProvisioningUrl);
         actions.add(action);
 
         return actions;
