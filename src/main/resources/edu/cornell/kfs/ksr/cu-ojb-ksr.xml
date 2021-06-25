@@ -25,6 +25,57 @@
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
 		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
+		<collection-descriptor name="securityProvisioningGroups" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+			proxy="true" auto-retrieve="true" auto-update="none" auto-delete="none">
+			<inverse-foreignkey field-ref="securityGroupId" />
+			<inverse-foreignkey field-ref="tabId" />
+		</collection-descriptor>
+	</class-descriptor>
+	
+		<class-descriptor class="edu.cornell.kfs.ksr.businessobject.SecurityProvisioning" table="KRSR_SEC_PRV_T">
+		<field-descriptor name="securityGroupId" column="SEC_GRP_ID" jdbc-type="BIGINT" primarykey="true" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+
+		<reference-descriptor name="securityGroup" class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+			<foreignkey field-ref="securityGroupId" />
+		</reference-descriptor>
+
+		<collection-descriptor name="securityProvisioningGroups" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+			<inverse-foreignkey field-ref="securityGroupId" />
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup" table="KRSR_SEC_PRV_GRP_T">
+		<field-descriptor name="provisioningId" column="PRV_ID" jdbc-type="BIGINT" primarykey="true" sequence-name="KRSR_SEC_PRV_ID_SEQ" autoincrement="true" />
+		<field-descriptor name="securityGroupId" column="SEC_GRP_ID" jdbc-type="BIGINT" />
+		<field-descriptor name="roleId" column="RL_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="roleTabOrder" column="RL_TB_ORD" jdbc-type="BIGINT" />
+		<field-descriptor name="tabId" column="TB_ID" jdbc-type="BIGINT" />
+		<field-descriptor name="distributedAuthorizerRoleId" column="DI_AUTH_RL_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="additionalAuthorizerRoleId" column="ADDL_AUTH_RL_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="centralAuthorizerRoleId" column="CNTRL_AUTH_RL_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="active" column="actv_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+
+		<reference-descriptor name="securityGroup" class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+			<foreignkey field-ref="securityGroupId" />
+		</reference-descriptor>
+
+		<collection-descriptor name="dependentRoles" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+			<inverse-foreignkey field-ref="provisioningId" />
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="org.kuali.rice.ksr.bo.SecurityProvisioningGroupDependentRoles" table="KRSR_SEC_PRV_GRP_DEP_RL_T">
+		<field-descriptor name="provisioningId" column="PRV_ID" jdbc-type="BIGINT" primarykey="true" />
+		<field-descriptor name="roleId" column="RL_ID" jdbc-type="VARCHAR" primarykey="true" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+
 	</class-descriptor>
 
 </descriptor-repository>
