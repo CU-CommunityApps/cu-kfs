@@ -62,7 +62,7 @@
                             	  p:defaultValueFinder-ref="securityGroupTabIDFinder"
                                   p:unconditionallyReadOnly="true" p:required="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="tabName"
-                                  p:noLookup="true"/>
+                                  p:noLookup="true" p:required="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="tabOrder"
                                   p:required="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="active" />

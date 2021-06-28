@@ -1,9 +1,9 @@
 package edu.cornell.kfs.ksr.businessobject;
 
-import org.kuali.kfs.core.api.mo.common.active.Inactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-public class SecurityGroupTab extends PersistableBusinessObjectBase implements Inactivatable {
+public class SecurityGroupTab extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private static final long serialVersionUID = -4877261432186568198L;
     private Long securityGroupId;

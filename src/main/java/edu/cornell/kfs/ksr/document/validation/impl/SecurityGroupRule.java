@@ -10,6 +10,7 @@ import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.ksr.KSRConstants;
@@ -21,34 +22,30 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 
 	/**
 	 * Validate the new SecurityGroupTab against ones that are already in the list - tab order must be unique - tab name must be unique
-	 * 
-	 * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.rice.kns.document.MaintenanceDocument, java.lang.String,
-	 *      org.kuali.rice.kns.bo.PersistableBusinessObject)
 	 */
 	@Override
 	public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject line) {
 		boolean success = true;
 
-		SecurityGroup securityGroup = (SecurityGroup) document.getDocumentDataObject();
-		SecurityGroupTab tempTab = (SecurityGroupTab) line;
-		if (securityGroup.getSecurityGroupTabs() != null) {
-			success = validateSecurityGroupTabs(document);
-			if (success) {
-				Iterator<SecurityGroupTab> it = securityGroup.getSecurityGroupTabs().iterator();
-				while (it.hasNext()) {
-					SecurityGroupTab tab = it.next();
-
-					if (tab.getTabOrder().equals(tempTab.getTabOrder())) {
-						GlobalVariables.getMessageMap().putError(KSRConstants.SECURITY_GROUP_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
-						success = false;
-					}
-					if (tab.getTabName().equals(tempTab.getTabName())) {
-						GlobalVariables.getMessageMap().putError(KSRConstants.SECURITY_GROUP_TAB_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
-						success = false;
-					}
-				}
-			}
-		}
+        if (line instanceof SecurityGroupTab) {
+            SecurityGroup securityGroup = (SecurityGroup) document.getDocumentDataObject();
+            SecurityGroupTab tempTab = (SecurityGroupTab) line;
+            if (securityGroup.getSecurityGroupTabs() != null) {
+                success = validateSecurityGroupTabs(document);
+                if (success) {
+                    for (SecurityGroupTab tab : securityGroup.getSecurityGroupTabs()) {
+                        if (tab.getTabOrder().equals(tempTab.getTabOrder())) {
+                            GlobalVariables.getMessageMap().putError(KSRConstants.SECURITY_GROUP_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
+                            success = false;
+                        }
+                        if (tab.getTabName().equals(tempTab.getTabName())) {
+                            GlobalVariables.getMessageMap().putError(KSRConstants.SECURITY_GROUP_TAB_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
+                            success = false;
+                        }
+                    }
+                }
+            }
+        }
 
 		return super.processCustomAddCollectionLineBusinessRules(document, collectionName, line)
 				&& success;
@@ -66,13 +63,7 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 			return false;
 		}
 		else if (tabs.size() > 0) {
-			Iterator<SecurityGroupTab> it = tabs.iterator();
-			while (it.hasNext()) {
-				SecurityGroupTab tab = it.next();
-				if (tab.isActive()) {
-					return true;
-				}
-			}
+		    return tabs.stream().anyMatch(tab -> tab.isActive());
 		}
 
 		return false;
@@ -80,15 +71,13 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 
 	/**
 	 * Validates the maint. doc before it is written to the db.
-	 * 
-	 * @see org.kuali.rice.kns.maintenance.rules.MaintenanceDocumentRuleBase#dataDictionaryValidate(org.kuali.rice.kns.document.MaintenanceDocument)
 	 */
 	@Override
 	protected boolean dataDictionaryValidate(MaintenanceDocument document) {
 		boolean success = true;
 		SecurityGroup securityGroup = (SecurityGroup) document.getDocumentDataObject();
 		if (!hasAtLeastOneActiveTab(securityGroup.getSecurityGroupTabs())) {
-			GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_MISSING, new String());
+			GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_MISSING);
 			success = false;
 		}
 
@@ -99,7 +88,7 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 		BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
 		SecurityGroup temp = (SecurityGroup) businessObjectService.findByPrimaryKey(SecurityGroup.class, hashMap);
 
-		if (temp != null) {
+		if (ObjectUtils.isNotNull(temp)) {
 			if (securityGroup.getSecurityGroupId() != null) {
 				if (temp.getSecurityGroupName().equals(securityGroup.getSecurityGroupName())
 						&& (!temp.getSecurityGroupId().equals(securityGroup.getSecurityGroupId()))) {

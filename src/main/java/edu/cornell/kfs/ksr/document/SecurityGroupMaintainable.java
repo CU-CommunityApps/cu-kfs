@@ -14,7 +14,7 @@ package edu.cornell.kfs.ksr.document;
 
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.sys.context.SpringContext;

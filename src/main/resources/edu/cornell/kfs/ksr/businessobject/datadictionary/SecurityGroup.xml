@@ -6,7 +6,6 @@
 	<bean id="SecurityGroup" parent="SecurityGroup-parentBean" />
 	<bean id="SecurityGroup-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
           p:actionsProvider-ref="securityGroupActionsProvider"
-          p:boNotesEnabled="true"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroup"
           p:businessObjectAdminService-ref="defaultBoAdminService"
           p:inquiryDefinition-ref="SecurityGroup-inquiryDefinition"
@@ -142,9 +141,7 @@
     <!-- Business Object Lookup Definition -->
 
     <bean id="SecurityGroup-lookupDefinition" parent="SecurityGroup-lookupDefinition-parentBean"/>
-    <bean id="SecurityGroup-lookupDefinition-parentBean" abstract="true"
-          parent="SecurityGroup-lookupDefinition-base-parentBean"/>
-    <bean id="SecurityGroup-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition"
+    <bean id="SecurityGroup-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
           p:title="Security Group Lookup">
         <property name="defaultSort">
             <bean parent="SortDefinition">

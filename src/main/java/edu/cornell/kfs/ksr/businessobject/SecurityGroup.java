@@ -3,10 +3,10 @@ package edu.cornell.kfs.ksr.businessobject;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.kfs.core.api.mo.common.active.Inactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-public class SecurityGroup extends PersistableBusinessObjectBase implements Inactivatable {
+public class SecurityGroup extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private static final long serialVersionUID = -234206146013644273L;
 
