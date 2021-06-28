@@ -1,7 +1,7 @@
 package edu.cornell.kfs.ksr;
 
 public class KSRConstants {
-	public static final String KSR_DOCUMENT_MAINTANABLE = "document.newMaintainableObject";
+	public static final String KSR_DOCUMENT_MAINTAINABLE = "document.newMaintainableObject";
 	
 	public static final String KSR_NAMESPACE = "KFS-SR";
 
