@@ -32,6 +32,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
     protected static final String OLD_DATA_ELEMENT = "oldData";
     protected static final String EXPECTED_RESULT_ELEMENT = "expectedResult";
     protected static final String MOVE_TO_PARENT_TEST_ELEMENT = "moveToParentTest";
+    protected static final String MOVED_CHILD_TEST_ELEMENT = "movedChild";
 
     protected TestMaintainableXMLConversionServiceImpl conversionService;
     protected String oldData;
@@ -69,8 +70,17 @@ public class CuMaintainableXMLConversionServiceImplTest {
     @Test
     void testMoveNodesToParentWhenExcludedNodeDoesNotHaveCustomPropertyRules() throws Exception {
         conversionService.addEntryToRuleMap(CuMaintenanceXMLConverter.DEFAULT_PROPERTY_RULE_KEY,
-                MOVE_TO_PARENT_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_NODES_TO_PARENT_INDICATOR);
+                MOVE_TO_PARENT_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_CHILD_NODES_TO_PARENT_INDICATOR);
         assertXMLFromTestFileConvertsAsExpected("MoveNodesToParentTest.xml");
+    }
+
+    @Test
+    void testMoveMarkedNodesToParent() throws Exception {
+        conversionService.addEntryToRuleMap(CuMaintenanceXMLConverter.DEFAULT_PROPERTY_RULE_KEY,
+                MOVE_TO_PARENT_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_MARKED_NODES_TO_PARENT_INDICATOR);
+        conversionService.addEntryToRuleMap(MOVE_TO_PARENT_TEST_ELEMENT,
+                MOVED_CHILD_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_THIS_NODE_TO_PARENT_INDICATOR);
+        assertXMLFromTestFileConvertsAsExpected("MoveMarkedNodesToParentTest.xml");
     }
 
     @Test
