@@ -1,10 +1,11 @@
 package edu.cornell.kfs.ksr.document.validation.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -69,46 +70,53 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 		return false;
 	}
 
-	/**
-	 * Validates the maint. doc before it is written to the db.
-	 */
-	@Override
-	protected boolean dataDictionaryValidate(MaintenanceDocument document) {
-		boolean success = true;
-		SecurityGroup securityGroup = (SecurityGroup) document.getDocumentDataObject();
-		if (!hasAtLeastOneActiveTab(securityGroup.getSecurityGroupTabs())) {
-			GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_MISSING);
-			success = false;
-		}
+    /**
+     * Validates the maint. doc before it is written to the db.
+     */
+    @Override
+    protected boolean dataDictionaryValidate(MaintenanceDocument document) {
+        boolean success = true;
+        SecurityGroup securityGroup = (SecurityGroup) document.getDocumentDataObject();
+        if (!hasAtLeastOneActiveTab(securityGroup.getSecurityGroupTabs())) {
+            GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_MISSING);
+            success = false;
+        }
 
-		// Check the Security Group Name against the DB
-		Map<String, Object> hashMap = new HashMap<String, Object>();
-		hashMap.put(KSRConstants.SECURITY_GROUP_NAME, securityGroup.getSecurityGroupName());
+        // Check the Security Group Name against the DB
+        SecurityGroup temp = retrieveSecurityGroupByName(securityGroup.getSecurityGroupName());
+        if (ObjectUtils.isNotNull(temp)) {
+            if (securityGroup.getSecurityGroupId() != null) {
+                if (temp.getSecurityGroupName().equals(securityGroup.getSecurityGroupName())
+                        && (!temp.getSecurityGroupId().equals(securityGroup.getSecurityGroupId()))) {
+                    GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTANABLE + "." + KSRConstants.SECURITY_GROUP_NAME,
+                            KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
+                    success = false;
+                }
+            } else {
+                GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTANABLE + "." + KSRConstants.SECURITY_GROUP_NAME,
+                        KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
+                success = false;
+            }
+        }
 
-		BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-		SecurityGroup temp = (SecurityGroup) businessObjectService.findByPrimaryKey(SecurityGroup.class, hashMap);
+        success = validateSecurityGroupTabs(document);
 
-		if (ObjectUtils.isNotNull(temp)) {
-			if (securityGroup.getSecurityGroupId() != null) {
-				if (temp.getSecurityGroupName().equals(securityGroup.getSecurityGroupName())
-						&& (!temp.getSecurityGroupId().equals(securityGroup.getSecurityGroupId()))) {
-					GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTANABLE
-							+ "." + KSRConstants.SECURITY_GROUP_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
-					success = false;
-				}
-			}
-			else {
-				GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTANABLE
-						+ "." + KSRConstants.SECURITY_GROUP_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
-				success = false;
-			}
+        return (super.dataDictionaryValidate(document) && success);
+    }
 
-		}
+    private SecurityGroup retrieveSecurityGroupByName(String securityGroupName) {
+        SecurityGroup securityGroup = null;
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(KSRConstants.SECURITY_GROUP_NAME, securityGroupName);
 
-		success = validateSecurityGroupTabs(document);
+        BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        Collection<SecurityGroup> securityGroups = businessObjectService.findMatching(SecurityGroup.class, hashMap);
 
-		return (super.dataDictionaryValidate(document) && success);
-	}
+        if (CollectionUtils.isNotEmpty(securityGroups)) {
+            securityGroup = securityGroups.iterator().next();
+        }
+        return securityGroup;
+    }
 
 	/**
 	 * Determines uniqueness of each SecurityGroupTab in the maint. doc.
@@ -140,12 +148,12 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 					SecurityGroupTab tempTab = securityGroupTabs.get(j);
 					if (successTabOrder
 							&& tab.getTabOrder().equals(tempTab.getTabOrder())) {
-						GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE, new String());
+						GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
 						successTabOrder = false;
 					}
 					if (successTabName
 							&& tab.getTabName().equals(tempTab.getTabName())) {
-						GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE, new String());
+						GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
 						successTabName = false;
 					}
 
