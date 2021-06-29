@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="SecurityProvisioning" parent="SecurityProvisioning-parentBean" />
+	<bean id="SecurityProvisioning-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:boNotesEnabled="true"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioning"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="SecurityProvisioning-inquiryDefinition"
+          p:lookupDefinition-ref="SecurityProvisioning-lookupDefinition"
+          p:name="SecurityProvisioning"
+          p:objectLabel="SecurityProvisioning"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="provisioningId">
+		<property name="attributes">
+			<list>
+				<ref bean="SecurityProvisioning-securityGroupId" />
+				<ref bean="SecurityProvisioning-securityGroup-securityGroupName" />
+				<ref bean="SecurityProvisioning-securityGroupDescription" />
+				<ref bean="SecurityProvisioning-securityGroup-versionNumber" />
+				<ref bean="SecurityProvisioning-securityGroup-active" />
+				<ref bean="SecurityProvisioning-versionNumber" />
+			</list>
+		</property>
+		<property name="collections">
+			<list>
+			  <bean parent="CollectionDefinition" p:name="securityProvisioningGroups" p:label="securityProvisioningGroups" p:shortLabel="Provisioning Groups" p:elementLabel="Security Provisioning Groups" />
+			</list>
+		</property>
+		<property name="relationships">
+			<list>
+				<bean parent="RelationshipDefinition">
+					<property name="objectAttributeName" value="securityGroup" />
+					<property name="primitiveAttributes">
+						<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="securityGroupId" p:targetName="securityGroupId" />
+						</list>
+					</property>
+					<property name="supportAttributes">
+						<list>
+							<bean parent="SupportAttributeDefinition" p:sourceName="securityGroup.securityGroupName" p:targetName="securityGroupName" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-securityGroupId" parent="SecurityProvisioning-securityGroupId-parentBean" />
+	<bean id="SecurityProvisioning-securityGroupId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupId" />
+		<property name="label" value="Security Group Id" />
+		<property name="shortLabel" value="Security Group Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Id" />
+		<property name="description" value="Security Group Id" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="4" />
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-securityGroup-securityGroupName" parent="SecurityProvisioning-securityGroup-parentBean" />
+	<bean id="SecurityProvisioning-securityGroup-securityGroupName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupName" />
+		<property name="label" value="Security Group Name" />
+		<property name="shortLabel" value="Security Group" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Name" />
+		<property name="description" value="Security Group Name" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="50" />
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-securityGroup-securityGroupDescription" parent="SecurityProvisioning-securityGroup-securityGroupDescription-parentBean" />
+	<bean id="SecurityProvisioning-securityGroup-securityGroupDescription-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupDescription" />
+		<property name="label" value="Security Group Description" />
+		<property name="shortLabel" value="Group Description" />
+		<property name="maxLength" value="400" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Description" />
+		<property name="description" value="Security Group Description" />
+		<property name="control">
+			<bean parent="TextareaControlDefinition" p:rows="4" p:cols="100" />
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioning-securityGroup-active" parent="SecurityProvisioning-securityGroup-active-parentBean" />
+	<bean id="SecurityProvisioning-securityGroup-active-parentBean" abstract="true" parent="AttributeReferenceDummy-activeIndicator">
+		<property name="name" value="active" />
+	</bean>
+
+	<bean id="SecurityProvisioning-versionNumber" parent="SecurityProvisioning-versionNumber-parentBean" />
+	<bean id="SecurityProvisioning-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+	
+	<!-- Business Object Inquiry Definition -->
+
+    <bean id="SecurityProvisioning-inquiryDefinition" parent="SecurityProvisioning-inquiryDefinition-parentBean"/>
+    <bean id="SecurityProvisioning-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Security Provisioning Inquiry" >
+        <property name="inquirySections">
+            <list>
+                <ref bean="SecurityProvisioning-inquirySectionDefinition"/>
+                <ref bean="SecurityProvisioning-inquirySectionDefinition-securityProvisioningGroup"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="SecurityProvisioning-inquirySectionDefinition" parent="SecurityProvisioning-inquirySectionDefinition-parentBean"/>
+    <bean id="SecurityProvisioning-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="securityGroup.securityGroupName"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="SecurityProvisioning-inquirySectionDefinition-securityProvisioningGroup"
+          parent="SecurityProvisioning-inquirySectionDefinition-securityProvisioningGroup-parentBean"/>
+    <bean id="SecurityProvisioning-inquirySectionDefinition-securityProvisioningGroup-parentBean" abstract="true" parent="InquirySectionDefinition"
+          p:id="securityPRovisioningGroupSection" p:title="Security Provisioning Groups">
+        <property name="inquiryFields">
+            <list>
+                <ref bean="SecurityProvisioning-inquiryCollectionDefinition-securityProvisioningGroup"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SecurityProvisioning-inquiryCollectionDefinition-securityProvisioningGroups"
+          parent="SecurityProvisioning-inquiryCollectionDefinition-securityProvisioningGroups-parentBean"/>
+    <bean id="SecurityProvisioning-inquiryCollectionDefinition-securityProvisioningGroups-parentBean" abstract="true"
+          parent="InquiryCollectionDefinition" p:attributeName="securityProvisioningGroups"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="securityGroup.securityGroupName"/>
+            </list>
+        </property>
+        <property name="summaryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="securityGroup.securityGroupName"/>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="SecurityProvisioning-lookupDefinition" parent="SecurityProvisioning-lookupDefinition-parentBean"/>
+    <bean id="SecurityProvisioning-lookupDefinition-parentBean" abstract="true"
+          parent="SecurityProvisioning-lookupDefinition-base-parentBean"/>
+    <bean id="SecurityProvisioning-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Security Provisioning Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>securityGroupId</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="SecurityProvisioning-securityGroupId" />
+                <ref bean="SecurityProvisioning-securityGroup.securityGroupName" />
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="SecurityProvisioning-securityGroup.securityGroupName" />
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+            	<bean parent="FieldDefinition" p:attributeName="securityGroupId"/>
+                <bean parent="FieldDefinition" p:attributeName="securityGroup.securityGroupName"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="securityGroup.securityGroupName"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
