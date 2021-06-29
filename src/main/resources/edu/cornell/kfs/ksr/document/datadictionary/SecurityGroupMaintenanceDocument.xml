@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+                           
+    <import resource="classpath:edu/cornell/kfs/ksr/cu-ksr-lookup-beans.xml"/>
+    
+    <bean id="SecurityGroupMaintenanceDocument" parent="SecurityGroupMaintenanceDocument-parentBean"/>
+    <bean id="SecurityGroupMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroup"
+          p:maintainableClass="edu.cornell.kfs.ksr.document.SecurityGroupMaintainable"
+          p:encryptDocumentDataInPersistentSessionStorage="true" p:documentTypeName="SecurityGroupDocumentType"
+          p:businessRulesClass="edu.cornell.kfs.ksr.document.validation.impl.SecurityGroupRule"
+          p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
+          p:workflowAttributes-ref="SecurityGroupMaintenanceDocument-workflowAttributes">
+        <property name="maintainableSections">
+        	<list>
+        		<ref bean="SecurityGroupMaintenanceDocument-Edit"/>
+        		<ref bean="SecurityGroupMaintenanceDocument-Tabs"/>
+        	</list>
+        </property>
+		<property name="lockingKeys">
+			<list>
+				<value>securityGroupId</value>
+			</list>
+		</property>
+	</bean>
+	
+    <bean id="SecurityGroupMaintenanceDocument-Edit"
+          parent="SecurityGroupMaintenanceDocument-Edit-parentBean"/>
+    <bean id="SecurityGroupMaintenanceDocument-Edit-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="generalInformationSection" p:title="Security Group">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="securityGroupId" 
+                      p:defaultValueFinder-ref="securityGroupIDFinder" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="securityGroupName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="securityGroupDescription" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="SecurityGroupMaintenanceDocument-Tabs" parent="SecurityGroupMaintenanceDocument-Tabs-parentBean"/>
+    <bean id="SecurityGroupMaintenanceDocument-Tabs-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="SecurityGroupTabs" p:title="Tabs">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableCollectionDefinition" p:name="securityGroupTabs"
+                      p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroupTab">
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabName"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabId"
+                            	  p:defaultValueFinder-ref="securityGroupTabIDFinder"
+                                  p:unconditionallyReadOnly="true" p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabName"
+                                  p:noLookup="true" p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabOrder"
+                                  p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="active" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <!-- workflow attributes -->
+    <bean id="SecurityGroupMaintenanceDocument-workflowAttributes"
+          parent="SecurityGroupMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="SecurityGroupMaintenanceDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes"/>
+
+</beans>
