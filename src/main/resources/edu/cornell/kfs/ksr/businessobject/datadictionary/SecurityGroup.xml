@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="SecurityGroup" parent="SecurityGroup-parentBean" />
+	<bean id="SecurityGroup-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
+          p:actionsProvider-ref="securityGroupActionsProvider"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroup"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="SecurityGroup-inquiryDefinition"
+          p:lookupDefinition-ref="SecurityGroup-lookupDefinition"
+          p:name="SecurityGroup"
+          p:objectLabel="SecurityGroup"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="securityGroupName">
+		<property name="attributes">
+			<list>
+				<ref bean="SecurityGroup-securityGroupId" />
+				<ref bean="SecurityGroup-securityGroupName" />
+				<ref bean="SecurityGroup-securityGroupDescription" />
+				<ref bean="SecurityGroup-versionNumber" />
+				<ref bean="SecurityGroup-active" />
+			</list>
+		</property>
+		<property name="collections">
+			<list>
+			  <bean parent="CollectionDefinition" p:name="securityGroupTabs" p:label="securityGroupTabs" p:shortLabel="Tab" p:elementLabel="Tab" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-securityGroupId" parent="SecurityGroup-securityGroupId-parentBean" />
+	<bean id="SecurityGroup-securityGroupId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupId" />
+		<property name="label" value="Security Group Id" />
+		<property name="shortLabel" value="Security Group Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Id" />
+		<property name="description" value="Security Group Id" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="4" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-securityGroupName" parent="SecurityGroup-securityGroupName-parentBean" />
+	<bean id="SecurityGroup-securityGroupName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupName" />
+		<property name="label" value="Security Group Name" />
+		<property name="shortLabel" value="Security Group" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Name" />
+		<property name="description" value="Security Group Name" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-securityGroupDescription" parent="SecurityGroup-securityGroupDescription-parentBean" />
+	<bean id="SecurityGroup-securityGroupDescription-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupDescription" />
+		<property name="label" value="Security Group Description" />
+		<property name="shortLabel" value="Group Description" />
+		<property name="maxLength" value="400" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group Description" />
+		<property name="description" value="Security Group Description" />
+		<property name="control">
+			<bean parent="TextareaControlDefinition" p:rows="4" p:cols="100" />
+		</property>
+	</bean>
+
+	<bean id="SecurityGroup-active" parent="SecurityGroup-active-parentBean" />
+	<bean id="SecurityGroup-active-parentBean" abstract="true" parent="AttributeReferenceDummy-activeIndicator">
+		<property name="name" value="active" />
+	</bean>
+
+	<bean id="SecurityGroup-versionNumber" parent="SecurityGroup-versionNumber-parentBean" />
+	<bean id="SecurityGroup-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+	
+	<!-- Business Object Inquiry Definition -->
+
+    <bean id="SecurityGroup-inquiryDefinition" parent="SecurityGroup-inquiryDefinition-parentBean"/>
+    <bean id="SecurityGroup-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Security Group Inquiry" >
+        <property name="inquirySections">
+            <list>
+                <ref bean="SecurityGroup-inquirySectionDefinition"/>
+                <ref bean="SecurityGroup-inquirySectionDefinition-securityGroupTab"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="SecurityGroup-inquirySectionDefinition" parent="SecurityGroup-inquirySectionDefinition-parentBean"/>
+    <bean id="SecurityGroup-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupId"/>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupName"/>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="SecurityGroup-inquirySectionDefinition-securityGroupTab"
+          parent="SecurityGroup-inquirySectionDefinition-securityGroupTab-parentBean"/>
+    <bean id="SecurityGroup-inquirySectionDefinition-securityGroupTab-parentBean" abstract="true" parent="InquirySectionDefinition"
+          p:id="securityGroupTabSection" p:title="Security Group Tabs">
+        <property name="inquiryFields">
+            <list>
+                <ref bean="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs"
+          parent="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs-parentBean"/>
+    <bean id="SecurityGroup-inquiryCollectionDefinition-securityGroupTabs-parentBean" abstract="true"
+          parent="InquiryCollectionDefinition" p:attributeName="securityGroupTabs"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityGroupTab">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="tabId"/>
+                <bean parent="FieldDefinition" p:attributeName="tabName"/>
+                <bean parent="FieldDefinition" p:attributeName="tabOrder"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="summaryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="tabName"/>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="SecurityGroup-lookupDefinition" parent="SecurityGroup-lookupDefinition-parentBean"/>
+    <bean id="SecurityGroup-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Security Group Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>securityGroupId</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="SecurityGroup-securityGroupId" />
+                <ref bean="SecurityGroup-securityGroupName" />
+                <ref bean="SecurityGroup-securityGroupDescription" />
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="SecurityGroup-securityGroupName" />
+                <ref bean="SecurityGroup-securityGroupDescription" />
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupId"/>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupName"/>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupName"/>
+                <bean parent="FieldDefinition" p:attributeName="securityGroupDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="securityGroupActionsProvider" parent="businessObjectActionsProvider"
+          class="edu.cornell.kfs.ksr.businessobject.actions.SecurityGroupActionsProvider" />
+
+</beans>
