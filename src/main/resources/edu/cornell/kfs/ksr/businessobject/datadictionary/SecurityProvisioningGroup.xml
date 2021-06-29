@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="SecurityProvisioningGroup" parent="SecurityProvisioningGroup-parentBean" />
+	<bean id="SecurityProvisioningGroup-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:boNotesEnabled="true"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:name="SecurityProvisioningGroup"
+          p:objectLabel="SecurityProvisioningGroup"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="provisioningId">
+		<property name="attributes">
+			<list>
+				<ref bean="SecurityProvisioningGroup-provisioningId" />
+				<ref bean="SecurityProvisioningGroup-securityGroupId" />
+				<ref bean="SecurityProvisioningGroup-securityGroup-securityGroupName" />
+				<ref bean="SecurityProvisioningGroup-securityGroupTab-tabName" />
+				<ref bean="SecurityProvisioningGroup-roleId" />
+				<ref bean="SecurityProvisioningGroup-roleName" />
+				<ref bean="SecurityProvisioningGroup-roleTabOrder" />
+				<ref bean="SecurityProvisioningGroup-tabId" />
+				<ref bean="SecurityProvisioningGroup-distributedAuthorizerRoleId" />
+				<ref bean="SecurityProvisioningGroup-additionalAuthorizerRoleId" />
+				<ref bean="SecurityProvisioningGroup-centralAuthorizerRoleId" />
+				<ref bean="SecurityProvisioningGroup-distributedAuthorizerRole-roleName" />
+				<ref bean="SecurityProvisioningGroup-additionalAuthorizerRole-roleName" />
+				<ref bean="SecurityProvisioningGroup-centralAuthorizerRole-roleName" />
+				<ref bean="SecurityProvisioningGroup-versionNumber" />
+				<ref bean="SecurityProvisioningGroup-active" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioningGroup-provisioningId" parent="SecurityProvisioningGroup-provisioningId-parentBean" />
+	<bean id="SecurityProvisioningGroup-provisioningId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="provisioningId" />
+		<property name="label" value="Provisioning Id" />
+		<property name="shortLabel" value="Provisioning Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="true" />
+		<property name="summary" value="Provisioning Id" />
+		<property name="description" value="Provisioning Id" />
+		<property name="control">
+			<bean parent="HiddenControlDefinition" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-securityGroupId" parent="SecurityProvisioningGroup-securityGroupId-parentBean" />
+	<bean id="SecurityProvisioningGroup-securityGroupId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupId" />
+		<property name="label" value="Security Group Id" />
+		<property name="shortLabel" value="Security Group Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="false" />
+		<property name="summary" value="Security Group Id" />
+		<property name="description" value="Security Group Id" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="20" />
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioningGroup-securityGroup-securityGroupName" parent="SecurityProvisioningGroup-securityGroup-securityGroupName-parentBean" />
+	<bean id="SecurityProvisioningGroup-securityGroup-securityGroupName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroup.securityGroupName" />
+		<property name="label" value="Security Group" />
+		<property name="shortLabel" value="Security Group" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Security Group" />
+		<property name="description" value="Security Group" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+		
+	<bean id="SecurityProvisioningGroup-securityGroupTab-tabName" parent="SecurityProvisioningGroup-securityGroupTab-tabName-parentBean" />
+	<bean id="SecurityProvisioningGroup-securityGroupTab-tabName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="securityGroupTab.tabName" />
+		<property name="label" value="Tab Location" />
+		<property name="shortLabel" value="Tab Location" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Tab Location" />
+		<property name="description" value="Tab Location" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-roleId" parent="SecurityProvisioningGroup-roleId-parentBean" />
+	<bean id="SecurityProvisioningGroup-roleId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="roleId" />
+		<property name="label" value="Role (to be granted)" />
+		<property name="shortLabel" value="Role" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Role" />
+		<property name="description" value="Role" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-roleName" parent="SecurityProvisioningGroup-roleName-parentBean" />
+	<bean id="SecurityProvisioningGroup-roleName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="roleName" />
+		<property name="label" value="Role (to be granted) Name" />
+		<property name="shortLabel" value="Role Name" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Role" />
+		<property name="description" value="Role" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-roleTabOrder" parent="SecurityProvisioningGroup-roleTabOrder-parentBean" />
+	<bean id="SecurityProvisioningGroup-roleTabOrder-parentBean" parent="AttributeDefinition">
+		<property name="name" value="roleTabOrder" />
+		<property name="label" value="Role Tab Order" />
+		<property name="shortLabel" value="Role Tab Order" />
+		<property name="maxLength" value="2" />
+		<property name="required" value="true" />
+		<property name="summary" value="Role Tab Order" />
+		<property name="description" value="Role Tab Order" />
+		<property name="validationPattern">
+			<bean parent="NumericValidationPattern" />
+		</property>
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="2" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-tabId" parent="SecurityProvisioningGroup-tabId-parentBean" />
+	<bean id="SecurityProvisioningGroup-tabId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="tabId" />
+		<property name="label" value="Tab Location" />
+		<property name="shortLabel" value="Tab Location" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="true" />
+		<property name="summary" value="Tab Location" />
+		<property name="description" value="Tab Location" />
+    	<property name="control" >
+      	<bean parent="SelectControlDefinition"
+            	p:valuesFinder-ref="SecurityGroupTabValuesFinder"
+            	p:includeKeyInLabel="true" />
+    </property>
+	</bean>
+
+	<bean id="SecurityProvisioningGroup-active" parent="SecurityProvisioningGroup-active-parentBean" />
+	<bean id="SecurityProvisioningGroup-active-parentBean" abstract="true" parent="AttributeReferenceDummy-activeIndicator">
+		<property name="name" value="active" />
+	</bean>
+
+	<bean id="SecurityProvisioningGroup-versionNumber" parent="SecurityProvisioningGroup-versionNumber-parentBean" />
+	<bean id="SecurityProvisioningGroup-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+    
+    <bean id="securityGroupTabValuesFinder" class="edu.cornell.kfs.ksr.businessobject.options.SecurityGroupTabValuesFinder"
+		  p:keyValuesService-ref="grl.keyValuesService"/>
+
+</beans>
