@@ -699,13 +699,36 @@
         <!--
             NOTE: Most of the vendor header extension's former properties have been moved
             into the main vendor header object, but we still need to keep the extension
-            because of its custom locale field.
+            because of its custom locale field. Also, some older vendor documents have
+            unconverted field names on the vendorHeader instead of the extension,
+            so duplicate conversions were added to the vendorHeader entry itself
+            to adjust for that.
         -->
         <pattern>
             <class>vendorHeader</class>
             <pattern>
                 <match>extension</match>
                 <replacement>(MOVE_MARKED_NODES_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorW9ReceivedDate</match>
+                <replacement>vendorW9SignedDate</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorW8BenReceivedDate</match>
+                <replacement>vendorW8SignedDate</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignTaxNumber</match>
+                <replacement>vendorForeignTaxId</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignRecipientBirthDate</match>
+                <replacement>vendorDOB</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorChapter4Status</match>
+                <replacement>chapter4Status</replacement>
             </pattern>
         </pattern>
         <pattern>

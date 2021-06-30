@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -31,8 +32,13 @@ public class CuMaintainableXMLConversionServiceImplTest {
     protected static final String BASE_TEST_FILE_PATH = "classpath:edu/cornell/kfs/krad/service/impl/";
     protected static final String OLD_DATA_ELEMENT = "oldData";
     protected static final String EXPECTED_RESULT_ELEMENT = "expectedResult";
+
     protected static final String MOVE_TO_PARENT_TEST_ELEMENT = "moveToParentTest";
     protected static final String MOVED_CHILD_TEST_ELEMENT = "movedChild";
+    protected static final String UNMOVED_CHILD_TO_UPDATE_TEST_ELEMENT = "unmovedChildToUpdate";
+    protected static final String UNMOVED_RENAMED_CHILD_TEST_ELEMENT = "unmovedRenamedChild";
+    protected static final String MOVED_CHILD_TO_UPDATE_TEST_ELEMENT = "movedChildToUpdate";
+    protected static final String MOVED_RENAMED_CHILD_TEST_ELEMENT = "movedRenamedChild";
 
     protected TestMaintainableXMLConversionServiceImpl conversionService;
     protected String oldData;
@@ -76,10 +82,16 @@ public class CuMaintainableXMLConversionServiceImplTest {
 
     @Test
     void testMoveMarkedNodesToParent() throws Exception {
-        conversionService.addEntryToRuleMap(CuMaintenanceXMLConverter.DEFAULT_PROPERTY_RULE_KEY,
-                MOVE_TO_PARENT_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_MARKED_NODES_TO_PARENT_INDICATOR);
-        conversionService.addEntryToRuleMap(MOVE_TO_PARENT_TEST_ELEMENT,
-                MOVED_CHILD_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_THIS_NODE_TO_PARENT_INDICATOR);
+        conversionService.addRulesToMap(
+                ruleEntry(CuMaintenanceXMLConverter.DEFAULT_PROPERTY_RULE_KEY,
+                        Map.entry(MOVE_TO_PARENT_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_MARKED_NODES_TO_PARENT_INDICATOR)),
+                ruleEntry(MOVE_TO_PARENT_TEST_ELEMENT,
+                        Map.entry(MOVED_CHILD_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_THIS_NODE_TO_PARENT_INDICATOR),
+                        Map.entry(MOVED_CHILD_TO_UPDATE_TEST_ELEMENT, CuMaintenanceXMLConverter.MOVE_THIS_NODE_TO_PARENT_INDICATOR),
+                        Map.entry(UNMOVED_CHILD_TO_UPDATE_TEST_ELEMENT, UNMOVED_RENAMED_CHILD_TEST_ELEMENT)),
+                ruleEntry(MOVE_TO_PARENT_TEST_ELEMENT + CuMaintenanceXMLConverter.MOVED_NODES_CLASSNAME_SUFFIX,
+                        Map.entry(MOVED_CHILD_TO_UPDATE_TEST_ELEMENT, MOVED_RENAMED_CHILD_TEST_ELEMENT)));
+
         assertXMLFromTestFileConvertsAsExpected("MoveMarkedNodesToParentTest.xml");
     }
 
@@ -123,9 +135,14 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected("ObjectCodeGlobalTest.xml");
     }
 
-    @Test
-    void testConversionOfVendor() throws Exception {
-        assertXMLFromTestFileConvertsAsExpected("VendorTest.xml");
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "VendorTest.xml",
+        "VendorWithoutHeaderExtensionTest.xml",
+        "VendorLocaleTest.xml"
+    })
+    void testConversionOfVendors(String vendorTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(vendorTestFile);
     }
 
     @Test
@@ -203,6 +220,12 @@ public class CuMaintainableXMLConversionServiceImplTest {
         return fileContents.substring(trimmedStartIndex, trimmedEndIndex);
     }
 
+    @SafeVarargs
+    protected final Map.Entry<String, Map<String, String>> ruleEntry(
+            String ruleClassname, Map.Entry<String, String>... conversions) {
+        return Map.entry(ruleClassname, Map.ofEntries(conversions));
+    }
+
     /**
      * Testing-only conversion service sub-class that will re-throw conversion errors instead of logging them,
      * and also allows for manually updating the property rule maps.
@@ -217,6 +240,14 @@ public class CuMaintainableXMLConversionServiceImplTest {
         public void addEntryToRuleMap(String ruleMapKey, String match, String replacement) {
             classPropertyRuleMaps.computeIfAbsent(ruleMapKey, (key) -> new HashMap<>())
                     .put(match, replacement);
+        }
+
+        @SafeVarargs
+        public final void addRulesToMap(Map.Entry<String, Map<String, String>>... ruleEntries) {
+            for (Map.Entry<String, Map<String, String>> ruleEntry : ruleEntries) {
+                classPropertyRuleMaps.computeIfAbsent(ruleEntry.getKey(), key -> new HashMap<>())
+                        .putAll(ruleEntry.getValue());
+            }
         }
     }
 

@@ -15,7 +15,7 @@
   <parameterConstraintCode>A</parameterConstraintCode>
   <moveToParentTest>
     <movedChild>This should be moved to parent.</movedChild>
-    <unmovedChild>This should stay on the parent.</unmovedChild>
+    <unmovedChild>This should stay in place.</unmovedChild>
   </moveToParentTest>
 </org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
 </oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.Parameter>
@@ -33,7 +33,9 @@
   <parameterConstraintCode>A</parameterConstraintCode>
   <moveToParentTest>
     <movedChild>This should be moved to parent.</movedChild>
-    <unmovedChild>This should stay on the parent.</unmovedChild>
+    <unmovedChild>This should stay in place.</unmovedChild>
+    <movedChildToUpdate>This should move to parent and have a name change.</movedChildToUpdate>
+    <unmovedChildToUpdate>This should stay in place and have a name change.</unmovedChildToUpdate>
   </moveToParentTest>
 </org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
@@ -51,7 +53,7 @@
   <parameterTypeCode>CONFG</parameterTypeCode>
   <evaluationOperatorCode>A</evaluationOperatorCode>
   <moveToParentTest>
-    <unmovedChild>This should stay on the parent.</unmovedChild>
+    <unmovedChild>This should stay in place.</unmovedChild>
   </moveToParentTest><movedChild>This should be moved to parent.</movedChild>
 </org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
 </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
@@ -66,8 +68,9 @@
   <parameterTypeCode>CONFG</parameterTypeCode>
   <evaluationOperatorCode>A</evaluationOperatorCode>
   <moveToParentTest>
-    <unmovedChild>This should stay on the parent.</unmovedChild>
-  </moveToParentTest><movedChild>This should be moved to parent.</movedChild>
+    <unmovedChild>This should stay in place.</unmovedChild>
+    <unmovedRenamedChild>This should stay in place and have a name change.</unmovedRenamedChild>
+  </moveToParentTest><movedChild>This should be moved to parent.</movedChild><movedRenamedChild>This should move to parent and have a name change.</movedRenamedChild>
 </org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
