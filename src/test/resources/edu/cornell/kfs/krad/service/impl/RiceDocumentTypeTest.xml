@@ -1,0 +1,61 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kew.document.DocumentTypeMaintainable"><oldMaintainableObject><org.kuali.rice.kew.doctype.bo.DocumentType>
+  <versionNumber>1</versionNumber>
+  <objectId>22F63DD3-3DAD-0B7D-9AEF-95CAA7267890</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <documentTypeId>102456</documentTypeId>
+  <docTypeParentId>100825</docTypeParentId>
+  <name>TLCS</name>
+  <version>0</version>
+  <active>true</active>
+  <currentInd>true</currentInd>
+  <label>Test Store</label>
+  <routingVersion>2</routingVersion>
+  <applyRetroactively>false</applyRetroactively>
+</org.kuali.rice.kew.doctype.bo.DocumentType><maintenanceAction>Copy</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kew.doctype.bo.DocumentType>
+  <newCollectionRecord>true</newCollectionRecord>
+  <docTypeParentId>100825</docTypeParentId>
+  <name>TLTS</name>
+  <version>0</version>
+  <active>true</active>
+  <currentInd>true</currentInd>
+  <label>Test Store - Testsuite</label>
+  <routingVersion>2</routingVersion>
+  <applyRetroactively>false</applyRetroactively>
+</org.kuali.rice.kew.doctype.bo.DocumentType><maintenanceAction>Copy</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kew.document.DocumentTypeMaintainable"><oldMaintainableObject><org.kuali.kfs.kew.doctype.bo.DocumentType>
+  <versionNumber>1</versionNumber>
+  <objectId>22F63DD3-3DAD-0B7D-9AEF-95CAA7267890</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <documentTypeId>102456</documentTypeId>
+  <docTypeParentId>100825</docTypeParentId>
+  <name>TLCS</name>
+  <version>0</version>
+  <active>true</active>
+  <currentInd>true</currentInd>
+  <label>Test Store</label>
+  <routingVersion>2</routingVersion>
+  <applyRetroactively>false</applyRetroactively>
+</org.kuali.kfs.kew.doctype.bo.DocumentType><maintenanceAction>Copy</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.kew.doctype.bo.DocumentType>
+  <newCollectionRecord>true</newCollectionRecord>
+  <docTypeParentId>100825</docTypeParentId>
+  <name>TLTS</name>
+  <version>0</version>
+  <active>true</active>
+  <currentInd>true</currentInd>
+  <label>Test Store - Testsuite</label>
+  <routingVersion>2</routingVersion>
+  <applyRetroactively>false</applyRetroactively>
+</org.kuali.kfs.kew.doctype.bo.DocumentType><maintenanceAction>Copy</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
