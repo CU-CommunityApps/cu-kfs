@@ -118,9 +118,20 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected("VendorTest.xml");
     }
 
-    @Test
-    void testConversionOfKfsParameterFromBeforeKewUpgrade() throws Exception {
-        assertXMLFromTestFileConvertsAsExpected("PreKewUpgradeParameterTest.xml");
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "PreKewUpgradeKfsParameterTest.xml",
+        "LegacyParameterTest.xml",
+        "RiceParameterTest.xml"
+    })
+    void testConversionOfParametersFromBeforeKewUpgrade(String parameterTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(parameterTestFile);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"LegacyDocumentTypeTest.xml", "RiceDocumentTypeTest.xml"})
+    void testConversionOfRiceDocumentTypeMaintenanceDocuments(String documentTypeTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(documentTypeTestFile);
     }
 
     @ParameterizedTest

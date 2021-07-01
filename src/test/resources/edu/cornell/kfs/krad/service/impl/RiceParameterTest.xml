@@ -1,0 +1,149 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.coreservice.web.parameter.ParameterMaintainableImpl"><oldMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>3</versionNumber>
+  <objectId>fe2cb476-9014-4360-9a40-0c1d2e3f4g5h</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>TSTBUDGET</namespaceCode>
+  <componentCode>TestBudget</componentCode>
+  <name>TEST_BUDGET_COLLEGE_ORG_CD_MAPPING</name>
+  <applicationId>LVB</applicationId>
+  <value>TB_AAA=9001;TB_CDE_ADMIN=NONE</value>
+  <description>Semicolon separated list of college-to-org-code mappings.</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  <__persistence__parameterType__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <value class="org.kuali.rice.coreservice.impl.parameter.ParameterTypeBo">
+      <versionNumber>1</versionNumber>
+      <objectId>52D77FDBA9E46227E0440003BAD97531</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <code>CONFG</code>
+      <name>Config</name>
+      <active>true</active>
+    </value>
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__parameterType__vh>
+  <__persistence__component__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <value class="org.kuali.rice.coreservice.impl.component.ComponentBo">
+      <versionNumber>1</versionNumber>
+      <objectId>791d0098-bfec-4c3d-8f9c-aad0d94pqr89</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <namespaceCode>TSTBUDGET</namespaceCode>
+      <code>TestBudget</code>
+      <name>Test Budget Management</name>
+      <active>true</active>
+    </value>
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__component__vh>
+  <__persistence__namespace__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <value class="org.kuali.rice.coreservice.impl.namespace.NamespaceBo">
+      <versionNumber>1</versionNumber>
+      <objectId>c08c17b1-dd5d-481a-a87f-027df9f9f9f9</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <applicationId>TST</applicationId>
+      <code>TSTBUDGET</code>
+      <name>Test Budget Management</name>
+      <active>true</active>
+    </value>
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__namespace__vh>
+  <__persistence__derivedComponent__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__derivedComponent__vh>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>3</versionNumber>
+  <objectId>fe2cb476-9014-4360-9a40-0c1d2e3f4g5h</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>TSTBUDGET</namespaceCode>
+  <componentCode>TestBudget</componentCode>
+  <name>TEST_BUDGET_COLLEGE_ORG_CD_MAPPING</name>
+  <applicationId>LVB</applicationId>
+  <value>TB_AAA=9001;TB_CDE_ADMIN=NONE;TB_QXZ=8002</value>
+  <description>Semicolon separated list of college-to-org-code mappings.</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  <__persistence__parameterType__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <value class="org.kuali.rice.coreservice.impl.parameter.ParameterTypeBo">
+      <versionNumber>1</versionNumber>
+      <objectId>52D77FDBA9E46227E0440003BAD97531</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <code>CONFG</code>
+      <name>Config</name>
+      <active>true</active>
+    </value>
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__parameterType__vh>
+  <__persistence__component__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <value class="org.kuali.rice.coreservice.impl.component.ComponentBo">
+      <versionNumber>1</versionNumber>
+      <objectId>791d0098-bfec-4c3d-8f9c-aad0d94pqr89</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <namespaceCode>TSTBUDGET</namespaceCode>
+      <code>TestBudget</code>
+      <name>Test Budget Management</name>
+      <active>true</active>
+    </value>
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__component__vh>
+  <__persistence__namespace__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <value class="org.kuali.rice.coreservice.impl.namespace.NamespaceBo">
+      <versionNumber>1</versionNumber>
+      <objectId>c08c17b1-dd5d-481a-a87f-027df9f9f9f9</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <applicationId>TST</applicationId>
+      <code>TSTBUDGET</code>
+      <name>Test Budget Management</name>
+      <active>true</active>
+    </value>
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__namespace__vh>
+  <__persistence__derivedComponent__vh class="org.eclipse.persistence.indirection.ValueHolder">
+    <isCoordinatedWithProperty>false</isCoordinatedWithProperty>
+    <isNewlyWeavedValueHolder>true</isNewlyWeavedValueHolder>
+  </__persistence__derivedComponent__vh>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.coreservice.web.parameter.ParameterMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
+  <versionNumber>3</versionNumber>
+  <objectId>fe2cb476-9014-4360-9a40-0c1d2e3f4g5h</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>TSTBUDGET</namespaceCode>
+  <componentCode>TestBudget</componentCode>
+  <name>TEST_BUDGET_COLLEGE_ORG_CD_MAPPING</name>
+  
+  <value>TB_AAA=9001;TB_CDE_ADMIN=NONE</value>
+  <description>Semicolon separated list of college-to-org-code mappings.</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
+  <versionNumber>3</versionNumber>
+  <objectId>fe2cb476-9014-4360-9a40-0c1d2e3f4g5h</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>TSTBUDGET</namespaceCode>
+  <componentCode>TestBudget</componentCode>
+  <name>TEST_BUDGET_COLLEGE_ORG_CD_MAPPING</name>
+  
+  <value>TB_AAA=9001;TB_CDE_ADMIN=NONE;TB_QXZ=8002</value>
+  <description>Semicolon separated list of college-to-org-code mappings.</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
