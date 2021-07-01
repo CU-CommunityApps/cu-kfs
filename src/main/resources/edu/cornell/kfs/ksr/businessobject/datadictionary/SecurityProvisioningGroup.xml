@@ -145,11 +145,95 @@
 		<property name="required" value="true" />
 		<property name="summary" value="Tab Location" />
 		<property name="description" value="Tab Location" />
-    	<property name="control" >
+    	<property name="control">
       	<bean parent="SelectControlDefinition"
             	p:valuesFinder-ref="SecurityGroupTabValuesFinder"
             	p:includeKeyInLabel="true" />
-    </property>
+    	</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-distributedAuthorizerRoleId" parent="SecurityProvisioningGroup-distributedAuthorizerRoleId-parentBean" />
+	<bean id="SecurityProvisioningGroup-distributedAuthorizerRoleId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="distributedAuthorizerRoleId" />
+		<property name="label" value="Distributed Authorizer Role" />
+		<property name="shortLabel" value="Distributed Authorizer Role" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Distributed Authorizer" />
+		<property name="description" value="Distributed Authorizer" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-distributedAuthorizerRole-roleName" parent="SecurityProvisioningGroup-distributedAuthorizerRole-roleName-parentBean" />
+	<bean id="SecurityProvisioningGroup-distributedAuthorizerRole-roleName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="distributedAuthorizerRoleName" />
+		<property name="label" value="Distributed Authorizer Name" />
+		<property name="shortLabel" value="Distributed Authorizer Name" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Distributed Authorizer" />
+		<property name="description" value="Distributed Authorizer" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="50" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-additionalAuthorizerRoleId" parent="SecurityProvisioningGroup-additionalAuthorizerRoleId-parentBean" />
+	<bean id="SecurityProvisioningGroup-additionalAuthorizerRoleId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="additionalAuthorizerRoleId" />
+		<property name="label" value="Additional Authorizer Role" />
+		<property name="shortLabel" value="Additional Authorizer Role" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Additional Authorizer" />
+		<property name="description" value="Additional Authorizer" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-additionalAuthorizerRole-roleName" parent="SecurityProvisioningGroup-additionalAuthorizerRole-roleName-parentBean" />
+	<bean id="SecurityProvisioningGroup-additionalAuthorizerRole-roleName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="additionalAuthorizerRoleName" />
+		<property name="label" value="Additional Authorizer Name" />
+		<property name="shortLabel" value="Additional Authorizer Name" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Additional Authorizer" />
+		<property name="description" value="Additional Authorizer" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="50" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-centralAuthorizerRoleId" parent="SecurityProvisioningGroup-centralAuthorizerRoleId-parentBean" />
+	<bean id="SecurityProvisioningGroup-centralAuthorizerRoleId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="centralAuthorizerRoleId" />
+		<property name="label" value="Central Authorizer Role" />
+		<property name="shortLabel" value="Central Authorizer Role" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Central Authorizer" />
+		<property name="description" value="Central Authorizer" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroup-centralAuthorizerRole-roleName" parent="SecurityProvisioningGroup-centralAuthorizerRole-roleName-parentBean" />
+	<bean id="SecurityProvisioningGroup-centralAuthorizerRole-roleName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="centralAuthorizerRoleName" />
+		<property name="label" value="Central Authorizer Name" />
+		<property name="shortLabel" value="Central Authorizer Name" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Central Authorizer" />
+		<property name="description" value="Central Authorizer" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="50" />
+		</property>
 	</bean>
 
 	<bean id="SecurityProvisioningGroup-active" parent="SecurityProvisioningGroup-active-parentBean" />
@@ -160,7 +244,6 @@
 	<bean id="SecurityProvisioningGroup-versionNumber" parent="SecurityProvisioningGroup-versionNumber-parentBean" />
 	<bean id="SecurityProvisioningGroup-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
     
-    <bean id="securityGroupTabValuesFinder" class="edu.cornell.kfs.ksr.businessobject.options.SecurityGroupTabValuesFinder"
-		  p:keyValuesService-ref="grl.keyValuesService"/>
+    <bean id="SecurityGroupTabValuesFinder" class="edu.cornell.kfs.ksr.businessobject.options.SecurityGroupTabValuesFinder" />
 
 </beans>
