@@ -640,6 +640,14 @@
                 <replacement>org.kuali.kfs.krad.bo.AdHocRouteWorkgroup</replacement>
             </pattern>
             <pattern>
+                <match>org.kuali.rice.kew.doctype.bo.DocumentType</match>
+                <replacement>org.kuali.kfs.kew.doctype.bo.DocumentType</replacement>
+            </pattern>
+            <pattern>
+                <match>org.eclipse.persistence.indirection.ValueHolder</match>
+                <replacement/>
+            </pattern>
+            <pattern>
                 <match>boNotes</match>
                 <replacement>(CONVERT_LEGACY_NOTES)</replacement>
             </pattern>
