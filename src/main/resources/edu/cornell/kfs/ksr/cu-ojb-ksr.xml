@@ -70,7 +70,7 @@
 		</collection-descriptor>
 	</class-descriptor>
 
-	<class-descriptor class="org.kuali.rice.ksr.bo.SecurityProvisioningGroupDependentRoles" table="KRSR_SEC_PRV_GRP_DEP_RL_T">
+	<class-descriptor class="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles" table="KRSR_SEC_PRV_GRP_DEP_RL_T">
 		<field-descriptor name="provisioningId" column="PRV_ID" jdbc-type="BIGINT" primarykey="true" />
 		<field-descriptor name="roleId" column="RL_ID" jdbc-type="VARCHAR" primarykey="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />

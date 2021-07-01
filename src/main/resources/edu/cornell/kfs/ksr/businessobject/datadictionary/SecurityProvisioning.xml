@@ -19,8 +19,7 @@
 			<list>
 				<ref bean="SecurityProvisioning-securityGroupId" />
 				<ref bean="SecurityProvisioning-securityGroup-securityGroupName" />
-				<ref bean="SecurityProvisioning-securityGroupDescription" />
-				<ref bean="SecurityProvisioning-securityGroup-versionNumber" />
+				<ref bean="SecurityProvisioning-securityGroup-securityGroupDescription" />
 				<ref bean="SecurityProvisioning-securityGroup-active" />
 				<ref bean="SecurityProvisioning-versionNumber" />
 			</list>
@@ -63,9 +62,9 @@
 		</property>
 	</bean>
 
-	<bean id="SecurityProvisioning-securityGroup-securityGroupName" parent="SecurityProvisioning-securityGroup-parentBean" />
+	<bean id="SecurityProvisioning-securityGroup-securityGroupName" parent="SecurityProvisioning-securityGroup-securityGroupName-parentBean" />
 	<bean id="SecurityProvisioning-securityGroup-securityGroupName-parentBean" parent="AttributeDefinition">
-		<property name="name" value="securityGroupName" />
+		<property name="name" value="securityGroup.securityGroupName" />
 		<property name="label" value="Security Group Name" />
 		<property name="shortLabel" value="Security Group" />
 		<property name="maxLength" value="40" />
@@ -79,7 +78,7 @@
 
 	<bean id="SecurityProvisioning-securityGroup-securityGroupDescription" parent="SecurityProvisioning-securityGroup-securityGroupDescription-parentBean" />
 	<bean id="SecurityProvisioning-securityGroup-securityGroupDescription-parentBean" parent="AttributeDefinition">
-		<property name="name" value="securityGroupDescription" />
+		<property name="name" value="securityGroup.securityGroupDescription" />
 		<property name="label" value="Security Group Description" />
 		<property name="shortLabel" value="Group Description" />
 		<property name="maxLength" value="400" />
@@ -93,7 +92,7 @@
 
 	<bean id="SecurityProvisioning-securityGroup-active" parent="SecurityProvisioning-securityGroup-active-parentBean" />
 	<bean id="SecurityProvisioning-securityGroup-active-parentBean" abstract="true" parent="AttributeReferenceDummy-activeIndicator">
-		<property name="name" value="active" />
+		<property name="name" value="securityGroup.active" />
 	</bean>
 
 	<bean id="SecurityProvisioning-versionNumber" parent="SecurityProvisioning-versionNumber-parentBean" />
@@ -128,7 +127,7 @@
           p:id="securityPRovisioningGroupSection" p:title="Security Provisioning Groups">
         <property name="inquiryFields">
             <list>
-                <ref bean="SecurityProvisioning-inquiryCollectionDefinition-securityProvisioningGroup"/>
+                <ref bean="SecurityProvisioning-inquiryCollectionDefinition-securityProvisioningGroups"/>
             </list>
         </property>
     </bean>
@@ -170,12 +169,12 @@
         <property name="formAttributeDefinitions">
             <list>
                 <ref bean="SecurityProvisioning-securityGroupId" />
-                <ref bean="SecurityProvisioning-securityGroup.securityGroupName" />
+                <ref bean="SecurityProvisioning-securityGroup-securityGroupName" />
             </list>
         </property>
         <property name="displayAttributeDefinitions">
             <list>
-                <ref bean="SecurityProvisioning-securityGroup.securityGroupName" />
+                <ref bean="SecurityProvisioning-securityGroup-securityGroupName" />
             </list>
         </property>
         <property name="lookupFields">
