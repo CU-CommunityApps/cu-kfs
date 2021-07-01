@@ -1,0 +1,95 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kew.document.DocumentTypeMaintainable"><oldMaintainableObject><org.kuali.rice.kew.doctype.bo.DocumentType>
+  <documentTypeId>77711</documentTypeId>
+  <name>TestFinancials</name>
+  <version>5</version>
+  <active>true</active>
+  <currentInd>true</currentInd>
+  <description>TestFinancials form</description>
+  <label>TestFinancials</label>
+  <previousVersionId>68099</previousVersionId>
+  <unresolvedDocHandlerUrl>https://testcynergyapp.tc.cit.cornell.edu/testcynergyapp/testDocument.do?methodToCall=docHandler</unresolvedDocHandlerUrl>
+  <postProcessorName>org.kuali.rice.kns.workflow.postprocessor.KualiPostProcessor</postProcessorName>
+  <workgroupId>432</workgroupId>
+  <blanketApproveWorkgroupId>432</blanketApproveWorkgroupId>
+  <actualServiceNamespace>CYN_APPS</actualServiceNamespace>
+  <applyRetroactively>false</applyRetroactively>
+  <routingVersion>1</routingVersion>
+  <versionNumber>1</versionNumber>
+  <objectId>225DC047-6614-9094-0D62-E2CD314A9ABC</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.rice.kew.doctype.bo.DocumentType><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kew.doctype.bo.DocumentType>
+  <documentTypeId>77711</documentTypeId>
+  <name>TestFinancials</name>
+  <version>5</version>
+  <active>false</active>
+  <currentInd>true</currentInd>
+  <description>TestFinancials form</description>
+  <label>TestFinancials</label>
+  <previousVersionId>68099</previousVersionId>
+  <unresolvedDocHandlerUrl>https://testcynergyapp.tc.cit.cornell.edu/testcynergyapp/testDocument.do?methodToCall=docHandler</unresolvedDocHandlerUrl>
+  <postProcessorName>org.kuali.rice.kns.workflow.postprocessor.KualiPostProcessor</postProcessorName>
+  <workgroupId>432</workgroupId>
+  <blanketApproveWorkgroupId>432</blanketApproveWorkgroupId>
+  <actualServiceNamespace>CYN_APPS</actualServiceNamespace>
+  <applyRetroactively>false</applyRetroactively>
+  <routingVersion>1</routingVersion>
+  <versionNumber>1</versionNumber>
+  <objectId>225DC047-6614-9094-0D62-E2CD314A9ABC</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.rice.kew.doctype.bo.DocumentType><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kew.document.DocumentTypeMaintainable"><oldMaintainableObject><org.kuali.kfs.kew.doctype.bo.DocumentType>
+  <documentTypeId>77711</documentTypeId>
+  <name>TestFinancials</name>
+  <version>5</version>
+  <active>true</active>
+  <currentInd>true</currentInd>
+  <description>TestFinancials form</description>
+  <label>TestFinancials</label>
+  <previousVersionId>68099</previousVersionId>
+  <unresolvedDocHandlerUrl>https://testcynergyapp.tc.cit.cornell.edu/testcynergyapp/testDocument.do?methodToCall=docHandler</unresolvedDocHandlerUrl>
+  <postProcessorName>org.kuali.rice.kns.workflow.postprocessor.KualiPostProcessor</postProcessorName>
+  <workgroupId>432</workgroupId>
+  <blanketApproveWorkgroupId>432</blanketApproveWorkgroupId>
+  
+  <applyRetroactively>false</applyRetroactively>
+  <routingVersion>1</routingVersion>
+  <versionNumber>1</versionNumber>
+  <objectId>225DC047-6614-9094-0D62-E2CD314A9ABC</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.kew.doctype.bo.DocumentType><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.kew.doctype.bo.DocumentType>
+  <documentTypeId>77711</documentTypeId>
+  <name>TestFinancials</name>
+  <version>5</version>
+  <active>false</active>
+  <currentInd>true</currentInd>
+  <description>TestFinancials form</description>
+  <label>TestFinancials</label>
+  <previousVersionId>68099</previousVersionId>
+  <unresolvedDocHandlerUrl>https://testcynergyapp.tc.cit.cornell.edu/testcynergyapp/testDocument.do?methodToCall=docHandler</unresolvedDocHandlerUrl>
+  <postProcessorName>org.kuali.rice.kns.workflow.postprocessor.KualiPostProcessor</postProcessorName>
+  <workgroupId>432</workgroupId>
+  <blanketApproveWorkgroupId>432</blanketApproveWorkgroupId>
+  
+  <applyRetroactively>false</applyRetroactively>
+  <routingVersion>1</routingVersion>
+  <versionNumber>1</versionNumber>
+  <objectId>225DC047-6614-9094-0D62-E2CD314A9ABC</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.kew.doctype.bo.DocumentType><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
