@@ -93,7 +93,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiInt
     }
 
     private void setupSearchValues() {
-        fieldValues.put("chartOfAccountsCode", "I");
+        fieldValues.put("chartOfAccountsCode", "IT");
         fieldValues.put("organizationCode", "0121");
         fieldValues.put("useOrgHierarchy", "Y");
         fieldValues.put("closed", "N");
