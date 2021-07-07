@@ -671,6 +671,18 @@
                 <match>com.rsmart.kuali.kfs.sec.businessobject.SecurityModel</match>
                 <replacement>org.kuali.kfs.sec.businessobject.SecurityModel</replacement>
             </pattern>
+            <pattern>
+                <match>org.kuali.kfs.module.cab.businessobject.Pretag</match>
+                <replacement>org.kuali.kfs.module.cam.businessobject.Pretag</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.module.cab.businessobject.PretagDetail</match>
+                <replacement>org.kuali.kfs.module.cam.businessobject.PretagDetail</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.module.cab.businessobject.AssetTransactionType</match>
+                <replacement>org.kuali.kfs.module.cam.businessobject.AssetTransactionType</replacement>
+            </pattern>
         </pattern>
         <!-- KDO-873 -->
         <pattern>
