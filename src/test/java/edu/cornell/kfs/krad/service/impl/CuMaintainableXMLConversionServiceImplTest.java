@@ -31,7 +31,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
     protected static final String BASE_TEST_FILE_PATH = "classpath:edu/cornell/kfs/krad/service/impl/";
     protected static final String OLD_DATA_ELEMENT = "oldData";
     protected static final String EXPECTED_RESULT_ELEMENT = "expectedResult";
-    protected static final String MOVE_TO_PARENT_TEST_ELEMENT = "moveToParentTest";
+    protected static final String MOVE_TO_PARENT_TEST_ELEMENT = "moveToParentTes";
 
     protected TestMaintainableXMLConversionServiceImpl conversionService;
     protected String oldData;
