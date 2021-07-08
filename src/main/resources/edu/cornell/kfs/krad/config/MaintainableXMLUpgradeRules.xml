@@ -95,13 +95,26 @@
          the element has non-"*"-map changes.
 
          [3] For element name or "class" attribute value matching,
-         setting the replacement value to "(MOVE_NODES_TO_PARENT)"
+         setting the replacement value to "(MOVE_CHILD_NODES_TO_PARENT)"
          will remove the element and its attributes during the conversion,
          but will still preserve its sub-elements and move them
          to the parent element. Handy for converting TypedArrayLists
          with ListProxyDefaultImpl sub-elements.
 
-         [4] For element names referring to map entries, setting the
+         [4] For element name or "class" attribute value matching,
+         setting the replacement value to "(MOVE_MARKED_NODES_TO_PARENT)"
+         will keep the element in place and convert its sub-elements as usual,
+         but any sub-rules with a replacement of "(MOVE_THIS_NODE_TO_PARENT)"
+         will remove the matching sub-element and place it within
+         the parent element instead. If further conversions are needed for
+         the moved elements, create an entry whose classname equals the converted
+         element name or class attribute of the element originally containing
+         the sub-elements, and append the suffix "_MOVED_NODES" to it.
+         This combination of rules is handy for cases where some (but not all)
+         of an element's various sub-elements need to be moved to the parent element.
+         (NOTE: Nested "(MOVE_MARKED_NODES_TO_PARENT)" handling is not supported.)
+
+         [5] For element names referring to map entries, setting the
          replacement value to "(CONVERT_TO_MAP_ENTRIES)" will wrap
          that element and its next sibling inside of an "entry"
          element. Needed for implementing the string-map-conversion
@@ -405,7 +418,7 @@
             <class>edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute</class>
             <pattern>
                 <match>laborBenefitRateCategoryCode</match>
-                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
             </pattern>
         </pattern>
         <!-- Special entries for converting archaic TypedArrayList elements. -->
@@ -425,7 +438,7 @@
             </pattern>
             <pattern>
                 <match>org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl</match>
-                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
             </pattern>
         </pattern>
         <pattern>
@@ -493,6 +506,11 @@
             <pattern>
                 <match>edu.cornell.kfs.module.cg.businessobject.CuAward</match>
                 <replacement>org.kuali.kfs.module.cg.businessobject.Award</replacement>
+            </pattern>
+            <!-- Special rule for handling the temporary wrapper element from "MOVE_MARKED_NODES_TO_PARENT" cases. -->
+            <pattern>
+                <match>movedNodes</match>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
             </pattern>
             <!-- Moved entries over from the "maint_doc_classname_changes" section, and made updates as needed. -->
             <pattern>
@@ -661,7 +679,7 @@
             </pattern>
             <pattern>
                 <match>map</match>
-                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
             </pattern>
             <pattern>
                 <match>com.rsmart.kuali.kfs.sec.businessobject.SecurityDefinition</match>
@@ -699,35 +717,18 @@
         <!-- KDO-873 end -->
         <!-- KDO-934 -->
         <!--
-            NOTE: We will need to revisit these VendorHeader conversion rules with the next
-            major change to vendor object structure, since our header extension object has
-            been added back in but with a reduced number of properties (though these rules
-            should not end up getting applied to the newer-style headers).
+            NOTE: Most of the vendor header extension's former properties have been moved
+            into the main vendor header object, but we still need to keep the extension
+            because of its custom locale field. Also, some older vendor documents have
+            unconverted field names on the vendorHeader instead of the extension,
+            so duplicate conversions were added to the vendorHeader entry itself
+            to adjust for that.
         -->
         <pattern>
             <class>vendorHeader</class>
             <pattern>
                 <match>extension</match>
-                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension</class>
-            <pattern>
-                <match>vendorHeaderGeneratedIdentifier</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>objectId</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>versionNumber</match>
-                <replacement/>
-            </pattern>
-            <pattern>
-                <match>newCollectionRecord</match>
-                <replacement/>
+                <replacement>(MOVE_MARKED_NODES_TO_PARENT)</replacement>
             </pattern>
             <pattern>
                 <match>vendorW9ReceivedDate</match>
@@ -746,8 +747,50 @@
                 <replacement>vendorDOB</replacement>
             </pattern>
             <pattern>
-                <match>vendorLocale</match>
-                <replacement/>
+                <match>vendorChapter4Status</match>
+                <replacement>chapter4Status</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension</class>
+            <pattern>
+                <match>vendorW9ReceivedDate</match>
+                <replacement>(MOVE_THIS_NODE_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorW8BenReceivedDate</match>
+                <replacement>(MOVE_THIS_NODE_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignTaxNumber</match>
+                <replacement>(MOVE_THIS_NODE_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignRecipientBirthDate</match>
+                <replacement>(MOVE_THIS_NODE_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorChapter4Status</match>
+                <replacement>(MOVE_THIS_NODE_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension_MOVED_NODES</class>
+            <pattern>
+                <match>vendorW9ReceivedDate</match>
+                <replacement>vendorW9SignedDate</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorW8BenReceivedDate</match>
+                <replacement>vendorW8SignedDate</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignTaxNumber</match>
+                <replacement>vendorForeignTaxId</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignRecipientBirthDate</match>
+                <replacement>vendorDOB</replacement>
             </pattern>
             <pattern>
                 <match>vendorChapter4Status</match>
