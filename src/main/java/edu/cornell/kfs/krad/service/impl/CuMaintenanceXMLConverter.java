@@ -59,9 +59,19 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * the extra parentheses), then some custom processing will be performed instead of
  * a direct name replacement:
  * 
- * (MOVE_NODES_TO_PARENT) -- The element itself will be removed, but all of its
+ * (MOVE_CHILD_NODES_TO_PARENT) -- The element itself will be removed, but all of its
  * child elements and text content will be preserved and converted, effectively
  * making them children of the parent of the removed element.
+ * 
+ * (MOVE_MARKED_NODES_TO_PARENT) -- The element itself will be kept and the regular
+ * conversion of its class attribute will also take place, but any sub-elements with
+ * a related rule of "(MOVE_THIS_NODE_TO_PARENT)" will be removed from this element
+ * and relocated to the parent element instead. To perform further conversions on any
+ * elements that were moved to the parent, set up a rule section whose "class" equals
+ * the converted element name or attribute class of the original enclosing element,
+ * and add the suffix "_MOVED_NODES" to it.
+ * 
+ * (MOVE_THIS_NODE_TO_PARENT) -- See "(MOVE_MARKED_NODES_TO_PARENT)" above.
  * 
  * (CONVERT_TO_MAP_ENTRIES) -- Every pair of similarly-configured elements
  * in that spot will be wrapped within an "entry" element.
@@ -90,10 +100,14 @@ public class CuMaintenanceXMLConverter {
     public static final String ROOT_ELEMENT = "maintainableDocumentContents";
     public static final String CLASS_ATTRIBUTE = "class";
     public static final String ATTRIBUTE_INDICATOR_SUFFIX = "(ATTR)";
-    public static final String MOVE_NODES_TO_PARENT_INDICATOR = "(MOVE_NODES_TO_PARENT)";
+    public static final String MOVE_CHILD_NODES_TO_PARENT_INDICATOR = "(MOVE_CHILD_NODES_TO_PARENT)";
+    public static final String MOVE_MARKED_NODES_TO_PARENT_INDICATOR = "(MOVE_MARKED_NODES_TO_PARENT)";
+    public static final String MOVE_THIS_NODE_TO_PARENT_INDICATOR = "(MOVE_THIS_NODE_TO_PARENT)";
     public static final String CONVERT_TO_MAP_ENTRIES_INDICATOR = "(CONVERT_TO_MAP_ENTRIES)";
     public static final String CONVERT_LEGACY_NOTES_INDICATOR = "(CONVERT_LEGACY_NOTES)";
     public static final String ENTRY_ELEMENT_NAME = "entry";
+    public static final String MOVED_NODES_ELEMENT_NAME = "movedNodes";
+    public static final String MOVED_NODES_CLASSNAME_SUFFIX = "_MOVED_NODES";
     public static final String DEFAULT_PROPERTY_RULE_KEY = "*";
     public static final String LIST_WRAPPER_ELEMENT_FOR_CONVERTED_BO_NOTES = "org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl";
     public static final int DATE_LENGTH_REQUIRING_EXTRA_SUFFIX = 10;
@@ -114,6 +128,8 @@ public class CuMaintenanceXMLConverter {
     protected String newDateSuffix;
     protected int dateLength;
     protected String legacyNotesXml;
+    protected XMLStreamWriter movedNodesXmlWriter;
+    protected boolean handlingMoveOfMarkedNodes;
 
     public CuMaintenanceXMLConverter(Map<String,Map<String,String>> classPropertyRuleMaps,
             Map<String,String> dateRuleMap) {
@@ -137,6 +153,8 @@ public class CuMaintenanceXMLConverter {
 
     public void performConversion() throws XMLStreamException {
         legacyNotesXml = null;
+        movedNodesXmlWriter = null;
+        handlingMoveOfMarkedNodes = false;
         
         while (xmlReader.hasNext()) {
             convertNextElement(
@@ -166,12 +184,12 @@ public class CuMaintenanceXMLConverter {
                 charactersHandler.handleEvent();
                 break;
             case XMLStreamConstants.START_DOCUMENT :
-                if (StringUtils.isBlank(legacyNotesXml)) {
+                if (StringUtils.isBlank(legacyNotesXml) && !handlingMoveOfMarkedNodes) {
                     xmlWriter.writeStartDocument();
                 }
                 break;
             case XMLStreamConstants.END_DOCUMENT :
-                if (StringUtils.isBlank(legacyNotesXml)) {
+                if (StringUtils.isBlank(legacyNotesXml) && !handlingMoveOfMarkedNodes) {
                     xmlWriter.writeEndDocument();
                 }
                 break;
@@ -265,8 +283,12 @@ public class CuMaintenanceXMLConverter {
     protected OutputMode getOutputModeForClassNames(String className, String newClassName) throws XMLStreamException {
         if (!StringUtils.equals(className, newClassName)) {
             switch (newClassName) {
-                case MOVE_NODES_TO_PARENT_INDICATOR :
-                    return OutputMode.MOVE_NODES_TO_PARENT;
+                case MOVE_CHILD_NODES_TO_PARENT_INDICATOR :
+                    return OutputMode.MOVE_CHILD_NODES_TO_PARENT;
+                case MOVE_MARKED_NODES_TO_PARENT_INDICATOR :
+                    return OutputMode.MOVE_MARKED_NODES_TO_PARENT;
+                case MOVE_THIS_NODE_TO_PARENT_INDICATOR :
+                    return OutputMode.MOVE_THIS_NODE_TO_PARENT;
                 case CONVERT_TO_MAP_ENTRIES_INDICATOR :
                     return OutputMode.CONVERT_TO_MAP_ENTRIES;
                 case CONVERT_LEGACY_NOTES_INDICATOR :
@@ -297,8 +319,20 @@ public class CuMaintenanceXMLConverter {
             case SKIP :
                 skipCurrentElement();
                 break;
-            case MOVE_NODES_TO_PARENT :
+            case MOVE_CHILD_NODES_TO_PARENT :
                 // Do nothing.
+                break;
+            case MOVE_MARKED_NODES_TO_PARENT :
+                if (handlingMoveOfMarkedNodes) {
+                    throw new XMLStreamException("Nested move-marked-nodes-to-parent rules are not supported");
+                }
+                handlingMoveOfMarkedNodes = true;
+                writeStartElementForMaintainable(newElementName, newClassAttributeValue);
+                convertAndWriteXmlThatPartiallyMovesNodesToParentElement(newElementName, newClassAttributeValue);
+                handlingMoveOfMarkedNodes = false;
+                break;
+            case MOVE_THIS_NODE_TO_PARENT :
+                recordNodeToBeMovedToParentElement(newElementName, newClassAttributeValue);
                 break;
             case CONVERT_TO_MAP_ENTRIES :
                 handleMapEntryPrintStateForStartElement();
@@ -307,6 +341,8 @@ public class CuMaintenanceXMLConverter {
             case CONVERT_LEGACY_NOTES :
                 recordAndConvertLegacyNotesXML();
                 break;
+            default :
+                throw new XMLStreamException("Unexpected output mode: " + outputMode);
         }
     }
 
@@ -409,7 +445,7 @@ public class CuMaintenanceXMLConverter {
         
         if (newPropertyRuleMap != null) {
             ruleMapStackTop = new XMLStreamStackElement(ruleMapStackTop, relativeDepth, newPropertyRuleMap, outputMode);
-        } else if (outputMode == OutputMode.MOVE_NODES_TO_PARENT) {
+        } else if (outputMode == OutputMode.MOVE_CHILD_NODES_TO_PARENT) {
             ruleMapStackTop = new XMLStreamStackElement(ruleMapStackTop, relativeDepth, Collections.emptyMap(), outputMode);
         }
     }
@@ -481,6 +517,86 @@ public class CuMaintenanceXMLConverter {
         }
     }
 
+    protected void convertAndWriteXmlThatPartiallyMovesNodesToParentElement(
+            String newElementName, String newClassAttributeValue) throws XMLStreamException {
+        StringBuilderWriter movedNodesWriter = null;
+        String movedNodesContent;
+        String movedNodesClassnamePrefix = StringUtils.isNotBlank(newClassAttributeValue) ?
+                newClassAttributeValue : newElementName;
+        String movedNodesClassname = movedNodesClassnamePrefix + MOVED_NODES_CLASSNAME_SUFFIX;
+        
+        try {
+            movedNodesWriter = new StringBuilderWriter();
+            XMLOutputFactory outFactory = XMLOutputFactory.newInstance();
+            movedNodesXmlWriter = outFactory.createXMLStreamWriter(movedNodesWriter);
+            int subStartDepth = relativeDepth;
+            
+            movedNodesXmlWriter.writeStartElement(MOVED_NODES_ELEMENT_NAME);
+            movedNodesXmlWriter.writeAttribute(CLASS_ATTRIBUTE, movedNodesClassname);
+            
+            do {
+                convertNextElement(
+                        this::handleMaintainableStartElement,
+                        this::handleMaintainableEndElement,
+                        this::handleMaintainableCharacters);
+            } while (relativeDepth >= subStartDepth);
+            
+            movedNodesXmlWriter.writeEndElement();
+            movedNodesXmlWriter.flush();
+            movedNodesContent = movedNodesWriter.toString();
+        } finally {
+            CuXMLStreamUtils.closeQuietly(movedNodesXmlWriter);
+            IOUtils.closeQuietly(movedNodesWriter);
+            movedNodesXmlWriter = null;
+        }
+        
+        writeNodesMarkedForMovingToParentElement(movedNodesContent);
+    }
+
+    protected void writeNodesMarkedForMovingToParentElement(String movedNodesContent) throws XMLStreamException {
+        XMLStreamReader existingReader = xmlReader;
+        StringReader movedNodesReader = null;
+        XMLStreamReader movedNodesXmlReader = null;
+        
+        try {
+            movedNodesReader = new StringReader(movedNodesContent);
+            XMLInputFactory inFactory = XMLInputFactory.newInstance();
+            inFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+            movedNodesXmlReader = inFactory.createXMLStreamReader(movedNodesReader);
+            xmlReader = movedNodesXmlReader;
+            
+            while (xmlReader.hasNext()) {
+                convertNextElement(
+                        this::handleMaintainableStartElement,
+                        this::handleMaintainableEndElement,
+                        this::handleMaintainableCharacters);
+            }
+        } finally {
+            xmlReader = existingReader;
+            CuXMLStreamUtils.closeQuietly(movedNodesXmlReader);
+            IOUtils.closeQuietly(movedNodesReader);
+        }
+    }
+
+    protected void recordNodeToBeMovedToParentElement(String newElementName, String newClassAttributeValue)
+            throws XMLStreamException {
+        XMLStreamWriter existingWriter = xmlWriter;
+        int subStartDepth = relativeDepth;
+        
+        try {
+            xmlWriter = movedNodesXmlWriter;
+            writeStartElementForMaintainable(newElementName, newClassAttributeValue);
+            do {
+                convertNextElement(
+                        this::handleMaintainableStartElement,
+                        this::handleMaintainableEndElement,
+                        this::handleMaintainableCharacters);
+            } while (relativeDepth >= subStartDepth);
+        } finally {
+            xmlWriter = existingWriter;
+        }
+    }
+
     /**
      * Functional interface whose only method is void and can potentially throw XMLStreamException,
      * to help with using lambda expressions or method references to simplify the parser's setup.
@@ -497,7 +613,9 @@ public class CuMaintenanceXMLConverter {
     protected enum OutputMode {
         DEFAULT(true, true),
         SKIP(false, false),
-        MOVE_NODES_TO_PARENT(false, true),
+        MOVE_CHILD_NODES_TO_PARENT(false, true),
+        MOVE_MARKED_NODES_TO_PARENT(true, true),
+        MOVE_THIS_NODE_TO_PARENT(true, true),
         CONVERT_TO_MAP_ENTRIES(true, true),
         CONVERT_LEGACY_NOTES(false, false);
         
@@ -535,7 +653,7 @@ public class CuMaintenanceXMLConverter {
         }
         
         public XMLStreamStackElement(XMLStreamStackElement parent, int depth, Map<String,String> propertyRuleMap, OutputMode outputMode) {
-            boolean useCustomRules = (outputMode != OutputMode.MOVE_NODES_TO_PARENT || !propertyRuleMap.isEmpty());
+            boolean useCustomRules = (outputMode != OutputMode.MOVE_CHILD_NODES_TO_PARENT || !propertyRuleMap.isEmpty());
             
             this.parent = parent;
             this.rulesDepth = useCustomRules ? depth : parent.rulesDepth;
