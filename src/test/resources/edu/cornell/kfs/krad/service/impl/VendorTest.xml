@@ -601,7 +601,7 @@
       <objectId>A52235912D982E6DE04054802EC24C1B</objectId>
       <newCollectionRecord>false</newCollectionRecord>
 
-      <vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
+      <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension"><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord><vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier></extension><vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
     <vendorParentName>Avis Budget Group Inc</vendorParentName>
 
 
@@ -763,7 +763,7 @@
       <objectId>A52235912D982E6DE04054802EC24C1B</objectId>
       <newCollectionRecord>false</newCollectionRecord>
 
-      <vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
+      <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension"><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord><vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier></extension><vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
     <vendorParentName>Avis Budget Group Inc</vendorParentName>
 
 
