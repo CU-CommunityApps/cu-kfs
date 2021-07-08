@@ -1,0 +1,355 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass='edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl'><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  <org.kuali.rice.krad.bo.Note>
+    <authorUniversalIdentifier>1000000</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-02-25 15:55:02.277</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>W9</noteText>
+    <attachmentIdentifier>33c492de-159d-4dc8-adf7-200000000000</attachmentIdentifier>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>2D3C47C53BE6B016E043814FD881B000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <attachment>
+      <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+      <attachmentFileName>Doe, John.pdf</attachmentFileName>
+      <attachmentIdentifier>33c492de-159d-4dc8-adf7-289c174a1000</attachmentIdentifier>
+      <attachmentFileSize>119102</attachmentFileSize>
+      <note reference='../..'/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </attachment>
+    <adHocRouteRecipient class='org.kuali.rice.krad.bo.AdHocRoutePerson'>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.rice.krad.bo.Note>
+  <org.kuali.rice.krad.bo.Note>
+    <authorUniversalIdentifier>30000</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-02-26 06:43:19.324</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>test info</noteText>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>2D3C47C53BE6B016E043814FD881B000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <adHocRouteRecipient class='org.kuali.rice.krad.bo.AdHocRoutePerson'>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.rice.krad.bo.Note>
+</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <activeIndicator>false</activeIndicator>
+  <vendorFirstLastNameIndicator>false</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <vendorAddresses/>
+  <vendorAliases/>
+  <vendorContacts/>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <vendorSupplierDiversities/>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </vendorHeader>
+  <vendorRestrictedPerson class='org.kuali.rice.kim.impl.identity.PersonImpl'>
+    <firstName/>
+    <middleName/>
+    <lastName/>
+    <name/>
+    <emailAddress/>
+    <phoneNumber/>
+    <suppressName>false</suppressName>
+    <suppressAddress>false</suppressAddress>
+    <suppressPhone>false</suppressPhone>
+    <suppressPersonal>false</suppressPersonal>
+    <suppressEmail>false</suppressEmail>
+    <campusCode/>
+    <employeeStatusCode/>
+    <employeeTypeCode/>
+    <primaryDepartmentCode/>
+    <employeeId/>
+    <baseSalaryAmount>
+      <value>0.00</value>
+    </baseSalaryAmount>
+    <active>true</active>
+  </vendorRestrictedPerson>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class='edu.cornell.kfs.vnd.businessobject.VendorDetailExtension'>
+    <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <newCollectionRecord>false</newCollectionRecord>
+  </extension>
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+  <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <vendorFirstName>John</vendorFirstName>
+  <vendorLastName>Doe</vendorLastName>
+  <activeIndicator>true</activeIndicator>
+  <vendorFirstLastNameIndicator>true</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <vendorAddresses>
+    <org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <vendorAddressGeneratedIdentifier>92000</vendorAddressGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+      <vendorLine1Address>509 E Main St Apt 99</vendorLine1Address>
+      <vendorCityName>Freeville</vendorCityName>
+      <vendorStateCode>NY</vendorStateCode>
+      <vendorZipCode>13068-9658</vendorZipCode>
+      <vendorCountryCode>US</vendorCountryCode>
+      <vendorAddressEmailAddress>johndoe@cornell.edu</vendorAddressEmailAddress>
+      <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+      <active>true</active>
+      <vendorDefaultAddresses/>
+      <versionNumber>1</versionNumber>
+      <objectId>e113ecb1-35e3-45fe-9ebf-2e087cc00000</objectId>
+      <newCollectionRecord>true</newCollectionRecord>
+      <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension'>
+        <vendorAddressGeneratedIdentifier>92000</vendorAddressGeneratedIdentifier>
+        <versionNumber>1</versionNumber>
+        <objectId>a3365811-34d4-4a5b-8273-d8631d530000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </extension>
+    </org.kuali.kfs.vnd.businessobject.VendorAddress>
+  </vendorAddresses>
+  <vendorAliases/>
+  <vendorContacts/>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorTypeCode>DV</vendorTypeCode>
+    <vendorTaxNumber>111111111</vendorTaxNumber>
+    <vendorTaxTypeCode>SSN</vendorTaxTypeCode>
+    <vendorOwnershipCode>ID</vendorOwnershipCode>
+    <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+    <vendorForeignIndicator>true</vendorForeignIndicator>
+    <vendorSupplierDiversities/>
+    <versionNumber>2</versionNumber>
+    <objectId>5137a07a-1f98-4c39-98dc-9458ab382000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  <vendorChapter4StatusCode>27</vendorChapter4StatusCode><vendorW9SignedDate>2015-02-06</vendorW9SignedDate><vendorForeignRecipientBirthDate>1993-01-31</vendorForeignRecipientBirthDate></vendorHeader>
+  <vendorRestrictedPerson class='org.kuali.rice.kim.impl.identity.PersonImpl'>
+    <firstName/>
+    <middleName/>
+    <lastName/>
+    <name/>
+    <emailAddress/>
+    <phoneNumber/>
+    <suppressName>false</suppressName>
+    <suppressAddress>false</suppressAddress>
+    <suppressPhone>false</suppressPhone>
+    <suppressPersonal>false</suppressPersonal>
+    <suppressEmail>false</suppressEmail>
+    <campusCode/>
+    <employeeStatusCode/>
+    <employeeTypeCode/>
+    <primaryDepartmentCode/>
+    <employeeId/>
+    <baseSalaryAmount>
+      <value>0.00</value>
+    </baseSalaryAmount>
+    <active>true</active>
+  </vendorRestrictedPerson>
+  <versionNumber>1</versionNumber>
+  <objectId>07415c8f-9fee-4941-ab21-b62eb08d6000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class='edu.cornell.kfs.vnd.businessobject.VendorDetailExtension'>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+    <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+    <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <versionNumber>1</versionNumber>
+    <objectId>9326a9de-84ee-4c7b-b26a-afff63b72000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+  </extension>
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  <org.kuali.kfs.krad.bo.Note>
+    <authorUniversalIdentifier>1000000</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-02-25 15:55:02.277</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>W9</noteText>
+    <attachmentIdentifier>33c492de-159d-4dc8-adf7-200000000000</attachmentIdentifier>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>2D3C47C53BE6B016E043814FD881B000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <attachment>
+      <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+      <attachmentFileName>Doe, John.pdf</attachmentFileName>
+      <attachmentIdentifier>33c492de-159d-4dc8-adf7-289c174a1000</attachmentIdentifier>
+      <attachmentFileSize>119102</attachmentFileSize>
+      <note reference="../.."/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </attachment>
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.kfs.krad.bo.Note>
+  <org.kuali.kfs.krad.bo.Note>
+    <authorUniversalIdentifier>30000</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-02-26 06:43:19.324</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>test info</noteText>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>2D3C47C53BE6B016E043814FD881B000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.kfs.krad.bo.Note>
+</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <activeIndicator>false</activeIndicator>
+  <vendorFirstLastNameIndicator>false</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <vendorAddresses/>
+  <vendorAliases/>
+  <vendorContacts/>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <vendorSupplierDiversities/>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </vendorHeader>
+  
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+    <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <newCollectionRecord>false</newCollectionRecord>
+  </extension>
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+  <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+  <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+  <vendorParentIndicator>true</vendorParentIndicator>
+  <vendorFirstName>John</vendorFirstName>
+  <vendorLastName>Doe</vendorLastName>
+  <activeIndicator>true</activeIndicator>
+  <vendorFirstLastNameIndicator>true</vendorFirstLastNameIndicator>
+  <taxableIndicator>false</taxableIndicator>
+  <vendorAddresses>
+    <org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <vendorAddressGeneratedIdentifier>92000</vendorAddressGeneratedIdentifier>
+      <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+      <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+      <vendorLine1Address>509 E Main St Apt 99</vendorLine1Address>
+      <vendorCityName>Freeville</vendorCityName>
+      <vendorStateCode>NY</vendorStateCode>
+      <vendorZipCode>13068-9658</vendorZipCode>
+      <vendorCountryCode>US</vendorCountryCode>
+      <vendorAddressEmailAddress>johndoe@cornell.edu</vendorAddressEmailAddress>
+      <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+      <active>true</active>
+      <vendorDefaultAddresses/>
+      <versionNumber>1</versionNumber>
+      <objectId>e113ecb1-35e3-45fe-9ebf-2e087cc00000</objectId>
+      <newCollectionRecord>true</newCollectionRecord>
+      <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension">
+        <vendorAddressGeneratedIdentifier>92000</vendorAddressGeneratedIdentifier>
+        <versionNumber>1</versionNumber>
+        <objectId>a3365811-34d4-4a5b-8273-d8631d530000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </extension>
+    </org.kuali.kfs.vnd.businessobject.VendorAddress>
+  </vendorAddresses>
+  <vendorAliases/>
+  <vendorContacts/>
+  <vendorContracts/>
+  <vendorCustomerNumbers/>
+  <vendorPhoneNumbers/>
+  <vendorShippingSpecialConditions/>
+  <vendorCommodities/>
+  <vendorHeader>
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorTypeCode>DV</vendorTypeCode>
+    <vendorTaxNumber>111111111</vendorTaxNumber>
+    <vendorTaxTypeCode>SSN</vendorTaxTypeCode>
+    <vendorOwnershipCode>ID</vendorOwnershipCode>
+    <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+    <vendorForeignIndicator>true</vendorForeignIndicator>
+    <vendorSupplierDiversities/>
+    <versionNumber>2</versionNumber>
+    <objectId>5137a07a-1f98-4c39-98dc-9458ab382000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  <vendorChapter4StatusCode>27</vendorChapter4StatusCode><vendorW9SignedDate>2015-02-06</vendorW9SignedDate><vendorDOB>1993-01-31</vendorDOB></vendorHeader>
+  
+  <versionNumber>1</versionNumber>
+  <objectId>07415c8f-9fee-4941-ab21-b62eb08d6000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+    <vendorHeaderGeneratedIdentifier>56789</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
+    <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+    <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
+    <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
+    <vendorCreditCardMerchants/>
+    <versionNumber>1</versionNumber>
+    <objectId>9326a9de-84ee-4c7b-b26a-afff63b72000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+  </extension>
+</org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
