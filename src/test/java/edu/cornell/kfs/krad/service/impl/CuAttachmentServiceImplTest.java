@@ -32,10 +32,10 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import edu.cornell.kfs.antivirus.service.AntiVirusService;
-import edu.cornell.kfs.antivirus.service.impl.DummyAntiVirusServiceImpl;
-import edu.cornell.kfs.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
+import edu.cornell.kfs.krad.service.AntiVirusService;
+import edu.cornell.kfs.krad.service.ScanResult;
+import edu.cornell.kfs.krad.service.impl.DummyAntiVirusServiceImpl;
 
 public class CuAttachmentServiceImplTest {
 
