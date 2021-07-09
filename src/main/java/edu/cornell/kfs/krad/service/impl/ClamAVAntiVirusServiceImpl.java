@@ -4,43 +4,29 @@ import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.krad.CUKRADConstants.ClamAVCommand;
+import edu.cornell.kfs.krad.CUKRADConstants.ClamAVCommands;
+import edu.cornell.kfs.krad.CUKRADConstants.ClamAVDelimiters;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.service.AntiVirusService;
+import edu.cornell.kfs.krad.util.ClamAVUtils;
 
 public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
 
     private static final Logger LOG = LogManager.getLogger();
 
     private static final int DEFAULT_CHUNK_SIZE = 2048;
-    //  IDSESSION, END
-//    It is mandatory to prefix this command with n or z, and all commands inside IDSESSION must  be
-//    prefixed.
-//
-//    Start/end  a  clamd  session. Within a session multiple SCAN, INSTREAM, FILDES, VERSION, STATS
-//    commands can be sent on the same socket without opening new connections.  Replies  from  clamd
-//    will  be  in  the form '<id>: <response>' where <id> is the request number (in ascii, starting
-//    from 1) and <response> is the usual clamd reply.  The reply lines have same delimiter  as  the
-//    corresponding  command had.  Clamd will process the commands asynchronously, and reply as soon
-//    as it has finished processing.
-//
-//    Clamd requires clients to read all the replies it sent, before sending more commands  to  pre-vent prevent
-//    vent  send()  deadlocks. The recommended way to implement a client that uses IDSESSION is with
-//    non-blocking sockets, and  a  select()/poll()  loop:  whenever  send  would  block,  sleep  in
-//    select/poll  until either you can write more data, or read more replies.  Note that using non-blocking nonblocking
-//    blocking sockets without the select/poll loop and  alternating  recv()/send()  doesn't  comply
-//    with clamd's requirements.
-//
-//    If  clamd detects that a client has deadlocked,  it will close the connection. Note that clamd
-//    may close an IDSESSION connection too if you don't follow the protocol's requirements.
-
 
     private int timeout;
     private String host;
@@ -54,231 +40,182 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
         setTimeout(timeout);
     }
 
+    private <T> T performClamAVOperation(ClamAVOperation<T> operation,
+            Function<Exception, T> errorResultBuilder) {
+        try (
+            Socket socket = new Socket();
+        ) {
+            socket.connect(new InetSocketAddress(host, port), timeout);
+            try (
+                InputStream socketInput = socket.getInputStream();
+                OutputStream socketOutput = socket.getOutputStream();
+                DataOutputStream socketDataOutput = new DataOutputStream(socketOutput);
+            ) {
+                return operation.run(socketInput, socketDataOutput);
+            }
+        } catch (Exception e) {
+            LOG.error("performClamAVOperation, Exception occurred while running ClamAV operation", e);
+            return errorResultBuilder.apply(e);
+        }
+    }
+
     public String stats() {
-        return cmd(ClamAVCommand.STATS.asBytes());
+        return runSimpleCommand(ClamAVCommands.STATS);
     }
 
     public boolean ping() {
-        return ClamAVResponses.PING_RESPONSE_OK.equals(cmd(ClamAVCommand.PING.asBytes()));
+        String pingResponse = runSimpleCommand(ClamAVCommands.PING);
+        return StringUtils.equals(ClamAVResponses.PING_RESPONSE_OK, pingResponse);
     }
 
-    public String cmd(byte[] cmd){
-
-        Socket socket = new Socket();
-
-        try {
-            socket.connect(new InetSocketAddress(getHost(), getPort()));
-        } catch (IOException e) {
-            LOG.error("could not connect to clamd server", e);
-            try {
-                socket.close();
-            } catch (IOException e2) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("exception closing socket", e2);
-                }
-            }
-            return null;    
-        }
-
-        try {
-            socket.setSoTimeout(getTimeout());
-        } catch (SocketException e) {
-                LOG.error("Could not set socket timeout to " + getTimeout() + "ms", e);
-        }
-
-        DataOutputStream dos = null;
-        String response = "";
-        try {  // finally to close resources
-
-            try {
-                dos = new DataOutputStream(socket.getOutputStream());
-            } catch (IOException e) {
-                LOG.error("could not open socket OutputStream", e);
-                return null;
-            }
-
-            try {
-                dos.write(cmd);
-                dos.flush();
-            } catch (IOException e){
-                LOG.debug("error writing " + new String(cmd) + " command", e);
-                return null;
-            }
-
-            InputStream is = null;
-            try {
-                is = socket.getInputStream();
-            } catch (IOException e){
-                LOG.error("error getting InputStream from socket", e);
-                return response;
-            }
-
-            int read = DEFAULT_CHUNK_SIZE;
-            byte[] buffer = new byte[DEFAULT_CHUNK_SIZE];
-            StringBuffer sb = new StringBuffer();
-            
-            while (read == DEFAULT_CHUNK_SIZE){
-                try {
-                    read = is.read(buffer);
-                } catch (IOException e){
-                    LOG.error("error reading result from socket", e);
-                    break;
-                }
-                sb.append(new String(buffer, 0, read));
-            }
-
-            response = sb.toString();
-
-        } finally {
-            if (dos != null) try { dos.close(); } catch (IOException e) { LOG.debug("exception closing DOS", e); }
-            try { socket.close(); } catch (IOException e) { LOG.debug("exception closing socket", e); }
-        }
-
-        if (LOG.isDebugEnabled()) LOG.debug( "Response: " + response);
-
-        return response;
-        }
-
-    /**
-     *
-     * The method to call if you already have the content to scan in-memory as a byte array.
-     *
-     * @param in the byte array to scan
-     * @return
-     * @throws IOException
-     */
-    @Override
-    public ClamAVScanResult scan(byte[] in) throws IOException {
-        return scan(new ByteArrayInputStream(in));
+    private String runSimpleCommand(String command) {
+        return performClamAVOperation(
+                (socketInput, socketOutput) -> runSimpleCommand(command, socketInput, socketOutput),
+                exception -> KFSConstants.EMPTY_STRING);
     }
 
-    /**
-     *
-     * The preferred method to call. This streams the contents of the InputStream to clamd, so
-     * the entire content is not loaded into memory at the same time.
-     * @param in the InputStream to read.  The stream is NOT closed by this method.
-     * @return a ScanResult representing the server response
-     * @throws IOException if anything goes awry other than setting the socket timeout or closing the socket
-     * or the DataOutputStream wrapping the socket's OutputStream
-     */
-    @Override
-    public ClamAVScanResult scan(InputStream in) {
+    private String runSimpleCommand(String command, InputStream socketInput, DataOutputStream socketOutput)
+            throws IOException {
+        sendSimpleCommandToClamAV(command, socketOutput);
+        socketOutput.flush();
+        return readClamAVResponse(socketInput);
+    }
 
-        Socket socket = new Socket();
+    private void sendSimpleCommandToClamAV(String command, DataOutputStream socketOutput) throws IOException {
+        byte[] commandAsBytes = command.getBytes(StandardCharsets.UTF_8);
+        byte[] delimitedCommandAsBytes = new byte[commandAsBytes.length + 2];
+        delimitedCommandAsBytes[0] = ClamAVDelimiters.Z_PREFIX_BYTE;
+        System.arraycopy(commandAsBytes, 0, delimitedCommandAsBytes, 1, commandAsBytes.length);
+        delimitedCommandAsBytes[delimitedCommandAsBytes.length - 1] = ClamAVDelimiters.NULL_SUFFIX_BYTE;
+        socketOutput.write(delimitedCommandAsBytes);
+    }
 
-        try {
-            socket.connect(new InetSocketAddress(getHost(), getPort()));
-        } catch (IOException e) {
-            LOG.error("could not connect to clamd server", e);
-            try {
-                socket.close();
-            } catch (IOException e2) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("exception closing socket", e2);
+    private String readClamAVResponse(InputStream socketInput) throws IOException {
+        byte[] responseData = new byte[DEFAULT_CHUNK_SIZE];
+        int previousLength = 0;
+        int currentLength = 0;
+        int responseTerminatorIndex = -1;
+        int chunkLength;
+        
+        do {
+            chunkLength = socketInput.read(responseData, currentLength, responseData.length - currentLength);
+            if (chunkLength > 0) {
+                previousLength = currentLength;
+                currentLength += chunkLength;
+                responseTerminatorIndex = ClamAVUtils.indexOfNullCharDelimiter(
+                        responseData, previousLength, currentLength);
+                if (responseData.length == currentLength) {
+                    responseData = Arrays.copyOf(responseData, responseData.length + DEFAULT_CHUNK_SIZE);
                 }
             }
-            return new ClamAVScanResult(e);    
+        } while (responseTerminatorIndex == -1 && chunkLength > 0);
+        
+        if (responseTerminatorIndex == -1) {
+            LOG.error("readClamAVResponse, End of stream was reached before reading full ClamAV response!  " +
+                    "No content will be returned.  " + currentLength + " bytes were received prior to abrupt end.");
+            if (LOG.isDebugEnabled()) {
+                logPartialClamAVResponse(responseData, 0, currentLength);
+            }
+            return KFSConstants.EMPTY_STRING;
+        } else if (responseTerminatorIndex < currentLength - 1) {
+            int extraContentLength = currentLength - responseTerminatorIndex - 1;
+            LOG.warn("readClamAVResponse, ClamAV sent an extra " + extraContentLength +
+                    " bytes of response data beyond the delimiter!  The extra bytes will be ignored.");
+            if (LOG.isDebugEnabled()) {
+                logPartialClamAVResponse(responseData, responseTerminatorIndex + 1, extraContentLength);
+            }
         }
+        
+        String responsePrecedingTerminator = new String(
+                responseData, 0, responseTerminatorIndex, StandardCharsets.UTF_8);
+        return responsePrecedingTerminator;
+    }
 
+    private void logPartialClamAVResponse(byte[] responseData, int start, int length) {
         try {
-            socket.setSoTimeout(getTimeout());
-        } catch (SocketException e) {
-                LOG.error("Could not set socket timeout to " + getTimeout() + "ms", e);        
+            String responseString = new String(responseData, start, length, StandardCharsets.UTF_8);
+            LOG.debug("logPartialClamAVResponse, Approximate text of partial response data: " + responseString);
+        } catch (RuntimeException e) {
+            LOG.debug("logPartialClamAVResponse, Partial response data could not be represented as text");
         }
+    }
 
-        DataOutputStream dos = null;
-        String response = "";
-        try {  // finally to close resources
+    @Override
+    public ClamAVScanResult scan(byte[] fileContents) throws IOException {
+        try (InputStream preLoadedFileStream = new ByteArrayInputStream(fileContents);) {
+            return scan(preLoadedFileStream);
+        }
+    }
 
-            try {
-                dos = new DataOutputStream(socket.getOutputStream());
-            } catch (IOException e) {
-                LOG.error("could not open socket OutputStream", e);
-                return new ClamAVScanResult(e);
-            }
+    @Override
+    public ClamAVScanResult scan(InputStream fileStream) {
+        return performClamAVOperation(
+                (socketInput, socketOutput) -> performStreamedScan(fileStream, socketInput, socketOutput),
+                exception -> new ClamAVScanResult(exception));
+    }
 
-            try {
-                dos.write(ClamAVCommand.INSTREAM.asBytes());
-            } catch (IOException e){
-                LOG.debug("error writing INSTREAM command", e);
-                return new ClamAVScanResult(e);
-            }
+    private ClamAVScanResult performStreamedScan(
+            InputStream fileStream, InputStream socketInput, DataOutputStream socketOutput) throws IOException {
+        sendSimpleCommandToClamAV(ClamAVCommands.INSTREAM, socketOutput);
+        sendFileContentsToClamAV(fileStream, socketOutput);
+        String response = readClamAVResponse(socketInput);
+        return new ClamAVScanResult(response);
+    }
 
-            int read = DEFAULT_CHUNK_SIZE;
-            byte[] buffer = new byte[DEFAULT_CHUNK_SIZE];
-            while (read == DEFAULT_CHUNK_SIZE){
+    private void sendFileContentsToClamAV(InputStream fileStream, DataOutputStream socketOutput) throws IOException {
+        byte[] fileChunk = new byte[DEFAULT_CHUNK_SIZE];
+        boolean continueSendingFileContents = true;
+        int chunkLength;
+        
+        do {
+            chunkLength = fileStream.read(fileChunk);
+            if (chunkLength <= 0) {
+                continueSendingFileContents = false;
+            } else {
                 try {
-                    read = in.read(buffer);
+                    socketOutput.writeInt(chunkLength);
+                    socketOutput.write(fileChunk, 0, chunkLength);
                 } catch (IOException e) {
-                    LOG.debug("error reading from InputStream", e);
-                    return new ClamAVScanResult(e);                    
-                }
-                
-                if (read <= 0) { break; }
-                
-                // we may exceed the clamd size limit, so we don't immediately return
-                // if we get an error here.
-                try {
-                    dos.writeInt(read);
-                    dos.write(buffer, 0, read);
-                } catch (IOException e){
-                    LOG.debug("error writing data to socket", e);
-                    break;
+                    LOG.error("sendFileContentsToClamAV, Exception occurred when streaming file contents to ClamAV; " +
+                            "the file size limit may have been exceeded.", e);
+                    continueSendingFileContents = false;
                 }
             }
-
-            try {
-                dos.writeInt(0);
-                dos.flush();
-            } catch (IOException e){
-                LOG.debug("error writing zero-length chunk to socket", e);
+        } while (continueSendingFileContents);
+        
+        try {
+            socketOutput.writeInt(0);
+            socketOutput.flush();
+        } catch (IOException e) {
+            if (chunkLength > 0) {
+                LOG.error("sendFileContentsToClamAV, Exception occurred when ending stream of file to ClamAV, " +
+                        "but an exception also occurred while sending the file content itself.  " +
+                        "Refer to the previous log entries to identify the prior error.");
+            } else {
+                LOG.error("sendFileContentsToClamAV, Exception occurred when ending stream of file to ClamAV", e);
             }
-
-            try {
-                read = socket.getInputStream().read(buffer);
-            } catch (IOException e){
-                LOG.debug("error reading result from socket", e);
-                read = 0;
-            }
-
-            if (read > 0) response = new String(buffer, 0, read);
-
-        } finally {
-            if (dos != null) try { dos.close(); } catch (IOException e) { LOG.debug("exception closing DOS", e); }
-            try { socket.close(); } catch (IOException e) { LOG.debug("exception closing socket", e); }
         }
-
-        if (LOG.isDebugEnabled()) LOG.debug( "Response: " + response);
-
-        return new ClamAVScanResult(response.trim());
-    }
-
-    public String getHost() {
-        return host;
     }
 
     public void setHost(String host) {
         this.host = host;
     }
 
-    public int getPort() {
-        return port;
-    }
-
     public void setPort(int port) {
         this.port = port;
     }
 
-    public int getTimeout() {
-        return timeout;
-    }
-
-    /**
-     * Socket timeout in milliseconds
-     * @param timeout socket timeout in milliseconds
-     */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    /*
+     * TODO: When base financials upgrades to commons-lang3 version 3.9 or later,
+     * remove this interface and replace its usage with the lang3 FailableBiFunction interface (or equivalent).
+     */
+    @FunctionalInterface
+    private static interface ClamAVOperation<T> {
+        T run(InputStream socketInput, DataOutputStream socketOutput) throws IOException;
     }
 
 }

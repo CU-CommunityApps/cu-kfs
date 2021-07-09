@@ -1,6 +1,7 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -107,13 +108,17 @@ public class ClamAVAntiVirusServiceImplTest {
     }
 
     private ClamAVScanResult runScan(String fileName) throws Exception {
-        try (InputStream fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName)) {
+        try (
+            InputStream fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName);
+        ) {
             return antiVirusService.scan(fileStream);
         }
     }
 
     private ClamAVScanResult runScanWithPreLoadedFile(String fileName) throws Exception {
-        try (InputStream fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName)) {
+        try (
+            InputStream fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName);
+        ) {
             byte[] fileBytes = IOUtils.toByteArray(fileStream);
             return antiVirusService.scan(fileBytes);
         }
@@ -127,7 +132,7 @@ public class ClamAVAntiVirusServiceImplTest {
 
     private void assertScanFailedDueToMockVirus(ClamAVScanResult result) throws Exception {
         assertEquals("Wrong result status", Status.FAILED, result.getStatus());
-        assertEquals("Wrong signature", CUKRADTestConstants.MOCK_VIRUS_INDICATOR, result.getSignature());
+        assertEquals("Wrong signature", CUKRADTestConstants.MOCK_VIRUS_MESSAGE, result.getSignature());
         assertTrue("Result string did not start with the expected prefix",
                 StringUtils.startsWith(result.getResult(), ClamAVResponses.STREAM_PREFIX));
         assertTrue("Result string did not end with the expected suffix",
@@ -135,15 +140,23 @@ public class ClamAVAntiVirusServiceImplTest {
     }
 
     private void assertScanExceededFileSizeLimit(ClamAVScanResult result) throws Exception {
-        assertEquals("Wrong result status", Status.ERROR, result.getStatus());
-        assertEquals("Wrong result string", ClamAVResponses.RESPONSE_SIZE_EXCEEDED, result.getResult());
-        assertTrue("Signature should have been blank", StringUtils.isBlank(result.getSignature()));
+        assertScanEncounteredError(ClamAVResponses.RESPONSE_SIZE_EXCEEDED, result);
     }
 
     private void assertScanEncounteredTempFileError(ClamAVScanResult result) throws Exception {
+        assertScanEncounteredError(ClamAVResponses.RESPONSE_ERROR_WRITING_FILE, result);
+    }
+
+    private void assertScanEncounteredError(
+            String potentialExpectedResultMessage, ClamAVScanResult result) throws Exception {
         assertEquals("Wrong result status", Status.ERROR, result.getStatus());
-        assertEquals("Wrong result string", ClamAVResponses.RESPONSE_ERROR_WRITING_FILE, result.getResult());
         assertTrue("Signature should have been blank", StringUtils.isBlank(result.getSignature()));
+        if (StringUtils.isNotBlank(result.getResult())) {
+            assertEquals("Wrong result string", potentialExpectedResultMessage, result.getResult());
+        } else {
+            assertNotNull("An exception should have been recorded if the endpoint response could not be retrieved",
+                    result.getException());
+        }
     }
 
 }

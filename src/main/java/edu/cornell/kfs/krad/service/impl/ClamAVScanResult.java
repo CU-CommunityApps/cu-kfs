@@ -1,5 +1,7 @@
 package edu.cornell.kfs.krad.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.service.ScanResult;
 
@@ -35,7 +37,7 @@ public class ClamAVScanResult implements ScanResult {
     public void setResult(String result) {
         this.result = result;
 
-        if (result == null) {
+        if (StringUtils.isBlank(result)) {
             setStatus(Status.ERROR);
         } else if (ClamAVResponses.RESPONSE_OK.equals(result)) {
             setStatus(Status.PASSED);
@@ -47,7 +49,6 @@ public class ClamAVScanResult implements ScanResult {
         } else if (ClamAVResponses.RESPONSE_ERROR_WRITING_FILE.equals(result)) {
             setStatus(Status.ERROR);                           
         }
-
     }
 
     @Override
