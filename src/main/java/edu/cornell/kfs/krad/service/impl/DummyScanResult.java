@@ -1,27 +1,20 @@
-package edu.cornell.kfs.antivirus.service.impl;
+package edu.cornell.kfs.krad.service.impl;
 
-import edu.cornell.kfs.antivirus.service.ScanResult;
+import edu.cornell.kfs.krad.service.ScanResult;
 
 public class DummyScanResult implements ScanResult {
 
+    @Override
     public String getResult() {
         return ScanResult.Status.PASSED.toString();
     }
 
-    public void setResult(String result) {
-
-    }
-
+    @Override
     public Status getStatus() {
         return ScanResult.Status.PASSED;
     }
 
-    public void setStatus(Status status) {
-    }
-
-    public void setSignature(String signature) {
-    }
-
+    @Override
     public String getSignature() {
         return null;
     }
