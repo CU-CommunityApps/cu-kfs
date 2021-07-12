@@ -1,10 +1,10 @@
 package edu.cornell.kfs.kim.impl.identity;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.impl.identity.AuthenticationServiceImpl;
@@ -49,9 +49,10 @@ public class CUWebAuthAuthenticationService extends AuthenticationServiceImpl {
             id = super.getPrincipalName(request);
         } else {
             // ok we need to check the CUWebAuth headers
-            String user = System.getProperty(CUWAL_REMOTE_USER_HEADER);
+            Map<String, String> env = System.getenv();
+            String user = env.get(CUWAL_REMOTE_USER_HEADER);
             if (user == null) {
-                user = System.getProperty(CUWAL_REMOTE_USER_HEADER.toUpperCase(Locale.US));
+                user = env.get(CUWAL_REMOTE_USER_HEADER.toUpperCase(Locale.US));
             }
             id = user;
         }
@@ -62,14 +63,9 @@ public class CUWebAuthAuthenticationService extends AuthenticationServiceImpl {
     }
     
     private void logSystemProperties() {
-        for (Object key : System.getProperties().keySet()) {
-            String keyString = String.valueOf(key);
-            if (StringUtils.containsIgnoreCase(keyString, "pass")) {
-                LOG.info("logSystemProperties, system property key='" + keyString + "' contains pass, so not displaying value");
-            } else {
-                String propertyValue = System.getProperty(keyString);
-                LOG.info("logSystemProperties, property key='" + keyString + "', property value='" + propertyValue + "'");
-            }
+        Map<String, String> env = System.getenv();
+        for (String envName : env.keySet()) {
+            LOG.info("logSystemProperties, name: =" + envName + "', value='" + env.get(envName) + "'");
         }
     }
 }
