@@ -1,6 +1,5 @@
 package edu.cornell.kfs.kim.impl.identity;
 
-import java.util.Iterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,7 @@ public class CUWebAuthAuthenticationService extends AuthenticationServiceImpl {
     /**
      * The HTTP header CUWebAuth will populate the remote user in 
      */
-    public static final String CUWAL_REMOTE_USER_HEADER = "http_remote_user";
+    public static final String CUWAL_REMOTE_USER_HEADER = "remote_user";
 
     /**
      * By default don't use the CUWebAuth HTTP headers
@@ -42,7 +41,6 @@ public class CUWebAuthAuthenticationService extends AuthenticationServiceImpl {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Obtaining user from request (" + (useHttpHeaders ? "from '" + CUWAL_REMOTE_USER_HEADER + "' HTTP header" : "from REMOTE_USER CGI variable") + request);
         }
-        logHttpServletRequestHeaderValue(request);
         // if we are not checking the headers, we are really just a normal RemoteUserWebAuthenticationService
         String id;
         if (!useHttpHeaders) {
@@ -59,22 +57,5 @@ public class CUWebAuthAuthenticationService extends AuthenticationServiceImpl {
             LOG.debug("Found: " + id);
         }
         return id;
-    }
-    
-    protected void logHttpServletRequestHeaderValue(HttpServletRequest request) {
-        try {
-            Iterator<String> i = request.getHeaderNames().asIterator();
-            while (i.hasNext()) {
-                try {
-                    String headerName = i.next();
-                    String headerValue = request.getHeader(headerName);
-                    LOG.info("logHttpServletRequestHeaderValue, headerName: '" + headerName + "' header value: '" + headerValue + "'");
-                } catch (Exception e) {
-                    LOG.error("logHttpServletRequestHeaderValue, had an error inside the while loop of the headers", e);
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("logHttpServletRequestHeaderValue, had an error outisde the while loop,", e);
-        }
     }
 }
