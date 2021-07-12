@@ -20,8 +20,8 @@ package org.kuali.kfs.module.ar.businessobject.lookup;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
 import org.kuali.kfs.kns.web.ui.ResultRow;
 import org.kuali.kfs.krad.document.Document;
@@ -60,11 +60,11 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
      */
     @Override
     public void validateSearchParameters(Map<String, String> fieldValues) {
-        if (!StringUtils.isBlank(fieldValues.get(ArPropertyConstants.PAYMENT_DATE))) {
+        if (StringUtils.isNotBlank(fieldValues.get(ArPropertyConstants.PAYMENT_DATE))) {
             validateDateField(fieldValues.get(ArPropertyConstants.PAYMENT_DATE), ArPropertyConstants.PAYMENT_DATE,
                     getDateTimeService());
         }
-        if (!StringUtils.isBlank(fieldValues.get(KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
+        if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
                 + ArPropertyConstants.PAYMENT_DATE))) {
             validateDateField(fieldValues.get(KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
                     + ArPropertyConstants.PAYMENT_DATE), KFSPropertyConstants.RANGE_LOWER_BOUND_KEY_PREFIX
@@ -130,7 +130,7 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
                             .contains(paymentApp.getFinancialSystemDocumentHeader().getWorkflowDocumentStatusCode())) {
                         useInvoicePaidApplied = false;
                     }
-                    if (!StringUtils.isBlank(lookupFormFields.get(ArPropertyConstants.APPLIED_INDICATOR))) {
+                    if (StringUtils.isNotBlank(lookupFormFields.get(ArPropertyConstants.APPLIED_INDICATOR))) {
                         final String appliedIndicator = lookupFormFields.get(ArPropertyConstants.APPLIED_INDICATOR);
                         if (KRADConstants.YES_INDICATOR_VALUE.equals(appliedIndicator)
                                 && !getFinancialSystemDocumentService().getSuccessfulDocumentStatuses()
@@ -150,7 +150,7 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
                     if (dateFinalized != null) {
                         paymentAppFinalDate = dateFinalized.toDate();
                     }
-                    if (!StringUtils.isBlank(lookupFormFields.get(ArPropertyConstants.PAYMENT_DATE))) {
+                    if (StringUtils.isNotBlank(lookupFormFields.get(ArPropertyConstants.PAYMENT_DATE))) {
                         final Date toPaymentDate = getDateTimeService().convertToDate(
                                 lookupFormFields.get(ArPropertyConstants.PAYMENT_DATE));
                         if (paymentAppFinalDate == null ||
@@ -182,14 +182,14 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
                         useInvoicePaidApplied = false;
                     }
 
-                    if (!StringUtils.isBlank(lookupFormFields.get(KFSPropertyConstants.AWARD_NUMBER))) {
+                    if (StringUtils.isNotBlank(lookupFormFields.get(KFSPropertyConstants.AWARD_NUMBER))) {
                         if (!StringUtils.equals(
                                 cgInvoiceDocument.getInvoiceGeneralDetail().getAward().getProposalNumber(),
                                 lookupFormFields.get(KFSPropertyConstants.AWARD_NUMBER))) {
                             useInvoicePaidApplied = false;
                         }
                     }
-                    if (!StringUtils.isBlank(lookupFormFields.get(ArPropertyConstants.REVERSED_INDICATOR))) {
+                    if (StringUtils.isNotBlank(lookupFormFields.get(ArPropertyConstants.REVERSED_INDICATOR))) {
                         final String reversedIndicator = lookupFormFields.get(ArPropertyConstants.REVERSED_INDICATOR);
                         if (KRADConstants.YES_INDICATOR_VALUE.equals(reversedIndicator)
                                 && !cgInvoiceDocument.isInvoiceReversal()) {
