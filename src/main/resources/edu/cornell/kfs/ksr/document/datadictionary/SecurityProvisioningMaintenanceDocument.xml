@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+                           
+    <import resource="classpath:edu/cornell/kfs/ksr/cu-ksr-lookup-beans.xml"/>
+    
+    <bean id="SecurityProvisioningMaintenanceDocument" parent="SecurityProvisioningMaintenanceDocument-parentBean"/>
+    <bean id="SecurityProvisioningMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioning"
+          p:encryptDocumentDataInPersistentSessionStorage="true" p:documentTypeName="SecurityProvisioningGroupDocumentType"
+          p:businessRulesClass="edu.cornell.kfs.ksr.document.validation.impl.SecurityProvisioningGroupRule"
+          p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase">
+        <property name="maintainableSections">
+        	<list>
+        		<ref bean="SecurityProvisioningMaintenanceDocument-Edit"/>
+        		<ref bean="SecurityProvisioningMaintenanceDocument-RoleProvisioning"/>
+        	</list>
+        </property>
+		<property name="lockingKeys">
+			<list>
+				<value>securityGroupId</value>
+			</list>
+		</property>
+	</bean>
+	
+    <bean id="SecurityProvisioningMaintenanceDocument-Edit"
+          parent="SecurityProvisioningMaintenanceDocument-Edit-parentBean"/>
+    <bean id="SecurityProvisioningMaintenanceDocument-Edit-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="generalInformationSection" p:title="Role Provisioning">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="securityGroupId" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="securityGroup.securityGroupName" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="securityGroup.securityGroupDescription" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="securityGroup.active" p:unconditionallyReadOnly="true"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="SecurityProvisioningMaintenanceDocument-RoleProvisioning" parent="SecurityProvisioningMaintenanceDocument-RoleProvisioning-parentBean"/>
+    <bean id="SecurityProvisioningMaintenanceDocument-RoleProvisioning-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="securityProvisioningGroups" p:title="Edit Role Provisioning">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableCollectionDefinition" p:name="securityProvisioningGroups"
+                      p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup">
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="provisioningId"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="provisioningId"
+                            	  p:defaultValueFinder-ref="securityProvisioningGroupIDFinder"
+                                  p:unconditionallyReadOnly="true" p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="roleId"
+                                  p:noLookup="true" p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="roleName"
+                                  p:unconditionallyReadOnly="true" p:required="false"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="tabId"
+                            	  p:required="true" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
