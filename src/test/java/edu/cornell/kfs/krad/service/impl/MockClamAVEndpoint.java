@@ -41,6 +41,7 @@ public class MockClamAVEndpoint implements Closeable {
     private static final Logger LOG = LogManager.getLogger();
 
     private static final int BUFFER_SIZE = 1024;
+    private static final int NUM_BYTES_FOR_CHUNK_LENGTH = 4;
 
     private ServerSocket serverSocket;
     private AtomicBoolean serverActive;
@@ -54,7 +55,7 @@ public class MockClamAVEndpoint implements Closeable {
         this.forceTempFileError = new AtomicBoolean(false);
         this.connectionHandler = new FutureTask<>(this::handleClients, KFSConstants.EMPTY_STRING);
         this.connectionHandlerThread = new Thread(connectionHandler);
-        serverSocket.setSoTimeout(5000);
+        serverSocket.setSoTimeout(CUKRADTestConstants.TEST_SOCKET_TIMEOUT);
         connectionHandlerThread.start();
     }
 
@@ -133,13 +134,13 @@ public class MockClamAVEndpoint implements Closeable {
             throws IOException {
          switch (command) {
              case ClamAVCommands.PING :
-                 return buildPingResponse(dataAfterCommand) + ClamAVDelimiters.NULL_SUFFIX;
+                 return buildPingResponse(dataAfterCommand);
                  
              case ClamAVCommands.INSTREAM :
-                 return handleScan(socketInput, dataAfterCommand) + ClamAVDelimiters.NULL_SUFFIX;
+                 return handleScan(socketInput, dataAfterCommand);
                  
              case ClamAVCommands.STATS :
-                 return buildStatsResponse(dataAfterCommand) + ClamAVDelimiters.NULL_SUFFIX;
+                 return buildStatsResponse(dataAfterCommand);
                  
              default :
                  LOG.error("handleClientCommand, Invalid command: " + command);
@@ -191,8 +192,8 @@ public class MockClamAVEndpoint implements Closeable {
     }
 
     private int readLengthOfNextChunkFromStream(InputStream socketInput) throws IOException {
-        byte[] nextChunkLengthAsBytes = socketInput.readNBytes(4);
-        if (nextChunkLengthAsBytes.length < 4) {
+        byte[] nextChunkLengthAsBytes = socketInput.readNBytes(NUM_BYTES_FOR_CHUNK_LENGTH);
+        if (nextChunkLengthAsBytes.length < NUM_BYTES_FOR_CHUNK_LENGTH) {
             throw new SocketException("Unexpected close of stream while reading length of next file chunk");
         }
         int nextChunkLength = nextChunkLengthAsBytes[3] & 0xFF;
@@ -204,14 +205,14 @@ public class MockClamAVEndpoint implements Closeable {
 
     private String buildMockScanResponse(String fileData) {
         if (StringUtils.containsIgnoreCase(fileData, CUKRADTestConstants.MOCK_INFECTED_FILE_INDICATOR)) {
-            return StringUtils.join(ClamAVResponses.STREAM_PREFIX, CUKRADTestConstants.MOCK_VIRUS_MESSAGE,
-                    KFSConstants.BLANK_SPACE, ClamAVResponses.FOUND_SUFFIX);
+            return StringUtils.join(ClamAVResponses.STREAM_PREFIX, KFSConstants.BLANK_SPACE,
+                    CUKRADTestConstants.MOCK_VIRUS_MESSAGE, KFSConstants.BLANK_SPACE, ClamAVResponses.FOUND_SUFFIX);
         }
         return ClamAVResponses.RESPONSE_OK;
     }
 
     private void writeResponseToClient(Writer socketWriter, String responseData) throws IOException {
-        socketWriter.write(responseData);
+        socketWriter.write(responseData + ClamAVDelimiters.NULL_SUFFIX);
         socketWriter.flush();
     }
 

@@ -38,7 +38,7 @@ public class ClamAVAntiVirusServiceImplTest {
     void setUp() throws Exception {
         mockClamAV = new MockClamAVEndpoint();
         antiVirusService = new ClamAVAntiVirusServiceImpl();
-        antiVirusService.setTimeout(5000);
+        antiVirusService.setTimeout(CUKRADTestConstants.TEST_SOCKET_TIMEOUT);
         antiVirusService.setHost(mockClamAV.getHostAddress());
         antiVirusService.setPort(mockClamAV.getPort());
     }

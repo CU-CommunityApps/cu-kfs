@@ -1,24 +1,27 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.service.ScanResult;
+import edu.cornell.kfs.krad.util.ClamAVUtils;
 
 public class ClamAVScanResult implements ScanResult {
 
-    private String result = "";
+    private String result = KFSConstants.EMPTY_STRING;
     private Status status = Status.FAILED;
-    private String signature = "";
+    private String signature = KFSConstants.EMPTY_STRING;
     private Exception exception = null;
 
     public ClamAVScanResult(String result) {
-        setResult(result);
+        this.result = result;
+        refreshStatusAndSignatureFromCurrentResult();
     }
 
     public ClamAVScanResult(Exception ex) {
-        setException(ex);
-        setStatus(Status.ERROR);
+        this.exception = ex;
+        this.status = Status.ERROR;
     }
 
     public Exception getException() {
@@ -36,18 +39,31 @@ public class ClamAVScanResult implements ScanResult {
 
     public void setResult(String result) {
         this.result = result;
+        refreshStatusAndSignatureFromCurrentResult();
+    }
 
-        if (StringUtils.isBlank(result)) {
-            setStatus(Status.ERROR);
-        } else if (ClamAVResponses.RESPONSE_OK.equals(result)) {
-            setStatus(Status.PASSED);
-        } else if (result.endsWith(ClamAVResponses.FOUND_SUFFIX)) {
-            setSignature(result.substring(ClamAVResponses.STREAM_PREFIX.length(),
-                    result.lastIndexOf(ClamAVResponses.FOUND_SUFFIX) - 1 ));
-        } else if (ClamAVResponses.RESPONSE_SIZE_EXCEEDED.equals(result)) {
-            setStatus(Status.ERROR);
-        } else if (ClamAVResponses.RESPONSE_ERROR_WRITING_FILE.equals(result)) {
-            setStatus(Status.ERROR);                           
+    private void refreshStatusAndSignatureFromCurrentResult() {
+        status = determineStatusFromCurrentResult();
+        if (Status.FAILED.equals(status)) {
+            signature = ClamAVUtils.getSignatureFromScanResultMessage(result);
+        } else {
+            signature = KFSConstants.EMPTY_STRING;
+        }
+    }
+
+    private Status determineStatusFromCurrentResult() {
+        switch (StringUtils.defaultString(result)) {
+            case ClamAVResponses.RESPONSE_OK :
+                return Status.PASSED;
+            
+            case ClamAVResponses.RESPONSE_SIZE_EXCEEDED :
+                return Status.ERROR;
+            
+            case ClamAVResponses.RESPONSE_ERROR_WRITING_FILE :
+                return Status.ERROR;
+            
+            default :
+                return StringUtils.endsWith(result, ClamAVResponses.FOUND_SUFFIX) ? Status.FAILED : Status.ERROR;
         }
     }
 

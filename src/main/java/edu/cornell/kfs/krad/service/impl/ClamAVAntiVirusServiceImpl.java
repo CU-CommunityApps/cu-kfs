@@ -119,7 +119,7 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
             return KFSConstants.EMPTY_STRING;
         } else if (responseTerminatorIndex < currentLength - 1) {
             int extraContentLength = currentLength - responseTerminatorIndex - 1;
-            LOG.warn("readClamAVResponse, ClamAV sent an extra " + extraContentLength +
+            LOG.warn("readClamAVResponse, ClamAV sent at least an extra " + extraContentLength +
                     " bytes of response data beyond the delimiter!  The extra bytes will be ignored.");
             if (LOG.isDebugEnabled()) {
                 logPartialClamAVResponse(responseData, responseTerminatorIndex + 1, extraContentLength);
@@ -142,7 +142,9 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
 
     @Override
     public ClamAVScanResult scan(byte[] fileContents) throws IOException {
-        try (InputStream preLoadedFileStream = new ByteArrayInputStream(fileContents);) {
+        try (
+            InputStream preLoadedFileStream = new ByteArrayInputStream(fileContents);
+        ) {
             return scan(preLoadedFileStream);
         }
     }
@@ -165,12 +167,14 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
     private void sendFileContentsToClamAV(InputStream fileStream, DataOutputStream socketOutput) throws IOException {
         byte[] fileChunk = new byte[DEFAULT_CHUNK_SIZE];
         boolean continueSendingFileContents = true;
+        boolean fileWasFullySent = false;
         int chunkLength;
         
         do {
             chunkLength = fileStream.read(fileChunk);
             if (chunkLength <= 0) {
                 continueSendingFileContents = false;
+                fileWasFullySent = true;
             } else {
                 try {
                     socketOutput.writeInt(chunkLength);
@@ -183,16 +187,20 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
             }
         } while (continueSendingFileContents);
         
+        sendEndOfFileContentToClamAV(socketOutput, fileWasFullySent);
+    }
+
+    private void sendEndOfFileContentToClamAV(DataOutputStream socketOutput, boolean fileWasFullySent) {
         try {
             socketOutput.writeInt(0);
             socketOutput.flush();
         } catch (IOException e) {
-            if (chunkLength > 0) {
-                LOG.error("sendFileContentsToClamAV, Exception occurred when ending stream of file to ClamAV, " +
+            if (fileWasFullySent) {
+                LOG.error("sendEndOfFileContentToClamAV, Exception occurred when ending stream of file to ClamAV", e);
+            } else {
+                LOG.error("sendEndOfFileContentToClamAV, Exception occurred when ending stream of file to ClamAV, " +
                         "but an exception also occurred while sending the file content itself.  " +
                         "Refer to the previous log entries to identify the prior error.");
-            } else {
-                LOG.error("sendFileContentsToClamAV, Exception occurred when ending stream of file to ClamAV", e);
             }
         }
     }
