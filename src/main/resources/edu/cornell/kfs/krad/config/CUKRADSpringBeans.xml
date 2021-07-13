@@ -59,16 +59,6 @@
     <bean id="businessObjectAuthorizationService"
           class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"/>
           
-    <bean id="cf.kradExceptionIncidentService"
-          class="edu.cornell.kfs.krad.service.impl.CuKualiExceptionIncidentServiceImpl"
-          p:mailer-ref="cf.mailer" p:incidentMailingList="${kr.incident.mailing.list}">
-        <property name="messageTemplate">
-            <!-- The property place holder below must be specified in          -->
-            <!-- common-config-default.xml or any other KNS configuration file -->
-            <bean class="org.kuali.rice.core.api.mail.MailMessage" p:fromAddress="${kr.incident.mailing.list}"/>
-        </property>
-    </bean>
-
     <bean id="encryptionService" class="edu.cornell.kfs.core.impl.encryption.AESEncryptionServiceImpl">
         <property name="key" value="${cu.encryption.key}"/>
         <property name="enabled" value="${cu.encryption.busEncryption}"/>
