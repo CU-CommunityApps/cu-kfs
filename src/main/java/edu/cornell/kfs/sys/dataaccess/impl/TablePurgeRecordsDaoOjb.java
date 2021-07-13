@@ -39,7 +39,7 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
             daysOldToUse = details.isUseDefaultDaysBeforePurgeParameter() ? defaultDaysOld : retrieveDaysBeforePurgeParameterValue(details.getNameSpaceCode(), details.getComponent(), details.getParameterName());
             dateForPurge = getPurgeDate(jobRunDate, daysOldToUse);
             lookupCriteria = buildTablePurgeCriteria(details.getServiceImplForPurgeTableLookupCriteria(), dateForPurge);
-            identifyAndRequestRecordsDeletion(details.getBusinessObjectForRecordsTablePurge(), lookupCriteria);
+            identifyAndRequestRecordsDeletion(details, lookupCriteria);
         }
     }
 
@@ -47,9 +47,10 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
         return serviceImplClassForPurgeTableLookupCriteria.buildLookupCriteria(dateForPurge);
     }
     
-    protected void identifyAndRequestRecordsDeletion(Class<?> classForDeleteQuery, Criteria lookupCriteria) {
+    protected void identifyAndRequestRecordsDeletion(TableDetailsForPurge details, Criteria lookupCriteria) {
+        Class<?> classForDeleteQuery = details.getBusinessObjectForRecordsTablePurge();
         int numberOfRecordsBeingPurged = getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(classForDeleteQuery, lookupCriteria));
-        LOG.info("identifyAndRequestRecordsDeletion: numberOfRecordsBeingPurged = " + numberOfRecordsBeingPurged);
+        LOG.info("identifyAndRequestRecordsDeletion: numberOfRecordsBeingPurged from table " + details.getTableToPurge() + " = " + numberOfRecordsBeingPurged);
         Collection<?> toBePurgedRecords = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(classForDeleteQuery, lookupCriteria));
         for (Object recordAsObject : toBePurgedRecords) {
             deleteRecordBasedOnBusinessObject((PersistableBusinessObjectBase)recordAsObject, ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE));
