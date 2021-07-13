@@ -23,7 +23,7 @@ public class CUWebAuthAuthenticationService extends AuthenticationServiceImpl {
     /**
      * The HTTP header CUWebAuth will populate the remote user in 
      */
-    public static final String CUWAL_REMOTE_USER_HEADER = "http_remote_user";
+    public static final String CUWAL_REMOTE_USER_HEADER = "remote_user";
 
     /**
      * By default don't use the CUWebAuth HTTP headers
