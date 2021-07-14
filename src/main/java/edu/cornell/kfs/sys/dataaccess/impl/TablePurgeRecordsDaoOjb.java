@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.service.TableLookupCriteriaPurgeService;
+import edu.cornell.kfs.sys.businessobject.PurgableBusinessObjectInterface;
 import edu.cornell.kfs.sys.businessobject.TableDetailsForPurge;
 import edu.cornell.kfs.sys.dataaccess.TablePurgeRecordsDao;
 
@@ -53,8 +54,17 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
         LOG.info("identifyAndRequestRecordsDeletion: numberOfRecordsBeingPurged from table " + details.getTableToPurge() + " = " + numberOfRecordsBeingPurged);
         Collection<?> toBePurgedRecords = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(classForDeleteQuery, lookupCriteria));
         for (Object recordAsObject : toBePurgedRecords) {
-            deleteRecordBasedOnBusinessObject((PersistableBusinessObjectBase)recordAsObject, ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE));
+            deleteRecordBasedOnBusinessObject((PersistableBusinessObjectBase)recordAsObject, buildPurgeRecordingString(recordAsObject));
         }
+    }
+    
+    protected String buildPurgeRecordingString(Object recordAsObject) {
+        String purgeRecordingString = ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE);
+        if (recordAsObject instanceof PurgableBusinessObjectInterface) {
+            PurgableBusinessObjectInterface purgable = (PurgableBusinessObjectInterface) recordAsObject;
+            purgeRecordingString = purgable.getPurgeRecordingString();
+        }
+        return purgeRecordingString;
     }
     
     @Transactional

@@ -408,15 +408,18 @@
           p:component="PurgeTablesStep"
           p:parameterName="PS_POSITION_DATA_WD_NUMBER_OF_DAYS_OLD"
           p:serviceImplForPurgeTableLookupCriteria-ref="positionDataWorkdayLookupCriteriaPurgeService"/>
-          
+    
+    <bean id="paymentWorksVendorLookupCriteriaPurgeService"
+          class="edu.cornell.kfs.sys.batch.service.impl.PaymentWorksVendorLookupCriteriaPurgeServiceImpl"/>      
+    
     <bean id="paymentWorksVendorTableDetailsForPurge" class="edu.cornell.kfs.sys.businessobject.TableDetailsForPurge"
           p:businessObjectForRecordsTablePurge="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor"
           p:tableToPurge="CU_PMW_VENDOR_T"
-          p:useDefaultDaysBeforePurgeParameter="false"
-          p:nameSpaceCode="KFS-SYS"
-          p:component="PurgeTablesStep"
+          p:useDefaultDaysBeforePurgeParameter="true"
+          p:nameSpaceCode=""
+          p:component=""
           p:parameterName=""
-          p:serviceImplForPurgeTableLookupCriteria-ref=""/>
+          p:serviceImplForPurgeTableLookupCriteria-ref="paymentWorksVendorLookupCriteriaPurgeService"/>
 
     <bean id="tablePurgeRecordsDao" parent="tablePurgeRecordsDao-parentBean"/>
     <bean id="tablePurgeRecordsDao-parentBean" parent="platformAwareDao"
