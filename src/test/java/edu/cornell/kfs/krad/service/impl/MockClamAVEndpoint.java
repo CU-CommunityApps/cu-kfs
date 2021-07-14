@@ -28,7 +28,6 @@ import edu.cornell.kfs.krad.CUKRADConstants.ClamAVCommands;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVDelimiters;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.CUKRADTestConstants;
-import edu.cornell.kfs.krad.util.ClamAVUtils;
 
 /**
  * Testing class for imitating a local ClamAV process.
@@ -108,9 +107,9 @@ public class MockClamAVEndpoint implements Closeable {
         int chunkLength;
         
         do {
-            chunkLength = socketInput.read(currentData, currentLength, currentData.length - currentLength);
+            chunkLength = socketInput.read(currentData, currentLength, BUFFER_SIZE - currentLength);
             if (chunkLength <= 0) {
-                continueReadingClientData = false;
+                throw new SocketException("Unexpected end of stream while reading command from client");
             } else {
                 previousLength = currentLength;
                 currentLength += chunkLength;
@@ -119,7 +118,7 @@ public class MockClamAVEndpoint implements Closeable {
                             "'zCOMMANDNAME\\0' format.  If you formatted your command as 'nCOMMANDNAME\\n' " +
                             "instead, please update your code accordingly.");
                 }
-                commandEndIndex = ClamAVUtils.indexOfNullCharDelimiter(currentData, previousLength, currentLength);
+                commandEndIndex = indexOfNullCharDelimiter(currentData, previousLength, currentLength);
                 
                 if (commandEndIndex != -1) {
                     String command = new String(currentData, 1, commandEndIndex - 1, StandardCharsets.UTF_8);
@@ -127,11 +126,21 @@ public class MockClamAVEndpoint implements Closeable {
                     String response = handleClientCommand(socketInput, command, dataAfterCommand);
                     writeResponseToClient(socketWriter, response);
                     continueReadingClientData = false;
-                } else if (currentLength == currentData.length) {
-                    currentData = Arrays.copyOf(currentData, currentData.length + BUFFER_SIZE);
+                } else if (currentLength == BUFFER_SIZE) {
+                    throw new SocketException("While sending the command to be run, the client sent " + BUFFER_SIZE +
+                            " bytes without ever including the expected end-of-command byte/character");
                 }
             }
         } while (continueReadingClientData);
+    }
+
+    private int indexOfNullCharDelimiter(byte[] content, int startIndex, int endIndex) {
+        for (int i = startIndex; i < endIndex; i++) {
+            if (content[i] == ClamAVDelimiters.NULL_SUFFIX_BYTE) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private String handleClientCommand(InputStream socketInput, String command, byte[] dataAfterCommand)
@@ -175,7 +184,10 @@ public class MockClamAVEndpoint implements Closeable {
             }
             
             for (int nextChunkLength = readLengthOfNextChunkFromStream(fullInput);
-                    nextChunkLength > 0; nextChunkLength = readLengthOfNextChunkFromStream(fullInput)) {
+                    nextChunkLength != 0; nextChunkLength = readLengthOfNextChunkFromStream(fullInput)) {
+                if (nextChunkLength < 0) {
+                    throw new SocketException("Unexpected negative file chunk length from client: " + nextChunkLength);
+                }
                 if (fileContentLength + nextChunkLength > fileContent.length) {
                     fileContent = Arrays.copyOf(
                             fileContent, fileContent.length + Math.max(nextChunkLength, BUFFER_SIZE));

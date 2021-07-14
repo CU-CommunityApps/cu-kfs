@@ -1,9 +1,7 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.service.ScanResult;
 import edu.cornell.kfs.krad.util.ClamAVUtils;
 
@@ -43,27 +41,11 @@ public class ClamAVScanResult implements ScanResult {
     }
 
     private void refreshStatusAndSignatureFromCurrentResult() {
-        status = determineStatusFromCurrentResult();
+        status = ClamAVUtils.determineScanStatusFromScanResultMessage(result);
         if (Status.FAILED.equals(status)) {
-            signature = ClamAVUtils.getSignatureFromScanResultMessage(result);
+            signature = ClamAVUtils.extractSignatureFromScanResultMessage(result);
         } else {
             signature = KFSConstants.EMPTY_STRING;
-        }
-    }
-
-    private Status determineStatusFromCurrentResult() {
-        switch (StringUtils.defaultString(result)) {
-            case ClamAVResponses.RESPONSE_OK :
-                return Status.PASSED;
-            
-            case ClamAVResponses.RESPONSE_SIZE_EXCEEDED :
-                return Status.ERROR;
-            
-            case ClamAVResponses.RESPONSE_ERROR_WRITING_FILE :
-                return Status.ERROR;
-            
-            default :
-                return StringUtils.endsWith(result, ClamAVResponses.FOUND_SUFFIX) ? Status.FAILED : Status.ERROR;
         }
     }
 

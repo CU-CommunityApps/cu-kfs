@@ -4,11 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,6 @@ import edu.cornell.kfs.krad.CUKRADConstants.ClamAVCommands;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVDelimiters;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.service.AntiVirusService;
-import edu.cornell.kfs.krad.util.ClamAVUtils;
 
 public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
 
@@ -48,10 +48,11 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
             socket.connect(new InetSocketAddress(host, port), timeout);
             try (
                 InputStream socketInput = socket.getInputStream();
+                Reader socketReader = new InputStreamReader(socketInput, StandardCharsets.UTF_8);
                 OutputStream socketOutput = socket.getOutputStream();
                 DataOutputStream socketDataOutput = new DataOutputStream(socketOutput);
             ) {
-                return operation.run(socketInput, socketDataOutput);
+                return operation.run(socketReader, socketDataOutput);
             }
         } catch (Exception e) {
             LOG.error("performClamAVOperation, Exception occurred while running ClamAV operation", e);
@@ -70,74 +71,61 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
 
     private String runSimpleCommand(String command) {
         return performClamAVOperation(
-                (socketInput, socketOutput) -> runSimpleCommand(command, socketInput, socketOutput),
+                (socketReader, socketOutput) -> runSimpleCommand(command, socketReader, socketOutput),
                 exception -> KFSConstants.EMPTY_STRING);
     }
 
-    private String runSimpleCommand(String command, InputStream socketInput, DataOutputStream socketOutput)
+    private String runSimpleCommand(String command, Reader socketReader, DataOutputStream socketOutput)
             throws IOException {
         sendSimpleCommandToClamAV(command, socketOutput);
         socketOutput.flush();
-        return readClamAVResponse(socketInput);
+        return readClamAVResponse(socketReader);
     }
 
     private void sendSimpleCommandToClamAV(String command, DataOutputStream socketOutput) throws IOException {
-        byte[] commandAsBytes = command.getBytes(StandardCharsets.UTF_8);
-        byte[] delimitedCommandAsBytes = new byte[commandAsBytes.length + 2];
-        delimitedCommandAsBytes[0] = ClamAVDelimiters.Z_PREFIX_BYTE;
-        System.arraycopy(commandAsBytes, 0, delimitedCommandAsBytes, 1, commandAsBytes.length);
-        delimitedCommandAsBytes[delimitedCommandAsBytes.length - 1] = ClamAVDelimiters.NULL_SUFFIX_BYTE;
+        if (StringUtils.isBlank(command)) {
+            throw new IllegalArgumentException("command cannot be blank");
+        }
+        String delimitedCommand = ClamAVDelimiters.Z_PREFIX + command + ClamAVDelimiters.NULL_SUFFIX;
+        byte[] delimitedCommandAsBytes = delimitedCommand.getBytes(StandardCharsets.UTF_8);
         socketOutput.write(delimitedCommandAsBytes);
     }
 
-    private String readClamAVResponse(InputStream socketInput) throws IOException {
-        byte[] responseData = new byte[DEFAULT_CHUNK_SIZE];
-        int previousLength = 0;
-        int currentLength = 0;
+    private String readClamAVResponse(Reader socketReader) throws IOException {
+        char[] responseChunk = new char[DEFAULT_CHUNK_SIZE];
+        StringBuilder fullResponse = new StringBuilder(DEFAULT_CHUNK_SIZE);
         int responseTerminatorIndex = -1;
         int chunkLength;
         
         do {
-            chunkLength = socketInput.read(responseData, currentLength, responseData.length - currentLength);
+            chunkLength = socketReader.read(responseChunk);
             if (chunkLength > 0) {
-                previousLength = currentLength;
-                currentLength += chunkLength;
-                responseTerminatorIndex = ClamAVUtils.indexOfNullCharDelimiter(
-                        responseData, previousLength, currentLength);
-                if (responseData.length == currentLength) {
-                    responseData = Arrays.copyOf(responseData, responseData.length + DEFAULT_CHUNK_SIZE);
-                }
+                fullResponse.append(responseChunk, 0, chunkLength);
+                responseTerminatorIndex = fullResponse.indexOf(
+                        ClamAVDelimiters.NULL_SUFFIX, fullResponse.length() - chunkLength);
             }
         } while (responseTerminatorIndex == -1 && chunkLength > 0);
         
         if (responseTerminatorIndex == -1) {
             LOG.error("readClamAVResponse, End of stream was reached before reading full ClamAV response!  " +
-                    "No content will be returned.  " + currentLength + " bytes were received prior to abrupt end.");
+                    "No content will be returned.  " + fullResponse.length() +
+                    " characters were received prior to abrupt end.");
             if (LOG.isDebugEnabled()) {
-                logPartialClamAVResponse(responseData, 0, currentLength);
+                LOG.debug("readClamAVResponse, Response text received prior to stream end: " + fullResponse);
             }
             return KFSConstants.EMPTY_STRING;
-        } else if (responseTerminatorIndex < currentLength - 1) {
-            int extraContentLength = currentLength - responseTerminatorIndex - 1;
+        } else if (responseTerminatorIndex < fullResponse.length() - 1) {
+            int extraContentLength = fullResponse.length() - responseTerminatorIndex - 1;
             LOG.warn("readClamAVResponse, ClamAV sent at least an extra " + extraContentLength +
-                    " bytes of response data beyond the delimiter!  The extra bytes will be ignored.");
+                    " characters of response data beyond the delimiter!  The extra characters will be ignored.");
             if (LOG.isDebugEnabled()) {
-                logPartialClamAVResponse(responseData, responseTerminatorIndex + 1, extraContentLength);
+                LOG.debug("readClamAVResponse, Response text received beyond end-of-content delimiter: " +
+                        fullResponse.substring(responseTerminatorIndex + 1));
             }
         }
         
-        String responsePrecedingTerminator = new String(
-                responseData, 0, responseTerminatorIndex, StandardCharsets.UTF_8);
+        String responsePrecedingTerminator = fullResponse.substring(0, responseTerminatorIndex);
         return responsePrecedingTerminator;
-    }
-
-    private void logPartialClamAVResponse(byte[] responseData, int start, int length) {
-        try {
-            String responseString = new String(responseData, start, length, StandardCharsets.UTF_8);
-            LOG.debug("logPartialClamAVResponse, Approximate text of partial response data: " + responseString);
-        } catch (RuntimeException e) {
-            LOG.debug("logPartialClamAVResponse, Partial response data could not be represented as text");
-        }
     }
 
     @Override
@@ -152,15 +140,15 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
     @Override
     public ClamAVScanResult scan(InputStream fileStream) {
         return performClamAVOperation(
-                (socketInput, socketOutput) -> performStreamedScan(fileStream, socketInput, socketOutput),
+                (socketReader, socketOutput) -> performStreamedScan(fileStream, socketReader, socketOutput),
                 exception -> new ClamAVScanResult(exception));
     }
 
     private ClamAVScanResult performStreamedScan(
-            InputStream fileStream, InputStream socketInput, DataOutputStream socketOutput) throws IOException {
+            InputStream fileStream, Reader socketReader, DataOutputStream socketOutput) throws IOException {
         sendSimpleCommandToClamAV(ClamAVCommands.INSTREAM, socketOutput);
         sendFileContentsToClamAV(fileStream, socketOutput);
-        String response = readClamAVResponse(socketInput);
+        String response = readClamAVResponse(socketReader);
         return new ClamAVScanResult(response);
     }
 
@@ -223,7 +211,7 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
      */
     @FunctionalInterface
     private static interface ClamAVOperation<T> {
-        T run(InputStream socketInput, DataOutputStream socketOutput) throws IOException;
+        T run(Reader socketReader, DataOutputStream socketOutput) throws IOException;
     }
 
 }
