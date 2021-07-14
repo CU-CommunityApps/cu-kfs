@@ -33,6 +33,10 @@ import edu.cornell.kfs.krad.util.ClamAVUtils;
 /**
  * Testing class for imitating a local ClamAV process.
  * 
+ * Scanned files that contain the word "INFECT" (case-insensitive) will be reported as virus-infected.
+ * Files that contain more than 5000 bytes will cause this class to report a size-limit-exceeded error.
+ * Enabling the "forceTempFileError" flag will cause any scans to report a write-to-temp-file error.
+ * 
  * The responses sent from this process may not completely match those that ClamAV would actually send.
  * Also, for simplicity, it is assumed that only text files are being scanned by this mock endpoint.
  */
@@ -193,8 +197,8 @@ public class MockClamAVEndpoint implements Closeable {
 
     private int readLengthOfNextChunkFromStream(InputStream socketInput) throws IOException {
         byte[] nextChunkLengthAsBytes = socketInput.readNBytes(NUM_BYTES_FOR_CHUNK_LENGTH);
-        if (nextChunkLengthAsBytes.length < NUM_BYTES_FOR_CHUNK_LENGTH) {
-            throw new SocketException("Unexpected close of stream while reading length of next file chunk");
+        if (nextChunkLengthAsBytes.length != NUM_BYTES_FOR_CHUNK_LENGTH) {
+            throw new SocketException("Unexpected end of stream while reading length of next file chunk");
         }
         int nextChunkLength = nextChunkLengthAsBytes[3] & 0xFF;
         nextChunkLength |= (nextChunkLengthAsBytes[2] & 0xFF) << 8;
