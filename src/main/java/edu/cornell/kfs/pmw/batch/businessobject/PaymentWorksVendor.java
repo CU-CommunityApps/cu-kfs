@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pmw.batch.businessobject;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -1304,8 +1305,9 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.VENDOR_TYPE, vendorType);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.INITIATOR_NETID, initiatorNetId);
         
-        SimpleDateFormat dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_MMddyyyy_hhmmss, Locale.US); 
-        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PROCESS_TIMESTAMP, dateFormat.format(processTimestamp));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am, Locale.US); 
+        Date timeStampDate = new Date(processTimestamp.getTime());
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PROCESS_TIMESTAMP, dateFormat.format(timeStampDate));
         
         sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
         return sb.toString();
