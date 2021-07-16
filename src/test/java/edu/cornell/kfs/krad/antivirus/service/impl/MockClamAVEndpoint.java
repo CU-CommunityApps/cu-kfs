@@ -1,4 +1,4 @@
-package edu.cornell.kfs.krad.service.impl;
+package edu.cornell.kfs.krad.antivirus.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -162,7 +162,7 @@ public class MockClamAVEndpoint implements Closeable {
     }
 
     private String buildPingResponse(byte[] dataAfterCommand) {
-        return dataAfterCommand.length == 0 ? ClamAVResponses.PING_RESPONSE_OK : ClamAVResponses.ERROR_SUFFIX;
+        return dataAfterCommand.length == 0 ? ClamAVResponses.RESPONSE_PING_SUCCESS : ClamAVResponses.ERROR_SUFFIX;
     }
 
     private String buildStatsResponse(byte[] dataAfterCommand) {

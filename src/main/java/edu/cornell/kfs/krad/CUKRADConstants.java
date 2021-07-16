@@ -14,7 +14,7 @@ public final class CUKRADConstants {
         public static final String FOUND_SUFFIX = "FOUND";
         public static final String ERROR_SUFFIX = "ERROR";
         public static final String RESPONSE_OK = STREAM_PREFIX + " OK";
-        public static final String PING_RESPONSE_OK = "PONG";
+        public static final String RESPONSE_PING_SUCCESS = "PONG";
         public static final String RESPONSE_SIZE_EXCEEDED = "INSTREAM size limit exceeded. " + ERROR_SUFFIX;
         public static final String RESPONSE_ERROR_WRITING_FILE = "Error writing to temporary file. " + ERROR_SUFFIX;
     }

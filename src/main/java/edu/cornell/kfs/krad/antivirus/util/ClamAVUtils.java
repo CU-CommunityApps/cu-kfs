@@ -1,10 +1,10 @@
-package edu.cornell.kfs.krad.util;
+package edu.cornell.kfs.krad.antivirus.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
-import edu.cornell.kfs.krad.service.ScanResult.Status;
+import edu.cornell.kfs.krad.antivirus.ScanResult.Status;
 
 public final class ClamAVUtils {
 

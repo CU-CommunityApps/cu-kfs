@@ -1,7 +1,6 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,7 +11,6 @@ import java.lang.reflect.Method;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -20,6 +18,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -28,14 +27,13 @@ import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.util.Guid;
 import org.kuali.kfs.vnd.businessobject.PhoneType;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+import edu.cornell.kfs.krad.antivirus.ScanResult;
+import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
+import edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
-import edu.cornell.kfs.krad.service.AntiVirusService;
-import edu.cornell.kfs.krad.service.ScanResult;
-import edu.cornell.kfs.krad.service.impl.DummyAntiVirusServiceImpl;
 
 public class CuAttachmentServiceImplTest {
 

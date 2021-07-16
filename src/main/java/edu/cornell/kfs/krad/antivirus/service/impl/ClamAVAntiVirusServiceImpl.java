@@ -1,4 +1,4 @@
-package edu.cornell.kfs.krad.service.impl;
+package edu.cornell.kfs.krad.antivirus.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
@@ -20,7 +20,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVCommands;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVDelimiters;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
-import edu.cornell.kfs.krad.service.AntiVirusService;
+import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
 
 public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
 
@@ -66,7 +66,7 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
 
     public boolean ping() {
         String pingResponse = runSimpleCommand(ClamAVCommands.PING);
-        return StringUtils.equals(ClamAVResponses.PING_RESPONSE_OK, pingResponse);
+        return StringUtils.equals(ClamAVResponses.RESPONSE_PING_SUCCESS, pingResponse);
     }
 
     private String runSimpleCommand(String command) {
@@ -110,18 +110,14 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
             LOG.error("readClamAVResponse, End of stream was reached before reading full ClamAV response!  " +
                     "No content will be returned.  " + fullResponse.length() +
                     " characters were received prior to abrupt end.");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("readClamAVResponse, Response text received prior to stream end: " + fullResponse);
-            }
+            LOG.error("readClamAVResponse, Response text received prior to stream end: " + fullResponse);
             return KFSConstants.EMPTY_STRING;
         } else if (responseTerminatorIndex < fullResponse.length() - 1) {
             int extraContentLength = fullResponse.length() - responseTerminatorIndex - 1;
             LOG.warn("readClamAVResponse, ClamAV sent at least an extra " + extraContentLength +
                     " characters of response data beyond the delimiter!  The extra characters will be ignored.");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("readClamAVResponse, Response text received beyond end-of-content delimiter: " +
-                        fullResponse.substring(responseTerminatorIndex + 1));
-            }
+            LOG.warn("readClamAVResponse, Response text received beyond end-of-content delimiter: " +
+                    fullResponse.substring(responseTerminatorIndex + 1));
         }
         
         String responsePrecedingTerminator = fullResponse.substring(0, responseTerminatorIndex);
@@ -134,6 +130,9 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
             InputStream preLoadedFileStream = new ByteArrayInputStream(fileContents);
         ) {
             return scan(preLoadedFileStream);
+        } catch (IOException e) {
+            LOG.error("scan, Unexpected error encountered while scanning pre-loaded file", e);
+            throw e;
         }
     }
 

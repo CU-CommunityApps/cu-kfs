@@ -1,6 +1,6 @@
-package edu.cornell.kfs.krad.service.impl;
+package edu.cornell.kfs.krad.antivirus.service.impl;
 
-import edu.cornell.kfs.krad.service.ScanResult;
+import edu.cornell.kfs.krad.antivirus.ScanResult;
 
 public class DummyScanResult implements ScanResult {
 

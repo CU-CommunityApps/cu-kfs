@@ -1,4 +1,4 @@
-package edu.cornell.kfs.krad.service;
+package edu.cornell.kfs.krad.antivirus;
 
 public interface ScanResult {
     enum Status { PASSED, FAILED, ERROR }

@@ -7,9 +7,9 @@
 
     <bean id="cuAttachmentDaoOjb" parent="platformAwareDao" class="edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb"/>
 
-    <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.service.impl.DummyAntiVirusServiceImpl" />
+    <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl" />
 
-    <bean id="antiVirusService" class="edu.cornell.kfs.krad.service.impl.ClamAVAntiVirusServiceImpl"
+    <bean id="antiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.ClamAVAntiVirusServiceImpl"
           p:host="127.0.0.1"
           p:port="3310"
           p:timeout="60000"/>

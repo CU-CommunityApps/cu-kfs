@@ -1,9 +1,9 @@
-package edu.cornell.kfs.krad.service.impl;
+package edu.cornell.kfs.krad.antivirus.service.impl;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.krad.service.ScanResult;
-import edu.cornell.kfs.krad.util.ClamAVUtils;
+import edu.cornell.kfs.krad.antivirus.ScanResult;
+import edu.cornell.kfs.krad.antivirus.util.ClamAVUtils;
 
 public class ClamAVScanResult implements ScanResult {
 
