@@ -1,7 +1,6 @@
 package edu.cornell.kfs.pmw.batch.businessobject;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -1289,9 +1288,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     }
 
     @Override
-    public String getPurgeRecordingString() {
-        StringBuilder sb = new StringBuilder(this.getClass().getName());
-        sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append(KFSConstants.NEWLINE);
+    public String buildObjectSpecifiicPurgableRecordData() {
+        StringBuilder sb = new StringBuilder();
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PMW_VENDOR_REQUESTID, pmwVendorRequestId);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_VENDOR_PROCESSING_STATUS, kfsVendorProcessingStatus);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_VENDOR_DOCUMENT_NUMBER, kfsVendorDocumentNumber);
@@ -1306,10 +1304,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.INITIATOR_NETID, initiatorNetId);
         
         SimpleDateFormat dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am, Locale.US); 
-        Date timeStampDate = new Date(processTimestamp.getTime());
-        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PROCESS_TIMESTAMP, dateFormat.format(timeStampDate));
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PROCESS_TIMESTAMP, dateFormat.format(processTimestamp));
         
-        sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
         return sb.toString();
     }
     

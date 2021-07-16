@@ -62,7 +62,7 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
         String purgeRecordingString = ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE);
         if (recordAsObject instanceof PurgableBusinessObjectInterface) {
             PurgableBusinessObjectInterface purgable = (PurgableBusinessObjectInterface) recordAsObject;
-            purgeRecordingString = purgable.getPurgeRecordingString();
+            purgeRecordingString = purgable.buildPurgableRecordingString();
         }
         return purgeRecordingString;
     }

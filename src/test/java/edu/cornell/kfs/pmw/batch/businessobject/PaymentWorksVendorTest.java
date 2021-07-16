@@ -3,7 +3,6 @@ package edu.cornell.kfs.pmw.batch.businessobject;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -69,8 +68,8 @@ class PaymentWorksVendorTest {
     }
     
     @Test
-    void testGetPurgeRecordingString() {
-        String purgeRecordingString = pmwVendor.getPurgeRecordingString();
+    void testBuildPurgableRecordingString() {
+        String purgeRecordingString = pmwVendor.buildPurgableRecordingString();
         LOG.info("testGetPurgeRecordingString: " + purgeRecordingString);
         
         assertpurgetRecordingStringContains(purgeRecordingString, "processTimestamp=07/15/2021 07:51:00 AM");
