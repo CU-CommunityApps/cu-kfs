@@ -421,6 +421,32 @@
                 <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
             </pattern>
         </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.Chart</class>
+            <pattern>
+                <match>finCoaManagerPrincipalId</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <!--
+            We removed our CU Higher Ed Function subclass and replaced it with an extended attribute instead.
+            This entry handles moving the CU-specific field into an extension.
+         -->
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.HigherEducationFunction</class>
+            <pattern>
+                <match>financialHigherEdFunctionDescription</match>
+                <replacement>(ADD_WRAPPER_ELEMENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>financialHigherEdFunctionDescription(WRAPPER_NAME)</match>
+                <replacement>extension</replacement>
+            </pattern>
+            <pattern>
+                <match>financialHigherEdFunctionDescription(WRAPPER_CLASS)</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.HigherEducationFunctionExtendedAttribute</replacement>
+            </pattern>
+        </pattern>
         <!-- Special entries for converting archaic TypedArrayList elements. -->
         <pattern>
             <class>org.kuali.rice.kns.util.TypedArrayList</class>
@@ -506,6 +532,16 @@
             <pattern>
                 <match>edu.cornell.kfs.module.cg.businessobject.CuAward</match>
                 <replacement>org.kuali.kfs.module.cg.businessobject.Award</replacement>
+            </pattern>
+            <!-- Re-map Account Delegate Global BOs to our CU-specific subclass. -->
+            <pattern>
+                <match>org.kuali.kfs.coa.businessobject.AccountDelegateGlobal</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal</replacement>
+            </pattern>
+            <!-- We no longer have a CU Higher Ed Function subclass, so re-map it to the base financials one. -->
+            <pattern>
+                <match>edu.cornell.kfs.coa.businessobject.CuHigherEducationFunction</match>
+                <replacement>org.kuali.kfs.coa.businessobject.HigherEducationFunction</replacement>
             </pattern>
             <!-- Special rule for handling the temporary wrapper element from "MOVE_MARKED_NODES_TO_PARENT" cases. -->
             <pattern>
