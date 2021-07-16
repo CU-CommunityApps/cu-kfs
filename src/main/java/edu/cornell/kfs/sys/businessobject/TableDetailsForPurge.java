@@ -4,6 +4,7 @@ import edu.cornell.kfs.sys.batch.service.TableLookupCriteriaPurgeService;
 
 public class TableDetailsForPurge {
     protected Class businessObjectForRecordsTablePurge;
+    protected String tableToPurge;
     protected boolean useDefaultDaysBeforePurgeParameter;
     protected String nameSpaceCode;
     protected String component;
@@ -13,9 +14,10 @@ public class TableDetailsForPurge {
     public TableDetailsForPurge() {
     }
     
-    public TableDetailsForPurge(Class businessObjectForRecordsTablePurge, boolean useDefaultDaysBeforePurgeParameter, String nameSpaceCode,
+    public TableDetailsForPurge(Class businessObjectForRecordsTablePurge, String tableToPurge, boolean useDefaultDaysBeforePurgeParameter, String nameSpaceCode,
                                 String component, String parameterName, TableLookupCriteriaPurgeService serviceImplForPurgeTableLookupCriteria) {
         this.businessObjectForRecordsTablePurge = businessObjectForRecordsTablePurge;
+        this.tableToPurge = tableToPurge;
         this.useDefaultDaysBeforePurgeParameter = useDefaultDaysBeforePurgeParameter;
         this.nameSpaceCode = nameSpaceCode;
         this.component = component;
@@ -31,6 +33,14 @@ public class TableDetailsForPurge {
         this.businessObjectForRecordsTablePurge = businessObjectForRecordsTablePurge;
     }
     
+    public String getTableToPurge() {
+        return tableToPurge;
+    }
+
+    public void setTableToPurge(String tableToPurge) {
+        this.tableToPurge = tableToPurge;
+    }
+
     public boolean isUseDefaultDaysBeforePurgeParameter() {
         return useDefaultDaysBeforePurgeParameter;
     }
