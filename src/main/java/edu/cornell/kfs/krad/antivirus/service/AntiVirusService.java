@@ -1,4 +1,4 @@
-package edu.cornell.kfs.antivirus.service;
+package edu.cornell.kfs.krad.antivirus.service;
 
 import java.io.IOException;
 import java.io.InputStream;
