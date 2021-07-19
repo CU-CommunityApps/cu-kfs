@@ -1,8 +1,8 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import edu.cornell.kfs.antivirus.service.AntiVirusService;
-import edu.cornell.kfs.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.dao.CuAttachmentDao;
+import edu.cornell.kfs.krad.antivirus.service.ScanResult;
+import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
