@@ -108,15 +108,14 @@ public class ClamAVAntiVirusServiceImpl implements AntiVirusService {
         
         if (responseTerminatorIndex == -1) {
             LOG.error("readClamAVResponse, End of stream was reached before reading full ClamAV response!  " +
-                    "No content will be returned.  " + fullResponse.length() +
-                    " characters were received prior to abrupt end.");
-            LOG.error("readClamAVResponse, Response text received prior to stream end: " + fullResponse);
+                    "No content will be returned.\n" +
+                    "Response text received prior to stream end: " + fullResponse);
             return KFSConstants.EMPTY_STRING;
         } else if (responseTerminatorIndex < fullResponse.length() - 1) {
             int extraContentLength = fullResponse.length() - responseTerminatorIndex - 1;
             LOG.warn("readClamAVResponse, ClamAV sent at least an extra " + extraContentLength +
-                    " characters of response data beyond the delimiter!  The extra characters will be ignored.");
-            LOG.warn("readClamAVResponse, Response text received beyond end-of-content delimiter: " +
+                    " characters of response data beyond the delimiter!  The extra characters will be ignored.\n" +
+                    "Response text received beyond end-of-content delimiter: " +
                     fullResponse.substring(responseTerminatorIndex + 1));
         }
         

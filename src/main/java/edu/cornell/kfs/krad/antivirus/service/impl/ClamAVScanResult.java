@@ -2,7 +2,7 @@ package edu.cornell.kfs.krad.antivirus.service.impl;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.krad.antivirus.ScanResult;
+import edu.cornell.kfs.krad.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.antivirus.util.ClamAVUtils;
 
 public class ClamAVScanResult implements ScanResult {

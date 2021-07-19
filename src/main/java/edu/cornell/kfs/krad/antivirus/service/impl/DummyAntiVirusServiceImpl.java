@@ -3,7 +3,7 @@ package edu.cornell.kfs.krad.antivirus.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 
-import edu.cornell.kfs.krad.antivirus.ScanResult;
+import edu.cornell.kfs.krad.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
 
 public class DummyAntiVirusServiceImpl implements AntiVirusService {

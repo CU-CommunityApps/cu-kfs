@@ -19,7 +19,7 @@ import org.kuali.kfs.core.api.util.CoreUtilities;
 
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.CUKRADTestConstants;
-import edu.cornell.kfs.krad.antivirus.ScanResult.Status;
+import edu.cornell.kfs.krad.antivirus.service.ScanResult.Status;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class ClamAVAntiVirusServiceImplTest {

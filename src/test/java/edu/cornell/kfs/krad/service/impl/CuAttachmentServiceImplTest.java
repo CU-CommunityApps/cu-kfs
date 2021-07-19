@@ -30,7 +30,7 @@ import org.kuali.kfs.vnd.businessobject.PhoneType;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import edu.cornell.kfs.krad.antivirus.ScanResult;
+import edu.cornell.kfs.krad.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
 import edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
