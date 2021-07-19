@@ -87,6 +87,10 @@
          have been adjusted so that the "class" element contains the replacement
          classname, rather than the classname to be replaced.)
 
+         Also, for elements with a "defined-in" attribute, its classname
+         can be replaced accordingly, based on the appropriate "*"-map
+         or non-"*"-map rules for the current element.
+
          [2] Adding "(ATTR)" to the end of a key will indicate that it
          should match on an attribute name instead of a sub-element name
          or "class" attribute value. (Note, however, that such keys will
@@ -120,6 +124,15 @@
          element. Needed for implementing the string-map-conversion
          behavior from IU's and KFS's conversion code. (NOTE: Nested
          map handling of this type is not supported at the moment.)
+
+         [6] For element name or "class" attribute value matching,
+         setting the replacement value to "(ADD_WRAPPER_ELEMENT)"
+         will cause the element to be placed inside a new wrapper element.
+         To specify the name and (optionally) the "class" attribute of the wrapper
+         element, add rules prefixed with the same name as the one with the
+         "(ADD_WRAPPER_ELEMENT)" indicator, and suffix the names with "(WRAPPER_NAME)"
+         or "(WRAPPER_CLASS)", respectively. The replacement values on those rules
+         will form the name and "class" attribute of the wrapper element.
          ====
     -->
     <rule name="maint_doc_changed_class_properties">
@@ -615,6 +628,10 @@
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.KualiCodeBase</match>
+                <replacement>org.kuali.kfs.krad.bo.KualiCodeBase</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.krad.bo.KualiCodeBase</match>
                 <replacement>org.kuali.kfs.krad.bo.KualiCodeBase</replacement>
             </pattern>
             <pattern>

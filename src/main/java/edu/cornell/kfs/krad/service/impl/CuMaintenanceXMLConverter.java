@@ -43,6 +43,9 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * to the "class" attribute value will be used instead of those that correspond
  * to the element's converted name, if they exist.
  * 
+ * This class will also convert classnames in an element's "defined-in" attribute
+ * to the appropriate replacement, based on the global or class/element-specific rules.
+ * 
  * If a mapping key ends with "(ATTR)", then the portion before that suffix will
  * be used to match the name of an *attribute* instead of the name of an element.
  * Any matching attributes will have their attribute *values* replaced accordingly.
@@ -84,6 +87,14 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * when saving maintenance documents, Rice is lax about that element's location
  * when it reads the notes from the XML.)
  * 
+ * (ADD_WRAPPER_ELEMENT) -- The element will be wrapped inside a new element
+ * when it gets written out to the converted XML. To specify the name
+ * and (optionally) the "class" attribute of the wrapper element, add rules
+ * prefixed with the same name as the one specifying the "(ADD_WRAPPER_ELEMENT)",
+ * and suffix the names with "(WRAPPER_NAME)" or "(WRAPPER_CLASS)", respectively.
+ * The replacement values on those rules will form the name and "class" attribute
+ * of the wrapper element.
+ * 
  * The above custom processing allows this class to replace some hard-coded
  * conversion behavior in KFS's XML conversion service, and also allows it
  * to implement UCD's customized legacy notes conversion in a StAX-friendly way.
@@ -99,6 +110,7 @@ public class CuMaintenanceXMLConverter {
 
     public static final String ROOT_ELEMENT = "maintainableDocumentContents";
     public static final String CLASS_ATTRIBUTE = "class";
+    public static final String DEFINED_IN_ATTRIBUTE = "defined-in";
     public static final String ATTRIBUTE_INDICATOR_SUFFIX = "(ATTR)";
     public static final String WRAPPER_NAME_INDICATOR_SUFFIX = "(WRAPPER_NAME)";
     public static final String WRAPPER_CLASS_INDICATOR_SUFFIX = "(WRAPPER_CLASS)";
@@ -385,11 +397,22 @@ public class CuMaintenanceXMLConverter {
             }
             
             if (StringUtils.isNotBlank(attributeValue)) {
-                if (CLASS_ATTRIBUTE.equals(attributeName)) {
+                if (StringUtils.equals(CLASS_ATTRIBUTE, attributeName)) {
                     attributeValue = newClassAttributeValue;
+                } else if (StringUtils.equals(DEFINED_IN_ATTRIBUTE, attributeName)) {
+                    attributeValue = determineClassnameForDefinedInAttribute(attributeValue);
                 }
                 xmlWriter.writeAttribute(attributeName, attributeValue);
             }
+        }
+    }
+
+    protected String determineClassnameForDefinedInAttribute(String currentClassname) throws XMLStreamException {
+        Map<String, String> propertyMap = findPropertyMapForAttributeUpdate(currentClassname);
+        if (propertyMap == null) {
+            return currentClassname;
+        } else {
+            return StringUtils.defaultIfBlank(propertyMap.get(currentClassname), currentClassname);
         }
     }
 

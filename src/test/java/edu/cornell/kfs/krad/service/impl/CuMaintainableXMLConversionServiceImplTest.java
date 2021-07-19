@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.core.api.util.CoreUtilities;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 /**
  * This test class is based on its Cynergy counterpart, edu.cornell.cynergy.krad.service.impl.CynergyMaintainableXMLConversionServiceImplTest
@@ -93,6 +97,19 @@ public class CuMaintainableXMLConversionServiceImplTest {
                         Map.entry(MOVED_CHILD_TO_UPDATE_TEST_ELEMENT, MOVED_RENAMED_CHILD_TEST_ELEMENT)));
 
         assertXMLFromTestFileConvertsAsExpected("MoveMarkedNodesToParentTest.xml");
+    }
+
+    @Test
+    void testAddWrapperElement() throws Exception {
+        conversionService.addRulesToMap(
+                ruleEntry(Parameter.class.getName(),
+                        Map.entry(MOVED_CHILD_TEST_ELEMENT, CuMaintenanceXMLConverter.ADD_WRAPPER_ELEMENT_INDICATOR),
+                        Map.entry(MOVED_CHILD_TEST_ELEMENT + CuMaintenanceXMLConverter.WRAPPER_NAME_INDICATOR_SUFFIX,
+                                KFSPropertyConstants.EXTENSION),
+                        Map.entry(MOVED_CHILD_TEST_ELEMENT + CuMaintenanceXMLConverter.WRAPPER_CLASS_INDICATOR_SUFFIX,
+                                PersistableBusinessObjectExtension.class.getName())));
+        
+        assertXMLFromTestFileConvertsAsExpected("AddWrapperElementTest.xml");
     }
 
     @Test
@@ -178,6 +195,19 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected(locationTestFile);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "LegacyChartTest.xml",
+        "ChartTest.xml",
+        "Legacy3xIndirectCostRecoveryTypeTest.xml",
+        "Legacy5xIndirectCostRecoveryTypeTest.xml",
+        "LegacyAccountDelegateGlobalTest.xml",
+        "LegacyHigherEducationFunctionTest.xml"
+    })
+    void testConversionOfVariousCOADocuments(String coaTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(coaTestFile);
+    }
+
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
         readTestFile(fileLocalName);
         String actualResult = conversionService.transformMaintainableXML(oldData);
@@ -207,7 +237,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
 
         try {
             fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileLocalName);
-            reader = new InputStreamReader(fileStream);
+            reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
             writer = new StringBuilderWriter();
 
             IOUtils.copy(reader, writer);

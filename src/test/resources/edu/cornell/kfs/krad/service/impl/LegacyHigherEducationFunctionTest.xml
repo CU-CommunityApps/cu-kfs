@@ -29,8 +29,8 @@
 </oldData>
 
 <expectedResult>
-<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.CuHigherEducationFunction>
-  <financialHigherEdFunctionDescription>Default test value if the test funds can be used for multiple test support purposes such as test aid grant AND test research.</financialHigherEdFunctionDescription>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.HigherEducationFunction>
+  <extension class="edu.cornell.kfs.coa.businessobject.HigherEducationFunctionExtendedAttribute"><financialHigherEdFunctionDescription>Default test value if the test funds can be used for multiple test support purposes such as test aid grant AND test research.</financialHigherEdFunctionDescription></extension>
   <financialHigherEdFunctionCd>8765</financialHigherEdFunctionCd>
   <financialHigherEdFunctionNm>Test Financial Aid</financialHigherEdFunctionNm>
   <finUnivBdgtOfficeFunctionCd>IJK</finUnivBdgtOfficeFunctionCd>
@@ -40,9 +40,9 @@
   <versionNumber>2</versionNumber>
   <objectId>A53DCA7C3C69467EE04054802FC20000</objectId>
   <newCollectionRecord>false</newCollectionRecord>
-</edu.cornell.kfs.coa.businessobject.CuHigherEducationFunction><maintenanceAction>Edit</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.CuHigherEducationFunction>
-  <financialHigherEdFunctionDescription>This code is for test accounts used for test costs only. Default value if the test funds can be used for multiple types of test purposes.</financialHigherEdFunctionDescription>
+</org.kuali.kfs.coa.businessobject.HigherEducationFunction><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.HigherEducationFunction>
+  <extension class="edu.cornell.kfs.coa.businessobject.HigherEducationFunctionExtendedAttribute"><financialHigherEdFunctionDescription>This code is for test accounts used for test costs only. Default value if the test funds can be used for multiple types of test purposes.</financialHigherEdFunctionDescription></extension>
   <financialHigherEdFunctionCd>8765</financialHigherEdFunctionCd>
   <financialHigherEdFunctionNm>Test Financial Aid</financialHigherEdFunctionNm>
   <finUnivBdgtOfficeFunctionCd>IJK</finUnivBdgtOfficeFunctionCd>
@@ -52,7 +52,7 @@
   <versionNumber>2</versionNumber>
   <objectId>A53DCA7C3C69467EE04054802FC20000</objectId>
   <newCollectionRecord>false</newCollectionRecord>
-</edu.cornell.kfs.coa.businessobject.CuHigherEducationFunction><maintenanceAction>Edit</maintenanceAction>
+</org.kuali.kfs.coa.businessobject.HigherEducationFunction><maintenanceAction>Edit</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
 

@@ -149,7 +149,7 @@
 </oldData>
 
 <expectedResult>
-<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
   <accountGlobalDetails>
     
     
@@ -178,8 +178,8 @@
   </delegateGlobals>
   <newCollectionRecord>false</newCollectionRecord>
   
-</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
   <documentNumber>112233</documentNumber>
   <accountGlobalDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
     <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
@@ -210,11 +210,11 @@
     </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
   </delegateGlobals>
   <versionNumber>1</versionNumber>
-  <objectId>810C6592-00DE-506A-9C50-BED5D9FEDFBD</objectId>
+  <objectId>810C6592-00DE-506A-9C50-BED5D9FE0000</objectId>
   <newCollectionRecord>true</newCollectionRecord>
   
   
-</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
+</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
 </newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/></notes></maintainableDocumentContents>
 </expectedResult>
 

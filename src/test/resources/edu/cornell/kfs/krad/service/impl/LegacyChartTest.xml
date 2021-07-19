@@ -109,9 +109,9 @@
 <maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.ChartMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
   <finChartOfAccountDescription>Test Organization</finChartOfAccountDescription>
   <active>true</active>
-  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
-  <reportsToChartOfAccountsCode>aa</reportsToChartOfAccountsCode>
-  <chartOfAccountsCode>bb</chartOfAccountsCode>
+  
+  <reportsToChartOfAccountsCode>AA</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>BB</chartOfAccountsCode>
   
   <versionNumber>1</versionNumber>
   <objectId>44ED00CE-9055-5B2B-0F74-7FA041530000</objectId>
@@ -121,7 +121,7 @@
 </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
   <finChartOfAccountDescription>Test Organization</finChartOfAccountDescription>
   <active>true</active>
-  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  
   <reportsToChartOfAccountsCode>AA</reportsToChartOfAccountsCode>
   <chartOfAccountsCode>BB</chartOfAccountsCode>
   <financialCashObjectCode>1111</financialCashObjectCode>

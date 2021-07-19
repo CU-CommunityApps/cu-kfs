@@ -218,7 +218,7 @@
   <newCollectionRecord>false</newCollectionRecord>
   <finChartOfAccountDescription>Test Campus</finChartOfAccountDescription>
   <active>true</active>
-  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  
   <reportsToChartOfAccountsCode>QQ</reportsToChartOfAccountsCode>
   <chartOfAccountsCode>ZZ</chartOfAccountsCode>
   <finAccountsPayableObjectCode>2345</finAccountsPayableObjectCode>
@@ -241,7 +241,7 @@
   <newCollectionRecord>false</newCollectionRecord>
   <finChartOfAccountDescription>Test Campus</finChartOfAccountDescription>
   <active>true</active>
-  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  
   <reportsToChartOfAccountsCode>QQ</reportsToChartOfAccountsCode>
   <chartOfAccountsCode>ZZ</chartOfAccountsCode>
   <finAccountsPayableObjectCode>2345</finAccountsPayableObjectCode>

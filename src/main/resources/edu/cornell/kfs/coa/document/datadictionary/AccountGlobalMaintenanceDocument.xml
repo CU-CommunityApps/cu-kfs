@@ -15,8 +15,14 @@
  limitations under the License.
 -->
 
+  <!--
+      CU Customization: We added an extra parent bean layer to the AccountGlobalMaintenanceDocument bean,
+      to make it easier to include the LD-module-specific overrides. We should remove this layering
+      customization when KualiCo improves the AccountGlobalMaintenanceDocument parent bean setup.
+   -->
+  <bean id="AccountGlobalMaintenanceDocument" parent="AccountGlobalMaintenanceDocument-cuParentBean"/>
 
-  <bean id="AccountGlobalMaintenanceDocument" parent="AccountGlobalMaintenanceDocument-parentBean">
+  <bean id="AccountGlobalMaintenanceDocument-cuParentBean" abstract="true" parent="AccountGlobalMaintenanceDocument-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountGlobal"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountGlobalPreRules"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.CuAccountGlobalRule"/>
@@ -30,7 +36,6 @@
     <property name="defaultExistenceChecks">
       <list merge = "true">
         <bean parent="ReferenceDefinition" p:attributeName="majorReportingCategory" p:attributeToHighlightOnFail="majorReportingCategoryCode" />
-        <bean parent="ReferenceDefinition" p:attributeName="laborBenefitRateCategory" p:attributeToHighlightOnFail="laborBenefitRateCategoryCode" />
         <bean parent="ReferenceDefinition" p:attributeName="accountPhysicalCampus" p:attributeToHighlightOnFail="accountPhysicalCampusCode" /> 
         <bean parent="ReferenceDefinition" p:attributeName="accountType" p:attributeToHighlightOnFail="accountTypeCode" /> 
         <bean parent="ReferenceDefinition" p:attributeName="reportsToAccount" p:attributeToHighlightOnFail="reportsToAccountNumber" />

@@ -65,7 +65,7 @@
       
     </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
   </indirectCostRecoveryExclusionTypeDetails>
-  <active defined-in="org.kuali.rice.kns.bo.KualiCodeBase">true</active>
+  <active defined-in="org.kuali.kfs.krad.bo.KualiCodeBase">true</active>
   <versionNumber>1</versionNumber>
   <objectId>9F4DD00150AA0F25E04054802FC20000</objectId>
   <newCollectionRecord>false</newCollectionRecord>
@@ -87,7 +87,7 @@
       
     </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
   </indirectCostRecoveryExclusionTypeDetails>
-  <active defined-in="org.kuali.rice.kns.bo.KualiCodeBase">true</active>
+  <active defined-in="org.kuali.kfs.krad.bo.KualiCodeBase">true</active>
   <versionNumber>1</versionNumber>
   <objectId>9F4DD00150AA0F25E04054802FC20000</objectId>
   <newCollectionRecord>false</newCollectionRecord>
