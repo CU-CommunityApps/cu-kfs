@@ -1,0 +1,221 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+  <accountGlobalDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>1</size>
+      </default>
+      <int>88</int>
+      <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.coa.businessobject.AccountGlobalDetail</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </accountGlobalDetails>
+  <delegateGlobals class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>1</size>
+      </default>
+      <int>16</int>
+      <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+        <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+        <accountDelegate class="org.kuali.rice.kim.bo.impl.PersonImpl">
+          <firstName></firstName>
+          <middleName></middleName>
+          <lastName></lastName>
+          <name></name>
+          <addressLine1></addressLine1>
+          <addressLine2></addressLine2>
+          <addressLine3></addressLine3>
+          <addressCityName></addressCityName>
+          <addressStateCode></addressStateCode>
+          <addressPostalCode></addressPostalCode>
+          <addressCountryCode></addressCountryCode>
+          <emailAddress></emailAddress>
+          <phoneNumber></phoneNumber>
+          <suppressName>false</suppressName>
+          <suppressAddress>false</suppressAddress>
+          <suppressPhone>false</suppressPhone>
+          <suppressPersonal>false</suppressPersonal>
+          <suppressEmail>false</suppressEmail>
+          <campusCode></campusCode>
+          <employeeStatusCode></employeeStatusCode>
+          <employeeTypeCode></employeeTypeCode>
+          <primaryDepartmentCode></primaryDepartmentCode>
+          <employeeId></employeeId>
+          <baseSalaryAmount>
+            <value>0.00</value>
+          </baseSalaryAmount>
+          <active>true</active>
+        </accountDelegate>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </delegateGlobals>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+  <documentNumber>112233</documentNumber>
+  <accountGlobalDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>A123456</accountNumber>
+      <documentNumber>112233</documentNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>C165EF8B-7F85-6005-6799-51AB9CB55000</objectId>
+      <newCollectionRecord>true</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+  </accountGlobalDetails>
+  <delegateGlobals class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+      <accountDelegateUniversalId>1098765</accountDelegateUniversalId>
+      <financialDocumentTypeCode>DV</financialDocumentTypeCode>
+      <approvalToThisAmount>
+        <value>19999.00</value>
+      </approvalToThisAmount>
+      <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+      <accountDelegateStartDate>2011-06-01</accountDelegateStartDate>
+      <accountDelegate class="org.kuali.rice.kim.bo.impl.PersonImpl">
+        <principalId>1098765</principalId>
+        <principalName>ab333</principalName>
+        <entityId>1098765</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>Jane</firstName>
+        <middleName> </middleName>
+        <lastName>Doe</lastName>
+        <name>Doe, Jane  </name>
+        <addressLine1>555 Main St</addressLine1>
+        <addressLine2> </addressLine2>
+        <addressLine3> </addressLine3>
+        <addressCityName>Ithaca</addressCityName>
+        <addressStateCode>NY</addressStateCode>
+        <addressPostalCode>14850</addressPostalCode>
+        <addressCountryCode> </addressCountryCode>
+        <emailAddress>janedoe@somewhere.edu</emailAddress>
+        <phoneNumber>000-000-0000</phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode>IT</campusCode>
+        <externalIdentifiers>
+          <entry>
+            <string>EMPLID</string>
+            <string>1111111</string>
+          </entry>
+        </externalIdentifiers>
+        <employeeStatusCode>A</employeeStatusCode>
+        <employeeTypeCode>P</employeeTypeCode>
+        <primaryDepartmentCode>IT-5555</primaryDepartmentCode>
+        <employeeId>1111111</employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <active>true</active>
+      </accountDelegate>
+      <documentNumber>112233</documentNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>408249E9-E67A-013E-FD30-E0FF821E0000</objectId>
+      <newCollectionRecord>true</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+  </delegateGlobals>
+  <versionNumber>1</versionNumber>
+  <objectId>810C6592-00DE-506A-9C50-BED5D9FE0000</objectId>
+  <newCollectionRecord>true</newCollectionRecord>
+  <boNotes/>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+  <accountGlobalDetails>
+    
+    
+      
+      
+      <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+    
+    
+  </accountGlobalDetails>
+  <delegateGlobals>
+    
+    
+      
+      
+      <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+        <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+        
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+    
+    
+  </delegateGlobals>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+  <documentNumber>112233</documentNumber>
+  <accountGlobalDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>A123456</accountNumber>
+      <documentNumber>112233</documentNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>C165EF8B-7F85-6005-6799-51AB9CB55000</objectId>
+      <newCollectionRecord>true</newCollectionRecord>
+      
+    </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+  </accountGlobalDetails>
+  <delegateGlobals class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+      <accountDelegateUniversalId>1098765</accountDelegateUniversalId>
+      <financialDocumentTypeCode>DV</financialDocumentTypeCode>
+      <approvalToThisAmount>
+        <value>19999.00</value>
+      </approvalToThisAmount>
+      <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+      <accountDelegateStartDate>2011-06-01</accountDelegateStartDate>
+      
+      <documentNumber>112233</documentNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>408249E9-E67A-013E-FD30-E0FF821E0000</objectId>
+      <newCollectionRecord>true</newCollectionRecord>
+      
+    </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+  </delegateGlobals>
+  <versionNumber>1</versionNumber>
+  <objectId>810C6592-00DE-506A-9C50-BED5D9FEDFBD</objectId>
+  <newCollectionRecord>true</newCollectionRecord>
+  
+  
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/></notes></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

@@ -1,0 +1,91 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.IndirectCostRecoveryTypeMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType>
+  <code>99</code>
+  <name>Other</name>
+  <active>true</active>
+  <indirectCostRecoveryExclusionTypeDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+      <accountIndirectCostRecoveryTypeCode>99</accountIndirectCostRecoveryTypeCode>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <financialObjectCode>5678</financialObjectCode>
+      <active>true</active>
+      <versionNumber>2</versionNumber>
+      <objectId>B2950B77-E296-7885-052B-95CC16A70000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+  </indirectCostRecoveryExclusionTypeDetails>
+  <active defined-in="org.kuali.rice.krad.bo.KualiCodeBase">true</active>
+  <versionNumber>6</versionNumber>
+  <objectId>9F4DD00150A40F25E04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType>
+  <code>99</code>
+  <name>Other</name>
+  <active>true</active>
+  <indirectCostRecoveryExclusionTypeDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+      <accountIndirectCostRecoveryTypeCode>99</accountIndirectCostRecoveryTypeCode>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <financialObjectCode>6789</financialObjectCode>
+      <active>true</active>
+      <versionNumber>2</versionNumber>
+      <objectId>B2950B77-E296-7885-052B-95CC16A70000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+  </indirectCostRecoveryExclusionTypeDetails>
+  <active defined-in="org.kuali.rice.krad.bo.KualiCodeBase">true</active>
+  <versionNumber>6</versionNumber>
+  <objectId>9F4DD00150A40F25E04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.IndirectCostRecoveryTypeMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType>
+  <code>99</code>
+  <name>Other</name>
+  <active>true</active>
+  <indirectCostRecoveryExclusionTypeDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+      <accountIndirectCostRecoveryTypeCode>99</accountIndirectCostRecoveryTypeCode>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <financialObjectCode>5678</financialObjectCode>
+      <active>true</active>
+      <versionNumber>2</versionNumber>
+      <objectId>B2950B77-E296-7885-052B-95CC16A70000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+  </indirectCostRecoveryExclusionTypeDetails>
+  <active defined-in="org.kuali.rice.krad.bo.KualiCodeBase">true</active>
+  <versionNumber>6</versionNumber>
+  <objectId>9F4DD00150A40F25E04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType>
+  <code>99</code>
+  <name>Other</name>
+  <active>true</active>
+  <indirectCostRecoveryExclusionTypeDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+      <accountIndirectCostRecoveryTypeCode>99</accountIndirectCostRecoveryTypeCode>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <financialObjectCode>6789</financialObjectCode>
+      <active>true</active>
+      <versionNumber>2</versionNumber>
+      <objectId>B2950B77-E296-7885-052B-95CC16A70000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType>
+  </indirectCostRecoveryExclusionTypeDetails>
+  <active defined-in="org.kuali.rice.krad.bo.KualiCodeBase">true</active>
+  <versionNumber>6</versionNumber>
+  <objectId>9F4DD00150A40F25E04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

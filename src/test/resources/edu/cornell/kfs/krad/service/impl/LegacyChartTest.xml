@@ -1,0 +1,137 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.ChartMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <finChartOfAccountDescription>Test Organization</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>AA</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>BB</chartOfAccountsCode>
+  <finCoaManager class="org.kuali.rice.kim.bo.impl.PersonImpl">
+    <principalId>1112223</principalId>
+    <principalName>jd999</principalName>
+    <entityId>1112223</entityId>
+    <entityTypeCode>PERSON</entityTypeCode>
+    <firstName>John</firstName>
+    <middleName> </middleName>
+    <lastName>Doe</lastName>
+    <name>Doe, John  </name>
+    <addressLine1>88 Side St</addressLine1>
+    <addressLine2> </addressLine2>
+    <addressLine3> </addressLine3>
+    <addressCityName>Ithaca</addressCityName>
+    <addressStateCode>NY</addressStateCode>
+    <addressPostalCode>14850</addressPostalCode>
+    <addressCountryCode> </addressCountryCode>
+    <emailAddress>johndoe@somecollege.edu</emailAddress>
+    <phoneNumber>444-555-6666</phoneNumber>
+    <suppressName>false</suppressName>
+    <suppressAddress>true</suppressAddress>
+    <suppressPhone>false</suppressPhone>
+    <suppressPersonal>false</suppressPersonal>
+    <suppressEmail>false</suppressEmail>
+    <campusCode>CC</campusCode>
+    <externalIdentifiers>
+      <entry>
+        <string>EMPLID</string>
+        <string>1212121</string>
+      </entry>
+    </externalIdentifiers>
+    <employeeStatusCode>A</employeeStatusCode>
+    <employeeTypeCode>P</employeeTypeCode>
+    <primaryDepartmentCode>IT-4444</primaryDepartmentCode>
+    <employeeId>1212121</employeeId>
+    <baseSalaryAmount>
+      <value>0.00</value>
+    </baseSalaryAmount>
+    <active>true</active>
+  </finCoaManager>
+  <versionNumber>1</versionNumber>
+  <objectId>44ED00CE-9055-5B2B-0F74-7FA041530000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <finChartOfAccountDescription>Test Organization</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>AA</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>BB</chartOfAccountsCode>
+  <financialCashObjectCode>1111</financialCashObjectCode>
+  <finCoaManager class="org.kuali.rice.kim.bo.impl.PersonImpl">
+    <principalId>1112223</principalId>
+    <principalName>jd999</principalName>
+    <entityId>1112223</entityId>
+    <entityTypeCode>PERSON</entityTypeCode>
+    <firstName>John</firstName>
+    <middleName> </middleName>
+    <lastName>Doe</lastName>
+    <name>Doe, John  </name>
+    <addressLine1>88 Side St</addressLine1>
+    <addressLine2> </addressLine2>
+    <addressLine3> </addressLine3>
+    <addressCityName>Ithaca</addressCityName>
+    <addressStateCode>NY</addressStateCode>
+    <addressPostalCode>14850</addressPostalCode>
+    <addressCountryCode> </addressCountryCode>
+    <emailAddress>johndoe@somecollege.edu</emailAddress>
+    <phoneNumber>444-555-6666</phoneNumber>
+    <suppressName>false</suppressName>
+    <suppressAddress>true</suppressAddress>
+    <suppressPhone>false</suppressPhone>
+    <suppressPersonal>false</suppressPersonal>
+    <suppressEmail>false</suppressEmail>
+    <campusCode>CC</campusCode>
+    <externalIdentifiers>
+      <entry>
+        <string>EMPLID</string>
+        <string>1212121</string>
+      </entry>
+    </externalIdentifiers>
+    <employeeStatusCode>A</employeeStatusCode>
+    <employeeTypeCode>P</employeeTypeCode>
+    <primaryDepartmentCode>IT-4444</primaryDepartmentCode>
+    <employeeId>1212121</employeeId>
+    <baseSalaryAmount>
+      <value>0.00</value>
+    </baseSalaryAmount>
+    <active>true</active>
+  </finCoaManager>
+  <versionNumber>1</versionNumber>
+  <objectId>44ED00CE-9055-5B2B-0F74-7FA041530000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.ChartMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <finChartOfAccountDescription>Test Organization</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>aa</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>bb</chartOfAccountsCode>
+  
+  <versionNumber>1</versionNumber>
+  <objectId>44ED00CE-9055-5B2B-0F74-7FA041530000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <finChartOfAccountDescription>Test Organization</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>AA</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>BB</chartOfAccountsCode>
+  <financialCashObjectCode>1111</financialCashObjectCode>
+  
+  <versionNumber>1</versionNumber>
+  <objectId>44ED00CE-9055-5B2B-0F74-7FA041530000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

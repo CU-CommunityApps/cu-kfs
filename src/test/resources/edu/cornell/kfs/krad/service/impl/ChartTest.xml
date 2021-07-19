@@ -1,0 +1,263 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.ChartMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <versionNumber>11</versionNumber>
+  <objectId>943FB78C67C46602E04054802FC20000</objectId>
+  <lastUpdatedTimestamp>2009-01-01 04:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <finChartOfAccountDescription>Test Campus</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>QQ</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>ZZ</chartOfAccountsCode>
+  <finAccountsPayableObjectCode>2345</finAccountsPayableObjectCode>
+  <finExternalEncumbranceObjCd>3333</finExternalEncumbranceObjCd>
+  <finPreEncumbranceObjectCode>3333</finPreEncumbranceObjectCode>
+  <financialCashObjectCode>1111</financialCashObjectCode>
+  <icrIncomeFinancialObjectCode>4321</icrIncomeFinancialObjectCode>
+  <finAccountsReceivableObjCode>1234</finAccountsReceivableObjCode>
+  <finInternalEncumbranceObjCd>3333</finInternalEncumbranceObjCd>
+  <icrExpenseFinancialObjectCd>9995</icrExpenseFinancialObjectCd>
+  <incBdgtEliminationsFinObjCd>9996</incBdgtEliminationsFinObjCd>
+  <expBdgtEliminationsFinObjCd>9997</expBdgtEliminationsFinObjCd>
+  <fundBalanceObjectCode>3111</fundBalanceObjectCode>
+  <finCoaManager class="org.kuali.rice.kim.impl.identity.PersonImpl">
+    <principalId>1112223</principalId>
+    <principalName>jd999</principalName>
+    <entityId>1112223</entityId>
+    <entityTypeCode>PERSON</entityTypeCode>
+    <firstName>John</firstName>
+    <middleName> </middleName>
+    <lastName>Doe</lastName>
+    <name>Doe, John</name>
+    <address serialization="custom">
+      <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <default/>
+      </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+      <org.kuali.rice.kim.api.identity.address.EntityAddress>
+        <default>
+          <active>true</active>
+          <defaultValue>true</defaultValue>
+          <suppressAddress>true</suppressAddress>
+          <validated>false</validated>
+          <addressType serialization="custom">
+            <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <default/>
+            </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+            <org.kuali.rice.kim.api.identity.CodedAttribute>
+              <default>
+                <active>true</active>
+                <code>HM</code>
+                <name>Home</name>
+                <objectId>5B35758A2D240503E0404F8189D80000</objectId>
+                <sortCode>b</sortCode>
+                <versionNumber>1</versionNumber>
+              </default>
+            </org.kuali.rice.kim.api.identity.CodedAttribute>
+          </addressType>
+          <attentionLine>Xxxxxx</attentionLine>
+          <city>Xxxxxx</city>
+          <cityUnmasked>Ithaca</cityUnmasked>
+          <countryCode>XX</countryCode>
+          <countryCodeUnmasked> </countryCodeUnmasked>
+          <entityId>1112223</entityId>
+          <entityTypeCode>PERSON</entityTypeCode>
+          <id>57777777</id>
+          <line1>Xxxxxx</line1>
+          <line1Unmasked>88 Side St</line1Unmasked>
+          <line2>Xxxxxx</line2>
+          <line2Unmasked> </line2Unmasked>
+          <line3>Xxxxxx</line3>
+          <line3Unmasked> </line3Unmasked>
+          <modifiedDate>2014-01-01T01:00:00.000-04:00</modifiedDate>
+          <objectId>A69F06487F2604F2E04054802EC20000</objectId>
+          <postalCode>00000</postalCode>
+          <postalCodeUnmasked>14850-0000</postalCodeUnmasked>
+          <stateProvinceCode>XX</stateProvinceCode>
+          <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+          <versionNumber>1</versionNumber>
+        </default>
+      </org.kuali.rice.kim.api.identity.address.EntityAddress>
+    </address>
+    <emailAddress>johndoe@somecollege.edu</emailAddress>
+    <phoneNumber>(444) 555-6666</phoneNumber>
+    <suppressName>false</suppressName>
+    <suppressAddress>true</suppressAddress>
+    <suppressPhone>false</suppressPhone>
+    <suppressPersonal>false</suppressPersonal>
+    <suppressEmail>false</suppressEmail>
+    <campusCode>CC</campusCode>
+    <externalIdentifiers>
+      <entry>
+        <string>EMPLID</string>
+        <string>1212121</string>
+      </entry>
+    </externalIdentifiers>
+    <employeeStatusCode>A</employeeStatusCode>
+    <employeeTypeCode>P</employeeTypeCode>
+    <primaryDepartmentCode>IT-4444</primaryDepartmentCode>
+    <employeeId>1212121</employeeId>
+    <baseSalaryAmount>
+      <value>0.00</value>
+    </baseSalaryAmount>
+    <active>true</active>
+  </finCoaManager>
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <versionNumber>11</versionNumber>
+  <objectId>943FB78C67C46602E04054802FC20000</objectId>
+  <lastUpdatedTimestamp>2009-01-01 04:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <finChartOfAccountDescription>Test Campus</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>QQ</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>ZZ</chartOfAccountsCode>
+  <finAccountsPayableObjectCode>2345</finAccountsPayableObjectCode>
+  <finExternalEncumbranceObjCd>3333</finExternalEncumbranceObjCd>
+  <finPreEncumbranceObjectCode>3333</finPreEncumbranceObjectCode>
+  <financialCashObjectCode>1111</financialCashObjectCode>
+  <icrIncomeFinancialObjectCode>4321</icrIncomeFinancialObjectCode>
+  <finAccountsReceivableObjCode>1234</finAccountsReceivableObjCode>
+  <finInternalEncumbranceObjCd>3333</finInternalEncumbranceObjCd>
+  <icrExpenseFinancialObjectCd>9995</icrExpenseFinancialObjectCd>
+  <incBdgtEliminationsFinObjCd>9996</incBdgtEliminationsFinObjCd>
+  <expBdgtEliminationsFinObjCd>9999</expBdgtEliminationsFinObjCd>
+  <fundBalanceObjectCode>3111</fundBalanceObjectCode>
+  <finCoaManager class="org.kuali.rice.kim.impl.identity.PersonImpl">
+    <principalId>1112223</principalId>
+    <principalName>jd999</principalName>
+    <entityId>1112223</entityId>
+    <entityTypeCode>PERSON</entityTypeCode>
+    <firstName>John</firstName>
+    <middleName> </middleName>
+    <lastName>Doe</lastName>
+    <name>Doe, John</name>
+    <address serialization="custom">
+      <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <default/>
+      </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+      <org.kuali.rice.kim.api.identity.address.EntityAddress>
+        <default>
+          <active>true</active>
+          <defaultValue>true</defaultValue>
+          <suppressAddress>true</suppressAddress>
+          <validated>false</validated>
+          <addressType serialization="custom">
+            <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <default/>
+            </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+            <org.kuali.rice.kim.api.identity.CodedAttribute>
+              <default>
+                <active>true</active>
+                <code>HM</code>
+                <name>Home</name>
+                <objectId>5B35758A2D240503E0404F8189D80000</objectId>
+                <sortCode>b</sortCode>
+                <versionNumber>1</versionNumber>
+              </default>
+            </org.kuali.rice.kim.api.identity.CodedAttribute>
+          </addressType>
+          <attentionLine>Xxxxxx</attentionLine>
+          <city>Xxxxxx</city>
+          <cityUnmasked>Ithaca</cityUnmasked>
+          <countryCode>XX</countryCode>
+          <countryCodeUnmasked> </countryCodeUnmasked>
+          <entityId>1112223</entityId>
+          <entityTypeCode>PERSON</entityTypeCode>
+          <id>57777777</id>
+          <line1>Xxxxxx</line1>
+          <line1Unmasked>88 Side St</line1Unmasked>
+          <line2>Xxxxxx</line2>
+          <line2Unmasked> </line2Unmasked>
+          <line3>Xxxxxx</line3>
+          <line3Unmasked> </line3Unmasked>
+          <modifiedDate>2014-01-01T01:00:00.000-04:00</modifiedDate>
+          <objectId>A69F06487F2604F2E04054802EC268A4</objectId>
+          <postalCode>00000</postalCode>
+          <postalCodeUnmasked>14850-0000</postalCodeUnmasked>
+          <stateProvinceCode>XX</stateProvinceCode>
+          <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+          <versionNumber>1</versionNumber>
+        </default>
+      </org.kuali.rice.kim.api.identity.address.EntityAddress>
+    </address>
+    <emailAddress>johndoe@somecollege.edu</emailAddress>
+    <phoneNumber>(444) 555-6666</phoneNumber>
+    <suppressName>false</suppressName>
+    <suppressAddress>true</suppressAddress>
+    <suppressPhone>false</suppressPhone>
+    <suppressPersonal>false</suppressPersonal>
+    <suppressEmail>false</suppressEmail>
+    <campusCode>CC</campusCode>
+    <externalIdentifiers>
+      <entry>
+        <string>EMPLID</string>
+        <string>1212121</string>
+      </entry>
+    </externalIdentifiers>
+    <employeeStatusCode>A</employeeStatusCode>
+    <employeeTypeCode>P</employeeTypeCode>
+    <primaryDepartmentCode>IT-4444</primaryDepartmentCode>
+    <employeeId>1212121</employeeId>
+    <baseSalaryAmount>
+      <value>0.00</value>
+    </baseSalaryAmount>
+    <active>true</active>
+  </finCoaManager>
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.ChartMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <versionNumber>11</versionNumber>
+  <objectId>943FB78C67C46602E04054802FC20000</objectId>
+  <lastUpdatedTimestamp>2009-01-01 04:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <finChartOfAccountDescription>Test Campus</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>QQ</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>ZZ</chartOfAccountsCode>
+  <finAccountsPayableObjectCode>2345</finAccountsPayableObjectCode>
+  <finExternalEncumbranceObjCd>3333</finExternalEncumbranceObjCd>
+  <finPreEncumbranceObjectCode>3333</finPreEncumbranceObjectCode>
+  <financialCashObjectCode>1111</financialCashObjectCode>
+  <icrIncomeFinancialObjectCode>4321</icrIncomeFinancialObjectCode>
+  <finAccountsReceivableObjCode>1234</finAccountsReceivableObjCode>
+  <finInternalEncumbranceObjCd>3333</finInternalEncumbranceObjCd>
+  <icrExpenseFinancialObjectCd>9995</icrExpenseFinancialObjectCd>
+  <incBdgtEliminationsFinObjCd>9996</incBdgtEliminationsFinObjCd>
+  <expBdgtEliminationsFinObjCd>9997</expBdgtEliminationsFinObjCd>
+  <fundBalanceObjectCode>3111</fundBalanceObjectCode>
+  
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Chart>
+  <versionNumber>11</versionNumber>
+  <objectId>943FB78C67C46602E04054802FC20000</objectId>
+  <lastUpdatedTimestamp>2009-01-01 04:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <finChartOfAccountDescription>Test Campus</finChartOfAccountDescription>
+  <active>true</active>
+  <finCoaManagerPrincipalId>1112223</finCoaManagerPrincipalId>
+  <reportsToChartOfAccountsCode>QQ</reportsToChartOfAccountsCode>
+  <chartOfAccountsCode>ZZ</chartOfAccountsCode>
+  <finAccountsPayableObjectCode>2345</finAccountsPayableObjectCode>
+  <finExternalEncumbranceObjCd>3333</finExternalEncumbranceObjCd>
+  <finPreEncumbranceObjectCode>3333</finPreEncumbranceObjectCode>
+  <financialCashObjectCode>1111</financialCashObjectCode>
+  <icrIncomeFinancialObjectCode>4321</icrIncomeFinancialObjectCode>
+  <finAccountsReceivableObjCode>1234</finAccountsReceivableObjCode>
+  <finInternalEncumbranceObjCd>3333</finInternalEncumbranceObjCd>
+  <icrExpenseFinancialObjectCd>9995</icrExpenseFinancialObjectCd>
+  <incBdgtEliminationsFinObjCd>9996</incBdgtEliminationsFinObjCd>
+  <expBdgtEliminationsFinObjCd>9999</expBdgtEliminationsFinObjCd>
+  <fundBalanceObjectCode>3111</fundBalanceObjectCode>
+  
+</org.kuali.kfs.coa.businessobject.Chart><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
