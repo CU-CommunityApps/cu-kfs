@@ -69,15 +69,15 @@ class PaymentWorksVendorTest {
     
     @Test
     void testBuildPurgableRecordingString() {
-        String purgeRecordingString = pmwVendor.buildPurgableRecordingString();
+        String purgeRecordingString = pmwVendor.buildPurgeableRecordingString();
         LOG.info("testGetPurgeRecordingString: " + purgeRecordingString);
         
-        assertpurgetRecordingStringContains(purgeRecordingString, "processTimestamp=07/15/2021 07:51:00 AM");
-        assertpurgetRecordingStringContains(purgeRecordingString, "pmwVendorRequestId=123");
-        assertpurgetRecordingStringContains(purgeRecordingString, "requestingCompanyLegalName=Foo Bar Inc");
+        assertPurgeRecordingStringContains(purgeRecordingString, "processTimestamp=07/15/2021 07:51:00 AM");
+        assertPurgeRecordingStringContains(purgeRecordingString, "pmwVendorRequestId=123");
+        assertPurgeRecordingStringContains(purgeRecordingString, "requestingCompanyLegalName=Foo Bar Inc");
     }
 
-    public void assertpurgetRecordingStringContains(String purgeRecordingString, String searchString) {
+    public void assertPurgeRecordingStringContains(String purgeRecordingString, String searchString) {
         assertTrue("Should find " + searchString, StringUtils.contains(purgeRecordingString, searchString));
     }
 

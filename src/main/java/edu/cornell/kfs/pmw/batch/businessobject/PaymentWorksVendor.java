@@ -14,9 +14,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.businessobject.PurgableBusinessObjectInterface;
+import edu.cornell.kfs.sys.businessobject.PurgeableBusinessObjectInterface;
 
-public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable, PurgableBusinessObjectInterface{
+public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable, PurgeableBusinessObjectInterface {
     private static final long serialVersionUID = -6784832598701451681L;
     
     private Integer id;
@@ -1288,17 +1288,17 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     }
 
     @Override
-    public String buildObjectSpecifiicPurgableRecordData() {
+    public String buildObjectSpecificPurgeableRecordData() {
         StringBuilder sb = new StringBuilder();
-        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PMW_VENDOR_REQUESTID, pmwVendorRequestId);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PMW_VENDOR_REQUEST_ID, pmwVendorRequestId);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_VENDOR_PROCESSING_STATUS, kfsVendorProcessingStatus);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_VENDOR_DOCUMENT_NUMBER, kfsVendorDocumentNumber);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_ACH_PROCESSING_STATUS, kfsAchProcessingStatus);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_ACH_DOCUMENT_NUMBER, kfsAchDocumentNumber);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.SUPPLIER_UPLOAD_STATUS, supplierUploadStatus);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_NAME, requestingCompanyLegalName);
-        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_FIRSTNAME, requestingCompanyLegalFirstName);
-        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_LASTNAME, requestingCompanyLegalLastName);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_FIRST_NAME, requestingCompanyLegalFirstName);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_LAST_NAME, requestingCompanyLegalLastName);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_NAME, requestingCompanyName);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.VENDOR_TYPE, vendorType);
         addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.INITIATOR_NETID, initiatorNetId);

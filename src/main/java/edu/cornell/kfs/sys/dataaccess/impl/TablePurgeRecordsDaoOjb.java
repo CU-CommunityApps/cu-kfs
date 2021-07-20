@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.service.TableLookupCriteriaPurgeService;
-import edu.cornell.kfs.sys.businessobject.PurgableBusinessObjectInterface;
+import edu.cornell.kfs.sys.businessobject.PurgeableBusinessObjectInterface;
 import edu.cornell.kfs.sys.businessobject.TableDetailsForPurge;
 import edu.cornell.kfs.sys.dataaccess.TablePurgeRecordsDao;
 
@@ -60,9 +60,9 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
     
     protected String buildPurgeRecordingString(Object recordAsObject) {
         String purgeRecordingString = ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE);
-        if (recordAsObject instanceof PurgableBusinessObjectInterface) {
-            PurgableBusinessObjectInterface purgable = (PurgableBusinessObjectInterface) recordAsObject;
-            purgeRecordingString = purgable.buildPurgableRecordingString();
+        if (recordAsObject instanceof PurgeableBusinessObjectInterface) {
+            PurgeableBusinessObjectInterface purgable = (PurgeableBusinessObjectInterface) recordAsObject;
+            purgeRecordingString = purgable.buildPurgeableRecordingString();
         }
         return purgeRecordingString;
     }

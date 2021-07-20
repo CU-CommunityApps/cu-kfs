@@ -410,7 +410,7 @@ public class PaymentWorksConstants {
         public static final String BANK_ACCOUNT_BANK_ACCOUNT_NUMBER = "bankAcctBankAccountNumber";
         public static final String BANK_ACCOUNT_BANK_VALIDATION_FILE = "bankAcctBankValidationFile";
         
-        public static final String PMW_VENDOR_REQUESTID = "pmwVendorRequestId";
+        public static final String PMW_VENDOR_REQUEST_ID = "pmwVendorRequestId";
         public static final String KFS_VENDOR_PROCESSING_STATUS = "kfsVendorProcessingStatus";
         public static final String KFS_VENDOR_DOCUMENT_NUMBER = "kfsVendorDocumentNumber";
         public static final String KFS_ACH_PROCESSING_STATUS = "kfsAchProcessingStatus";
@@ -418,12 +418,11 @@ public class PaymentWorksConstants {
         public static final String PROCESS_TIMESTAMP = "processTimestamp";
         public static final String SUPPLIER_UPLOAD_STATUS = "supplierUploadStatus";
         public static final String REQUESTING_COMPANY_LEGAL_NAME = "requestingCompanyLegalName";
-        public static final String REQUESTING_COMPANY_LEGAL_FIRSTNAME = "requestingCompanyLegalFirstName";
-        public static final String REQUESTING_COMPANY_LEGAL_LASTNAME = "requestingCompanyLegalLastName";
+        public static final String REQUESTING_COMPANY_LEGAL_FIRST_NAME = "requestingCompanyLegalFirstName";
+        public static final String REQUESTING_COMPANY_LEGAL_LAST_NAME = "requestingCompanyLegalLastName";
         public static final String REQUESTING_COMPANY_NAME = "requestingCompanyName";
         public static final String VENDOR_TYPE = "vendorType";
         public static final String INITIATOR_NETID = "initiatorNetId";
     }
-    
 
 }
