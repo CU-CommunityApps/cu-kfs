@@ -68,7 +68,7 @@ class PaymentWorksVendorTest {
     }
     
     @Test
-    void testBuildPurgableRecordingString() {
+    void testBuildPurgeableRecordingString() {
         String purgeRecordingString = pmwVendor.buildPurgeableRecordingString();
         LOG.info("testGetPurgeRecordingString: " + purgeRecordingString);
         
