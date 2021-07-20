@@ -12,17 +12,23 @@
  */
 package edu.cornell.kfs.ksr.document;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 
+
 import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroupTab;
+import edu.cornell.kfs.ksr.businessobject.SecurityProvisioning;
 
 public class SecurityGroupMaintainable extends FinancialSystemMaintainable {
 
@@ -39,6 +45,29 @@ public class SecurityGroupMaintainable extends FinancialSystemMaintainable {
                 Long newId = sas.getNextAvailableSequenceNumber(KSRConstants.SECURITY_GROUP_TAB_SEQ_NAME);
                 securityGroupTab.setTabId(newId);
             }
+        }
+    }
+    
+    @Override
+    public void doRouteStatusChange(DocumentHeader documentHeader) {
+        super.doRouteStatusChange(documentHeader);
+
+        SecurityGroup securityGroup = (SecurityGroup) getDataObject();
+        createSecurityProvisioningEntryIfItDoesNotExist(securityGroup);
+    }
+    
+    private void createSecurityProvisioningEntryIfItDoesNotExist(SecurityGroup securityGroup) {
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(KSRConstants.SECURITY_GROUP_ID, securityGroup.getSecurityGroupId());
+        BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        Collection<SecurityProvisioning> securityProvisioningDB = businessObjectService.findMatching(SecurityProvisioning.class, hashMap);
+
+        // if record doesn't exist, create it
+        if (securityProvisioningDB == null || securityProvisioningDB.isEmpty()) {
+            SecurityProvisioning securityProvisioning = new SecurityProvisioning();
+            securityProvisioning.setSecurityGroupId(securityGroup.getSecurityGroupId());
+
+            businessObjectService.save(securityProvisioning);
         }
     }
 

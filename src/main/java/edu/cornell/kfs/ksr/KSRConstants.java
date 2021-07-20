@@ -8,8 +8,9 @@ public class KSRConstants {
 	// Security Group sections
 	public static final String SECTION_SECURITY_TABS = "SecurityGroupTabs";
 
-	// Security Group properties
-	public static final String SECURITY_GROUP_NAME = "securityGroupName";
+    // Security Group parameters
+    public static final String SECURITY_GROUP_NAME = "securityGroupName";
+    public static final String SECURITY_GROUP_ID = "securityGroupId";
 	
 	// Security Group Tab properties
 	public static final String SECURITY_GROUP_TAB_NAME = "tabName";
