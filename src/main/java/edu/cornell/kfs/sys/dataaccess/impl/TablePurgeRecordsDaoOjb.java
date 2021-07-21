@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.service.TableLookupCriteriaPurgeService;
+import edu.cornell.kfs.sys.businessobject.PurgeableBusinessObjectInterface;
 import edu.cornell.kfs.sys.businessobject.TableDetailsForPurge;
 import edu.cornell.kfs.sys.dataaccess.TablePurgeRecordsDao;
 
@@ -39,7 +40,7 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
             daysOldToUse = details.isUseDefaultDaysBeforePurgeParameter() ? defaultDaysOld : retrieveDaysBeforePurgeParameterValue(details.getNameSpaceCode(), details.getComponent(), details.getParameterName());
             dateForPurge = getPurgeDate(jobRunDate, daysOldToUse);
             lookupCriteria = buildTablePurgeCriteria(details.getServiceImplForPurgeTableLookupCriteria(), dateForPurge);
-            identifyAndRequestRecordsDeletion(details.getBusinessObjectForRecordsTablePurge(), lookupCriteria);
+            identifyAndRequestRecordsDeletion(details, lookupCriteria);
         }
     }
 
@@ -47,13 +48,23 @@ public class TablePurgeRecordsDaoOjb extends PlatformAwareDaoBaseOjb implements 
         return serviceImplClassForPurgeTableLookupCriteria.buildLookupCriteria(dateForPurge);
     }
     
-    protected void identifyAndRequestRecordsDeletion(Class<?> classForDeleteQuery, Criteria lookupCriteria) {
+    protected void identifyAndRequestRecordsDeletion(TableDetailsForPurge details, Criteria lookupCriteria) {
+        Class<?> classForDeleteQuery = details.getBusinessObjectForRecordsTablePurge();
         int numberOfRecordsBeingPurged = getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(classForDeleteQuery, lookupCriteria));
-        LOG.info("identifyAndRequestRecordsDeletion: numberOfRecordsBeingPurged = " + numberOfRecordsBeingPurged);
+        LOG.info("identifyAndRequestRecordsDeletion: numberOfRecordsBeingPurged from table " + details.getTableToPurge() + " = " + numberOfRecordsBeingPurged);
         Collection<?> toBePurgedRecords = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(classForDeleteQuery, lookupCriteria));
         for (Object recordAsObject : toBePurgedRecords) {
-            deleteRecordBasedOnBusinessObject((PersistableBusinessObjectBase)recordAsObject, ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE));
+            deleteRecordBasedOnBusinessObject((PersistableBusinessObjectBase)recordAsObject, buildPurgeRecordingString(recordAsObject));
         }
+    }
+    
+    protected String buildPurgeRecordingString(Object recordAsObject) {
+        String purgeRecordingString = ToStringBuilder.reflectionToString(recordAsObject, ToStringStyle.MULTI_LINE_STYLE);
+        if (recordAsObject instanceof PurgeableBusinessObjectInterface) {
+            PurgeableBusinessObjectInterface purgeable = (PurgeableBusinessObjectInterface) recordAsObject;
+            purgeRecordingString = purgeable.buildPurgeableRecordingString();
+        }
+        return purgeRecordingString;
     }
     
     @Transactional

@@ -2,16 +2,21 @@ package edu.cornell.kfs.pmw.batch.businessobject;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.PurgeableBusinessObjectInterface;
 
-public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable{
+public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable, PurgeableBusinessObjectInterface {
     private static final long serialVersionUID = -6784832598701451681L;
     
     private Integer id;
@@ -1280,6 +1285,32 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         } else {
             return StringUtils.EMPTY;
         }
+    }
+
+    @Override
+    public String buildObjectSpecificPurgeableRecordData() {
+        StringBuilder sb = new StringBuilder();
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PMW_VENDOR_REQUEST_ID, pmwVendorRequestId);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_VENDOR_PROCESSING_STATUS, kfsVendorProcessingStatus);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_VENDOR_DOCUMENT_NUMBER, kfsVendorDocumentNumber);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_ACH_PROCESSING_STATUS, kfsAchProcessingStatus);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.KFS_ACH_DOCUMENT_NUMBER, kfsAchDocumentNumber);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.SUPPLIER_UPLOAD_STATUS, supplierUploadStatus);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_NAME, requestingCompanyLegalName);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_FIRST_NAME, requestingCompanyLegalFirstName);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_LEGAL_LAST_NAME, requestingCompanyLegalLastName);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.REQUESTING_COMPANY_NAME, requestingCompanyName);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.VENDOR_TYPE, vendorType);
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.INITIATOR_NETID, initiatorNetId);
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am, Locale.US); 
+        addToStringBuilder(sb, PaymentWorksConstants.PaymentWorksVendorFieldName.PROCESS_TIMESTAMP, dateFormat.format(processTimestamp));
+        
+        return sb.toString();
+    }
+    
+    private void addToStringBuilder(StringBuilder sb, String fieldName, String fieldValue) {
+        sb.append(fieldName).append(CUKFSConstants.EQUALS_SIGN).append(fieldValue).append(KFSConstants.NEWLINE);
     }
 
 }

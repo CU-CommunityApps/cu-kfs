@@ -2,9 +2,12 @@ package edu.cornell.kfs.pmw.batch.businessobject;
 
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +31,11 @@ class PaymentWorksVendorTest {
         pmwVendor.setBankAcctRoutingNumber("566");
         pmwVendor.setBankAcctBankAccountNumber("0998");
         pmwVendor.setBankAcctBankValidationFile("bankaccoountfile.pdf");
+        pmwVendor.setPmwVendorRequestId("123");
+        pmwVendor.setRequestingCompanyLegalName("Foo Bar Inc");
+        
+        DateTime date = new DateTime(2021, 7, 15, 7, 51);
+        pmwVendor.setProcessTimestamp(new Timestamp(date.getMillis()));
     }
 
     @AfterEach
@@ -57,6 +65,20 @@ class PaymentWorksVendorTest {
     private void assertRestrictedFieldFormattedCorrectly(String toStringValue, String searchField) {
         String searchString = searchField + CUKFSConstants.EQUALS_SIGN + PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT;
         assertTrue("Should find restricted value for " + searchField, StringUtils.contains(toStringValue, searchString));
+    }
+    
+    @Test
+    void testBuildPurgeableRecordingString() {
+        String purgeRecordingString = pmwVendor.buildPurgeableRecordingString();
+        LOG.info("testGetPurgeRecordingString: " + purgeRecordingString);
+        
+        assertPurgeRecordingStringContains(purgeRecordingString, "processTimestamp=07/15/2021 07:51:00 AM");
+        assertPurgeRecordingStringContains(purgeRecordingString, "pmwVendorRequestId=123");
+        assertPurgeRecordingStringContains(purgeRecordingString, "requestingCompanyLegalName=Foo Bar Inc");
+    }
+
+    public void assertPurgeRecordingStringContains(String purgeRecordingString, String searchString) {
+        assertTrue("Should find " + searchString, StringUtils.contains(purgeRecordingString, searchString));
     }
 
 }
