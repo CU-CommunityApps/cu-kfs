@@ -57,11 +57,27 @@
                             	  p:defaultValueFinder-ref="securityProvisioningGroupIDFinder"
                                   p:unconditionallyReadOnly="true" p:required="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="roleId"
-                                  p:noLookup="true" p:required="true"/>
+                                  p:required="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="roleName"
                                   p:unconditionallyReadOnly="true" p:required="false"/>
                             <bean parent="MaintainableFieldDefinition" p:name="tabId"
                             	  p:required="true" />
+                            <bean parent="MaintainableFieldDefinition" p:name="roleTabOrder"
+                            	  p:required="true" />
+                            <bean parent="MaintainableFieldDefinition" p:name="distributedAuthorizerRoleId"
+                            	  p:required="false" />
+                            <bean parent="MaintainableFieldDefinition" p:name="distributedAuthorizerRoleName"
+                            	  p:unconditionallyReadOnly="true" p:required="false" />
+                            <bean parent="MaintainableFieldDefinition" p:name="additionalAuthorizerRoleId"
+                            	  p:required="false" />
+                            <bean parent="MaintainableFieldDefinition" p:name="additionalAuthorizerRoleName"
+                            	  p:unconditionallyReadOnly="true" p:required="false" />
+                            <bean parent="MaintainableFieldDefinition" p:name="centralAuthorizerRoleId"
+                            	  p:required="false" />
+                            <bean parent="MaintainableFieldDefinition" p:name="centralAuthorizerRoleName"
+                            	  p:unconditionallyReadOnly="true" p:required="false" />
+                            <bean parent="MaintainableFieldDefinition" p:name="active"
+                            	  p:required="false" />
                         </list>
                     </property>
                 </bean>
