@@ -460,6 +460,20 @@
                 <replacement>edu.cornell.kfs.coa.businessobject.HigherEducationFunctionExtendedAttribute</replacement>
             </pattern>
         </pattern>
+        <!--
+            Later KualiCo releases specifically use PersonImpl as the data type for the "accountDelegate" property
+            on the AccountDelegateGlobalDetail object. We have added a conversion rule to explicitly remove
+            the "accountDelegate" property from the XML, given that our other rules fully remove Person objects,
+            and since the newer "accountDelegate" properties might not have a "class" attribute that references
+            the PersonImpl class.
+         -->
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail</class>
+            <pattern>
+                <match>accountDelegate</match>
+                <replacement/>
+            </pattern>
+        </pattern>
         <!-- Special entries for converting archaic TypedArrayList elements. -->
         <pattern>
             <class>org.kuali.rice.kns.util.TypedArrayList</class>

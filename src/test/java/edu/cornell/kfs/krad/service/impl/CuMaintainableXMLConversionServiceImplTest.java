@@ -202,6 +202,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
         "Legacy3xIndirectCostRecoveryTypeTest.xml",
         "Legacy5xIndirectCostRecoveryTypeTest.xml",
         "LegacyAccountDelegateGlobalTest.xml",
+        "AccountDelegateGlobalTest.xml",
         "LegacyHigherEducationFunctionTest.xml"
     })
     void testConversionOfVariousCOADocuments(String coaTestFile) throws Exception {
