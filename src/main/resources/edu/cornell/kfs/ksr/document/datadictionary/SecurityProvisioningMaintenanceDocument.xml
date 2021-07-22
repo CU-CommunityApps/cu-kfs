@@ -59,7 +59,7 @@
                             <bean parent="MaintainableFieldDefinition" p:name="roleId"
                                   p:required="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="roleName"
-                                  p:unconditionallyReadOnly="true" p:required="false"/>
+                                  p:required="false"/>
                             <bean parent="MaintainableFieldDefinition" p:name="tabId"
                             	  p:required="true" />
                             <bean parent="MaintainableFieldDefinition" p:name="roleTabOrder"

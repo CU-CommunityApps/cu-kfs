@@ -11,6 +11,7 @@
           p:businessObjectAdminService-ref="defaultBoAdminService"
           p:name="SecurityProvisioningGroup"
           p:objectLabel="SecurityProvisioningGroup"
+          p:lookupDefinition-ref="SecurityProvisioningGroup-lookupDefinition"
           p:searchService-ref="defaultSearchService"
           p:titleAttribute="provisioningId">
 		<property name="attributes">
@@ -31,6 +32,23 @@
 				<ref bean="SecurityProvisioningGroup-centralAuthorizerRole-roleName" />
 				<ref bean="SecurityProvisioningGroup-versionNumber" />
 				<ref bean="SecurityProvisioningGroup-active" />
+			</list>
+		</property>
+		<property name="relationships">
+			<list>
+				<bean parent="RelationshipDefinition">
+					<property name="objectAttributeName" value="role" />
+					<property name="primitiveAttributes">
+						<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="roleId" p:targetName="id" />
+						</list>
+					</property>
+					<property name="supportAttributes">
+						<list>
+							<bean parent="SupportAttributeDefinition" p:sourceName="roleName" p:targetName="name" p:identifier="true"/>
+						</list>
+					</property>
+				</bean>
 			</list>
 		</property>
 	</bean>
@@ -92,32 +110,10 @@
 	</bean>
 	
 	<bean id="SecurityProvisioningGroup-roleId" parent="SecurityProvisioningGroup-roleId-parentBean" />
-	<bean id="SecurityProvisioningGroup-roleId-parentBean" parent="AttributeDefinition">
-		<property name="name" value="roleId" />
-		<property name="label" value="Role (to be granted)" />
-		<property name="shortLabel" value="Role" />
-		<property name="maxLength" value="40" />
-		<property name="required" value="true" />
-		<property name="summary" value="Role" />
-		<property name="description" value="Role" />
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="40" />
-		</property>
-	</bean>
+    <bean id="SecurityProvisioningGroup-roleId-parentBean" parent="Role-id" abstract="true" p:name="roleId" p:control-ref="HiddenControl"/>
 	
 	<bean id="SecurityProvisioningGroup-roleName" parent="SecurityProvisioningGroup-roleName-parentBean" />
-	<bean id="SecurityProvisioningGroup-roleName-parentBean" parent="AttributeDefinition">
-		<property name="name" value="roleName" />
-		<property name="label" value="Role (to be granted) Name" />
-		<property name="shortLabel" value="Role Name" />
-		<property name="maxLength" value="100" />
-		<property name="required" value="false" />
-		<property name="summary" value="Role" />
-		<property name="description" value="Role" />
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="40" />
-		</property>
-	</bean>
+	<bean id="SecurityProvisioningGroup-roleName-parentBean" parent="Role-name" abstract="true" p:name="roleName"/>
 	
 	<bean id="SecurityProvisioningGroup-roleTabOrder" parent="SecurityProvisioningGroup-roleTabOrder-parentBean" />
 	<bean id="SecurityProvisioningGroup-roleTabOrder-parentBean" parent="AttributeDefinition">
@@ -243,6 +239,47 @@
 
 	<bean id="SecurityProvisioningGroup-versionNumber" parent="SecurityProvisioningGroup-versionNumber-parentBean" />
 	<bean id="SecurityProvisioningGroup-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+	
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="SecurityProvisioningGroup-lookupDefinition" parent="SecurityProvisioningGroup-lookupDefinition-parentBean"/>
+    <bean id="SecurityProvisioningGroup-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Security Provisioning Group Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>provisioningId</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="SecurityProvisioningGroup-provisioningId" />
+                <ref bean="SecurityProvisioningGroup-roleName" />
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="SecurityProvisioningGroup-provisioningId" />
+                <ref bean="SecurityProvisioningGroup-roleName" />
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="provisioningId"/>
+                <bean parent="FieldDefinition" p:attributeName="roleName" p:forceLookup="true"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="provisioningId"/>
+                <bean parent="FieldDefinition" p:attributeName="roleName" p:forceLookup="true"/>
+            </list>
+        </property>
+    </bean>
+	
     
     <bean id="SecurityGroupTabValuesFinder" class="edu.cornell.kfs.ksr.businessobject.options.SecurityGroupTabValuesFinder" />
 
