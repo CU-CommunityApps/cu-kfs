@@ -43,11 +43,6 @@
 							<bean parent="PrimitiveAttributeDefinition" p:sourceName="roleId" p:targetName="id" />
 						</list>
 					</property>
-					<property name="supportAttributes">
-						<list>
-							<bean parent="SupportAttributeDefinition" p:sourceName="roleName" p:targetName="name" p:identifier="true"/>
-						</list>
-					</property>
 				</bean>
 			</list>
 		</property>
@@ -110,7 +105,7 @@
 	</bean>
 	
 	<bean id="SecurityProvisioningGroup-roleId" parent="SecurityProvisioningGroup-roleId-parentBean" />
-    <bean id="SecurityProvisioningGroup-roleId-parentBean" parent="Role-id" abstract="true" p:name="roleId" p:control-ref="HiddenControl"/>
+    <bean id="SecurityProvisioningGroup-roleId-parentBean" parent="Role-id" abstract="true" p:name="roleId"/>
 	
 	<bean id="SecurityProvisioningGroup-roleName" parent="SecurityProvisioningGroup-roleName-parentBean" />
 	<bean id="SecurityProvisioningGroup-roleName-parentBean" parent="Role-name" abstract="true" p:name="roleName"/>

@@ -57,7 +57,7 @@
                             	  p:defaultValueFinder-ref="securityProvisioningGroupIDFinder"
                                   p:unconditionallyReadOnly="true" p:required="true"/>
                             <bean parent="MaintainableFieldDefinition" p:name="roleId"
-                                  p:required="true"/>
+                                  p:required="true" />
                             <bean parent="MaintainableFieldDefinition" p:name="roleName"
                                   p:required="false"/>
                             <bean parent="MaintainableFieldDefinition" p:name="tabId"
