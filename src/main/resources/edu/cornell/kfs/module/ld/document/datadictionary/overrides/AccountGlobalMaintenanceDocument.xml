@@ -1,0 +1,21 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <!--
+        CU Customization: Copied this bean from the KFS LD bean overrides, and modified it to override
+        our CU-specific parent bean layer instead. Once KualiCo improves the AccountGlobalMaintenanceDocument
+        parent bean layering, this override and/or file should be removed.
+     -->
+    <bean id="AccountGlobalMaintenanceDocument" parent="AccountGlobalMaintenanceDocument-cuParentBean">
+        <property name="defaultExistenceChecks">
+            <list merge="true">
+                <bean parent="ReferenceDefinition" p:attributeName="laborBenefitRateCategory"
+                      p:attributeToHighlightOnFail="laborBenefitRateCategoryCode"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
