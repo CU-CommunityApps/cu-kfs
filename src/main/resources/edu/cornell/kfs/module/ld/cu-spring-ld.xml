@@ -13,6 +13,7 @@
              <list merge="true">
                  <value>classpath:edu/cornell/kfs/module/ld/businessobject/datadictionary/*.xml</value>
                  <value>classpath:edu/cornell/kfs/module/ld/document/datadictionary/*.xml</value>
+                 <value>classpath:edu/cornell/kfs/module/ld/document/datadictionary/overrides/*.xml</value>
              </list>
         </property>
 		<property name="databaseRepositoryFilePaths">
