@@ -54,6 +54,15 @@
         </property>
     </bean>
     
+    <!-- KFSPTS-22142 Add local customization to fix Role lookup from a child/collection object on a maintenance doc -->
+    <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
+        <property name="lookupableHelperService">
+            <bean class="edu.cornell.kfs.kim.lookup.CuRoleLookupableHelperServiceImpl"
+                  parent="lookupableHelperService">
+            </bean>
+        </property>
+    </bean>
+    
     <bean id="kimModule" parent="kimModule-parentBean" class="edu.cornell.kfs.kim.service.impl.CuKimModuleService"/>
 
 </beans>
