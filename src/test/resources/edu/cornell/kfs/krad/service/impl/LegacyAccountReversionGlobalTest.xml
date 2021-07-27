@@ -1,0 +1,211 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountReversionGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountReversionGlobal>
+  <accountReversionGlobalDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>1</size>
+      </default>
+      <int>10</int>
+      <org.kuali.kfs.coa.businessobject.AccountReversionGlobalDetail>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionGlobalDetail>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.coa.businessobject.AccountReversionGlobalDetail</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </accountReversionGlobalDetails>
+  <accountReversionGlobalAccounts class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>133</size>
+      </default>
+      <int>133</int>
+      <org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+      <org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </accountReversionGlobalAccounts>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.coa.businessobject.AccountReversionGlobal><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountReversionGlobal>
+  <documentNumber>1999999</documentNumber>
+  <universityFiscalYear>2012</universityFiscalYear>
+  <cashReversionFinancialChartOfAccountsCode>IT</cashReversionFinancialChartOfAccountsCode>
+  <cashReversionAccountNumber>B123123</cashReversionAccountNumber>
+  <accountReversionGlobalDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>1</size>
+      </default>
+      <int>10</int>
+      <org.kuali.kfs.coa.businessobject.AccountReversionGlobalDetail>
+        <documentNumber>1999999</documentNumber>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <accountReversionObjectCode>3030</accountReversionObjectCode>
+        <accountReversionCode>CC</accountReversionCode>
+        <versionNumber>1</versionNumber>
+        <objectId>879B408D-2659-946C-5357-15C4AB4D0000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionGlobalDetail>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.coa.businessobject.AccountReversionGlobalDetail</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </accountReversionGlobalDetails>
+  <accountReversionGlobalAccounts class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>132</size>
+      </default>
+      <int>133</int>
+      <org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <documentNumber>1999999</documentNumber>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>B10B10B</accountNumber>
+        <versionNumber>1</versionNumber>
+        <objectId>C201DDB8-F871-7050-01AE-3CDAE7940000</objectId>
+        <newCollectionRecord>true</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+      <org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <documentNumber>1999999</documentNumber>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>B10C10D</accountNumber>
+        <versionNumber>1</versionNumber>
+        <objectId>CAD519D9-AF92-1052-DD0F-B46C69AA0000</objectId>
+        <newCollectionRecord>true</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </accountReversionGlobalAccounts>
+  <versionNumber>1</versionNumber>
+  <objectId>2EA395FD-818D-C96D-BCFB-98E20AC00000</objectId>
+  <newCollectionRecord>true</newCollectionRecord>
+  <boNotes/>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.coa.businessobject.AccountReversionGlobal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountReversionGlobalMaintainableImpl"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.AccountReversionGlobal>
+  <accountReversionGlobalDetails>
+    
+    
+      
+      
+      <edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail>
+    
+    
+  </accountReversionGlobalDetails>
+  <accountReversionGlobalAccounts>
+    
+    
+      
+      
+      <edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+      <edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+    
+    
+  </accountReversionGlobalAccounts>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</edu.cornell.kfs.coa.businessobject.AccountReversionGlobal><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.AccountReversionGlobal>
+  <documentNumber>1999999</documentNumber>
+  <universityFiscalYear>2012</universityFiscalYear>
+  <cashReversionFinancialChartOfAccountsCode>IT</cashReversionFinancialChartOfAccountsCode>
+  <cashReversionAccountNumber>B123123</cashReversionAccountNumber>
+  <accountReversionGlobalDetails>
+    
+    
+      
+      
+      <edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail>
+        <documentNumber>1999999</documentNumber>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <accountReversionObjectCode>3030</accountReversionObjectCode>
+        <accountReversionCode>CC</accountReversionCode>
+        <versionNumber>1</versionNumber>
+        <objectId>879B408D-2659-946C-5357-15C4AB4D0000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail>
+    
+    
+  </accountReversionGlobalDetails>
+  <accountReversionGlobalAccounts>
+    
+    
+      
+      
+      <edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <documentNumber>1999999</documentNumber>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>B10B10B</accountNumber>
+        <versionNumber>1</versionNumber>
+        <objectId>C201DDB8-F871-7050-01AE-3CDAE7940000</objectId>
+        <newCollectionRecord>true</newCollectionRecord>
+        
+      </edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+      <edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+        <documentNumber>1999999</documentNumber>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>B10C10D</accountNumber>
+        <versionNumber>1</versionNumber>
+        <objectId>CAD519D9-AF92-1052-DD0F-B46C69AA0000</objectId>
+        <newCollectionRecord>true</newCollectionRecord>
+        
+      </edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount>
+    
+    
+  </accountReversionGlobalAccounts>
+  <versionNumber>1</versionNumber>
+  <objectId>2EA395FD-818D-C96D-BCFB-98E20AC00000</objectId>
+  <newCollectionRecord>true</newCollectionRecord>
+  
+  
+</edu.cornell.kfs.coa.businessobject.AccountReversionGlobal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/></notes></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
