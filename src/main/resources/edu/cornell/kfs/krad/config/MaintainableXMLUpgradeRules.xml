@@ -541,7 +541,7 @@
                 <match>org.kuali.kfs.coa.businessobject.ObjectCodeGlobal</match>
                 <replacement>edu.cornell.kfs.coa.businessobject.CUObjectCodeGlobal</replacement>
             </pattern>
-            <!--KDO-766 -->
+            <!-- KDO-766, KFSPTS-21726 -->
             <pattern>
                 <match>org.kuali.kfs.coa.businessobject.AccountReversion</match>
                 <replacement>edu.cornell.kfs.coa.businessobject.AccountReversion</replacement>
@@ -549,6 +549,18 @@
             <pattern>
                 <match>org.kuali.kfs.coa.businessobject.AccountReversionDetail</match>
                 <replacement>edu.cornell.kfs.coa.businessobject.AccountReversionDetail</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.coa.businessobject.AccountReversionGlobal</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.AccountReversionGlobal</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.coa.businessobject.AccountReversionGlobalDetail</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.AccountReversionGlobalDetail</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.coa.businessobject.AccountReversionGlobalAccount</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.AccountReversionGlobalAccount</replacement>
             </pattern>
             <!-- KDO-934 -->
             <pattern>
