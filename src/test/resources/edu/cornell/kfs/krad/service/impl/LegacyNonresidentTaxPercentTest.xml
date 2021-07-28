@@ -1,0 +1,57 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78F01EC6602E04054802FC20000</objectId>
+  <lastUpdatedTimestamp>2011-01-01 01:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <incomeClassCode>Q</incomeClassCode>
+  <incomeTaxTypeCode>X</incomeTaxTypeCode>
+  <active>true</active>
+  <incomeTaxPercent>
+    <value>10.00</value>
+  </incomeTaxPercent>
+</org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent><maintenanceAction>Copy</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent>
+  <versionNumber>1</versionNumber>
+  <lastUpdatedTimestamp>2011-01-01 01:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>true</newCollectionRecord>
+  <incomeClassCode>Q</incomeClassCode>
+  <incomeTaxTypeCode>X</incomeTaxTypeCode>
+  <active>true</active>
+  <incomeTaxPercent>
+    <value>9.00</value>
+  </incomeTaxPercent>
+</org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent><maintenanceAction>Copy</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.fp.businessobject.NonresidentTaxPercent>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78F01EC6602E04054802FC20000</objectId>
+  <lastUpdatedTimestamp>2011-01-01 01:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>false</newCollectionRecord>
+  <incomeClassCode>Q</incomeClassCode>
+  <incomeTaxTypeCode>X</incomeTaxTypeCode>
+  <active>true</active>
+  
+    <incomeTaxPercent>10.00</incomeTaxPercent>
+  
+</org.kuali.kfs.fp.businessobject.NonresidentTaxPercent><maintenanceAction>Copy</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.fp.businessobject.NonresidentTaxPercent>
+  <versionNumber>1</versionNumber>
+  <lastUpdatedTimestamp>2011-01-01 01:00:00</lastUpdatedTimestamp>
+  <newCollectionRecord>true</newCollectionRecord>
+  <incomeClassCode>Q</incomeClassCode>
+  <incomeTaxTypeCode>X</incomeTaxTypeCode>
+  <active>true</active>
+  
+    <incomeTaxPercent>9.00</incomeTaxPercent>
+  
+</org.kuali.kfs.fp.businessobject.NonresidentTaxPercent><maintenanceAction>Copy</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

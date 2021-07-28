@@ -441,6 +441,20 @@
                 <replacement/>
             </pattern>
         </pattern>
+        <pattern>
+            <class>org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl</class>
+            <pattern>
+                <match>financialSystemFunctionActiveIndicator</match>
+                <replacement>active</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.fp.businessobject.TravelCompanyCode</class>
+            <pattern>
+                <match>foreignCompany</match>
+                <replacement/>
+            </pattern>
+        </pattern>
         <!--
             We removed our CU Higher Ed Function subclass and replaced it with an extended attribute instead.
             This entry handles moving the CU-specific field into an extension.
@@ -472,6 +486,25 @@
             <pattern>
                 <match>accountDelegate</match>
                 <replacement/>
+            </pattern>
+        </pattern>
+        <!--
+            The next two entries will effectively unwrap the inner "value" element on the NonresidentTaxPercent
+            object's "incomeTaxPercent" property. If our code or base code ends up adding an "incomeTaxPercent"
+            property to another object, then this particular conversion may need to be modified.
+         -->
+        <pattern>
+            <class>org.kuali.kfs.fp.businessobject.NonresidentTaxPercent</class>
+            <pattern>
+                <match>incomeTaxPercent</match>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>incomeTaxPercent</class>
+            <pattern>
+                <match>value</match>
+                <replacement>incomeTaxPercent</replacement>
             </pattern>
         </pattern>
         <!-- Special entries for converting archaic TypedArrayList elements. -->
@@ -779,6 +812,10 @@
             <pattern>
                 <match>org.kuali.kfs.module.cab.businessobject.AssetTransactionType</match>
                 <replacement>org.kuali.kfs.module.cam.businessobject.AssetTransactionType</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent</match>
+                <replacement>org.kuali.kfs.fp.businessobject.NonresidentTaxPercent</replacement>
             </pattern>
         </pattern>
         <!-- KDO-873 -->
