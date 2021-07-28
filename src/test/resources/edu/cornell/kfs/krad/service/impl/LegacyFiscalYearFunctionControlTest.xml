@@ -1,0 +1,47 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl>
+  <universityFiscalYear>2010</universityFiscalYear>
+  <financialSystemFunctionControlCode>AABBCC</financialSystemFunctionControlCode>
+  <financialSystemFunctionActiveIndicator>true</financialSystemFunctionActiveIndicator>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7C3CAA467EE04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl>
+  <universityFiscalYear>2010</universityFiscalYear>
+  <financialSystemFunctionControlCode>AABBCC</financialSystemFunctionControlCode>
+  <financialSystemFunctionActiveIndicator>false</financialSystemFunctionActiveIndicator>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7C3CAA467EE04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl>
+  <universityFiscalYear>2010</universityFiscalYear>
+  <financialSystemFunctionControlCode>AABBCC</financialSystemFunctionControlCode>
+  <active>true</active>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7C3CAA467EE04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl>
+  <universityFiscalYear>2010</universityFiscalYear>
+  <financialSystemFunctionControlCode>AABBCC</financialSystemFunctionControlCode>
+  <active>false</active>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7C3CAA467EE04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
