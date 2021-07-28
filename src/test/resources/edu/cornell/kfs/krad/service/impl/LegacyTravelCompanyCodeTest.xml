@@ -1,0 +1,45 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.fp.businessobject.TravelCompanyCode>
+  <foreignCompany>false</foreignCompany>
+  <code>O</code>
+  <name>OTHER</name>
+  <active>true</active>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78F01B76602E04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.kfs.fp.businessobject.TravelCompanyCode><maintenanceAction>Copy</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.fp.businessobject.TravelCompanyCode>
+  <foreignCompany>false</foreignCompany>
+  <code>O</code>
+  <name>OTHER-TEST FEE</name>
+  <active>true</active>
+  <versionNumber>1</versionNumber>
+  <newCollectionRecord>true</newCollectionRecord>
+</org.kuali.kfs.fp.businessobject.TravelCompanyCode><maintenanceAction>Copy</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.fp.businessobject.TravelCompanyCode>
+  
+  <code>O</code>
+  <name>OTHER</name>
+  <active>true</active>
+  <versionNumber>1</versionNumber>
+  <objectId>943FB78F01B76602E04054802FC20000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.kfs.fp.businessobject.TravelCompanyCode><maintenanceAction>Copy</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.fp.businessobject.TravelCompanyCode>
+  
+  <code>O</code>
+  <name>OTHER-TEST FEE</name>
+  <active>true</active>
+  <versionNumber>1</versionNumber>
+  <newCollectionRecord>true</newCollectionRecord>
+</org.kuali.kfs.fp.businessobject.TravelCompanyCode><maintenanceAction>Copy</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
