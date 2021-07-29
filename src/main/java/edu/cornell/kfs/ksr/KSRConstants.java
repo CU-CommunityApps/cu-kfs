@@ -1,27 +1,27 @@
 package edu.cornell.kfs.ksr;
 
 public class KSRConstants {
-	public static final String KSR_DOCUMENT_MAINTAINABLE = "document.newMaintainableObject";
-	
-	public static final String KSR_NAMESPACE = "KFS-SR";
+    public static final String KSR_DOCUMENT_MAINTAINABLE = "document.newMaintainableObject";
 
-	// Security Group sections
-	public static final String SECTION_SECURITY_TABS = "SecurityGroupTabs";
+    public static final String KSR_NAMESPACE = "KFS-SR";
+
+    // Security Group sections
+    public static final String SECTION_SECURITY_TABS = "SecurityGroupTabs";
 
     // Security Group parameters
     public static final String SECURITY_GROUP_NAME = "securityGroupName";
     public static final String SECURITY_GROUP_ID = "securityGroupId";
-	
-	// Security Group Tab properties
-	public static final String SECURITY_GROUP_TAB_NAME = "tabName";
-	public static final String SECURITY_GROUP_TAB_ID = "tabId";
-	public static final String SECURITY_GROUP_TAB_ORDER = "tabOrder";
-	
-	// Security Group sections
+
+    // Security Group Tab properties
+    public static final String SECURITY_GROUP_TAB_NAME = "tabName";
+    public static final String SECURITY_GROUP_TAB_ID = "tabId";
+    public static final String SECURITY_GROUP_TAB_ORDER = "tabOrder";
+
+    // Security Group sections
     public static final String SECURITY_PROVISIONING_GROUP = "securityProvisioningGroup";
     public static final String SECURITY_PROVISIONING_GROUPS = "securityProvisioningGroups";
     public static final String DEPENDENT_ROLES = "dependentRoles";
-    
+
     // Security Provisioning Group parameters
     public static final String SECURITY_PROVISIONING_GROUP_ADD_AUTH_ROLE_ID = "additionalAuthorizerRoleId";
     public static final String SECURITY_PROVISIONING_GROUP_CENT_AUTH_ROLE_ID = "centralAuthorizerRoleId";
@@ -34,13 +34,13 @@ public class KSRConstants {
     public static final String PROVISIONING_ROLE_ID = "roleId";
     public static final String PROVISIONING_ROLE_TAB_ORDER = "roleTabOrder";
 
-	// Sequence names
-	public static final String SECURITY_GROUP_SEQ_NAME = "KRSR_SEC_GRP_ID_SEQ";
-	public static final String SECURITY_GROUP_TAB_SEQ_NAME = "KRSR_SEC_GRP_TB_ID_SEQ";
-	public static final String SECURITY_PROVISIONING_GROUP_SEQ_NAME = "KRSR_SEC_PRV_ID_SEQ";
-    
+    // Sequence names
+    public static final String SECURITY_GROUP_SEQ_NAME = "KRSR_SEC_GRP_ID_SEQ";
+    public static final String SECURITY_GROUP_TAB_SEQ_NAME = "KRSR_SEC_GRP_TB_ID_SEQ";
+    public static final String SECURITY_PROVISIONING_GROUP_SEQ_NAME = "KRSR_SEC_PRV_ID_SEQ";
+
     public static final String SECURITY_PROVISIONING_URL_NAME = "Edit Provisioning";
-    
+
     // Security Provisioning Group labels
     public static final String SECURITY_PROVISIONING_GROUP_ADD_AUTH_LBL = "Additional Authorizer";
     public static final String SECURITY_PROVISIONING_GROUP_CENT_AUTH_LBL = "Central Authorizer";

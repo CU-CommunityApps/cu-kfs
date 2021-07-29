@@ -63,12 +63,12 @@ public class SecurityGroupTab extends PersistableBusinessObjectBase implements M
         this.active = active;
     }
 
-     public List<SecurityProvisioningGroup> getSecurityProvisioningGroups() {
-     return securityProvisioningGroups;
-     }
-    
-     public void setSecurityProvisioningGroups(List<SecurityProvisioningGroup> securityProvisioningGroups) {
-     this.securityProvisioningGroups = securityProvisioningGroups;
-     }
+    public List<SecurityProvisioningGroup> getSecurityProvisioningGroups() {
+        return securityProvisioningGroups;
+    }
+
+    public void setSecurityProvisioningGroups(List<SecurityProvisioningGroup> securityProvisioningGroups) {
+        this.securityProvisioningGroups = securityProvisioningGroups;
+    }
 
 }

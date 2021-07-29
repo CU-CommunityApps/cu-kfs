@@ -8,7 +8,6 @@ public class SecurityProvisioningGroupDependentRoles extends PersistableBusiness
     private static final long serialVersionUID = 8290338935892653260L;
 
     private Long provisioningId;
-
     private String roleId;
 
     private Role role;
