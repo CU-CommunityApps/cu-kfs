@@ -1,26 +1,19 @@
 package edu.cornell.kfs.module.ar.document.service.impl;
 
+import java.util.Collection;
+
 import org.kuali.kfs.module.ar.businessobject.InvoicePaidApplied;
 import org.kuali.kfs.module.ar.document.CustomerInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.InvoicePaidAppliedServiceImpl;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import java.util.Collection;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /*
- * Backport FINP-7572
+ * Back-port FINP-7572
  */
 public class CuInvoicePaidAppliedServiceImpl extends InvoicePaidAppliedServiceImpl {
-    private static final Logger LOG = LogManager.getLogger();
-    
+
     @Override
     public boolean doesInvoiceHaveAppliedAmounts(CustomerInvoiceDocument document) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("doesInvoiceHaveAppliedAmounts, checking document " + document.getDocumentNumber());
-        }
         Collection<InvoicePaidApplied> results = getActiveInvoicePaidAppliedsForInvoice(document);
 
         for (InvoicePaidApplied invoicePaidApplied : results) {
