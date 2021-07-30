@@ -85,5 +85,9 @@
     <bean id="contractsGrantsBillingAwardVerificationService"
           parent="contractsGrantsBillingAwardVerificationService-parentBean" 
           class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsBillingAwardVerificationServiceImpl"/>
-
+          
+    <!-- Back-port FINP-7572 -->
+    <bean id="invoicePaidAppliedService" parent="invoicePaidAppliedService-parentBean" 
+      class="edu.cornell.kfs.module.ar.document.service.impl.CuInvoicePaidAppliedServiceImpl"/>
+    
 </beans>
