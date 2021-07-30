@@ -9,7 +9,6 @@ import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.api.type.KimTypeInfoService;
 import org.kuali.kfs.kim.framework.services.KimFrameworkServiceLocator;
 import org.kuali.kfs.kim.framework.type.KimTypeService;
-import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
@@ -30,7 +29,6 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 	@Override
 	public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject line) {
 		boolean success = true;
-		// Extract index
 
 		if (line instanceof SecurityProvisioningGroupDependentRoles) {
 			SecurityProvisioningGroupDependentRoles dependentRole = (SecurityProvisioningGroupDependentRoles) line;
