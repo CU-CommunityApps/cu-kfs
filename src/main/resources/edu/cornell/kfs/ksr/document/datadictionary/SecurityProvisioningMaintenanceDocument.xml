@@ -9,6 +9,7 @@
     <bean id="SecurityProvisioningMaintenanceDocument" parent="SecurityProvisioningMaintenanceDocument-parentBean"/>
     <bean id="SecurityProvisioningMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioning"
+          p:maintainableClass="edu.cornell.kfs.ksr.document.SecurityProvisioningMaintainable"
           p:encryptDocumentDataInPersistentSessionStorage="true" p:documentTypeName="SecurityProvisioningGroupDocumentType"
           p:businessRulesClass="edu.cornell.kfs.ksr.document.validation.impl.SecurityProvisioningGroupRule"
           p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase">
@@ -78,6 +79,22 @@
                             	  p:unconditionallyReadOnly="true" p:required="false" />
                             <bean parent="MaintainableFieldDefinition" p:name="active"
                             	  p:required="false" />
+                        </list>
+                    </property>
+                    <property name="maintainableCollections">
+                        <list>
+                            <bean parent="MaintainableCollectionDefinition" p:name="dependentRoles"
+                                  p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles"
+                                  p:summaryTitle="Dependent Roles">
+                                <property name="maintainableFields">
+                                    <list>
+                                        <bean parent="MaintainableFieldDefinition" p:name="roleId"
+                                              p:required="true"/>
+                                        <bean parent="MaintainableFieldDefinition" p:name="roleName"
+                                              p:unconditionallyReadOnly="true" p:required="false"/>
+                                    </list>
+                                </property>
+                            </bean>
                         </list>
                     </property>
                 </bean>

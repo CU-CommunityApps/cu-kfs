@@ -21,6 +21,18 @@
 				<ref bean="SecurityProvisioningGroupDependentRoles-versionNumber" />
 			</list>
 		</property>
+		<property name="relationships">
+			<list>
+				<bean parent="RelationshipDefinition">
+					<property name="objectAttributeName" value="role" />
+					<property name="primitiveAttributes">
+						<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="roleId" p:targetName="id" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
 	</bean>
 
 	<bean id="SecurityProvisioningGroupDependentRoles-provisioningId" parent="SecurityProvisioningGroupDependentRoles-provisioningId-parentBean" />

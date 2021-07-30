@@ -81,7 +81,7 @@
 		<property name="summary" value="Provisioning Id" />
 		<property name="description" value="Provisioning Id" />
 		<property name="control">
-			<bean parent="HiddenControlDefinition" />
+			<bean parent="TextControlDefinition" p:size="20" />
 		</property>
 	</bean>
 	
