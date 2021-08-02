@@ -29,7 +29,7 @@ public class SecurityProvisioningGroupDependentRoles extends PersistableBusiness
     }
 
     public Role getRole() {
-        initializeRoleBoIfNecessary(roleId, role, this::setRole);
+        initializeRoleIfNecessary(roleId, role, this::setRole);
         return role;
     }
 

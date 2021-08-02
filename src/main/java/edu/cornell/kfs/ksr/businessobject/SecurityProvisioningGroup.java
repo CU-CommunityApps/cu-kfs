@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.kuali.kfs.core.api.mo.common.active.Inactivatable;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-public class SecurityProvisioningGroup extends PersistableBusinessObjectBase implements Inactivatable, KsrObjectWithRoles {
+public class SecurityProvisioningGroup extends PersistableBusinessObjectBase implements MutableInactivatable, KsrObjectWithRoles {
     
     private Long provisioningId;
     private Long securityGroupId;
@@ -84,7 +84,7 @@ public class SecurityProvisioningGroup extends PersistableBusinessObjectBase imp
     }
 
     public Role getRole() {
-        initializeRoleBoIfNecessary(roleId, role, this::setRole);
+        initializeRoleIfNecessary(roleId, role, this::setRole);
         return role;
     }
 
@@ -106,7 +106,7 @@ public class SecurityProvisioningGroup extends PersistableBusinessObjectBase imp
     }
 
     public Role getDistributedAuthorizerRole() {
-        initializeRoleBoIfNecessary(distributedAuthorizerRoleId, distributedAuthorizerRole, this::setDistributedAuthorizerRole);
+        initializeRoleIfNecessary(distributedAuthorizerRoleId, distributedAuthorizerRole, this::setDistributedAuthorizerRole);
         return distributedAuthorizerRole;
     }
 
@@ -128,7 +128,7 @@ public class SecurityProvisioningGroup extends PersistableBusinessObjectBase imp
     }
 
     public Role getAdditionalAuthorizerRole() {
-        initializeRoleBoIfNecessary(additionalAuthorizerRoleId, additionalAuthorizerRole, this::setAdditionalAuthorizerRole);
+        initializeRoleIfNecessary(additionalAuthorizerRoleId, additionalAuthorizerRole, this::setAdditionalAuthorizerRole);
         return additionalAuthorizerRole;
     }
 
@@ -150,7 +150,7 @@ public class SecurityProvisioningGroup extends PersistableBusinessObjectBase imp
     }
 
     public Role getCentralAuthorizerRole() {
-        initializeRoleBoIfNecessary(centralAuthorizerRoleId, centralAuthorizerRole, this::setCentralAuthorizerRole);
+        initializeRoleIfNecessary(centralAuthorizerRoleId, centralAuthorizerRole, this::setCentralAuthorizerRole);
         return centralAuthorizerRole;
     }
 
@@ -168,6 +168,7 @@ public class SecurityProvisioningGroup extends PersistableBusinessObjectBase imp
         return active;
     }
 
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }

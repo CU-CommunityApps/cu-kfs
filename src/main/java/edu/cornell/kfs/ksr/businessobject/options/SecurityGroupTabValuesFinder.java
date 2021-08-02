@@ -19,6 +19,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.ksr.KSRConstants;
+import edu.cornell.kfs.ksr.KSRPropertyConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroupTab;
 import edu.cornell.kfs.ksr.businessobject.SecurityProvisioning;
 
@@ -43,7 +44,7 @@ public class SecurityGroupTabValuesFinder extends KeyValuesBase {
         Collection<SecurityGroupTab> tabs;
         if (securityGroupID != null) {
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(KSRConstants.SECURITY_GROUP_ID, securityGroupID);
+            map.put(KSRPropertyConstants.SECURITY_GROUP_ID, securityGroupID);
             tabs = SpringContext.getBean(BusinessObjectService.class).findMatching(SecurityGroupTab.class, map);
             for (SecurityGroupTab tab : tabs) {
                 keyValues.add(new ConcreteKeyValue(tab.getTabId().toString(), tab.getTabOrder() + " - " + tab.getTabName()));

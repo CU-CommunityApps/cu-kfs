@@ -1,6 +1,6 @@
 package edu.cornell.kfs.ksr.document;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 
 import edu.cornell.kfs.ksr.businessobject.SecurityProvisioning;

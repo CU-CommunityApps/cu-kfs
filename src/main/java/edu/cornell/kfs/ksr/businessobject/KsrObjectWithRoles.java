@@ -1,15 +1,10 @@
 package edu.cornell.kfs.ksr.businessobject;
 
-import java.util.Collections;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.kim.impl.KIMPropertyConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
-import org.kuali.kfs.krad.service.KualiModuleService;
-import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -34,7 +29,7 @@ public interface KsrObjectWithRoles {
      * @param role The role to be checked; may be null.
      * @param roleSetter The Consumer for updating the role object reference.
      */
-    default void initializeRoleBoIfNecessary(String roleId, Role role, Consumer<Role> roleSetter) {
+    default void initializeRoleIfNecessary(String roleId, Role role, Consumer<Role> roleSetter) {
         if (StringUtils.isBlank(roleId)) {
             if (ObjectUtils.isNotNull(role)) {
                 roleSetter.accept(null);
