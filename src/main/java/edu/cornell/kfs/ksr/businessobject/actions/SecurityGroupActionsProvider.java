@@ -17,17 +17,15 @@ import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.KSRPropertyConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
 import edu.cornell.kfs.ksr.businessobject.SecurityProvisioning;
-import edu.cornell.kfs.ksr.businessobject.admin.SecurityGroupAdminService;
 
 public class SecurityGroupActionsProvider extends BusinessObjectActionsProvider {
 
     @Override
     public List<Action> getActionLinks(BusinessObjectBase businessObject, Person user) {
-        final List<Action> actions = super.getActionLinks(businessObject, user);
-        
+        final List<Action> actions = super.getActionLinks(businessObject, user);       
         BusinessObjectAdminService businessObjectAdminService = businessObjectDictionaryService.getBusinessObjectAdminService(businessObject.getClass());
-        if (businessObjectAdminService instanceof SecurityGroupAdminService &&
-                ((SecurityGroupAdminService) businessObjectAdminService).allowsEditProvisioning(user)) {
+        
+        if (businessObjectAdminService.allowsEdit(businessObject, user)) {
             String securityProvisioningUrl = generateSecurityProvisioningUrl((SecurityGroup) businessObject);
             final Action action = new Action(KSRConstants.SECURITY_PROVISIONING_URL_NAME, "GET", securityProvisioningUrl);
             actions.add(action);
