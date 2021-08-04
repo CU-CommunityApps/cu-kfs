@@ -12,8 +12,6 @@ public class SecurityProvisioningMaintainable extends FinancialSystemMaintainabl
     /**
      * Updates the security group IDs and provisioning IDs on the related
      * provisioning-group and dependent-role objects accordingly.
-     * 
-     * @see org.kuali.rice.krad.maintenance.MaintainableImpl#prepareForSave()
      */
     @Override
     public void prepareForSave() {
