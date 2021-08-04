@@ -1,0 +1,327 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.pdp.businessobject.CustomerProfile>
+  <achPaymentDescription>Unknown University Accounts Payable</achPaymentDescription>
+  <additionalCheckNoteTextLine1>Anonymous Bank</additionalCheckNoteTextLine1>
+  <additionalCheckNoteTextLine2>Ithaca, New York</additionalCheckNoteTextLine2>
+  <address1>777 Main St.</address1>
+  <adviceCreate>true</adviceCreate>
+  <adviceHeaderText>Payment related to:</adviceHeaderText>
+  <adviceSubjectLine>Unknown University ACH Payment</adviceSubjectLine>
+  <chartCode>IT</chartCode>
+  <checkHeaderNoteTextLine1>Unknown University</checkHeaderNoteTextLine1>
+  <checkHeaderNoteTextLine2>Test Services</checkHeaderNoteTextLine2>
+  <checkHeaderNoteTextLine3>1234 N Test Hall</checkHeaderNoteTextLine3>
+  <checkHeaderNoteTextLine4>Ithaca NY 14850</checkHeaderNoteTextLine4>
+  <city>Ithaca</city>
+  <contactFullName>John D. Doe</contactFullName>
+  <countryCode>US</countryCode>
+  <customerDescription>Test 1</customerDescription>
+  <defaultChartCode>IT</defaultChartCode>
+  <defaultAccountNumber>H999666</defaultAccountNumber>
+  <defaultSubAccountNumber>-----</defaultSubAccountNumber>
+  <defaultObjectCode>5555</defaultObjectCode>
+  <defaultPhysicalCampusProcessingCode>IT</defaultPhysicalCampusProcessingCode>
+  <defaultSubObjectCode>333</defaultSubObjectCode>
+  <employeeCheck>false</employeeCheck>
+  <fileThresholdAmount>
+    <value>100000.00</value>
+  </fileThresholdAmount>
+  <fileThresholdEmailAddress>testaddress@someplace.edu</fileThresholdEmailAddress>
+  <id>
+    <value>3</value>
+  </id>
+  <nraReview>false</nraReview>
+  <unitCode>CDEF</unitCode>
+  <ownershipCodeRequired>false</ownershipCodeRequired>
+  <payeeIdRequired>true</payeeIdRequired>
+  <paymentThresholdAmount>
+    <value>35000.00</value>
+  </paymentThresholdAmount>
+  <paymentThresholdEmailAddress>testaddress@someplace.edu</paymentThresholdEmailAddress>
+  <processingEmailAddr>testaddress@someplace.edu</processingEmailAddr>
+  <achTransactionType>PPPP</achTransactionType>
+  <stateCode>NY</stateCode>
+  <subUnitCode>CBAA</subUnitCode>
+  <zipCode>14850</zipCode>
+  <accountingEditRequired>true</accountingEditRequired>
+  <relieveLiabilities>false</relieveLiabilities>
+  <active>true</active>
+  <selectedForFormat>false</selectedForFormat>
+  <customerBanks class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>ACH</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D805467EE040548000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>CHCK</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D804467EE040549000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+  </customerBanks>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA80D7FB467EE04054802F000000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.pdp.businessobject.CustomerProfile><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.pdp.businessobject.CustomerProfile>
+  <achPaymentDescription>Unknown University Accounts Payable</achPaymentDescription>
+  <additionalCheckNoteTextLine1>Anonymous Bank</additionalCheckNoteTextLine1>
+  <additionalCheckNoteTextLine2>Ithaca, New York</additionalCheckNoteTextLine2>
+  <address1>777 Main St.</address1>
+  <adviceCreate>true</adviceCreate>
+  <adviceHeaderText>Payment related to:</adviceHeaderText>
+  <adviceSubjectLine>Unknown University ACH Payment 2</adviceSubjectLine>
+  <chartCode>IT</chartCode>
+  <checkHeaderNoteTextLine1>Unknown University</checkHeaderNoteTextLine1>
+  <checkHeaderNoteTextLine2>Test Services</checkHeaderNoteTextLine2>
+  <checkHeaderNoteTextLine3>1234 N Test Hall</checkHeaderNoteTextLine3>
+  <checkHeaderNoteTextLine4>Ithaca NY 14850</checkHeaderNoteTextLine4>
+  <city>Ithaca</city>
+  <contactFullName>John D. Doe</contactFullName>
+  <countryCode>US</countryCode>
+  <customerDescription>Test 1</customerDescription>
+  <defaultChartCode>IT</defaultChartCode>
+  <defaultAccountNumber>H999666</defaultAccountNumber>
+  <defaultSubAccountNumber>-----</defaultSubAccountNumber>
+  <defaultObjectCode>5555</defaultObjectCode>
+  <defaultPhysicalCampusProcessingCode>IT</defaultPhysicalCampusProcessingCode>
+  <defaultSubObjectCode>333</defaultSubObjectCode>
+  <employeeCheck>false</employeeCheck>
+  <fileThresholdAmount>
+    <value>100000.00</value>
+  </fileThresholdAmount>
+  <fileThresholdEmailAddress>testaddress@someplace.edu</fileThresholdEmailAddress>
+  <id>
+    <value>3</value>
+  </id>
+  <nraReview>false</nraReview>
+  <unitCode>CDEF</unitCode>
+  <ownershipCodeRequired>false</ownershipCodeRequired>
+  <payeeIdRequired>true</payeeIdRequired>
+  <paymentThresholdAmount>
+    <value>35000.00</value>
+  </paymentThresholdAmount>
+  <paymentThresholdEmailAddress>testaddress@someplace.edu</paymentThresholdEmailAddress>
+  <processingEmailAddr>testaddress@someplace.edu</processingEmailAddr>
+  <achTransactionType>PPPP</achTransactionType>
+  <stateCode>NY</stateCode>
+  <subUnitCode>CBAA</subUnitCode>
+  <zipCode>14850</zipCode>
+  <accountingEditRequired>true</accountingEditRequired>
+  <relieveLiabilities>false</relieveLiabilities>
+  <active>true</active>
+  <selectedForFormat>false</selectedForFormat>
+  <customerBanks class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>ACH</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D805467EE040548000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>CHCK</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D804467EE040549000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+  </customerBanks>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA80D7FB467EE04054802F000000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.pdp.businessobject.CustomerProfile><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.pdp.businessobject.CustomerProfile>
+  <achPaymentDescription>Unknown University Accounts Payable</achPaymentDescription>
+  <additionalCheckNoteTextLine1>Anonymous Bank</additionalCheckNoteTextLine1>
+  <additionalCheckNoteTextLine2>Ithaca, New York</additionalCheckNoteTextLine2>
+  <address1>777 Main St.</address1>
+  <adviceCreate>true</adviceCreate>
+  <adviceHeaderText>Payment related to:</adviceHeaderText>
+  <adviceSubjectLine>Unknown University ACH Payment</adviceSubjectLine>
+  <chartCode>IT</chartCode>
+  <checkHeaderNoteTextLine1>Unknown University</checkHeaderNoteTextLine1>
+  <checkHeaderNoteTextLine2>Test Services</checkHeaderNoteTextLine2>
+  <checkHeaderNoteTextLine3>1234 N Test Hall</checkHeaderNoteTextLine3>
+  <checkHeaderNoteTextLine4>Ithaca NY 14850</checkHeaderNoteTextLine4>
+  <city>Ithaca</city>
+  <contactFullName>John D. Doe</contactFullName>
+  <countryCode>US</countryCode>
+  <customerDescription>Test 1</customerDescription>
+  <defaultChartCode>IT</defaultChartCode>
+  <defaultAccountNumber>H999666</defaultAccountNumber>
+  <defaultSubAccountNumber>-----</defaultSubAccountNumber>
+  <defaultObjectCode>5555</defaultObjectCode>
+  <defaultPhysicalCampusProcessingCode>IT</defaultPhysicalCampusProcessingCode>
+  <defaultSubObjectCode>333</defaultSubObjectCode>
+  <employeeCheck>false</employeeCheck>
+  <fileThresholdAmount>
+    <value>100000.00</value>
+  </fileThresholdAmount>
+  <fileThresholdEmailAddress>testaddress@someplace.edu</fileThresholdEmailAddress>
+  <id>
+    <value>3</value>
+  </id>
+  <nonresidentReview>false</nonresidentReview>
+  <unitCode>CDEF</unitCode>
+  <ownershipCodeRequired>false</ownershipCodeRequired>
+  <payeeIdRequired>true</payeeIdRequired>
+  <paymentThresholdAmount>
+    <value>35000.00</value>
+  </paymentThresholdAmount>
+  <paymentThresholdEmailAddress>testaddress@someplace.edu</paymentThresholdEmailAddress>
+  <processingEmailAddr>testaddress@someplace.edu</processingEmailAddr>
+  <achTransactionType>PPPP</achTransactionType>
+  <stateCode>NY</stateCode>
+  <subUnitCode>CBAA</subUnitCode>
+  <zipCode>14850</zipCode>
+  <accountingEditRequired>true</accountingEditRequired>
+  <relieveLiabilities>false</relieveLiabilities>
+  <active>true</active>
+  <selectedForFormat>false</selectedForFormat>
+  <customerBanks class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>ACH</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D805467EE040548000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>CHCK</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D804467EE040549000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+  </customerBanks>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA80D7FB467EE04054802F000000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.pdp.businessobject.CustomerProfile><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.pdp.businessobject.CustomerProfile>
+  <achPaymentDescription>Unknown University Accounts Payable</achPaymentDescription>
+  <additionalCheckNoteTextLine1>Anonymous Bank</additionalCheckNoteTextLine1>
+  <additionalCheckNoteTextLine2>Ithaca, New York</additionalCheckNoteTextLine2>
+  <address1>777 Main St.</address1>
+  <adviceCreate>true</adviceCreate>
+  <adviceHeaderText>Payment related to:</adviceHeaderText>
+  <adviceSubjectLine>Unknown University ACH Payment 2</adviceSubjectLine>
+  <chartCode>IT</chartCode>
+  <checkHeaderNoteTextLine1>Unknown University</checkHeaderNoteTextLine1>
+  <checkHeaderNoteTextLine2>Test Services</checkHeaderNoteTextLine2>
+  <checkHeaderNoteTextLine3>1234 N Test Hall</checkHeaderNoteTextLine3>
+  <checkHeaderNoteTextLine4>Ithaca NY 14850</checkHeaderNoteTextLine4>
+  <city>Ithaca</city>
+  <contactFullName>John D. Doe</contactFullName>
+  <countryCode>US</countryCode>
+  <customerDescription>Test 1</customerDescription>
+  <defaultChartCode>IT</defaultChartCode>
+  <defaultAccountNumber>H999666</defaultAccountNumber>
+  <defaultSubAccountNumber>-----</defaultSubAccountNumber>
+  <defaultObjectCode>5555</defaultObjectCode>
+  <defaultPhysicalCampusProcessingCode>IT</defaultPhysicalCampusProcessingCode>
+  <defaultSubObjectCode>333</defaultSubObjectCode>
+  <employeeCheck>false</employeeCheck>
+  <fileThresholdAmount>
+    <value>100000.00</value>
+  </fileThresholdAmount>
+  <fileThresholdEmailAddress>testaddress@someplace.edu</fileThresholdEmailAddress>
+  <id>
+    <value>3</value>
+  </id>
+  <nonresidentReview>false</nonresidentReview>
+  <unitCode>CDEF</unitCode>
+  <ownershipCodeRequired>false</ownershipCodeRequired>
+  <payeeIdRequired>true</payeeIdRequired>
+  <paymentThresholdAmount>
+    <value>35000.00</value>
+  </paymentThresholdAmount>
+  <paymentThresholdEmailAddress>testaddress@someplace.edu</paymentThresholdEmailAddress>
+  <processingEmailAddr>testaddress@someplace.edu</processingEmailAddr>
+  <achTransactionType>PPPP</achTransactionType>
+  <stateCode>NY</stateCode>
+  <subUnitCode>CBAA</subUnitCode>
+  <zipCode>14850</zipCode>
+  <accountingEditRequired>true</accountingEditRequired>
+  <relieveLiabilities>false</relieveLiabilities>
+  <active>true</active>
+  <selectedForFormat>false</selectedForFormat>
+  <customerBanks class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>ACH</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D805467EE040548000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+    <org.kuali.kfs.pdp.businessobject.CustomerBank>
+      <customerId>
+        <value>3</value>
+      </customerId>
+      <bankCode>DEFG</bankCode>
+      <disbursementTypeCode>CHCK</disbursementTypeCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA80D804467EE040549000000000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.pdp.businessobject.CustomerBank>
+  </customerBanks>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA80D7FB467EE04054802F000000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.pdp.businessobject.CustomerProfile><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
