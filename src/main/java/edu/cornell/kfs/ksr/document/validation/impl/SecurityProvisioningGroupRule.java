@@ -34,8 +34,7 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		if (line instanceof SecurityProvisioningGroupDependentRoles) {
 			SecurityProvisioningGroupDependentRoles dependentRole = (SecurityProvisioningGroupDependentRoles) line;
 			success = validateDependentRole(dependentRole);
-		}
-		else if (line instanceof SecurityProvisioningGroup) {
+		} else if (line instanceof SecurityProvisioningGroup) {
 			SecurityProvisioningGroup securityProvisioningGroup = (SecurityProvisioningGroup) line;
 			success = validateSecurityProvisioningGroup(document, securityProvisioningGroup);
 			if (success && securityProvisioningGroup.isActive()) {
