@@ -6,7 +6,6 @@
 	<bean id="SecurityProvisioningGroupDependentRoles" parent="SecurityProvisioningGroupDependentRoles-parentBean" />
 	<bean id="SecurityProvisioningGroupDependentRoles-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
           p:actionsProvider-ref="businessObjectActionsProvider"
-          p:boNotesEnabled="true"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles"
           p:businessObjectAdminService-ref="defaultBoAdminService"
           p:name="SecurityProvisioningGroupDependentRoles"

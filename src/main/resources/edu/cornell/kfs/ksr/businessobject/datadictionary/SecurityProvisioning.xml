@@ -6,7 +6,6 @@
 	<bean id="SecurityProvisioning" parent="SecurityProvisioning-parentBean" />
 	<bean id="SecurityProvisioning-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
           p:actionsProvider-ref="businessObjectActionsProvider"
-          p:boNotesEnabled="true"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioning"
           p:businessObjectAdminService-ref="defaultBoAdminService"
           p:inquiryDefinition-ref="SecurityProvisioning-inquiryDefinition"

@@ -89,12 +89,12 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
             if (securityGroup.getSecurityGroupId() != null) {
                 if (temp.getSecurityGroupName().equals(securityGroup.getSecurityGroupName())
                         && (!temp.getSecurityGroupId().equals(securityGroup.getSecurityGroupId()))) {
-                    GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRPropertyConstants.SECURITY_GROUP_NAME,
+                    GlobalVariables.getMessageMap().putError(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRPropertyConstants.SECURITY_GROUP_NAME,
                             KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
                     success = false;
                 }
             } else {
-                GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRPropertyConstants.SECURITY_GROUP_NAME,
+                GlobalVariables.getMessageMap().putError(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRPropertyConstants.SECURITY_GROUP_NAME,
                         KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
                 success = false;
             }

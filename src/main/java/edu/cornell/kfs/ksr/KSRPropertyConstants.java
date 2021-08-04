@@ -2,6 +2,8 @@ package edu.cornell.kfs.ksr;
 
 public class KSRPropertyConstants {
     
+    public static final String KSR_DOCUMENT_MAINTAINABLE = "document.newMaintainableObject";
+    
     // Security Group properties
     public static final String SECURITY_GROUP_NAME = "securityGroupName";
     public static final String SECURITY_GROUP_ID = "securityGroupId";

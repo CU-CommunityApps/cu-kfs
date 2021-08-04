@@ -6,7 +6,6 @@
 	<bean id="SecurityProvisioningGroup" parent="SecurityProvisioningGroup-parentBean" />
 	<bean id="SecurityProvisioningGroup-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
           p:actionsProvider-ref="businessObjectActionsProvider"
-          p:boNotesEnabled="true"
           p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup"
           p:businessObjectAdminService-ref="defaultBoAdminService"
           p:name="SecurityProvisioningGroup"
@@ -31,6 +30,11 @@
 				<ref bean="SecurityProvisioningGroup-centralAuthorizerRole-roleName" />
 				<ref bean="SecurityProvisioningGroup-versionNumber" />
 				<ref bean="SecurityProvisioningGroup-active" />
+			</list>
+		</property>
+		<property name="collections">
+			<list>
+				<bean parent="CollectionDefinition" p:name="dependentRoles" p:label="dependentRoles" p:shortLabel="dependentRoles" p:elementLabel="dependentRoles" />
 			</list>
 		</property>
 		<property name="relationships">

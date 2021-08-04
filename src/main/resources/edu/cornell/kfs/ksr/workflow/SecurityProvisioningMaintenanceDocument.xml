@@ -5,7 +5,7 @@
       <name>SecurityProvisioningGroupDocumentType</name>
       <parent>FSSM</parent>
       <label>Security Provisioning</label>
-      <docHandler>${application.url}/maintenance?methodToCall=docHandler</docHandler>
+      <docHandler>${application.url}/maintenance.do?methodToCall=docHandler</docHandler>
       <active>true</active>
       <routingVersion>2</routingVersion>
     </documentType>

@@ -1,7 +1,6 @@
 package edu.cornell.kfs.ksr;
 
 public class KSRConstants {
-    public static final String KSR_DOCUMENT_MAINTAINABLE = "document.newMaintainableObject";
 
     public static final String KSR_NAMESPACE = "KFS-SR";
     public static final String CREATE_MAINTAIN_SECURITY_PROVISIONING_PERMISSION_NAME = "Create/Maintain Security Provisioning";
