@@ -455,6 +455,13 @@
                 <replacement/>
             </pattern>
         </pattern>
+        <pattern>
+            <class>org.kuali.kfs.pdp.businessobject.CustomerProfile</class>
+            <pattern>
+                <match>nraReview</match>
+                <replacement>nonresidentReview</replacement>
+            </pattern>
+        </pattern>
         <!--
             We removed our CU Higher Ed Function subclass and replaced it with an extended attribute instead.
             This entry handles moving the CU-specific field into an extension.
