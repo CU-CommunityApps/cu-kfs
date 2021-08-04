@@ -220,6 +220,11 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected(fpTestFile);
     }
 
+    @Test
+    void testConversionOfCustomerProfile() throws Exception {
+        assertXMLFromTestFileConvertsAsExpected("LegacyCustomerProfileTest.xml");
+    }
+
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
         readTestFile(fileLocalName);
         String actualResult = conversionService.transformMaintainableXML(oldData);
