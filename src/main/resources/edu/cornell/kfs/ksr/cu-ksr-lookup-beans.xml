@@ -8,5 +8,6 @@
 
     <bean id="securityGroupTabIDFinder" class="edu.cornell.kfs.ksr.businessobject.options.SecurityGroupTabIDFinder"/>
     <bean id="securityGroupIDFinder" class="edu.cornell.kfs.ksr.businessobject.options.SecurityGroupIDFinder"/>
+    <bean id="securityProvisioningGroupIDFinder" class="edu.cornell.kfs.ksr.businessobject.options.SecurityProvisioningGroupIDFinder"/>
 
 </beans>
