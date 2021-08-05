@@ -16,6 +16,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.KSRKeyConstants;
+import edu.cornell.kfs.ksr.KSRPropertyConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroupTab;
 
@@ -36,11 +37,11 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
                 if (success) {
                     for (SecurityGroupTab tab : securityGroup.getSecurityGroupTabs()) {
                         if (tab.getTabOrder().equals(tempTab.getTabOrder())) {
-                            GlobalVariables.getMessageMap().putError(KSRConstants.SECURITY_GROUP_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
+                            GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_GROUP_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
                             success = false;
                         }
                         if (tab.getTabName().equals(tempTab.getTabName())) {
-                            GlobalVariables.getMessageMap().putError(KSRConstants.SECURITY_GROUP_TAB_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
+                            GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_GROUP_TAB_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
                             success = false;
                         }
                     }
@@ -88,12 +89,12 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
             if (securityGroup.getSecurityGroupId() != null) {
                 if (temp.getSecurityGroupName().equals(securityGroup.getSecurityGroupName())
                         && (!temp.getSecurityGroupId().equals(securityGroup.getSecurityGroupId()))) {
-                    GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRConstants.SECURITY_GROUP_NAME,
+                    GlobalVariables.getMessageMap().putError(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRPropertyConstants.SECURITY_GROUP_NAME,
                             KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
                     success = false;
                 }
             } else {
-                GlobalVariables.getMessageMap().putError(KSRConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRConstants.SECURITY_GROUP_NAME,
+                GlobalVariables.getMessageMap().putError(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRPropertyConstants.SECURITY_GROUP_NAME,
                         KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
                 success = false;
             }
@@ -107,7 +108,7 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
     private SecurityGroup retrieveSecurityGroupByName(String securityGroupName) {
         SecurityGroup securityGroup = null;
         Map<String, Object> hashMap = new HashMap<String, Object>();
-        hashMap.put(KSRConstants.SECURITY_GROUP_NAME, securityGroupName);
+        hashMap.put(KSRPropertyConstants.SECURITY_GROUP_NAME, securityGroupName);
 
         BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
         Collection<SecurityGroup> securityGroups = businessObjectService.findMatching(SecurityGroup.class, hashMap);
