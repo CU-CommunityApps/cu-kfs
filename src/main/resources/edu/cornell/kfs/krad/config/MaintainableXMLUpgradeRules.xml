@@ -462,6 +462,34 @@
                 <replacement>nonresidentReview</replacement>
             </pattern>
         </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.AwardProjectDirector</class>
+            <pattern>
+                <match>projectDirector</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.AwardFundManager</class>
+            <pattern>
+                <match>fundManager</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.AwardAccount</class>
+            <pattern>
+                <match>projectDirector</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector</class>
+            <pattern>
+                <match>projectDirector</match>
+                <replacement/>
+            </pattern>
+        </pattern>
         <!--
             We removed our CU Higher Ed Function subclass and replaced it with an extended attribute instead.
             This entry handles moving the CU-specific field into an extension.
@@ -921,6 +949,17 @@
             </pattern>
         </pattern>
         <!-- KDO-934 end -->
+        <pattern>
+            <class>account</class>
+            <pattern>
+                <match>indirectCostRcvyFinCoaCode</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>indirectCostRecoveryAcctNbr</match>
+                <replacement/>
+            </pattern>
+        </pattern>
         <pattern>
             <class>noteType</class>
             <pattern>
