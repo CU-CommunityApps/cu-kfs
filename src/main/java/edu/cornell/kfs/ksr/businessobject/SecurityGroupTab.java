@@ -1,5 +1,8 @@
 package edu.cornell.kfs.ksr.businessobject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
@@ -12,10 +15,10 @@ public class SecurityGroupTab extends PersistableBusinessObjectBase implements M
     private Long tabOrder;
     private boolean active;
 
-    //List<SecurityProvisioningGroup> securityProvisioningGroups;
+    List<SecurityProvisioningGroup> securityProvisioningGroups;
 
     public SecurityGroupTab() {
-        //securityProvisioningGroups = new ArrayList<>();
+        securityProvisioningGroups = new ArrayList<>();
         active = true;
     }
 
@@ -60,12 +63,12 @@ public class SecurityGroupTab extends PersistableBusinessObjectBase implements M
         this.active = active;
     }
 
-    // public List<SecurityProvisioningGroup> getSecurityProvisioningGroups() {
-    // return securityProvisioningGroups;
-    // }
-    //
-    // public void setSecurityProvisioningGroups(List<SecurityProvisioningGroup> securityProvisioningGroups) {
-    // this.securityProvisioningGroups = securityProvisioningGroups;
-    // }
+    public List<SecurityProvisioningGroup> getSecurityProvisioningGroups() {
+        return securityProvisioningGroups;
+    }
+
+    public void setSecurityProvisioningGroups(List<SecurityProvisioningGroup> securityProvisioningGroups) {
+        this.securityProvisioningGroups = securityProvisioningGroups;
+    }
 
 }

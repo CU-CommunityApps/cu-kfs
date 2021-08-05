@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="SecurityProvisioningGroupDependentRoles" parent="SecurityProvisioningGroupDependentRoles-parentBean" />
+	<bean id="SecurityProvisioningGroupDependentRoles-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectClass="edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:name="SecurityProvisioningGroupDependentRoles"
+          p:objectLabel="SecurityProvisioningGroupDependentRoles"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="provisioningId">
+		<property name="attributes">
+			<list>
+				<ref bean="SecurityProvisioningGroupDependentRoles-provisioningId" />
+				<ref bean="SecurityProvisioningGroupDependentRoles-roleId" />
+				<ref bean="SecurityProvisioningGroupDependentRoles-roleName" />
+				<ref bean="SecurityProvisioningGroupDependentRoles-versionNumber" />
+			</list>
+		</property>
+		<property name="relationships">
+			<list>
+				<bean parent="RelationshipDefinition">
+					<property name="objectAttributeName" value="role" />
+					<property name="primitiveAttributes">
+						<list>
+							<bean parent="PrimitiveAttributeDefinition" p:sourceName="roleId" p:targetName="id" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioningGroupDependentRoles-provisioningId" parent="SecurityProvisioningGroupDependentRoles-provisioningId-parentBean" />
+	<bean id="SecurityProvisioningGroupDependentRoles-provisioningId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="provisioningId" />
+		<property name="label" value="Provisioning Id" />
+		<property name="shortLabel" value="Provisioning Id" />
+		<property name="maxLength" value="32" />
+		<property name="required" value="false" />
+		<property name="summary" value="Provisioning Id" />
+		<property name="description" value="Provisioning Id" />
+		<property name="control">
+			<bean parent="HiddenControlDefinition" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroupDependentRoles-roleId" parent="SecurityProvisioningGroupDependentRoles-roleId-parentBean" />
+	<bean id="SecurityProvisioningGroupDependentRoles-roleId-parentBean" parent="AttributeDefinition">
+		<property name="name" value="roleId" />
+		<property name="label" value="Role Id" />
+		<property name="shortLabel" value="Role Id" />
+		<property name="maxLength" value="40" />
+		<property name="required" value="true" />
+		<property name="summary" value="Role Id" />
+		<property name="description" value="Role Id" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+	
+	<bean id="SecurityProvisioningGroupDependentRoles-roleName" parent="SecurityProvisioningGroupDependentRoles-roleName-parentBean" />
+	<bean id="SecurityProvisioningGroupDependentRoles-roleName-parentBean" parent="AttributeDefinition">
+		<property name="name" value="roleName" />
+		<property name="label" value="Role Name" />
+		<property name="shortLabel" value="Role Name" />
+		<property name="maxLength" value="100" />
+		<property name="required" value="false" />
+		<property name="summary" value="Dependent Role" />
+		<property name="description" value="DependentRole" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="40" />
+		</property>
+	</bean>
+
+	<bean id="SecurityProvisioningGroupDependentRoles-versionNumber" parent="SecurityProvisioningGroupDependentRoles-versionNumber-parentBean" />
+	<bean id="SecurityProvisioningGroupDependentRoles-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+
+</beans>
