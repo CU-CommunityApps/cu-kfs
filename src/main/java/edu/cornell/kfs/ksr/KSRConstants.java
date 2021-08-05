@@ -1,24 +1,29 @@
 package edu.cornell.kfs.ksr;
 
 public class KSRConstants {
-	public static final String KSR_DOCUMENT_MAINTAINABLE = "document.newMaintainableObject";
-	
-	public static final String KSR_NAMESPACE = "KFS-SR";
 
-	// Security Group sections
-	public static final String SECTION_SECURITY_TABS = "SecurityGroupTabs";
+    public static final String KSR_NAMESPACE = "KFS-SR";
+    public static final String CREATE_MAINTAIN_SECURITY_PROVISIONING_PERMISSION_NAME = "Create/Maintain Security Provisioning";
 
-	// Security Group properties
-	public static final String SECURITY_GROUP_NAME = "securityGroupName";
-	
-	// Security Group Tab properties
-	public static final String SECURITY_GROUP_TAB_NAME = "tabName";
-	public static final String SECURITY_GROUP_TAB_ID = "tabId";
-	public static final String SECURITY_GROUP_TAB_ORDER = "tabOrder";
+    // Security Group sections
+    public static final String SECTION_SECURITY_TABS = "SecurityGroupTabs";
 
-	// Sequence names
-	public static final String SECURITY_GROUP_SEQ_NAME = "KRSR_SEC_GRP_ID_SEQ";
-	public static final String SECURITY_GROUP_TAB_SEQ_NAME = "KRSR_SEC_GRP_TB_ID_SEQ";
-    
+    // Security Group sections
+    public static final String SECURITY_PROVISIONING_GROUP = "securityProvisioningGroup";
+    public static final String SECURITY_PROVISIONING_GROUPS = "securityProvisioningGroups";
+    public static final String DEPENDENT_ROLES = "dependentRoles";
+
+    // Sequence names
+    public static final String SECURITY_GROUP_SEQ_NAME = "KRSR_SEC_GRP_ID_SEQ";
+    public static final String SECURITY_GROUP_TAB_SEQ_NAME = "KRSR_SEC_GRP_TB_ID_SEQ";
+    public static final String SECURITY_PROVISIONING_GROUP_SEQ_NAME = "KRSR_SEC_PRV_ID_SEQ";
+
     public static final String SECURITY_PROVISIONING_URL_NAME = "Edit Provisioning";
+
+    // Security Provisioning Group labels
+    public static final String SECURITY_PROVISIONING_GROUP_ADD_AUTH_LBL = "Additional Authorizer";
+    public static final String SECURITY_PROVISIONING_GROUP_CENT_AUTH_LBL = "Central Authorizer";
+    public static final String SECURITY_PROVISIONING_GROUP_DIST_AUTH_LBL = "Distributed Authorizer";
+    public static final String SECURITY_PROVISIONING_GROUP_DEP_ROLE_LBL = "Dependent Role";
+    public static final String SECURITY_PROVISIONING_GROUP_ROLE_LBL = "Role (to be granted)";
 }
