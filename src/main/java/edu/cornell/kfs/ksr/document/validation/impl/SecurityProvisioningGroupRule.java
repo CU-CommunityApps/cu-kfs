@@ -328,7 +328,7 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		// Validate the SecurityProvisioningGroup and check it for duplicates
 		for (int i = 0; i < securityProvisioning.getSecurityProvisioningGroups().size(); i++) {
 			SecurityProvisioningGroup securityProvisioningGroup = securityProvisioning.getSecurityProvisioningGroups().get(i);
-			success = validateSecurityProvisioningGroup(document, securityProvisioningGroup, i);
+			success &= validateSecurityProvisioningGroup(document, securityProvisioningGroup, i);
 			if (!securityProvisioningGroup.isActive()) {
 				continue;
 			}
