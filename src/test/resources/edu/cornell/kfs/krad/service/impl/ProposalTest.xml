@@ -1,0 +1,413 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.module.cg.document.ProposalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.cg.businessobject.Proposal>
+  <newCollectionRecord>false</newCollectionRecord>
+  <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+  <active>false</active>
+  <proposalSubcontractors/>
+  <proposalOrganizations/>
+  <proposalProjectDirectors/>
+  <proposalResearchRisks/>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+</org.kuali.kfs.module.cg.businessobject.Proposal><maintenanceAction>null</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.cg.businessobject.Proposal>
+  <newCollectionRecord>false</newCollectionRecord>
+  <proposalNumber>98765</proposalNumber>
+  <proposalBeginningDate>2021-01-02</proposalBeginningDate>
+  <proposalEndingDate>2023-01-01</proposalEndingDate>
+  <proposalDirectCostAmount>
+    <value>200000.00</value>
+  </proposalDirectCostAmount>
+  <proposalIndirectCostAmount>
+    <value>80000.00</value>
+  </proposalIndirectCostAmount>
+  <proposalDueDate>2023-06-30</proposalDueDate>
+  <proposalTotalProjectAmount>
+    <value>280000.00</value>
+  </proposalTotalProjectAmount>
+  <proposalSubmissionDate>2021-01-31</proposalSubmissionDate>
+  <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+  <grantNumber>2020-30303-40404</grantNumber>
+  <proposalAwardTypeCode>S</proposalAwardTypeCode>
+  <agencyNumber>19191</agencyNumber>
+  <proposalStatusCode>SP</proposalStatusCode>
+  <proposalPurposeCode>R</proposalPurposeCode>
+  <proposalProjectTitle>Plant Testing</proposalProjectTitle>
+  <active>true</active>
+  <proposalSubcontractors/>
+  <proposalOrganizations>
+    <org.kuali.kfs.module.cg.businessobject.ProposalOrganization>
+      <newCollectionRecord>false</newCollectionRecord>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <organizationCode>0606</organizationCode>
+      <proposalNumber>98765</proposalNumber>
+      <proposalPrimaryOrganizationIndicator>true</proposalPrimaryOrganizationIndicator>
+      <active>true</active>
+      <organization>
+        <versionNumber>4</versionNumber>
+        <objectId>A53DCA7C32D9467EE04054802FC00000</objectId>
+        <lastUpdatedTimestamp>2020-01-01 02:03:04</lastUpdatedTimestamp>
+        <newCollectionRecord>false</newCollectionRecord>
+        <organizationCode>0606</organizationCode>
+        <organizationName>Plant Testers - Lansing</organizationName>
+        <organizationCityName>ITHACA</organizationCityName>
+        <organizationStateCode>NY</organizationStateCode>
+        <organizationZipCode>14850</organizationZipCode>
+        <organizationBeginDate>2010-03-17</organizationBeginDate>
+        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        <organizationManagerUniversalId>1020304</organizationManagerUniversalId>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+        <organizationTypeCode>S</organizationTypeCode>
+        <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+        <reportsToOrganizationCode>0101</reportsToOrganizationCode>
+        <organizationPlantAccountNumber>666CCCC</organizationPlantAccountNumber>
+        <campusPlantAccountNumber>666CCCC</campusPlantAccountNumber>
+        <organizationPlantChartCode>IT</organizationPlantChartCode>
+        <campusPlantChartCode>IT</campusPlantChartCode>
+        <organizationCountryCode>US</organizationCountryCode>
+        <organizationLine1Address>PO Box 99 Test Hall</organizationLine1Address>
+        <organizationLine2Address>Lansing</organizationLine2Address>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+      </organization>
+    </org.kuali.kfs.module.cg.businessobject.ProposalOrganization>
+  </proposalOrganizations>
+  <proposalProjectDirectors>
+    <org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+      <newCollectionRecord>false</newCollectionRecord>
+      <principalId>3579753</principalId>
+      <proposalNumber>98765</proposalNumber>
+      <proposalPrimaryProjectDirectorIndicator>true</proposalPrimaryProjectDirectorIndicator>
+      <active>true</active>
+      <projectDirector>
+        <principalId>3579753</principalId>
+        <principalName>jdd444</principalName>
+        <entityId>3579753</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>John</firstName>
+        <middleName>D.</middleName>
+        <lastName>Doe</lastName>
+        <name>Doe, John D.</name>
+        <address serialization="custom">
+          <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+            <default/>
+          </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <org.kuali.rice.kim.api.identity.address.EntityAddress>
+            <default>
+              <active>true</active>
+              <defaultValue>true</defaultValue>
+              <suppressAddress>true</suppressAddress>
+              <validated>false</validated>
+              <addressType serialization="custom">
+                <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                  <default/>
+                </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <org.kuali.rice.kim.api.identity.CodedAttribute>
+                  <default>
+                    <active>true</active>
+                    <code>HM</code>
+                    <name>Home</name>
+                    <objectId>5B35758A2D240503E0404F8189D00000</objectId>
+                    <sortCode>b</sortCode>
+                    <versionNumber>1</versionNumber>
+                  </default>
+                </org.kuali.rice.kim.api.identity.CodedAttribute>
+              </addressType>
+              <attentionLine>Xxxxxx</attentionLine>
+              <city>Xxxxxx</city>
+              <cityUnmasked>Lansing</cityUnmasked>
+              <countryCode>XX</countryCode>
+              <countryCodeUnmasked> </countryCodeUnmasked>
+              <entityId>3579753</entityId>
+              <entityTypeCode>PERSON</entityTypeCode>
+              <id>3232323</id>
+              <line1>Xxxxxx</line1>
+              <line1Unmasked>765 Main Road</line1Unmasked>
+              <line2>Xxxxxx</line2>
+              <line2Unmasked> </line2Unmasked>
+              <line3>Xxxxxx</line3>
+              <line3Unmasked> </line3Unmasked>
+              <modifiedDate>2016-08-01T07:08:09.000-04:00</modifiedDate>
+              <objectId>3BE5AACB8DD4069AE0534D7310000000</objectId>
+              <postalCode>00000</postalCode>
+              <postalCodeUnmasked>14882</postalCodeUnmasked>
+              <stateProvinceCode>XX</stateProvinceCode>
+              <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+              <versionNumber>1</versionNumber>
+            </default>
+          </org.kuali.rice.kim.api.identity.address.EntityAddress>
+        </address>
+        <emailAddress>jdd444@someplace.edu</emailAddress>
+        <phoneNumber>(333) 5557777</phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode>IT</campusCode>
+        <externalIdentifiers>
+          <entry>
+            <string>EMPLID</string>
+            <string>8765678</string>
+          </entry>
+        </externalIdentifiers>
+        <employeeStatusCode>A</employeeStatusCode>
+        <employeeTypeCode>P</employeeTypeCode>
+        <primaryDepartmentCode>IT-0101</primaryDepartmentCode>
+        <employeeId>8765678</employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <primary>true</primary>
+        <active>true</active>
+      </projectDirector>
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    </org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+    <org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+      <newCollectionRecord>false</newCollectionRecord>
+      <principalId>282828</principalId>
+      <proposalNumber>98765</proposalNumber>
+      <proposalPrimaryProjectDirectorIndicator>false</proposalPrimaryProjectDirectorIndicator>
+      <active>true</active>
+      <projectDirector>
+        <principalId>282828</principalId>
+        <principalName>tv33</principalName>
+        <entityId>282828</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>Tee</firstName>
+        <middleName>U.</middleName>
+        <lastName>Vee</lastName>
+        <name>Vee, Tee U.</name>
+        <address serialization="custom">
+          <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+            <default/>
+          </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <org.kuali.rice.kim.api.identity.address.EntityAddress>
+            <default>
+              <active>true</active>
+              <defaultValue>true</defaultValue>
+              <suppressAddress>true</suppressAddress>
+              <validated>false</validated>
+              <addressType serialization="custom">
+                <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                  <default/>
+                </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <org.kuali.rice.kim.api.identity.CodedAttribute>
+                  <default>
+                    <active>true</active>
+                    <code>HM</code>
+                    <name>Home</name>
+                    <objectId>5B35758A2D240503E0404F8189D00000</objectId>
+                    <sortCode>b</sortCode>
+                    <versionNumber>1</versionNumber>
+                  </default>
+                </org.kuali.rice.kim.api.identity.CodedAttribute>
+              </addressType>
+              <attentionLine>Xxxxxx</attentionLine>
+              <city>Xxxxxx</city>
+              <cityUnmasked>Lansing</cityUnmasked>
+              <countryCode>XX</countryCode>
+              <countryCodeUnmasked> </countryCodeUnmasked>
+              <entityId>282828</entityId>
+              <entityTypeCode>PERSON</entityTypeCode>
+              <id>57777777</id>
+              <line1>Xxxxxx</line1>
+              <line1Unmasked>33 Secondary St</line1Unmasked>
+              <line2>Xxxxxx</line2>
+              <line2Unmasked> </line2Unmasked>
+              <line3>Xxxxxx</line3>
+              <line3Unmasked> </line3Unmasked>
+              <modifiedDate>2014-11-30T01:02:03.000-04:00</modifiedDate>
+              <objectId>A69F0648A91504F2E04054802EC00000</objectId>
+              <postalCode>00000</postalCode>
+              <postalCodeUnmasked>14882-1111</postalCodeUnmasked>
+              <stateProvinceCode>XX</stateProvinceCode>
+              <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+              <versionNumber>1</versionNumber>
+            </default>
+          </org.kuali.rice.kim.api.identity.address.EntityAddress>
+        </address>
+        <emailAddress>tv33@someplace.edu</emailAddress>
+        <phoneNumber>(321) 321-3210</phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode>IT</campusCode>
+        <externalIdentifiers>
+          <entry>
+            <string>EMPLID</string>
+            <string>1777777</string>
+          </entry>
+        </externalIdentifiers>
+        <employeeStatusCode>A</employeeStatusCode>
+        <employeeTypeCode>P</employeeTypeCode>
+        <primaryDepartmentCode>IT-0123</primaryDepartmentCode>
+        <employeeId>1777777</employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <primary>true</primary>
+        <active>true</active>
+      </projectDirector>
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    </org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+  </proposalProjectDirectors>
+  <proposalResearchRisks/>
+  <agency>
+    <versionNumber>5</versionNumber>
+    <objectId>A8815FF823C5D369E04054802EC00000</objectId>
+    <lastUpdatedTimestamp>2020-12-12 02:03:04</lastUpdatedTimestamp>
+    <newCollectionRecord>false</newCollectionRecord>
+    <agencyNumber>19191</agencyNumber>
+    <reportingName>US TEST</reportingName>
+    <fullName>US Test Institute</fullName>
+    <agencyTypeCode>F</agencyTypeCode>
+    <reportsToAgencyNumber>567</reportsToAgencyNumber>
+    <inStateIndicator>false</inStateIndicator>
+    <active>true</active>
+    <stateAgencyIndicator>false</stateAgencyIndicator>
+  </agency>
+  <federalPassThroughAgency>
+    <newCollectionRecord>false</newCollectionRecord>
+    <inStateIndicator>false</inStateIndicator>
+    <active>false</active>
+    <stateAgencyIndicator>false</stateAgencyIndicator>
+  </federalPassThroughAgency>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+</org.kuali.kfs.module.cg.businessobject.Proposal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.module.cg.document.ProposalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.cg.businessobject.Proposal>
+  <newCollectionRecord>false</newCollectionRecord>
+  <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+  <active>false</active>
+  <proposalSubcontractors/>
+  <proposalOrganizations/>
+  <proposalProjectDirectors/>
+  <proposalResearchRisks/>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+</org.kuali.kfs.module.cg.businessobject.Proposal><maintenanceAction>null</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.cg.businessobject.Proposal>
+  <newCollectionRecord>false</newCollectionRecord>
+  <proposalNumber>98765</proposalNumber>
+  <proposalBeginningDate>2021-01-02</proposalBeginningDate>
+  <proposalEndingDate>2023-01-01</proposalEndingDate>
+  <proposalDirectCostAmount>
+    <value>200000.00</value>
+  </proposalDirectCostAmount>
+  <proposalIndirectCostAmount>
+    <value>80000.00</value>
+  </proposalIndirectCostAmount>
+  <proposalDueDate>2023-06-30</proposalDueDate>
+  <proposalTotalProjectAmount>
+    <value>280000.00</value>
+  </proposalTotalProjectAmount>
+  <proposalSubmissionDate>2021-01-31</proposalSubmissionDate>
+  <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+  <grantNumber>2020-30303-40404</grantNumber>
+  <proposalAwardTypeCode>S</proposalAwardTypeCode>
+  <agencyNumber>19191</agencyNumber>
+  <proposalStatusCode>SP</proposalStatusCode>
+  <proposalPurposeCode>R</proposalPurposeCode>
+  <proposalProjectTitle>Plant Testing</proposalProjectTitle>
+  <active>true</active>
+  <proposalSubcontractors/>
+  <proposalOrganizations>
+    <org.kuali.kfs.module.cg.businessobject.ProposalOrganization>
+      <newCollectionRecord>false</newCollectionRecord>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <organizationCode>0606</organizationCode>
+      <proposalNumber>98765</proposalNumber>
+      <proposalPrimaryOrganizationIndicator>true</proposalPrimaryOrganizationIndicator>
+      <active>true</active>
+      <organization>
+        <versionNumber>4</versionNumber>
+        <objectId>A53DCA7C32D9467EE04054802FC00000</objectId>
+        <lastUpdatedTimestamp>2020-01-01 02:03:04</lastUpdatedTimestamp>
+        <newCollectionRecord>false</newCollectionRecord>
+        <organizationCode>0606</organizationCode>
+        <organizationName>Plant Testers - Lansing</organizationName>
+        <organizationCityName>ITHACA</organizationCityName>
+        <organizationStateCode>NY</organizationStateCode>
+        <organizationZipCode>14850</organizationZipCode>
+        <organizationBeginDate>2010-03-17</organizationBeginDate>
+        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        <organizationManagerUniversalId>1020304</organizationManagerUniversalId>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+        <organizationTypeCode>S</organizationTypeCode>
+        <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+        <reportsToOrganizationCode>0101</reportsToOrganizationCode>
+        <organizationPlantAccountNumber>666CCCC</organizationPlantAccountNumber>
+        <campusPlantAccountNumber>666CCCC</campusPlantAccountNumber>
+        <organizationPlantChartCode>IT</organizationPlantChartCode>
+        <campusPlantChartCode>IT</campusPlantChartCode>
+        <organizationCountryCode>US</organizationCountryCode>
+        <organizationLine1Address>PO Box 99 Test Hall</organizationLine1Address>
+        <organizationLine2Address>Lansing</organizationLine2Address>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+      </organization>
+    </org.kuali.kfs.module.cg.businessobject.ProposalOrganization>
+  </proposalOrganizations>
+  <proposalProjectDirectors>
+    <org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+      <newCollectionRecord>false</newCollectionRecord>
+      <principalId>3579753</principalId>
+      <proposalNumber>98765</proposalNumber>
+      <proposalPrimaryProjectDirectorIndicator>true</proposalPrimaryProjectDirectorIndicator>
+      <active>true</active>
+      
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    </org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+    <org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+      <newCollectionRecord>false</newCollectionRecord>
+      <principalId>282828</principalId>
+      <proposalNumber>98765</proposalNumber>
+      <proposalPrimaryProjectDirectorIndicator>false</proposalPrimaryProjectDirectorIndicator>
+      <active>true</active>
+      
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    </org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector>
+  </proposalProjectDirectors>
+  <proposalResearchRisks/>
+  <agency>
+    <versionNumber>5</versionNumber>
+    <objectId>A8815FF823C5D369E04054802EC00000</objectId>
+    <lastUpdatedTimestamp>2020-12-12 02:03:04</lastUpdatedTimestamp>
+    <newCollectionRecord>false</newCollectionRecord>
+    <agencyNumber>19191</agencyNumber>
+    <reportingName>US TEST</reportingName>
+    <fullName>US Test Institute</fullName>
+    <agencyTypeCode>F</agencyTypeCode>
+    <reportsToAgencyNumber>567</reportsToAgencyNumber>
+    <inStateIndicator>false</inStateIndicator>
+    <active>true</active>
+    <stateAgencyIndicator>false</stateAgencyIndicator>
+  </agency>
+  <federalPassThroughAgency>
+    <newCollectionRecord>false</newCollectionRecord>
+    <inStateIndicator>false</inStateIndicator>
+    <active>false</active>
+    <stateAgencyIndicator>false</stateAgencyIndicator>
+  </federalPassThroughAgency>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+</org.kuali.kfs.module.cg.businessobject.Proposal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
