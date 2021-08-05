@@ -1,0 +1,877 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.module.cg.document.AwardMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.cg.businessobject.Award>
+  <proposalNumber>56789</proposalNumber>
+  <awardBeginningDate>2009-07-01</awardBeginningDate>
+  <awardEndingDate>2011-12-24</awardEndingDate>
+  <awardTotalAmount>
+    <value>27777.77</value>
+  </awardTotalAmount>
+  <awardAllocatedUniversityComputingServicesAmount>
+    <value>0.00</value>
+  </awardAllocatedUniversityComputingServicesAmount>
+  <awardEntryDate>2011-06-01</awardEntryDate>
+  <federalPassThroughIndicator>false</federalPassThroughIndicator>
+  <awardDirectCostAmount>
+    <value>27777.77</value>
+  </awardDirectCostAmount>
+  <awardIndirectCostAmount>
+    <value>0.00</value>
+  </awardIndirectCostAmount>
+  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardStatusCode>WC</awardStatusCode>
+  <letterOfCreditFundGroupCode>EDUC</letterOfCreditFundGroupCode>
+  <grantDescriptionCode>GRT</grantDescriptionCode>
+  <agencyNumber>456</agencyNumber>
+  <awardProjectTitle>LEGACY TEST PROJECT</awardProjectTitle>
+  <awardPurposeCode>S</awardPurposeCode>
+  <active>false</active>
+  <awardProjectDirectors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+      <principalId>1009008</principalId>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryProjectDirectorIndicator>true</awardPrimaryProjectDirectorIndicator>
+      <awardProjectDirectorProjectTitle>Principal Investigator</awardProjectDirectorProjectTitle>
+      <active>true</active>
+      <projectDirector class="org.kuali.rice.kim.bo.impl.PersonImpl">
+        <principalId>1009008</principalId>
+        <principalName>tu123</principalName>
+        <entityId>1009008</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>Test</firstName>
+        <middleName> </middleName>
+        <lastName>User</lastName>
+        <name>User, Test  </name>
+        <addressLine1>100 Anonymous Rd</addressLine1>
+        <addressLine2> </addressLine2>
+        <addressLine3> </addressLine3>
+        <addressCityName>Ithaca</addressCityName>
+        <addressStateCode>NY</addressStateCode>
+        <addressPostalCode>14850</addressPostalCode>
+        <addressCountryCode> </addressCountryCode>
+        <emailAddress>tu123@someplace.edu</emailAddress>
+        <phoneNumber>666/555-4321</phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode>IT</campusCode>
+        <externalIdentifiers>
+          <entry>
+            <string>EMPLID</string>
+            <string>1002003</string>
+          </entry>
+        </externalIdentifiers>
+        <employeeStatusCode>A</employeeStatusCode>
+        <employeeTypeCode>P</employeeTypeCode>
+        <primaryDepartmentCode>IT-1111</primaryDepartmentCode>
+        <employeeId>1002003</employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <active>true</active>
+      </projectDirector>
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CE467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+  </awardProjectDirectors>
+  <awardAccounts class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardAccount>
+      <active>true</active>
+      <account>
+        <accountsFringesBnftIndicator>false</accountsFringesBnftIndicator>
+        <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+        <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+        <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+        <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+        <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+        <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+        <accountOffCampusIndicator>false</accountOffCampusIndicator>
+        <active>true</active>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </account>
+      <projectDirector class="org.kuali.rice.kim.bo.impl.PersonImpl">
+        <firstName></firstName>
+        <middleName></middleName>
+        <lastName></lastName>
+        <name></name>
+        <addressLine1></addressLine1>
+        <addressLine2></addressLine2>
+        <addressLine3></addressLine3>
+        <addressCityName></addressCityName>
+        <addressStateCode></addressStateCode>
+        <addressPostalCode></addressPostalCode>
+        <addressCountryCode></addressCountryCode>
+        <emailAddress></emailAddress>
+        <phoneNumber></phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>false</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode></campusCode>
+        <employeeStatusCode></employeeStatusCode>
+        <employeeTypeCode></employeeTypeCode>
+        <primaryDepartmentCode></primaryDepartmentCode>
+        <employeeId></employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <active>true</active>
+      </projectDirector>
+      <newCollectionRecord>true</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.module.cg.businessobject.AwardAccount>
+  </awardAccounts>
+  <awardSubcontractors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+  <awardOrganizations class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <organizationCode>7878</organizationCode>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryOrganizationIndicator>true</awardPrimaryOrganizationIndicator>
+      <active>true</active>
+      <organization>
+        <organizationCode>7878</organizationCode>
+        <organizationName>Anonymous Center for Test Studies</organizationName>
+        <organizationCityName>Ithaca</organizationCityName>
+        <organizationStateCode>NY</organizationStateCode>
+        <organizationZipCode>14850</organizationZipCode>
+        <organizationBeginDate>2010-05-05</organizationBeginDate>
+        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        <organizationManagerUniversalId>1231231</organizationManagerUniversalId>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+        <organizationTypeCode>D</organizationTypeCode>
+        <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+        <reportsToOrganizationCode>7654</reportsToOrganizationCode>
+        <organizationPlantAccountNumber>H00IJKL</organizationPlantAccountNumber>
+        <campusPlantAccountNumber>J012100</campusPlantAccountNumber>
+        <organizationPlantChartCode>IT</organizationPlantChartCode>
+        <campusPlantChartCode>IT</campusPlantChartCode>
+        <organizationCountryCode>US</organizationCountryCode>
+        <organizationLine1Address>222 Test Hall</organizationLine1Address>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>A53DCA7C3878467EE04054802FC00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </organization>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CD467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+  </awardOrganizations>
+  <proposal>
+    <proposalNumber>56789</proposalNumber>
+    <proposalBeginningDate>2009-07-01</proposalBeginningDate>
+    <proposalEndingDate>2011-12-24</proposalEndingDate>
+    <proposalTotalAmount>
+      <value>27777.77</value>
+    </proposalTotalAmount>
+    <proposalDirectCostAmount>
+      <value>0.00</value>
+    </proposalDirectCostAmount>
+    <proposalIndirectCostAmount>
+      <value>0.00</value>
+    </proposalIndirectCostAmount>
+    <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
+    <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+    <grantNumber>P1112223334</grantNumber>
+    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <agencyNumber>456</agencyNumber>
+    <proposalStatusCode>WC</proposalStatusCode>
+    <cfdaNumber>88.333</cfdaNumber>
+    <proposalPurposeCode>S</proposalPurposeCode>
+    <proposalProjectTitle>LEGACY TEST PROJECT</proposalProjectTitle>
+    <active>true</active>
+    <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+    <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7FBEAF467EE04054802FC20000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </proposal>
+  <agency>
+    <agencyNumber>456</agencyNumber>
+    <reportingName>US DEPT OF TEST</reportingName>
+    <fullName>DEPT OF TESTING US</fullName>
+    <agencyTypeCode>F</agencyTypeCode>
+    <inStateIndicator>false</inStateIndicator>
+    <active>true</active>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7F9823467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </agency>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7FE9CC467EE04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute">
+    <costShareRequired>false</costShareRequired>
+    <finalFinancialReportRequired>false</finalFinancialReportRequired>
+    <proposalNumber>56789</proposalNumber>
+    <versionNumber>1</versionNumber>
+    <objectId>A4A9E2DA1AB9B26CE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </extension>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.cg.businessobject.Award><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.cg.businessobject.Award>
+  <proposalNumber>56789</proposalNumber>
+  <awardBeginningDate>2009-07-01</awardBeginningDate>
+  <awardEndingDate>2011-12-24</awardEndingDate>
+  <awardTotalAmount>
+    <value>27777.77</value>
+  </awardTotalAmount>
+  <awardAllocatedUniversityComputingServicesAmount>
+    <value>0.00</value>
+  </awardAllocatedUniversityComputingServicesAmount>
+  <awardEntryDate>2011-06-01</awardEntryDate>
+  <federalPassThroughIndicator>false</federalPassThroughIndicator>
+  <awardDirectCostAmount>
+    <value>27777.77</value>
+  </awardDirectCostAmount>
+  <awardIndirectCostAmount>
+    <value>0.00</value>
+  </awardIndirectCostAmount>
+  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardStatusCode>WC</awardStatusCode>
+  <letterOfCreditFundGroupCode>EDUC</letterOfCreditFundGroupCode>
+  <grantDescriptionCode>GRT</grantDescriptionCode>
+  <agencyNumber>456</agencyNumber>
+  <awardProjectTitle>LEGACY TEST PROJECT</awardProjectTitle>
+  <awardPurposeCode>S</awardPurposeCode>
+  <active>false</active>
+  <awardProjectDirectors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+      <principalId>1009008</principalId>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryProjectDirectorIndicator>true</awardPrimaryProjectDirectorIndicator>
+      <awardProjectDirectorProjectTitle>Principal Investigator</awardProjectDirectorProjectTitle>
+      <active>true</active>
+      <projectDirector class="org.kuali.rice.kim.bo.impl.PersonImpl">
+        <principalId>1009008</principalId>
+        <principalName>tu123</principalName>
+        <entityId>1009008</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>Test</firstName>
+        <middleName> </middleName>
+        <lastName>User</lastName>
+        <name>User, Test  </name>
+        <addressLine1>100 Anonymous Rd</addressLine1>
+        <addressLine2> </addressLine2>
+        <addressLine3> </addressLine3>
+        <addressCityName>Ithaca</addressCityName>
+        <addressStateCode>NY</addressStateCode>
+        <addressPostalCode>14850</addressPostalCode>
+        <addressCountryCode> </addressCountryCode>
+        <emailAddress>tu123@someplace.edu</emailAddress>
+        <phoneNumber>666/555-4321</phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode>IT</campusCode>
+        <externalIdentifiers>
+          <entry>
+            <string>EMPLID</string>
+            <string>1002003</string>
+          </entry>
+        </externalIdentifiers>
+        <employeeStatusCode>A</employeeStatusCode>
+        <employeeTypeCode>P</employeeTypeCode>
+        <primaryDepartmentCode>IT-1111</primaryDepartmentCode>
+        <employeeId>1002003</employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <active>true</active>
+      </projectDirector>
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CE467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+  </awardProjectDirectors>
+  <awardAccounts class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardAccount>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>A999444</accountNumber>
+      <principalId>234234</principalId>
+      <active>true</active>
+      <account>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>A999444</accountNumber>
+        <accountName>LEGACY TEST PROJECT ACCT</accountName>
+        <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+        <accountCityName>ITHACA</accountCityName>
+        <accountStateCode>NY</accountStateCode>
+        <accountStreetAddress>TEST HALL</accountStreetAddress>
+        <accountZipCode>14850</accountZipCode>
+        <accountCreateDate>2009-11-11</accountCreateDate>
+        <accountEffectiveDate>2009-12-01</accountEffectiveDate>
+        <accountExpirationDate>2011-12-31</accountExpirationDate>
+        <acctIndirectCostRcvyTypeCd>01</acctIndirectCostRcvyTypeCd>
+        <financialIcrSeriesIdentifier>000</financialIcrSeriesIdentifier>
+        <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+        <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+        <accountSufficientFundsCode>N</accountSufficientFundsCode>
+        <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+        <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+        <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+        <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+        <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+        <accountCfdaNumber>88.333</accountCfdaNumber>
+        <accountOffCampusIndicator>false</accountOffCampusIndicator>
+        <active>true</active>
+        <accountFiscalOfficerSystemIdentifier>234234</accountFiscalOfficerSystemIdentifier>
+        <accountsSupervisorySystemsIdentifier>1098765</accountsSupervisorySystemsIdentifier>
+        <accountManagerSystemIdentifier>234234</accountManagerSystemIdentifier>
+        <organizationCode>6666</organizationCode>
+        <accountTypeCode>EN</accountTypeCode>
+        <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+        <subFundGroupCode>CGTEST</subFundGroupCode>
+        <financialHigherEdFunctionCd>2468</financialHigherEdFunctionCd>
+        <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+        <continuationFinChrtOfAcctCd>IT</continuationFinChrtOfAcctCd>
+        <continuationAccountNumber>G272727</continuationAccountNumber>
+        <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+        <contractControlAccountNumber>A999333</contractControlAccountNumber>
+        <indirectCostRcvyFinCoaCode>IT</indirectCostRcvyFinCoaCode>
+        <indirectCostRecoveryAcctNbr>Y555222</indirectCostRecoveryAcctNbr>
+        <contractsAndGrantsAccountResponsibilityId>5</contractsAndGrantsAccountResponsibilityId>
+        <versionNumber>2</versionNumber>
+        <objectId>A53DCA7D596C467EE04054802FC00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </account>
+      <projectDirector class="org.kuali.rice.kim.bo.impl.PersonImpl">
+        <principalId>234234</principalId>
+        <principalName>jd777</principalName>
+        <entityId>234234</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>Jane</firstName>
+        <middleName> </middleName>
+        <lastName>Doe</lastName>
+        <name>Doe, Jane  </name>
+        <addressLine1>Test Center</addressLine1>
+        <addressLine2>555 Main St</addressLine2>
+        <addressLine3> </addressLine3>
+        <addressCityName>Unknown</addressCityName>
+        <addressStateCode>55</addressStateCode>
+        <addressPostalCode>787878</addressPostalCode>
+        <addressCountryCode> </addressCountryCode>
+        <emailAddress></emailAddress>
+        <phoneNumber> </phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode></campusCode>
+        <externalIdentifiers>
+          <entry>
+            <string>EMPLID</string>
+            <string>1313131</string>
+          </entry>
+        </externalIdentifiers>
+        <employeeStatusCode></employeeStatusCode>
+        <employeeTypeCode></employeeTypeCode>
+        <primaryDepartmentCode></primaryDepartmentCode>
+        <employeeId></employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <active>true</active>
+      </projectDirector>
+      <newCollectionRecord>true</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.module.cg.businessobject.AwardAccount>
+  </awardAccounts>
+  <awardSubcontractors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+  <awardOrganizations class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <organizationCode>7878</organizationCode>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryOrganizationIndicator>true</awardPrimaryOrganizationIndicator>
+      <active>true</active>
+      <organization>
+        <organizationCode>7878</organizationCode>
+        <organizationName>Anonymous Center for Test Studies</organizationName>
+        <organizationCityName>Ithaca</organizationCityName>
+        <organizationStateCode>NY</organizationStateCode>
+        <organizationZipCode>14850</organizationZipCode>
+        <organizationBeginDate>2010-05-05</organizationBeginDate>
+        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        <organizationManagerUniversalId>1231231</organizationManagerUniversalId>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+        <organizationTypeCode>D</organizationTypeCode>
+        <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+        <reportsToOrganizationCode>7654</reportsToOrganizationCode>
+        <organizationPlantAccountNumber>H00IJKL</organizationPlantAccountNumber>
+        <campusPlantAccountNumber>J012100</campusPlantAccountNumber>
+        <organizationPlantChartCode>IT</organizationPlantChartCode>
+        <campusPlantChartCode>IT</campusPlantChartCode>
+        <organizationCountryCode>US</organizationCountryCode>
+        <organizationLine1Address>222 Test Hall</organizationLine1Address>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>A53DCA7C3878467EE04054802FC00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </organization>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CD467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+  </awardOrganizations>
+  <proposal>
+    <proposalNumber>56789</proposalNumber>
+    <proposalBeginningDate>2009-07-01</proposalBeginningDate>
+    <proposalEndingDate>2011-12-24</proposalEndingDate>
+    <proposalTotalAmount>
+      <value>27777.77</value>
+    </proposalTotalAmount>
+    <proposalDirectCostAmount>
+      <value>0.00</value>
+    </proposalDirectCostAmount>
+    <proposalIndirectCostAmount>
+      <value>0.00</value>
+    </proposalIndirectCostAmount>
+    <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
+    <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+    <grantNumber>P1112223334</grantNumber>
+    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <agencyNumber>456</agencyNumber>
+    <proposalStatusCode>WC</proposalStatusCode>
+    <cfdaNumber>88.333</cfdaNumber>
+    <proposalPurposeCode>S</proposalPurposeCode>
+    <proposalProjectTitle>LEGACY TEST PROJECT</proposalProjectTitle>
+    <active>true</active>
+    <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+    <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7FBEAF467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </proposal>
+  <agency>
+    <agencyNumber>446</agencyNumber>
+    <reportingName>US DEPT OF TEST</reportingName>
+    <fullName>DEPT OF TESTING US</fullName>
+    <agencyTypeCode>F</agencyTypeCode>
+    <inStateIndicator>false</inStateIndicator>
+    <active>true</active>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7F9823467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </agency>
+  <routingOrg>7777</routingOrg>
+  <routingChart>IT</routingChart>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7FE9CC467EE04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute">
+    <costShareRequired>false</costShareRequired>
+    <finalFinancialReportRequired>false</finalFinancialReportRequired>
+    <proposalNumber>56789</proposalNumber>
+    <versionNumber>1</versionNumber>
+    <objectId>A4A9E2DA1AB9B26CE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </extension>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.cg.businessobject.Award><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.module.cg.document.AwardMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.cg.businessobject.Award>
+  <proposalNumber>56789</proposalNumber>
+  <awardBeginningDate>2009-07-01</awardBeginningDate>
+  <awardEndingDate>2011-12-24</awardEndingDate>
+  <awardTotalAmount>
+    <value>27777.77</value>
+  </awardTotalAmount>
+  <awardAllocatedUniversityComputingServicesAmount>
+    <value>0.00</value>
+  </awardAllocatedUniversityComputingServicesAmount>
+  <awardEntryDate>2011-06-01</awardEntryDate>
+  <federalPassThroughIndicator>false</federalPassThroughIndicator>
+  <awardDirectCostAmount>
+    <value>27777.77</value>
+  </awardDirectCostAmount>
+  <awardIndirectCostAmount>
+    <value>0.00</value>
+  </awardIndirectCostAmount>
+  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardStatusCode>WC</awardStatusCode>
+  <letterOfCreditFundGroupCode>EDUC</letterOfCreditFundGroupCode>
+  <grantDescriptionCode>GRT</grantDescriptionCode>
+  <agencyNumber>456</agencyNumber>
+  <awardProjectTitle>LEGACY TEST PROJECT</awardProjectTitle>
+  <awardPurposeCode>S</awardPurposeCode>
+  <active>false</active>
+  <awardProjectDirectors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+      <principalId>1009008</principalId>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryProjectDirectorIndicator>true</awardPrimaryProjectDirectorIndicator>
+      <awardProjectDirectorProjectTitle>Principal Investigator</awardProjectDirectorProjectTitle>
+      <active>true</active>
+      
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CE467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+  </awardProjectDirectors>
+  <awardAccounts class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardAccount>
+      <active>true</active>
+      <account>
+        <accountsFringesBnftIndicator>false</accountsFringesBnftIndicator>
+        <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+        <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+        <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+        <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+        <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+        <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+        <accountOffCampusIndicator>false</accountOffCampusIndicator>
+        <active>true</active>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </account>
+      
+      <newCollectionRecord>true</newCollectionRecord>
+      
+    </org.kuali.kfs.module.cg.businessobject.AwardAccount>
+  </awardAccounts>
+  <awardSubcontractors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+  <awardOrganizations class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <organizationCode>7878</organizationCode>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryOrganizationIndicator>true</awardPrimaryOrganizationIndicator>
+      <active>true</active>
+      <organization>
+        <organizationCode>7878</organizationCode>
+        <organizationName>Anonymous Center for Test Studies</organizationName>
+        <organizationCityName>Ithaca</organizationCityName>
+        <organizationStateCode>NY</organizationStateCode>
+        <organizationZipCode>14850</organizationZipCode>
+        <organizationBeginDate>2010-05-05</organizationBeginDate>
+        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        <organizationManagerUniversalId>1231231</organizationManagerUniversalId>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+        <organizationTypeCode>D</organizationTypeCode>
+        <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+        <reportsToOrganizationCode>7654</reportsToOrganizationCode>
+        <organizationPlantAccountNumber>H00IJKL</organizationPlantAccountNumber>
+        <campusPlantAccountNumber>J012100</campusPlantAccountNumber>
+        <organizationPlantChartCode>IT</organizationPlantChartCode>
+        <campusPlantChartCode>IT</campusPlantChartCode>
+        <organizationCountryCode>US</organizationCountryCode>
+        <organizationLine1Address>222 Test Hall</organizationLine1Address>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>A53DCA7C3878467EE04054802FC00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </organization>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CD467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+  </awardOrganizations>
+  <proposal>
+    <proposalNumber>56789</proposalNumber>
+    <proposalBeginningDate>2009-07-01</proposalBeginningDate>
+    <proposalEndingDate>2011-12-24</proposalEndingDate>
+    <proposalTotalAmount>
+      <value>27777.77</value>
+    </proposalTotalAmount>
+    <proposalDirectCostAmount>
+      <value>0.00</value>
+    </proposalDirectCostAmount>
+    <proposalIndirectCostAmount>
+      <value>0.00</value>
+    </proposalIndirectCostAmount>
+    <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
+    <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+    <grantNumber>P1112223334</grantNumber>
+    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <agencyNumber>456</agencyNumber>
+    <proposalStatusCode>WC</proposalStatusCode>
+    <cfdaNumber>88.333</cfdaNumber>
+    <proposalPurposeCode>S</proposalPurposeCode>
+    <proposalProjectTitle>LEGACY TEST PROJECT</proposalProjectTitle>
+    <active>true</active>
+    <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+    <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7FBEAF467EE04054802FC20000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </proposal>
+  <agency>
+    <agencyNumber>456</agencyNumber>
+    <reportingName>US DEPT OF TEST</reportingName>
+    <fullName>DEPT OF TESTING US</fullName>
+    <agencyTypeCode>F</agencyTypeCode>
+    <inStateIndicator>false</inStateIndicator>
+    <active>true</active>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7F9823467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </agency>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7FE9CC467EE04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute">
+    <costShareRequired>false</costShareRequired>
+    <finalFinancialReportRequired>false</finalFinancialReportRequired>
+    <proposalNumber>56789</proposalNumber>
+    <versionNumber>1</versionNumber>
+    <objectId>A4A9E2DA1AB9B26CE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </extension>
+  
+</org.kuali.kfs.module.cg.businessobject.Award><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.cg.businessobject.Award>
+  <proposalNumber>56789</proposalNumber>
+  <awardBeginningDate>2009-07-01</awardBeginningDate>
+  <awardEndingDate>2011-12-24</awardEndingDate>
+  <awardTotalAmount>
+    <value>27777.77</value>
+  </awardTotalAmount>
+  <awardAllocatedUniversityComputingServicesAmount>
+    <value>0.00</value>
+  </awardAllocatedUniversityComputingServicesAmount>
+  <awardEntryDate>2011-06-01</awardEntryDate>
+  <federalPassThroughIndicator>false</federalPassThroughIndicator>
+  <awardDirectCostAmount>
+    <value>27777.77</value>
+  </awardDirectCostAmount>
+  <awardIndirectCostAmount>
+    <value>0.00</value>
+  </awardIndirectCostAmount>
+  <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+  <awardStatusCode>WC</awardStatusCode>
+  <letterOfCreditFundGroupCode>EDUC</letterOfCreditFundGroupCode>
+  <grantDescriptionCode>GRT</grantDescriptionCode>
+  <agencyNumber>456</agencyNumber>
+  <awardProjectTitle>LEGACY TEST PROJECT</awardProjectTitle>
+  <awardPurposeCode>S</awardPurposeCode>
+  <active>false</active>
+  <awardProjectDirectors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+      <principalId>1009008</principalId>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryProjectDirectorIndicator>true</awardPrimaryProjectDirectorIndicator>
+      <awardProjectDirectorProjectTitle>Principal Investigator</awardProjectDirectorProjectTitle>
+      <active>true</active>
+      
+      <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+      <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CE467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.module.cg.businessobject.AwardProjectDirector>
+  </awardProjectDirectors>
+  <awardAccounts class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardAccount>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>A999444</accountNumber>
+      <principalId>234234</principalId>
+      <active>true</active>
+      <account>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <accountNumber>A999444</accountNumber>
+        <accountName>LEGACY TEST PROJECT ACCT</accountName>
+        <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+        <accountCityName>ITHACA</accountCityName>
+        <accountStateCode>NY</accountStateCode>
+        <accountStreetAddress>TEST HALL</accountStreetAddress>
+        <accountZipCode>14850</accountZipCode>
+        <accountCreateDate>2009-11-11</accountCreateDate>
+        <accountEffectiveDate>2009-12-01</accountEffectiveDate>
+        <accountExpirationDate>2011-12-31</accountExpirationDate>
+        <acctIndirectCostRcvyTypeCd>01</acctIndirectCostRcvyTypeCd>
+        <financialIcrSeriesIdentifier>000</financialIcrSeriesIdentifier>
+        <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+        <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+        <accountSufficientFundsCode>N</accountSufficientFundsCode>
+        <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+        <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+        <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+        <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+        <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+        <accountCfdaNumber>88.333</accountCfdaNumber>
+        <accountOffCampusIndicator>false</accountOffCampusIndicator>
+        <active>true</active>
+        <accountFiscalOfficerSystemIdentifier>234234</accountFiscalOfficerSystemIdentifier>
+        <accountsSupervisorySystemsIdentifier>1098765</accountsSupervisorySystemsIdentifier>
+        <accountManagerSystemIdentifier>234234</accountManagerSystemIdentifier>
+        <organizationCode>6666</organizationCode>
+        <accountTypeCode>EN</accountTypeCode>
+        <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+        <subFundGroupCode>CGTEST</subFundGroupCode>
+        <financialHigherEdFunctionCd>2468</financialHigherEdFunctionCd>
+        <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+        <continuationFinChrtOfAcctCd>IT</continuationFinChrtOfAcctCd>
+        <continuationAccountNumber>G272727</continuationAccountNumber>
+        <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+        <contractControlAccountNumber>A999333</contractControlAccountNumber>
+        
+        
+        <contractsAndGrantsAccountResponsibilityId>5</contractsAndGrantsAccountResponsibilityId>
+        <versionNumber>2</versionNumber>
+        <objectId>A53DCA7D596C467EE04054802FC00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </account>
+      
+      <newCollectionRecord>true</newCollectionRecord>
+      
+    </org.kuali.kfs.module.cg.businessobject.AwardAccount>
+  </awardAccounts>
+  <awardSubcontractors class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+  <awardOrganizations class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <organizationCode>7878</organizationCode>
+      <proposalNumber>56789</proposalNumber>
+      <awardPrimaryOrganizationIndicator>true</awardPrimaryOrganizationIndicator>
+      <active>true</active>
+      <organization>
+        <organizationCode>7878</organizationCode>
+        <organizationName>Anonymous Center for Test Studies</organizationName>
+        <organizationCityName>Ithaca</organizationCityName>
+        <organizationStateCode>NY</organizationStateCode>
+        <organizationZipCode>14850</organizationZipCode>
+        <organizationBeginDate>2010-05-05</organizationBeginDate>
+        <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+        <organizationManagerUniversalId>1231231</organizationManagerUniversalId>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+        <organizationTypeCode>D</organizationTypeCode>
+        <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+        <reportsToOrganizationCode>7654</reportsToOrganizationCode>
+        <organizationPlantAccountNumber>H00IJKL</organizationPlantAccountNumber>
+        <campusPlantAccountNumber>J012100</campusPlantAccountNumber>
+        <organizationPlantChartCode>IT</organizationPlantChartCode>
+        <campusPlantChartCode>IT</campusPlantChartCode>
+        <organizationCountryCode>US</organizationCountryCode>
+        <organizationLine1Address>222 Test Hall</organizationLine1Address>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>A53DCA7C3878467EE04054802FC00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </organization>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7FE9CD467EE04054802FC00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.module.cg.businessobject.AwardOrganization>
+  </awardOrganizations>
+  <proposal>
+    <proposalNumber>56789</proposalNumber>
+    <proposalBeginningDate>2009-07-01</proposalBeginningDate>
+    <proposalEndingDate>2011-12-24</proposalEndingDate>
+    <proposalTotalAmount>
+      <value>27777.77</value>
+    </proposalTotalAmount>
+    <proposalDirectCostAmount>
+      <value>0.00</value>
+    </proposalDirectCostAmount>
+    <proposalIndirectCostAmount>
+      <value>0.00</value>
+    </proposalIndirectCostAmount>
+    <proposalSubmissionDate>2009-07-01</proposalSubmissionDate>
+    <proposalFederalPassThroughIndicator>false</proposalFederalPassThroughIndicator>
+    <grantNumber>P1112223334</grantNumber>
+    <proposalAwardTypeCode>Z</proposalAwardTypeCode>
+    <agencyNumber>456</agencyNumber>
+    <proposalStatusCode>WC</proposalStatusCode>
+    <cfdaNumber>88.333</cfdaNumber>
+    <proposalPurposeCode>S</proposalPurposeCode>
+    <proposalProjectTitle>LEGACY TEST PROJECT</proposalProjectTitle>
+    <active>true</active>
+    <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+    <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7FBEAF467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </proposal>
+  <agency>
+    <agencyNumber>446</agencyNumber>
+    <reportingName>US DEPT OF TEST</reportingName>
+    <fullName>DEPT OF TESTING US</fullName>
+    <agencyTypeCode>F</agencyTypeCode>
+    <inStateIndicator>false</inStateIndicator>
+    <active>true</active>
+    <versionNumber>1</versionNumber>
+    <objectId>A53DCA7F9823467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </agency>
+  <routingOrg>7777</routingOrg>
+  <routingChart>IT</routingChart>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
+  <versionNumber>1</versionNumber>
+  <objectId>A53DCA7FE9CC467EE04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute">
+    <costShareRequired>false</costShareRequired>
+    <finalFinancialReportRequired>false</finalFinancialReportRequired>
+    <proposalNumber>56789</proposalNumber>
+    <versionNumber>1</versionNumber>
+    <objectId>A4A9E2DA1AB9B26CE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </extension>
+  
+</org.kuali.kfs.module.cg.businessobject.Award><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
