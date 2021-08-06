@@ -1,0 +1,101 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.module.ld.businessobject.BenefitsCalculation>
+  <universityFiscalYear>2013</universityFiscalYear>
+  <chartOfAccountsCode>IT</chartOfAccountsCode>
+  <positionBenefitTypeCode>X</positionBenefitTypeCode>
+  <positionFringeBenefitPercent>
+    <value>0.00</value>
+  </positionFringeBenefitPercent>
+  <positionFringeBenefitObjectCode>5678</positionFringeBenefitObjectCode>
+  <active>true</active>
+  <laborBenefitRateCategoryCode>QQ</laborBenefitRateCategoryCode>
+  <versionNumber>3</versionNumber>
+  <objectId>BDE5F53D-2DCF-CBFF-30A3-FF4BA7200000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension">
+    <accountCodeOffset>G234567</accountCodeOffset>
+    <objectCodeOffset>5678</objectCodeOffset>
+    <universityFiscalYear>2013</universityFiscalYear>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <positionBenefitTypeCode>X</positionBenefitTypeCode>
+    <laborBenefitRateCategoryCode>QQ</laborBenefitRateCategoryCode>
+    <versionNumber>1</versionNumber>
+    <objectId>1C56BCA2-12EE-C11C-57A4-6D592E800000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </extension>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.ld.businessobject.BenefitsCalculation><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.ld.businessobject.BenefitsCalculation>
+  <universityFiscalYear>2013</universityFiscalYear>
+  <chartOfAccountsCode>IT</chartOfAccountsCode>
+  <positionBenefitTypeCode>X</positionBenefitTypeCode>
+  <positionFringeBenefitPercent>
+    <value>0.00</value>
+  </positionFringeBenefitPercent>
+  <positionFringeBenefitObjectCode>5678</positionFringeBenefitObjectCode>
+  <active>true</active>
+  <laborBenefitRateCategoryCode>QQ</laborBenefitRateCategoryCode>
+  <versionNumber>3</versionNumber>
+  <objectId>BDE5F53D-2DCF-CBFF-30A3-FF4BA7200000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <extension class="com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension">
+    <accountCodeOffset>G345678</accountCodeOffset>
+    <objectCodeOffset>6789</objectCodeOffset>
+    <universityFiscalYear>2013</universityFiscalYear>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <positionBenefitTypeCode>X</positionBenefitTypeCode>
+    <laborBenefitRateCategoryCode>QQ</laborBenefitRateCategoryCode>
+    <versionNumber>1</versionNumber>
+    <objectId>1C56BCA2-12EE-C11C-57A4-6D592E800000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </extension>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.ld.businessobject.BenefitsCalculation><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"><oldMaintainableObject><org.kuali.kfs.module.ld.businessobject.BenefitsCalculation>
+  <universityFiscalYear>2013</universityFiscalYear>
+  <chartOfAccountsCode>IT</chartOfAccountsCode>
+  <positionBenefitTypeCode>X</positionBenefitTypeCode>
+  <positionFringeBenefitPercent>
+    <value>0.00</value>
+  </positionFringeBenefitPercent>
+  <positionFringeBenefitObjectCode>5678</positionFringeBenefitObjectCode>
+  <active>true</active>
+  <laborBenefitRateCategoryCode>QQ</laborBenefitRateCategoryCode>
+  <versionNumber>3</versionNumber>
+  <objectId>BDE5F53D-2DCF-CBFF-30A3-FF4BA7200000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+    <accountCodeOffset>G234567</accountCodeOffset>
+    <objectCodeOffset>5678</objectCodeOffset>
+  
+</org.kuali.kfs.module.ld.businessobject.BenefitsCalculation><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.ld.businessobject.BenefitsCalculation>
+  <universityFiscalYear>2013</universityFiscalYear>
+  <chartOfAccountsCode>IT</chartOfAccountsCode>
+  <positionBenefitTypeCode>X</positionBenefitTypeCode>
+  <positionFringeBenefitPercent>
+    <value>0.00</value>
+  </positionFringeBenefitPercent>
+  <positionFringeBenefitObjectCode>5678</positionFringeBenefitObjectCode>
+  <active>true</active>
+  <laborBenefitRateCategoryCode>QQ</laborBenefitRateCategoryCode>
+  <versionNumber>3</versionNumber>
+  <objectId>BDE5F53D-2DCF-CBFF-30A3-FF4BA7200000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+    <accountCodeOffset>G345678</accountCodeOffset>
+    <objectCodeOffset>6789</objectCodeOffset>
+  
+</org.kuali.kfs.module.ld.businessobject.BenefitsCalculation><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
