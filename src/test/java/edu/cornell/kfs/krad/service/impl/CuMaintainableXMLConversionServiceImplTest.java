@@ -235,9 +235,13 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected(cgTestFile);
     }
 
-    @Test
-    void testConversionOfLaborBenefitRateCategory() throws Exception {
-        assertXMLFromTestFileConvertsAsExpected("LegacyLaborBenefitRateCategoryTest.xml");
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "LegacyBenefitsCalculationTest.xml",
+        "LegacyLaborBenefitRateCategoryTest.xml"
+    })
+    void testConversionOfVariousLDDocuments(String ldTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(ldTestFile);
     }
 
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {

@@ -549,6 +549,53 @@
                 <replacement>incomeTaxPercent</replacement>
             </pattern>
         </pattern>
+        <!--
+            We used to have an extended attribute for the LD BenefitsCalculation business object.
+            The next two entries will remove that extension, move its relevant sub-elements to the parent,
+            and remove its unneeded sub-elements.
+         -->
+        <pattern>
+            <class>org.kuali.kfs.module.ld.businessobject.BenefitsCalculation</class>
+            <pattern>
+                <match>extension</match>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>com.rsmart.kuali.kfs.module.ld.businessobject.BenefitsCalculationExtension</class>
+            <pattern>
+                <match>universityFiscalYear</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>chartOfAccountsCode</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>positionBenefitTypeCode</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>laborBenefitRateCategoryCode</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>versionNumber</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>objectId</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>newCollectionRecord</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>autoIncrementSet</match>
+                <replacement/>
+            </pattern>
+        </pattern>
         <!-- Special entries for converting archaic TypedArrayList elements. -->
         <pattern>
             <class>org.kuali.rice.kns.util.TypedArrayList</class>
