@@ -1,0 +1,47 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory>
+  <laborBenefitRateCategoryCode>XZ</laborBenefitRateCategoryCode>
+  <activeIndicator>true</activeIndicator>
+  <codeDesc>Test College Testing apply</codeDesc>
+  <versionNumber>2</versionNumber>
+  <objectId>9F4DD00641F10F25E04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory>
+  <laborBenefitRateCategoryCode>XZ</laborBenefitRateCategoryCode>
+  <activeIndicator>true</activeIndicator>
+  <codeDesc>Test College Testing: 0% Test</codeDesc>
+  <versionNumber>2</versionNumber>
+  <objectId>9F4DD00641F10F25E04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.maintenance.KualiMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory>
+  <laborBenefitRateCategoryCode>XZ</laborBenefitRateCategoryCode>
+  <active>true</active>
+  <codeDesc>Test College Testing apply</codeDesc>
+  <versionNumber>2</versionNumber>
+  <objectId>9F4DD00641F10F25E04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory>
+  <laborBenefitRateCategoryCode>XZ</laborBenefitRateCategoryCode>
+  <active>true</active>
+  <codeDesc>Test College Testing: 0% Test</codeDesc>
+  <versionNumber>2</versionNumber>
+  <objectId>9F4DD00641F10F25E04054802FC00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
