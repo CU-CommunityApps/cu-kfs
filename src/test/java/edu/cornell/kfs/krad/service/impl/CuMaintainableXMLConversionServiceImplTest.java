@@ -235,6 +235,15 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected(cgTestFile);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "LegacyBenefitsCalculationTest.xml",
+        "LegacyLaborBenefitRateCategoryTest.xml"
+    })
+    void testConversionOfVariousLDDocuments(String ldTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(ldTestFile);
+    }
+
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
         readTestFile(fileLocalName);
         String actualResult = conversionService.transformMaintainableXML(oldData);
