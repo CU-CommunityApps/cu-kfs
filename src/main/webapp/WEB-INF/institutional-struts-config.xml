@@ -24,7 +24,9 @@
     <form-beans>
         <form-bean name="KualiForm"
                    type="org.kuali.kfs.kns.web.struts.form.KualiForm"/>
-
+                    <!-- Security Request Wizard Form -->
+        <form-bean name="SecurityRequestWizardForm"
+			type="edu.cornell.kfs.ksr.web.struts.SecurityRequestWizardForm" />
                             <!-- Check Recon Form -->
         <form-bean name="CheckReconciliationReportForm"
             type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
@@ -121,11 +123,11 @@
 		</action>
 
 		<action path="/financialDistributionOfIncomeAndExpense" name="CuDistributionOfIncomeAndExpenseForm" input="/jsp/fp/DistributionOfIncomeAndExpense.jsp"
-      type="edu.cornell.kfs.fp.document.web.struts.CuDistributionOfIncomeAndExpenseAction" scope="request"
-      parameter="methodToCall" validate="true" attribute="KualiForm">
-      <set-property property="cancellable" value="true" />
-      <forward name="basic" path="/jsp/fp/DistributionOfIncomeAndExpense.jsp" />
-    </action> 
+      		type="edu.cornell.kfs.fp.document.web.struts.CuDistributionOfIncomeAndExpenseAction" scope="request"
+      		parameter="methodToCall" validate="true" attribute="KualiForm">
+      		<set-property property="cancellable" value="true" />
+     		<forward name="basic" path="/jsp/fp/DistributionOfIncomeAndExpense.jsp" />
+    	</action> 
 		
 		<!-- KFSUPGRADE-75 -->
 	   <action path="/purapRequisition" name="RequisitionForm"
@@ -231,6 +233,11 @@
             <forward name="basic" path="/jsp/module/ar/ContractsGrantsInvoiceDocument.jsp"/>
         </action>
         
+        <action path="/securityRequestWizard" name="SecurityRequestWizardForm" attribute="KualiForm" 
+                type="edu.cornell.kfs.ksr.web.struts.SecurityRequestWizardAction" scope="request"  parameter="methodToCall">
+			<forward name="wizard" path="/jsp/ksr/SecurityRequestWizard.jsp" />
+		</action>
+		
         <!-- Override of maintenance document mapping to use a CU-specific action class. -->
         <action path="/maintenance" name="KualiMaintenanceForm" attribute="KualiForm" scope="request"
                 parameter="methodToCall" validate="false" input="/WEB-INF/jsp/KualiMaintenanceDocument.jsp"

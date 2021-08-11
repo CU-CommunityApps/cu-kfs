@@ -18,6 +18,7 @@ public class KSRConstants {
     public static final String SECURITY_GROUP_TAB_SEQ_NAME = "KRSR_SEC_GRP_TB_ID_SEQ";
     public static final String SECURITY_PROVISIONING_GROUP_SEQ_NAME = "KRSR_SEC_PRV_ID_SEQ";
 
+    public static final String SECURITY_REQUEST_WIZARD = "wizard";
     public static final String SECURITY_PROVISIONING_URL_NAME = "Edit Provisioning";
 
     // Security Provisioning Group labels
@@ -26,4 +27,9 @@ public class KSRConstants {
     public static final String SECURITY_PROVISIONING_GROUP_DIST_AUTH_LBL = "Distributed Authorizer";
     public static final String SECURITY_PROVISIONING_GROUP_DEP_ROLE_LBL = "Dependent Role";
     public static final String SECURITY_PROVISIONING_GROUP_ROLE_LBL = "Role (to be granted)";
+    
+    //Security Request Document
+    public static final String SECURITY_REQUEST_DOC_TYPE_NAME = "SecurityRequestDocument";
+    public static final String SECURITY_REQUEST_DOC_URL = "securityRequestDocument.do";
+
 }
