@@ -1,0 +1,451 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.module.cam.document.AssetGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.cam.businessobject.AssetGlobal>
+  <capitalAssetBuilderOriginIndicator>false</capitalAssetBuilderOriginIndicator>
+  <assetSharedDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>1</size>
+      </default>
+      <int>10</int>
+      <org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+        <assetGlobalUniqueDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>0</size>
+            </default>
+            <int>10</int>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+          <org.kuali.rice.kns.util.TypedArrayList>
+            <default>
+              <listObjectType>org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail</listObjectType>
+            </default>
+          </org.kuali.rice.kns.util.TypedArrayList>
+        </assetGlobalUniqueDetails>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </assetSharedDetails>
+  <assetPaymentDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>1</size>
+      </default>
+      <int>10</int>
+      <org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+        <transferPaymentIndicator>false</transferPaymentIndicator>
+        <amount>
+          <value>0.00</value>
+        </amount>
+        <postingYear>2013</postingYear>
+        <overrideCode>NONE</overrideCode>
+        <accountExpiredOverride>false</accountExpiredOverride>
+        <accountExpiredOverrideNeeded>false</accountExpiredOverrideNeeded>
+        <nonFringeAccountOverride>false</nonFringeAccountOverride>
+        <nonFringeAccountOverrideNeeded>false</nonFringeAccountOverrideNeeded>
+        <objectBudgetOverride>false</objectBudgetOverride>
+        <objectBudgetOverrideNeeded>false</objectBudgetOverrideNeeded>
+        <financialDocumentLineTypeCode>F</financialDocumentLineTypeCode>
+        <salesTaxRequired>false</salesTaxRequired>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </assetPaymentDetails>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.cam.businessobject.AssetGlobal><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.cam.businessobject.AssetGlobal>
+  <documentNumber>1919191</documentNumber>
+  <acquisitionTypeCode>N</acquisitionTypeCode>
+  <capitalAssetDescription>Test asset</capitalAssetDescription>
+  <inventoryStatusCode>A</inventoryStatusCode>
+  <conditionCode>E</conditionCode>
+  <capitalAssetTypeCode>333</capitalAssetTypeCode>
+  <manufacturerName>Unknown</manufacturerName>
+  <manufacturerModelNumber>Unknown</manufacturerModelNumber>
+  <vendorName>Test Vendor</vendorName>
+  <organizationText>shipped to John Doe</organizationText>
+  <createDate>2011-08-31</createDate>
+  <capitalAssetInServiceDate reference="../createDate"/>
+  <capitalAssetDepreciationDate reference="../createDate"/>
+  <organizationOwnerChartOfAccountsCode>IT</organizationOwnerChartOfAccountsCode>
+  <organizationOwnerAccountNumber>3999999</organizationOwnerAccountNumber>
+  <capitalAssetBuilderOriginIndicator>true</capitalAssetBuilderOriginIndicator>
+  <lastInventoryDate>2012-08-08</lastInventoryDate>
+  <assetSharedDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>1</size>
+      </default>
+      <int>10</int>
+      <org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+        <campusCode>IT</campusCode>
+        <offCampusName>Test Institute Medical Testing</offCampusName>
+        <offCampusAddress>1 Test Research Center</offCampusAddress>
+        <offCampusCityName>Main Road, Someplace</offCampusCityName>
+        <offCampusCountryCode>AA</offCampusCountryCode>
+        <locationQuantity>1</locationQuantity>
+        <assetGlobalUniqueDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>1</size>
+            </default>
+            <int>10</int>
+            <org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+              <capitalAssetNumber>505050</capitalAssetNumber>
+              <campusCode>IT</campusCode>
+              <offCampusName>Test Institute Medical Testing</offCampusName>
+              <offCampusAddress>1 Test Research Center</offCampusAddress>
+              <offCampusCityName>Main Road, Someplace</offCampusCityName>
+              <offCampusCountryCode>AA</offCampusCountryCode>
+              <assetRepresentative class="org.kuali.rice.kim.bo.impl.PersonImpl">
+                <firstName></firstName>
+                <middleName></middleName>
+                <lastName></lastName>
+                <name></name>
+                <addressLine1></addressLine1>
+                <addressLine2></addressLine2>
+                <addressLine3></addressLine3>
+                <addressCityName></addressCityName>
+                <addressStateCode></addressStateCode>
+                <addressPostalCode></addressPostalCode>
+                <addressCountryCode></addressCountryCode>
+                <emailAddress></emailAddress>
+                <phoneNumber></phoneNumber>
+                <suppressName>false</suppressName>
+                <suppressAddress>false</suppressAddress>
+                <suppressPhone>false</suppressPhone>
+                <suppressPersonal>false</suppressPersonal>
+                <suppressEmail>false</suppressEmail>
+                <campusCode></campusCode>
+                <employeeStatusCode></employeeStatusCode>
+                <employeeTypeCode></employeeTypeCode>
+                <primaryDepartmentCode></primaryDepartmentCode>
+                <employeeId></employeeId>
+                <baseSalaryAmount>
+                  <value>0.00</value>
+                </baseSalaryAmount>
+                <active>true</active>
+              </assetRepresentative>
+              <newCollectionRecord>true</newCollectionRecord>
+              <autoIncrementSet>false</autoIncrementSet>
+            </org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+          <org.kuali.rice.kns.util.TypedArrayList>
+            <default>
+              <listObjectType>org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail</listObjectType>
+            </default>
+          </org.kuali.rice.kns.util.TypedArrayList>
+        </assetGlobalUniqueDetails>
+        <newCollectionRecord>true</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </assetSharedDetails>
+  <assetPaymentDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+      <expenditureFinancialSystemOriginationCode>99</expenditureFinancialSystemOriginationCode>
+      <expenditureFinancialDocumentPostedDate>2011-07-07</expenditureFinancialDocumentPostedDate>
+      <transferPaymentIndicator>false</transferPaymentIndicator>
+      <expenditureFinancialDocumentNumber>151515</expenditureFinancialDocumentNumber>
+      <expenditureFinancialDocumentTypeCode>DVZZ</expenditureFinancialDocumentTypeCode>
+      <postingPeriodCode>01</postingPeriodCode>
+      <amount>
+        <value>15000.00</value>
+      </amount>
+      <documentNumber>1919191</documentNumber>
+      <sequenceNumber>1</sequenceNumber>
+      <postingYear>2012</postingYear>
+      <overrideCode>NONE</overrideCode>
+      <accountExpiredOverride>false</accountExpiredOverride>
+      <accountExpiredOverrideNeeded>false</accountExpiredOverrideNeeded>
+      <nonFringeAccountOverride>false</nonFringeAccountOverride>
+      <nonFringeAccountOverrideNeeded>false</nonFringeAccountOverrideNeeded>
+      <objectBudgetOverride>false</objectBudgetOverride>
+      <objectBudgetOverrideNeeded>false</objectBudgetOverrideNeeded>
+      <financialDocumentLineTypeCode>F</financialDocumentLineTypeCode>
+      <salesTaxRequired>false</salesTaxRequired>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>3999999</accountNumber>
+      <financialObjectCode>3456</financialObjectCode>
+      <versionNumber>1</versionNumber>
+      <objectId>29CFA968-814B-A8F1-3142-255225600000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+  </assetPaymentDetails>
+  <organizationOwnerAccount>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>3999999</accountNumber>
+    <accountName>TEST START-UP</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>111 MAIN</accountStreetAddress>
+    <accountZipCode>14850</accountZipCode>
+    <accountCreateDate>2010-05-05</accountCreateDate>
+    <accountEffectiveDate>2010-05-05</accountEffectiveDate>
+    <acctIndirectCostRcvyTypeCd>55</acctIndirectCostRcvyTypeCd>
+    <financialIcrSeriesIdentifier>000</financialIcrSeriesIdentifier>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>1010101</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>404040</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>1002003</accountManagerSystemIdentifier>
+    <organizationCode>0246</organizationCode>
+    <accountTypeCode>CC</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>TESTZZ</subFundGroupCode>
+    <financialHigherEdFunctionCd>4321</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>T</accountRestrictedStatusCode>
+    <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+    <contractControlAccountNumber>3344556</contractControlAccountNumber>
+    <indirectCostRcvyFinCoaCode>IT</indirectCostRcvyFinCoaCode>
+    <indirectCostRecoveryAcctNbr>3456789</indirectCostRecoveryAcctNbr>
+    <versionNumber>3</versionNumber>
+    <objectId>A53DCA7CEECA467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </organizationOwnerAccount>
+  <separateSourceTotalAmount reference="../assetSharedDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetGlobalUniqueDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetRepresentative/baseSalaryAmount"/>
+  <minAssetTotalAmount reference="../assetSharedDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetGlobalUniqueDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetRepresentative/baseSalaryAmount"/>
+  <maxAssetTotalAmount reference="../assetSharedDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetGlobalUniqueDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetRepresentative/baseSalaryAmount"/>
+  <versionNumber>1</versionNumber>
+  <objectId>08D7F331-4AB5-60FD-2A74-5CCF38300000</objectId>
+  <newCollectionRecord>true</newCollectionRecord>
+  <boNotes/>
+  <autoIncrementSet>false</autoIncrementSet>
+</org.kuali.kfs.module.cam.businessobject.AssetGlobal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.module.cam.document.AssetGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.module.cam.businessobject.AssetGlobal>
+  <capitalAssetBuilderOriginIndicator>false</capitalAssetBuilderOriginIndicator>
+  <assetSharedDetails>
+    
+    
+      
+      
+      <org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+        <assetGlobalUniqueDetails>
+          
+          
+            
+            
+          
+          
+        </assetGlobalUniqueDetails>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+    
+    
+  </assetSharedDetails>
+  <assetPaymentDetails>
+    
+    
+      
+      
+      <org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+        <transferPaymentIndicator>false</transferPaymentIndicator>
+        <amount>
+          <value>0.00</value>
+        </amount>
+        <postingYear>2013</postingYear>
+        <overrideCode>NONE</overrideCode>
+        <accountExpiredOverride>false</accountExpiredOverride>
+        <accountExpiredOverrideNeeded>false</accountExpiredOverrideNeeded>
+        <nonFringeAccountOverride>false</nonFringeAccountOverride>
+        <nonFringeAccountOverrideNeeded>false</nonFringeAccountOverrideNeeded>
+        <objectBudgetOverride>false</objectBudgetOverride>
+        <objectBudgetOverrideNeeded>false</objectBudgetOverrideNeeded>
+        <financialDocumentLineTypeCode>F</financialDocumentLineTypeCode>
+        <salesTaxRequired>false</salesTaxRequired>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+    
+    
+  </assetPaymentDetails>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.module.cam.businessobject.AssetGlobal><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.cam.businessobject.AssetGlobal>
+  <documentNumber>1919191</documentNumber>
+  <acquisitionTypeCode>N</acquisitionTypeCode>
+  <capitalAssetDescription>Test asset</capitalAssetDescription>
+  <inventoryStatusCode>A</inventoryStatusCode>
+  <conditionCode>E</conditionCode>
+  <capitalAssetTypeCode>333</capitalAssetTypeCode>
+  <manufacturerName>Unknown</manufacturerName>
+  <manufacturerModelNumber>Unknown</manufacturerModelNumber>
+  <vendorName>Test Vendor</vendorName>
+  <organizationText>shipped to John Doe</organizationText>
+  <createDate>2011-08-31</createDate>
+  <capitalAssetInServiceDate reference="../createDate"/>
+  <capitalAssetDepreciationDate reference="../createDate"/>
+  <organizationOwnerChartOfAccountsCode>IT</organizationOwnerChartOfAccountsCode>
+  <organizationOwnerAccountNumber>3999999</organizationOwnerAccountNumber>
+  <capitalAssetBuilderOriginIndicator>true</capitalAssetBuilderOriginIndicator>
+  <lastInventoryDate>2012-08-08</lastInventoryDate>
+  <assetSharedDetails>
+    
+    
+      
+      
+      <org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+        <campusCode>IT</campusCode>
+        <offCampusName>Test Institute Medical Testing</offCampusName>
+        <offCampusAddress>1 Test Research Center</offCampusAddress>
+        <offCampusCityName>Main Road, Someplace</offCampusCityName>
+        <offCampusCountryCode>AA</offCampusCountryCode>
+        <locationQuantity>1</locationQuantity>
+        <assetGlobalUniqueDetails>
+          
+          
+            
+            
+            <org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+              <capitalAssetNumber>505050</capitalAssetNumber>
+              <campusCode>IT</campusCode>
+              <offCampusName>Test Institute Medical Testing</offCampusName>
+              <offCampusAddress>1 Test Research Center</offCampusAddress>
+              <offCampusCityName>Main Road, Someplace</offCampusCityName>
+              <offCampusCountryCode>AA</offCampusCountryCode>
+              <assetRepresentative class="org.kuali.kfs.kim.impl.identity.PersonImpl">
+              
+                <baseSalaryAmount>
+                  <value>0.00</value>
+                </baseSalaryAmount>
+              
+              </assetRepresentative>
+              <newCollectionRecord>true</newCollectionRecord>
+              
+            </org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+          
+          
+        </assetGlobalUniqueDetails>
+        <newCollectionRecord>true</newCollectionRecord>
+        
+      </org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail>
+    
+    
+  </assetSharedDetails>
+  <assetPaymentDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+      <expenditureFinancialSystemOriginationCode>99</expenditureFinancialSystemOriginationCode>
+      <expenditureFinancialDocumentPostedDate>2011-07-07</expenditureFinancialDocumentPostedDate>
+      <transferPaymentIndicator>false</transferPaymentIndicator>
+      <expenditureFinancialDocumentNumber>151515</expenditureFinancialDocumentNumber>
+      <expenditureFinancialDocumentTypeCode>DVZZ</expenditureFinancialDocumentTypeCode>
+      <postingPeriodCode>01</postingPeriodCode>
+      <amount>
+        <value>15000.00</value>
+      </amount>
+      <documentNumber>1919191</documentNumber>
+      <sequenceNumber>1</sequenceNumber>
+      <postingYear>2012</postingYear>
+      <overrideCode>NONE</overrideCode>
+      <accountExpiredOverride>false</accountExpiredOverride>
+      <accountExpiredOverrideNeeded>false</accountExpiredOverrideNeeded>
+      <nonFringeAccountOverride>false</nonFringeAccountOverride>
+      <nonFringeAccountOverrideNeeded>false</nonFringeAccountOverrideNeeded>
+      <objectBudgetOverride>false</objectBudgetOverride>
+      <objectBudgetOverrideNeeded>false</objectBudgetOverrideNeeded>
+      <financialDocumentLineTypeCode>F</financialDocumentLineTypeCode>
+      <salesTaxRequired>false</salesTaxRequired>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>3999999</accountNumber>
+      <financialObjectCode>3456</financialObjectCode>
+      <versionNumber>1</versionNumber>
+      <objectId>29CFA968-814B-A8F1-3142-255225600000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+    </org.kuali.kfs.module.cam.businessobject.AssetPaymentDetail>
+  </assetPaymentDetails>
+  <organizationOwnerAccount>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>3999999</accountNumber>
+    <accountName>TEST START-UP</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>111 MAIN</accountStreetAddress>
+    <accountZipCode>14850</accountZipCode>
+    <accountCreateDate>2010-05-05</accountCreateDate>
+    <accountEffectiveDate>2010-05-05</accountEffectiveDate>
+    <acctIndirectCostRcvyTypeCd>55</acctIndirectCostRcvyTypeCd>
+    <financialIcrSeriesIdentifier>000</financialIcrSeriesIdentifier>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>1010101</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>404040</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>1002003</accountManagerSystemIdentifier>
+    <organizationCode>0246</organizationCode>
+    <accountTypeCode>CC</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>TESTZZ</subFundGroupCode>
+    <financialHigherEdFunctionCd>4321</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>T</accountRestrictedStatusCode>
+    <contractControlFinCoaCode>IT</contractControlFinCoaCode>
+    <contractControlAccountNumber>3344556</contractControlAccountNumber>
+    
+    
+    <versionNumber>3</versionNumber>
+    <objectId>A53DCA7CEECA467EE04054802FC00000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+  </organizationOwnerAccount>
+  <separateSourceTotalAmount reference="../assetSharedDetails/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetGlobalUniqueDetails/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetRepresentative/baseSalaryAmount"/>
+  <minAssetTotalAmount reference="../assetSharedDetails/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetGlobalUniqueDetails/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetRepresentative/baseSalaryAmount"/>
+  <maxAssetTotalAmount reference="../assetSharedDetails/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetGlobalUniqueDetails/org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail/assetRepresentative/baseSalaryAmount"/>
+  <versionNumber>1</versionNumber>
+  <objectId>08D7F331-4AB5-60FD-2A74-5CCF38300000</objectId>
+  <newCollectionRecord>true</newCollectionRecord>
+  
+  
+</org.kuali.kfs.module.cam.businessobject.AssetGlobal><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/></notes></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
