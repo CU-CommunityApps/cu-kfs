@@ -42,14 +42,6 @@
 						<html:submit property="methodToCall.processWizard" styleClass="btn btn-default" value="Submit" />
 					</div>
 				</div>
-				<!-- 
-				
-				<div id="globalbuttons" class="globalbuttons">
-                 
-                  <html:image src="${ConfigProperties.kr.url}/static/images/buttonsmall_submit.gif" property="methodToCall.processWizard" alt="Submit" styleClass="globalbuttons" />
-               	
-               </div>
-                -->
                </td>
 			</tr>
 		</tfoot>

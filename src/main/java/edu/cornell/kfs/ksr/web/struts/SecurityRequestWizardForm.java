@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
@@ -38,31 +38,18 @@ public class SecurityRequestWizardForm extends FinancialSystemTransactionalDocum
         return super.shouldMethodToCallParameterBeUsed(methodToCallParameterName, methodToCallParameterValue, request);
     }
 
-    /**
-     * @return the securityGroup
-     */
     public SecurityGroup getSecurityGroup() {
         return securityGroup;
     }
 
-    /**
-     * @param securityGroup
-     *            the securityGroup to set
-     */
     public void setSecurityGroup(SecurityGroup securityGroup) {
         this.securityGroup = securityGroup;
     }
 
-	/**
-	 * @param securityGroups the securityGroups to set
-	 */
 	public void setSecurityGroups(List<SecurityGroup> securityGroups) {
 		this.securityGroups = securityGroups;
 	}
 
-	/**
-	 * @return the securityGroups
-	 */
 	public List<SecurityGroup> getSecurityGroups() {
 		return securityGroups;
 	}
