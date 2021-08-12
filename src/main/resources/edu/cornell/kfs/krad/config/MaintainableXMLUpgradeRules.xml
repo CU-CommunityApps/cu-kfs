@@ -91,6 +91,17 @@
          can be replaced accordingly, based on the appropriate "*"-map
          or non-"*"-map rules for the current element.
 
+         The element paths in "reference" attributes can be converted as well. The process
+         will examine the sections of the attribute's element path, identify the appropriate
+         conversion rules for each section, and perform the conversion appropriately.
+         Since the "reference" attributes do not contain the "class" attribute information
+         that may be present on the referenced elements, this process supports the ability
+         to forcibly associate a class with a particular path segment; this can be specified
+         via an entry whose mapping key has the segment/element name plus the "(REFERENCE)" suffix.
+         (Note that not all of the advanced conversion rules are supported by the "reference"
+         attribute handling, and that conversion may fail if the process determines that
+         the referenced XML section has been removed.)
+
          [2] Adding "(ATTR)" to the end of a key will indicate that it
          should match on an attribute name instead of a sub-element name
          or "class" attribute value. (Note, however, that such keys will
@@ -133,6 +144,15 @@
          "(ADD_WRAPPER_ELEMENT)" indicator, and suffix the names with "(WRAPPER_NAME)"
          or "(WRAPPER_CLASS)", respectively. The replacement values on those rules
          will form the name and "class" attribute of the wrapper element.
+         
+         [7] For element name or "class" attribute value matching,
+         setting the replacement value to "(SKIP_UNMATCHED_CHILD_ELEMENTS)"
+         will keep the element in place, but none of its child elements
+         will be written unless an explicit mapping exists for them, either in
+         the global rules or the element/classname-specific rules. Note that
+         the sub-elements of a preserved child element will not be skipped, unless
+         other conversion rules are specified to exclude them. (Sub-elements of
+         skipped child elements will also be skipped.)
          ====
     -->
     <rule name="maint_doc_changed_class_properties">
@@ -596,6 +616,61 @@
                 <replacement/>
             </pattern>
         </pattern>
+        <!--
+            The following rules are needed to properly convert Asset Global documents. Some of them
+            have "reference" attributes whose paths are impacted by the move-child-nodes-to-parent rule,
+            and which also reference a Kuali numeric value within a Person object (which the conversion
+            process would normally remove). To fix the first issue, some entries have been added that allow
+            the path conversion to properly use the move-child-nodes-to-parent rules from the TypedArrayList
+            entry. To fix the second issue, some entries were added to explicitly preserve a specific Person
+            reference on the document, and to also remove nearly all of the Person element's sub-elements
+            except the ones absolutely needed. (The runtime code should automatically recreate or update
+            the Person instance automatically in this particular case.)
+            
+            Note that a "reference" override rule is needed on AssetGlobalDetail as well, because KualiCo's
+            AssetGlobalDetail objects can have their own nested list of AssetGlobalDetail objects.
+         -->
+        <pattern>
+            <class>org.kuali.kfs.module.cam.businessobject.AssetGlobal</class>
+            <pattern>
+                <match>assetSharedDetails(REFERENCE)</match>
+                <replacement>org.kuali.rice.kns.util.TypedArrayList</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail</class>
+            <pattern>
+                <match>assetGlobalUniqueDetails(REFERENCE)</match>
+                <replacement>org.kuali.rice.kns.util.TypedArrayList</replacement>
+            </pattern>
+            <pattern>
+                <match>assetRepresentative</match>
+                <replacement>(SKIP_UNMATCHED_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>assetRepresentative(REFERENCE)</match>
+                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
+                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.impl.identity.PersonImpl</match>
+                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.identity.PersonImpl</match>
+                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.kim.impl.identity.PersonImpl</class>
+            <pattern>
+                <match>baseSalaryAmount</match>
+                <replacement>baseSalaryAmount</replacement>
+            </pattern>
+        </pattern>
         <!-- Special entries for converting archaic TypedArrayList elements. -->
         <pattern>
             <class>org.kuali.rice.kns.util.TypedArrayList</class>
@@ -643,12 +718,16 @@
                 <replacement>(CONVERT_TO_MAP_ENTRIES)</replacement>
             </pattern>
         </pattern>
-        <!-- Added match for performing the same ManageableArrayList handling as in UCD's version of the code. -->
+        <!-- Added match for performing ManageableArrayList handling similar to UCD's version of the code. -->
         <pattern>
             <class>org.apache.ojb.broker.util.collections.ManageableArrayList</class>
             <pattern>
                 <match>class(ATTR)</match>
                 <replacement/>
+            </pattern>
+            <pattern>
+                <match>org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl</match>
+                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
             </pattern>
         </pattern>
         <!-- Added global matches; behaves similarly to the omitted "maint_doc_classname_changes" rule. -->
@@ -889,6 +968,14 @@
             <pattern>
                 <match>com.rsmart.kuali.kfs.sec.businessobject.SecurityModel</match>
                 <replacement>org.kuali.kfs.sec.businessobject.SecurityModel</replacement>
+            </pattern>
+            <pattern>
+                <match>com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition</match>
+                <replacement>org.kuali.kfs.sec.businessobject.SecurityModelDefinition</replacement>
+            </pattern>
+            <pattern>
+                <match>com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember</match>
+                <replacement>org.kuali.kfs.sec.businessobject.SecurityModelMember</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.kfs.module.cab.businessobject.Pretag</match>
