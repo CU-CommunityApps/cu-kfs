@@ -1,0 +1,603 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="com.rsmart.kuali.kfs.sec.document.SecurityModelMaintainableImpl"><oldMaintainableObject><com.rsmart.kuali.kfs.sec.businessobject.SecurityModel>
+  <id>
+    <value>333</value>
+  </id>
+  <name>labor for test orgs</name>
+  <description>labor for orgs 1111,2222,3333</description>
+  <roleId>101010101</roleId>
+  <active>true</active>
+  <modelDefinitions class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>28</size>
+      </default>
+      <int>38</int>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>300</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>1111</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>false</active>
+        <securityDefinition>
+          <id>
+            <value>66</value>
+          </id>
+          <name>Labor test (descend hierarchy)</name>
+          <description>Labor test restriction (descending hierarchy)</description>
+          <roleId>101010101</roleId>
+          <attributeId>
+            <value>7</value>
+          </attributeId>
+          <restrictViewAccountingLine>false</restrictViewAccountingLine>
+          <restrictEditAccountingLine>false</restrictEditAccountingLine>
+          <restrictViewDocument>false</restrictViewDocument>
+          <restrictEditDocument>false</restrictEditDocument>
+          <restrictViewNotesAndAttachments>false</restrictViewNotesAndAttachments>
+          <restrictLookup>false</restrictLookup>
+          <restrictGLInquiry>false</restrictGLInquiry>
+          <restrictLaborInquiry>true</restrictLaborInquiry>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>90032452-934E-C42B-C71D-E85CCFA00000</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </securityDefinition>
+        <versionNumber>17</versionNumber>
+        <objectId>AA7382CC-18C7-FA26-2EDB-55AF89300000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>301</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>2222</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>A20F21BB-0636-BA04-6219-05578FF00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>302</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>3333</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>9ED80B02-66E2-1D55-696B-8BA90A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  </modelDefinitions>
+  <modelMembers class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>30</size>
+      </default>
+      <int>38</int>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>2020202</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>6</versionNumber>
+        <objectId>80264849-7CC6-E559-9A3F-8CD0C4900000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1515151</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>1</versionNumber>
+        <objectId>CBB42544-A590-5952-F6B4-B94199800000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1020304</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>15</versionNumber>
+        <objectId>BC43DE58-C608-8489-BC4A-9B724A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  </modelMembers>
+  <versionNumber>17</versionNumber>
+  <objectId>975EEE66-773D-D4AE-5A68-4F814BD5D90F</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</com.rsmart.kuali.kfs.sec.businessobject.SecurityModel><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><com.rsmart.kuali.kfs.sec.businessobject.SecurityModel>
+  <id>
+    <value>333</value>
+  </id>
+  <name>labor for test orgs</name>
+  <description>labor for orgs 1111,2222,3333</description>
+  <roleId>101010101</roleId>
+  <active>true</active>
+  <modelDefinitions class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>28</size>
+      </default>
+      <int>38</int>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>300</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>1111</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition>
+          <id>
+            <value>66</value>
+          </id>
+          <name>Labor test (descend hierarchy)</name>
+          <description>Labor test restriction (descending hierarchy)</description>
+          <roleId>101010101</roleId>
+          <attributeId>
+            <value>7</value>
+          </attributeId>
+          <restrictViewAccountingLine>false</restrictViewAccountingLine>
+          <restrictEditAccountingLine>false</restrictEditAccountingLine>
+          <restrictViewDocument>false</restrictViewDocument>
+          <restrictEditDocument>false</restrictEditDocument>
+          <restrictViewNotesAndAttachments>false</restrictViewNotesAndAttachments>
+          <restrictLookup>false</restrictLookup>
+          <restrictGLInquiry>false</restrictGLInquiry>
+          <restrictLaborInquiry>true</restrictLaborInquiry>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>90032452-934E-C42B-C71D-E85CCFA00000</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </securityDefinition>
+        <versionNumber>17</versionNumber>
+        <objectId>AA7382CC-18C7-FA26-2EDB-55AF89300000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>301</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>2222</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>A20F21BB-0636-BA04-6219-05578FF00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>302</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>3333</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>9ED80B02-66E2-1D55-696B-8BA90A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  </modelDefinitions>
+  <modelMembers class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>30</size>
+      </default>
+      <int>38</int>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>2020202</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>6</versionNumber>
+        <objectId>80264849-7CC6-E559-9A3F-8CD0C4900000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1515151</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>1</versionNumber>
+        <objectId>CBB42544-A590-5952-F6B4-B94199800000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1020304</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>15</versionNumber>
+        <objectId>BC43DE58-C608-8489-BC4A-9B724A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </com.rsmart.kuali.kfs.sec.businessobject.SecurityModelMember>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  </modelMembers>
+  <versionNumber>17</versionNumber>
+  <objectId>975EEE66-773D-D4AE-5A68-4F814BD00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+</com.rsmart.kuali.kfs.sec.businessobject.SecurityModel><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="com.rsmart.kuali.kfs.sec.document.SecurityModelMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.sec.businessobject.SecurityModel>
+  <id>
+    <value>333</value>
+  </id>
+  <name>labor for test orgs</name>
+  <description>labor for orgs 1111,2222,3333</description>
+  <roleId>101010101</roleId>
+  <active>true</active>
+  <modelDefinitions>
+    
+    
+      
+      
+      <org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>300</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>1111</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>false</active>
+        <securityDefinition>
+          <id>
+            <value>66</value>
+          </id>
+          <name>Labor test (descend hierarchy)</name>
+          <description>Labor test restriction (descending hierarchy)</description>
+          <roleId>101010101</roleId>
+          <attributeId>
+            <value>7</value>
+          </attributeId>
+          <restrictViewAccountingLine>false</restrictViewAccountingLine>
+          <restrictEditAccountingLine>false</restrictEditAccountingLine>
+          <restrictViewDocument>false</restrictViewDocument>
+          <restrictEditDocument>false</restrictEditDocument>
+          <restrictViewNotesAndAttachments>false</restrictViewNotesAndAttachments>
+          <restrictLookup>false</restrictLookup>
+          <restrictGLInquiry>false</restrictGLInquiry>
+          <restrictLaborInquiry>true</restrictLaborInquiry>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>90032452-934E-C42B-C71D-E85CCFA00000</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          
+        </securityDefinition>
+        <versionNumber>17</versionNumber>
+        <objectId>AA7382CC-18C7-FA26-2EDB-55AF89300000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>301</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>2222</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../org.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>A20F21BB-0636-BA04-6219-05578FF00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>302</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>3333</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../org.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>9ED80B02-66E2-1D55-696B-8BA90A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+    
+  </modelDefinitions>
+  <modelMembers>
+    
+    
+      
+      
+      <org.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>2020202</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>6</versionNumber>
+        <objectId>80264849-7CC6-E559-9A3F-8CD0C4900000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <org.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1515151</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>1</versionNumber>
+        <objectId>CBB42544-A590-5952-F6B4-B94199800000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <org.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1020304</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>15</versionNumber>
+        <objectId>BC43DE58-C608-8489-BC4A-9B724A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelMember>
+    
+  </modelMembers>
+  <versionNumber>17</versionNumber>
+  <objectId>975EEE66-773D-D4AE-5A68-4F814BD5D90F</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.sec.businessobject.SecurityModel><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.sec.businessobject.SecurityModel>
+  <id>
+    <value>333</value>
+  </id>
+  <name>labor for test orgs</name>
+  <description>labor for orgs 1111,2222,3333</description>
+  <roleId>101010101</roleId>
+  <active>true</active>
+  <modelDefinitions>
+    
+    
+      
+      
+      <org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>300</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>1111</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition>
+          <id>
+            <value>66</value>
+          </id>
+          <name>Labor test (descend hierarchy)</name>
+          <description>Labor test restriction (descending hierarchy)</description>
+          <roleId>101010101</roleId>
+          <attributeId>
+            <value>7</value>
+          </attributeId>
+          <restrictViewAccountingLine>false</restrictViewAccountingLine>
+          <restrictEditAccountingLine>false</restrictEditAccountingLine>
+          <restrictViewDocument>false</restrictViewDocument>
+          <restrictEditDocument>false</restrictEditDocument>
+          <restrictViewNotesAndAttachments>false</restrictViewNotesAndAttachments>
+          <restrictLookup>false</restrictLookup>
+          <restrictGLInquiry>false</restrictGLInquiry>
+          <restrictLaborInquiry>true</restrictLaborInquiry>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>90032452-934E-C42B-C71D-E85CCFA00000</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          
+        </securityDefinition>
+        <versionNumber>17</versionNumber>
+        <objectId>AA7382CC-18C7-FA26-2EDB-55AF89300000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>301</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>2222</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../org.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>A20F21BB-0636-BA04-6219-05578FF00000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+      <org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+        <modelDefinitionId>
+          <value>302</value>
+        </modelDefinitionId>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <definitionId>
+          <value>66</value>
+        </definitionId>
+        <constraintCode>A</constraintCode>
+        <operatorCode>=</operatorCode>
+        <attributeValue>3333</attributeValue>
+        <overrideDeny>true</overrideDeny>
+        <active>true</active>
+        <securityDefinition reference="../../org.kuali.kfs.sec.businessobject.SecurityModelDefinition/securityDefinition"/>
+        <versionNumber>17</versionNumber>
+        <objectId>9ED80B02-66E2-1D55-696B-8BA90A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelDefinition>
+    
+  </modelDefinitions>
+  <modelMembers>
+    
+    
+      
+      
+      <org.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>2020202</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>6</versionNumber>
+        <objectId>80264849-7CC6-E559-9A3F-8CD0C4900000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <org.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1515151</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>1</versionNumber>
+        <objectId>CBB42544-A590-5952-F6B4-B94199800000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelMember>
+      <org.kuali.kfs.sec.businessobject.SecurityModelMember>
+        <modelId>
+          <value>333</value>
+        </modelId>
+        <memberId>1020304</memberId>
+        <memberTypeCode>P</memberTypeCode>
+        <versionNumber>15</versionNumber>
+        <objectId>BC43DE58-C608-8489-BC4A-9B724A600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        
+      </org.kuali.kfs.sec.businessobject.SecurityModelMember>
+    
+  </modelMembers>
+  <versionNumber>17</versionNumber>
+  <objectId>975EEE66-773D-D4AE-5A68-4F814BD00000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+</org.kuali.kfs.sec.businessobject.SecurityModel><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
