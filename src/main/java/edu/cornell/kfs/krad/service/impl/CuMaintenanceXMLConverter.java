@@ -1,9 +1,11 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -17,7 +19,9 @@ import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 
 /**
@@ -45,6 +49,17 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * 
  * This class will also convert classnames in an element's "defined-in" attribute
  * to the appropriate replacement, based on the global or class/element-specific rules.
+ * 
+ * This class can handle the conversion of "reference" attributes as well. The code
+ * will examine the sections of the attribute's element path, identify the appropriate
+ * conversion rules for each section, and perform the conversion appropriately.
+ * Since the "reference" attributes do not contain the "class" attribute information
+ * that may be present on the referenced elements, this process supports the ability
+ * to forcibly associate a class with a particular path segment; this can be specified
+ * via an entry whose mapping key has the segment/element name plus the "(REFERENCE)" suffix.
+ * (Note that not all of the advanced conversion rules are supported by the "reference"
+ * attribute handling, and that conversion may fail if the process determines that
+ * the referenced XML section has been removed.)
  * 
  * If a mapping key ends with "(ATTR)", then the portion before that suffix will
  * be used to match the name of an *attribute* instead of the name of an element.
@@ -95,6 +110,13 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * The replacement values on those rules will form the name and "class" attribute
  * of the wrapper element.
  * 
+ * (SKIP_UNMATCHED_CHILD_ELEMENTS) -- The element itself will be kept and the regular
+ * conversion of its class attribute will also take place, but none of its child elements
+ * will be written unless an explicit mapping exists for them, either in the global rules
+ * or the element/classname-specific rules. Note that the sub-elements of a preserved
+ * child element will not be skipped, unless other conversion rules are specified
+ * to exclude them. (Sub-elements of skipped child elements will also be skipped.)
+ * 
  * The above custom processing allows this class to replace some hard-coded
  * conversion behavior in KFS's XML conversion service, and also allows it
  * to implement UCD's customized legacy notes conversion in a StAX-friendly way.
@@ -111,19 +133,23 @@ public class CuMaintenanceXMLConverter {
     public static final String ROOT_ELEMENT = "maintainableDocumentContents";
     public static final String CLASS_ATTRIBUTE = "class";
     public static final String DEFINED_IN_ATTRIBUTE = "defined-in";
+    public static final String REFERENCE_ATTRIBUTE = "reference";
     public static final String ATTRIBUTE_INDICATOR_SUFFIX = "(ATTR)";
     public static final String WRAPPER_NAME_INDICATOR_SUFFIX = "(WRAPPER_NAME)";
     public static final String WRAPPER_CLASS_INDICATOR_SUFFIX = "(WRAPPER_CLASS)";
+    public static final String REFERENCE_OVERRIDE_SUFFIX = "(REFERENCE)";
     public static final String MOVE_CHILD_NODES_TO_PARENT_INDICATOR = "(MOVE_CHILD_NODES_TO_PARENT)";
     public static final String MOVE_MARKED_NODES_TO_PARENT_INDICATOR = "(MOVE_MARKED_NODES_TO_PARENT)";
     public static final String MOVE_THIS_NODE_TO_PARENT_INDICATOR = "(MOVE_THIS_NODE_TO_PARENT)";
     public static final String CONVERT_TO_MAP_ENTRIES_INDICATOR = "(CONVERT_TO_MAP_ENTRIES)";
     public static final String CONVERT_LEGACY_NOTES_INDICATOR = "(CONVERT_LEGACY_NOTES)";
     public static final String ADD_WRAPPER_ELEMENT_INDICATOR = "(ADD_WRAPPER_ELEMENT)";
+    public static final String SKIP_UNMATCHED_CHILD_ELEMENTS_INDICATOR = "(SKIP_UNMATCHED_CHILD_ELEMENTS)";
     public static final String ENTRY_ELEMENT_NAME = "entry";
     public static final String MOVED_NODES_ELEMENT_NAME = "movedNodes";
     public static final String MOVED_NODES_CLASSNAME_SUFFIX = "_MOVED_NODES";
     public static final String DEFAULT_PROPERTY_RULE_KEY = "*";
+    public static final String PARENT_DIRECTORY = "..";
     public static final String LIST_WRAPPER_ELEMENT_FOR_CONVERTED_BO_NOTES = "org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl";
     public static final int DATE_LENGTH_REQUIRING_EXTRA_SUFFIX = 10;
     public static final int DATE_LENGTH_REQUIRING_MILLIS_SUFFIX = 19;
@@ -263,7 +289,7 @@ public class CuMaintenanceXMLConverter {
     protected void handleMaintainableStartElement() throws XMLStreamException {
         relativeDepth++;
         
-        String classAttributeValue = xmlReader.getAttributeValue(null, CLASS_ATTRIBUTE);
+        String classAttributeValue = StringUtils.defaultString(xmlReader.getAttributeValue(null, CLASS_ATTRIBUTE));
         String newClassAttributeValue = findReplacementOrReturnExisting(classAttributeValue);
         String elementName = xmlReader.getLocalName();
         String elementNameForOutput = elementName;
@@ -306,6 +332,8 @@ public class CuMaintenanceXMLConverter {
                     return OutputMode.MOVE_THIS_NODE_TO_PARENT;
                 case ADD_WRAPPER_ELEMENT_INDICATOR :
                     return OutputMode.ADD_WRAPPER_ELEMENT;
+                case SKIP_UNMATCHED_CHILD_ELEMENTS_INDICATOR :
+                    return OutputMode.SKIP_UNMATCHED_CHILD_ELEMENTS;
                 case CONVERT_TO_MAP_ENTRIES_INDICATOR :
                     return OutputMode.CONVERT_TO_MAP_ENTRIES;
                 case CONVERT_LEGACY_NOTES_INDICATOR :
@@ -322,6 +350,8 @@ public class CuMaintenanceXMLConverter {
             return ruleMapStackTop.propertyRuleMap.get(className);
         } else if (defaultPropertyRuleMap.containsKey(className)) {
             return defaultPropertyRuleMap.get(className);
+        } else if (ruleMapStackTop.outputMode == OutputMode.SKIP_UNMATCHED_CHILD_ELEMENTS) {
+            return KFSConstants.EMPTY_STRING;
         } else {
             return className;
         }
@@ -353,6 +383,9 @@ public class CuMaintenanceXMLConverter {
                 break;
             case ADD_WRAPPER_ELEMENT :
                 writeNodeWithinAdditionalWrapperElement(newElementName, newClassAttributeValue);
+                break;
+            case SKIP_UNMATCHED_CHILD_ELEMENTS :
+                writeStartElementForMaintainable(newElementName, newClassAttributeValue);
                 break;
             case CONVERT_TO_MAP_ENTRIES :
                 handleMapEntryPrintStateForStartElement();
@@ -397,13 +430,24 @@ public class CuMaintenanceXMLConverter {
             }
             
             if (StringUtils.isNotBlank(attributeValue)) {
-                if (StringUtils.equals(CLASS_ATTRIBUTE, attributeName)) {
-                    attributeValue = newClassAttributeValue;
-                } else if (StringUtils.equals(DEFINED_IN_ATTRIBUTE, attributeName)) {
-                    attributeValue = determineClassnameForDefinedInAttribute(attributeValue);
-                }
+                attributeValue = performExtraAttributeValueConversionIfNecessary(
+                        attributeName, attributeValue, newClassAttributeValue);
                 xmlWriter.writeAttribute(attributeName, attributeValue);
             }
+        }
+    }
+
+    protected String performExtraAttributeValueConversionIfNecessary(
+            String attributeName, String attributeValue, String newClassAttributeValue) throws XMLStreamException {
+        switch (attributeName) {
+            case CLASS_ATTRIBUTE :
+                return newClassAttributeValue;
+            case DEFINED_IN_ATTRIBUTE :
+                return determineClassnameForDefinedInAttribute(attributeValue);
+            case REFERENCE_ATTRIBUTE :
+                return convertReferenceAttributeForCurrentElement(attributeValue);
+            default :
+                return attributeValue;
         }
     }
 
@@ -476,7 +520,7 @@ public class CuMaintenanceXMLConverter {
         
         if (newPropertyRuleMap != null) {
             ruleMapStackTop = new XMLStreamStackElement(ruleMapStackTop, relativeDepth, newPropertyRuleMap, outputMode);
-        } else if (outputMode == OutputMode.MOVE_CHILD_NODES_TO_PARENT) {
+        } else if (outputMode.forceStackPush || ruleMapStackTop.outputMode.forceStackPushForChild) {
             ruleMapStackTop = new XMLStreamStackElement(ruleMapStackTop, relativeDepth, Collections.emptyMap(), outputMode);
         }
     }
@@ -656,6 +700,106 @@ public class CuMaintenanceXMLConverter {
         xmlWriter.writeEndElement();
     }
 
+    protected String convertReferenceAttributeForCurrentElement(String attributeValue) throws XMLStreamException {
+        XMLStreamStackElement oldStackTop = ruleMapStackTop;
+        int oldRelativeDepth = relativeDepth;
+        String[] referencePathSegments = StringUtils.split(attributeValue, CUKFSConstants.SLASH);
+        Stream.Builder<String> newSegments = Stream.builder();
+        
+        try {
+            for (String segment : referencePathSegments) {
+                String newSegment = handleAndConvertReferencePathSegment(segment);
+                if (StringUtils.isNotBlank(newSegment)) {
+                    newSegments.accept(newSegment);
+                }
+            }
+        } finally {
+            relativeDepth = oldRelativeDepth;
+            ruleMapStackTop = oldStackTop;
+        }
+        
+        return StringUtils.join(newSegments.build().iterator(), CUKFSConstants.SLASH);
+    }
+
+    protected String handleAndConvertReferencePathSegment(String segment) throws XMLStreamException {
+        if (StringUtils.equals(segment, PARENT_DIRECTORY)) {
+            popStackElementIfNecessary();
+            relativeDepth--;
+            return segment;
+        } else if (StringUtils.contains(segment, KFSConstants.SQUARE_BRACKET_LEFT)) {
+            String segmentWithoutIndex = StringUtils.substringBeforeLast(segment, KFSConstants.SQUARE_BRACKET_LEFT);
+            String indexFragment = StringUtils.substring(segment, StringUtils.length(segmentWithoutIndex));
+            String newSegment = handleAndConvertNonParentPathSegment(segmentWithoutIndex);
+            if (StringUtils.isBlank(newSegment)) {
+                throw new XMLStreamException("The reference attribute conversion does not support " +
+                        "removing an indexed segment");
+            } else if (StringUtils.contains(newSegment, CUKFSConstants.SLASH)) {
+                throw new XMLStreamException("The reference attribute conversion does not support " +
+                        "wrapping an indexed segment inside another path fragment");
+            }
+            return newSegment + indexFragment;
+        } else {
+            return handleAndConvertNonParentPathSegment(segment);
+        }
+    }
+
+    protected String handleAndConvertNonParentPathSegment(String segment) throws XMLStreamException {
+        relativeDepth++;
+        String newElementName = segment;
+        String potentialNewElementName = findReplacementOrReturnExisting(segment);
+        String forcedClassnameKey = potentialNewElementName + REFERENCE_OVERRIDE_SUFFIX;
+        String forcedClassname = findReplacementOrReturnExisting(forcedClassnameKey);
+        OutputMode outputMode = getOutputModeForClassNames(forcedClassnameKey, forcedClassname);
+        
+        if (outputMode.writeCurrentElement) {
+            OutputMode elementOutputMode = getOutputModeForClassNames(segment, potentialNewElementName);
+            if (elementOutputMode == OutputMode.DEFAULT) {
+                newElementName = potentialNewElementName;
+            }
+            if (outputMode == OutputMode.DEFAULT) {
+                outputMode = elementOutputMode;
+            }
+        }
+        
+        if (outputMode.allowsStackUpdate) {
+            pushStackElementIfNecessary(newElementName, forcedClassname, outputMode);
+        }
+        
+        return buildConvertedPathSegment(newElementName, forcedClassname, outputMode);
+    }
+
+    protected String buildConvertedPathSegment(String newElementName, String forcedClassname, OutputMode outputMode)
+            throws XMLStreamException {
+        String wrapperElementName;
+        String wrapperKeyPrefix;
+        
+        switch (outputMode) {
+            case DEFAULT :
+                return newElementName;
+            case SKIP :
+                throw new XMLStreamException("Cannot convert reference attribute that matches removed XML content");
+            case MOVE_CHILD_NODES_TO_PARENT :
+                return KFSConstants.EMPTY_STRING;
+            case MOVE_MARKED_NODES_TO_PARENT :
+                return newElementName;
+            case ADD_WRAPPER_ELEMENT :
+                wrapperKeyPrefix = (StringUtils.isBlank(forcedClassname) || StringUtils.endsWith(
+                        forcedClassname, REFERENCE_OVERRIDE_SUFFIX)) ? newElementName : forcedClassname;
+                wrapperElementName = ruleMapStackTop.propertyRuleMap.get(
+                        wrapperKeyPrefix + WRAPPER_NAME_INDICATOR_SUFFIX);
+                if (StringUtils.isBlank(wrapperElementName)) {
+                    throw new XMLStreamException(
+                            "Could not find wrapper element for converted reference segment " + wrapperKeyPrefix);
+                }
+                return wrapperElementName + CUKFSConstants.SLASH + newElementName;
+            case SKIP_UNMATCHED_CHILD_ELEMENTS :
+                return newElementName;
+            default :
+                throw new XMLStreamException("Output mode " + outputMode
+                        + " is not supported for reference attribute conversion");
+        }
+    }
+
     /**
      * Functional interface whose only method is void and can potentially throw XMLStreamException,
      * to help with using lambda expressions or method references to simplify the parser's setup.
@@ -672,19 +816,29 @@ public class CuMaintenanceXMLConverter {
     protected enum OutputMode {
         DEFAULT(true, true),
         SKIP(false, false),
-        MOVE_CHILD_NODES_TO_PARENT(false, true),
+        MOVE_CHILD_NODES_TO_PARENT(false, true, true, false),
         MOVE_MARKED_NODES_TO_PARENT(true, true),
         MOVE_THIS_NODE_TO_PARENT(true, true),
         ADD_WRAPPER_ELEMENT(true, true),
+        SKIP_UNMATCHED_CHILD_ELEMENTS(true, true, false, true),
         CONVERT_TO_MAP_ENTRIES(true, true),
         CONVERT_LEGACY_NOTES(false, false);
         
         public final boolean writeCurrentElement;
         public final boolean allowsStackUpdate;
+        public final boolean forceStackPush;
+        public final boolean forceStackPushForChild;
         
         private OutputMode(boolean writeCurrentElement, boolean allowsStackUpdate) {
+            this(writeCurrentElement, allowsStackUpdate, false, false);
+        }
+        
+        private OutputMode(boolean writeCurrentElement, boolean allowsStackUpdate, boolean forceStackPush,
+                boolean forceStackPushForChild) {
             this.writeCurrentElement = writeCurrentElement;
             this.allowsStackUpdate = allowsStackUpdate;
+            this.forceStackPush = forceStackPush;
+            this.forceStackPushForChild = forceStackPushForChild;
         }
     }
 

@@ -1,0 +1,95 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterValue>Some New Value</parameterValue>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+  <anotherVersionNumber reference="../versionNumber"/>
+  <testChunk>
+    <testData><value>Example Value</value></testData>
+    <testData><value>Second Example Value</value></testData>
+    <testData reference="../testData"/>
+    <testData reference="../testData[2]"/>
+  </testChunk>
+  <testChunk>
+    <childToRename><value>Test Value</value></childToRename>
+    <childToRename><value>Second Test Value</value></childToRename>
+    <childToRename reference="../childToRename"/>
+    <childToRename reference="../childToRename[2]"/>
+  </testChunk>
+  <moreTestData reference="../testChunk/testData"/>
+  <moreTestData reference="../testChunk/testData[2]"/>
+  <moreChildData reference="../testChunk[2]/childToRename"/>
+  <moreChildData reference="../testChunk[2]/childToRename[2]"/>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coreservice.impl.parameter.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <value>Some New Value</value>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  <anotherVersionNumber reference="../versionNumber"/>
+  <testChunk>
+    <testData><value>Example Value</value></testData>
+    <testData><value>Second Example Value</value></testData>
+    <testData reference="../testData"/>
+    <testData reference="../testData[2]"/>
+  </testChunk>
+  <testChunk>
+    <renamedChild><value>Test Value</value></renamedChild>
+    <renamedChild><value>Second Test Value</value></renamedChild>
+    <renamedChild reference="../renamedChild"/>
+    <renamedChild reference="../renamedChild[2]"/>
+  </testChunk>
+  <moreTestData reference="../testChunk/testData"/>
+  <moreTestData reference="../testChunk/testData[2]"/>
+  <moreChildData reference="../testChunk[2]/renamedChild"/>
+  <moreChildData reference="../testChunk[2]/renamedChild[2]"/>
+</org.kuali.kfs.coreservice.impl.parameter.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
