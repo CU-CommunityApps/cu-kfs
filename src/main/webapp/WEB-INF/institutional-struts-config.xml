@@ -235,8 +235,8 @@
         
         <action path="/securityRequestWizard" name="SecurityRequestWizardForm" attribute="KualiForm" 
                 type="edu.cornell.kfs.ksr.web.struts.SecurityRequestWizardAction" scope="request"  parameter="methodToCall">
-			<forward name="wizard" path="/jsp/ksr/SecurityRequestWizard.jsp" />
-		</action>
+            <forward name="wizard" path="/jsp/ksr/SecurityRequestWizard.jsp" />
+        </action>
 		
         <!-- Override of maintenance document mapping to use a CU-specific action class. -->
         <action path="/maintenance" name="KualiMaintenanceForm" attribute="KualiForm" scope="request"

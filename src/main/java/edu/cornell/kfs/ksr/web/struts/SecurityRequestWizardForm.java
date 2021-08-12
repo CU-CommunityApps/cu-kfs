@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 
+import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
 
 
@@ -31,7 +32,7 @@ public class SecurityRequestWizardForm extends FinancialSystemTransactionalDocum
     @Override
     public boolean shouldMethodToCallParameterBeUsed(String methodToCallParameterName, String methodToCallParameterValue,
             HttpServletRequest request) {
-        if (StringUtils.equals(methodToCallParameterValue, "processWizard")) {
+        if (StringUtils.equals(methodToCallParameterValue, KSRConstants.PROCESS_WIZARD_METHOD_NAME)) {
             return true;
         }
 

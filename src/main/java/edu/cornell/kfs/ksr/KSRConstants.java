@@ -32,5 +32,6 @@ public class KSRConstants {
     //Security Request Document
     public static final String SECURITY_REQUEST_DOC_TYPE_NAME = "SecurityRequestDocument";
     public static final String SECURITY_REQUEST_DOC_URL = "securityRequestDocument.do";
+    public static final String PROCESS_WIZARD_METHOD_NAME = "processWizard";
 
 }

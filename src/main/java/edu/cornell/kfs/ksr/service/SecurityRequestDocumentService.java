@@ -6,6 +6,5 @@ import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
 
 public interface SecurityRequestDocumentService {
 
-
     List<SecurityGroup> getActiveSecurityGroups();
 }
