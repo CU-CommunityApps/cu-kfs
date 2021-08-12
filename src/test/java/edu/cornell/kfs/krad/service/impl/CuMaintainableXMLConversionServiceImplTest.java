@@ -43,6 +43,10 @@ public class CuMaintainableXMLConversionServiceImplTest {
     protected static final String UNMOVED_RENAMED_CHILD_TEST_ELEMENT = "unmovedRenamedChild";
     protected static final String MOVED_CHILD_TO_UPDATE_TEST_ELEMENT = "movedChildToUpdate";
     protected static final String MOVED_RENAMED_CHILD_TEST_ELEMENT = "movedRenamedChild";
+    protected static final String PARENT_TO_FILTER_ELEMENT = "parentToFilter";
+    protected static final String CHILD_TO_KEEP_ELEMENT = "childToKeep";
+    protected static final String CHILD_TO_RENAME_ELEMENT = "childToRename";
+    protected static final String RENAMED_CHILD_ELEMENT = "renamedChild";
 
     protected TestMaintainableXMLConversionServiceImpl conversionService;
     protected String oldData;
@@ -110,6 +114,28 @@ public class CuMaintainableXMLConversionServiceImplTest {
                                 PersistableBusinessObjectExtension.class.getName())));
         
         assertXMLFromTestFileConvertsAsExpected("AddWrapperElementTest.xml");
+    }
+
+    @Test
+    void testSkipUnmatchedChildElements() throws Exception {
+        conversionService.addRulesToMap(
+                ruleEntry(Parameter.class.getName(),
+                        Map.entry(PARENT_TO_FILTER_ELEMENT, CuMaintenanceXMLConverter.SKIP_UNMATCHED_CHILD_ELEMENTS_INDICATOR)),
+                ruleEntry(PARENT_TO_FILTER_ELEMENT,
+                        Map.entry(CHILD_TO_KEEP_ELEMENT, CHILD_TO_KEEP_ELEMENT)),
+                ruleEntry(CuMaintenanceXMLConverter.DEFAULT_PROPERTY_RULE_KEY,
+                        Map.entry(CHILD_TO_RENAME_ELEMENT, RENAMED_CHILD_ELEMENT)));
+        
+        assertXMLFromTestFileConvertsAsExpected("SkipUnmatchedChildTest.xml");
+    }
+
+    @Test
+    void testConversionOfReferenceAttributes() throws Exception {
+        conversionService.addRulesToMap(
+                ruleEntry(CuMaintenanceXMLConverter.DEFAULT_PROPERTY_RULE_KEY,
+                        Map.entry(CHILD_TO_RENAME_ELEMENT, RENAMED_CHILD_ELEMENT)));
+        
+        assertXMLFromTestFileConvertsAsExpected("ReferenceAttributeTest.xml");
     }
 
     @Test
@@ -242,6 +268,16 @@ public class CuMaintainableXMLConversionServiceImplTest {
     })
     void testConversionOfVariousLDDocuments(String ldTestFile) throws Exception {
         assertXMLFromTestFileConvertsAsExpected(ldTestFile);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "LegacySecurityModelTest.xml",
+        "LegacySecurityModelTest2.xml",
+        "LegacyAssetGlobalTest.xml"
+    })
+    void testConversionOfDocumentsWithComplexReferenceAttributes(String testFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(testFile);
     }
 
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
