@@ -37,5 +37,10 @@
     <bean id="securityRequestModuleService" parent="securityRequestModuleService-parentBean"/>
     <bean id="securityRequestModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl"
           abstract="true" p:moduleConfiguration-ref="securityRequestModuleConfiguration"/>
+          
+    <bean id="securityRequestDocumentService" parent="securityRequestDocumentService-parentBean" />
+    <bean id="securityRequestDocumentService-parentBean" class="edu.cornell.kfs.ksr.service.impl.SecurityRequestDocumentServiceImpl" abstract="true">
+        <property name="businessObjectService" ref="businessObjectService" />
+    </bean>
     
 </beans>
