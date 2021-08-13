@@ -25,5 +25,11 @@ public class KSRPropertyConstants {
     public static final String SECURITY_PROVISIONING_GROUP_SECURITY_PROVISIONING_GROUP_NAME = "securityGroup.securityGroupName";
     public static final String PROVISIONING_ROLE_ID = "roleId";
     public static final String PROVISIONING_ROLE_TAB_ORDER = "roleTabOrder";
+    
+    // Security Request Document Properties
+    public static final String SECURITY_REQUEST_DOCUMENT_TAB_ID = "tabId";
+    public static final String SECURITY_REQUEST_DOCUMENT_TAB_ORDER = "tabOrder";
+    public static final String SECURITY_REQUEST_DOCUMENT_ROLE_TAB_ORDER = "roleTabOrder";
+    public static final String SECURITY_GROUP = "securityGroup";
 
 }
