@@ -7,6 +7,7 @@ public class KSRPropertyConstants {
     // Security Group properties
     public static final String SECURITY_GROUP_NAME = "securityGroupName";
     public static final String SECURITY_GROUP_ID = "securityGroupId";
+    public static final String SECURITY_GROUP_ACTIVE_INDICATOR = "active";
 
     // Security Group Tab properties
     public static final String SECURITY_GROUP_TAB_NAME = "tabName";
