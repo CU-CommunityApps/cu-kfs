@@ -57,7 +57,7 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
 
         try {
             conn = getJdbcTemplate().getDataSource().getConnection();
-            cs = conn.prepareCall("{call CYNERGY.AUTO_CANCEL_FYI_ACK}");
+            cs = conn.prepareCall("{call KFS.AUTO_CANCEL_FYI_ACK}");
             dbmsOutput = new DbmsOutput(conn);
             dbmsOutput.enable(1000000);
             result = cs.execute();
@@ -131,7 +131,7 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
         Map<String, String> ids = new HashMap<String, String>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("select DOC_HDR_ID, DOC_TYP_ID from CYNERGY.KREW_DOC_HDR_T where ");
+        sql.append("select DOC_HDR_ID, DOC_TYP_ID from KFS.KREW_DOC_HDR_T where ");
         sql.append("DOC_HDR_STAT_CD = '" + DocumentStatus.SAVED.getCode() + "' and (trunc(CRTE_DT) + " + daysToAutoCancel + ") <= trunc(SYSDATE)");
 
         LOG.info("SQL Statement: " + sql);
