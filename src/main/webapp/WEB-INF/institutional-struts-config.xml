@@ -123,11 +123,11 @@
 		</action>
 
 		<action path="/financialDistributionOfIncomeAndExpense" name="CuDistributionOfIncomeAndExpenseForm" input="/jsp/fp/DistributionOfIncomeAndExpense.jsp"
-      		type="edu.cornell.kfs.fp.document.web.struts.CuDistributionOfIncomeAndExpenseAction" scope="request"
-      		parameter="methodToCall" validate="true" attribute="KualiForm">
-      		<set-property property="cancellable" value="true" />
-     		<forward name="basic" path="/jsp/fp/DistributionOfIncomeAndExpense.jsp" />
-    	</action> 
+      type="edu.cornell.kfs.fp.document.web.struts.CuDistributionOfIncomeAndExpenseAction" scope="request"
+      parameter="methodToCall" validate="true" attribute="KualiForm">
+      <set-property property="cancellable" value="true" />
+      <forward name="basic" path="/jsp/fp/DistributionOfIncomeAndExpense.jsp" />
+    </action> 
 		
 		<!-- KFSUPGRADE-75 -->
 	   <action path="/purapRequisition" name="RequisitionForm"

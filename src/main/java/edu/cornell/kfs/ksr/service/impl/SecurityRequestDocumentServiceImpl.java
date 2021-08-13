@@ -18,7 +18,7 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
     @Override
     public List<SecurityGroup> getActiveSecurityGroups() {
         Map<String, Object> hashMap = new HashMap<String, Object>();
-        hashMap.put("active", true);
+        hashMap.put(KSRPropertyConstants.SECURITY_GROUP_ACTIVE_INDICATOR, true);
 
         List<SecurityGroup> groupList = (List<SecurityGroup>) businessObjectService.findMatchingOrderBy(SecurityGroup.class, hashMap,
                 KSRPropertyConstants.SECURITY_GROUP_NAME, true);
