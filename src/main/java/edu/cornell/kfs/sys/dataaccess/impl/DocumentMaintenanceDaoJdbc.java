@@ -72,7 +72,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 	private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount, boolean includeOrderByClause) {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("select DOC_HDR_ID from CYNERGY.KREW_DOC_HDR_T where ");
+		sql.append("select DOC_HDR_ID from KFS.KREW_DOC_HDR_T where ");
 		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, "docRouteStatus"));
 		sql.append("='");
 		sql.append(KewApiConstants.ROUTE_HEADER_ENROUTE_CD);
@@ -90,14 +90,14 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 		sql.append(workflowDocumentHeaderColumnName);
 		sql.append(" IN (select distinct(");
 		sql.append(retrieveColumnNameFromAnnotations(ActionRequest.class, WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY));
-		sql.append(") from CYNERGY.");
+		sql.append(") from KFS.");
 		sql.append(retrieveTableNameFromAnnotations(ActionRequest.class));
 		sql.append(" where ");
 		sql.append("RSP_ID");
 		sql.append(" in (select ");
 		sql.append("RSP_ID");
 		sql.append(" from ");
-		sql.append("CYNERGY.KRIM_ROLE_RSP_T");
+		sql.append("KFS.KRIM_ROLE_RSP_T");
 		sql.append(" where ");
 		sql.append("ROLE_ID");
 		sql.append(" in (?");
@@ -227,7 +227,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
     private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
         StringBuilder sb = new StringBuilder();
         sb.append("select ai.prncpl_id, ai.doc_hdr_id, aie.actn_note, aie.note_ts, ai.actn_itm_id ");
-        sb.append("from CYNERGY.").append(retrieveTableNameFromAnnotations(ActionItem.class)).append(" ai, CYNERGY.");
+        sb.append("from KFS.").append(retrieveTableNameFromAnnotations(ActionItem.class)).append(" ai, KFS.");
         sb.append(retrieveTableNameFromAnnotations(ActionItemExtension.class)).append(" aie ");
         sb.append("where ai.actn_itm_id = aie.actn_itm_id ");
         sb.append("and ai.doc_hdr_id in (");
