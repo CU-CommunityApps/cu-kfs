@@ -83,7 +83,7 @@ public class RecurringDisbursementVoucherSearchDaoJdbc extends PlatformAwareDaoB
     private String getSavedDvsSpawnedByRecurringDvForCurrentAndPastFiscalPeriodsSelectSql(Date currentFisalPeriodEndDate) {
         SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_dd_MMM_yy, Locale.US);
         StringBuilder sqlBuilder = new StringBuilder("SELECT B.DV_DOC_NBR, B.DV_CHECK_DT ");
-        sqlBuilder.append("FROM KFS.FP_DV_DOC_T A, KFS.FP_RCDV_DTL_T B, CYNERGY.KREW_DOC_HDR_T C ");
+        sqlBuilder.append("FROM KFS.FP_DV_DOC_T A, KFS.FP_RCDV_DTL_T B, KFS.KREW_DOC_HDR_T C ");
         sqlBuilder.append("WHERE A.FDOC_NBR = B.DV_DOC_NBR AND C.DOC_HDR_ID = B.DV_DOC_NBR ");
         sqlBuilder.append("AND C.DOC_HDR_STAT_CD = '").append(KewApiConstants.ROUTE_HEADER_SAVED_CD).append("' ");
         sqlBuilder.append("AND B.DV_CHECK_DT <= '").append(formatter.format(currentFisalPeriodEndDate)).append("'");
