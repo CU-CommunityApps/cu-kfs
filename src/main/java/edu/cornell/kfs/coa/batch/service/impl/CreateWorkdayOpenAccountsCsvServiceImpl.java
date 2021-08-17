@@ -35,6 +35,7 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
     public void createWorkdayOpenAccountsCsv() throws IOException {
         List<WorkdayOpenAccountDetail> details = workdayOpenAccountDao.getWorkdayOpenAccountDetail();
         if (CollectionUtils.isNotEmpty(details)) {
+            LOG.info("createWorkdayOpenAccountsCsv, number of open account detail lines to write: " + details.size());
             writeOpenAccountsToCsvFile(details);
         } else {
             LOG.error("createWorkdayOpenAccountsCsv, no open accounts were found, this shouldn't happen");

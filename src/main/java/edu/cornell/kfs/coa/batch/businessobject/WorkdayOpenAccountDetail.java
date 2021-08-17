@@ -188,8 +188,6 @@ public class WorkdayOpenAccountDetail {
         addValueToStringBuilder(sb, accountTypeCode, true);
         addValueToStringBuilder(sb, subAccountNumber, true);
         addValueToStringBuilder(sb, subAccountName, true);
-        addValueToStringBuilder(sb, subAccountNumber, true);
-        addValueToStringBuilder(sb, subAccountNumber, true);
         addValueToStringBuilder(sb, subAccountActiveIndicator, true);
         addValueToStringBuilder(sb, objectCode, true);
         addValueToStringBuilder(sb, subObjectCode, true);
