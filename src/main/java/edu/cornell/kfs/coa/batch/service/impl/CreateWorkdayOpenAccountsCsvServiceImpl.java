@@ -26,10 +26,10 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpenAccountsCsvService {
     private static final Logger LOG = LogManager.getLogger();
     
-    protected WorkdayOpenAccountDao workdayOpenAccountDao;
-    protected DateTimeService dateTimeService;
     protected String csvOpenAccountsExportDirectory;
     protected String csvOpenAccountstFileCreationDirectory;
+    protected DateTimeService dateTimeService;
+    protected WorkdayOpenAccountDao workdayOpenAccountDao;
     
     @Override
     public void createWorkdayOpenAccountsCsv() throws IOException {
@@ -121,6 +121,22 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         detail.setSubObjectCode("subObjectCode");
         detail.setSubObjectName("subObjectName");
         return detail;
+    }
+
+    public void setCsvOpenAccountsExportDirectory(String csvOpenAccountsExportDirectory) {
+        this.csvOpenAccountsExportDirectory = csvOpenAccountsExportDirectory;
+    }
+
+    public void setCsvOpenAccountstFileCreationDirectory(String csvOpenAccountstFileCreationDirectory) {
+        this.csvOpenAccountstFileCreationDirectory = csvOpenAccountstFileCreationDirectory;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
+    public void setWorkdayOpenAccountDao(WorkdayOpenAccountDao workdayOpenAccountDao) {
+        this.workdayOpenAccountDao = workdayOpenAccountDao;
     }
 
 }

@@ -39,7 +39,8 @@
 		<property name="jobNames">
 			<list>
 				<value>accountReversionImportJob</value>
-                <value>createClosedAccountsCsvJob</value>
+				<value>createClosedAccountsCsvJob</value>
+				<value>createWorkDayOpenAccountsCsvJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
@@ -243,8 +244,20 @@
     <bean id="closedAccountsByDateRangeDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.ClosedAccountsByDateRangeDaoJdbc">
     </bean>
     
-    <bean id="createOpenAccountsCsvService" parent="createClosedAccountsCsvService-parentBean" />
-    <bean id="createOpenAccountsCsvService-parentBean" class="edu.cornell.kfs.coa.batch.service.impl.CreateWorkdayOpenAccountsCsvServiceImpl" abstract="true">
+    <bean id="createWorkDayOpenAccountsCsvJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createWorkdayOpenAccountsCsvStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="createWorkdayOpenAccountsCsvStep" parent="step" class="edu.cornell.kfs.coa.batch.CreateWorkdayOpenAccountsCsvStep">
+        <property name="createWorkdayOpenAccountsCsvService" ref="createWorkdayOpenAccountsCsvService" />
+    </bean>
+    
+    <bean id="createWorkdayOpenAccountsCsvService" parent="createWorkdayOpenAccountsCsvService-parentBean" />
+    <bean id="createWorkdayOpenAccountsCsvService-parentBean" class="edu.cornell.kfs.coa.batch.service.impl.CreateWorkdayOpenAccountsCsvServiceImpl" abstract="true">
         <property name="csvOpenAccountsExportDirectory">
             <value>${staging.directory}/coa/open-accounts-outbound/</value>
         </property>
@@ -256,6 +269,7 @@
     </bean>
 
     <bean id="workdayOpenAccountDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.WorkdayOpenAccountDaoJdbc">
+        <property name="universityDateService" ref="universityDateService" />
     </bean>
 
 
