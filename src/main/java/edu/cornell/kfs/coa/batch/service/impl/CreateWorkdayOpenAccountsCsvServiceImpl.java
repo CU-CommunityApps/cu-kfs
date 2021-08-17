@@ -17,7 +17,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.coa.batch.CuCoaBatchConstants;
-import edu.cornell.kfs.coa.batch.businessobject.ClosedAccount;
 import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetail;
 import edu.cornell.kfs.coa.batch.dataaccess.WorkdayOpenAccountDao;
 import edu.cornell.kfs.coa.batch.service.CreateWorkdayOpenAccountsCsvService;

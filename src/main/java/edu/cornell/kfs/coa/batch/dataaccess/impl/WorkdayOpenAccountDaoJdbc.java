@@ -34,7 +34,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     protected String FIN_SUB_OBJ_CD_NM = "FIN_SUB_OBJ_CD_NM";
     
     
-    private UniversityDateService universityDateService;
+    protected UniversityDateService universityDateService;
 
     @Override
     public List<WorkdayOpenAccountDetail> getWorkdayOpenAccountDetail() {
@@ -126,6 +126,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         sb.append("CAT.SUB_FUND_GRP_CD, CAT.FIN_HGH_ED_FUNC_CD, CAT.ACCT_EFFECT_DT,  CAT.ACCT_CLOSED_IND, CAT.ACCT_TYP_CD, ");
         return sb.toString();
     }
+    
     private String buildEmptySubAccountSelect() {
         return "'' AS SUB_ACCT_NBR, '' AS SUB_ACCT_NM, '' AS SUB_ACCT_ACTV_CD, ";
     }
