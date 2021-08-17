@@ -21,4 +21,8 @@ public class CuCoaBatchConstants {
         
         public static final String OUTPUT_FILE_NAME = "kfsClosedAccounts";
     }
+    
+    public static class WorkdayOpenAccountsFileCreationConstants {
+        public static final String OUTPUT_FILE_NAME = "kfsOpendAccountsSubacountsSubobjectcodes";
+    }
 }

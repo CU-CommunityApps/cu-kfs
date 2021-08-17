@@ -86,7 +86,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         sb.append(buildEmptySubAccountSelect());
         sb.append(buildEmptySubObjectSelect());
         sb.append(buildBaseFromAndJoin());
-        sb.append(buildBaseWhereClause());
+        sb.append(buildBaseWhere());
         return sb.toString();
     }
     
@@ -101,7 +101,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         sb.append(buildEmptySubObjectSelect());
         sb.append(buildBaseFromAndJoin());
         sb.append("JOIN KFS.CA_SUB_ACCT_T CSA ON CAT.FIN_COA_CD = CSA.FIN_COA_CD AND CAT.ACCOUNT_NBR = CSA.ACCOUNT_NBR ");
-        sb.append(buildBaseWhereClause());
+        sb.append(buildBaseWhere());
         sb.append("AND CSA.SUB_ACCT_ACTV_CD = 'Y' ");
         return sb.toString();
     }
@@ -114,7 +114,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         sb.append(buildBaseFromAndJoin());
         sb.append("JOIN KFS.CA_SUB_OBJECT_CD_T CSO ON CAT.FIN_COA_CD = CSO.FIN_COA_CD AND CAT.ACCOUNT_NBR = CSO.ACCOUNT_NBR ");
         sb.append("JOIN KFS.LD_LABOR_OBJ_T COC ON CAT.FIN_COA_CD = COC.FIN_COA_CD AND CSO.FIN_OBJECT_CD = COC.FIN_OBJECT_CD AND CSO.UNIV_FISCAL_YR = COC.UNIV_FISCAL_YR ");
-        sb.append(buildBaseWhereClause());
+        sb.append(buildBaseWhere());
         sb.append("AND CSO.UNIV_FISCAL_YR = ").append(universityDateService.getCurrentFiscalYear());
         sb.append(" AND COC.ACTV_IND = 'Y' ");
         return sb.toString();
@@ -141,7 +141,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         return sb.toString();
     }
     
-    private String buildBaseWhereClause() {
+    private String buildBaseWhere() {
         StringBuilder sb = new StringBuilder();
         sb.append("WHERE CAT.ACCT_CLOSED_IND = 'N' ");
         sb.append("AND CSF.SUB_FUND_GRP_WAGE_IND = 'Y' ");

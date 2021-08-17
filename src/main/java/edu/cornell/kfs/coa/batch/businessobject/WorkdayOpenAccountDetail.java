@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -17,6 +18,7 @@ public class WorkdayOpenAccountDetail {
     private String subFundGroupCode;
     private String higherEdFunctionCode;
     private Date accountEffectiveDate;
+    private String accountEffectiveDateString;
     private String accountClosedIndicator;
     private String accountTypeCode;
     private String subAccountNumber;
@@ -25,9 +27,11 @@ public class WorkdayOpenAccountDetail {
     private String objectCode;
     private String subObjectCode;
     private String subObjectName;
+    private boolean headerDetailRow;
     
     public WorkdayOpenAccountDetail() {
         super();
+        headerDetailRow = false;
     }
     
     public String getChart() {
@@ -84,6 +88,14 @@ public class WorkdayOpenAccountDetail {
 
     public void setAccountEffectiveDate(Date accountEffectiveDate) {
         this.accountEffectiveDate = accountEffectiveDate;
+    }
+
+    public String getAccountEffectiveDateString() {
+        return accountEffectiveDateString;
+    }
+
+    public void setAccountEffectiveDateString(String accountEffectiveDateString) {
+        this.accountEffectiveDateString = accountEffectiveDateString;
     }
 
     public String getAccountClosedIndicator() {
@@ -150,8 +162,15 @@ public class WorkdayOpenAccountDetail {
         this.subObjectName = subObjectName;
     }
     
+    public boolean isHeaderDetailRow() {
+        return headerDetailRow;
+    }
+
+    public void setHeaderDetailRow(boolean headerDetailRow) {
+        this.headerDetailRow = headerDetailRow;
+    }
+
     public String toCsvString() {
-        SimpleDateFormat sdf = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
         StringBuilder sb = new StringBuilder();
         addValueToStringBuilder(sb, chart, true);
         addValueToStringBuilder(sb, accountNumber, true);
@@ -159,7 +178,12 @@ public class WorkdayOpenAccountDetail {
         addValueToStringBuilder(sb, subFundGroupWageIndicator, true);
         addValueToStringBuilder(sb, subFundGroupCode, true);
         addValueToStringBuilder(sb, higherEdFunctionCode, true);
-        addValueToStringBuilder(sb, sdf.format(accountEffectiveDate), true);
+        if (headerDetailRow) {
+            addValueToStringBuilder(sb, accountEffectiveDateString, true);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
+            addValueToStringBuilder(sb, sdf.format(accountEffectiveDate), true);
+        }
         addValueToStringBuilder(sb, accountClosedIndicator, true);
         addValueToStringBuilder(sb, accountTypeCode, true);
         addValueToStringBuilder(sb, subAccountNumber, true);
@@ -174,11 +198,17 @@ public class WorkdayOpenAccountDetail {
     }
     
     private void addValueToStringBuilder(StringBuilder sb, String value, boolean addComma) {
-        sb.append(CUKFSConstants.DOUBLE_QUOTE).append(value).append(CUKFSConstants.DOUBLE_QUOTE);
+        if (!headerDetailRow) {
+            sb.append(CUKFSConstants.DOUBLE_QUOTE);
+        }
+        String valueToPrint = StringUtils.isBlank(value) ? KFSConstants.BLANK_SPACE : value;
+        sb.append(valueToPrint);
+        if (!headerDetailRow) {
+            sb.append(CUKFSConstants.DOUBLE_QUOTE);
+        }
         if (addComma) {
             sb.append(KFSConstants.COMMA);
         }
     }
-    
 
 }

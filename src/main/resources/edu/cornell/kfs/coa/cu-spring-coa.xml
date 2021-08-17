@@ -47,6 +47,8 @@
                  <value>${staging.directory}/coa</value>
                  <value>${staging.directory}/coa/closed-accounts-outbound</value>
                  <value>${staging.directory}/coa/closed-accounts-outbound/being-written</value>
+                 <value>${staging.directory}/coa/open-accounts-outbound</value>
+                 <value>${staging.directory}/coa/open-accounts-outbound/being-written</value>
              </list>
          </property>
 	</bean>
@@ -239,6 +241,21 @@
     </bean>
 
     <bean id="closedAccountsByDateRangeDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.ClosedAccountsByDateRangeDaoJdbc">
+    </bean>
+    
+    <bean id="createOpenAccountsCsvService" parent="createClosedAccountsCsvService-parentBean" />
+    <bean id="createOpenAccountsCsvService-parentBean" class="edu.cornell.kfs.coa.batch.service.impl.CreateWorkdayOpenAccountsCsvServiceImpl" abstract="true">
+        <property name="csvOpenAccountsExportDirectory">
+            <value>${staging.directory}/coa/open-accounts-outbound/</value>
+        </property>
+        <property name="csvOpenAccountstFileCreationDirectory">
+            <value>${staging.directory}/coa/open-accounts-outbound/being-written/</value>
+        </property>
+        <property name="workdayOpenAccountDao" ref="workdayOpenAccountDao" />
+        <property name="dateTimeService" ref="dateTimeService" />
+    </bean>
+
+    <bean id="workdayOpenAccountDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.WorkdayOpenAccountDaoJdbc">
     </bean>
 
 
