@@ -303,6 +303,9 @@
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SBox" alias="form1042SBox" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SOverriddenBox" alias="form1042SOverriddenBox" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentReasonCode" alias="paymentReasonCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::disbursementNbr" alias="disbursementNbr" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentStatusCode" alias="paymentStatusCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::disbursementTypeCode" alias="disbursementTypeCode" />
     </row>
     <!--
         ===========================================================================================
