@@ -118,7 +118,9 @@
     <script language="JavaScript" src="scripts/kew/actionlist-common.js"></script>
     <%-- CU Customization: Add CU-specific scripts. --%>
     <script language="JavaScript" src="scripts/kew/cu-actionlist-common.js"></script>
-    <script language="JavaScript" src="dwr/interface/ActionListService.js"></script>
+    <c:if test="${!ActionListForm.viewOutbox && userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME] == null}">
+        <script language="JavaScript" src="dwr/interface/ActionListService.js"></script>
+    </c:if>
     <%-- End custom CU scripts. --%>
     <style type="text/css">
         <!--
@@ -399,12 +401,12 @@
                                                         <display:column sortable="true" title="${actionItemNotesLabel}"
                                                               sortProperty="actionItemExtension.actionNoteForSorting" class="infocell">
                                                             <html-el:textarea cols="50" rows="2"
-                                                                  disabled="${ActionListForm.viewOutbox}"
+                                                                  disabled="${ActionListForm.viewOutbox || userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME] != null}"
                                                                   property="actions[${result.actionListIndex}].actionNote"
                                                                   value="${ActionListForm.viewOutbox ? '' : result.extension.actionNote}"
-                                                                  onblur="onblur_saveActionNoteChange(this,${result.id},'${actionNotesSuccessSaveMsg}');"
-                                                                  onkeyup="textLimitWithErrMsg(this,${actionItemNotesMaxLength},'${actionNotesTruncateMsg}');"/>
-                                                            <span id="actions[${result.actionListIndex}].actionNote.div">&nbsp;</span>
+                                                                  onchange="saveActionNoteChange(this,'${result.id}','${actionNotesSuccessSaveMsg}');"
+                                                                  onkeyup="truncateNoteTextIfNecessary(this,${actionItemNotesMaxLength},'${actionNotesTruncateMsg}');"/>
+                                                            <span id="actions[${result.actionListIndex}].actionNote.status">&nbsp;</span>
                                                         </display:column>
                                                     </c:if>
                                                     <c:if
