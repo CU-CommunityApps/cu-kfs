@@ -118,7 +118,7 @@
     <script language="JavaScript" src="scripts/kew/actionlist-common.js"></script>
     <%-- CU Customization: Add CU-specific scripts. --%>
     <script language="JavaScript" src="scripts/kew/cu-actionlist-common.js"></script>
-    <c:if test="${!ActionListForm.viewOutbox && userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME] == null}">
+    <c:if test="${!ActionListForm.viewOutbox}">
         <script language="JavaScript" src="dwr/interface/ActionListService.js"></script>
     </c:if>
     <%-- End custom CU scripts. --%>
@@ -401,7 +401,7 @@
                                                         <display:column sortable="true" title="${actionItemNotesLabel}"
                                                               sortProperty="actionItemExtension.actionNoteForSorting" class="infocell">
                                                             <html-el:textarea cols="50" rows="2"
-                                                                  disabled="${ActionListForm.viewOutbox || userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME] != null}"
+                                                                  disabled="${ActionListForm.viewOutbox}"
                                                                   property="actions[${result.actionListIndex}].actionNote"
                                                                   value="${ActionListForm.viewOutbox ? '' : result.extension.actionNote}"
                                                                   onchange="saveActionNoteChange(this,'${result.id}','${actionNotesSuccessSaveMsg}');"
