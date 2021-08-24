@@ -83,6 +83,7 @@
         <objectClasses>
             <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail" />
             <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax" />
+            <objectClass name="org.kuali.kfs.pdp.businessobject.PaymentGroup" />
             <objectClass name="org.kuali.kfs.sys.businessobject.SourceAccountingLine" />
             <objectClass name="org.kuali.kfs.fp.document.DisbursementVoucherDocument" />
             <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
@@ -128,6 +129,10 @@
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorForeignIndicator" alias="vendorForeignIndicator" />
         <!-- ==== Fields from SH_UNIV_DATE_T ==== -->
         <field name="org.kuali.kfs.sys.businessobject.UniversityDate::universityDate" alias="universityDate" />
+        <!-- ==== Fields from PDP_PMT_GRP_T ==== -->
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::disbursementNbr" alias="disbursementNbr" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::paymentStatusCode" alias="paymentStatusCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::disbursementTypeCode" alias="disbursementTypeCode" />
     </row>
     <!--
         =================================================================
