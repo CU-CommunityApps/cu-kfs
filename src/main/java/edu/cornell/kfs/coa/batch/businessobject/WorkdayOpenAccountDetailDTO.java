@@ -9,7 +9,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class WorkdayOpenAccountDetail {
+public class WorkdayOpenAccountDetailDTO {
     
     private String chart;
     private String accountNumber;
@@ -29,7 +29,7 @@ public class WorkdayOpenAccountDetail {
     private String subObjectName;
     private boolean headerDetailRow;
     
-    public WorkdayOpenAccountDetail() {
+    public WorkdayOpenAccountDetailDTO() {
         super();
         headerDetailRow = false;
     }

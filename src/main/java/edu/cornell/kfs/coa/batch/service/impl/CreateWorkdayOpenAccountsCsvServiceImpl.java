@@ -17,7 +17,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.coa.batch.CuCoaBatchConstants;
-import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetail;
+import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetailDTO;
 import edu.cornell.kfs.coa.batch.dataaccess.WorkdayOpenAccountDao;
 import edu.cornell.kfs.coa.batch.service.CreateWorkdayOpenAccountsCsvService;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -32,7 +32,7 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
     
     @Override
     public void createWorkdayOpenAccountsCsv() throws IOException {
-        List<WorkdayOpenAccountDetail> details = workdayOpenAccountDao.getWorkdayOpenAccountDetail();
+        List<WorkdayOpenAccountDetailDTO> details = workdayOpenAccountDao.getWorkdayOpenAccountDetails();
         if (CollectionUtils.isNotEmpty(details)) {
             LOG.info("createWorkdayOpenAccountsCsv, number of open account detail lines to write: " + details.size());
             writeOpenAccountsToCsvFile(details);
@@ -43,7 +43,7 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         
     }
     
-    private void writeOpenAccountsToCsvFile(List<WorkdayOpenAccountDetail> details) throws IOException{
+    private void writeOpenAccountsToCsvFile(List<WorkdayOpenAccountDetailDTO> details) throws IOException{
         String csvFileName = generateCsvOutputFileName();
         String fullyQualifiedCreationDirectoryFileName = fullyQualifyFileNameToCreationDirectory(csvFileName);
         LOG.info("writeOpenAccountsToCsvFile: fullyQualifiedOutputFile = " + fullyQualifiedCreationDirectoryFileName);
@@ -53,14 +53,14 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         try {
             outputFileWriter.write(buildWorkdayOpenAccountDetailHeaderRow().toCsvString());
             outputFileWriter.write(KFSConstants.NEWLINE);
-            for (WorkdayOpenAccountDetail closedAccount : details) {
-                outputFileWriter.write(closedAccount.toCsvString());
+            for (WorkdayOpenAccountDetailDTO openAccount : details) {
+                outputFileWriter.write(openAccount.toCsvString());
                 outputFileWriter.write(KFSConstants.NEWLINE);
             }
             outputFileWriter.flush();
             LOG.info("writeOpenAccountsToCsvFile: CSV file in being-written directory has all the data, was flushed, and file will attempt to now be closed.");
         } catch (IOException io) {
-            LOG.error("writeOpenAccountsToCsvFile: Caught IOException attempting to create CSV file of closded accounts => ", io);
+            LOG.error("writeOpenAccountsToCsvFile: Caught IOException attempting to create CSV file of open accounts => ", io);
             throw io;
         } finally {
             IOUtils.closeQuietly(outputFileWriter);
@@ -102,8 +102,8 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         java.nio.file.Files.move(sourceFilePath, exportFilePath, StandardCopyOption.ATOMIC_MOVE);
     }
     
-    private WorkdayOpenAccountDetail buildWorkdayOpenAccountDetailHeaderRow() {
-        WorkdayOpenAccountDetail detail = new WorkdayOpenAccountDetail();
+    private WorkdayOpenAccountDetailDTO buildWorkdayOpenAccountDetailHeaderRow() {
+        WorkdayOpenAccountDetailDTO detail = new WorkdayOpenAccountDetailDTO();
         detail.setHeaderDetailRow(true);
         detail.setAccountClosedIndicator("accountClosedIndicator");
         detail.setAccountEffectiveDateString("accountEffectiveDate");

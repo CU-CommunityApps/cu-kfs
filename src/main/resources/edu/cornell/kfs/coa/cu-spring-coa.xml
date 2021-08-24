@@ -40,7 +40,7 @@
 			<list>
 				<value>accountReversionImportJob</value>
 				<value>createClosedAccountsCsvJob</value>
-				<value>createWorkDayOpenAccountsCsvJob</value>
+				<value>createWorkdayOpenAccountsCsvJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
@@ -244,7 +244,7 @@
     <bean id="closedAccountsByDateRangeDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.ClosedAccountsByDateRangeDaoJdbc">
     </bean>
     
-    <bean id="createWorkDayOpenAccountsCsvJob" parent="unscheduledJobDescriptor">
+    <bean id="createWorkdayOpenAccountsCsvJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
                 <ref bean="createWorkdayOpenAccountsCsvStep" />

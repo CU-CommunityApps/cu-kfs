@@ -57,7 +57,7 @@ public class WorkdayOpenAccountDaoJdbcTest {
                 + "CSO.UNIV_FISCAL_YR = COC.UNIV_FISCAL_YR "
                 + "WHERE CAT.ACCT_CLOSED_IND = 'N' AND CSF.SUB_FUND_GRP_WAGE_IND = 'Y' AND CAT.FIN_COA_CD = 'IT' AND "
                 + "CSO.UNIV_FISCAL_YR = 2022 AND COC.ACTV_IND = 'Y'  "
-                + "ORDER BY FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_COA_CD, FIN_SUB_OBJ_CD";
+                + "ORDER BY FIN_COA_CD, ACCOUNT_NBR, SUB_ACCT_NBR, FIN_SUB_OBJ_CD";
         assertEquals(expectedSql, actualSql);
     }
 

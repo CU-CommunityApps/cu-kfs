@@ -11,58 +11,56 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.RowMapper;
 
-import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetail;
+import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetailDTO;
 import edu.cornell.kfs.coa.batch.dataaccess.WorkdayOpenAccountDao;
 
 public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implements WorkdayOpenAccountDao {
     private static final Logger LOG = LogManager.getLogger();
     
-    protected String FIN_COA_CD = "FIN_COA_CD";
-    protected String ACCOUNT_NBR = "ACCOUNT_NBR";
-    protected String ACCOUNT_NM = "ACCOUNT_NM";
-    protected String SUB_FUND_GRP_WAGE_IND = "SUB_FUND_GRP_WAGE_IND";
-    protected String SUB_FUND_GRP_CD = "SUB_FUND_GRP_CD";
-    protected String FIN_HGH_ED_FUNC_CD = "FIN_HGH_ED_FUNC_CD";
-    protected String ACCT_EFFECT_DT = "ACCT_EFFECT_DT";
-    protected String ACCT_CLOSED_IND = "ACCT_CLOSED_IND";
-    protected String ACCT_TYP_CD = "ACCT_TYP_CD";
-    protected String SUB_ACCT_NBR = "SUB_ACCT_NBR";
-    protected String SUB_ACCT_NM = "SUB_ACCT_NM";
-    protected String SUB_ACCT_ACTV_CD = "SUB_ACCT_ACTV_CD";
-    protected String FIN_OBJECT_CD = "FIN_OBJECT_CD";
-    protected String FIN_SUB_OBJ_CD = "FIN_SUB_OBJ_CD";
-    protected String FIN_SUB_OBJ_CD_NM = "FIN_SUB_OBJ_CD_NM";
+    protected static final String FIN_COA_CD = "FIN_COA_CD";
+    protected static final String ACCOUNT_NBR = "ACCOUNT_NBR";
+    protected static final String ACCOUNT_NM = "ACCOUNT_NM";
+    protected static final String SUB_FUND_GRP_WAGE_IND = "SUB_FUND_GRP_WAGE_IND";
+    protected static final String SUB_FUND_GRP_CD = "SUB_FUND_GRP_CD";
+    protected static final String FIN_HGH_ED_FUNC_CD = "FIN_HGH_ED_FUNC_CD";
+    protected static final String ACCT_EFFECT_DT = "ACCT_EFFECT_DT";
+    protected static final String ACCT_CLOSED_IND = "ACCT_CLOSED_IND";
+    protected static final String ACCT_TYP_CD = "ACCT_TYP_CD";
+    protected static final String SUB_ACCT_NBR = "SUB_ACCT_NBR";
+    protected static final String SUB_ACCT_NM = "SUB_ACCT_NM";
+    protected static final String SUB_ACCT_ACTV_CD = "SUB_ACCT_ACTV_CD";
+    protected static final String FIN_OBJECT_CD = "FIN_OBJECT_CD";
+    protected static final String FIN_SUB_OBJ_CD = "FIN_SUB_OBJ_CD";
+    protected static final String FIN_SUB_OBJ_CD_NM = "FIN_SUB_OBJ_CD_NM";
     
     
     protected UniversityDateService universityDateService;
 
     @Override
-    public List<WorkdayOpenAccountDetail> getWorkdayOpenAccountDetail() {
+    public List<WorkdayOpenAccountDetailDTO> getWorkdayOpenAccountDetails() {
         try {
-            RowMapper<WorkdayOpenAccountDetail> rowMapper = new RowMapper<WorkdayOpenAccountDetail> () {
-                public WorkdayOpenAccountDetail mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
-                    WorkdayOpenAccountDetail detail = new WorkdayOpenAccountDetail();
-                    detail.setChart(resultSet.getString(FIN_COA_CD));
-                    detail.setAccountNumber(resultSet.getString(ACCOUNT_NBR));
-                    detail.setAccountName(resultSet.getString(ACCOUNT_NM));
-                    detail.setSubFundGroupWageIndicator(resultSet.getString(SUB_FUND_GRP_WAGE_IND));
-                    detail.setSubFundGroupCode(resultSet.getString(SUB_FUND_GRP_CD));
-                    detail.setHigherEdFunctionCode(resultSet.getString(FIN_HGH_ED_FUNC_CD));
-                    detail.setAccountEffectiveDate(resultSet.getDate(ACCT_EFFECT_DT));
-                    detail.setAccountClosedIndicator(resultSet.getString(ACCT_CLOSED_IND));
-                    detail.setAccountTypeCode(resultSet.getString(ACCT_TYP_CD));
-                    detail.setSubAccountNumber(resultSet.getString(SUB_ACCT_NM));
-                    detail.setSubAccountName(resultSet.getString(SUB_ACCT_NM));
-                    detail.setSubAccountActiveIndicator(resultSet.getString(SUB_ACCT_ACTV_CD));
-                    detail.setObjectCode(resultSet.getString(FIN_OBJECT_CD));
-                    detail.setSubObjectCode(resultSet.getString(FIN_SUB_OBJ_CD));
-                    detail.setSubObjectName(resultSet.getString(FIN_SUB_OBJ_CD_NM));
-                    return detail;
-                }
+            RowMapper<WorkdayOpenAccountDetailDTO> rowMapper = (resultSet, rowNumber) -> {
+                WorkdayOpenAccountDetailDTO detail = new WorkdayOpenAccountDetailDTO();
+                detail.setChart(resultSet.getString(FIN_COA_CD));
+                detail.setAccountNumber(resultSet.getString(ACCOUNT_NBR));
+                detail.setAccountName(resultSet.getString(ACCOUNT_NM));
+                detail.setSubFundGroupWageIndicator(resultSet.getString(SUB_FUND_GRP_WAGE_IND));
+                detail.setSubFundGroupCode(resultSet.getString(SUB_FUND_GRP_CD));
+                detail.setHigherEdFunctionCode(resultSet.getString(FIN_HGH_ED_FUNC_CD));
+                detail.setAccountEffectiveDate(resultSet.getDate(ACCT_EFFECT_DT));
+                detail.setAccountClosedIndicator(resultSet.getString(ACCT_CLOSED_IND));
+                detail.setAccountTypeCode(resultSet.getString(ACCT_TYP_CD));
+                detail.setSubAccountNumber(resultSet.getString(SUB_ACCT_NBR));
+                detail.setSubAccountName(resultSet.getString(SUB_ACCT_NM));
+                detail.setSubAccountActiveIndicator(resultSet.getString(SUB_ACCT_ACTV_CD));
+                detail.setObjectCode(resultSet.getString(FIN_OBJECT_CD));
+                detail.setSubObjectCode(resultSet.getString(FIN_SUB_OBJ_CD));
+                detail.setSubObjectName(resultSet.getString(FIN_SUB_OBJ_CD_NM));
+                return detail;
             };
             return this.getJdbcTemplate().query(buildFullOpenAccountSql(), rowMapper);
         } catch (Exception e) {
-            LOG.error("getWorkdayOpenAccountDetail, had an error getting open account details: ", e);
+            LOG.error("getWorkdayOpenAccountDetails, had an error getting open account details: ", e);
             throw new RuntimeException(e);
         }
     }
@@ -155,7 +153,6 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         sb.append(" ORDER BY ").append(FIN_COA_CD).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
         sb.append(ACCOUNT_NBR).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
         sb.append(SUB_ACCT_NBR).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
-        sb.append(FIN_COA_CD).append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
         sb.append(FIN_SUB_OBJ_CD);
         return sb.toString();
     }
