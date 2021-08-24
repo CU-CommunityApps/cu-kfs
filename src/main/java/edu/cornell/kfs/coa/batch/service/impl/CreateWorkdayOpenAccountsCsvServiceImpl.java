@@ -18,11 +18,20 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 import edu.cornell.kfs.coa.batch.CuCoaBatchConstants;
+import edu.cornell.kfs.coa.batch.CuCoaBatchConstants.WorkdayOpenAccountDetailDTOCsvColumn;
 import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetailDTO;
 import edu.cornell.kfs.coa.batch.dataaccess.WorkdayOpenAccountDao;
 import edu.cornell.kfs.coa.batch.service.CreateWorkdayOpenAccountsCsvService;
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
+import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.EnumConfiguredMappingStrategy;
 
 public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpenAccountsCsvService {
     private static final Logger LOG = LogManager.getLogger();
@@ -45,8 +54,8 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         
     }
     
-    private void writeOpenAccountsToCsvFile (List<WorkdayOpenAccountDetailDTO> details) throws IOException{
-        BufferedWriter os = null;
+    private void writeOpenAccountsToCsvFile (List<WorkdayOpenAccountDetailDTO> details) {
+        BufferedWriter bufferedWriter = null;
         String csvFileName = generateCsvOutputFileName();
         String fullyQualifiedCreationDirectoryFileName = fullyQualifyFileNameToCreationDirectory(csvFileName);
         LOG.info("writeOpenAccountsToCsvFile: fullyQualifiedOutputFile = " + fullyQualifiedCreationDirectoryFileName);
@@ -54,12 +63,10 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fullyQualifiedCreationDirectoryFileName), 
                     StandardCharsets.UTF_8);
-            os = new BufferedWriter(writer);
+            bufferedWriter = new BufferedWriter(writer);
             
-            writeAccountDetailToCsvFile (os, buildWorkdayOpenAccountDetailHeaderRow());
-            for (WorkdayOpenAccountDetailDTO detail : details) {
-                writeAccountDetailToCsvFile (os, detail);
-            }
+            StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> cvsWriter = buildCvsWriter(bufferedWriter);
+            cvsWriter.write(details);
             
             String fullyQualifiedExportDirectoryFileName = fullyQualifyFileNameToExportDirectory(csvFileName);
             LOG.info("writeOpenAccountsToCsvFile: Moving data file from creation directory to fullyQualifiedExportDirectoryFileName = " + fullyQualifiedExportDirectoryFileName);
@@ -69,24 +76,31 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         } catch (IOException ie) {
             LOG.error("writeOpenAccountsToCsvFile, Problem reading file:  " + csvFileName, ie);
             throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
+        } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException ie) {
+            LOG.error("writeOpenAccountsToCsvFile, problem with CSV parsing", ie);
+            throw new IllegalStateException(ie);
         } finally {
             // Close file
-            if (os != null) {
+            if (bufferedWriter != null) {
                 try {
-                    os.close();
+                    bufferedWriter.close();
                 } catch (IOException ie) {
                     LOG.error("writeOpenAccountsToCsvFile, problem closing the output stream", ie);
                 }
             }
         }
     }
+    
+    private StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> buildCvsWriter(BufferedWriter bufferedWriter) {
+        EnumConfiguredMappingStrategy<WorkdayOpenAccountDetailDTO, WorkdayOpenAccountDetailDTOCsvColumn> mappingStrategy = new EnumConfiguredMappingStrategy<>(
+                WorkdayOpenAccountDetailDTOCsvColumn.class, WorkdayOpenAccountDetailDTOCsvColumn::getHeaderLabel,
+                WorkdayOpenAccountDetailDTOCsvColumn::getWorkdayOpenAccountDetailPropertyName);
+        mappingStrategy.setType(WorkdayOpenAccountDetailDTO.class);
 
-    public void writeAccountDetailToCsvFile (BufferedWriter os, WorkdayOpenAccountDetailDTO openAccount) throws IOException {
-        os.write(openAccount.toCsvString());
-        os.write(KFSConstants.NEWLINE);
+        StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> csvWriter = new StatefulBeanToCsvBuilder<WorkdayOpenAccountDetailDTO>(
+                bufferedWriter).withMappingStrategy(mappingStrategy).build();
+        return csvWriter;
     }
-    
-    
     
     private String generateCsvOutputFileName() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
@@ -112,27 +126,6 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         File exportFile = new File(fullyQualifiedTargetFile);
         Path exportFilePath = exportFile.toPath();
         java.nio.file.Files.move(sourceFilePath, exportFilePath, StandardCopyOption.ATOMIC_MOVE);
-    }
-    
-    private WorkdayOpenAccountDetailDTO buildWorkdayOpenAccountDetailHeaderRow() {
-        WorkdayOpenAccountDetailDTO detail = new WorkdayOpenAccountDetailDTO();
-        detail.setHeaderDetailRow(true);
-        detail.setAccountClosedIndicator("accountClosedIndicator");
-        detail.setAccountEffectiveDateString("accountEffectiveDate");
-        detail.setAccountName("accountName");
-        detail.setAccountNumber("accountNumber");
-        detail.setAccountTypeCode("accountTypeCode");
-        detail.setChart("chart");
-        detail.setHigherEdFunctionCode("higherEdFunctionCode");
-        detail.setObjectCode("objectCode");
-        detail.setSubAccountActiveIndicator("subAccountActiveIndicator");
-        detail.setSubAccountName("subAccountName");
-        detail.setSubAccountNumber("subAccountNumber");
-        detail.setSubFundGroupCode("subFundGroupCode");
-        detail.setSubFundGroupWageIndicator("subFundGroupWageIndicator");
-        detail.setSubObjectCode("subObjectCode");
-        detail.setSubObjectName("subObjectName");
-        return detail;
     }
 
     public void setCsvOpenAccountsExportDirectory(String csvOpenAccountsExportDirectory) {
