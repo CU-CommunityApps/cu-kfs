@@ -70,7 +70,8 @@ public class CuActionListServiceImpl extends ActionListServiceImpl implements Cu
                 resultStatus = getNoteSaveFailureStatus();
             }
         } catch (RuntimeException e) {
-            LOG.error("saveActionItemNoteForActionItemId, Unexpected exception when saving action item note", e);
+            LOG.error("saveActionItemNoteForActionItemId, Unexpected exception when saving action item note with ID: "
+                    + StringUtils.defaultIfBlank(actionItemId, "(Blank ID)"), e);
             resultStatus = getNoteSaveFailureStatus();
         }
         
