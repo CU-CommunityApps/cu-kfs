@@ -1,8 +1,11 @@
 package edu.cornell.kfs.coa.batch.service.impl;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
@@ -10,7 +13,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -43,38 +45,48 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         
     }
     
-    private void writeOpenAccountsToCsvFile(List<WorkdayOpenAccountDetailDTO> details) throws IOException{
+    private void writeOpenAccountsToCsvFile (List<WorkdayOpenAccountDetailDTO> details) throws IOException{
+        BufferedWriter os = null;
         String csvFileName = generateCsvOutputFileName();
         String fullyQualifiedCreationDirectoryFileName = fullyQualifyFileNameToCreationDirectory(csvFileName);
         LOG.info("writeOpenAccountsToCsvFile: fullyQualifiedOutputFile = " + fullyQualifiedCreationDirectoryFileName);
         File outputFile = new File(fullyQualifiedCreationDirectoryFileName);
-        FileWriter outputFileWriter;
-        outputFileWriter = new FileWriter(outputFile);
         try {
-            outputFileWriter.write(buildWorkdayOpenAccountDetailHeaderRow().toCsvString());
-            outputFileWriter.write(KFSConstants.NEWLINE);
-            for (WorkdayOpenAccountDetailDTO openAccount : details) {
-                outputFileWriter.write(openAccount.toCsvString());
-                outputFileWriter.write(KFSConstants.NEWLINE);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fullyQualifiedCreationDirectoryFileName), 
+                    StandardCharsets.UTF_8);
+            os = new BufferedWriter(writer);
+            
+            writeAccountDetailToCsvFile (os, buildWorkdayOpenAccountDetailHeaderRow());
+            for (WorkdayOpenAccountDetailDTO detail : details) {
+                writeAccountDetailToCsvFile (os, detail);
             }
-            outputFileWriter.flush();
-            LOG.info("writeOpenAccountsToCsvFile: CSV file in being-written directory has all the data, was flushed, and file will attempt to now be closed.");
-        } catch (IOException io) {
-            LOG.error("writeOpenAccountsToCsvFile: Caught IOException attempting to create CSV file of open accounts => ", io);
-            throw io;
-        } finally {
-            IOUtils.closeQuietly(outputFileWriter);
-        }
-        try {
+            
             String fullyQualifiedExportDirectoryFileName = fullyQualifyFileNameToExportDirectory(csvFileName);
             LOG.info("writeOpenAccountsToCsvFile: Moving data file from creation directory to fullyQualifiedExportDirectoryFileName = " + fullyQualifiedExportDirectoryFileName);
             moveCreatedFileToExportDirectory(outputFile, fullyQualifiedExportDirectoryFileName);
             LOG.info("writeClosedAccountsToCsvFile: File was successfully moved to export directory.");
-        } catch (IOException io2) {
-            LOG.error("writeOpenAccountsToCsvFile: Caught IOException attempting to move CSV file of closed accounts to export directory => ", io2);
-            throw io2;
+            
+        } catch (IOException ie) {
+            LOG.error("writeOpenAccountsToCsvFile, Problem reading file:  " + csvFileName, ie);
+            throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
+        } finally {
+            // Close file
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException ie) {
+                    LOG.error("writeOpenAccountsToCsvFile, problem closing the output stream", ie);
+                }
+            }
         }
     }
+
+    public void writeAccountDetailToCsvFile (BufferedWriter os, WorkdayOpenAccountDetailDTO openAccount) throws IOException {
+        os.write(openAccount.toCsvString());
+        os.write(KFSConstants.NEWLINE);
+    }
+    
+    
     
     private String generateCsvOutputFileName() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
