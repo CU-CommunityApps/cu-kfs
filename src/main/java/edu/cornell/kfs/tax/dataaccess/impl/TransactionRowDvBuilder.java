@@ -307,9 +307,6 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));
             insertStatement.setString(detailRow.paymentReasonCode.index - offset, rs.getString(dvRow.disbVchrPaymentReasonCode.index));
-            insertStatement.setString(detailRow.disbursementNbr.index - offset, rs.getString(dvRow.disbursementNbr.index));
-            insertStatement.setString(detailRow.paymentStatusCode.index - offset, rs.getString(dvRow.paymentStatusCode.index));
-            insertStatement.setString(detailRow.disbursementTypeCode.index - offset, rs.getString(dvRow.disbursementTypeCode.index));
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
             
             // Add to batch, and execute batch if needed.
