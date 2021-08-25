@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<descriptor-repository version="1.0">
+
+    <class-descriptor class="org.kuali.kfs.kew.actionitem.ActionItemActionListExtension" table="KREW_ACTN_ITM_T">
+        <field-descriptor column="ACTN_ITM_ID" name="id" jdbc-type="VARCHAR" primarykey="true" autoincrement="true"
+                          sequence-name="KREW_ACTN_ITM_S"/>
+        <field-descriptor name="principalId" column="PRNCPL_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dateAssigned" column="ASND_DT" jdbc-type="TIMESTAMP"/>
+        <field-descriptor name="actionRequestCd" column="RQST_CD" jdbc-type="CHAR"/>
+        <field-descriptor name="actionRequestId" column="ACTN_RQST_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="documentId" column="DOC_HDR_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="responsibilityId" column="RSP_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="groupId" column="GRP_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="roleName" column="ROLE_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="docTitle" column="DOC_HDR_TTL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="docLabel" column="DOC_TYP_LBL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="docHandlerURL" column="DOC_HDLR_URL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="docName" column="DOC_TYP_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="delegatorPrincipalId" column="DLGN_PRNCPL_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="delegatorGroupId" column="DLGN_GRP_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="delegationType" column="DLGN_TYP" jdbc-type="VARCHAR"/>
+        <field-descriptor name="requestLabel" column="RQST_LBL" jdbc-type="VARCHAR"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+        <reference-descriptor auto-retrieve="true" auto-update="false" auto-delete="false"
+                              class-ref="org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValueActionListExtension"
+                              name="routeHeader">
+            <foreignkey field-ref="documentId"/>
+        </reference-descriptor>
+        <!-- CU Customization: Add an ActionItemExtension reference on the "extension" property. -->
+        <reference-descriptor auto-retrieve="true" auto-update="false" auto-delete="false"
+                              class-ref="edu.cornell.kfs.kew.actionitem.ActionItemExtension"
+                              name="extension">
+            <foreignkey field-ref="id"/>
+        </reference-descriptor>
+    </class-descriptor>
+
+    <!-- Modified version of CONTRIB-73 by MSU - Add a Note to Your Action List Item -->
+    <class-descriptor class="edu.cornell.kfs.kew.actionitem.ActionItemExtension" table="KREW_ACTN_ITM_EXT_T">
+        <field-descriptor name="actionItemId" column="ACTN_ITM_ID" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="actionNote" column="ACTN_NOTE" jdbc-type="VARCHAR" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+    </class-descriptor>
+
+</descriptor-repository>
