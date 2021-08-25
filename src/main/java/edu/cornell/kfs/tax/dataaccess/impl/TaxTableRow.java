@@ -367,7 +367,6 @@ abstract class TaxTableRow {
             this.extractDate = getAliasedField(CommonDvSourceFieldNames.EXTRACT_DATE);
             this.paidDate = getAliasedField(CommonDvSourceFieldNames.PAID_DATE);
             this.universityDate = getAliasedField(CommonDvSourceFieldNames.UNIVERSITY_DATE);
-
             // Vendor-related fields will be configured by the superclass.
         }
     }
