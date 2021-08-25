@@ -111,8 +111,6 @@
     <field-descriptor name="conflictOfInterestEmployeeName" column="CONF_EMPL_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="conflictOfInterestEmployeePhoneNumber" column="CONF_EMPL_PHN_NBR" jdbc-type="VARCHAR" />
 
-    <field-descriptor name="acceptCreditCards" column="ACCEPT_CREDIT_CARD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-
     <!-- PO vendor specific attributes -->
     <field-descriptor name="insuranceContactName" column="INS_CNTCT_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactPhoneNumber" column="INS_CNTCT_PHN_NBR" jdbc-type="VARCHAR" />

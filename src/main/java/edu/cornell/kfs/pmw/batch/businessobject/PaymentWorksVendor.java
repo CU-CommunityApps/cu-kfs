@@ -169,7 +169,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     /*
      * Fields removed from the new foreign vendor 
      */
-    private boolean acceptCreditCards;
     private String taxCountry;
     private String insuranceCertificate;
     private boolean invoicing;
@@ -813,14 +812,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setConflictOfInterestEmployeePhoneNumber(String conflictOfInterestEmployeePhoneNumber) {
         this.conflictOfInterestEmployeePhoneNumber = conflictOfInterestEmployeePhoneNumber;
-    }
-
-    public boolean isAcceptCreditCards() {
-        return acceptCreditCards;
-    }
-
-    public void setAcceptCreditCards(boolean acceptCreditCards) {
-        this.acceptCreditCards = acceptCreditCards;
     }
 
     public String getInsuranceContactName() {
