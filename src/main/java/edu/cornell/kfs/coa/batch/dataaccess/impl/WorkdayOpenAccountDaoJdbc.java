@@ -134,7 +134,7 @@ public class WorkdayOpenAccountDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     private String buildBaseFromAndJoin() {
         StringBuilder sb = new StringBuilder();
         sb.append("FROM KFS.CA_ACCOUNT_T CAT ");
-        sb.append("JOIN KFS.CA_SUB_FUND_GRP_T CSF ON CAT.SUB_FUND_GRP_CD = CSF.SUB_FUND_GRP_CD ");;
+        sb.append("JOIN KFS.CA_SUB_FUND_GRP_T CSF ON CAT.SUB_FUND_GRP_CD = CSF.SUB_FUND_GRP_CD ");
         return sb.toString();
     }
     

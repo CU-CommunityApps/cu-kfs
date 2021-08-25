@@ -26,7 +26,7 @@ public class CuCoaBatchConstants {
         public static final String OUTPUT_FILE_NAME = "kfsOpenAccountsSubaccountsSubobjectcodes";
     }
     
-    public enum WorkdayOpenAccountDetailDTOCsvColumn{
+    public enum WorkdayOpenAccountDetailDTOCsvColumn {
         CHART("chart"),
         ACCOUNT_NUMBER("accountNumber"),
         ACCOUNT_NAME("accountName"),

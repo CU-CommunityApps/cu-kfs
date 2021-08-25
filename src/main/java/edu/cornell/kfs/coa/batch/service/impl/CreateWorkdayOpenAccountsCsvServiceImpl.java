@@ -2,6 +2,7 @@ package edu.cornell.kfs.coa.batch.service.impl;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -28,8 +30,6 @@ import edu.cornell.kfs.coa.batch.CuCoaBatchConstants.WorkdayOpenAccountDetailDTO
 import edu.cornell.kfs.coa.batch.businessobject.WorkdayOpenAccountDetailDTO;
 import edu.cornell.kfs.coa.batch.dataaccess.WorkdayOpenAccountDao;
 import edu.cornell.kfs.coa.batch.service.CreateWorkdayOpenAccountsCsvService;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
-import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.EnumConfiguredMappingStrategy;
 
@@ -37,7 +37,7 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
     private static final Logger LOG = LogManager.getLogger();
     
     protected String csvOpenAccountsExportDirectory;
-    protected String csvOpenAccountstFileCreationDirectory;
+    protected String csvOpenAccountsFileCreationDirectory;
     protected DateTimeService dateTimeService;
     protected WorkdayOpenAccountDao workdayOpenAccountDao;
     
@@ -54,41 +54,42 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         
     }
     
-    private void writeOpenAccountsToCsvFile (List<WorkdayOpenAccountDetailDTO> details) {
-        BufferedWriter bufferedWriter = null;
+    private void writeOpenAccountsToCsvFile(List<WorkdayOpenAccountDetailDTO> details) {
         String csvFileName = generateCsvOutputFileName();
         String fullyQualifiedCreationDirectoryFileName = fullyQualifyFileNameToCreationDirectory(csvFileName);
         LOG.info("writeOpenAccountsToCsvFile: fullyQualifiedOutputFile = " + fullyQualifiedCreationDirectoryFileName);
-        File outputFile = new File(fullyQualifiedCreationDirectoryFileName);
-        try {
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fullyQualifiedCreationDirectoryFileName), 
-                    StandardCharsets.UTF_8);
-            bufferedWriter = new BufferedWriter(writer);
-            
+        
+        try (FileOutputStream fileOutputStream = new FileOutputStream(fullyQualifiedCreationDirectoryFileName);
+                OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
             StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> cvsWriter = buildCvsWriter(bufferedWriter);
             cvsWriter.write(details);
-            
-            String fullyQualifiedExportDirectoryFileName = fullyQualifyFileNameToExportDirectory(csvFileName);
-            LOG.info("writeOpenAccountsToCsvFile: Moving data file from creation directory to fullyQualifiedExportDirectoryFileName = " + fullyQualifiedExportDirectoryFileName);
-            moveCreatedFileToExportDirectory(outputFile, fullyQualifiedExportDirectoryFileName);
-            LOG.info("writeClosedAccountsToCsvFile: File was successfully moved to export directory.");
-            
-        } catch (IOException ie) {
-            LOG.error("writeOpenAccountsToCsvFile, Problem reading file:  " + csvFileName, ie);
-            throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
-        } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException ie) {
-            LOG.error("writeOpenAccountsToCsvFile, problem with CSV parsing", ie);
-            throw new IllegalStateException(ie);
-        } finally {
-            // Close file
-            if (bufferedWriter != null) {
-                try {
-                    bufferedWriter.close();
-                } catch (IOException ie) {
-                    LOG.error("writeOpenAccountsToCsvFile, problem closing the output stream", ie);
-                }
-            }
+        } catch (CsvDataTypeMismatchException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (CsvRequiredFieldEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (FileNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
+
+        try {
+            String fullyQualifiedExportDirectoryFileName = fullyQualifyFileNameToExportDirectory(csvFileName);
+            LOG.info("writeOpenAccountsToCsvFile, Moving data file from creation directory to fullyQualifiedExportDirectoryFileName = "
+                            + fullyQualifiedExportDirectoryFileName);
+            File outputFile = new File(fullyQualifiedCreationDirectoryFileName);
+            moveCreatedFileToExportDirectory(outputFile, fullyQualifiedExportDirectoryFileName);
+            LOG.info("writeOpenAccountsToCsvFile, file was successfully moved to export directory.");
+        } catch (IOException ie) {
+            LOG.error("writeOpenAccountsToCsvFile, had a problem moving the output file.", ie);
+            throw new RuntimeException(ie);
+        }
+
     }
     
     private StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> buildCvsWriter(BufferedWriter bufferedWriter) {
@@ -110,7 +111,7 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
     }
     
     private String fullyQualifyFileNameToCreationDirectory(String csvFileName) {
-        StringBuilder filename = new StringBuilder(csvOpenAccountstFileCreationDirectory);
+        StringBuilder filename = new StringBuilder(csvOpenAccountsFileCreationDirectory);
         filename.append(csvFileName);
         return filename.toString();
     }
@@ -132,8 +133,8 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         this.csvOpenAccountsExportDirectory = csvOpenAccountsExportDirectory;
     }
 
-    public void setCsvOpenAccountstFileCreationDirectory(String csvOpenAccountstFileCreationDirectory) {
-        this.csvOpenAccountstFileCreationDirectory = csvOpenAccountstFileCreationDirectory;
+    public void setCsvOpenAccountsFileCreationDirectory(String csvOpenAccountsFileCreationDirectory) {
+        this.csvOpenAccountsFileCreationDirectory = csvOpenAccountsFileCreationDirectory;
     }
 
     public void setDateTimeService(DateTimeService dateTimeService) {

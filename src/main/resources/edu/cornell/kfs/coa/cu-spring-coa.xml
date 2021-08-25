@@ -261,7 +261,7 @@
         <property name="csvOpenAccountsExportDirectory">
             <value>${staging.directory}/coa/open-accounts-outbound/</value>
         </property>
-        <property name="csvOpenAccountstFileCreationDirectory">
+        <property name="csvOpenAccountsFileCreationDirectory">
             <value>${staging.directory}/coa/open-accounts-outbound/being-written/</value>
         </property>
         <property name="workdayOpenAccountDao" ref="workdayOpenAccountDao" />
