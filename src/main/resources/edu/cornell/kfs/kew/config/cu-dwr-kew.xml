@@ -1,0 +1,13 @@
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://getahead.org/dwr/dwr30.dtd">
+<dwr>
+  <init>
+    <creator id="kewCreator" class="org.kuali.kfs.kns.web.servlet.dwr.GlobalResourceDelegatingSpringCreator"/>
+  </init>
+  <allow>
+    <!-- Modified version of CONTRIB-73 by MSU - Add a Note to Your Action List Item -->
+    <create creator="kewCreator" javascript="ActionListService">
+      <param name="beanName" value="enActionListService"/>
+      <include method="saveActionItemNoteForActionItemId"/>
+    </create>
+  </allow>
+</dwr>

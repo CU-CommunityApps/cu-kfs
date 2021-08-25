@@ -1,7 +1,6 @@
 package edu.cornell.kfs.kew.actionitem;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -26,39 +25,21 @@ public class ActionItemExtension extends PersistableBusinessObjectBase
 
     private String actionItemId;
     private String actionNote;
-    private Integer lockVerNbr;
-    private Timestamp noteTimeStamp;
 
     public String getActionItemId() {
         return actionItemId;
-    }
-
-    public Integer getLockVerNbr() {
-        return lockVerNbr;
-    }
-
-    public String getActionNote() {
-        return actionNote;
-    }
-
-    public Timestamp getNoteTimeStamp() {
-        return noteTimeStamp;
     }
 
     public void setActionItemId(String actionItemId) {
         this.actionItemId = actionItemId;
     }
 
+    public String getActionNote() {
+        return actionNote;
+    }
+
     public void setActionNote(String actionNote) {
         this.actionNote = actionNote;
-    }
-
-    public void setLockVerNbr(Integer lockVerNbr) {
-        this.lockVerNbr = lockVerNbr;
-    }
-
-    public void setNoteTimeStamp(Timestamp noteTimeStamp) {
-        this.noteTimeStamp = noteTimeStamp;
     }
 
     public String getActionNoteForSorting() {
@@ -80,8 +61,8 @@ public class ActionItemExtension extends PersistableBusinessObjectBase
         return new ToStringBuilder(this)
                 .append("actionItemId", actionItemId)
                 .append("actionNote", actionNote)
-                .append("lockVerNbr", lockVerNbr)
-                .append("noteTimeStamp", noteTimeStamp)
+                .append("versionNumber", versionNumber)
+                .append("lastUpdatedTimeStamp", getLastUpdatedTimestamp())
                 .toString();
     }
 
