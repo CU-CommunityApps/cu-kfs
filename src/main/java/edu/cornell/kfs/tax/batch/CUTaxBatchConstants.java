@@ -353,6 +353,9 @@ public final class CUTaxBatchConstants {
         public static final String FORM_1042S_OVERRIDDEN_BOX = "form1042SOverriddenBox";
         public static final String PAYMENT_REASON_CODE = "paymentReasonCode";
         
+        public static final String DISBURSEMENT_NUMBER = "disbursementNbr";
+        public static final String PAYMENT_STATUS_CODE = "paymentStatusCode";
+        public static final String DISBURSEMENT_TYPE_CODE = "disbursementTypeCode";
         
         private TransactionDetailFieldNames() {
             throw new UnsupportedOperationException("do not call TransactionDetailFieldNames constructor");

@@ -63,6 +63,9 @@
         <field name="Header51" length="10" type="STATIC" value="1042S_Box" />
         <field name="Header52" length="20" type="STATIC" value="1042S_Overridden_Box" />
         <field name="Header53" length="14" type="STATIC" value="Payment_Reason" />
+        <field name="Header54" length="19" type="STATIC" value="Disbursement_Number" />
+        <field name="Header55" length="19" type="STATIC" value="Payment_Status_Code" />
+        <field name="Header56" length="22" type="STATIC" value="Disbursement_Type_Code" />
     </section>
     <!--
         =================================================
@@ -123,5 +126,8 @@
         <field name="Field51" length="10" type="DETAIL" value="form1042SBox" />
         <field name="Field52" length="20" type="DETAIL" value="form1042SOverriddenBox" />
         <field name="Field53" length="14" type="DETAIL" value="paymentReasonCode" />
+        <field name="Field54" length="20" type="DETAIL" value="disbursementNbr" />
+        <field name="Field55" length="14" type="DETAIL" value="paymentStatusCode" />
+        <field name="Field56" length="14" type="DETAIL" value="disbursementTypeCode" />
     </section>
 </taxOutputDefinition>
