@@ -12,6 +12,10 @@
 
         NOTE: For the certain beans below that were present in the 2021-01-28 financials release, they did not follow
         the "parentBean" convention, so full overrides of them had to be included below.
+
+        NOTE: The "kewModuleConfiguration" bean override is still needed, since it contains customizations
+        related to the Action List Notes feature. If the bean does get updated to follow the parentBean convention
+        in base code, then the custom setup could take advantage of that instead of having to do a full override.
      -->
     <bean id="kewModule" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl"
           p:moduleConfiguration-ref="kewModuleConfiguration"
@@ -42,11 +46,13 @@
         <property name="scriptConfigurationFilePaths">
             <list>
                 <value>org/kuali/kfs/kew/config/dwr-kew.xml</value>
+                <value>edu/cornell/kfs/kew/config/cu-dwr-kew.xml</value>
             </list>
         </property>
         <property name="databaseRepositoryFilePaths">
             <list>
                 <value>org/kuali/kfs/kew/impl/config/OJB-repository-kew-classes.xml</value>
+                <value>edu/cornell/kfs/kew/impl/config/cu-OJB-repository-kew-classes.xml</value>
             </list>
         </property>
         <property name="triggerNames">
@@ -130,5 +136,14 @@
         We can remove this workaround when we upgrade to the 2021-04-08 financials patch.
      -->
     <bean id="stuckDocumentScheduler" class="java.lang.String"/>
+
+    <!-- Override action list and action item DAOs/services to support the action list notes customization. -->
+
+    <bean id="enActionItemDAO" class="edu.cornell.kfs.kew.actionitem.dao.impl.CuActionItemDAOOjbImpl" lazy-init="true"
+          p:jcdAlias="kewDataSource"/>
+
+    <bean id="enActionListService" class="edu.cornell.kfs.kew.actionlist.service.impl.CuActionListServiceImpl"
+          lazy-init="true" p:actionListDAO-ref="enActionListDAO" p:actionItemDAO-ref="enActionItemDAO"
+          p:configurationService-ref="configurationService"/>
 
 </beans>
