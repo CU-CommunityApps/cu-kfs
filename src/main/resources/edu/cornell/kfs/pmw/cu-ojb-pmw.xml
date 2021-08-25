@@ -88,7 +88,6 @@
     <field-descriptor name="bankAddressValidated" column="BANK_ADDR_VALIDATED" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
 
     <!-- DV and PO vendor attributes -->
-    <field-descriptor name="taxCountry" column="TAX_CNTRY_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="vendorType" column="VENDOR_TYPE" jdbc-type="VARCHAR" />
     <field-descriptor name="initiatorNetId" column="INITIATOR_NET_ID" jdbc-type="VARCHAR" />
 

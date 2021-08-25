@@ -56,7 +56,6 @@
                 <ref bean="PaymentWorksVendor-pmwTransactionType" />
 
                 <!-- Custom Fields -->
-                <ref bean="PaymentWorksVendor-taxCountry" />
                 <ref bean="PaymentWorksVendor-vendorType" />
                 <ref bean="PaymentWorksVendor-initiatorNetId" />
                 <ref bean="PaymentWorksVendor-vendorInformationContactName" />
@@ -729,17 +728,6 @@
     <bean id="PaymentWorksVendor-servicesProvided-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="servicesProvided" />
         <property name="label" value="Service Provided" />
-        <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="50" />
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="50" />
-        </property>
-    </bean>
-
-    <bean id="PaymentWorksVendor-taxCountry" parent="PaymentWorksVendor-taxCountry-parentBean" />
-    <bean id="PaymentWorksVendor-taxCountry-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="taxCountry" />
-        <property name="label" value="Tax Country" />
         <property name="forceUppercase" value="false" />
         <property name="maxLength" value="50" />
         <property name="control">
@@ -1444,7 +1432,6 @@
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorDocumentNumber" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorHeaderGeneratedIdentifier" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorDetailAssignedIdentifier" />
-                            <bean parent="FieldDefinition" p:attributeName="taxCountry" />
                             <bean parent="FieldDefinition" p:attributeName="vendorType" />
                             <bean parent="FieldDefinition" p:attributeName="initiatorNetId" />
                             <bean parent="FieldDefinition" p:attributeName="vendorInformationContactName" />

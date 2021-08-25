@@ -169,7 +169,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     /*
      * Fields removed from the new foreign vendor 
      */
-    private String taxCountry;
     private String insuranceCertificate;
     private boolean invoicing;
     private String eInvoiceContactName;
@@ -660,14 +659,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setCustomFieldConversionErrors(boolean customFieldConversionErrors) {
         this.customFieldConversionErrors = customFieldConversionErrors;
-    }
-
-    public String getTaxCountry() {
-        return taxCountry;
-    }
-
-    public void setTaxCountry(String taxCountry) {
-        this.taxCountry = taxCountry;
     }
 
     public String getInitiatorNetId() {
