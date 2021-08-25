@@ -2,7 +2,6 @@ package edu.cornell.kfs.coa.batch.service.impl;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -14,10 +13,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -64,18 +61,9 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
             StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> cvsWriter = buildCvsWriter(bufferedWriter);
             cvsWriter.write(details);
-        } catch (CsvDataTypeMismatchException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (CsvRequiredFieldEmptyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (FileNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException | IOException e) {
+            LOG.error("writeOpenAccountsToCsvFile, Error writing to file " + fullyQualifiedCreationDirectoryFileName, e);
+            throw new RuntimeException(e);
         }
 
         try {
