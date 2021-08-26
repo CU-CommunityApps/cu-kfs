@@ -115,7 +115,6 @@
     <field-descriptor name="insuranceContactPhoneNumber" column="INS_CNTCT_PHN_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactPhoneExtension" column="INS_CNTCT_PHN_EXTNS_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactEmail" column="INS_CNTCT_EMAIL" jdbc-type="VARCHAR" />
-    <field-descriptor name="insuranceCertificate" column="INS_CERT_URL" jdbc-type="VARCHAR" />
     
     <field-descriptor name="invoicing" column="INVOICING_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="eInvoiceContactName" column="INV_CNTCT_NM" jdbc-type="VARCHAR" />
