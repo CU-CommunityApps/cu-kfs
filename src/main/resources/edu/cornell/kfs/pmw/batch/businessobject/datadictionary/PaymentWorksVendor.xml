@@ -100,7 +100,6 @@
                 <ref bean="PaymentWorksVendor-poTransmissionMethod" />
                 <ref bean="PaymentWorksVendor-poFaxNumber" />
                 <ref bean="PaymentWorksVendor-poEmailAddress" />
-                <ref bean="PaymentWorksVendor-currentlyPaidThroughPayroll" />
                 <ref bean="PaymentWorksVendor-everPaidThroughPayroll" />
                 <ref bean="PaymentWorksVendor-seperateLegalEntityProvidingServices" />
                 <ref bean="PaymentWorksVendor-cornellProvidedTrainingOrEquipmentRequired" />
@@ -1236,17 +1235,6 @@
         <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter" />
     </bean>
 
-    <bean id="PaymentWorksVendor-currentlyPaidThroughPayroll" parent="PaymentWorksVendor-currentlyPaidThroughPayroll-parentBean" />
-    <bean id="PaymentWorksVendor-currentlyPaidThroughPayroll-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="currentlyPaidThroughPayroll" />
-        <property name="label" value="Currently Paid Through Payroll" />
-        <property name="forceUppercase" value="false" />
-        <property name="control">
-            <bean parent="CheckboxControlDefinition" />
-        </property>
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter" />
-    </bean>
-
     <bean id="PaymentWorksVendor-everPaidThroughPayroll" parent="PaymentWorksVendor-everPaidThroughPayroll-parentBean" />
     <bean id="PaymentWorksVendor-everPaidThroughPayroll-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="everPaidThroughPayroll" />
@@ -1380,7 +1368,6 @@
                             <bean parent="FieldDefinition" p:attributeName="poTransmissionMethod" />
                             <bean parent="FieldDefinition" p:attributeName="poFaxNumber" />
                             <bean parent="FieldDefinition" p:attributeName="poEmailAddress" />
-                            <bean parent="FieldDefinition" p:attributeName="currentlyPaidThroughPayroll" />
                             <bean parent="FieldDefinition" p:attributeName="everPaidThroughPayroll" />
                             <bean parent="FieldDefinition" p:attributeName="seperateLegalEntityProvidingServices" />
                             <bean parent="FieldDefinition" p:attributeName="cornellProvidedTrainingOrEquipmentRequired" />
