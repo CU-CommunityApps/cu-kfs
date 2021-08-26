@@ -169,7 +169,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     /*
      * Fields removed from the new foreign vendor 
      */
-    private boolean cornellProvidedTrainingOrEquipmentRequired;
     private boolean informalMarketing;
 
     public Integer getId() {
@@ -1000,14 +999,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setPoEmailAddress(String poEmailAddress) {
         this.poEmailAddress = poEmailAddress;
-    }
-
-    public boolean isCornellProvidedTrainingOrEquipmentRequired() {
-        return cornellProvidedTrainingOrEquipmentRequired;
-    }
-
-    public void setCornellProvidedTrainingOrEquipmentRequired(boolean cornellProvidedTrainingOrEquipmentRequired) {
-        this.cornellProvidedTrainingOrEquipmentRequired = cornellProvidedTrainingOrEquipmentRequired;
     }
 
     public boolean isInformalMarketing() {
