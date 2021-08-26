@@ -169,7 +169,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     /*
      * Fields removed from the new foreign vendor 
      */
-    private boolean invoicing;
     private String eInvoiceContactName;
     private String eInvoiceContactPhoneNumber;
     private String eInvoicePhoneExtension;
@@ -834,14 +833,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setInsuranceContactEmail(String insuranceContactEmail) {
         this.insuranceContactEmail = insuranceContactEmail;
-    }
-    
-    public boolean isInvoicing() {
-        return invoicing;
-    }
-
-    public void setInvoicing(boolean invoicing) {
-        this.invoicing = invoicing;
     }
 
     public String geteInvoiceContactName() {
