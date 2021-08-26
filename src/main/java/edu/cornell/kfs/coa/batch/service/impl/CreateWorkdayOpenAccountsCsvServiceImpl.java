@@ -59,8 +59,8 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
         try (FileOutputStream fileOutputStream = new FileOutputStream(fullyQualifiedCreationDirectoryFileName);
                 OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
-            StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> cvsWriter = buildCvsWriter(bufferedWriter);
-            cvsWriter.write(details);
+            StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> csvWriter = buildCsvWriter(bufferedWriter);
+            csvWriter.write(details);
         } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException | IOException e) {
             LOG.error("writeOpenAccountsToCsvFile, Error writing to file " + fullyQualifiedCreationDirectoryFileName, e);
             throw new RuntimeException(e);
@@ -80,7 +80,7 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
 
     }
     
-    private StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> buildCvsWriter(BufferedWriter bufferedWriter) {
+    private StatefulBeanToCsv<WorkdayOpenAccountDetailDTO> buildCsvWriter(BufferedWriter bufferedWriter) {
         EnumConfiguredMappingStrategy<WorkdayOpenAccountDetailDTO, WorkdayOpenAccountDetailDTOCsvColumn> mappingStrategy = new EnumConfiguredMappingStrategy<>(
                 WorkdayOpenAccountDetailDTOCsvColumn.class, WorkdayOpenAccountDetailDTOCsvColumn::getHeaderLabel,
                 WorkdayOpenAccountDetailDTOCsvColumn::getWorkdayOpenAccountDetailPropertyName);
