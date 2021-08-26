@@ -116,7 +116,6 @@
     <field-descriptor name="insuranceContactPhoneExtension" column="INS_CNTCT_PHN_EXTNS_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactEmail" column="INS_CNTCT_EMAIL" jdbc-type="VARCHAR" />
     
-    <field-descriptor name="eInvoiceContactName" column="INV_CNTCT_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="eInvoiceContactPhoneNumber" column="INV_CNTCT_PHN_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="eInvoicePhoneExtension" column="INV_CNTCT_PHN_EXTNS_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="eInvoiceEmail" column="INV_CNTCT_EMAIL" jdbc-type="VARCHAR" />
