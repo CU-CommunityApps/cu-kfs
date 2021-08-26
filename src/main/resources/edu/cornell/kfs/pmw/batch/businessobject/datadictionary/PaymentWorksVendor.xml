@@ -100,7 +100,6 @@
                 <ref bean="PaymentWorksVendor-poTransmissionMethod" />
                 <ref bean="PaymentWorksVendor-poFaxNumber" />
                 <ref bean="PaymentWorksVendor-poEmailAddress" />
-                <ref bean="PaymentWorksVendor-seperateLegalEntityProvidingServices" />
                 <ref bean="PaymentWorksVendor-cornellProvidedTrainingOrEquipmentRequired" />
                 <ref bean="PaymentWorksVendor-informalMarketing" />
             </list>
@@ -1189,17 +1188,6 @@
         </property>
     </bean>
 
-    <bean id="PaymentWorksVendor-seperateLegalEntityProvidingServices" parent="PaymentWorksVendor-seperateLegalEntityProvidingServices-parentBean" />
-    <bean id="PaymentWorksVendor-seperateLegalEntityProvidingServices-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="seperateLegalEntityProvidingServices" />
-        <property name="label" value="Seperate Legal Entity Providing Service" />
-        <property name="forceUppercase" value="false" />
-        <property name="control">
-            <bean parent="CheckboxControlDefinition" />
-        </property>
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter" />
-    </bean>
-
     <bean id="PaymentWorksVendor-cornellProvidedTrainingOrEquipmentRequired" parent="PaymentWorksVendor-cornellProvidedTrainingOrEquipmentRequired-parentBean" />
     <bean id="PaymentWorksVendor-cornellProvidedTrainingOrEquipmentRequired-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="cornellProvidedTrainingOrEquipmentRequired" />
@@ -1356,7 +1344,6 @@
                             <bean parent="FieldDefinition" p:attributeName="poTransmissionMethod" />
                             <bean parent="FieldDefinition" p:attributeName="poFaxNumber" />
                             <bean parent="FieldDefinition" p:attributeName="poEmailAddress" />
-                            <bean parent="FieldDefinition" p:attributeName="seperateLegalEntityProvidingServices" />
                             <bean parent="FieldDefinition" p:attributeName="cornellProvidedTrainingOrEquipmentRequired" />
                             <bean parent="FieldDefinition" p:attributeName="informalMarketing" />
                         </list>
