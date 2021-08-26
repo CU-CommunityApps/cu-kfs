@@ -169,7 +169,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     /*
      * Fields removed from the new foreign vendor 
      */
-    private boolean everPaidThroughPayroll;
     private boolean seperateLegalEntityProvidingServices;
     private boolean cornellProvidedTrainingOrEquipmentRequired;
     private boolean informalMarketing;
@@ -1002,14 +1001,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setPoEmailAddress(String poEmailAddress) {
         this.poEmailAddress = poEmailAddress;
-    }
-
-    public boolean isEverPaidThroughPayroll() {
-        return everPaidThroughPayroll;
-    }
-
-    public void setEverPaidThroughPayroll(boolean everPaidThroughPayroll) {
-        this.everPaidThroughPayroll = everPaidThroughPayroll;
     }
 
     public boolean isSeperateLegalEntityProvidingServices() {
