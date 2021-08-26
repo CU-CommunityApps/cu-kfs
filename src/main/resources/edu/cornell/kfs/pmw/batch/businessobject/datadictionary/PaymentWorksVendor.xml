@@ -100,7 +100,6 @@
                 <ref bean="PaymentWorksVendor-poTransmissionMethod" />
                 <ref bean="PaymentWorksVendor-poFaxNumber" />
                 <ref bean="PaymentWorksVendor-poEmailAddress" />
-                <ref bean="PaymentWorksVendor-informalMarketing" />
             </list>
         </property>
     </bean>
@@ -1187,17 +1186,6 @@
         </property>
     </bean>
 
-    <bean id="PaymentWorksVendor-informalMarketing" parent="PaymentWorksVendor-informalMarketing-parentBean" />
-    <bean id="PaymentWorksVendor-informalMarketing-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="informalMarketing" />
-        <property name="label" value="Informal Marketing" />
-        <property name="forceUppercase" value="false" />
-        <property name="control">
-            <bean parent="CheckboxControlDefinition" />
-        </property>
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter" />
-    </bean>
-
     <bean id="PaymentWorksVendor-diverseBusiness" parent="PaymentWorksVendor-diverseBusiness-parentBean" />
     <bean id="PaymentWorksVendor-diverseBusiness-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="diverseBusiness" />
@@ -1332,7 +1320,6 @@
                             <bean parent="FieldDefinition" p:attributeName="poTransmissionMethod" />
                             <bean parent="FieldDefinition" p:attributeName="poFaxNumber" />
                             <bean parent="FieldDefinition" p:attributeName="poEmailAddress" />
-                            <bean parent="FieldDefinition" p:attributeName="informalMarketing" />
                         </list>
                     </property>
                 </bean>

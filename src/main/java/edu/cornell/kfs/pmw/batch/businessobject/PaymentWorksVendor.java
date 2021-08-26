@@ -166,11 +166,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String disabledVeteran;
     private String veteranCertificationExpirationDate;
     
-    /*
-     * Fields removed from the new foreign vendor 
-     */
-    private boolean informalMarketing;
-
     public Integer getId() {
         return id;
     }
@@ -999,14 +994,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setPoEmailAddress(String poEmailAddress) {
         this.poEmailAddress = poEmailAddress;
-    }
-
-    public boolean isInformalMarketing() {
-        return informalMarketing;
-    }
-
-    public void setInformalMarketing(boolean informalMarketing) {
-        this.informalMarketing = informalMarketing;
     }
     
     public String getSupplierCategory() {
