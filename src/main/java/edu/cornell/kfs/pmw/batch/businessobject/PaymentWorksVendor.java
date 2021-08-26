@@ -169,7 +169,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     /*
      * Fields removed from the new foreign vendor 
      */
-    private String eInvoiceContactPhoneNumber;
     private String eInvoicePhoneExtension;
     private String eInvoiceEmail;
     private String servicesProvided;    
@@ -832,14 +831,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setInsuranceContactEmail(String insuranceContactEmail) {
         this.insuranceContactEmail = insuranceContactEmail;
-    }
-
-    public String geteInvoiceContactPhoneNumber() {
-        return eInvoiceContactPhoneNumber;
-    }
-
-    public void seteInvoiceContactPhoneNumber(String eInvoiceContactPhoneNumber) {
-        this.eInvoiceContactPhoneNumber = eInvoiceContactPhoneNumber;
     }
 
     public String geteInvoicePhoneExtension() {
