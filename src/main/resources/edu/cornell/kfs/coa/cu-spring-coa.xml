@@ -39,7 +39,8 @@
 		<property name="jobNames">
 			<list>
 				<value>accountReversionImportJob</value>
-                <value>createClosedAccountsCsvJob</value>
+				<value>createClosedAccountsCsvJob</value>
+				<value>createWorkdayOpenAccountsCsvJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
@@ -47,6 +48,8 @@
                  <value>${staging.directory}/coa</value>
                  <value>${staging.directory}/coa/closed-accounts-outbound</value>
                  <value>${staging.directory}/coa/closed-accounts-outbound/being-written</value>
+                 <value>${staging.directory}/coa/open-accounts-outbound</value>
+                 <value>${staging.directory}/coa/open-accounts-outbound/being-written</value>
              </list>
          </property>
 	</bean>
@@ -239,6 +242,34 @@
     </bean>
 
     <bean id="closedAccountsByDateRangeDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.ClosedAccountsByDateRangeDaoJdbc">
+    </bean>
+    
+    <bean id="createWorkdayOpenAccountsCsvJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createWorkdayOpenAccountsCsvStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="createWorkdayOpenAccountsCsvStep" parent="step" class="edu.cornell.kfs.coa.batch.CreateWorkdayOpenAccountsCsvStep">
+        <property name="createWorkdayOpenAccountsCsvService" ref="createWorkdayOpenAccountsCsvService" />
+    </bean>
+    
+    <bean id="createWorkdayOpenAccountsCsvService" parent="createWorkdayOpenAccountsCsvService-parentBean" />
+    <bean id="createWorkdayOpenAccountsCsvService-parentBean" class="edu.cornell.kfs.coa.batch.service.impl.CreateWorkdayOpenAccountsCsvServiceImpl" abstract="true">
+        <property name="csvOpenAccountsExportDirectory">
+            <value>${staging.directory}/coa/open-accounts-outbound/</value>
+        </property>
+        <property name="csvOpenAccountsFileCreationDirectory">
+            <value>${staging.directory}/coa/open-accounts-outbound/being-written/</value>
+        </property>
+        <property name="workdayOpenAccountDao" ref="workdayOpenAccountDao" />
+        <property name="dateTimeService" ref="dateTimeService" />
+    </bean>
+
+    <bean id="workdayOpenAccountDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.WorkdayOpenAccountDaoJdbc">
+        <property name="universityDateService" ref="universityDateService" />
     </bean>
 
 
