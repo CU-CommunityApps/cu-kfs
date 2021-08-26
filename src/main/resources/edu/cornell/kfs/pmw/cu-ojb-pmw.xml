@@ -116,8 +116,6 @@
     <field-descriptor name="insuranceContactPhoneExtension" column="INS_CNTCT_PHN_EXTNS_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactEmail" column="INS_CNTCT_EMAIL" jdbc-type="VARCHAR" />
     
-    <field-descriptor name="eInvoiceEmail" column="INV_CNTCT_EMAIL" jdbc-type="VARCHAR" />
-    
     <field-descriptor name="poCountryLegacy" column="PO_CNTRY_CD_LEGACY" jdbc-type="VARCHAR" />
     <field-descriptor name="poUsState" column="PO_ST_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="poAustralianProvince" column="PO_AUST_PROVINCE" jdbc-type="VARCHAR" />

@@ -78,7 +78,6 @@
                 <ref bean="PaymentWorksVendor-insuranceContactPhoneNumber" />
                 <ref bean="PaymentWorksVendor-insuranceContactPhoneExtension" />
                 <ref bean="PaymentWorksVendor-insuranceContactEmail" />
-                <ref bean="PaymentWorksVendor-eInvoiceEmail" />
                 <ref bean="PaymentWorksVendor-poCountry" />
                 <ref bean="PaymentWorksVendor-poUsState" />
                 <ref bean="PaymentWorksVendor-poAustralianProvince" />
@@ -752,17 +751,6 @@
         </property>
     </bean>
 
-    <bean id="PaymentWorksVendor-eInvoiceEmail" parent="PaymentWorksVendor-eInvoiceEmail-parentBean" />
-    <bean id="PaymentWorksVendor-eInvoiceEmail-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="eInvoiceEmail" />
-        <property name="label" value="E Invoice Contact Email" />
-        <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="50" />
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="50" />
-        </property>
-    </bean>
-
     <bean id="PaymentWorksVendor-vendorInformationContactName" parent="PaymentWorksVendor-vendorInformationContactName-parentBean" />
     <bean id="PaymentWorksVendor-vendorInformationContactName-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="vendorInformationContactName" />
@@ -1394,7 +1382,6 @@
                             <bean parent="FieldDefinition" p:attributeName="insuranceContactPhoneNumber" />
                             <bean parent="FieldDefinition" p:attributeName="insuranceContactPhoneExtension" />
                             <bean parent="FieldDefinition" p:attributeName="insuranceContactEmail" />
-                            <bean parent="FieldDefinition" p:attributeName="eInvoiceEmail" />
                             <bean parent="FieldDefinition" p:attributeName="poCountry" />
                             <bean parent="FieldDefinition" p:attributeName="poUsState" />
                             <bean parent="FieldDefinition" p:attributeName="poAustralianProvince" />
