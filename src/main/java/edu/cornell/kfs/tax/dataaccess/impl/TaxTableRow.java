@@ -218,8 +218,8 @@ abstract class TaxTableRow {
             this.payeeIdTypeCode = getAliasedField(CommonPdpSourceFieldNames.PAYEE_ID_TYPE_CODE);
             this.line1Address = getAliasedField(CommonPdpSourceFieldNames.LINE1_ADDRESS);
             this.nraPayment = getAliasedField(CommonPdpSourceFieldNames.NRA_PAYMENT_IND);
-            this.paymentStatusCode = getAliasedField(TransactionDetailFieldNames.PAYMENT_STATUS_CODE);
-            this.disbursementTypeCode = getAliasedField(TransactionDetailFieldNames.DISBURSEMENT_TYPE_CODE);
+            this.paymentStatusCode = getAliasedField(CommonPdpSourceFieldNames.PAYMENT_STATUS_CODE);
+            this.disbursementTypeCode = getAliasedField(CommonPdpSourceFieldNames.DISBURSEMENT_TYPE_CODE);
             this.paymentDetailId = getAliasedField(CommonPdpSourceFieldNames.PAYMENT_DETAIL_ID);
             this.custPaymentDocNbr = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_PAYMENT_DOC_NUMBER);
             this.paymentDetailPaymentGroupId = getAliasedField(CommonPdpSourceFieldNames.PAYMENT_DETAIL_PAYMENT_GROUP_ID);
