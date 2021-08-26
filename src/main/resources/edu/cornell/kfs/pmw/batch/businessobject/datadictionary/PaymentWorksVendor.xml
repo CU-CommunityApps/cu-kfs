@@ -100,7 +100,6 @@
                 <ref bean="PaymentWorksVendor-poTransmissionMethod" />
                 <ref bean="PaymentWorksVendor-poFaxNumber" />
                 <ref bean="PaymentWorksVendor-poEmailAddress" />
-                <ref bean="PaymentWorksVendor-servicesProvided" />
                 <ref bean="PaymentWorksVendor-currentlyPaidThroughPayroll" />
                 <ref bean="PaymentWorksVendor-everPaidThroughPayroll" />
                 <ref bean="PaymentWorksVendor-seperateLegalEntityProvidingServices" />
@@ -715,17 +714,6 @@
     <bean id="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier" parent="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier-parentBean" />
     <bean id="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier-parentBean" abstract="true" parent="VendorDetail-vendorDetailAssignedIdentifier">
         <property name="name" value="kfsVendorDetailAssignedIdentifier"/>
-    </bean>
-
-    <bean id="PaymentWorksVendor-servicesProvided" parent="PaymentWorksVendor-servicesProvided-parentBean" />
-    <bean id="PaymentWorksVendor-servicesProvided-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="servicesProvided" />
-        <property name="label" value="Service Provided" />
-        <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="50" />
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="50" />
-        </property>
     </bean>
 
     <bean id="PaymentWorksVendor-vendorType" parent="PaymentWorksVendor-vendorType-parentBean" />
@@ -1392,7 +1380,6 @@
                             <bean parent="FieldDefinition" p:attributeName="poTransmissionMethod" />
                             <bean parent="FieldDefinition" p:attributeName="poFaxNumber" />
                             <bean parent="FieldDefinition" p:attributeName="poEmailAddress" />
-                            <bean parent="FieldDefinition" p:attributeName="servicesProvided" />
                             <bean parent="FieldDefinition" p:attributeName="currentlyPaidThroughPayroll" />
                             <bean parent="FieldDefinition" p:attributeName="everPaidThroughPayroll" />
                             <bean parent="FieldDefinition" p:attributeName="seperateLegalEntityProvidingServices" />

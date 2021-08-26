@@ -142,7 +142,6 @@
     <field-descriptor name="poFaxNumber" column="PO_FAX_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="poEmailAddress" column="PO_EMAIL_ADDR" jdbc-type="VARCHAR" />
     
-    <field-descriptor name="servicesProvided" column="SERVICES_PROVIDED" jdbc-type="VARCHAR" />
     <field-descriptor name="currentlyPaidThroughPayroll" column="CU_PAYROLL_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="everPaidThroughPayroll" column="CU_PAYROLL_PRIOR_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="seperateLegalEntityProvidingServices" column="SEP_LEGAL_ENTITY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
