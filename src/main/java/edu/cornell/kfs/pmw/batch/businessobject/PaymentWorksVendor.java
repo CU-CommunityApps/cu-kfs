@@ -175,7 +175,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private boolean seperateLegalEntityProvidingServices;
     private boolean cornellProvidedTrainingOrEquipmentRequired;
     private boolean informalMarketing;
-    private boolean servicesProvidedWithoutInsurance;
 
     public Integer getId() {
         return id;
@@ -1053,14 +1052,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setInformalMarketing(boolean informalMarketing) {
         this.informalMarketing = informalMarketing;
-    }
-
-    public boolean isServicesProvidedWithoutInsurance() {
-        return servicesProvidedWithoutInsurance;
-    }
-
-    public void setServicesProvidedWithoutInsurance(boolean servicesProvidedWithoutInsurance) {
-        this.servicesProvidedWithoutInsurance = servicesProvidedWithoutInsurance;
     }
     
     public String getSupplierCategory() {

@@ -106,7 +106,6 @@
                 <ref bean="PaymentWorksVendor-seperateLegalEntityProvidingServices" />
                 <ref bean="PaymentWorksVendor-cornellProvidedTrainingOrEquipmentRequired" />
                 <ref bean="PaymentWorksVendor-informalMarketing" />
-                <ref bean="PaymentWorksVendor-servicesProvidedWithoutInsurance" />
             </list>
         </property>
     </bean>
@@ -1271,17 +1270,6 @@
         <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter" />
     </bean>
 
-    <bean id="PaymentWorksVendor-servicesProvidedWithoutInsurance" parent="PaymentWorksVendor-servicesProvidedWithoutInsurance-parentBean" />
-    <bean id="PaymentWorksVendor-servicesProvidedWithoutInsurance-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="servicesProvidedWithoutInsurance" />
-        <property name="label" value="Services Provided Without Insurance" />
-        <property name="forceUppercase" value="false" />
-        <property name="control">
-            <bean parent="CheckboxControlDefinition" />
-        </property>
-        <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter" />
-    </bean>
-
     <bean id="PaymentWorksVendor-lookupDefinition" parent="PaymentWorksVendor-lookupDefinition-parentBean" />
     <bean id="PaymentWorksVendor-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="PaymentWorks Vendor Lookup" />
@@ -1410,7 +1398,6 @@
                             <bean parent="FieldDefinition" p:attributeName="seperateLegalEntityProvidingServices" />
                             <bean parent="FieldDefinition" p:attributeName="cornellProvidedTrainingOrEquipmentRequired" />
                             <bean parent="FieldDefinition" p:attributeName="informalMarketing" />
-                            <bean parent="FieldDefinition" p:attributeName="servicesProvidedWithoutInsurance" />
                         </list>
                     </property>
                 </bean>
