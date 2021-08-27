@@ -1,6 +1,5 @@
 package edu.cornell.kfs.sys.dataaccess.impl;
 
-import java.lang.annotation.Annotation;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,28 +9,25 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kew.actionitem.ActionItem;
-import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.springframework.jdbc.core.ConnectionCallback;
 
-import edu.cornell.kfs.kew.actionitem.ActionItemExtension;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.DocumentRequeueStep;
 import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
 
 public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc implements DocumentMaintenanceDao {
-	private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceDaoJdbc.class);
+    private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceDaoJdbc.class);
 
-	public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "documentId";
+    public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "documentId";
 
     private ParameterService parameterService;
 
@@ -52,7 +48,8 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
                 String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size(), true);
                 selectStatement = con.prepareStatement(selectStatementSql);
 
-                addDocumentIdAndRoleIdsToSelectStatement(selectStatement, docTypeIds, roleIds);
+                addQueryParameterCollectionsToSelectStatement(selectStatement,
+                        List.of(KewApiConstants.ROUTE_HEADER_ENROUTE_CD), docTypeIds, roleIds);
 
                 queryResultSet = selectStatement.executeQuery();
 
@@ -67,90 +64,25 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
             }
             return documentIdsToRequeue;
         });
-	}
+    }
 
-	private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount, boolean includeOrderByClause) {
-		StringBuilder sql = new StringBuilder();
+    private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount, boolean includeOrderByClause) {
+        return buildSqlQuery(
+                "SELECT DOC_HDR_ID FROM KFS.KREW_DOC_HDR_T ",
+                "WHERE DOC_HDR_STAT_CD = ? ",
+                "AND DOC_TYP_ID NOT IN (", buildPlaceholderList(docTypeIdCount), ") ",
+                "AND DOC_HDR_ID IN (",
+                        "SELECT DISTINCT DOC_HDR_ID FROM KFS.KREW_ACTN_RQST_T ",
+                        "WHERE RSP_ID IN (",
+                                "SELECT RSP_ID FROM KFS.KRIM_ROLE_RSP_T ",
+                                "WHERE ROLE_ID IN (", buildPlaceholderList(roleIdCount), ")))",
+                buildPotentialOrderByClauseForRequeueSqlQuery(includeOrderByClause));
+    }
 
-		sql.append("select DOC_HDR_ID from KFS.KREW_DOC_HDR_T where ");
-		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, "docRouteStatus"));
-		sql.append("='");
-		sql.append(KewApiConstants.ROUTE_HEADER_ENROUTE_CD);
-		sql.append("' AND ");
-		sql.append(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, KFSPropertyConstants.DOCUMENT_TYPE_ID));
-		sql.append(" NOT IN (?");
+    private String buildPotentialOrderByClauseForRequeueSqlQuery(boolean includeOrderByClause) {
+        return includeOrderByClause ? " ORDER BY DOC_HDR_ID ASC" : KFSConstants.EMPTY_STRING;
+    }
 
-		for (int i=1; i<docTypeIdCount; i++) {
-			sql.append(",?");
-		}
-
-		sql.append(") AND ");
-
-		final String workflowDocumentHeaderColumnName = retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY);
-		sql.append(workflowDocumentHeaderColumnName);
-		sql.append(" IN (select distinct(");
-		sql.append(retrieveColumnNameFromAnnotations(ActionRequest.class, WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY));
-		sql.append(") from KFS.");
-		sql.append(retrieveTableNameFromAnnotations(ActionRequest.class));
-		sql.append(" where ");
-		sql.append("RSP_ID");
-		sql.append(" in (select ");
-		sql.append("RSP_ID");
-		sql.append(" from ");
-		sql.append("KFS.KRIM_ROLE_RSP_T");
-		sql.append(" where ");
-		sql.append("ROLE_ID");
-		sql.append(" in (?");
-
-		for (int i=1; i<roleIdCount; i++) {
-			sql.append(",?");
-		}
-
-		sql.append(")))");
-		
-		if (includeOrderByClause) {
-		    sql.append(" order by ").append(workflowDocumentHeaderColumnName).append(" ASC");
-		}
-
-		return sql.toString();
-	}
-	
-	private String retrieveColumnNameFromAnnotations(Class className, String fieldName) {
-		String columnName = KFSConstants.EMPTY_STRING;
-
-		try {
-			Annotation[] annotations = className.getDeclaredField(fieldName).getAnnotations();
-			for(Annotation annotation: annotations) {
-			    // TODO: KFSPTS-21563: Change this to find the column name in the OJB metadata,
-	            // or update the calling code to just use literals for the column names.
-				/*if(annotation instanceof Column) {
-					columnName = ((Column) annotation).name();
-					break;
-				}*/
-			}
-		} catch (NoSuchFieldException e) {
-			LOG.warn("retrieveColumnNameFromAnnotations - caught Exception when trying to determine columnName", e);
-		}
-		
-		return columnName;
-	}
-	
-	private String retrieveTableNameFromAnnotations(Class className) {
-		String tableName = KFSConstants.EMPTY_STRING;
-
-		Annotation[] annotations = className.getDeclaredAnnotations();
-		for (Annotation annotation: annotations) {
-		    // TODO: KFSPTS-21563: Change this to find the table name in the OJB metadata,
-		    // or update the calling code to just use literals for the table names.
-			/*if (annotation instanceof Table) {
-				tableName = ((Table) annotation).name();
-				break;
-			}*/
-		}
-
-		return tableName;
-	}
-	
     @Override
     public List<ActionItemNoteDetailDto> getActionNotesToBeRequeued() {
         return getJdbcTemplate().execute((ConnectionCallback<List<ActionItemNoteDetailDto>>) con -> {
@@ -166,7 +98,8 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
                 selectStatement = con.prepareStatement(selectStatementSql);
 
-                addDocumentIdAndRoleIdsToSelectStatement(selectStatement, docTypeIds, roleIds);
+                addQueryParameterCollectionsToSelectStatement(selectStatement,
+                        List.of(KewApiConstants.ROUTE_HEADER_ENROUTE_CD), docTypeIds, roleIds);
 
                 queryResultSet = selectStatement.executeQuery();
 
@@ -195,15 +128,14 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
         return parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
     }
 
-    private void addDocumentIdAndRoleIdsToSelectStatement(PreparedStatement selectStatement,
-            final Collection<String> docTypeIds, final Collection<String> roleIds) throws SQLException {
+    @SafeVarargs
+    private void addQueryParameterCollectionsToSelectStatement(PreparedStatement selectStatement,
+            Collection<String>... parameterCollections) throws SQLException {
         int index = 1;
-        for (String docTypeId: docTypeIds) {
-            selectStatement.setString(index++, docTypeId);
-        }
-
-        for (String roleId: roleIds) {
-            selectStatement.setString(index++, roleId);
+        for (Collection<String> parameterCollection : parameterCollections) {
+            for (String parameter : parameterCollection) {
+                selectStatement.setString(index++, parameter);
+            }
         }
     }
 
@@ -223,25 +155,25 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
             }
         }
     }
-	
-    private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("select ai.prncpl_id, ai.doc_hdr_id, aie.actn_note, aie.note_ts, ai.actn_itm_id ");
-        sb.append("from KFS.").append(retrieveTableNameFromAnnotations(ActionItem.class)).append(" ai, KFS.");
-        sb.append(retrieveTableNameFromAnnotations(ActionItemExtension.class)).append(" aie ");
-        sb.append("where ai.actn_itm_id = aie.actn_itm_id ");
-        sb.append("and ai.doc_hdr_id in (");
-        sb.append(buildRequeueSqlQuery(docTypeIdCount, roleIdCount, false));
-        sb.append(")");
-        return sb.toString();
-    }
-	
-	public ParameterService getParameterService() {
-		return parameterService;
-	}
 
-	public void setParameterService(ParameterService parameterService) {
-		this.parameterService = parameterService;
-	}
-	
+    private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
+        return buildSqlQuery(
+                "SELECT AI.PRNCPL_ID, AI.DOC_HDR_ID, AIE.ACTN_NOTE, AIE.LAST_UPDT_TS, AI.ACTN_ITM_ID ",
+                "FROM KFS.KREW_ACTN_ITM_T AI ",
+                "JOIN KFS.KREW_ACTN_ITM_EXT_T AIE ON AI.ACTN_ITM_ID = AIE.ACTN_ITM_ID ",
+                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQuery(docTypeIdCount, roleIdCount, false), ")");
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    private String buildSqlQuery(String... sqlFragments) {
+        return StringUtils.join(sqlFragments);
+    }
+
+    private String buildPlaceholderList(int size) {
+        return StringUtils.repeat(KFSConstants.QUESTION_MARK, CUKFSConstants.COMMA_AND_SPACE, size);
+    }
+
 }
