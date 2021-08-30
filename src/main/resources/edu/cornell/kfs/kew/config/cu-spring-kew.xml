@@ -155,4 +155,18 @@
           lazy-init="true" p:routeHeaderDAO-ref="enDocumentRouteHeaderDAO"
           p:searchableAttributeDAO-ref="enSearchableAttributeDAO"/>
 
+    <!-- Override action list email services to support forcing PROD-style emails in non-PROD environments. -->
+
+    <bean id="enEmailContentService" class="org.kuali.kfs.kew.mail.service.impl.EmailContentServiceImpl"
+          lazy-init="true"
+          p:emailService-ref="emailService"
+          p:routeHeaderService-ref="enDocumentRouteHeaderService"
+          p:deploymentEnvironment="${cu.actionlist.email.environment}"/>
+
+    <bean id="enActionListEmailService"
+          class="edu.cornell.kfs.kew.mail.service.impl.CuActionListEmailServiceImpl"
+          p:deploymentEnvironment="${cu.actionlist.email.environment}"
+          p:emailContentGenerator-ref="enEmailContentService"
+          p:emailService-ref="emailService" p:scheduler-ref="scheduler"/>
+
 </beans>
