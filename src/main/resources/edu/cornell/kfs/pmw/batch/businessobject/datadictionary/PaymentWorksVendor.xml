@@ -63,7 +63,6 @@
                 <ref bean="PaymentWorksVendor-vendorInformationPhoneExtension" />
                 <ref bean="PaymentWorksVendor-vendorInformationEmail" />
                 <ref bean="PaymentWorksVendor-diverseBusiness" />
-                <ref bean="PaymentWorksVendor-womanOwned" />
                 <ref bean="PaymentWorksVendor-wbeCertificationExpirationDate" />
                 <ref bean="PaymentWorksVendor-conflictOfInterest" />
                 <ref bean="PaymentWorksVendor-conflictOfInterestRelationshipToEmployee" />
@@ -1060,17 +1059,6 @@
         </property>
     </bean>
 
-    <bean id="PaymentWorksVendor-womanOwned" parent="PaymentWorksVendor-womanOwned-parentBean" />
-    <bean id="PaymentWorksVendor-womanOwned-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="womanOwned" />
-        <property name="label" value="Woman Owned" />
-        <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="100" />
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="50" />
-        </property>
-    </bean>
-
     <bean id="PaymentWorksVendor-wbeCertificationExpirationDate" parent="PaymentWorksVendor-wbeCertificationExpirationDate-parentBean" />
     <bean id="PaymentWorksVendor-wbeCertificationExpirationDate-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="wbeCertificationExpirationDate" />
@@ -1223,7 +1211,6 @@
                             <bean parent="FieldDefinition" p:attributeName="vendorInformationPhoneExtension" />
                             <bean parent="FieldDefinition" p:attributeName="vendorInformationEmail" />
                             <bean parent="FieldDefinition" p:attributeName="diverseBusiness" />
-                            <bean parent="FieldDefinition" p:attributeName="womanOwned" />
                             <bean parent="FieldDefinition" p:attributeName="wbeCertificationExpirationDate" />
                             <bean parent="FieldDefinition" p:attributeName="conflictOfInterest" />
                             <bean parent="FieldDefinition" p:attributeName="conflictOfInterestRelationshipToEmployee" />
