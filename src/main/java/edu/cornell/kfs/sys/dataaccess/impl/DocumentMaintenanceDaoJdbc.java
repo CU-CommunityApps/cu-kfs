@@ -1,123 +1,103 @@
 package edu.cornell.kfs.sys.dataaccess.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.sys.KFSConstants;
-import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SqlParameterValue;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.DocumentRequeueStep;
 import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
+import edu.cornell.kfs.sys.util.CuSqlChunk;
+import edu.cornell.kfs.sys.util.CuSqlQuery;
 
 public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc implements DocumentMaintenanceDao {
-    private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceDaoJdbc.class);
+    private static final Logger LOG = LogManager.getLogger();
 
-    public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "documentId";
+    private static final String PARAMETER_MESSAGE_FORMAT = "(Type: '{0}', Value: '{1}')";
 
     private ParameterService parameterService;
 
-	/**
-	 * @see DocumentMaintenanceDao#getDocumentRequeueValues()#getDocumentRequeueFileValues()
-	 */
-	@Override
-	public Collection<String> getDocumentRequeueValues() {
-		return getJdbcTemplate().execute((ConnectionCallback<Collection<String>>) con -> {
-            PreparedStatement selectStatement = null;
-            ResultSet queryResultSet = null;
-            List<String> documentIdsToRequeue = new ArrayList<>();
-
-            try {
-                final Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
-                final Collection<String> roleIds = findRequeueableRoleIds();
-
-                String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size(), true);
-                selectStatement = con.prepareStatement(selectStatementSql);
-
-                addQueryParameterCollectionsToSelectStatement(selectStatement,
-                        List.of(KewApiConstants.ROUTE_HEADER_ENROUTE_CD), docTypeIds, roleIds);
-
-                queryResultSet = selectStatement.executeQuery();
-
-                while (queryResultSet.next()) {
-                    String documentId = queryResultSet.getString(1);
-                    documentIdsToRequeue.add(documentId);
-                }
-
-                queryResultSet.close();
-            } finally {
-                processQueryFinally(selectStatement, queryResultSet);
-            }
-            return documentIdsToRequeue;
-        });
+    @Override
+    public Collection<String> getDocumentRequeueValues() {
+        CuSqlQuery sqlQuery = buildRequeueSqlQuery();
+        RowMapper<String> documentIdMapper = (resultSet, rowNum) -> resultSet.getString(1);
+        return queryForValues(sqlQuery, documentIdMapper);
     }
 
-    private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount, boolean includeOrderByClause) {
-        return buildSqlQuery(
+    private CuSqlQuery buildRequeueSqlQuery() {
+        CuSqlChunk sqlChunk = buildRequeueSqlQueryChunk();
+        sqlChunk.append(" ORDER BY DOC_HDR_ID ASC");
+        return sqlChunk.toQuery();
+    }
+
+    private CuSqlChunk buildRequeueSqlQueryChunk() {
+        Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
+        Collection<String> roleIds = findRequeueableRoleIds();
+        return CuSqlChunk.of(
                 "SELECT DOC_HDR_ID FROM KFS.KREW_DOC_HDR_T ",
-                "WHERE DOC_HDR_STAT_CD = ? ",
-                "AND DOC_TYP_ID NOT IN (", buildPlaceholderList(docTypeIdCount), ") ",
-                "AND DOC_HDR_ID IN (",
+                "WHERE DOC_HDR_STAT_CD = ", CuSqlChunk.forParameter(KewApiConstants.ROUTE_HEADER_ENROUTE_CD),
+                " AND DOC_TYP_ID NOT IN (", CuSqlChunk.forStringParameters(docTypeIds), ")",
+                " AND DOC_HDR_ID IN (",
                         "SELECT DISTINCT DOC_HDR_ID FROM KFS.KREW_ACTN_RQST_T ",
                         "WHERE RSP_ID IN (",
                                 "SELECT RSP_ID FROM KFS.KRIM_ROLE_RSP_T ",
-                                "WHERE ROLE_ID IN (", buildPlaceholderList(roleIdCount), ")))",
-                buildPotentialOrderByClauseForRequeueSqlQuery(includeOrderByClause));
-    }
-
-    private String buildPotentialOrderByClauseForRequeueSqlQuery(boolean includeOrderByClause) {
-        return includeOrderByClause ? " ORDER BY DOC_HDR_ID ASC" : KFSConstants.EMPTY_STRING;
+                                "WHERE ROLE_ID IN (", CuSqlChunk.forStringParameters(roleIds), ")))");
     }
 
     @Override
     public List<ActionItemNoteDetailDto> getActionNotesToBeRequeued() {
-        return getJdbcTemplate().execute((ConnectionCallback<List<ActionItemNoteDetailDto>>) con -> {
-            PreparedStatement selectStatement = null;
-            ResultSet queryResultSet = null;
-            List<ActionItemNoteDetailDto> notes = new ArrayList<ActionItemNoteDetailDto>();
+        CuSqlQuery sqlQuery = buildActionNoteQuery();
+        RowMapper<ActionItemNoteDetailDto> actionItemNoteMapper = (resultSet, rowNum) -> {
+            ActionItemNoteDetailDto actionItemNote = new ActionItemNoteDetailDto();
+            actionItemNote.setPrincipalId(resultSet.getString(1));
+            actionItemNote.setDocHeaderId(resultSet.getString(2));
+            actionItemNote.setActionNote(resultSet.getString(3));
+            actionItemNote.setNoteTimeStamp(resultSet.getTimestamp(4, Calendar.getInstance()));
+            actionItemNote.setOriginalActionItemId(resultSet.getString(5));
+            return actionItemNote;
+        };
+        return queryForValues(sqlQuery, actionItemNoteMapper);
+    }
 
-            try {
-                final Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
-                final Collection<String> roleIds = findRequeueableRoleIds();
+    private CuSqlQuery buildActionNoteQuery() {
+        return CuSqlQuery.of(
+                "SELECT AI.PRNCPL_ID, AI.DOC_HDR_ID, AIE.ACTN_NOTE, AIE.LAST_UPDT_TS, AI.ACTN_ITM_ID ",
+                "FROM KFS.KREW_ACTN_ITM_T AI ",
+                "JOIN KFS.KREW_ACTN_ITM_EXT_T AIE ON AI.ACTN_ITM_ID = AIE.ACTN_ITM_ID ",
+                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQueryChunk(), ")");
+    }
 
-                String selectStatementSql = buildActionNoteQuery(docTypeIds.size(), roleIds.size());
+    private <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
+        try {
+            return getJdbcTemplate().query(sqlQuery.getQueryString(), rowMapper, sqlQuery.getParametersArray());
+        } catch (RuntimeException e) {
+            LOG.error("queryForValues, Unexpected error encountered while running query! Query String: <["
+                    + sqlQuery.getQueryString() + "]>, Query Parameters: <["
+                    + buildParametersMessage(sqlQuery) + "]>", e);
+            throw e;
+        }
+    }
 
-                selectStatement = con.prepareStatement(selectStatementSql);
+    private String buildParametersMessage(CuSqlQuery sqlQuery) {
+        return sqlQuery.getParameters().stream()
+                .map(this::buildMessageForSingleParameter)
+                .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
+    }
 
-                addQueryParameterCollectionsToSelectStatement(selectStatement,
-                        List.of(KewApiConstants.ROUTE_HEADER_ENROUTE_CD), docTypeIds, roleIds);
-
-                queryResultSet = selectStatement.executeQuery();
-
-                while (queryResultSet.next()) {
-                    String principalId = queryResultSet.getString(1);
-                    String docHeaderId = queryResultSet.getString(2);
-                    String actionNote = queryResultSet.getString(3);
-                    Timestamp noteTimeStamp = queryResultSet.getTimestamp(4, Calendar.getInstance());
-                    String originalActionItemId = queryResultSet.getString(5);
-                    notes.add(new ActionItemNoteDetailDto(principalId, docHeaderId, actionNote, originalActionItemId, noteTimeStamp));
-                }
-
-                queryResultSet.close();
-            } finally {
-                processQueryFinally(selectStatement, queryResultSet);
-            }
-            return notes;
-        });
+    private String buildMessageForSingleParameter(SqlParameterValue parameter) {
+        return MessageFormat.format(PARAMETER_MESSAGE_FORMAT, parameter.getSqlType(), parameter.getValue());
     }
 
     private Collection<String> findNonRequeueableDocumentTypes() {
@@ -128,52 +108,8 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
         return parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
     }
 
-    @SafeVarargs
-    private void addQueryParameterCollectionsToSelectStatement(PreparedStatement selectStatement,
-            Collection<String>... parameterCollections) throws SQLException {
-        int index = 1;
-        for (Collection<String> parameterCollection : parameterCollections) {
-            for (String parameter : parameterCollection) {
-                selectStatement.setString(index++, parameter);
-            }
-        }
-    }
-
-    private void processQueryFinally(PreparedStatement selectStatement, ResultSet queryResultSet) {
-        if (queryResultSet != null) {
-            try {
-                queryResultSet.close();
-            } catch (SQLException e) {
-                LOG.error("processQueryFinally: Could not close ResultSet", e);
-            }
-        }
-        if (selectStatement != null) {
-            try {
-                selectStatement.close();
-            } catch (SQLException e) {
-                LOG.error("processQueryFinally: Could not close selection PreparedStatement", e);
-            }
-        }
-    }
-
-    private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
-        return buildSqlQuery(
-                "SELECT AI.PRNCPL_ID, AI.DOC_HDR_ID, AIE.ACTN_NOTE, AIE.LAST_UPDT_TS, AI.ACTN_ITM_ID ",
-                "FROM KFS.KREW_ACTN_ITM_T AI ",
-                "JOIN KFS.KREW_ACTN_ITM_EXT_T AIE ON AI.ACTN_ITM_ID = AIE.ACTN_ITM_ID ",
-                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQuery(docTypeIdCount, roleIdCount, false), ")");
-    }
-
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
-    }
-
-    private String buildSqlQuery(String... sqlFragments) {
-        return StringUtils.join(sqlFragments);
-    }
-
-    private String buildPlaceholderList(int size) {
-        return StringUtils.repeat(KFSConstants.QUESTION_MARK, CUKFSConstants.COMMA_AND_SPACE, size);
     }
 
 }

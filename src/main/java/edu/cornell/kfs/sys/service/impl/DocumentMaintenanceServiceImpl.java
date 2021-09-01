@@ -26,7 +26,7 @@ import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
 import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
-    private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     private DocumentMaintenanceDao documentMaintenanceDao;
 
     @Override
