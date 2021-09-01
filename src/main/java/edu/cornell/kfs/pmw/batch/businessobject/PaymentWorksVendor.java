@@ -158,7 +158,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
      */
     
     private boolean diverseBusiness;
-    private String mbeCertificationExpirationDate;
     private String womanOwned;
     private String wbeCertificationExpirationDate;
     private String disabledVeteran;
@@ -696,14 +695,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setDiverseBusiness(boolean diverseBusiness) {
         this.diverseBusiness = diverseBusiness;
-    }
-
-    public String getMbeCertificationExpirationDate() {
-        return mbeCertificationExpirationDate;
-    }
-
-    public void setMbeCertificationExpirationDate(String mbeCertificationExpirationDate) {
-        this.mbeCertificationExpirationDate = mbeCertificationExpirationDate;
     }
 
     public String getWomanOwned() {
