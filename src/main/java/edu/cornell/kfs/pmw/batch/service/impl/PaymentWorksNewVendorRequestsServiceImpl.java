@@ -181,11 +181,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY, errorMessages) 
                 && allValidationPassed;
         
-        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), 
-                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), 
-                PaymentWorksConstants.PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY, errorMessages) 
-                && allValidationPassed;
-        
         if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getDateOfBirth())) {
             allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getDateOfBirth(), 
                     getConfigurationService().getPropertyValueAsString(
