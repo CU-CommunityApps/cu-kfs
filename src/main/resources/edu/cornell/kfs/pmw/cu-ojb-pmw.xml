@@ -97,7 +97,6 @@
     <field-descriptor name="vendorInformationEmail" column="VEND_INFO_CNTCT_EMAIL" jdbc-type="VARCHAR" />
 
     <field-descriptor name="diverseBusiness" column="DIVERSE_BUSINESS_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="wbeCertificationExpirationDate" column="WBE_CERT_EXP_DT" jdbc-type="VARCHAR" />
 
     <field-descriptor name="conflictOfInterest" column="CONFLICT_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="conflictOfInterestRelationshipToEmployee" column="CONF_RELATIONSHIP_TYPE" jdbc-type="VARCHAR" />

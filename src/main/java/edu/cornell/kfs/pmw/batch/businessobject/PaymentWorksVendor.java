@@ -151,14 +151,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String federalDiversityClassifications;
     private String poCountryUsCanadaAustraliaOther;
     private String poCountry;
-    
-    
-    /*
-     * Altered fields
-     */
-    
     private boolean diverseBusiness;
-    private String wbeCertificationExpirationDate;
     
     public Integer getId() {
         return id;
@@ -692,14 +685,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setDiverseBusiness(boolean diverseBusiness) {
         this.diverseBusiness = diverseBusiness;
-    }
-
-    public String getWbeCertificationExpirationDate() {
-        return wbeCertificationExpirationDate;
-    }
-
-    public void setWbeCertificationExpirationDate(String wbeCertificationExpirationDate) {
-        this.wbeCertificationExpirationDate = wbeCertificationExpirationDate;
     }
     
     public boolean isConflictOfInterest() {
