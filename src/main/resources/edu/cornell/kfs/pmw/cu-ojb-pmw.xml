@@ -97,7 +97,6 @@
     <field-descriptor name="vendorInformationEmail" column="VEND_INFO_CNTCT_EMAIL" jdbc-type="VARCHAR" />
 
     <field-descriptor name="diverseBusiness" column="DIVERSE_BUSINESS_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="diversityClassifications" column="DIVERSITY_CLASS" jdbc-type="VARCHAR" />
     <field-descriptor name="minorityStatus" column="MINORITY_STATUS" jdbc-type="VARCHAR" />
     <field-descriptor name="mbeCertificationExpirationDate" column="MBE_CERT_EXP_DT" jdbc-type="VARCHAR" />
     <field-descriptor name="womanOwned" column="WOMAN_OWNED" jdbc-type="VARCHAR" />

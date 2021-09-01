@@ -63,7 +63,6 @@
                 <ref bean="PaymentWorksVendor-vendorInformationPhoneExtension" />
                 <ref bean="PaymentWorksVendor-vendorInformationEmail" />
                 <ref bean="PaymentWorksVendor-diverseBusiness" />
-                <ref bean="PaymentWorksVendor-diversityClassifications" />
                 <ref bean="PaymentWorksVendor-minorityStatus" />
                 <ref bean="PaymentWorksVendor-mbeCertificationExpirationDate" />
                 <ref bean="PaymentWorksVendor-womanOwned" />
@@ -1065,17 +1064,6 @@
         </property>
     </bean>
 
-    <bean id="PaymentWorksVendor-diversityClassifications" parent="PaymentWorksVendor-diversityClassifications-parentBean" />
-    <bean id="PaymentWorksVendor-diversityClassifications-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="diversityClassifications" />
-        <property name="label" value="Diversity Classifications" />
-        <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="200" />
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="50" />
-        </property>
-    </bean>
-
     <bean id="PaymentWorksVendor-veteranCertificationExpirationDate" parent="PaymentWorksVendor-veteranCertificationExpirationDate-parentBean" />
     <bean id="PaymentWorksVendor-veteranCertificationExpirationDate-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="veteranCertificationExpirationDate" />
@@ -1283,7 +1271,6 @@
                             <bean parent="FieldDefinition" p:attributeName="vendorInformationPhoneExtension" />
                             <bean parent="FieldDefinition" p:attributeName="vendorInformationEmail" />
                             <bean parent="FieldDefinition" p:attributeName="diverseBusiness" />
-                            <bean parent="FieldDefinition" p:attributeName="diversityClassifications" />
                             <bean parent="FieldDefinition" p:attributeName="minorityStatus" />
                             <bean parent="FieldDefinition" p:attributeName="mbeCertificationExpirationDate" />
                             <bean parent="FieldDefinition" p:attributeName="womanOwned" />
