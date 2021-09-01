@@ -99,7 +99,6 @@
     <field-descriptor name="diverseBusiness" column="DIVERSE_BUSINESS_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="womanOwned" column="WOMAN_OWNED" jdbc-type="VARCHAR" />
     <field-descriptor name="wbeCertificationExpirationDate" column="WBE_CERT_EXP_DT" jdbc-type="VARCHAR" />
-    <field-descriptor name="disabledVeteran" column="DISABLED_VET" jdbc-type="VARCHAR" />
     <field-descriptor name="veteranCertificationExpirationDate" column="VET_CERT_EXP_DT" jdbc-type="VARCHAR" />
 
     <field-descriptor name="conflictOfInterest" column="CONFLICT_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
