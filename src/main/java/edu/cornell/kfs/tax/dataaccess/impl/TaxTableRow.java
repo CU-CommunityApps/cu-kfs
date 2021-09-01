@@ -174,8 +174,6 @@ abstract class TaxTableRow {
         final TaxTableField payeeIdTypeCode;
         final TaxTableField line1Address;
         final TaxTableField nraPayment;
-        final TaxTableField paymentStatusCode;
-        final TaxTableField disbursementTypeCode;
         // Fields from PDP_PMT_DTL_T (PaymentDetail)
         final TaxTableField paymentDetailId;
         final TaxTableField custPaymentDocNbr;
@@ -218,8 +216,6 @@ abstract class TaxTableRow {
             this.payeeIdTypeCode = getAliasedField(CommonPdpSourceFieldNames.PAYEE_ID_TYPE_CODE);
             this.line1Address = getAliasedField(CommonPdpSourceFieldNames.LINE1_ADDRESS);
             this.nraPayment = getAliasedField(CommonPdpSourceFieldNames.NRA_PAYMENT_IND);
-            this.paymentStatusCode = getAliasedField(CommonPdpSourceFieldNames.PAYMENT_STATUS_CODE);
-            this.disbursementTypeCode = getAliasedField(CommonPdpSourceFieldNames.DISBURSEMENT_TYPE_CODE);
             this.paymentDetailId = getAliasedField(CommonPdpSourceFieldNames.PAYMENT_DETAIL_ID);
             this.custPaymentDocNbr = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_PAYMENT_DOC_NUMBER);
             this.paymentDetailPaymentGroupId = getAliasedField(CommonPdpSourceFieldNames.PAYMENT_DETAIL_PAYMENT_GROUP_ID);
@@ -535,10 +531,6 @@ abstract class TaxTableRow {
         final TaxTableField form1042SOverriddenBox;
         final TaxTableField paymentReasonCode;
         
-        final TaxTableField disbursementNbr;
-        final TaxTableField paymentStatusCode;
-        final TaxTableField disbursementTypeCode;
-
         TransactionDetailRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields,
                 Integer insertOffset) {
             super(rowId, fields, tables, aliasedFields, insertOffset);
@@ -596,10 +588,6 @@ abstract class TaxTableRow {
             this.form1042SBox = getAliasedField(TransactionDetailFieldNames.FORM_1042S_BOX);
             this.form1042SOverriddenBox = getAliasedField(TransactionDetailFieldNames.FORM_1042S_OVERRIDDEN_BOX);
             this.paymentReasonCode = getAliasedField(TransactionDetailFieldNames.PAYMENT_REASON_CODE);
-
-            this.disbursementNbr = getAliasedField(TransactionDetailFieldNames.DISBURSEMENT_NUMBER);
-            this.paymentStatusCode = getAliasedField(TransactionDetailFieldNames.PAYMENT_STATUS_CODE);
-            this.disbursementTypeCode = getAliasedField(TransactionDetailFieldNames.DISBURSEMENT_TYPE_CODE);
         }
     }
 
