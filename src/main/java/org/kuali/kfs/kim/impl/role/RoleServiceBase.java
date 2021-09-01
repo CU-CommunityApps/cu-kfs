@@ -762,6 +762,9 @@ abstract class RoleServiceBase {
 
     // CU Customization: Add KimTypeInfoService getter and setter.
     public KimTypeInfoService getKimTypeInfoService() {
+        if (kimTypeInfoService == null) {
+            setKimTypeInfoService(KimApiServiceLocator.getKimTypeInfoService());
+        }
         return kimTypeInfoService;
     }
 
