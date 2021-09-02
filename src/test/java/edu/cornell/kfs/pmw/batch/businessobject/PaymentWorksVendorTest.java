@@ -58,7 +58,7 @@ class PaymentWorksVendorTest {
         assertTrue("Should find the requesting company description", StringUtils.contains(actualToString, "requestingCompanyDesc" + 
                 CUKFSConstants.EQUALS_SIGN + REQUESTING_COMPANY_DESCRIPTION));
         
-        assertTrue("Should find the informal marketing ", StringUtils.contains(actualToString, "informalMarketing" + 
+        assertTrue("Should find the conflict of interest ", StringUtils.contains(actualToString, "conflictOfInterest" + 
                 CUKFSConstants.EQUALS_SIGN + "false"));
     }
     

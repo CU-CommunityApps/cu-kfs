@@ -88,7 +88,6 @@
     <field-descriptor name="bankAddressValidated" column="BANK_ADDR_VALIDATED" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
 
     <!-- DV and PO vendor attributes -->
-    <field-descriptor name="taxCountry" column="TAX_CNTRY_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="vendorType" column="VENDOR_TYPE" jdbc-type="VARCHAR" />
     <field-descriptor name="initiatorNetId" column="INITIATOR_NET_ID" jdbc-type="VARCHAR" />
 
@@ -98,33 +97,17 @@
     <field-descriptor name="vendorInformationEmail" column="VEND_INFO_CNTCT_EMAIL" jdbc-type="VARCHAR" />
 
     <field-descriptor name="diverseBusiness" column="DIVERSE_BUSINESS_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="diversityClassifications" column="DIVERSITY_CLASS" jdbc-type="VARCHAR" />
-    <field-descriptor name="minorityStatus" column="MINORITY_STATUS" jdbc-type="VARCHAR" />
-    <field-descriptor name="mbeCertificationExpirationDate" column="MBE_CERT_EXP_DT" jdbc-type="VARCHAR" />
-    <field-descriptor name="womanOwned" column="WOMAN_OWNED" jdbc-type="VARCHAR" />
-    <field-descriptor name="wbeCertificationExpirationDate" column="WBE_CERT_EXP_DT" jdbc-type="VARCHAR" />
-    <field-descriptor name="disabledVeteran" column="DISABLED_VET" jdbc-type="VARCHAR" />
-    <field-descriptor name="veteranCertificationExpirationDate" column="VET_CERT_EXP_DT" jdbc-type="VARCHAR" />
 
     <field-descriptor name="conflictOfInterest" column="CONFLICT_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     <field-descriptor name="conflictOfInterestRelationshipToEmployee" column="CONF_RELATIONSHIP_TYPE" jdbc-type="VARCHAR" />
     <field-descriptor name="conflictOfInterestEmployeeName" column="CONF_EMPL_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="conflictOfInterestEmployeePhoneNumber" column="CONF_EMPL_PHN_NBR" jdbc-type="VARCHAR" />
 
-    <field-descriptor name="acceptCreditCards" column="ACCEPT_CREDIT_CARD_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-
     <!-- PO vendor specific attributes -->
     <field-descriptor name="insuranceContactName" column="INS_CNTCT_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactPhoneNumber" column="INS_CNTCT_PHN_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactPhoneExtension" column="INS_CNTCT_PHN_EXTNS_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="insuranceContactEmail" column="INS_CNTCT_EMAIL" jdbc-type="VARCHAR" />
-    <field-descriptor name="insuranceCertificate" column="INS_CERT_URL" jdbc-type="VARCHAR" />
-    
-    <field-descriptor name="invoicing" column="INVOICING_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-    <field-descriptor name="eInvoiceContactName" column="INV_CNTCT_NM" jdbc-type="VARCHAR" />
-    <field-descriptor name="eInvoiceContactPhoneNumber" column="INV_CNTCT_PHN_NBR" jdbc-type="VARCHAR" />
-    <field-descriptor name="eInvoicePhoneExtension" column="INV_CNTCT_PHN_EXTNS_NBR" jdbc-type="VARCHAR" />
-    <field-descriptor name="eInvoiceEmail" column="INV_CNTCT_EMAIL" jdbc-type="VARCHAR" />
     
     <field-descriptor name="poCountryLegacy" column="PO_CNTRY_CD_LEGACY" jdbc-type="VARCHAR" />
     <field-descriptor name="poUsState" column="PO_ST_CD" jdbc-type="VARCHAR" />
@@ -151,14 +134,6 @@
     <field-descriptor name="poTransmissionMethod" column="PO_TRANS_METHOD" jdbc-type="VARCHAR" />
     <field-descriptor name="poFaxNumber" column="PO_FAX_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="poEmailAddress" column="PO_EMAIL_ADDR" jdbc-type="VARCHAR" />
-    
-    <field-descriptor name="servicesProvided" column="SERVICES_PROVIDED" jdbc-type="VARCHAR" />
-    <field-descriptor name="currentlyPaidThroughPayroll" column="CU_PAYROLL_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="everPaidThroughPayroll" column="CU_PAYROLL_PRIOR_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="seperateLegalEntityProvidingServices" column="SEP_LEGAL_ENTITY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="cornellProvidedTrainingOrEquipmentRequired" column="CU_TRAINING_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="informalMarketing" column="INFORMAL_MARKETING_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-    <field-descriptor name="servicesProvidedWithoutInsurance" column="SERVICE_NO_INS_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     
     <field-descriptor name="supplierCategory" column="SUPP_CAT" jdbc-type="VARCHAR" />
     <field-descriptor name="federalDivsersityCertificates" column="FED_DIV_CERT" jdbc-type="VARCHAR" />

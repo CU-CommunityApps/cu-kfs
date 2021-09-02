@@ -11,7 +11,6 @@ public class PaymentWorksKeyConstants {
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL = "note.label.paymentworks.pven.conflict.of.interest.employee.name";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_PHONE_NUMBER_LABEL = "note.label.paymentworks.pven.conflict.of.interest.phone.number";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_RELATIONSHIP_LABEL = "note.label.paymentworks.pven.conflict.of.interest.relationship";
-    public static final String NEW_VENDOR_PVEN_NOTES_INSURANCE_CERTIFICATE_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.insurance.certificate.exists";
     public static final String NEW_VENDOR_PAAT_NOTES_PMW_VENDOR_NUMBER_LABEL = "note.label.paymentworks.vendor.number.paat.created.from";
     
     //Boiler plate for PaymentWorks generated KFS Payee ACH Account Explanation
@@ -50,24 +49,14 @@ public class PaymentWorksKeyConstants {
     public static final String NO_RECORDS_DOMESTIC_WIRE_WITH_ACH = "message.paymentworks.no.records.domestic.wire.with.ach";
     
     //PaymentWorks Business Rule Failure Messages
-    public static final String ERROR_LEGAL_NAME_TOO_LONG_FOR_KFS = "error.paymentworks.legel.name.too.long";
     public static final String ERROR_LEGAL_NAME_NULL_OR_BLANK = "error.paymentworks.legel.name.null.or.blank";
     public static final String ERROR_DATE_IS_NOT_FORMATTED_CORRECTLY = "error.paymentworks.date.bad.format";
-    public static final String ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION = "error.paymentworks.nys.certified.mbe.description";
-    public static final String ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION = "error.paymentworks.nys.certified.wbe.description";
-    public static final String ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION = "error.paymentworks.nys.certified.disabled.veteran.description";
     public static final String ERROR_COUNTRY_OF_INCORPORATION_BLANK = "error.paymentworks.incorporation.country.blank";
     public static final String ERROR_PRIMARY_ADDRESS_COUNTRY_BLANK = "error.paymentworks.primary.address.country.blank";
     public static final String ERROR_REMITTANCE_ADDRESS_COUNTRY_BLANK = "error.paymentworks.remittance.address.country.blank";
-    public static final String ERROR_BANK_ADDRESS_COUNTRY_BLANK = "error.paymentworks.bank.address.country.blank";
-    public static final String ERROR_FIPS_TAX_COUNTRY_BLANK = "error.paymentworks.tax.address.fips.country.blank";
-    public static final String ERROR_SINGLE_ISO_MAPS_TO_MULTIPLE_FIPS = "error.paymentworks.single.iso.maps.to.multiple.fips";
-    public static final String ERROR_ISO_COUNTRY_NOT_FOUND = "error.paymentworks.iso.country.not.found";
     public static final String ERROR_W8_W9_URL_IS_NULL_OR_BLANK = "error.paymentworks.w8.w9.url.null.or.blank";
     public static final String ERROR_TAX_NUMBER_IS_NULL_OR_BLANK = "error.paymentworks.tax.number.null.or.blank";
     public static final String ERROR_TAX_NUMBER_TYPE_IS_NULL_OR_BLANK = "error.paymentworks.tax.number.type.null.or.blank";
-    public static final String FOREIGN_VENDOR_PROCESSING_NOT_AUTOMATIC_YET = "error.paymentworks.foreign.vendor.not.implemented.yet"; //REMOVE THIS MESSAGE AFTER FOREIGN VENDORS HAVE BEEN IMPLEMENTED
-    public static final String COULD_NOT_DETERMINE_TAX_BUSINESS_RULE_TO_USE = "error.paymentworks.unknown.tax.business.rule";
     public static final String ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY = "error.paymentworks.empty.vendor.type";
     public static final String ERROR_VENDOR_HEADER_GENERATED_IDENTIFIER_MISSING = "error.paymentworks.vendor.header.generated.identifier.missing";
     public static final String ERROR_VENDOR_HEADER_DETAILED_ASSIGNED_IDENTIFIER_MISSING = "error.paymentworks.vendor.header.detailed.assigned.identifier.missing";
@@ -77,7 +66,6 @@ public class PaymentWorksKeyConstants {
     public final static String NO_ACH_DATA_PROVIDED_BY_VENDOR_MESSAGE = "message.paymentworks.no.ach.data.provided";
     public static final String ERROR_PAYMENTWORKS_DATE_OF_BIRTH_DESCRIPTION = "error.paymentworks.date.of.birth.description";
     public static final String ERROR_W8_SIGNED_DATE_DESCRIPTION = "error.paymentworks.w8.signed.date.description";
-    public static final String MESSAGE_PAYMENTWORKS_DIVERSITY_CERTIFICATIONS_IN_PAYMENTWORKS = "message.paymentworks.diversity.certifications.in.paymentworks";
     public static final String ERROR_PAYMENTWORKS_BANK_NOT_US = "error.paymentworks.bank.not.us";
     public static final String ERROR_PAYMENTWORKS_DOMESTIC_WIRE_VENDOR_ACH = "error.paymentworks.domestic.wire.vendor.with.ach";
     public static final String ERROR_PAYMENTWORKS_FOREIGN_WIRE_VENDOR_ACH = "error.paymentworks.foreign.wire.vendor.with.ach";
