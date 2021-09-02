@@ -33,5 +33,9 @@ public class KSRConstants {
     public static final String SECURITY_REQUEST_DOC_TYPE_NAME = "SecurityRequestDocument";
     public static final String SECURITY_REQUEST_DOC_URL = "securityRequestDocument.do";
     public static final String PROCESS_WIZARD_METHOD_NAME = "processWizard";
+    
+    public static final String SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME = "Security Request Distributed Authorizer";
+    public static final String SECURITY_REQUEST_ADDITIONAL_AUTHORIZER_ROLE_NAME = "Security Request Additional Authorizer";
+    public static final String SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME = "Security Request Central Authorizer";
 
 }

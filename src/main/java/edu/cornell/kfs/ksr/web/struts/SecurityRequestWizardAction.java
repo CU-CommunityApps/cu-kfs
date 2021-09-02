@@ -44,7 +44,7 @@ public class SecurityRequestWizardAction extends FinancialSystemTransactionalDoc
         parameters.put(KSRPropertyConstants.SECURITY_GROUP_ID, securityRequestWizardForm.getSecurityGroup().getSecurityGroupId().toString());
 
         String applicationUrl = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY);
-        String securityRequestUrl = applicationUrl + KSRConstants.KSR_PATH + KSRConstants.SECURITY_REQUEST_DOC_URL;
+        String securityRequestUrl = applicationUrl + "/" + /*KSRConstants.KSR_PATH +*/ KSRConstants.SECURITY_REQUEST_DOC_URL;
         return new ActionForward(UrlFactory.parameterizeUrl(securityRequestUrl, parameters), true);
     }
 
