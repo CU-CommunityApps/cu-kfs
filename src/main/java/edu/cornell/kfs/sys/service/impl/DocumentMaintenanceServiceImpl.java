@@ -26,7 +26,7 @@ import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
 import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
-    private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     private DocumentMaintenanceDao documentMaintenanceDao;
 
     @Override
@@ -59,8 +59,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
                     LOG.info("requeueDocumentByDocumentId, adding note details " + detailDto.toString() + " to action item " + actionItem.getId());
                 } else {
                     actionItemExtension.setActionNote(detailDto.getActionNote());
-                    // TODO: KFSPTS-21563: Update or remove the timestamp setup below accordingly.
-                    //actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
                     LOG.info("requeueDocumentByDocumentId, updating note details " + detailDto.toString() + " to action item " + actionItem.getId());
                 }
                 KRADServiceLocator.getBusinessObjectService().save(actionItemExtension);
@@ -92,8 +90,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         ActionItemExtension actionItemExtension = new ActionItemExtension();
         actionItemExtension.setActionItemId(item.getId());
         actionItemExtension.setActionNote(detailDto.getActionNote());
-        // TODO: KFSPTS-21563: Update or remove the timestamp setup below accordingly.
-        //actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
         return actionItemExtension;
     }
     
