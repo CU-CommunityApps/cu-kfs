@@ -151,40 +151,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String federalDiversityClassifications;
     private String poCountryUsCanadaAustraliaOther;
     private String poCountry;
-    
-    
-    /*
-     * Altered fields
-     */
-    
     private boolean diverseBusiness;
-    private String diversityClassifications;
-    private String minorityStatus;
-    private String mbeCertificationExpirationDate;
-    private String womanOwned;
-    private String wbeCertificationExpirationDate;
-    private String disabledVeteran;
-    private String veteranCertificationExpirationDate;
     
-    /*
-     * Fields removed from the new foreign vendor 
-     */
-    private boolean acceptCreditCards;
-    private String taxCountry;
-    private String insuranceCertificate;
-    private boolean invoicing;
-    private String eInvoiceContactName;
-    private String eInvoiceContactPhoneNumber;
-    private String eInvoicePhoneExtension;
-    private String eInvoiceEmail;
-    private String servicesProvided;    
-    private boolean currentlyPaidThroughPayroll;
-    private boolean everPaidThroughPayroll;
-    private boolean seperateLegalEntityProvidingServices;
-    private boolean cornellProvidedTrainingOrEquipmentRequired;
-    private boolean informalMarketing;
-    private boolean servicesProvidedWithoutInsurance;
-
     public Integer getId() {
         return id;
     }
@@ -663,14 +631,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.customFieldConversionErrors = customFieldConversionErrors;
     }
 
-    public String getTaxCountry() {
-        return taxCountry;
-    }
-
-    public void setTaxCountry(String taxCountry) {
-        this.taxCountry = taxCountry;
-    }
-
     public String getInitiatorNetId() {
         return initiatorNetId;
     }
@@ -726,63 +686,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     public void setDiverseBusiness(boolean diverseBusiness) {
         this.diverseBusiness = diverseBusiness;
     }
-
-    public String getDiversityClassifications() {
-        return diversityClassifications;
-    }
-
-    public void setDiversityClassifications(String diversityClassifications) {
-        this.diversityClassifications = diversityClassifications;
-    }
-
-    public String getMinorityStatus() {
-        return minorityStatus;
-    }
-
-    public void setMinorityStatus(String minorityStatus) {
-        this.minorityStatus = minorityStatus;
-    }
-
-    public String getMbeCertificationExpirationDate() {
-        return mbeCertificationExpirationDate;
-    }
-
-    public void setMbeCertificationExpirationDate(String mbeCertificationExpirationDate) {
-        this.mbeCertificationExpirationDate = mbeCertificationExpirationDate;
-    }
-
-    public String getWomanOwned() {
-        return womanOwned;
-    }
-
-    public void setWomanOwned(String womanOwned) {
-        this.womanOwned = womanOwned;
-    }
-
-    public String getWbeCertificationExpirationDate() {
-        return wbeCertificationExpirationDate;
-    }
-
-    public void setWbeCertificationExpirationDate(String wbeCertificationExpirationDate) {
-        this.wbeCertificationExpirationDate = wbeCertificationExpirationDate;
-    }
-
-    public String getDisabledVeteran() {
-        return disabledVeteran;
-    }
-
-    public void setDisabledVeteran(String disabledVeteran) {
-        this.disabledVeteran = disabledVeteran;
-    }
-
-    public String getVeteranCertificationExpirationDate() {
-        return veteranCertificationExpirationDate;
-    }
-
-    public void setVeteranCertificationExpirationDate(String veteranCertificationExpirationDate) {
-        this.veteranCertificationExpirationDate = veteranCertificationExpirationDate;
-    }
-
+    
     public boolean isConflictOfInterest() {
         return conflictOfInterest;
     }
@@ -815,14 +719,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.conflictOfInterestEmployeePhoneNumber = conflictOfInterestEmployeePhoneNumber;
     }
 
-    public boolean isAcceptCreditCards() {
-        return acceptCreditCards;
-    }
-
-    public void setAcceptCreditCards(boolean acceptCreditCards) {
-        this.acceptCreditCards = acceptCreditCards;
-    }
-
     public String getInsuranceContactName() {
         return insuranceContactName;
     }
@@ -853,54 +749,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setInsuranceContactEmail(String insuranceContactEmail) {
         this.insuranceContactEmail = insuranceContactEmail;
-    }
-
-    public String getInsuranceCertificate() {
-        return insuranceCertificate;
-    }
-
-    public void setInsuranceCertificate(String insuranceCertificate) {
-        this.insuranceCertificate = insuranceCertificate;
-    }
-
-    public boolean isInvoicing() {
-        return invoicing;
-    }
-
-    public void setInvoicing(boolean invoicing) {
-        this.invoicing = invoicing;
-    }
-
-    public String geteInvoiceContactName() {
-        return eInvoiceContactName;
-    }
-
-    public void seteInvoiceContactName(String eInvoiceContactName) {
-        this.eInvoiceContactName = eInvoiceContactName;
-    }
-
-    public String geteInvoiceContactPhoneNumber() {
-        return eInvoiceContactPhoneNumber;
-    }
-
-    public void seteInvoiceContactPhoneNumber(String eInvoiceContactPhoneNumber) {
-        this.eInvoiceContactPhoneNumber = eInvoiceContactPhoneNumber;
-    }
-
-    public String geteInvoicePhoneExtension() {
-        return eInvoicePhoneExtension;
-    }
-
-    public void seteInvoicePhoneExtension(String eInvoicePhoneExtension) {
-        this.eInvoicePhoneExtension = eInvoicePhoneExtension;
-    }
-
-    public String geteInvoiceEmail() {
-        return eInvoiceEmail;
-    }
-
-    public void seteInvoiceEmail(String eInvoiceEmail) {
-        this.eInvoiceEmail = eInvoiceEmail;
     }
 
     public String getPoCountryLegacy() {
@@ -1077,62 +925,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setPoEmailAddress(String poEmailAddress) {
         this.poEmailAddress = poEmailAddress;
-    }
-
-    public String getServicesProvided() {
-        return servicesProvided;
-    }
-
-    public void setServicesProvided(String servicesProvided) {
-        this.servicesProvided = servicesProvided;
-    }
-
-    public boolean isCurrentlyPaidThroughPayroll() {
-        return currentlyPaidThroughPayroll;
-    }
-
-    public void setCurrentlyPaidThroughPayroll(boolean currentlyPaidThroughPayroll) {
-        this.currentlyPaidThroughPayroll = currentlyPaidThroughPayroll;
-    }
-
-    public boolean isEverPaidThroughPayroll() {
-        return everPaidThroughPayroll;
-    }
-
-    public void setEverPaidThroughPayroll(boolean everPaidThroughPayroll) {
-        this.everPaidThroughPayroll = everPaidThroughPayroll;
-    }
-
-    public boolean isSeperateLegalEntityProvidingServices() {
-        return seperateLegalEntityProvidingServices;
-    }
-
-    public void setSeperateLegalEntityProvidingServices(boolean seperateLegalEntityProvidingServices) {
-        this.seperateLegalEntityProvidingServices = seperateLegalEntityProvidingServices;
-    }
-
-    public boolean isCornellProvidedTrainingOrEquipmentRequired() {
-        return cornellProvidedTrainingOrEquipmentRequired;
-    }
-
-    public void setCornellProvidedTrainingOrEquipmentRequired(boolean cornellProvidedTrainingOrEquipmentRequired) {
-        this.cornellProvidedTrainingOrEquipmentRequired = cornellProvidedTrainingOrEquipmentRequired;
-    }
-
-    public boolean isInformalMarketing() {
-        return informalMarketing;
-    }
-
-    public void setInformalMarketing(boolean informalMarketing) {
-        this.informalMarketing = informalMarketing;
-    }
-
-    public boolean isServicesProvidedWithoutInsurance() {
-        return servicesProvidedWithoutInsurance;
-    }
-
-    public void setServicesProvidedWithoutInsurance(boolean servicesProvidedWithoutInsurance) {
-        this.servicesProvidedWithoutInsurance = servicesProvidedWithoutInsurance;
     }
     
     public String getSupplierCategory() {
