@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+    <documentType>
+      <name>SecurityRequestDocument</name>
+      <parent>KFST</parent>
+      <description>Create a Security Request Document</description>
+      <label>Security Request Document</label>
+      <docHandler>${kfs.url}/securityRequestDocument.do?methodToCall=docHandler</docHandler>
+      <active>true</active>
+      <routingVersion>1</routingVersion>
+      <routePaths>
+        <routePath>
+          <start name="AdHoc" nextNode="DistributedAuthorizer" />
+          <role name="DistributedAuthorizer" nextNode="AdditionalAuthorizer" />
+          <role name="AdditionalAuthorizer" nextNode="CentralAuthorizer" />
+          <role name="CentralAuthorizer" />
+        </routePath>
+      </routePaths>
+      <routeNodes>
+        <start name="AdHoc">
+          <activationType>P</activationType>
+          <mandatoryRoute>false</mandatoryRoute>
+          <finalApproval>false</finalApproval>
+        </start>
+        <role name="DistributedAuthorizer">
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="AdditionalAuthorizer">
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+        <role name="CentralAuthorizer">
+          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+          <activationType>P</activationType>
+        </role>
+      </routeNodes>
+    </documentType>
+  </documentTypes>
+</data>
