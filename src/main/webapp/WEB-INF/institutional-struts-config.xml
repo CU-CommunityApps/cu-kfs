@@ -243,7 +243,7 @@
         
         <action path="/securityRequestDocument" name="SecurityRequestDocumentForm" attribute="KualiForm" scope="request"
                type="edu.cornell.kfs.ksr.web.struts.SecurityRequestDocumentAction" parameter="methodToCall">
-           <forward name="basic" path="/WEB-INF/jsp/SecurityRequestDocument.jsp" />
+           <forward name="basic" path="/jsp/ksr/SecurityRequestDocument.jsp" />
         </action> 
 		
         <!-- Override of maintenance document mapping to use a CU-specific action class. -->
