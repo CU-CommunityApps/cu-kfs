@@ -90,4 +90,7 @@ public class CUKFSPropertyConstants {
                     + KIMPropertyConstants.Principal.PRINCIPAL_NAME;
 
     public static final String UNMASKED_PROPERTY_SUFFIX = "Unmasked";
+
+    public static final String DOCUMENT_ID = "documentId";
+    public static final String FINALIZED_DATE = "finalizedDate";
 }
