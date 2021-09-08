@@ -126,7 +126,7 @@ To change how these email notifications are sent (immediately, weekly or none):
 
 
 
-For additional help, email <![CDATA[<mailto:]]><xsl:value-of select="@applicationEmailAddress"/><![CDATA[>]]>
+For additional help, please visit: https://www.dfa.cornell.edu/fis/gethelp
 
 
 </body>
@@ -165,7 +165,7 @@ To change how these email notifications are sent (immediately, daily or none):
 
 
 
-For additional help, email <![CDATA[<mailto:]]><xsl:value-of select="@applicationEmailAddress"/><![CDATA[>]]>
+For additional help, please visit: https://www.dfa.cornell.edu/fis/gethelp
 
 
 </body>

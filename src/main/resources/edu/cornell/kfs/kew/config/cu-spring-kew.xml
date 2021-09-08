@@ -157,16 +157,16 @@
 
     <!-- Override action list email services to support forcing PROD-style emails in non-PROD environments. -->
 
-    <bean id="enEmailContentService" class="org.kuali.kfs.kew.mail.service.impl.EmailContentServiceImpl"
+    <bean id="enEmailContentService" class="edu.cornell.kfs.kew.mail.service.impl.CuEmailContentServiceImpl"
           lazy-init="true"
           p:emailService-ref="emailService"
           p:routeHeaderService-ref="enDocumentRouteHeaderService"
-          p:deploymentEnvironment="${cu.actionlist.email.environment}"/>
+          p:deploymentEnvironment="${environment}"
+          p:parameterService-ref="parameterService"/>
 
     <bean id="enActionListEmailService"
           class="edu.cornell.kfs.kew.mail.service.impl.CuActionListEmailServiceImpl"
-          p:deploymentEnvironment="${cu.actionlist.email.environment}"
-          p:emailContentGenerator-ref="enEmailContentService"
+          p:deploymentEnvironment="${environment}" p:emailContentGenerator-ref="enEmailContentService"
           p:emailService-ref="emailService" p:scheduler-ref="scheduler"/>
 
 </beans>
