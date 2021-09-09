@@ -232,7 +232,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         String mappingPath = mapping.getPath();
         String basePath = getApplicationBaseUrl();
 
-        return basePath + "/ksr" + mappingPath + ".do";
+        return basePath + mappingPath + ".do";
     }
 
     /**

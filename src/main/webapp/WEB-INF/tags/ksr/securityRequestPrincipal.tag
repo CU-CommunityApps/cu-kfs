@@ -17,15 +17,15 @@
                         
                     <c:if test="${!readOnly}">
 
-                      <kul:user userIdFieldName="document.principalId"
-                      userId="${KualiForm.document.principalId}"
-                      universalIdFieldName=""
-                      universalId=""
-                      userNameFieldName="document.requestPerson.principalName"
-                      userName="${KualiForm.document.requestPerson.principalName}"
-                      readOnly="${not fullEntryMode}"
-                      fieldConversions="principalName:document.principalId,name:document.requestPerson.principalName"
-                      lookupParameters="document.principalNameForSearch:principalName"
+                      <kul:user userIdFieldName="document.requestPerson.principalName"
+                      userId="${KualiForm.document.requestPerson.principalName}"
+                      universalIdFieldName="document.principalId"
+                      universalId="${KualiForm.document.principalId}"
+                      userNameFieldName="document.requestPerson.name"
+                      userName="${KualiForm.document.requestPerson.name}"
+                      readOnly="${readOnly}"
+                      fieldConversions="principalName:document.requestPerson.principalName,principalId:document.principalId,name:document.requestPerson.name"
+                      lookupParameters="document.requestPerson.principalName:principalName,document.principalId:principalId,document.requestPerson.name:name"
                       hasErrors="${hasErrors}"
                       />
                     </c:if>    
