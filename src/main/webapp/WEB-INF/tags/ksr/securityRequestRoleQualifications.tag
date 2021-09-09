@@ -35,7 +35,7 @@
             <c:forEach var="qualificationDetail" items="${securityRequestRoleQualificationHdr.roleQualificationDetails}" varStatus="status">
               <td>
                 <c:set var="attributeEntry" value="${qualificationDetail.attributeEntry}" />
-                <kul:htmlControlAttribute attributeEntry="${attributeEntry}" kimTypeId="${qualificationDetail.kimType.kimTypeId}"
+                <kul:htmlControlAttribute attributeEntry="${attributeEntry}"
                     property="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification.roleQualificationDetails[${status.count-1}].attributeValue" readOnly="${readOnly}" />
                 
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    
@@ -61,7 +61,7 @@
             <c:forEach var="qualificationDetail" items="${securityRequestRoleQualification.roleQualificationDetails}" varStatus="dtlStatus">
               <td>
                 <c:set var="attributeEntry" value="${qualificationDetail.attributeEntry}" />
-                <kul:htmlControlAttribute attributeEntry="${attributeEntry}" kimTypeId="${qualificationDetail.kimType.kimTypeId}"
+                <kul:htmlControlAttribute attributeEntry="${attributeEntry}" 
                     property="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}].roleQualificationDetails[${dtlStatus.count-1}].attributeValue" readOnly="${readOnly}" />
             
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    

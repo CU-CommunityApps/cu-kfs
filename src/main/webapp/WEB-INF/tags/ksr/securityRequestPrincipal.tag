@@ -1,7 +1,8 @@
-  <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
+ <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <c:set var="securityRequestAttributes" value="${DataDictionary.SecurityRequestDocument.attributes}" />
 <%-- CU Customization (CYNERGY-2425): Modified the tabErrorKey to include more primary department code error messages. --%>
+ 
 <kul:tab tabTitle="Access Requested For: ${KualiForm.document.securityGroup.securityGroupName}" defaultOpen="true" tabErrorKey="document.principalId,document.requestPerson.*,document.primaryDepartmentCode,error.ksr.securityrequestdocument.primaryDeptCode.*">
     <div class="tab-container" align="center">
         <h3>Access Request for ${KualiForm.document.securityGroup.securityGroupName}</h3>
@@ -15,8 +16,18 @@
                         attributeEntry="${securityRequestAttributes['requestPerson.principalName']}" readOnly="true"/> 
                         
                     <c:if test="${!readOnly}">
-                      <kul:lookup boClassName="org.kuali.rice.kim.bo.impl.PersonImpl"
-                           fieldConversions="principalId:principalId,principalName:requestPerson.principalName" />
+
+                      <kul:user userIdFieldName="document.principalId"
+                      userId="${KualiForm.document.principalId}"
+                      universalIdFieldName=""
+                      universalId=""
+                      userNameFieldName="document.requestPerson.principalName"
+                      userName="${KualiForm.document.requestPerson.principalName}"
+                      readOnly="${not fullEntryMode}"
+                      fieldConversions="principalName:document.principalId,name:document.requestPerson.principalName"
+                      lookupParameters="document.principalNameForSearch:principalName"
+                      hasErrors="${hasErrors}"
+                      />
                     </c:if>    
                 </td>
             </tr>

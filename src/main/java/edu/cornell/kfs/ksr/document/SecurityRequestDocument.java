@@ -9,6 +9,7 @@ import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.krad.document.TransactionalDocumentBase;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
@@ -98,7 +99,17 @@ public class SecurityRequestDocument extends TransactionalDocumentBase {
     }
 
     public Person getRequestPerson() {
-        return SpringContext.getBean(PersonService.class).getPerson(principalId);
+            // ==== CU Customization: Altered this method to resemble a similar one from a rice-sampleapp form. ====
+            PersonService personService = KimApiServiceLocator.getPersonService();
+            requestPerson = personService.getPerson(principalId);
+            if (requestPerson == null) {
+                try {
+                    requestPerson = KimApiServiceLocator.getPersonService().getPersonImplementationClass().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return requestPerson;
     }
 
     public void setRequestPerson(Person requestPerson) {

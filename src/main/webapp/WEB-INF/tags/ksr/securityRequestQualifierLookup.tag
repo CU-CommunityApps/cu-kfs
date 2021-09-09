@@ -2,7 +2,7 @@
 
 <%@ attribute name="requestQualifications" required="true" type="java.util.List"%>
 <%@ attribute name="pathPrefix" required="true"%>
-<%@ attribute name="attributeDefinition" required="true" type="org.kuali.rice.kns.datadictionary.KimDataDictionaryAttributeDefinition"%>
+<%@ attribute name="attributeDefinition" required="true" type="org.kuali.kfs.kns.kim.type.KimAttributeDefinition"%>
 
 <c:set var="fieldConversion" value="" />
 <c:set var="params" value="" />
