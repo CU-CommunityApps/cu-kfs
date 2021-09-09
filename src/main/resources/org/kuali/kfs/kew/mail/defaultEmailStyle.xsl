@@ -86,6 +86,7 @@ Action Item sent to <xsl:value-of select="actionItem/actionItemPrincipalName"/>
 <xsl:if test="string(actionItem/actionItem/delegationType)">
  for delegation type <xsl:value-of select="actionItem/actionItem/delegationType"/>
 </xsl:if>
+in environment <xsl:value-of select="@env"/>
 ===============
 </xsl:if>
 
@@ -128,6 +129,12 @@ To change how these email notifications are sent (immediately, weekly or none):
 
 For additional help, please visit: https://www.dfa.cornell.edu/fis/gethelp
 
+<xsl:if test="@env != 'kfs-prod'">
+==== Debug ====
+Daily Reminder sent to <xsl:value-of select="user/principalName"/>
+in environment <xsl:value-of select="@env"/>
+===============
+</xsl:if>
 
 </body>
         </email>
@@ -167,6 +174,12 @@ To change how these email notifications are sent (immediately, daily or none):
 
 For additional help, please visit: https://www.dfa.cornell.edu/fis/gethelp
 
+<xsl:if test="@env != 'kfs-prod'">
+==== Debug ====
+Weekly Reminder sent to <xsl:value-of select="user/principalName"/>
+in environment <xsl:value-of select="@env"/>
+===============
+</xsl:if>
 
 </body>
         </email>
