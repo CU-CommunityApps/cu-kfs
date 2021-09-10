@@ -155,4 +155,22 @@
           lazy-init="true" p:routeHeaderDAO-ref="enDocumentRouteHeaderDAO"
           p:searchableAttributeDAO-ref="enSearchableAttributeDAO"/>
 
+    <!--
+        Override of email content service to configure the "deploymentEnvironment" property correctly.
+        Once KualiCo fixes that issue, this email content service override can be removed.
+     -->
+    <bean id="enEmailContentService" class="org.kuali.kfs.kew.mail.service.impl.EmailContentServiceImpl"
+          lazy-init="true"
+          p:emailService-ref="emailService"
+          p:routeHeaderService-ref="enDocumentRouteHeaderService"
+          p:deploymentEnvironment="${environment}"/>
+
+    <!-- Override action list email service to support forcing PROD-style emails in non-PROD environments. -->
+
+    <bean id="enActionListEmailService"
+          class="edu.cornell.kfs.kew.mail.service.impl.CuActionListEmailServiceImpl"
+          p:deploymentEnvironment="${environment}" p:emailContentGenerator-ref="enEmailContentService"
+          p:emailService-ref="emailService" p:scheduler-ref="scheduler"
+          p:parameterService-ref="parameterService"/>
+
 </beans>
