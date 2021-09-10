@@ -38,7 +38,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
     private CuSqlQuery buildRequeueSqlQuery() {
         CuSqlChunk sqlChunk = buildRequeueSqlQueryChunk();
-        sqlChunk.append(" ORDER BY DOC_HDR_ID ASC");
+        sqlChunk.append(" ORDER BY DH.DOC_HDR_ID ASC");
         return sqlChunk.toQuery();
     }
 
@@ -46,14 +46,15 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
         Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
         Collection<String> roleIds = findRequeueableRoleIds();
         return CuSqlChunk.of(
-                "SELECT DOC_HDR_ID FROM KFS.KREW_DOC_HDR_T ",
-                "WHERE DOC_HDR_STAT_CD = ", CuSqlChunk.forParameter(KewApiConstants.ROUTE_HEADER_ENROUTE_CD),
-                " AND DOC_TYP_ID NOT IN (", CuSqlChunk.forStringParameters(docTypeIds), ")",
-                " AND DOC_HDR_ID IN (",
-                        "SELECT DISTINCT DOC_HDR_ID FROM KFS.KREW_ACTN_RQST_T ",
-                        "WHERE RSP_ID IN (",
-                                "SELECT RSP_ID FROM KFS.KRIM_ROLE_RSP_T ",
-                                "WHERE ROLE_ID IN (", CuSqlChunk.forStringParameters(roleIds), ")))");
+                "SELECT DH.DOC_HDR_ID FROM KFS.KREW_DOC_HDR_T DH ",
+                "WHERE DH.DOC_HDR_STAT_CD = ", CuSqlChunk.forParameter(KewApiConstants.ROUTE_HEADER_ENROUTE_CD),
+                " AND DH.DOC_TYP_ID NOT IN (", CuSqlChunk.forStringParameters(docTypeIds), ")",
+                " AND EXISTS (",
+                        "SELECT DISTINCT RQ.DOC_HDR_ID FROM KFS.KREW_ACTN_RQST_T RQ ",
+                        "WHERE DH.DOC_HDR_ID = RQ.DOC_HDR_ID ",
+                        "AND RQ.RSP_ID IN (",
+                                "SELECT RR.RSP_ID FROM KFS.KRIM_ROLE_RSP_T RR ",
+                                "WHERE RR.ROLE_ID IN (", CuSqlChunk.forStringParameters(roleIds), ")))");
     }
 
     @Override
