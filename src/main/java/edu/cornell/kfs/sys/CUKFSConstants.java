@@ -180,6 +180,9 @@ public class CUKFSConstants {
 
     public static final String LEGACY_PERMIT_NAMESPACE = "PERMIT";
 
+    public static final String DOCUMENT_REINDEX_FILE_NAME_PREFIX = "documentReindex";
+    public static final String DOCUMENT_REINDEX_FILE_NAME_EXTENSION = ".txt";
+
     public static final class FILE_EXTENSIONS {
         public static final String CSV_FILE_EXTENSION = ".csv";
     }
