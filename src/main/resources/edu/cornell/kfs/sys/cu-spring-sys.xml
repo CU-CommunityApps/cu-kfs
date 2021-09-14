@@ -92,7 +92,7 @@
 	</bean>
 	
 	<bean id="documentReindexerStep" class="edu.cornell.kfs.sys.batch.DocumentReindexStep" parent="step">
-        <property name="documentAttributeIndexingQueue" ref="documentAttributeIndexingQueue"/>
+		<property name="documentAttributeIndexingQueue" ref="documentAttributeIndexingQueue"/>
 		<property name="stagingDirectory" value="${staging.directory}/sys"/>
 	</bean>
 	
