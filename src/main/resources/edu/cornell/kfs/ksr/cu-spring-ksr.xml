@@ -41,6 +41,17 @@
     <bean id="securityRequestDocumentService" parent="securityRequestDocumentService-parentBean" />
     <bean id="securityRequestDocumentService-parentBean" class="edu.cornell.kfs.ksr.service.impl.SecurityRequestDocumentServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="personService" ref="personService" />
+    </bean>
+    
+    <bean id="securityRequestRoleTypeService" parent="securityRequestRoleTypeService-parentBean" />
+    <bean id="securityRequestRoleTypeService-parentBean" class="edu.cornell.kfs.ksr.service.impl.SecurityRequestDerivedRoleTypeServiceImpl" abstract="true">
+    </bean>
+    
+    <bean id="securityRequestPostProcessingService" parent="securityRequestPostProcessingService-parentBean" />
+    <bean id="securityRequestPostProcessingService-parentBean" class="edu.cornell.kfs.ksr.service.impl.SecurityRequestPostProcessingServiceImpl" abstract="true">
+        <property name="roleService" ref="roleService" />
+        <property name="roleUpdateService" ref="roleService" />
     </bean>
     
 </beans>

@@ -202,4 +202,12 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
         return roleUpdateService;
     }
 
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
+    public void setRoleUpdateService(RoleService roleUpdateService) {
+        this.roleUpdateService = roleUpdateService;
+    }
+
 }

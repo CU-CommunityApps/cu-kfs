@@ -9,11 +9,11 @@
         
         <table width="100%" border="0" cellpadding="0" cellspacing="0" class="datatable">
             <tr>
-                <kul:htmlAttributeHeaderCell labelFor="document.requestPerson.principalName" attributeEntry="${securityRequestAttributes['requestPerson.principalName']}"
-                    align="right" horizontal="true"/>
-                <td width="50%">
-                    <html:hidden property="document.principalId" /> <kul:htmlControlAttribute property="document.requestPerson.principalName"
-                        attributeEntry="${securityRequestAttributes['requestPerson.principalName']}" readOnly="true"/> 
+            	<th class="right">
+            		<kul:htmlAttributeLabel attributeEntry="${securityRequestAttributes['requestPerson.principalName']}"/>
+        		</th>
+                <td valign="middle" class="left" width="50%">
+                    <html:hidden property="document.principalId" />
                         
                     <c:if test="${!readOnly}">
 
@@ -32,8 +32,9 @@
                 </td>
             </tr>
             <tr>
-                <kul:htmlAttributeHeaderCell labelFor="document.primaryDepartmentCode"
-                    attributeEntry="${securityRequestAttributes.primaryDepartmentCode}" align="right" horizontal="true"/>
+                <th class="right">
+            		<kul:htmlAttributeLabel attributeEntry="${securityRequestAttributes.primaryDepartmentCode}"/>
+        		</th>
                 <td>
                     <kul:htmlControlAttribute property="document.primaryDepartmentCode"
                         attributeEntry="${securityRequestAttributes.primaryDepartmentCode}" readOnly="${readOnly}" />

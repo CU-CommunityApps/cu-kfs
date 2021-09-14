@@ -9,12 +9,13 @@
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="datatable">
     <tr>
-        <td class="tab-subhead" colspan="2">${securityRequestRole.roleInfo.roleId} : ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.roleName}</td>
+        <td class="tab-subhead" colspan="2">${securityRequestRole.roleInfo.id} : ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.name}</td>
     </tr>
     
-    <tr>
-        <kul:htmlAttributeHeaderCell labelFor="document.securityRequestRoles[${securityRequestRoleIndex}].active" 
-             attributeEntry="${genericAttributes.activeIndicator}"  align="right" useShortLabel="false" horizontal="true"/>
+    <tr>     
+        <th class="right">
+            <kul:htmlAttributeLabel attributeEntry="${genericAttributes.activeIndicator}"/>
+        </th>
         <td width="50%">
           <kul:htmlControlAttribute property="document.securityRequestRoles[${securityRequestRoleIndex}].active"
                 attributeEntry="${genericAttributes.activeIndicator}" readOnly="${readOnly}"/> 

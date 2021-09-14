@@ -36,6 +36,7 @@ import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
@@ -208,18 +209,13 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
         SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) form;
         SecurityRequestDocument document = (SecurityRequestDocument) documentForm.getDocument();
-
-        if (StringUtils.isNotBlank(request.getParameter(KIMPropertyConstants.Person.PRINCIPAL_ID))) {
-            String principalId = request.getParameter(KIMPropertyConstants.Person.PRINCIPAL_ID);
-
-            if (!StringUtils.equals(principalId, document.getPrincipalId())) {
-                document.setPrincipalId(principalId);
-
+        
+        if(StringUtils.isNotBlank(document.getPrincipalId()) && ObjectUtils.isNotNull(document.getRequestPerson())) {
                 SpringContext.getBean(SecurityRequestDocumentService.class).initiateSecurityRequestDocument(document,
                         GlobalVariables.getUserSession().getPerson());
                 documentForm.setTabRoleIndexes(buildTabRoleIndexes(document));
-            }
         }
+
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -267,16 +263,15 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
             // role order
             List<Integer> requestRoleIndexes = new ArrayList<Integer>();
             for (SecurityProvisioningGroup provisioningGroup : groupTab.getSecurityProvisioningGroups()) {
-                int roleIndex = findSecurityRequestRoleIndex(document, provisioningGroup.getRoleId());
-                if (roleIndex == -1) {
-                    throw new RuntimeException("Unable to find security request role record for role id: "
-                            + provisioningGroup.getRoleId());
-                }
+                if (provisioningGroup.isActive()) {
+                    int roleIndex = findSecurityRequestRoleIndex(document, provisioningGroup.getRoleId());
+                    if (roleIndex == -1) {
+                        throw new RuntimeException("Unable to find security request role record for role id: " + provisioningGroup.getRoleId());
+                    }
 
-                if(provisioningGroup.isActive()){
                     requestRoleIndexes.add(new Integer(roleIndex));
                 }
-                
+
             }
 
             if(requestRoleIndexes.size() > 0){
@@ -363,8 +358,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         roleMembers.addAll(SpringContext.getBean(SecurityRequestDerivedRoleTypeServiceImpl.class)
             .getRoleMembersFromDerivedRole(SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME,
                                                document, role));
-// TODO fix this
-        /*
+
         attributes.put(AttributeConstants.ROUTE_NODE_NAME, "AdditionalAuthorizer");
         roleMembers.addAll(getSecurityRequestDerivedRoleTypeService()
             .getRoleMembersFromDerivedRole(SECURITY_REQUEST_ADDITIONAL_AUTHORIZER_ROLE_NAME,
@@ -374,10 +368,14 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         roleMembers.addAll(getSecurityRequestDerivedRoleTypeService()
             .getRoleMembersFromDerivedRole(SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME,
                                                document, role));
-                                               */
+                                               
         
         LOG.info("Got role members " + roleMembers.size());
         return roleMembers;
+    }
+
+    private SecurityRequestDerivedRoleTypeServiceImpl getSecurityRequestDerivedRoleTypeService() {
+        return SpringContext.getBean(SecurityRequestDerivedRoleTypeServiceImpl.class);
     }
 
     /**
