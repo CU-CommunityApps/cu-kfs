@@ -4,56 +4,70 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 
-import edu.cornell.kfs.sys.batch.CuAbstractStep;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class DocumentReindexStep extends CuAbstractStep {
-	private String stagingDirectory;
-	private String fileName = "documentReindex.txt";
-	private static final Logger LOG = LogManager.getLogger(DocumentReindexStep.class);
-	
-	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        final DocumentAttributeIndexingQueue documentAttributeIndexingQueue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
-        
-		File f = new File(stagingDirectory+File.separator+fileName);
-	    ArrayList<String> docIds = new ArrayList<String>();
 
-	    try {
-	    	BufferedReader reader = new BufferedReader(new FileReader(f));
+    private static final Logger LOG = LogManager.getLogger();
 
-	    	String line = null;
-	    	while ((line=reader.readLine()) != null) {
-	    		docIds.add(line);   	
-	    	}
-	    } catch (IOException ioe) {
-	    	ioe.printStackTrace();
-	    	return false;
-	    }
-		for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
-			String documentId = it.next();
-			
-			try {
-			    LOG.info("execute, indexing document " + documentId);
-			    documentAttributeIndexingQueue.indexDocument(documentId);
-			} catch (Exception e) {
-			    LOG.error("execute, had an error indexing docuemnt " + documentId, e);
-			}
-		}
-		
-		addTimeStampToFileName(f, fileName, stagingDirectory);
-		return true;
-	}
+    private DocumentAttributeIndexingQueue documentAttributeIndexingQueue;
+    private String stagingDirectory;
 
-	public void setStagingDirectory(String stagingDirectory) {
-		this.stagingDirectory = stagingDirectory;
-	}
+    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+        try {
+            File documentReindexFile = new File(stagingDirectory + File.separator + getDocumentReindexFilename());
+            List<String> documentIds = getDocumentIdsToProcess(documentReindexFile);
+            reindexDocuments(documentIds);
+            addTimeStampToFileName(documentReindexFile, getDocumentReindexFilename(), stagingDirectory);
+        } catch (Exception e) {
+            LOG.error("execute, Unexpected error occurred while indexing documents", e);
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+    private String getDocumentReindexFilename() {
+        return CUKFSConstants.DOCUMENT_REINDEX_FILE_NAME_PREFIX + CUKFSConstants.TEXT_FILE_EXTENSION;
+    }
+
+    private List<String> getDocumentIdsToProcess(File documentReindexFile) throws IOException {
+        LOG.info("getDocumentIdsToProcess, Reading document IDs to be processed for reindexing...");
+        try (FileReader fileReader = new FileReader(documentReindexFile, StandardCharsets.UTF_8);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+        ) {
+            List<String> documentIds = bufferedReader.lines().collect(Collectors.toUnmodifiableList());
+            LOG.info("getDocumentIdsToProcess, Found " + documentIds.size() + " documents to reindex");
+            return documentIds;
+        }
+    }
+
+    private void reindexDocuments(List<String> documentIds) {
+        for (String documentId : documentIds) {
+            try {
+                LOG.info("reindexDocuments, Indexing document " + documentId);
+                documentAttributeIndexingQueue.indexDocument(documentId);
+            } catch (Exception e) {
+                LOG.error("reindexDocuments, Unexpected error occurred while indexing document " + documentId, e);
+            }
+        }
+        LOG.info("reindexDocuments, Finished indexing documents");
+    }
+
+    public void setDocumentAttributeIndexingQueue(DocumentAttributeIndexingQueue documentAttributeIndexingQueue) {
+        this.documentAttributeIndexingQueue = documentAttributeIndexingQueue;
+    }
+
+    public void setStagingDirectory(String stagingDirectory) {
+        this.stagingDirectory = stagingDirectory;
+    }
 
 }
