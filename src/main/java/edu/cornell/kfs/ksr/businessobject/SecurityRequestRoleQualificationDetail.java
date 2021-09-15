@@ -13,6 +13,7 @@ import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
 import org.kuali.kfs.kim.service.UiDocumentService;
 import org.kuali.kfs.kns.datadictionary.control.TextControlDefinition;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.exporter.StringMap;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -96,13 +97,13 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
         return this.definitions;
     }
 
-    public /*AttributeDefinition*/ KimAttributeField getAttributeDefinition() {
+    public AttributeDefinition getAttributeDefinition() {
         List<KimAttributeField> definitions = getDefinitions();
         if (definitions != null) {
             for (KimAttributeField definition : definitions) {
                 if (StringUtils.equals(definition.getAttributeField().getName(), getAttributeName())) {
                     //return KRADServiceLocatorWeb.getDataDictionaryService().getAttributeDefinition("", definition.getAttributeField().getName());
-                	return definition;
+                	return definition.getAttributeField();
                 }
             }
         }

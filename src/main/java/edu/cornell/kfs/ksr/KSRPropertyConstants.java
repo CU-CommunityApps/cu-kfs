@@ -31,5 +31,10 @@ public class KSRPropertyConstants {
     public static final String SECURITY_REQUEST_DOCUMENT_TAB_ORDER = "tabOrder";
     public static final String SECURITY_REQUEST_DOCUMENT_ROLE_TAB_ORDER = "roleTabOrder";
     public static final String SECURITY_GROUP = "securityGroup";
+    public static final String SECURITY_REQUEST_DOC_REQUEST_ROLE = "document.securityRequestRoles";
+    public static final String SECURITY_REQUEST_DOC_PRINCIPAL_ID = "document.principalId";
+    public static final String SECURITY_REQUEST_DOC_ROLE_QUAL = "requestRoleQualifications";
+    public static final String SECURITY_REQUEST_DOC_ROLE_QUAL_DETAILS = "roleQualificationDetails";
+    public static final String SECURITY_REQUEST_DOC_ROLE_ATTR_VALUE = "attributeValue";
 
 }

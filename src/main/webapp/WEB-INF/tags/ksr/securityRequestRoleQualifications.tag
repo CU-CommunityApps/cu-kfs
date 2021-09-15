@@ -1,4 +1,4 @@
-  <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <%@ attribute name="securityRequestRoleIndex" required="true"
               description="Index of the security request role instance in the document collection to render qualifications for." %>
@@ -39,14 +39,14 @@
                     property="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification.roleQualificationDetails[${status.count-1}].attributeValue" readOnly="${readOnly}" />
                 
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    
-                <c:if test="${attributeDefinition.hasLookupBoDefinition && (!empty attributeDefinition.lookupBoClass) && !readOnly}"> 
+                <c:if test="${attributeDefinition.canLookup && (!empty attributeDefinition.lookupClassName) && !readOnly}"> 
                    <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification" attributeDefinition="${attributeDefinition}" />
                 </c:if>    
               </td>
             </c:forEach>
             
             <td>
-               <html:image src="${ConfigProperties.kr.externalizable.images.url}tinybutton-add1.gif" styleClass="tinybutton"
+               <html:image src="${ConfigProperties.externalizable.images.url}tinybutton-add1.gif" styleClass="tinybutton"
                   property="methodToCall.addQualificationLine.roleRequestIndex${securityRequestRoleIndex}" alt="Add Qualification" title="Add Qualification" />
             </td>
         </tr>
@@ -65,7 +65,7 @@
                     property="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}].roleQualificationDetails[${dtlStatus.count-1}].attributeValue" readOnly="${readOnly}" />
             
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    
-                <c:if test="${attributeDefinition.hasLookupBoDefinition && (!empty attributeDefinition.lookupBoClass) && !readOnly}"> 
+                <c:if test="${attributeDefinition.canLookup && (!empty attributeDefinition.lookupClassName) && !readOnly}"> 
                    <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}]" attributeDefinition="${attributeDefinition}" />
                 </c:if>              
               </td>
@@ -73,7 +73,7 @@
             
             <c:if test="${!readOnly}">
               <td>
-                 <html:image src="${ConfigProperties.kr.externalizable.images.url}tinybutton-delete1.gif" styleClass="tinybutton"
+                 <html:image src="${ConfigProperties.externalizable.images.url}tinybutton-delete1.gif" styleClass="tinybutton"
                     property="methodToCall.deleteQualificationLine.roleRequestIndex${securityRequestRoleIndex}.qualificationIndex${qualStatus.count-1}" alt="Delete Qualification" title="Delete Qualification" />
               </td>
             </c:if>
