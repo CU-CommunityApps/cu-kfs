@@ -172,8 +172,6 @@ public class CUKFSConstants {
     
     public static final String DOCUMENT_ID = "documentId";
     
-    public static final String DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME = "documentRefreshQueue";
-
     public static final String XML_FILE_EXTENSION = ".xml";
 
     public static final String LOCATION_SERVICE_BEAN_NAME = "locationService-fin";
