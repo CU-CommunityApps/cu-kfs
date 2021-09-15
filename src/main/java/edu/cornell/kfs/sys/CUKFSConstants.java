@@ -175,13 +175,13 @@ public class CUKFSConstants {
     public static final String DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME = "documentRefreshQueue";
 
     public static final String XML_FILE_EXTENSION = ".xml";
+    public static final String TEXT_FILE_EXTENSION = ".txt";
 
     public static final String LOCATION_SERVICE_BEAN_NAME = "locationService-fin";
 
     public static final String LEGACY_PERMIT_NAMESPACE = "PERMIT";
 
     public static final String DOCUMENT_REINDEX_FILE_NAME_PREFIX = "documentReindex";
-    public static final String DOCUMENT_REINDEX_FILE_NAME_EXTENSION = ".txt";
 
     public static final class FILE_EXTENSIONS {
         public static final String CSV_FILE_EXTENSION = ".csv";

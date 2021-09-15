@@ -36,7 +36,7 @@ public class DocumentReindexStep extends CuAbstractStep {
     }
 
     private String getDocumentReindexFilename() {
-        return CUKFSConstants.DOCUMENT_REINDEX_FILE_NAME_PREFIX + CUKFSConstants.DOCUMENT_REINDEX_FILE_NAME_EXTENSION;
+        return CUKFSConstants.DOCUMENT_REINDEX_FILE_NAME_PREFIX + CUKFSConstants.TEXT_FILE_EXTENSION;
     }
 
     private List<String> getDocumentIdsToProcess(File documentReindexFile) throws IOException {
