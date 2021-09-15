@@ -37,23 +37,35 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
     }
 
     private CuSqlQuery buildRequeueSqlQuery() {
-        CuSqlChunk sqlChunk = buildRequeueSqlQueryChunk();
-        sqlChunk.append(" ORDER BY DOC_HDR_ID ASC");
+        CuSqlChunk sqlChunk = buildRequeueSqlQueryChunkWithOrderByClause();
         return sqlChunk.toQuery();
     }
 
-    private CuSqlChunk buildRequeueSqlQueryChunk() {
+    private CuSqlChunk buildRequeueSqlQueryChunkWithOrderByClause() {
+        return buildRequeueSqlQueryChunk(true);
+    }
+
+    private CuSqlChunk buildRequeueSqlQueryChunkWithoutOrderByClause() {
+        return buildRequeueSqlQueryChunk(false);
+    }
+
+    private CuSqlChunk buildRequeueSqlQueryChunk(boolean includeOrderByClause) {
         Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
         Collection<String> roleIds = findRequeueableRoleIds();
-        return CuSqlChunk.of(
-                "SELECT DOC_HDR_ID FROM KFS.KREW_DOC_HDR_T ",
-                "WHERE DOC_HDR_STAT_CD = ", CuSqlChunk.forParameter(KewApiConstants.ROUTE_HEADER_ENROUTE_CD),
-                " AND DOC_TYP_ID NOT IN (", CuSqlChunk.forStringParameters(docTypeIds), ")",
-                " AND DOC_HDR_ID IN (",
-                        "SELECT DISTINCT DOC_HDR_ID FROM KFS.KREW_ACTN_RQST_T ",
-                        "WHERE RSP_ID IN (",
-                                "SELECT RSP_ID FROM KFS.KRIM_ROLE_RSP_T ",
-                                "WHERE ROLE_ID IN (", CuSqlChunk.forStringParameters(roleIds), ")))");
+        CuSqlChunk subQuery = CuSqlChunk.of(
+                "SELECT DH.DOC_HDR_ID FROM KFS.KREW_DOC_HDR_T DH ",
+                "WHERE DH.DOC_HDR_STAT_CD = ", CuSqlChunk.forParameter(KewApiConstants.ROUTE_HEADER_ENROUTE_CD),
+                " AND DH.DOC_TYP_ID NOT IN (", CuSqlChunk.forStringParameters(docTypeIds), ")",
+                " AND EXISTS (",
+                        "SELECT DISTINCT RQ.DOC_HDR_ID FROM KFS.KREW_ACTN_RQST_T RQ ",
+                        "WHERE DH.DOC_HDR_ID = RQ.DOC_HDR_ID ",
+                        "AND RQ.RSP_ID IN (",
+                                "SELECT RR.RSP_ID FROM KFS.KRIM_ROLE_RSP_T RR ",
+                                "WHERE RR.ROLE_ID IN (", CuSqlChunk.forStringParameters(roleIds), ")))");
+        if (includeOrderByClause) {
+            subQuery.append(" ORDER BY DH.DOC_HDR_ID ASC");
+        }
+        return subQuery;
     }
 
     @Override
@@ -76,7 +88,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
                 "SELECT AI.PRNCPL_ID, AI.DOC_HDR_ID, AIE.ACTN_NOTE, AIE.LAST_UPDT_TS, AI.ACTN_ITM_ID ",
                 "FROM KFS.KREW_ACTN_ITM_T AI ",
                 "JOIN KFS.KREW_ACTN_ITM_EXT_T AIE ON AI.ACTN_ITM_ID = AIE.ACTN_ITM_ID ",
-                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQueryChunk(), ")");
+                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQueryChunkWithoutOrderByClause(), ")");
     }
 
     private <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
