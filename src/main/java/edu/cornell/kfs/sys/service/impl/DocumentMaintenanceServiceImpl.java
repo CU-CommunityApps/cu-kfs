@@ -13,10 +13,9 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.actionitem.ActionItem;
 import org.kuali.kfs.kew.actionlist.dao.impl.ActionListPriorityComparator;
 import org.kuali.kfs.kew.api.document.DocumentRefreshQueue;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.kew.actionitem.ActionItemExtension;
@@ -27,7 +26,10 @@ import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
     private static final Logger LOG = LogManager.getLogger();
+
     private DocumentMaintenanceDao documentMaintenanceDao;
+    private DocumentRefreshQueue documentRefreshQueue;
+    private BusinessObjectService businessObjectService;
 
     @Override
     public boolean requeueDocuments() {
@@ -46,8 +48,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     @Transactional
     private void requeueDocumentByDocumentId(List<ActionItemNoteDetailDto> noteDetails, String docId) {
         LOG.info("requeueDocumentByDocumentId: Requesting requeue for document: " + docId);
-        DocumentRefreshQueue documentRequeuer = (DocumentRefreshQueue) SpringContext.getService(CUKFSConstants.DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME);
-        documentRequeuer.refreshDocument(docId);
+        documentRefreshQueue.refreshDocument(docId);
         
         List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
         for (ActionItemNoteDetailDto detailDto : noteDetailsForDocument) {
@@ -61,7 +62,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
                     actionItemExtension.setActionNote(detailDto.getActionNote());
                     LOG.info("requeueDocumentByDocumentId, updating note details " + detailDto.toString() + " to action item " + actionItem.getId());
                 }
-                KRADServiceLocator.getBusinessObjectService().save(actionItemExtension);
+                businessObjectService.save(actionItemExtension);
             }
         }
     }
@@ -70,7 +71,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         Map<String, Object> query = Map.ofEntries(
                 Map.entry(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipalId()),
                 Map.entry(CUKFSConstants.DOCUMENT_ID, detailDto.getDocHeaderId()));
-        Collection<ActionItem> actionItems = KRADServiceLocator.getBusinessObjectService().findMatching(ActionItem.class, query);
+        Collection<ActionItem> actionItems = businessObjectService.findMatching(ActionItem.class, query);
         ActionItem selectedActionItem = null;
         if (LOG.isDebugEnabled() ) {
             LOG.debug("findActionItem, number of action items for principal " +  detailDto.getPrincipalId() + " and document number " 
@@ -83,7 +84,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     }
     
     private ActionItemExtension findActionItemExtension(String actionItemId) {
-        return KRADServiceLocator.getBusinessObjectService().findBySinglePrimaryKey(ActionItemExtension.class, actionItemId);
+        return businessObjectService.findBySinglePrimaryKey(ActionItemExtension.class, actionItemId);
     }
 
     private ActionItemExtension buildActionItemExtension(ActionItemNoteDetailDto detailDto, ActionItem item) {
@@ -105,6 +106,14 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
 
     public void setDocumentMaintenanceDao(DocumentMaintenanceDao documentMaintenanceDao) {
         this.documentMaintenanceDao = documentMaintenanceDao;
+    }
+
+    public void setDocumentRefreshQueue(DocumentRefreshQueue documentRefreshQueue) {
+        this.documentRefreshQueue = documentRefreshQueue;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
 }

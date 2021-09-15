@@ -66,11 +66,11 @@ public class ActionItemNoteDetailDto implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("principalId: '").append(principalId);
+        sb.append("(principalId: '").append(principalId);
         sb.append("' docHeaderId: '").append(docHeaderId);
         sb.append("' noteTimeStamp: '").append(noteTimeStamp);
         sb.append("' actionNote: '").append(actionNote);
-        sb.append("' original action item id: '").append(originalActionItemId).append("'");
+        sb.append("' original action item id: '").append(originalActionItemId).append("')");
         return sb.toString();
     }
 

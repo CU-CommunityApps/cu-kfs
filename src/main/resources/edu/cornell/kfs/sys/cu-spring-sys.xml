@@ -97,11 +97,10 @@
 	
 	<bean id="jobListener" class="edu.cornell.kfs.sys.batch.CuJobListener" parent="jobListener-parentBean"/>
 
-	<bean id="documentMaintenanceService" parent="documentMaintenanceService-parentBean"/>
-
-    <bean id="documentMaintenanceService-parentBean" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl">
-	    <property name="documentMaintenanceDao" ref="documentMaintenanceDao"/>
-    </bean>
+    <bean id="documentMaintenanceService" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl"
+          p:documentMaintenanceDao-ref="documentMaintenanceDao"
+          p:documentRefreshQueue-ref="documentRefreshQueue"
+          p:businessObjectService-ref="businessObjectService"/>
 
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
 
