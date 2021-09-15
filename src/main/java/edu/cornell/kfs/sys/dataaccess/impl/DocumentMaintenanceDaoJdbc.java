@@ -37,8 +37,16 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
     }
 
     private CuSqlQuery buildRequeueSqlQuery() {
-        CuSqlChunk sqlChunk = buildRequeueSqlQueryChunk(true);
+        CuSqlChunk sqlChunk = buildRequeueSqlQueryChunkWithOrderByClause();
         return sqlChunk.toQuery();
+    }
+
+    private CuSqlChunk buildRequeueSqlQueryChunkWithOrderByClause() {
+        return buildRequeueSqlQueryChunk(true);
+    }
+
+    private CuSqlChunk buildRequeueSqlQueryChunkWithoutOrderByClause() {
+        return buildRequeueSqlQueryChunk(false);
     }
 
     private CuSqlChunk buildRequeueSqlQueryChunk(boolean includeOrderByClause) {
@@ -80,7 +88,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
                 "SELECT AI.PRNCPL_ID, AI.DOC_HDR_ID, AIE.ACTN_NOTE, AIE.LAST_UPDT_TS, AI.ACTN_ITM_ID ",
                 "FROM KFS.KREW_ACTN_ITM_T AI ",
                 "JOIN KFS.KREW_ACTN_ITM_EXT_T AIE ON AI.ACTN_ITM_ID = AIE.ACTN_ITM_ID ",
-                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQueryChunk(false), ")");
+                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQueryChunkWithoutOrderByClause(), ")");
     }
 
     private <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
