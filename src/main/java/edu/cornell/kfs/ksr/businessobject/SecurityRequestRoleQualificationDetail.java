@@ -97,13 +97,13 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
         return this.definitions;
     }
 
-    public AttributeDefinition getAttributeDefinition() {
+    public KimAttributeField getAttributeDefinition() {
         List<KimAttributeField> definitions = getDefinitions();
         if (definitions != null) {
             for (KimAttributeField definition : definitions) {
                 if (StringUtils.equals(definition.getAttributeField().getName(), getAttributeName())) {
                     //return KRADServiceLocatorWeb.getDataDictionaryService().getAttributeDefinition("", definition.getAttributeField().getName());
-                	return definition.getAttributeField();
+                	return definition;
                 }
             }
         }

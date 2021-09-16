@@ -39,8 +39,9 @@
                     property="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification.roleQualificationDetails[${status.count-1}].attributeValue" readOnly="${readOnly}" />
                 
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    
-                <c:if test="${attributeDefinition.canLookup && (!empty attributeDefinition.lookupClassName) && !readOnly}"> 
-                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification" attributeDefinition="${attributeDefinition}" />
+                <c:if test="${(!empty attributeDefinition.quickFinder) && !readOnly}"> 
+                	<c:set var="quickFinderAttributeDefinition" value="${qualificationDetail.attributeDefinition.quickFinder}" />
+                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification" attributeDefinition="${quickFinderAttributeDefinition}" />
                 </c:if>    
               </td>
             </c:forEach>
@@ -64,9 +65,11 @@
                 <kul:htmlControlAttribute attributeEntry="${attributeEntry}" 
                     property="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}].roleQualificationDetails[${dtlStatus.count-1}].attributeValue" readOnly="${readOnly}" />
             
-                <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    
-                <c:if test="${attributeDefinition.canLookup && (!empty attributeDefinition.lookupClassName) && !readOnly}"> 
-                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}]" attributeDefinition="${attributeDefinition}" />
+                <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />  
+                 
+                <c:if test="${(!empty attributeDefinition.quickFinder) && !readOnly}"> 
+                <c:set var="quickFinderAttributeDefinition" value="${qualificationDetail.attributeDefinition.quickFinder}" />
+                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}]" attributeDefinition="${quickFinderAttributeDefinition}" />
                 </c:if>              
               </td>
             </c:forEach>
@@ -80,5 +83,3 @@
         </tr>
     </c:forEach>    
 </table>
-
-
