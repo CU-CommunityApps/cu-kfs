@@ -268,9 +268,13 @@
 		<property name="steps">
 			<list>
 				<ref bean="concurEventNotificationProcessingStep" />
+				<ref bean="concurEventNotificationV2ProcessingStep" />
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="concurEventNotificationV2ProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationV2ProcessingStep">
+  </bean>
 
 	<bean id="concurEventNotificationProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationProcessingStep">
 		<property name="concurEventNotificationProcessingService" ref="concurEventNotificationProcessingService" />

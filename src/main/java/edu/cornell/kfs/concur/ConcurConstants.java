@@ -30,6 +30,13 @@ public class ConcurConstants {
     public static final String CONCUR_CONSUMER_KEY = "concur.consumer.key";
     public static final String CONCUR_SECRET_KEY = "concur.secret.key";
     public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
+    
+    public static final String CONCUR_WEB_SERVICE_GROUP_CODE_OAUTH_2 = "CNCR_OAUTH2";
+    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_CLIENT_ID = "concur.client_id";
+    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_SECRET_ID = "concur.secret_id";
+    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_USER_NAME = "concur.user_name";
+    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_REQUEST_TOKEN = "concur.request_token";
+    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_REFRESH_TOKEN = "concur.refresh_token";
 
     public static final String USERNAME_PASSWORD_SEPARATOR = ":";
     public static final String TLS_V1_2_PROTOCOL = "TLSv1.2";
