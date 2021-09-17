@@ -15,4 +15,5 @@
 -->
 <!DOCTYPE doc>
 <Context path="/kfs" reloadable="true">
+  <CookieProcessor sameSiteCookies="none" />
 </Context>
