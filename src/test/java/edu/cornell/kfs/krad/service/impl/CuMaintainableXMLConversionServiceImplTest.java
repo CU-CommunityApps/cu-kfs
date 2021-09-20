@@ -280,6 +280,16 @@ public class CuMaintainableXMLConversionServiceImplTest {
         assertXMLFromTestFileConvertsAsExpected(testFile);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "LegacySecurityGroupTest.xml",
+        "LegacyRice20SecurityProvisioningTest.xml",
+        "LegacyRice23SecurityProvisioningTest.xml"
+    })
+    void testConversionOfKSRDocuments(String ksrTestFile) throws Exception {
+        assertXMLFromTestFileConvertsAsExpected(ksrTestFile);
+    }
+
     protected void assertXMLFromTestFileConvertsAsExpected(String fileLocalName) throws Exception {
         readTestFile(fileLocalName);
         String actualResult = conversionService.transformMaintainableXML(oldData);

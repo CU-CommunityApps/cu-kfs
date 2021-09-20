@@ -82,53 +82,43 @@
 </oldData>
 
 <expectedResult>
-<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><edu.cornell.kfs.ksr.businessobject.SecurityGroup>
   <newCollectionRecord>false</newCollectionRecord>
   <active>true</active>
   <securityGroupTabs>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
         <newCollectionRecord>false</newCollectionRecord>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
+      <edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
         <newCollectionRecord>false</newCollectionRecord>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
   </securityGroupTabs>
-</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+</edu.cornell.kfs.ksr.businessobject.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.ksr.businessobject.SecurityGroup>
   <newCollectionRecord>false</newCollectionRecord>
-  <securityGroupId>
-    <value>1</value>
-  </securityGroupId>
+  <securityGroupId>1</securityGroupId>
   <securityGroupName>Test Security Group 01</securityGroupName>
   <securityGroupDescription>This security group is only for testing purposes</securityGroupDescription>
   <active>true</active>
   <securityGroupTabs>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
         <newCollectionRecord>true</newCollectionRecord>
-        <tabId>
-          <value>2</value>
-        </tabId>
+        <tabId>2</tabId>
         <tabName>One Set of Roles</tabName>
-        <tabOrder>
-          <value>1</value>
-        </tabOrder>
+        <tabOrder>1</tabOrder>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
-      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
+      <edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
         <newCollectionRecord>true</newCollectionRecord>
-        <tabId>
-          <value>3</value>
-        </tabId>
+        <tabId>3</tabId>
         <tabName>Another Set of Roles</tabName>
-        <tabOrder>
-          <value>2</value>
-        </tabOrder>
+        <tabOrder>2</tabOrder>
         <active>true</active>
-      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      </edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
   </securityGroupTabs>
-</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</edu.cornell.kfs.ksr.businessobject.SecurityGroup><maintenanceAction>New</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
 
