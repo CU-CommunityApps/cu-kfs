@@ -30,7 +30,6 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.KimConstants.AttributeConstants;
 import org.kuali.kfs.kim.api.role.RoleMembership;
-import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
@@ -58,8 +57,8 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     private static final String SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME = "Security Request Central Authorizer";
 
     // ==== CU Customization (CYNERGY-2377): Added the Logger below, and tweaked existing logging lines to use this logger instead. ====
-	private static final Logger LOG = LogManager.getLogger(SecurityRequestDocumentAction.class);
-    
+    private static final Logger LOG = LogManager.getLogger(SecurityRequestDocumentAction.class);
+
     /**
      * Verify security group id has been set for creating the security request document
      * 
@@ -80,6 +79,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         // set security group id on new document instance
         SecurityRequestDocument document = (SecurityRequestDocument) documentForm.getDocument();
         document.setSecurityGroupId(documentForm.getSecurityGroupId());
+        documentForm.setCurrentPrincipalId(document.getPrincipalId());
         document.refreshReferenceObject(KSRPropertyConstants.SECURITY_GROUP);
     }
 
@@ -91,8 +91,10 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     @Override
     protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
         super.loadDocument(kualiDocumentFormBase);
-
+        SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) kualiDocumentFormBase;
         SecurityRequestDocument document = (SecurityRequestDocument) kualiDocumentFormBase.getDocument();
+
+        documentForm.setCurrentPrincipalId(document.getPrincipalId());
         SpringContext.getBean(SecurityRequestDocumentService.class).prepareSecurityRequestDocument(document);
         ((SecurityRequestDocumentForm) kualiDocumentFormBase).setTabRoleIndexes(buildTabRoleIndexes(document));
     }
@@ -101,14 +103,13 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
      * Processes the request to add a new role qualification line
      * 
      * <p>
-     * From the methodToCall request parameter the requested role index for the new qualification line to add is parsed
-     * out and the corresponding <code>SecurityRequestRole</code> instance is pulled for the document. Business rules
-     * are then invoked on the qualification line and if successful, the line is added to the existing collection of
-     * qualifications for the request role, and a new blank qualification line is constructed
+     * From the methodToCall request parameter the requested role index for the new qualification line to add is parsed out and the corresponding
+     * <code>SecurityRequestRole</code> instance is pulled for the document. Business rules are then invoked on the qualification line and if successful, the
+     * line is added to the existing collection of qualifications for the request role, and a new blank qualification line is constructed
      * </p>
      */
-    public ActionForward addQualificationLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward addQualificationLine(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) form;
         SecurityRequestDocument document = (SecurityRequestDocument) documentForm.getDocument();
 
@@ -119,8 +120,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         if (StringUtils.isNotBlank(parameterName) && StringUtils.contains(parameterName, ".roleRequestIndex")) {
             String roleRequestIndexStr = StringUtils.substringBetween(parameterName, ".roleRequestIndex", ".");
             roleRequestIndex = Integer.parseInt(roleRequestIndexStr);
-        }
-        else {
+        } else {
             LOG.error("Unable to find role request index for new qualification line");
             throw new RuntimeException("Unable to find role request index for new qualification line");
         }
@@ -134,8 +134,8 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
         // check any business rules
         String errorPath = "document.securityRequestRoles[" + roleRequestIndex + "].newRequestRoleQualification";
-        boolean rulePassed = KRADServiceLocatorWeb.getKualiRuleService().applyRules(
-                new AddQualificationLineEvent(errorPath, document, securityRequestRole.getNewRequestRoleQualification()));
+        boolean rulePassed = KRADServiceLocatorWeb.getKualiRuleService()
+                .applyRules(new AddQualificationLineEvent(errorPath, document, securityRequestRole.getNewRequestRoleQualification()));
 
         if (rulePassed) {
             securityRequestRole.getRequestRoleQualifications().add(securityRequestRole.getNewRequestRoleQualification());
@@ -152,14 +152,13 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
      * Processes the request to delete a qualification line
      * 
      * <p>
-     * From the methodToCall request parameter the requested role index for the delete qualification line is parsed out
-     * and the corresponding <code>SecurityRequestRole</code> instance is pulled for the document. Likewise the index
-     * for the qualification line within the security request role is parsed from the methodToCall parameter. If both
-     * are found, the corresponding qualification line is removed from the collection
+     * From the methodToCall request parameter the requested role index for the delete qualification line is parsed out and the corresponding
+     * <code>SecurityRequestRole</code> instance is pulled for the document. Likewise the index for the qualification line within the security request role is
+     * parsed from the methodToCall parameter. If both are found, the corresponding qualification line is removed from the collection
      * </p>
      */
-    public ActionForward deleteQualificationLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward deleteQualificationLine(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) form;
         SecurityRequestDocument document = (SecurityRequestDocument) documentForm.getDocument();
 
@@ -175,8 +174,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
             String qualificationIndexStr = StringUtils.substringBetween(parameterName, ".qualificationIndex", ".");
             qualificationIndex = Integer.parseInt(qualificationIndexStr);
-        }
-        else {
+        } else {
             LOG.error("Unable to find qualification index for line to delete");
             throw new RuntimeException("Unable to find qualification index for line to delete");
         }
@@ -195,34 +193,36 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     }
 
     /**
-     * On return from the person lookup, if principal id is selected then invokes the
-     * <code>SecurityRequestDocumentService</code> to initiate the document instance
+     * On return from the person lookup, if principal id is selected then invokes the <code>SecurityRequestDocumentService</code> to initiate the document
+     * instance
      * 
-     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#refresh(org.apache.struts.action.ActionMapping,
-     *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
+     * @see org.kuali.rice.kns.web.struts.action.KualiDocumentActionBase#refresh(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm,
+     *      javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        super.refresh(mapping, form, request, response);
-
+    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) form;
         SecurityRequestDocument document = (SecurityRequestDocument) documentForm.getDocument();
-        
-        if(StringUtils.isNotBlank(document.getPrincipalId()) && ObjectUtils.isNotNull(document.getRequestPerson())) {
-                SpringContext.getBean(SecurityRequestDocumentService.class).initiateSecurityRequestDocument(document,
-                        GlobalVariables.getUserSession().getPerson());
-                documentForm.setTabRoleIndexes(buildTabRoleIndexes(document));
-        }
 
+        super.refresh(mapping, form, request, response);
+
+        if (StringUtils.isNotBlank(request.getParameter("document.principalId"))) {
+
+            if (StringUtils.isNotBlank(document.getPrincipalId()) && ObjectUtils.isNotNull(document.getRequestPerson())) {
+                if (!StringUtils.equals(document.getPrincipalId(), documentForm.getCurrentPrincipalId())) {
+                    SpringContext.getBean(SecurityRequestDocumentService.class).initiateSecurityRequestDocument(document,
+                            GlobalVariables.getUserSession().getPerson());
+                    documentForm.setTabRoleIndexes(buildTabRoleIndexes(document));
+                    documentForm.setCurrentPrincipalId(document.getPrincipalId());
+                }
+            }
+        }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiAction#getReturnLocation(javax.servlet.http.HttpServletRequest,
-     *      org.apache.struts.action.ActionMapping)
+     * @see org.kuali.rice.kns.web.struts.action.KualiAction#getReturnLocation(javax.servlet.http.HttpServletRequest, org.apache.struts.action.ActionMapping)
      */
     protected String getReturnLocation(HttpServletRequest request, ActionMapping mapping) {
         String mappingPath = mapping.getPath();
@@ -232,13 +232,14 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     }
 
     /**
-     * Builds a List of <code>TabRoleIndexes</code> that is used within the UI to determine how to render the tabs,
-     * which security request roles go within each tab, and the order in which they should be rendered
+     * Builds a List of <code>TabRoleIndexes</code> that is used within the UI to determine how to render the tabs, which security request roles go within each
+     * tab, and the order in which they should be rendered
      * 
-     * @param document {@link SecurityRequestDocument} for which to build indexes from
+     * @param document
+     *            {@link SecurityRequestDocument} for which to build indexes from
      * @return List<SecurityRequestDocumentForm.TabRoleIndexes>
      */
-    @SuppressWarnings({"rawtypes","unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected List<SecurityRequestDocumentForm.TabRoleIndexes> buildTabRoleIndexes(final SecurityRequestDocument document) {
         final List<SecurityRequestDocumentForm.TabRoleIndexes> tabRoleIndexes = new ArrayList<SecurityRequestDocumentForm.TabRoleIndexes>();
 
@@ -274,19 +275,19 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
             }
 
-            if(requestRoleIndexes.size() > 0){
+            if (requestRoleIndexes.size() > 0) {
                 tabIndexes.setRoleRequestIndexes(requestRoleIndexes);
                 tabRoleIndexes.add(tabIndexes);
             }
-            
+
         }
 
         return tabRoleIndexes;
     }
 
     /**
-     * Searches the securityRequestRoles collection of the given security request document for the request role instance
-     * that is associated with the given role id, only one such instance should exist
+     * Searches the securityRequestRoles collection of the given security request document for the request role instance that is associated with the given role
+     * id, only one such instance should exist
      * 
      * @param document
      *            - security request document instance with collection to search
@@ -321,55 +322,46 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
      */
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         final SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) form;
-        
+
         final StringBuffer annotation = new StringBuffer();
-        
+
         final SecurityRequestDocument document = (SecurityRequestDocument) documentForm.getDocument();
-        
+
         if (documentForm.getMethodToCall().indexOf("approve") > -1) {
             final String principalId = GlobalVariables.getUserSession().getPerson().getPrincipalId();
             for (final SecurityRequestRole securityRequestRole : document.getSecurityRequestRoles()) {
                 LOG.info("Checking if " + principalId + " has access");
                 if (canApproveRequestForRole(securityRequestRole, principalId, document)) {
-                    annotation.append(securityRequestRole.getRoleInfo().getNamespaceCode())
-                        .append(" - ")
-                        .append(securityRequestRole.getRoleInfo().getName())
-                        .append("\n");
+                    annotation.append(securityRequestRole.getRoleInfo().getNamespaceCode()).append(" - ").append(securityRequestRole.getRoleInfo().getName())
+                            .append("\n");
                 }
             }
         }
         documentForm.setAnnotation(annotation.toString());
-        
 
         return super.approve(mapping, form, request, response);
     }
 
-    protected List<RoleMembership> getRoleMembers(final SecurityRequestRole role, 
-                                                      final String principalId, 
-                                                      final SecurityRequestDocument document) {
+    protected List<RoleMembership> getRoleMembers(final SecurityRequestRole role, final String principalId, final SecurityRequestDocument document) {
 
-        final Map<String,String> attributes = new HashMap<String,String>();
+        final Map<String, String> attributes = new HashMap<String, String>();
         attributes.put(AttributeConstants.DOCUMENT_NUMBER, document.getDocumentNumber());
         attributes.put(AttributeConstants.DOCUMENT_TYPE_NAME, KSRConstants.SECURITY_REQUEST_DOC_TYPE_NAME);
 
         final List<RoleMembership> roleMembers = new ArrayList<RoleMembership>();
 
-        attributes.put(AttributeConstants.ROUTE_NODE_NAME, "DistributedAuthorizer");  
+        attributes.put(AttributeConstants.ROUTE_NODE_NAME, "DistributedAuthorizer");
         roleMembers.addAll(SpringContext.getBean(SecurityRequestDerivedRoleTypeServiceImpl.class)
-            .getRoleMembersFromDerivedRole(SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME,
-                                               document, role));
+                .getRoleMembersFromDerivedRole(SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME, document, role));
 
         attributes.put(AttributeConstants.ROUTE_NODE_NAME, "AdditionalAuthorizer");
-        roleMembers.addAll(getSecurityRequestDerivedRoleTypeService()
-            .getRoleMembersFromDerivedRole(SECURITY_REQUEST_ADDITIONAL_AUTHORIZER_ROLE_NAME,
-                                               document, role));
+        roleMembers.addAll(
+                getSecurityRequestDerivedRoleTypeService().getRoleMembersFromDerivedRole(SECURITY_REQUEST_ADDITIONAL_AUTHORIZER_ROLE_NAME, document, role));
 
         attributes.put(AttributeConstants.ROUTE_NODE_NAME, "CentralAuthorizer");
-        roleMembers.addAll(getSecurityRequestDerivedRoleTypeService()
-            .getRoleMembersFromDerivedRole(SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME,
-                                               document, role));
-                                               
-        
+        roleMembers.addAll(
+                getSecurityRequestDerivedRoleTypeService().getRoleMembersFromDerivedRole(SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME, document, role));
+
         LOG.info("Got role members " + roleMembers.size());
         return roleMembers;
     }
@@ -380,12 +372,15 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
     /**
      * Determine if the currently logged in user can approve the given {@link SecurityRequestRole} for this document. It does this by utilizing the
-     * {@link SecurityRequestDerivedRoleTypeServiceImpl} and returning members of the SecurityRequest Derived Role. It then checks
-     * to see if a {@link RoleMembershipInfo} <code>principalId</code> is present
+     * {@link SecurityRequestDerivedRoleTypeServiceImpl} and returning members of the SecurityRequest Derived Role. It then checks to see if a
+     * {@link RoleMembershipInfo} <code>principalId</code> is present
      *
-     * @param role the {@link SecurityRequestRole} to check for access on
-     * @param principalId (Usually the current user's)
-     * @param documentNumber used for qualifications.
+     * @param role
+     *            the {@link SecurityRequestRole} to check for access on
+     * @param principalId
+     *            (Usually the current user's)
+     * @param documentNumber
+     *            used for qualifications.
      */
     protected boolean canApproveRequestForRole(final SecurityRequestRole role, final String principalId, final SecurityRequestDocument document) {
         for (final RoleMembership roleMember : getRoleMembers(role, principalId, document)) {

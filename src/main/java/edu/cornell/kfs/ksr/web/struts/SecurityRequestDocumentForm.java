@@ -10,6 +10,7 @@ public class SecurityRequestDocumentForm extends FinancialSystemTransactionalDoc
     private static final long serialVersionUID = 4809922796567396276L;
 
     private Long securityGroupId;
+    private String currentPrincipalId;
     protected List<TabRoleIndexes> tabRoleIndexes;
 
     public SecurityRequestDocumentForm() {
@@ -107,6 +108,14 @@ public class SecurityRequestDocumentForm extends FinancialSystemTransactionalDoc
      */
     public void setSecurityGroupId(Long securityGroupId) {
         this.securityGroupId = securityGroupId;
+    }
+
+    public String getCurrentPrincipalId() {
+        return currentPrincipalId;
+    }
+
+    public void setCurrentPrincipalId(String currentPrincipalId) {
+        this.currentPrincipalId = currentPrincipalId;
     }
 
 }

@@ -13,6 +13,7 @@
             		<kul:htmlAttributeLabel attributeEntry="${securityRequestAttributes['requestPerson.principalName']}"/>
         		</th>
                 <td valign="middle" class="left" width="50%">
+                
                     <html:hidden property="document.principalId" />
                         
                     <c:if test="${!readOnly}">
