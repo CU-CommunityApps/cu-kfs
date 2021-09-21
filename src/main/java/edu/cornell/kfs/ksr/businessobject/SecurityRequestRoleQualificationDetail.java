@@ -13,7 +13,6 @@ import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
 import org.kuali.kfs.kim.service.UiDocumentService;
 import org.kuali.kfs.kns.datadictionary.control.TextControlDefinition;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.exporter.StringMap;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -45,9 +44,7 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
 
         if ((attributeEntryMap != null) && (attributeEntryMap.containsKey(getAttributeName()))) {
             attributeEntry = (Map<String, Object>) attributeEntryMap.get(getAttributeName());
-        }
-        else {
-            // build generic attribute entry
+        } else {
             attributeEntry = getGenericAttributeEntry();
         }
 
@@ -59,20 +56,16 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
 
         KimTypeAttribute attributeInfo = getKimType().getAttributeDefinitionById(attributeId);
 
-        // the "control" entry should be a map and not an actual control definition. ====
-        Map<String,Object> controlMap = new StringMap();
+        Map<String, Object> controlMap = new StringMap();
         TextControlDefinition textControl = new TextControlDefinition();
         textControl.setSize(15);
-        
-        // Setup the map properties in a similar fashion as Rice's AttributesMapBuilder class.
+
         controlMap.put("text", "true");
         controlMap.put("size", textControl.getSize().toString());
         controlMap.put("datePicker", Boolean.valueOf(textControl.isDatePicker()).toString());
         controlMap.put("ranged", Boolean.valueOf(textControl.isRanged()).toString());
-        
-        attributeEntry.put("control", controlMap);
-        // ==== End CU Customization ====
 
+        attributeEntry.put("control", controlMap);
         attributeEntry.put("name", attributeInfo.getKimAttribute().getAttributeName());
 
         String label = attributeInfo.getKimAttribute().getAttributeLabel();
@@ -102,8 +95,7 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
         if (definitions != null) {
             for (KimAttributeField definition : definitions) {
                 if (StringUtils.equals(definition.getAttributeField().getName(), getAttributeName())) {
-                    //return KRADServiceLocatorWeb.getDataDictionaryService().getAttributeDefinition("", definition.getAttributeField().getName());
-                	return definition;
+                    return definition;
                 }
             }
         }

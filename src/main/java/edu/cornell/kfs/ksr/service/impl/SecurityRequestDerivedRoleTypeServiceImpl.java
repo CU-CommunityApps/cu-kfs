@@ -34,7 +34,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
     private static final Logger LOG = LogManager.getLogger(SecurityRequestDerivedRoleTypeServiceImpl.class);
 
     protected String getAuthorizerRoleId(final String roleName, final SecurityRequestDocument document, final SecurityRequestRole requestRole) {
-        // retrieve the configured authorizer (if any) from the provisioning record
         final SecurityProvisioningGroup provisioningGroup = getProvisioningGroupForRequest(document.getSecurityGroupId(), requestRole);
         if (KSRConstants.SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME.equals(roleName)) {
             return provisioningGroup.getDistributedAuthorizerRoleId();
@@ -78,7 +77,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
             }
         }
 
-        // add membership record for the primary department code
         String primaryDepartmentCode = document.getPrimaryDepartmentCode();
         if (StringUtils.isNotBlank(primaryDepartmentCode) && StringUtils.contains(primaryDepartmentCode, "-")) {
             String[] primaryDepartment = StringUtils.split(primaryDepartmentCode, "-");
@@ -105,7 +103,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
         final List<RoleMembership> members = new ArrayList<RoleMembership>();
 
-        // only generate routing request if change has been requested
         boolean changeRequested = false;
         if (requestRole.isActive() != requestRole.isCurrentActive()) {
             changeRequested = true;
@@ -122,7 +119,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
         final String authorizerRoleId = getAuthorizerRoleId(roleName, document, requestRole);
 
-        // if no authorizer role configured, no requests generated for this role request
         if (StringUtils.isBlank(authorizerRoleId)) {
             LOG.info("No authorizer role id found for security request role: " + requestRole.getRoleId());
             return members;
@@ -152,16 +148,12 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
         return members;
     }
 
-    /**
-     * @see org.kuali.rice.kns.kim.role.DerivedRoleTypeServiceBase#getRoleMembersFromDerivedRole(java.lang.String, java.lang.String, java.util.Map)
-     */
     @Override
     public List<RoleMembership> getRoleMembersFromDerivedRole(String namespaceCode, String roleName, Map<String, String> qualification) {
         final List<RoleMembership> members = new ArrayList<RoleMembership>();
 
         LOG.info("Generating role membership for role: " + roleName + " with qualification " + qualification);
 
-        // retrieve security request document
         String documentNumber = qualification.get(AttributeConstants.DOCUMENT_NUMBER);
         SecurityRequestDocument document = null;
         try {
@@ -171,7 +163,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
             throw new RuntimeException("Unable to retrieve security request document: " + documentNumber, e);
         }
 
-        // get authorizer role from provisioning record for each requested role
         for (final SecurityRequestRole requestRole : document.getSecurityRequestRoles()) {
             members.addAll(getRoleMembersFromDerivedRole(roleName, document, requestRole));
         }
@@ -180,17 +171,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
         return members;
     }
 
-    /**
-     * Determines if the given role id and qualification set have already been added to the map of added members, if not the role and qualification are added
-     * 
-     * @param addedMembers
-     *            - map containing all roles and qualification sets that have been added so far
-     * @param roleId
-     *            - id for the role to check for
-     * @param qualification
-     *            - qualification set to check for
-     * @return boolean true if the role id and qualification have been added to the map and should be added as members, false if there is already a member
-     */
     protected boolean addMemberIfNotPreviouselyAdded(Map<String, List<Map<String, String>>> addedMembers, String roleId, Map<String, String> qualification) {
         boolean addMember = true;
 
@@ -220,16 +200,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
         return addMember;
     }
 
-    /**
-     * Retrieves the security provisioning group record configured for the given security group id and role id contained on the given security request role
-     * record
-     * 
-     * @param securityGroupId
-     *            - security group id for the provisioning record to retrieve
-     * @param requestRole
-     *            - request role record containing the role id for the provisioning record
-     * @return SecurityProvisioningGroup instance retrieved or null if one was not found
-     */
     protected SecurityProvisioningGroup getProvisioningGroupForRequest(Long securityGroupId, SecurityRequestRole requestRole) {
         SecurityProvisioningGroup provisioningGroup = null;
         Map<String, Object> provisioningSearch = new HashMap<String, Object>();
@@ -237,7 +207,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
         provisioningSearch.put(KSRPropertyConstants.PROVISIONING_ROLE_ID, requestRole.getRoleId());
         provisioningSearch.put(KRADPropertyConstants.ACTIVE, Boolean.TRUE);
 
-        // should only return one record due to restrictions on provisioning groups
         List<SecurityProvisioningGroup> provisioningGroups = (List<SecurityProvisioningGroup>) KRADServiceLocator.getBusinessObjectService()
                 .findMatching(SecurityProvisioningGroup.class, provisioningSearch);
 
@@ -248,15 +217,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
         return provisioningGroup;
     }
 
-    /**
-     * Retrieves role membership for the given role id and qualification
-     * 
-     * @param authorizerRoleId
-     *            - role id to retrieve members for
-     * @param qualification
-     *            - qualification to match
-     * @return List<RoleMembershipInfo> current role members
-     */
     protected List<RoleMembership> getAuthorizerRoleMembers(String authorizerRoleId, Map<String, String> qualification) {
         List<String> roleIds = new ArrayList<String>();
         roleIds.add(authorizerRoleId);
@@ -266,7 +226,6 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
     protected boolean isQualifiedAuthorizerRole(String authorizerRoleId) {
         RoleLite role = KimApiServiceLocator.getRoleService().getRoleWithoutMembers(authorizerRoleId);
-        // The code below has been copied from SecurityRequestRole.isQualifiedRole(), and has been tweaked as needed.
         if (role != null) {
             KimType type = KimApiServiceLocator.getKimTypeInfoService().getKimType(role.getKimTypeId());
 

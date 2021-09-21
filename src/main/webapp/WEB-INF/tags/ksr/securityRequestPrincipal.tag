@@ -1,7 +1,6 @@
  <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <c:set var="securityRequestAttributes" value="${DataDictionary.SecurityRequestDocument.attributes}" />
-<%-- CU Customization (CYNERGY-2425): Modified the tabErrorKey to include more primary department code error messages. --%>
  
 <kul:tab tabTitle="Access Requested For: ${KualiForm.document.securityGroup.securityGroupName}" defaultOpen="true" tabErrorKey="document.principalId,document.requestPerson.*,document.primaryDepartmentCode,error.ksr.securityrequestdocument.primaryDeptCode.*">
     <div class="tab-container" align="center">
@@ -28,6 +27,7 @@
                       fieldConversions="principalName:document.requestPerson.principalName,principalId:document.principalId,name:document.requestPerson.name"
                       lookupParameters="document.requestPerson.principalName:principalName,document.principalId:principalId,document.requestPerson.name:name"
                       hasErrors="${hasErrors}"
+                      onblur="loadDepartments(this.form)"
                       />
                     </c:if>    
                 </td>

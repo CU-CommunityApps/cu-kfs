@@ -27,7 +27,7 @@
                     <!-- Security Request Wizard Form -->
         <form-bean name="SecurityRequestWizardForm"
 			type="edu.cornell.kfs.ksr.web.struts.SecurityRequestWizardForm" />
-					<!-- Security Request Wizard Form -->
+					<!-- Security Request Document Form -->
 		<form-bean name="SecurityRequestDocumentForm"
             type="edu.cornell.kfs.ksr.web.struts.SecurityRequestDocumentForm" />  
                             <!-- Check Recon Form -->

@@ -36,5 +36,5 @@ public class KSRPropertyConstants {
     public static final String SECURITY_REQUEST_DOC_ROLE_QUAL = "requestRoleQualifications";
     public static final String SECURITY_REQUEST_DOC_ROLE_QUAL_DETAILS = "roleQualificationDetails";
     public static final String SECURITY_REQUEST_DOC_ROLE_ATTR_VALUE = "attributeValue";
-
+    public static final String SECURITY_REQUEST_DOC_REQUEST_PERSON = "requestPerson";
 }

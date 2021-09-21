@@ -89,8 +89,6 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
 
         String principalId = document.getPrincipalId();
 
-        // if request principal or security group is empty we cannot do any
-        // setup
         if (StringUtils.isBlank(principalId)) {
             throw new RuntimeException("Principal id not set for new Security Request Document");
         }
@@ -116,7 +114,6 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
     protected void buildSecurityRequestRoles(SecurityRequestDocument document) {
         List<SecurityRequestRole> requestRoles = new ArrayList<SecurityRequestRole>();
 
-        // sequence for new request role records
         long roleRequestId = 1;
 
         for (SecurityGroupTab groupTab : document.getSecurityGroup().getSecurityGroupTabs()) {
@@ -142,7 +139,6 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
     }
     
     protected void buildSecurityRequestRoleQualifications(SecurityRequestRole requestRole, String principalId) {
-        // check user had role for setting the request active indicator
         List<String> roleIds = new ArrayList<String>();
         roleIds.add(requestRole.getRoleId());
 
@@ -154,7 +150,6 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
             requestRole.setCurrentActive(true);
             requestRole.setCurrentQualifications("");
 
-            // if qualified role, get principal's qualifications values for type attributes
             if (requestRole.isQualifiedRole()) {
                 List<Map<String,String>> principalQualifications = roleService.getNestedRoleQualifiersForPrincipalByRoleIds(principalId, roleIds, Collections.emptyMap());
 
@@ -174,7 +169,6 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
             requestRole.setCurrentActive(false);
         }
 
-        // if qualified role, setup line for adding new qualification
         if (requestRole.isQualifiedRole()) {
             SecurityRequestRoleQualification newRequestRoleQualification = buildRoleQualificationLine(requestRole, null);
             requestRole.setNewRequestRoleQualification(newRequestRoleQualification);

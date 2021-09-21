@@ -22,14 +22,9 @@ public class SecurityRequestRoleQualification extends PersistableBusinessObjectB
 
         roleQualificationDetails = new ArrayList<SecurityRequestRoleQualificationDetail>();
     }
-    
-    /**
-     * Builds an <code>AttributeSet</code> from the qualification details
-     * 
-     * @return AttributeSet containing attribute name/value pairs from the qualification details
-     */
-    public Map<String,String> buildQualificationAttributeSet() {
-        Map<String,String> qualification = new HashMap<String,String>();
+
+    public Map<String, String> buildQualificationAttributeSet() {
+        Map<String, String> qualification = new HashMap<String, String>();
 
         for (SecurityRequestRoleQualificationDetail qualificationDetail : getRoleQualificationDetails()) {
             if (StringUtils.isNotBlank(qualificationDetail.getAttributeValue())) {
