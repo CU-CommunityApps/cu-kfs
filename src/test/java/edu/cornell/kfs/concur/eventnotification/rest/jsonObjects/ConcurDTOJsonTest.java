@@ -25,19 +25,30 @@ public class ConcurDTOJsonTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         objectMapper = null;
     }
 
     @Test
-    void testCreateConcurOauth2TokenResponseDTOFromJsonFile() throws JsonParseException, JsonMappingException, IOException {
+    public void testCreateConcurOauth2TokenResponseDTOFromJsonFile() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(ConcurDTOJsonTestConstants.OAUTH2_TOKEN_RESPONSE_FILE_NAME); 
         ConcurOauth2TokenResponseDTO dto = objectMapper.readValue(jsonFile, ConcurOauth2TokenResponseDTO.class);
+        validateConcurOauth2TokenResponseDTO(dto);
+    }
+    
+    @Test
+    public void testCreateConcurOauth2TokenResponseDTOFromJsonFileWithExtraValues() throws JsonParseException, JsonMappingException, IOException {
+        File jsonFile = new File(ConcurDTOJsonTestConstants.OAUTH2_TOKEN_RESPONSE_WITH_EXTRA_VALUES_FILE_NAME); 
+        ConcurOauth2TokenResponseDTO dto = objectMapper.readValue(jsonFile, ConcurOauth2TokenResponseDTO.class);
+        validateConcurOauth2TokenResponseDTO(dto);
+    }
+
+    private void validateConcurOauth2TokenResponseDTO(ConcurOauth2TokenResponseDTO dto) {
         assertEquals(ConcurDTOJsonTestConstants.Oauth2TokenResponseValue.ACCESS_TOKEN, dto.getAccess_token());
         assertEquals(ConcurDTOJsonTestConstants.Oauth2TokenResponseValue.EXPIRES_IN, dto.getExpires_in());
         assertEquals(ConcurDTOJsonTestConstants.Oauth2TokenResponseValue.GEOLOCATION, dto.getGeolocation());
@@ -49,7 +60,7 @@ public class ConcurDTOJsonTest {
     }
     
     @Test
-    void testCreateJsonStringFromConcurOauth2TokenResponseDTO() throws JsonProcessingException {
+    public void testCreateJsonStringFromConcurOauth2TokenResponseDTO() throws JsonProcessingException {
         ConcurOauth2TokenResponseDTO dto = new ConcurOauth2TokenResponseDTO();
         dto.setAccess_token("access");
         dto.setExpires_in(321);

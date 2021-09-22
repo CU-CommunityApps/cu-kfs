@@ -1,5 +1,8 @@
 package edu.cornell.kfs.concur.rest.jsonObjects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConcurOauth2TokenResponseDTO {
     
     private int expires_in;

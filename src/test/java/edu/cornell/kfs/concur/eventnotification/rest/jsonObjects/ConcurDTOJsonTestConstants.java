@@ -2,6 +2,7 @@ package edu.cornell.kfs.concur.eventnotification.rest.jsonObjects;
 
 public class ConcurDTOJsonTestConstants {
     public static final String OAUTH2_TOKEN_RESPONSE_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/ConcurOauth2TokenResponse.json";
+    public static final String OAUTH2_TOKEN_RESPONSE_WITH_EXTRA_VALUES_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/ConcurOauth2TokenResponseWithExtraValues.json";
     
     public static final class Oauth2TokenResponseValue {
         public static final int EXPIRES_IN = 3600;
