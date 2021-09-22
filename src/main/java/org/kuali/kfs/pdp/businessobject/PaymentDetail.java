@@ -235,8 +235,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     @Override
-    public void beforeInsert() {
-        super.beforeInsert();
+    public void afterInsert() {
+        super.afterInsert();
         // add extended attribute
         PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = new PaymentDetailExtendedAttribute();
         paymentDetailExtendedAttribute.setId(this.getId());
