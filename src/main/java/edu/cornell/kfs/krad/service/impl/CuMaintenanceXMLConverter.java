@@ -110,6 +110,12 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * The replacement values on those rules will form the name and "class" attribute
  * of the wrapper element.
  * 
+ * (UNWRAP_CHILD_ELEMENTS) -- The element itself will be kept and the regular
+ * conversion of its class attribute will also take place, but only its text content
+ * will be written out. Any child elements will be omitted except for their text content.
+ * In addition, for any whitespace-only content in the parent element or between
+ * the child elements, such content will be trimmed.
+ * 
  * (SKIP_UNMATCHED_CHILD_ELEMENTS) -- The element itself will be kept and the regular
  * conversion of its class attribute will also take place, but none of its child elements
  * will be written unless an explicit mapping exists for them, either in the global rules
@@ -144,6 +150,7 @@ public class CuMaintenanceXMLConverter {
     public static final String CONVERT_TO_MAP_ENTRIES_INDICATOR = "(CONVERT_TO_MAP_ENTRIES)";
     public static final String CONVERT_LEGACY_NOTES_INDICATOR = "(CONVERT_LEGACY_NOTES)";
     public static final String ADD_WRAPPER_ELEMENT_INDICATOR = "(ADD_WRAPPER_ELEMENT)";
+    public static final String UNWRAP_CHILD_ELEMENTS_INDICATOR = "(UNWRAP_CHILD_ELEMENTS)";
     public static final String SKIP_UNMATCHED_CHILD_ELEMENTS_INDICATOR = "(SKIP_UNMATCHED_CHILD_ELEMENTS)";
     public static final String ENTRY_ELEMENT_NAME = "entry";
     public static final String MOVED_NODES_ELEMENT_NAME = "movedNodes";
@@ -332,6 +339,8 @@ public class CuMaintenanceXMLConverter {
                     return OutputMode.MOVE_THIS_NODE_TO_PARENT;
                 case ADD_WRAPPER_ELEMENT_INDICATOR :
                     return OutputMode.ADD_WRAPPER_ELEMENT;
+                case UNWRAP_CHILD_ELEMENTS_INDICATOR :
+                    return OutputMode.UNWRAP_CHILD_ELEMENTS;
                 case SKIP_UNMATCHED_CHILD_ELEMENTS_INDICATOR :
                     return OutputMode.SKIP_UNMATCHED_CHILD_ELEMENTS;
                 case CONVERT_TO_MAP_ENTRIES_INDICATOR :
@@ -383,6 +392,9 @@ public class CuMaintenanceXMLConverter {
                 break;
             case ADD_WRAPPER_ELEMENT :
                 writeNodeWithinAdditionalWrapperElement(newElementName, newClassAttributeValue);
+                break;
+            case UNWRAP_CHILD_ELEMENTS :
+                writeNodeWithChildElementsUnwrapped(newElementName, newClassAttributeValue);
                 break;
             case SKIP_UNMATCHED_CHILD_ELEMENTS :
                 writeStartElementForMaintainable(newElementName, newClassAttributeValue);
@@ -700,6 +712,39 @@ public class CuMaintenanceXMLConverter {
         xmlWriter.writeEndElement();
     }
 
+    protected void writeNodeWithChildElementsUnwrapped(String newElementName, String newClassAttributeValue)
+            throws XMLStreamException {
+        writeStartElementForMaintainable(newElementName, newClassAttributeValue);
+        
+        int subStartDepth = relativeDepth;
+        int currentDepth = subStartDepth;
+        do {
+            switch (xmlReader.next()) {
+                case XMLStreamConstants.START_ELEMENT :
+                    currentDepth++;
+                    break;
+                case XMLStreamConstants.END_ELEMENT :
+                    currentDepth--;
+                    break;
+                case XMLStreamConstants.CHARACTERS :
+                    writeCharactersForChildElementUnwrapping(subStartDepth, currentDepth);
+                default :
+                    break;
+            }
+        } while (currentDepth >= subStartDepth);
+        
+        handleMaintainableEndElement();
+    }
+
+    protected void writeCharactersForChildElementUnwrapping(int subStartDepth, int currentDepth)
+            throws XMLStreamException {
+        String currentText = xmlReader.getText();
+        if (subStartDepth == currentDepth && StringUtils.isBlank(currentText)) {
+            currentText = StringUtils.trim(currentText);
+        }
+        xmlWriter.writeCharacters(currentText);
+    }
+
     protected String convertReferenceAttributeForCurrentElement(String attributeValue) throws XMLStreamException {
         XMLStreamStackElement oldStackTop = ruleMapStackTop;
         int oldRelativeDepth = relativeDepth;
@@ -820,6 +865,7 @@ public class CuMaintenanceXMLConverter {
         MOVE_MARKED_NODES_TO_PARENT(true, true),
         MOVE_THIS_NODE_TO_PARENT(true, true),
         ADD_WRAPPER_ELEMENT(true, true),
+        UNWRAP_CHILD_ELEMENTS(true, true),
         SKIP_UNMATCHED_CHILD_ELEMENTS(true, true, false, true),
         CONVERT_TO_MAP_ENTRIES(true, true),
         CONVERT_LEGACY_NOTES(false, false);
