@@ -1,0 +1,311 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityProvisioningMaintainable"><oldMaintainableObject><org.kuali.rice.ksr.bo.SecurityProvisioning>
+  <versionNumber>2</versionNumber>
+  <objectId>E4DE62FC-2EFF-9415-1416-4AA113700000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <securityGroupId>
+    <value>2</value>
+  </securityGroupId>
+  <securityProvisioningGroups>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>F47FAD19-B139-166D-8CEE-CA32A6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <provisioningId>
+        <value>2</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>2</value>
+      </securityGroupId>
+      <roleId>3000033</roleId>
+      <roleTabOrder>
+        <value>1</value>
+      </roleTabOrder>
+      <tabId>
+        <value>10</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>A989A1A1-B7DC-6E15-660D-8C04A5A00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <provisioningId>
+        <value>3</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>2</value>
+      </securityGroupId>
+      <roleId>3000011</roleId>
+      <roleTabOrder>
+        <value>2</value>
+      </roleTabOrder>
+      <tabId>
+        <value>10</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>85DB38E3-18CC-0373-DE99-2558E6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <provisioningId>
+        <value>4</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>2</value>
+      </securityGroupId>
+      <roleId>100000222</roleId>
+      <roleTabOrder>
+        <value>3</value>
+      </roleTabOrder>
+      <tabId>
+        <value>10</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup>
+    <versionNumber>1</versionNumber>
+    <objectId>BD6BB445-9081-E1E2-39AA-4F7A02100000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+    <securityGroupId>
+      <value>2</value>
+    </securityGroupId>
+    <securityGroupName>Test Roles Only</securityGroupName>
+    <securityGroupDescription>Just Test roles does not include KFS roles</securityGroupDescription>
+    <active>true</active>
+  </securityGroup>
+</org.kuali.rice.ksr.bo.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.ksr.bo.SecurityProvisioning>
+  <versionNumber>2</versionNumber>
+  <objectId>E4DE62FC-2EFF-9415-1416-4AA113700000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <securityGroupId>
+    <value>2</value>
+  </securityGroupId>
+  <securityProvisioningGroups>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>F47FAD19-B139-166D-8CEE-CA32A6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <provisioningId>
+        <value>2</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>2</value>
+      </securityGroupId>
+      <roleId>3000033</roleId>
+      <roleTabOrder>
+        <value>1</value>
+      </roleTabOrder>
+      <tabId>
+        <value>10</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>A989A1A1-B7DC-6E15-660D-8C04A5A00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <provisioningId>
+        <value>3</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>2</value>
+      </securityGroupId>
+      <roleId>3000011</roleId>
+      <roleTabOrder>
+        <value>2</value>
+      </roleTabOrder>
+      <tabId>
+        <value>10</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>false</active>
+      <dependentRoles/>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>85DB38E3-18CC-0373-DE99-2558E6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <provisioningId>
+        <value>4</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>2</value>
+      </securityGroupId>
+      <roleId>100000222</roleId>
+      <roleTabOrder>
+        <value>3</value>
+      </roleTabOrder>
+      <tabId>
+        <value>10</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>false</active>
+      <dependentRoles/>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup>
+    <versionNumber>1</versionNumber>
+    <objectId>BD6BB445-9081-E1E2-39AA-4F7A02100000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+    <securityGroupId>
+      <value>2</value>
+    </securityGroupId>
+    <securityGroupName>Test Roles Only</securityGroupName>
+    <securityGroupDescription>Just Test roles does not include KFS roles</securityGroupDescription>
+    <active>true</active>
+  </securityGroup>
+</org.kuali.rice.ksr.bo.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityProvisioningMaintainable"><oldMaintainableObject><edu.cornell.kfs.ksr.businessobject.SecurityProvisioning>
+  <versionNumber>2</versionNumber>
+  <objectId>E4DE62FC-2EFF-9415-1416-4AA113700000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <securityGroupId>2</securityGroupId>
+  <securityProvisioningGroups>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>F47FAD19-B139-166D-8CEE-CA32A6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+      <provisioningId>2</provisioningId>
+      <securityGroupId>2</securityGroupId>
+      <roleId>3000033</roleId>
+      <roleTabOrder>1</roleTabOrder>
+      <tabId>10</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>A989A1A1-B7DC-6E15-660D-8C04A5A00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+      <provisioningId>3</provisioningId>
+      <securityGroupId>2</securityGroupId>
+      <roleId>3000011</roleId>
+      <roleTabOrder>2</roleTabOrder>
+      <tabId>10</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>85DB38E3-18CC-0373-DE99-2558E6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+      <provisioningId>4</provisioningId>
+      <securityGroupId>2</securityGroupId>
+      <roleId>100000222</roleId>
+      <roleTabOrder>3</roleTabOrder>
+      <tabId>10</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup>
+    <versionNumber>1</versionNumber>
+    <objectId>BD6BB445-9081-E1E2-39AA-4F7A02100000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+    <securityGroupId>2</securityGroupId>
+    <securityGroupName>Test Roles Only</securityGroupName>
+    <securityGroupDescription>Just Test roles does not include KFS roles</securityGroupDescription>
+    <active>true</active>
+  </securityGroup>
+</edu.cornell.kfs.ksr.businessobject.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.ksr.businessobject.SecurityProvisioning>
+  <versionNumber>2</versionNumber>
+  <objectId>E4DE62FC-2EFF-9415-1416-4AA113700000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  
+  <securityGroupId>2</securityGroupId>
+  <securityProvisioningGroups>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>F47FAD19-B139-166D-8CEE-CA32A6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+      <provisioningId>2</provisioningId>
+      <securityGroupId>2</securityGroupId>
+      <roleId>3000033</roleId>
+      <roleTabOrder>1</roleTabOrder>
+      <tabId>10</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <dependentRoles/>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>A989A1A1-B7DC-6E15-660D-8C04A5A00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+      <provisioningId>3</provisioningId>
+      <securityGroupId>2</securityGroupId>
+      <roleId>3000011</roleId>
+      <roleTabOrder>2</roleTabOrder>
+      <tabId>10</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>false</active>
+      <dependentRoles/>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <versionNumber>1</versionNumber>
+      <objectId>85DB38E3-18CC-0373-DE99-2558E6700000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      
+      <provisioningId>4</provisioningId>
+      <securityGroupId>2</securityGroupId>
+      <roleId>100000222</roleId>
+      <roleTabOrder>3</roleTabOrder>
+      <tabId>10</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>false</active>
+      <dependentRoles/>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup>
+    <versionNumber>1</versionNumber>
+    <objectId>BD6BB445-9081-E1E2-39AA-4F7A02100000</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    
+    <securityGroupId>2</securityGroupId>
+    <securityGroupName>Test Roles Only</securityGroupName>
+    <securityGroupDescription>Just Test roles does not include KFS roles</securityGroupDescription>
+    <active>true</active>
+  </securityGroup>
+</edu.cornell.kfs.ksr.businessobject.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
