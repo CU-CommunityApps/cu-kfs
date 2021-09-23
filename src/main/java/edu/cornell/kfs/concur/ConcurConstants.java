@@ -31,7 +31,7 @@ public class ConcurConstants {
     public static final String CONCUR_SECRET_KEY = "concur.secret.key";
     public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
     
-    public static final String CONCUR_WEB_SERVICE_GROUP_CODE_OAUTH_2 = "CNCR_OAUTH2";
+    public static final String CONCUR_WEB_SERVICE_GROUP_CODE_OAUTH_2 = "CNCROAUTH2";
     public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_CLIENT_ID = "concur.client_id";
     public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_SECRET_ID = "concur.secret_id";
     public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_USER_NAME = "concur.user_name";
@@ -153,6 +153,31 @@ public class ConcurConstants {
     public static class ConcurXmlNamespaces {
         public static final String NOTIFICATION = "http://www.concursolutions.com/api/notification/2012/06";
         public static final String TRAVEL_REQUEST = "http://www.concursolutions.com/api/travelrequest/2012/06";
+    }
+    
+    public enum ConcurEventNoticationVersion2EventType {
+        ExpenseReport("Expense Report"),
+        TravelRequest("Travel Request");
+        
+        public final String eventType;
+        
+        private ConcurEventNoticationVersion2EventType(String eventType) {
+            this.eventType = eventType;
+        }
+    }
+    
+    public enum ConcurEventNotificationVersion2ProcessingResults {
+        validAccounts("valid", true),
+        invalidAccounts("invalid", false),
+        processingError("processing error", false);
+        
+        public final String status;
+        public final boolean valid;
+        
+        private ConcurEventNotificationVersion2ProcessingResults(String status, boolean valid) {
+            this.status = status;
+            this.valid = valid;
+        }
     }
 
 }

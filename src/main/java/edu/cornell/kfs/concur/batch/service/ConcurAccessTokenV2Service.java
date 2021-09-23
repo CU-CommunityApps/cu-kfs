@@ -1,4 +1,4 @@
-package edu.cornell.kfs.concur.service;
+package edu.cornell.kfs.concur.batch.service;
 
 public interface ConcurAccessTokenV2Service {
     String retrieveNewAccessBearerToken();
