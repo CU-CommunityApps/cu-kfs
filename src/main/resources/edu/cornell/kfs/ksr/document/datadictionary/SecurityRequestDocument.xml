@@ -81,9 +81,6 @@
   </bean>  
   
   <bean id="SecurityRequestDocument-workflowAttributes" parent="SecurityRequestDocument-workflowAttributes-parentBean"/>
-  <!--<bean id="SecurityRequestDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes"/>-->
-
-  <!-- CU Customization (CYNERGY-2386): Added customized KSR doc search attributes. -->
   
   <bean id="SecurityRequestDocument-principalNameForSearch" parent="SecurityRequestDocument-principalNameForSearch-parentBean"/>
   <bean id="SecurityRequestDocument-principalNameForSearch-parentBean" abstract="true" parent="PersonImpl-principalName">
