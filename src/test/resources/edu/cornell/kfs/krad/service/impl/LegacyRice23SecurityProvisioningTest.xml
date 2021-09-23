@@ -1,0 +1,939 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityProvisioningMaintainable"><oldMaintainableObject><org.kuali.rice.ksr.bo.SecurityProvisioning>
+  <securityGroupId>
+    <value>3</value>
+  </securityGroupId>
+  <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <active>true</active>
+      <dependentRoles/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <provisioningId>
+        <value>1</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>3</value>
+      </securityGroupId>
+      <roleId>102030405</roleId>
+      <roleTabOrder>
+        <value>1</value>
+      </roleTabOrder>
+      <tabId>
+        <value>17</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <securityGroup>
+        <securityGroupId>
+          <value>3</value>
+        </securityGroupId>
+        <securityGroupName>Test role only</securityGroupName>
+        <securityGroupDescription>Includes only test initiator role</securityGroupDescription>
+        <active>true</active>
+        <securityGroupTabs class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+          <org.kuali.rice.ksr.bo.SecurityGroupTab>
+            <securityGroupId>
+              <value>3</value>
+            </securityGroupId>
+            <tabId>
+              <value>17</value>
+            </tabId>
+            <tabName>Test</tabName>
+            <tabOrder>
+              <value>1</value>
+            </tabOrder>
+            <active>true</active>
+            <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+              <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+                <provisioningId>
+                  <value>1</value>
+                </provisioningId>
+                <securityGroupId>
+                  <value>3</value>
+                </securityGroupId>
+                <roleId>102030405</roleId>
+                <roleTabOrder>
+                  <value>1</value>
+                </roleTabOrder>
+                <tabId>
+                  <value>17</value>
+                </tabId>
+                <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+                <active>true</active>
+                <securityGroup reference="../../../../.."/>
+                <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+                <versionNumber>1</versionNumber>
+                <objectId>AD841BA3-98D3-CEAD-3646-939850C88478</objectId>
+                <newCollectionRecord>false</newCollectionRecord>
+              </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+            </securityProvisioningGroups>
+            <versionNumber>1</versionNumber>
+            <objectId>F39D8883-81FE-3A9A-90BE-4FF583700000</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+          </org.kuali.rice.ksr.bo.SecurityGroupTab>
+        </securityGroupTabs>
+        <versionNumber>1</versionNumber>
+        <objectId>F4B47341-891C-EFEB-B875-9E14AD200000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </securityGroup>
+      <roleLookup>
+        <id>102030405</id>
+        <name>Test User (cu)</name>
+        <active>true</active>
+        <kimTypeId>1</kimTypeId>
+        <namespaceCode>KFS-TEST</namespaceCode>
+        <members class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>2</size>
+            </default>
+            <int>10</int>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100011223</id>
+              <roleId>102030405</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>0</size>
+                  </default>
+                  <int>10</int>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>234567</memberId>
+              <typeCode>P</typeCode>
+              <versionNumber>58</versionNumber>
+              <objectId>3C71966C-EB70-0E9A-CD3A-CB1C76600000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100011224</id>
+              <roleId>102030405</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>0</size>
+                  </default>
+                  <int>10</int>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>1033333</memberId>
+              <typeCode>P</typeCode>
+              <versionNumber>57</versionNumber>
+              <objectId>4DA0B911-FA43-C227-5BFC-7ED72C500000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </members>
+        <versionNumber>132</versionNumber>
+        <objectId>d2aacd77-dea5-4897-924d-dbf0bd600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </roleLookup>
+      <distributedAuthorizerRole>
+        <id>100000789</id>
+        <name>KSR Test Authorizer</name>
+        <active>true</active>
+        <kimTypeId>28</kimTypeId>
+        <namespaceCode>KR-SR</namespaceCode>
+        <members class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>2</size>
+            </default>
+            <int>10</int>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100020003</id>
+              <roleId>100000789</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>3</size>
+                  </default>
+                  <int>10</int>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203203</id>
+                    <attributeValue>IT</attributeValue>
+                    <kimAttributeId>22</kimAttributeId>
+                    <kimAttribute>
+                      <id>22</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>chartOfAccountsCode</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D49D7954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>1C6A889F-64E3-3EA1-B81D-64B857200000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203204</id>
+                    <attributeValue>0500</attributeValue>
+                    <kimAttributeId>24</kimAttributeId>
+                    <kimAttribute>
+                      <id>24</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>organizationCode</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D49F7954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>24A3B933-0C3E-6468-7FB4-4E4715E00000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203205</id>
+                    <attributeValue>Y</attributeValue>
+                    <kimAttributeId>25</kimAttributeId>
+                    <kimAttribute>
+                      <id>25</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>descendHierarchy</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D4A07954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>3A93DCBC-754B-EA55-B99F-03CB34600000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>100000111</memberId>
+              <typeCode>R</typeCode>
+              <activeToDateValue>2014-02-28 00:00:00.0</activeToDateValue>
+              <versionNumber>9</versionNumber>
+              <objectId>9BA1735F-9D33-613B-31C3-D6976FC11208</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100020004</id>
+              <roleId>100000789</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>3</size>
+                  </default>
+                  <int>10</int>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203206</id>
+                    <attributeValue>IT</attributeValue>
+                    <kimAttributeId>22</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>4DD18149-301F-567E-D822-0B56DF000000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203207</id>
+                    <attributeValue>2000</attributeValue>
+                    <kimAttributeId>24</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo[2]/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>69894274-B5C0-40BB-FC65-16E461100000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203208</id>
+                    <attributeValue>Y</attributeValue>
+                    <kimAttributeId>25</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo[3]/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>24508056-2E9A-6211-36BA-5832B0800000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>100000333</memberId>
+              <typeCode>R</typeCode>
+              <activeToDateValue>2014-02-28 00:00:00.0</activeToDateValue>
+              <versionNumber>9</versionNumber>
+              <objectId>9BAA4090-B0F3-F387-76DE-E0EB9FE00000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </members>
+        <versionNumber>8</versionNumber>
+        <objectId>1ACAD147-08AA-C475-2DF6-A388E4600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </distributedAuthorizerRole>
+      <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+      <versionNumber>1</versionNumber>
+      <objectId>AD841BA3-98D3-CEAD-3646-939850C88478</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup reference="../securityProvisioningGroups/org.kuali.rice.ksr.bo.SecurityProvisioningGroup[2]/securityGroup"/>
+  <versionNumber>2</versionNumber>
+  <objectId>F343E499-1BAD-90AD-4871-A1913F900000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.rice.ksr.bo.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.ksr.bo.SecurityProvisioning>
+  <securityGroupId>
+    <value>3</value>
+  </securityGroupId>
+  <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <roleId>100000444</roleId>
+      <roleTabOrder>
+        <value>5</value>
+      </roleTabOrder>
+      <tabId>
+        <value>17</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <additionalAuthorizerRoleId></additionalAuthorizerRoleId>
+      <centralAuthorizerRoleId></centralAuthorizerRoleId>
+      <active>true</active>
+      <roleLookup>
+        <id>100000444</id>
+        <name>Test Shopper Facilities(cu)</name>
+        <active>true</active>
+        <kimTypeId>1</kimTypeId>
+        <namespaceCode>KFS-TEST</namespaceCode>
+        <members class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>1</size>
+            </default>
+            <int>10</int>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100022222</id>
+              <roleId>100000444</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>0</size>
+                  </default>
+                  <int>10</int>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>1007899</memberId>
+              <typeCode>P</typeCode>
+              <activeToDateValue>2015-06-24 10:46:00.0</activeToDateValue>
+              <versionNumber>2</versionNumber>
+              <objectId>9fbf7ff9-ae32-448f-bedf-21d132600000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </members>
+        <versionNumber>2</versionNumber>
+        <objectId>8ADEBEAE-8442-3F77-1BD7-DE9AEB200000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </roleLookup>
+      <distributedAuthorizerRole>
+        <id>100000789</id>
+        <name>KSR Test Authorizer</name>
+        <active>true</active>
+        <kimTypeId>28</kimTypeId>
+        <namespaceCode>KR-SR</namespaceCode>
+        <members class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>2</size>
+            </default>
+            <int>10</int>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100020003</id>
+              <roleId>100000789</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>3</size>
+                  </default>
+                  <int>10</int>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203203</id>
+                    <attributeValue>IT</attributeValue>
+                    <kimAttributeId>22</kimAttributeId>
+                    <kimAttribute>
+                      <id>22</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>chartOfAccountsCode</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D49D7954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>1C6A889F-64E3-3EA1-B81D-64B857200000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203204</id>
+                    <attributeValue>0500</attributeValue>
+                    <kimAttributeId>24</kimAttributeId>
+                    <kimAttribute>
+                      <id>24</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>organizationCode</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D49F7954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>24A3B933-0C3E-6468-7FB4-4E4715E00000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203205</id>
+                    <attributeValue>Y</attributeValue>
+                    <kimAttributeId>25</kimAttributeId>
+                    <kimAttribute>
+                      <id>25</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>descendHierarchy</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D4A07954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>3A93DCBC-754B-EA55-B99F-03CB34600000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>100000111</memberId>
+              <typeCode>R</typeCode>
+              <activeToDateValue>2014-02-28 00:00:00.0</activeToDateValue>
+              <versionNumber>9</versionNumber>
+              <objectId>9BA1735F-9D33-613B-31C3-D6976FC11208</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100020004</id>
+              <roleId>100000789</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>3</size>
+                  </default>
+                  <int>10</int>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203206</id>
+                    <attributeValue>IT</attributeValue>
+                    <kimAttributeId>22</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>4DD18149-301F-567E-D822-0B56DF000000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203207</id>
+                    <attributeValue>2000</attributeValue>
+                    <kimAttributeId>24</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo[2]/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>69894274-B5C0-40BB-FC65-16E461100000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203208</id>
+                    <attributeValue>Y</attributeValue>
+                    <kimAttributeId>25</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo[3]/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>24508056-2E9A-6211-36BA-5832B0800000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>100000333</memberId>
+              <typeCode>R</typeCode>
+              <activeToDateValue>2014-02-28 00:00:00.0</activeToDateValue>
+              <versionNumber>9</versionNumber>
+              <objectId>9BAA4090-B0F3-F387-76DE-E0EB9FE00000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </members>
+        <versionNumber>8</versionNumber>
+        <objectId>1ACAD147-08AA-C475-2DF6-A388E4600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </distributedAuthorizerRole>
+      <dependentRoles/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+    <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+      <provisioningId>
+        <value>1</value>
+      </provisioningId>
+      <securityGroupId>
+        <value>3</value>
+      </securityGroupId>
+      <roleId>102030405</roleId>
+      <roleTabOrder>
+        <value>1</value>
+      </roleTabOrder>
+      <tabId>
+        <value>17</value>
+      </tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <securityGroup>
+        <securityGroupId>
+          <value>3</value>
+        </securityGroupId>
+        <securityGroupName>Test role only</securityGroupName>
+        <securityGroupDescription>Includes only test initiator role</securityGroupDescription>
+        <active>true</active>
+        <securityGroupTabs class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+          <org.kuali.rice.ksr.bo.SecurityGroupTab>
+            <securityGroupId>
+              <value>3</value>
+            </securityGroupId>
+            <tabId>
+              <value>17</value>
+            </tabId>
+            <tabName>Test</tabName>
+            <tabOrder>
+              <value>1</value>
+            </tabOrder>
+            <active>true</active>
+            <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+              <org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+                <provisioningId>
+                  <value>1</value>
+                </provisioningId>
+                <securityGroupId>
+                  <value>3</value>
+                </securityGroupId>
+                <roleId>102030405</roleId>
+                <roleTabOrder>
+                  <value>1</value>
+                </roleTabOrder>
+                <tabId>
+                  <value>17</value>
+                </tabId>
+                <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+                <active>true</active>
+                <securityGroup reference="../../../../.."/>
+                <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+                <versionNumber>1</versionNumber>
+                <objectId>AD841BA3-98D3-CEAD-3646-939850C88478</objectId>
+                <newCollectionRecord>false</newCollectionRecord>
+              </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+            </securityProvisioningGroups>
+            <versionNumber>1</versionNumber>
+            <objectId>F39D8883-81FE-3A9A-90BE-4FF583700000</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+          </org.kuali.rice.ksr.bo.SecurityGroupTab>
+        </securityGroupTabs>
+        <versionNumber>1</versionNumber>
+        <objectId>F4B47341-891C-EFEB-B875-9E14AD200000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </securityGroup>
+      <roleLookup>
+        <id>102030405</id>
+        <name>Test User (cu)</name>
+        <active>true</active>
+        <kimTypeId>1</kimTypeId>
+        <namespaceCode>KFS-TEST</namespaceCode>
+        <members class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>2</size>
+            </default>
+            <int>10</int>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100011223</id>
+              <roleId>102030405</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>0</size>
+                  </default>
+                  <int>10</int>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>234567</memberId>
+              <typeCode>P</typeCode>
+              <versionNumber>58</versionNumber>
+              <objectId>3C71966C-EB70-0E9A-CD3A-CB1C76600000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100011224</id>
+              <roleId>102030405</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>0</size>
+                  </default>
+                  <int>10</int>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>1033333</memberId>
+              <typeCode>P</typeCode>
+              <versionNumber>57</versionNumber>
+              <objectId>4DA0B911-FA43-C227-5BFC-7ED72C500000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </members>
+        <versionNumber>132</versionNumber>
+        <objectId>d2aacd77-dea5-4897-924d-dbf0bd600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </roleLookup>
+      <distributedAuthorizerRole>
+        <id>100000789</id>
+        <name>KSR Test Authorizer</name>
+        <active>true</active>
+        <kimTypeId>28</kimTypeId>
+        <namespaceCode>KR-SR</namespaceCode>
+        <members class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+          <unserializable-parents/>
+          <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+            <default>
+              <size>2</size>
+            </default>
+            <int>10</int>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100020003</id>
+              <roleId>100000789</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>3</size>
+                  </default>
+                  <int>10</int>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203203</id>
+                    <attributeValue>IT</attributeValue>
+                    <kimAttributeId>22</kimAttributeId>
+                    <kimAttribute>
+                      <id>22</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>chartOfAccountsCode</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D49D7954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>1C6A889F-64E3-3EA1-B81D-64B857200000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203204</id>
+                    <attributeValue>0500</attributeValue>
+                    <kimAttributeId>24</kimAttributeId>
+                    <kimAttribute>
+                      <id>24</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>organizationCode</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D49F7954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>24A3B933-0C3E-6468-7FB4-4E4715E00000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020003</assignedToId>
+                    <id>3203205</id>
+                    <attributeValue>Y</attributeValue>
+                    <kimAttributeId>25</kimAttributeId>
+                    <kimAttribute>
+                      <id>25</id>
+                      <componentName>org.kuali.kfs.sys.identity.KfsKimAttributes</componentName>
+                      <attributeName>descendHierarchy</attributeName>
+                      <namespaceCode>KFS-COA</namespaceCode>
+                      <active>true</active>
+                      <versionNumber>1</versionNumber>
+                      <objectId>5ADF18B6D4A07954E0404F8189D00000</objectId>
+                      <newCollectionRecord>false</newCollectionRecord>
+                    </kimAttribute>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>3A93DCBC-754B-EA55-B99F-03CB34600000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>100000111</memberId>
+              <typeCode>R</typeCode>
+              <activeToDateValue>2014-02-28 00:00:00.0</activeToDateValue>
+              <versionNumber>9</versionNumber>
+              <objectId>9BA1735F-9D33-613B-31C3-D6976FC11208</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+            <org.kuali.rice.kim.impl.role.RoleMemberBo>
+              <id>100020004</id>
+              <roleId>100000789</roleId>
+              <attributeDetails class="org.apache.ojb.broker.util.collections.ManageableArrayList" serialization="custom">
+                <unserializable-parents/>
+                <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+                  <default>
+                    <size>3</size>
+                  </default>
+                  <int>10</int>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203206</id>
+                    <attributeValue>IT</attributeValue>
+                    <kimAttributeId>22</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>4DD18149-301F-567E-D822-0B56DF000000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203207</id>
+                    <attributeValue>2000</attributeValue>
+                    <kimAttributeId>24</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo[2]/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>69894274-B5C0-40BB-FC65-16E461100000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                  <org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                    <assignedToId>100020004</assignedToId>
+                    <id>3203208</id>
+                    <attributeValue>Y</attributeValue>
+                    <kimAttributeId>25</kimAttributeId>
+                    <kimAttribute reference="../../../../../org.kuali.rice.kim.impl.role.RoleMemberBo/attributeDetails/org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo[3]/kimAttribute"/>
+                    <kimTypeId>28</kimTypeId>
+                    <versionNumber>6</versionNumber>
+                    <objectId>24508056-2E9A-6211-36BA-5832B0800000</objectId>
+                    <newCollectionRecord>false</newCollectionRecord>
+                  </org.kuali.rice.kim.impl.role.RoleMemberAttributeDataBo>
+                </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+              </attributeDetails>
+              <memberId>100000333</memberId>
+              <typeCode>R</typeCode>
+              <activeToDateValue>2014-02-28 00:00:00.0</activeToDateValue>
+              <versionNumber>9</versionNumber>
+              <objectId>9BAA4090-B0F3-F387-76DE-E0EB9FE00000</objectId>
+              <newCollectionRecord>false</newCollectionRecord>
+            </org.kuali.rice.kim.impl.role.RoleMemberBo>
+          </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        </members>
+        <versionNumber>8</versionNumber>
+        <objectId>1ACAD147-08AA-C475-2DF6-A388E4600000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </distributedAuthorizerRole>
+      <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+      <versionNumber>1</versionNumber>
+      <objectId>AD841BA3-98D3-CEAD-3646-939850C00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.ksr.bo.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup reference="../securityProvisioningGroups/org.kuali.rice.ksr.bo.SecurityProvisioningGroup[2]/securityGroup"/>
+  <versionNumber>2</versionNumber>
+  <objectId>F343E499-1BAD-90AD-4871-A1913F900000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</org.kuali.rice.ksr.bo.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityProvisioningMaintainable"><oldMaintainableObject><edu.cornell.kfs.ksr.businessobject.SecurityProvisioning>
+  <securityGroupId>3</securityGroupId>
+  <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <active>true</active>
+      <dependentRoles/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <provisioningId>1</provisioningId>
+      <securityGroupId>3</securityGroupId>
+      <roleId>102030405</roleId>
+      <roleTabOrder>1</roleTabOrder>
+      <tabId>17</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <securityGroup>
+        <securityGroupId>3</securityGroupId>
+        <securityGroupName>Test role only</securityGroupName>
+        <securityGroupDescription>Includes only test initiator role</securityGroupDescription>
+        <active>true</active>
+        <securityGroupTabs class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+          <edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
+            <securityGroupId>3</securityGroupId>
+            <tabId>17</tabId>
+            <tabName>Test</tabName>
+            <tabOrder>1</tabOrder>
+            <active>true</active>
+            <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+              <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+                <provisioningId>1</provisioningId>
+                <securityGroupId>3</securityGroupId>
+                <roleId>102030405</roleId>
+                <roleTabOrder>1</roleTabOrder>
+                <tabId>17</tabId>
+                <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+                <active>true</active>
+                <securityGroup reference="../../../../.."/>
+                <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+                <versionNumber>1</versionNumber>
+                <objectId>AD841BA3-98D3-CEAD-3646-939850C88478</objectId>
+                <newCollectionRecord>false</newCollectionRecord>
+              </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+            </securityProvisioningGroups>
+            <versionNumber>1</versionNumber>
+            <objectId>F39D8883-81FE-3A9A-90BE-4FF583700000</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+          </edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
+        </securityGroupTabs>
+        <versionNumber>1</versionNumber>
+        <objectId>F4B47341-891C-EFEB-B875-9E14AD200000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </securityGroup>
+      
+      
+      <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+      <versionNumber>1</versionNumber>
+      <objectId>AD841BA3-98D3-CEAD-3646-939850C88478</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup reference="../securityProvisioningGroups/edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup[2]/securityGroup"/>
+  <versionNumber>2</versionNumber>
+  <objectId>F343E499-1BAD-90AD-4871-A1913F900000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</edu.cornell.kfs.ksr.businessobject.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.ksr.businessobject.SecurityProvisioning>
+  <securityGroupId>3</securityGroupId>
+  <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <roleId>100000444</roleId>
+      <roleTabOrder>5</roleTabOrder>
+      <tabId>17</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <additionalAuthorizerRoleId/>
+      <centralAuthorizerRoleId/>
+      <active>true</active>
+      
+      
+      <dependentRoles/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+    <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+      <provisioningId>1</provisioningId>
+      <securityGroupId>3</securityGroupId>
+      <roleId>102030405</roleId>
+      <roleTabOrder>1</roleTabOrder>
+      <tabId>17</tabId>
+      <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+      <active>true</active>
+      <securityGroup>
+        <securityGroupId>3</securityGroupId>
+        <securityGroupName>Test role only</securityGroupName>
+        <securityGroupDescription>Includes only test initiator role</securityGroupDescription>
+        <active>true</active>
+        <securityGroupTabs class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+          <edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
+            <securityGroupId>3</securityGroupId>
+            <tabId>17</tabId>
+            <tabName>Test</tabName>
+            <tabOrder>1</tabOrder>
+            <active>true</active>
+            <securityProvisioningGroups class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+              <edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+                <provisioningId>1</provisioningId>
+                <securityGroupId>3</securityGroupId>
+                <roleId>102030405</roleId>
+                <roleTabOrder>1</roleTabOrder>
+                <tabId>17</tabId>
+                <distributedAuthorizerRoleId>100000789</distributedAuthorizerRoleId>
+                <active>true</active>
+                <securityGroup reference="../../../../.."/>
+                <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+                <versionNumber>1</versionNumber>
+                <objectId>AD841BA3-98D3-CEAD-3646-939850C88478</objectId>
+                <newCollectionRecord>false</newCollectionRecord>
+              </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+            </securityProvisioningGroups>
+            <versionNumber>1</versionNumber>
+            <objectId>F39D8883-81FE-3A9A-90BE-4FF583700000</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+          </edu.cornell.kfs.ksr.businessobject.SecurityGroupTab>
+        </securityGroupTabs>
+        <versionNumber>1</versionNumber>
+        <objectId>F4B47341-891C-EFEB-B875-9E14AD200000</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </securityGroup>
+      
+      
+      <dependentRoles class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+      <versionNumber>1</versionNumber>
+      <objectId>AD841BA3-98D3-CEAD-3646-939850C00000</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup>
+  </securityProvisioningGroups>
+  <securityGroup reference="../securityProvisioningGroups/edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup[2]/securityGroup"/>
+  <versionNumber>2</versionNumber>
+  <objectId>F343E499-1BAD-90AD-4871-A1913F900000</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+</edu.cornell.kfs.ksr.businessobject.SecurityProvisioning><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
