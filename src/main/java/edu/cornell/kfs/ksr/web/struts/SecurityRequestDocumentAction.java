@@ -166,10 +166,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     }
 
     protected String getReturnLocation(HttpServletRequest request, ActionMapping mapping) {
-        String mappingPath = mapping.getPath();
-        String basePath = getApplicationBaseUrl();
-
-        return basePath + mappingPath + ".do";
+        return getApplicationBaseUrl() + mapping.getPath() + ".do";
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

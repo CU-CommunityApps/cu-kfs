@@ -7,34 +7,15 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 
 import edu.cornell.kfs.ksr.businessobject.SecurityRequestRole;
 import edu.cornell.kfs.ksr.businessobject.SecurityRequestRoleQualification;
 
 public class KSRUtil {
-
-	public static void appendNameSpace(Role role, String roleID) {
-		if ((role == null) || (!StringUtils.equals(roleID, role.getId()))) {
-			role = KRADServiceLocator.getBusinessObjectService().findBySinglePrimaryKey(Role.class, roleID);
-
-			if (role != null) {
-				String temp = role.getNamespaceCode() + " - "
-						+ role.getName();
-				role.setName(temp);
-			}
-		}
-		else if ((role != null) && (role.getName() != null)
-				&& (role.getName().indexOf(role.getNamespaceCode()) == -1)) {
-			String temp = role.getNamespaceCode() + " - " + role.getName();
-			role.setName(temp);
-		}
-	}
 
 	public static String buildQualificationString(List<Map<String,String>> qualifications, List<KimTypeAttribute> typeAttributes) {
 		String qualificationsString = "";

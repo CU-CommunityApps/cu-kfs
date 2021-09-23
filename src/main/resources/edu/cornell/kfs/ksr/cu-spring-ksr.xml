@@ -51,7 +51,6 @@
     <bean id="securityRequestPostProcessingService" parent="securityRequestPostProcessingService-parentBean" />
     <bean id="securityRequestPostProcessingService-parentBean" class="edu.cornell.kfs.ksr.service.impl.SecurityRequestPostProcessingServiceImpl" abstract="true">
         <property name="roleService" ref="roleService" />
-        <property name="roleUpdateService" ref="roleService" />
     </bean>
     
 </beans>

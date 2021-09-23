@@ -9,19 +9,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.core.api.criteria.PredicateFactory;
+import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.uif.AttributeError;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.framework.services.KimFrameworkServiceLocator;
 import org.kuali.kfs.kim.framework.type.KimTypeService;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kns.rules.TransactionalDocumentRuleBase;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
+import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.KSRKeyConstants;
 import edu.cornell.kfs.ksr.KSRPropertyConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup;
@@ -35,9 +40,10 @@ import edu.cornell.kfs.ksr.util.KSRUtil;
 
 public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  implements AddQualificationRule {
 
-    private static final Map<String,String[]> getRequiredQualificationsMap() {
+    protected Map<String,String[]> getRequiredQualificationsMap() {
         Map<String,String[]> currentQualMap = new HashMap<String,String[]>(50);
-        Collection<String> newQualifications = CoreFrameworkServiceLocator.getParameterService().getParameterValuesAsString("KR-SR", "Document", "REQUIRED_QUALIFICATIONS");
+        Collection<String> newQualifications = getParameterService().getParameterValuesAsString(
+                KSRConstants.KSR_NAMESPACE, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE, KSRConstants.REQUIRED_QUALIFICATIONS_PARAMETER);
         if (newQualifications != null) {
             for (String newQualification : newQualifications) {
                 String newKey = newQualification.substring(0, newQualification.indexOf(':'));
@@ -206,10 +212,11 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
             for (int i = 0; i < activeRoles.size(); i++) {
                 List<String> rolesNeeded = new ArrayList<String>();
                 SecurityRequestRole securityRequestRole = activeRoles.get(i);
+
                 Map<String, Object> hashMap = new HashMap<String, Object>();
                 hashMap.put(KSRPropertyConstants.PROVISIONING_ROLE_ID, securityRequestRole.getRoleId());
                 hashMap.put(KSRPropertyConstants.SECURITY_GROUP_ID, securityRequestDocument.getSecurityGroupId());
-                hashMap.put("active", Boolean.TRUE);
+                hashMap.put(KSRPropertyConstants.SECURITY_GROUP_ACTIVE_INDICATOR, Boolean.TRUE);
 
                 List<SecurityProvisioningGroup> objList = (List<SecurityProvisioningGroup>) KRADServiceLocator.getBusinessObjectService().findMatching(SecurityProvisioningGroup.class, hashMap);
                 SecurityProvisioningGroup securityProvisioningGroup = null;
@@ -259,5 +266,13 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
         }
         
         return success;
+    }
+    
+    protected ParameterService getParameterService() {
+        return CoreFrameworkServiceLocator.getParameterService();
+    }
+    
+    protected BusinessObjectService getBusinessObjectService() {
+        return KRADServiceLocator.getBusinessObjectService();
     }
 }

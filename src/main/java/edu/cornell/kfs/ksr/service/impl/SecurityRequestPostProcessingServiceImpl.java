@@ -19,7 +19,6 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SecurityRequestPostProcessingServiceImpl.class);
 
     private RoleService roleService;
-    private RoleService roleUpdateService;
 
     public void postProcessSecurityRequest(SecurityRequestDocument document) {
         String principalId = document.getPrincipalId();
@@ -48,12 +47,12 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
             List<Map<String,String>> principalQualifications = getPrincipalsCurrentQualifications(requestRole, principalId);
 
             for (Map<String,String> existingQualification : principalQualifications) {
-                getRoleUpdateService().removePrincipalFromRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
+                getRoleService().removePrincipalFromRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
                         requestRole.getRoleInfo().getName(), existingQualification);
             }
         }
         else {
-            getRoleUpdateService().removePrincipalFromRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
+            getRoleService().removePrincipalFromRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
                     requestRole.getRoleInfo().getName(), Collections.<String,String>emptyMap());
         }
     }
@@ -61,7 +60,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
     protected void assignPrincipalToRole(SecurityRequestRole requestRole, String principalId) {
         LOG.debug("Assigning principal: " + principalId + " to role: " + requestRole.getRoleId());
         
-        getRoleUpdateService().assignPrincipalToRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
+        getRoleService().assignPrincipalToRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
                 requestRole.getRoleInfo().getName(), new HashMap<String,String>());
     }
 
@@ -80,7 +79,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
             				+ " with qualifications: " + requestedQualification.toString());
             	}
                 
-                getRoleUpdateService().assignPrincipalToRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
+                getRoleService().assignPrincipalToRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
                         requestRole.getRoleInfo().getName(), requestedQualification);
             }
         }
@@ -91,7 +90,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
         				+ " with qualifications: " + existingQualification.toString());
         	}
             
-            getRoleUpdateService().removePrincipalFromRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
+            getRoleService().removePrincipalFromRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
                     requestRole.getRoleInfo().getName(), existingQualification);
         }
     }
@@ -132,20 +131,8 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
         return roleService;
     }
 
-    public RoleService getRoleUpdateService() {
-        if (roleUpdateService == null) {
-            roleUpdateService = KimApiServiceLocator.getRoleService();
-        }
-
-        return roleUpdateService;
-    }
-
     public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
-    }
-
-    public void setRoleUpdateService(RoleService roleUpdateService) {
-        this.roleUpdateService = roleUpdateService;
     }
 
 }

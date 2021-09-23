@@ -1,12 +1,16 @@
 package edu.cornell.kfs.ksr.businessobject;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.api.type.KimAttributeField;
 import org.kuali.kfs.kim.api.type.KimTypeInfoService;
+import org.kuali.kfs.kim.framework.services.KimFrameworkServiceLocator;
 import org.kuali.kfs.kim.framework.type.KimTypeService;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
@@ -80,26 +84,26 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
     }
 
     public List<KimAttributeField> getDefinitions() {
-        if (definitions == null || definitions.isEmpty()) {
-            KimTypeService kimTypeService = SpringContext.getBean(KimTypeService.class);
+        if (CollectionUtils.isEmpty(definitions)) {
+            KimTypeService kimTypeService = getKimTypeService(getKimType());
             if (kimTypeService != null) {
                 this.definitions = kimTypeService.getAttributeDefinitions(roleTypeId);
             }
         }
 
-        return this.definitions;
+        if (definitions == null) {
+            definitions = Collections.emptyList();
+        }
+
+        return definitions;
     }
 
     public KimAttributeField getAttributeDefinition() {
-        List<KimAttributeField> definitions = getDefinitions();
-        if (definitions != null) {
-            for (KimAttributeField definition : definitions) {
-                if (StringUtils.equals(definition.getAttributeField().getName(), getAttributeName())) {
-                    return definition;
-                }
+        for (KimAttributeField definition : getDefinitions()) {
+            if (StringUtils.equals(definition.getAttributeField().getName(), getAttributeName())) {
+                return definition;
             }
         }
-
         return null;
     }
 
@@ -108,13 +112,12 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
         if (attributeInfo != null) {
             return attributeInfo.getKimAttribute().getAttributeName();
         }
-
-        return "";
+        return StringUtils.EMPTY;
     }
 
     public KimType getKimType() {
         if ((kimType == null) || (!StringUtils.equals(roleTypeId, kimType.getId()))) {
-            kimType = SpringContext.getBean(KimTypeInfoService.class).getKimType(roleTypeId);
+            kimType = getKimTypeInfoService().getKimType(roleTypeId);
         }
 
         return kimType;
@@ -166,6 +169,14 @@ public class SecurityRequestRoleQualificationDetail extends PersistableBusinessO
 
     public void setAttributeValue(String attributeValue) {
         this.attributeValue = attributeValue;
+    }
+    
+    protected KimTypeInfoService getKimTypeInfoService() {
+        return KimApiServiceLocator.getKimTypeInfoService();
+    }
+    
+    protected KimTypeService getKimTypeService(KimType kimType) {
+        return KimFrameworkServiceLocator.getKimTypeService(kimType);
     }
 
 }

@@ -87,7 +87,6 @@ public class SecurityRequestDocument extends TransactionalDocumentBase {
     }
 
     public Person getRequestPerson() {
-        // ==== CU Customization: Altered this method to resemble a similar one from a rice-sampleapp form. ====
         PersonService personService = KimApiServiceLocator.getPersonService();
         requestPerson = personService.getPerson(principalId);
         if (requestPerson == null) {
