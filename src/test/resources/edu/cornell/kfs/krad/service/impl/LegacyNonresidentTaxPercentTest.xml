@@ -36,9 +36,7 @@
   <incomeClassCode>Q</incomeClassCode>
   <incomeTaxTypeCode>X</incomeTaxTypeCode>
   <active>true</active>
-  
-    <incomeTaxPercent>10.00</incomeTaxPercent>
-  
+  <incomeTaxPercent>10.00</incomeTaxPercent>
 </org.kuali.kfs.fp.businessobject.NonresidentTaxPercent><maintenanceAction>Copy</maintenanceAction>
 </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.fp.businessobject.NonresidentTaxPercent>
   <versionNumber>1</versionNumber>
@@ -47,9 +45,7 @@
   <incomeClassCode>Q</incomeClassCode>
   <incomeTaxTypeCode>X</incomeTaxTypeCode>
   <active>true</active>
-  
-    <incomeTaxPercent>9.00</incomeTaxPercent>
-  
+  <incomeTaxPercent>9.00</incomeTaxPercent>
 </org.kuali.kfs.fp.businessobject.NonresidentTaxPercent><maintenanceAction>Copy</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
