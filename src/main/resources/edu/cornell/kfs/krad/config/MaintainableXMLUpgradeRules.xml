@@ -146,6 +146,14 @@
          will form the name and "class" attribute of the wrapper element.
          
          [7] For element name or "class" attribute value matching,
+         setting the replacement value to "(UNWRAP_CHILD_ELEMENTS)"
+         will cause the element to preserve only its own text content as well as
+         its child elements' text content; the child elements themselves
+         will be removed. (This also applies to any nested child elements.)
+         In addition, for any whitespace-only content in the parent element
+         or between the child elements, such content will be trimmed.
+         
+         [8] For element name or "class" attribute value matching,
          setting the replacement value to "(SKIP_UNMATCHED_CHILD_ELEMENTS)"
          will keep the element in place, but none of its child elements
          will be written unless an explicit mapping exists for them, either in
@@ -518,6 +526,100 @@
             </pattern>
         </pattern>
         <!--
+            The next set of entries will remove unneeded role objects from the various KSR business objects,
+            and will also effectively unwrap any "value" elements within their various ID/numeric fields.
+         -->
+        <pattern>
+            <class>edu.cornell.kfs.ksr.businessobject.SecurityGroup</class>
+            <pattern>
+                <match>securityGroupId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>securityGroup</class>
+            <pattern>
+                <match>securityGroupId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.ksr.businessobject.SecurityGroupTab</class>
+            <pattern>
+                <match>securityGroupId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>tabId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>tabOrder</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.ksr.businessobject.SecurityProvisioning</class>
+            <pattern>
+                <match>securityGroupId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup</class>
+            <pattern>
+                <match>provisioningId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>securityGroupId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>roleTabOrder</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>tabId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>role</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>roleLookup</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>distributedAuthorizerRole</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>additionalAuthorizerRole</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>centralAuthorizerRole</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles</class>
+            <pattern>
+                <match>provisioningId</match>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
+            </pattern>
+            <pattern>
+                <match>role</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>roleLookup</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <!--
             We removed our CU Higher Ed Function subclass and replaced it with an extended attribute instead.
             This entry handles moving the CU-specific field into an extension.
          -->
@@ -551,22 +653,14 @@
             </pattern>
         </pattern>
         <!--
-            The next two entries will effectively unwrap the inner "value" element on the NonresidentTaxPercent
-            object's "incomeTaxPercent" property. If our code or base code ends up adding an "incomeTaxPercent"
-            property to another object, then this particular conversion may need to be modified.
+            The next entry will effectively unwrap the inner "value" element on the NonresidentTaxPercent
+            object's "incomeTaxPercent" property.
          -->
         <pattern>
             <class>org.kuali.kfs.fp.businessobject.NonresidentTaxPercent</class>
             <pattern>
                 <match>incomeTaxPercent</match>
-                <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
-            </pattern>
-        </pattern>
-        <pattern>
-            <class>incomeTaxPercent</class>
-            <pattern>
-                <match>value</match>
-                <replacement>incomeTaxPercent</replacement>
+                <replacement>(UNWRAP_CHILD_ELEMENTS)</replacement>
             </pattern>
         </pattern>
         <!--
@@ -787,6 +881,27 @@
             <pattern>
                 <match>movedNodes</match>
                 <replacement>(MOVE_CHILD_NODES_TO_PARENT)</replacement>
+            </pattern>
+            <!-- Convert KSR business objects to their equivalent cu-kfs classnames. -->
+            <pattern>
+                <match>org.kuali.rice.ksr.bo.SecurityGroup</match>
+                <replacement>edu.cornell.kfs.ksr.businessobject.SecurityGroup</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.ksr.bo.SecurityGroupTab</match>
+                <replacement>edu.cornell.kfs.ksr.businessobject.SecurityGroupTab</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.ksr.bo.SecurityProvisioning</match>
+                <replacement>edu.cornell.kfs.ksr.businessobject.SecurityProvisioning</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.ksr.bo.SecurityProvisioningGroup</match>
+                <replacement>edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.ksr.bo.SecurityProvisioningGroupDependentRoles</match>
+                <replacement>edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles</replacement>
             </pattern>
             <!-- Moved entries over from the "maint_doc_classname_changes" section, and made updates as needed. -->
             <pattern>
