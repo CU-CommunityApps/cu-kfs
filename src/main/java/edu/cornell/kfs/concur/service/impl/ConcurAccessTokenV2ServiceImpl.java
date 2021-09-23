@@ -1,20 +1,37 @@
 package edu.cornell.kfs.concur.service.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.function.Function;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status.Family;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.businessobjects.ConcurOauth2PersistedValues;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOauth2TokenResponseDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenV2Service;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Service {
     private static final Logger LOG = LogManager.getLogger();
     
     protected WebServiceCredentialService webServiceCredentialService;
+    protected String concurRefreshAccessTokenURL;
 
     @Override
     public String retrieveNewAccessBearerToken() {
@@ -38,10 +55,65 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE_OAUTH_2, credentialKey);
     }
     
-    private ConcurOauth2TokenResponseDTO getAccessTokenFromConcurEndPoint(ConcurOauth2PersistedValues credentialValues) {
+    protected ConcurOauth2TokenResponseDTO getAccessTokenFromConcurEndPoint(ConcurOauth2PersistedValues credentialValues) {
+        ConcurOauth2TokenResponseDTO tokenResponse = null;
+        int maxRetryCount = 5;
+        int retryCount = 0;
+        while (retryCount <= maxRetryCount && tokenResponse == null) {
+            LOG.info("getAccessTokenFromConcurEndPoint, trying to get an access token from Concur, try number " + retryCount);
+            tokenResponse = callConcurAccessTokenEndpoint(credentialValues);
+            retryCount++;
+        }
+        if (tokenResponse == null) {
+            throw new RuntimeException("Unable to retrieve an access token.");
+        }
+        return tokenResponse;
+    }
+
+    public ConcurOauth2TokenResponseDTO callConcurAccessTokenEndpoint(ConcurOauth2PersistedValues credentialValues) {
+        Client client = null;
+        Response response = null;
+        try {
+            ClientConfig clientConfig = new ClientConfig();
+            client = ClientBuilder.newClient(clientConfig);
+            Invocation request = buildRefreshAccessTokenClientRequest(client, credentialValues);
+            response = request.invoke();
+            if (Family.SUCCESSFUL == response.getStatusInfo().getFamily()) {
+                LOG.info("callConcurAccessTokenEndpoint, successfully got a new access token");
+                return response.readEntity(ConcurOauth2TokenResponseDTO.class);
+            } else {
+                LOG.error("callConcurAccessTokenEndpoint, unsuccessful resonse code returned when trying to get access token: " + response.getStatus());
+            }
+        } catch (Exception e) {
+          LOG.error("callConcurAccessTokenEndpoint, had an error trying to get an access token", e);  
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+            CURestClientUtils.closeQuietly(client);
+        }
         return null;
     }
     
+    protected Invocation buildRefreshAccessTokenClientRequest(Client client, ConcurOauth2PersistedValues credentialValues) {
+        URI uri;
+        try {
+            uri = new URI(concurRefreshAccessTokenURL);
+        } catch (URISyntaxException e) {
+            LOG.error("buildRefreshAccessTokenClientRequest, there was a problem building refresh access token client request.", e);
+            throw new RuntimeException("An error occured while building the refresh access token URI: ", e);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildRefreshAccessTokenClientRequest, URI: " + uri);
+        }
+        final MultivaluedHashMap<String, String> entity = new MultivaluedHashMap();
+        entity.add("client_id", credentialValues.getClientId());
+        entity.add("client_secret", credentialValues.getSecretId());
+        entity.add("refresh_token", credentialValues.getRefreshToken());
+        entity.add("grant_type", "refresh_token");
+        return client.target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .buildPost(Entity.form(entity));
+    }
     
     private void updateRefreshTokenIfRequired(ConcurOauth2PersistedValues credentialValues, ConcurOauth2TokenResponseDTO tokenResopnse) {
         if (StringUtils.equals(credentialValues.getRefreshToken(), tokenResopnse.getRefresh_token())) {
