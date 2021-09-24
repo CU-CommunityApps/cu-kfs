@@ -17,6 +17,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
@@ -24,6 +28,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.businessobjects.ConcurOauth2PersistedValues;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOauth2TokenResponseDTO;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.util.CUJsonUtils;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Service {
@@ -56,7 +61,8 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     }
     
     protected ConcurOauth2TokenResponseDTO getAccessTokenFromConcurEndPoint(ConcurOauth2PersistedValues credentialValues) {
-        ConcurOauth2TokenResponseDTO tokenResponse = null;
+        //ConcurOauth2TokenResponseDTO tokenResponse = null;
+        String tokenResponse = null;
         int maxRetryCount = findMaxRetries();
         String accessTokenEndpoint = findAccesTokenEndpoint();
         int retryCount = 0;
@@ -68,7 +74,8 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         if (tokenResponse == null) {
             throw new RuntimeException("Unable to retrieve an access token.");
         }
-        return tokenResponse;
+        
+        return convertJsonTokenToConcurOauth2TokenResponseDTO(tokenResponse);
     }
     
     protected int findMaxRetries() {
@@ -83,20 +90,17 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         return endpoint;
     }
 
-    protected ConcurOauth2TokenResponseDTO callConcurAccessTokenEndpoint(ConcurOauth2PersistedValues credentialValues, String accessTokenEndpoint) {
+    protected String callConcurAccessTokenEndpoint(ConcurOauth2PersistedValues credentialValues, String accessTokenEndpoint) {
         Client client = null;
         Response response = null;
         try {
             ClientConfig clientConfig = new ClientConfig();
+            clientConfig.register(new JacksonJsonProvider());
             client = ClientBuilder.newClient(clientConfig);
             response = buildRefreshAccessTokenClientRequest(client, credentialValues, accessTokenEndpoint);
-            /*
-             * @todo besure to remove this log statement
-             */
-            LOG.info("callConcurAccessTokenEndpoint, the response was " + response.readEntity(String.class));
             if (Family.SUCCESSFUL == response.getStatusInfo().getFamily()) {
                 LOG.info("callConcurAccessTokenEndpoint, successfully got a new access token");
-                return response.readEntity(ConcurOauth2TokenResponseDTO.class);
+                return response.readEntity(String.class);
             } else {
                 LOG.error("callConcurAccessTokenEndpoint, unsuccessful response code returned when trying to get access token: " + response.getStatus());
             }
@@ -117,7 +121,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
             LOG.error("buildRefreshAccessTokenClientRequest, there was a problem building refresh access token client request.", e);
             throw new RuntimeException("An error occured while building the refresh access token URI: ", e);
         }
-        final MultivaluedHashMap entity = new MultivaluedHashMap();
+        final MultivaluedHashMap<String, String> entity = new MultivaluedHashMap<>();
         entity.add("client_id", credentialValues.getClientId());
         entity.add("client_secret", credentialValues.getSecretId());
         entity.add("refresh_token", credentialValues.getRefreshToken());
@@ -125,6 +129,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         LOG.info("buildRefreshAccessTokenClientRequest, built the enity map");
         return client.target(uri)
                 .request()
+                .header("Content-Type", MediaType.TEXT_PLAIN)
                 .accept(MediaType.APPLICATION_JSON)
                 .post(Entity.form(entity));
     }
@@ -137,6 +142,18 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
             webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE_OAUTH_2, 
                     ConcurConstants.CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_REFRESH_TOKEN, tokenResopnse.getRefresh_token());
         }
+    }
+    
+    private ConcurOauth2TokenResponseDTO convertJsonTokenToConcurOauth2TokenResponseDTO(String tokenResponse) {
+        ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
+        ConcurOauth2TokenResponseDTO dto;
+        try {
+            dto = objectMapper.readValue(tokenResponse, ConcurOauth2TokenResponseDTO.class);
+        } catch (JsonProcessingException e) {
+            LOG.error("convertJsonTokenToConcurOauth2TokenResponseDTO, unable to conver json to ConcurOauth2TokenResponseDTO", e);
+            throw new RuntimeException(e);
+        }
+        return dto;
     }
 
     public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
