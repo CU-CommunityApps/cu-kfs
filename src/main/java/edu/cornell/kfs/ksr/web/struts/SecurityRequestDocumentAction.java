@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -173,9 +174,9 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
         List sortPropertyNames = new ArrayList();
         sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_TAB_ORDER);
-        List<SecurityGroupTab> securityGroupTabs = new ArrayList<>();
-        Collections.copy(securityGroupTabs, document.getSecurityGroup().getSecurityGroupTabs());
-        Collections.sort(document.getSecurityGroup().getSecurityGroupTabs(), new BeanPropertyComparator(sortPropertyNames));
+        
+        List<SecurityGroupTab> securityGroupTabs = document.getSecurityGroup().getSecurityGroupTabs().stream().collect(Collectors.toList());
+        Collections.sort(securityGroupTabs, new BeanPropertyComparator(sortPropertyNames));
 
         for (SecurityGroupTab groupTab : document.getSecurityGroup().getSecurityGroupTabs()) {
             SecurityRequestDocumentForm.TabRoleIndexes tabIndexes = new SecurityRequestDocumentForm.TabRoleIndexes();
@@ -184,9 +185,9 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
             sortPropertyNames = new ArrayList();
             sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_ROLE_TAB_ORDER);
-            List<SecurityProvisioningGroup> provisioningGroups = new ArrayList<>();
-            Collections.copy(provisioningGroups, groupTab.getSecurityProvisioningGroups());
-            Collections.sort(groupTab.getSecurityProvisioningGroups(), new BeanPropertyComparator(sortPropertyNames));
+
+            List<SecurityProvisioningGroup> provisioningGroups = groupTab.getSecurityProvisioningGroups().stream().collect(Collectors.toList());
+            Collections.sort(provisioningGroups, new BeanPropertyComparator(sortPropertyNames));
 
             List<Integer> requestRoleIndexes = new ArrayList<Integer>();
             for (SecurityProvisioningGroup provisioningGroup : groupTab.getSecurityProvisioningGroups()) {
