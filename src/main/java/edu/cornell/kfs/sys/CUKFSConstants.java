@@ -169,6 +169,7 @@ public class CUKFSConstants {
     public static final String ELLIPSIS = "...";
     public static final String PADDED_HYPHEN = " - ";
     public static final String COMMA_AND_SPACE = ", ";
+    public static final String NULL = "NULL";
     
     public static final String DOCUMENT_ID = "documentId";
     

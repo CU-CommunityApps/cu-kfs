@@ -19,6 +19,25 @@
         		<ref bean="SecurityProvisioningMaintenanceDocument-RoleProvisioning"/>
         	</list>
         </property>
+        <property name="defaultExistenceChecks">
+            <list>
+                <bean parent="ReferenceDefinition" p:collection="securityProvisioningGroups"
+                      p:attributeName="role"
+                      p:attributeToHighlightOnFail="roleId"/>
+                <bean parent="ReferenceDefinition" p:collection="securityProvisioningGroups"
+                      p:attributeName="distributedAuthorizerRole"
+                      p:attributeToHighlightOnFail="distributedAuthorizerRoleId"/>
+                <bean parent="ReferenceDefinition" p:collection="securityProvisioningGroups"
+                      p:attributeName="additionalAuthorizerRole"
+                      p:attributeToHighlightOnFail="additionalAuthorizerRoleId"/>
+                <bean parent="ReferenceDefinition" p:collection="securityProvisioningGroups"
+                      p:attributeName="centralAuthorizerRole"
+                      p:attributeToHighlightOnFail="centralAuthorizerRoleId"/>
+                <bean parent="ReferenceDefinition" p:collection="securityProvisioningGroups.dependentRoles"
+                      p:attributeName="role"
+                      p:attributeToHighlightOnFail="roleId"/>
+            </list>
+        </property>
 		<property name="lockingKeys">
 			<list>
 				<value>securityGroupId</value>
