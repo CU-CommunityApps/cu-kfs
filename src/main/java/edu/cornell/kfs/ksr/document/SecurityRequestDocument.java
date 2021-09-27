@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
@@ -32,8 +32,6 @@ public class SecurityRequestDocument extends TransactionalDocumentBase {
     private SecurityGroup securityGroup;
 
     private List<SecurityRequestRole> securityRequestRoles;
-
-    private List<TabRoleIndexes> tabRoleIndexes;
 
     public SecurityRequestDocument() {
         super();
@@ -158,62 +156,6 @@ public class SecurityRequestDocument extends TransactionalDocumentBase {
         }
     }
 
-    public List<TabRoleIndexes> getTabRoleIndexes() {
-        if (tabRoleIndexes == null || tabRoleIndexes.isEmpty()) {
-            if (securityRequestRoles != null && !securityRequestRoles.isEmpty()) {
-                buildTabRoleIndexes();
-            }
-        }
-        return tabRoleIndexes;
-    }
-
-    public void setTabRoleIndexes(List<TabRoleIndexes> tabRoleIndexes) {
-        this.tabRoleIndexes = tabRoleIndexes;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void buildTabRoleIndexes() {
-        final List<SecurityRequestDocument.TabRoleIndexes> tabRoleIndexes = new ArrayList<SecurityRequestDocument.TabRoleIndexes>();
-
-        List<String> sortPropertyNames = new ArrayList<String>();
-        sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_TAB_ORDER);
-
-        Collections.sort(getSecurityGroup().getSecurityGroupTabs(), new BeanPropertyComparator(sortPropertyNames));
-
-        for (SecurityGroupTab groupTab : getSecurityGroup().getSecurityGroupTabs()) {
-            SecurityRequestDocument.TabRoleIndexes tabIndexes = new SecurityRequestDocument.TabRoleIndexes();
-            tabIndexes.setTabId(groupTab.getTabId());
-            tabIndexes.setTabName(groupTab.getTabName());
-
-            sortPropertyNames = new ArrayList<String>();
-            sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_ROLE_TAB_ORDER);
-
-            Collections.sort(groupTab.getSecurityProvisioningGroups(), new BeanPropertyComparator(sortPropertyNames));
-
-            List<Integer> requestRoleIndexes = new ArrayList<Integer>();
-            List<SecurityRequestRole> requestRoles = new ArrayList<SecurityRequestRole>();
-            for (SecurityProvisioningGroup provisioningGroup : groupTab.getSecurityProvisioningGroups()) {
-                int roleIndex = findSecurityRequestRoleIndex(provisioningGroup.getRoleId());
-
-                if (roleIndex != -1) {
-                    if (provisioningGroup.isActive()) {
-                        requestRoleIndexes.add(Integer.valueOf(roleIndex));
-                        requestRoles.add(getSecurityRequestRoles().get(roleIndex));
-                    }
-                }
-            }
-
-            if (requestRoleIndexes.size() > 0) {
-                tabIndexes.setRoleRequestIndexes(requestRoleIndexes);
-                tabIndexes.setRoleRequests(requestRoles);
-                tabRoleIndexes.add(tabIndexes);
-            }
-
-        }
-
-        this.tabRoleIndexes = tabRoleIndexes;
-    }
-
     protected int findSecurityRequestRoleIndex(final String roleId) {
         int roleIndex = -1;
 
@@ -227,49 +169,6 @@ public class SecurityRequestDocument extends TransactionalDocumentBase {
         }
 
         return roleIndex;
-    }
-
-    public static class TabRoleIndexes implements java.io.Serializable {
-
-        private static final long serialVersionUID = 7522534024320122122L;
-
-        private Long tabId;
-        private String tabName;
-        private List<Integer> roleRequestIndexes;
-        private List<SecurityRequestRole> roleRequests;
-
-        public Long getTabId() {
-            return tabId;
-        }
-
-        public void setTabId(Long tabId) {
-            this.tabId = tabId;
-        }
-
-        public String getTabName() {
-            return tabName;
-        }
-
-        public void setTabName(String tabName) {
-            this.tabName = tabName;
-        }
-
-        public List<Integer> getRoleRequestIndexes() {
-            return roleRequestIndexes;
-        }
-
-        public void setRoleRequestIndexes(List<Integer> roleRequestIndexes) {
-            this.roleRequestIndexes = roleRequestIndexes;
-        }
-
-        public List<SecurityRequestRole> getRoleRequests() {
-            return roleRequests;
-        }
-
-        public void setRoleRequests(List<SecurityRequestRole> roleRequests) {
-            this.roleRequests = roleRequests;
-        }
-
     }
 
 }

@@ -40,15 +40,15 @@
                 
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    
                 <c:if test="${(!empty attributeDefinition.quickFinder) && !readOnly}"> 
-                	<c:set var="quickFinderAttributeDefinition" value="${qualificationDetail.attributeDefinition.quickFinder}" />
-                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification" attributeDefinition="${quickFinderAttributeDefinition}" />
+                	<c:set var="quickFinder" value="${qualificationDetail.attributeDefinition.quickFinder}" />
+                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification" quickFinder="${quickFinder}" />
                 </c:if>    
               </td>
             </c:forEach>
             
             <td>
-               <html:image src="${ConfigProperties.externalizable.images.url}tinybutton-add1.gif" styleClass="tinybutton"
-                  property="methodToCall.addQualificationLine.roleRequestIndex${securityRequestRoleIndex}" alt="Add Qualification" title="Add Qualification" />
+               <html:html-button property="methodToCall.addQualificationLine.roleRequestIndex${securityRequestRoleIndex}" 
+                	alt="Add Qualification" title="Add Qualification" styleClass="btn btn-green skinny" value="Add" innerHTML="<span class=\"fa fa-plus\"></span>"/>
             </td>
         </tr>
     </c:if>
@@ -68,16 +68,16 @@
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />  
                  
                 <c:if test="${(!empty attributeDefinition.quickFinder) && !readOnly}"> 
-                <c:set var="quickFinderAttributeDefinition" value="${qualificationDetail.attributeDefinition.quickFinder}" />
-                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}]" attributeDefinition="${quickFinderAttributeDefinition}" />
+                <c:set var="quickFinder" value="${qualificationDetail.attributeDefinition.quickFinder}" />
+                   <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}]" quickFinder="${quickFinder}" />
                 </c:if>              
               </td>
             </c:forEach>
             
             <c:if test="${!readOnly}">
               <td>
-                 <html:image src="${ConfigProperties.externalizable.images.url}tinybutton-delete1.gif" styleClass="tinybutton"
-                    property="methodToCall.deleteQualificationLine.roleRequestIndex${securityRequestRoleIndex}.qualificationIndex${qualStatus.count-1}" alt="Delete Qualification" title="Delete Qualification" />
+                 <html:html-button property="methodToCall.deleteQualificationLine.roleRequestIndex${securityRequestRoleIndex}.qualificationIndex${qualStatus.count-1}" 
+                	alt="Delete Qualification" title="Delete Qualification" styleClass="btn btn-green skinny" value="Delete" innerHTML="<span class=\"fa fa-trash\"></span>"/>
               </td>
             </c:if>
         </tr>

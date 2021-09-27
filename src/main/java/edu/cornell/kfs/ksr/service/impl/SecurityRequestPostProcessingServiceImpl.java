@@ -23,7 +23,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
     public void postProcessSecurityRequest(SecurityRequestDocument document) {
         String principalId = document.getPrincipalId();
 
-        LOG.info("Processing security request document: " + document.getDocumentNumber() + " for principal id: " + principalId);
+        LOG.info("postProcessSecurityRequest() Processing security request document: " + document.getDocumentNumber() + " for principal id: " + principalId);
 
         for (SecurityRequestRole requestRole : document.getSecurityRequestRoles()) {
             if (requestRole.isActive()) {
@@ -41,7 +41,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
     }
 
     protected void removePrincipalFromRole(SecurityRequestRole requestRole, String principalId) {
-        LOG.debug("Removing principal: " + principalId + " from role: " + requestRole.getRoleId());
+        LOG.debug("removePrincipalFromRole() Removing principal: " + principalId + " from role: " + requestRole.getRoleId());
         
         if (requestRole.isQualifiedRole()) {
             List<Map<String,String>> principalQualifications = getPrincipalsCurrentQualifications(requestRole, principalId);
@@ -58,7 +58,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
     }
 
     protected void assignPrincipalToRole(SecurityRequestRole requestRole, String principalId) {
-        LOG.debug("Assigning principal: " + principalId + " to role: " + requestRole.getRoleId());
+        LOG.debug("assignPrincipalToRole() Assigning principal: " + principalId + " to role: " + requestRole.getRoleId());
         
         getRoleService().assignPrincipalToRole(principalId, requestRole.getRoleInfo().getNamespaceCode(),
                 requestRole.getRoleInfo().getName(), new HashMap<String,String>());
@@ -75,7 +75,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
             boolean qualificationExists = findInQualificationsListAndRemove(principalQualifications, requestedQualification);
             if (!qualificationExists) {
             	if (LOG.isDebugEnabled()) {
-            		LOG.debug("Assigning role: " + requestRole.getRoleId() + " to principal Id: " + principalId
+            		LOG.debug("assignUpdatePrincipalRoleQualifications() Assigning role: " + requestRole.getRoleId() + " to principal Id: " + principalId
             				+ " with qualifications: " + requestedQualification.toString());
             	}
                 
@@ -86,7 +86,7 @@ public class SecurityRequestPostProcessingServiceImpl implements SecurityRequest
 
         for (Map<String,String> existingQualification : principalQualifications) {
         	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Removing assignment for role: " + requestRole.getRoleId() + " to principal Id: " + principalId
+        		LOG.debug("assignUpdatePrincipalRoleQualifications() Removing assignment for role: " + requestRole.getRoleId() + " to principal Id: " + principalId
         				+ " with qualifications: " + existingQualification.toString());
         	}
             

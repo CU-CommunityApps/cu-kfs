@@ -19,10 +19,10 @@ public class KSRKeyConstants {
     public static final String ERROR_SECURITY_PROVISIONING_GROUP_CIRCULAR_REFERENCE = "error.ksr.securityprovisioninggroup.role.circular.reference";
     public static final String ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_MATCH = "error.ksr.securityprovisioninggroup.dependentRole.match";
     
-    public static final String ERROR_SECURITY_REQUEST_DOC_QUALIFIER_MISSING = "error.ksr.securityrequestdocument.qualifier.missing";
     public static final String ERROR_SECURITY_REQUEST_DOC_PRINCIPAL_ID_MISSING = "error.ksr.securityrequestdocument.principalId.missing";
     public static final String ERROR_SECURITY_REQUEST_DOC_DEPENDENT_ROLE_MISSING = "error.ksr.securityrequestdocument.dependentRole.missing";
     public static final String ERROR_SECURITY_REQUEST_DOC_CHANGE_MISSING = "error.ksr.securityrequestdocument.change.missing";
-    public static final String ERROR_SECURITY_REQUEST_DOC_QUALIFIER_VALID = "error.ksr.securityrequestdocument.qualifier.valid";
     public static final String ERROR_SECURITY_REQUEST_DOC_SERVICE_EXCEPTION = "error.ksr.securityrequestdocument.service.exception";
+    public static final String ERROR_SECURITY_REQUEST_DOC_QUALIFIER_MULTI_MISSING = "error.ksr.securityrequestdocument.qualifier.multi.missing";
+    public static final String ERROR_SECURITY_REQUEST_DOC_QUALIFIER_EXCEPTION = "error.ksr.securityrequestdocument.qualifier.exception";
 }

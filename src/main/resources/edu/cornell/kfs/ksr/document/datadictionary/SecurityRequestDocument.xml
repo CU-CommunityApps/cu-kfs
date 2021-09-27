@@ -71,23 +71,21 @@
         p:forceUppercase="true" p:label="Primary Department Code" p:shortLabel="Primary Department Code" p:maxLength="40">
     <property name="name" value="primaryDepartmentCode"/>
     <property name="required" value="true" />
-            <property name="validCharactersConstraint">
-            <bean parent="PrimaryDepartmentCodePatternConstraint"/>
-        </property>
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="20" />
-		</property>
+    <property name="validCharactersConstraint">
+      <bean parent="PrimaryDepartmentCodePatternConstraint"/>
+    </property>
+	<property name="control">
+	  <bean parent="TextControlDefinition" p:size="20" />
+	</property>
     <property name="description" value="The person's primary department code." />
   </bean>  
-  
-  <bean id="SecurityRequestDocument-workflowAttributes" parent="SecurityRequestDocument-workflowAttributes-parentBean"/>
   
   <bean id="SecurityRequestDocument-principalNameForSearch" parent="SecurityRequestDocument-principalNameForSearch-parentBean"/>
   <bean id="SecurityRequestDocument-principalNameForSearch-parentBean" abstract="true" parent="PersonImpl-principalName">
     <property name="name" value="principalNameForSearch"/>
     <property name="required" value="false" />
-                <property name="validCharactersConstraint">
-            <bean parent="AlphaNumericPatternConstraint"/>
+    <property name="validCharactersConstraint">
+      <bean parent="AlphaNumericPatternConstraint"/>
     </property>
   </bean>
   
@@ -97,9 +95,9 @@
     <property name="label" value="Role ID" />
     <property name="shortLabel" value="Role ID" />
     <property name="required" value="false" />
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="40" />
-		</property>
+    <property name="control">
+	  <bean parent="TextControlDefinition" p:size="40" />
+	</property>
   </bean>
   
   <bean id="SecurityRequestDocument-roleQualifierValueForSearch" parent="SecurityRequestDocument-roleQualifierValueForSearch-parentBean"/>
@@ -109,13 +107,13 @@
     <property name="shortLabel" value="Role Qualifier Value" />
     <property name="maxLength" value="40" />
     <property name="required" value="false" />
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="40" />
-		</property>
+	<property name="control">
+	  <bean parent="TextControlDefinition" p:size="40" />
+	</property>
   </bean>
   	
     <!-- workflow attributes for routing -->
-
+    <bean id="SecurityRequestDocument-workflowAttributes" parent="SecurityRequestDocument-workflowAttributes-parentBean"/>
     <bean id="SecurityRequestDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
         <property name="searchingTypeDefinitions">
        <list>

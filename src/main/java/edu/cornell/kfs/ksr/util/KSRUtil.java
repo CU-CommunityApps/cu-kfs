@@ -55,7 +55,6 @@ public class KSRUtil {
 
 		KimType typeInfo = getTypeInfoForRoleRequest(requestRole);
 		if (requestRole.isQualifiedRole()) {
-			// ==== CU Customization: Adjusted as needed to prevent sorting of an immutable list. ====
 			typeAttributes.addAll(typeInfo.getAttributeDefinitions());
 
 			List<String> typeSort = new ArrayList<String>();

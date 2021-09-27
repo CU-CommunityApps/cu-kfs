@@ -36,6 +36,7 @@
 		<field-descriptor name="securityGroupId" column="SEC_GRP_ID" jdbc-type="BIGINT" primarykey="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
 		<reference-descriptor name="securityGroup" class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="securityGroupId" />
@@ -59,6 +60,7 @@
 		<field-descriptor name="active" column="actv_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
 		<reference-descriptor name="securityGroup" class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="securityGroupId" />
@@ -75,7 +77,7 @@
 		<field-descriptor name="roleId" column="RL_ID" jdbc-type="VARCHAR" primarykey="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
-
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 	</class-descriptor>
 	
 	<class-descriptor class="edu.cornell.kfs.ksr.document.SecurityRequestDocument" table="KRSR_SEC_RQ_T">
@@ -86,7 +88,7 @@
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
 
-		<reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.krad.bo.DocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object">
+		<reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object">
 			<foreignkey field-ref="documentNumber" />
 		</reference-descriptor>
 
@@ -110,7 +112,8 @@
 		<field-descriptor name="currentActive" column="CUR_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="currentQualifications" column="CUR_QUAL" jdbc-type="VARCHAR" />
 		<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+		
 		<collection-descriptor name="requestRoleQualifications" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityRequestRoleQualification" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
 			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
 			<inverse-foreignkey field-ref="documentNumber" />
@@ -124,6 +127,7 @@
 		<field-descriptor name="qualificationId" column="QUAL_ID" jdbc-type="SMALLINT" primarykey="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
 		<collection-descriptor name="roleQualificationDetails" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityRequestRoleQualificationDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
 			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
@@ -142,6 +146,7 @@
 		<field-descriptor name="attributeValue" column="ATTR_VAL" jdbc-type="VARCHAR" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 	</class-descriptor>
 
 </descriptor-repository>

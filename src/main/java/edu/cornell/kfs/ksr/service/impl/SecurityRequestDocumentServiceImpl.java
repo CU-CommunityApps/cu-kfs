@@ -84,7 +84,7 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
     }
     
     public void initiateSecurityRequestDocument(SecurityRequestDocument document, Person user) {
-        LOG.info("Preparing security request document: "
+        LOG.info("initiateSecurityRequestDocument() Preparing security request document: "
                 + document.getDocumentNumber());
 
         String principalId = document.getPrincipalId();
@@ -102,7 +102,7 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
             document.setPrimaryDepartmentCode(person.getPrimaryDepartmentCode());
         }
         else {
-            LOG.error("Unable to find person record for principal id: "
+            LOG.error("initiateSecurityRequestDocument() Unable to find person record for principal id: "
                     + principalId);
             throw new RuntimeException("Error preparing document: Unable to find person record for principal id: "
                     + principalId);

@@ -3,7 +3,7 @@ package edu.cornell.kfs.ksr.businessobject;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.kim.api.role.RoleService;
 import org.kuali.kfs.kim.api.type.KimTypeInfoService;
@@ -15,6 +15,10 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 public class SecurityRequestRole extends PersistableBusinessObjectBase implements MutableInactivatable {
     private static final long serialVersionUID = -8781959491437530198L;
+    
+    private static final String CURRENTLY_ACTIVE = "Currently Active";
+    private static final String CURRENTLY_INACTIVE = "Currently Inactive";
+    private static final String CURRENT_QUALIFICATIONS = "Current Qualifications: ";
 
     private String documentNumber;
     private Long roleRequestId;
@@ -134,11 +138,11 @@ public class SecurityRequestRole extends PersistableBusinessObjectBase implement
     }
 
     public String getCurrentActiveFlagForDisplay() {
-    	return (currentActive) ? "Currently Active" : "Currently Inactive";
+    	return (currentActive) ? CURRENTLY_ACTIVE : CURRENTLY_INACTIVE;
     }
 
     public String getCurrentQualificationsForDisplay() {
-    	return (StringUtils.isNotBlank(currentQualifications)) ? "Current Qualifications: " + currentQualifications : "";
+    	return (StringUtils.isNotBlank(currentQualifications)) ? CURRENT_QUALIFICATIONS + currentQualifications : "";
     }
 
 }

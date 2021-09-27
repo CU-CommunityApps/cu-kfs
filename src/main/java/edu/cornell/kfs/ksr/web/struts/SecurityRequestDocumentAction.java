@@ -1,6 +1,7 @@
 package edu.cornell.kfs.ksr.web.struts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -40,9 +41,6 @@ import edu.cornell.kfs.ksr.service.SecurityRequestDocumentService;
 import edu.cornell.kfs.ksr.service.impl.SecurityRequestDerivedRoleTypeServiceImpl;
 
 public class SecurityRequestDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
-    private static final String SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME = "Security Request Distributed Authorizer";
-    private static final String SECURITY_REQUEST_ADDITIONAL_AUTHORIZER_ROLE_NAME = "Security Request Additional Authorizer";
-    private static final String SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME = "Security Request Central Authorizer";
 
     private static final Logger LOG = LogManager.getLogger(SecurityRequestDocumentAction.class);
 
@@ -51,7 +49,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) kualiDocumentFormBase;
 
         if (documentForm.getSecurityGroupId() == null) {
-            LOG.error("Security group id not given for new security request document request");
+            LOG.error("createDocument() Security group id not given for new security request document request");
             throw new RuntimeException("Security group id not given for new security request document request");
         }
 
@@ -86,13 +84,13 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
             String roleRequestIndexStr = StringUtils.substringBetween(parameterName, ".roleRequestIndex", ".");
             roleRequestIndex = Integer.parseInt(roleRequestIndexStr);
         } else {
-            LOG.error("Unable to find role request index for new qualification line");
+            LOG.error("addQualificationLine() Unable to find role request index for new qualification line");
             throw new RuntimeException("Unable to find role request index for new qualification line");
         }
 
         SecurityRequestRole securityRequestRole = document.getSecurityRequestRoles().get(roleRequestIndex);
         if (securityRequestRole == null) {
-            LOG.error("Security request role not found for index: " + roleRequestIndex);
+            LOG.error("addQualificationLine() Security request role not found for index: " + roleRequestIndex);
             throw new RuntimeException("Security request role not found for index: " + roleRequestIndex);
         }
 
@@ -128,13 +126,13 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
             String qualificationIndexStr = StringUtils.substringBetween(parameterName, ".qualificationIndex", ".");
             qualificationIndex = Integer.parseInt(qualificationIndexStr);
         } else {
-            LOG.error("Unable to find qualification index for line to delete");
+            LOG.error("deleteQualificationLine() Unable to find qualification index for line to delete");
             throw new RuntimeException("Unable to find qualification index for line to delete");
         }
 
         SecurityRequestRole securityRequestRole = document.getSecurityRequestRoles().get(roleRequestIndex);
         if (securityRequestRole == null) {
-            LOG.error("Security request role not found for index: " + roleRequestIndex);
+            LOG.error("deleteQualificationLine() Security request role not found for index: " + roleRequestIndex);
             throw new RuntimeException("Security request role not found for index: " + roleRequestIndex);
         }
 
@@ -175,7 +173,8 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
         List sortPropertyNames = new ArrayList();
         sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_TAB_ORDER);
-
+        List<SecurityGroupTab> securityGroupTabs = new ArrayList<>();
+        Collections.copy(securityGroupTabs, document.getSecurityGroup().getSecurityGroupTabs());
         Collections.sort(document.getSecurityGroup().getSecurityGroupTabs(), new BeanPropertyComparator(sortPropertyNames));
 
         for (SecurityGroupTab groupTab : document.getSecurityGroup().getSecurityGroupTabs()) {
@@ -185,7 +184,8 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
 
             sortPropertyNames = new ArrayList();
             sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_ROLE_TAB_ORDER);
-
+            List<SecurityProvisioningGroup> provisioningGroups = new ArrayList<>();
+            Collections.copy(provisioningGroups, groupTab.getSecurityProvisioningGroups());
             Collections.sort(groupTab.getSecurityProvisioningGroups(), new BeanPropertyComparator(sortPropertyNames));
 
             List<Integer> requestRoleIndexes = new ArrayList<Integer>();
@@ -229,14 +229,14 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         final SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) form;
 
-        final StringBuffer annotation = new StringBuffer();
+        StringBuilder annotation = new StringBuilder();
 
         final SecurityRequestDocument document = (SecurityRequestDocument) documentForm.getDocument();
 
         if (documentForm.getMethodToCall().indexOf("approve") > -1) {
             final String principalId = GlobalVariables.getUserSession().getPerson().getPrincipalId();
             for (final SecurityRequestRole securityRequestRole : document.getSecurityRequestRoles()) {
-                LOG.info("Checking if " + principalId + " has access");
+                LOG.info("approve() Checking if " + principalId + " has access");
                 if (canApproveRequestForRole(securityRequestRole, principalId, document)) {
                     annotation.append(securityRequestRole.getRoleInfo().getNamespaceCode()).append(" - ").append(securityRequestRole.getRoleInfo().getName())
                             .append("\n");
@@ -248,41 +248,32 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         return super.approve(mapping, form, request, response);
     }
 
-    protected List<RoleMembership> getRoleMembers(final SecurityRequestRole role, final String principalId, final SecurityRequestDocument document) {
-
-        final Map<String, String> attributes = new HashMap<String, String>();
-        attributes.put(AttributeConstants.DOCUMENT_NUMBER, document.getDocumentNumber());
-        attributes.put(AttributeConstants.DOCUMENT_TYPE_NAME, KSRConstants.SECURITY_REQUEST_DOC_TYPE_NAME);
-
-        final List<RoleMembership> roleMembers = new ArrayList<RoleMembership>();
-
-        attributes.put(AttributeConstants.ROUTE_NODE_NAME, "DistributedAuthorizer");
-        roleMembers.addAll(SpringContext.getBean(SecurityRequestDerivedRoleTypeServiceImpl.class)
-                .getRoleMembersFromDerivedRole(SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME, document, role));
-
-        attributes.put(AttributeConstants.ROUTE_NODE_NAME, "AdditionalAuthorizer");
-        roleMembers.addAll(
-                getSecurityRequestDerivedRoleTypeService().getRoleMembersFromDerivedRole(SECURITY_REQUEST_ADDITIONAL_AUTHORIZER_ROLE_NAME, document, role));
-
-        attributes.put(AttributeConstants.ROUTE_NODE_NAME, "CentralAuthorizer");
-        roleMembers.addAll(
-                getSecurityRequestDerivedRoleTypeService().getRoleMembersFromDerivedRole(SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME, document, role));
-
-        LOG.info("Got role members " + roleMembers.size());
-        return roleMembers;
-    }
-
-    private SecurityRequestDerivedRoleTypeServiceImpl getSecurityRequestDerivedRoleTypeService() {
-        return SpringContext.getBean(SecurityRequestDerivedRoleTypeServiceImpl.class);
-    }
-
-    protected boolean canApproveRequestForRole(final SecurityRequestRole role, final String principalId, final SecurityRequestDocument document) {
-        for (final RoleMembership roleMember : getRoleMembers(role, principalId, document)) {
-            LOG.info("Got role member " + roleMember.getMemberId());
+    protected boolean canApproveRequestForRole(final SecurityRequestRole requestRole, final String principalId, final SecurityRequestDocument document) {
+        for (final RoleMembership roleMember : getAuthorizerRoleMembers(requestRole, document)) {
+            LOG.info("canApproveRequestForRole() Got role member " + roleMember.getMemberId());
             if (roleMember.getMemberId().equals(principalId)) {
                 return true;
             }
         }
         return false;
+    }
+    
+    protected List<RoleMembership> getAuthorizerRoleMembers(SecurityRequestRole requestRole, SecurityRequestDocument document) {
+        List<RoleMembership> roleMembers = new ArrayList<>();
+        List<String> authorizerRoleNames = Arrays.asList(
+                KSRConstants.SECURITY_REQUEST_DISTRIBUTED_AUTHORIZER_ROLE_NAME, KSRConstants.SECURITY_REQUEST_ADDITIONAL_AUTHORIZER_ROLE_NAME,
+                        KSRConstants.SECURITY_REQUEST_CENTRAL_AUTHORIZER_ROLE_NAME);
+
+        for (String authorizerRoleName : authorizerRoleNames) {
+            List<RoleMembership> authorizerRoleMembers = getSecurityRequestDerivedRoleTypeService().getRoleMembersFromDerivedRole(
+                    authorizerRoleName, document, requestRole);
+            roleMembers.addAll(authorizerRoleMembers);
+        }
+
+        return roleMembers;
+    }
+    
+    private SecurityRequestDerivedRoleTypeServiceImpl getSecurityRequestDerivedRoleTypeService() {
+        return SpringContext.getBean(SecurityRequestDerivedRoleTypeServiceImpl.class);
     }
 }

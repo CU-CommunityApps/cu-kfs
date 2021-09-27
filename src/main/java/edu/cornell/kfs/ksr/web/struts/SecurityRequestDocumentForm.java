@@ -34,8 +34,8 @@ public class SecurityRequestDocumentForm extends FinancialSystemTransactionalDoc
     public static class TabRoleIndexes implements java.io.Serializable {
 
     	private static final long serialVersionUID = 6981150675755290581L;
-
-		private Long tabId;
+    	
+    	private Long tabId;
         private String tabName;
         private List<Integer> roleRequestIndexes;
 

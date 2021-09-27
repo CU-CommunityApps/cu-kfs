@@ -8,7 +8,7 @@
       <label>Security Request Document</label>
       <docHandler>${application.url}/securityRequestDocument.do?methodToCall=docHandler</docHandler>
       <active>true</active>
-      <routingVersion>1</routingVersion>
+      <routingVersion>2</routingVersion>
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="DistributedAuthorizer" />

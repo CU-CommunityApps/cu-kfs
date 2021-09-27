@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.uif.AttributeError;
@@ -65,11 +65,9 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
 
             if (!securityRequestRole.isActive()) {
                 continue;
-            }
-            else if (!securityRequestRole.isQualifiedRole()) {
+            } else if (!securityRequestRole.isQualifiedRole()) {
                 continue;
-            }
-            else {
+            } else {
                 String[] requiredQualifications = getRequiredQualificationsMap().get(tempTypeInfo.getServiceName());
                 if (requiredQualifications != null && requiredQualifications.length > 0) {
                     boolean qualsValid = true;
@@ -90,7 +88,7 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
                     if (!qualsValid || securityRequestRole.getRequestRoleQualifications().size() == 0) {
                         success = false;
                         GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_REQUEST_DOC_REQUEST_ROLE + "[" + i + "].active",
-                                "error.ksr.securityrequestdocument.qualifier.multi.missing", new String[]{securityRequestRole.getRoleInfo().getName()});
+                                KSRKeyConstants.ERROR_SECURITY_REQUEST_DOC_QUALIFIER_MULTI_MISSING, new String[]{securityRequestRole.getRoleInfo().getName()});
                     }
                 } else if (securityRequestRole.getRequestRoleQualifications().size() == 0) {
                     securityRequestRole.getRequestRoleQualifications().add(
@@ -259,8 +257,7 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
             SecurityRequestRole securityRequestRole = securityRequestDocument.getSecurityRequestRoles().get(i);
             if (securityRequestRole.isCurrentActive() != securityRequestRole.isActive()) {
                 success |= true;
-            }
-            else if (securityRequestRole.isQualifiedRole()) {
+            } else if (securityRequestRole.isQualifiedRole()) {
                 success |= KSRUtil.isQualificationChangeRequested(securityRequestRole);
             }
         }

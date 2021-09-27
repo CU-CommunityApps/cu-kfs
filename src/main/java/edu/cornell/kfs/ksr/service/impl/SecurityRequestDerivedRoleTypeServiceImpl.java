@@ -68,7 +68,7 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
                 if (addMember) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Adding member role id: " + authorizerRoleId + " with qualification: " + roleQualifier.toString());
+                        LOG.trace("getRoleMembersFromDistributedAuthorizerRole() Adding member role id: " + authorizerRoleId + " with qualification: " + roleQualifier.toString());
                     }
 
                     List<RoleMembership> authorizerRoleMembers = getAuthorizerRoleMembers(authorizerRoleId, roleQualifier);
@@ -89,7 +89,7 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
             if (addMember) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Adding member role id: " + authorizerRoleId + " with qualification: " + roleQualifier.toString());
+                    LOG.trace("getRoleMembersFromDistributedAuthorizerRole() Adding member role id: " + authorizerRoleId + " with qualification: " + roleQualifier.toString());
                 }
 
                 List<RoleMembership> authorizerRoleMembers = getAuthorizerRoleMembers(authorizerRoleId, roleQualifier);
@@ -112,7 +112,7 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
         if (!changeRequested) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("No change requested for security request role: " + requestRole.getRoleId());
+                LOG.trace("getRoleMembersFromDerivedRole() No change requested for security request role: " + requestRole.getRoleId());
             }
             return members;
         }
@@ -120,11 +120,11 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
         final String authorizerRoleId = getAuthorizerRoleId(roleName, document, requestRole);
 
         if (StringUtils.isBlank(authorizerRoleId)) {
-            LOG.info("No authorizer role id found for security request role: " + requestRole.getRoleId());
+            LOG.info("getRoleMembersFromDerivedRole() No authorizer role id found for security request role: " + requestRole.getRoleId());
             return members;
         }
 
-        LOG.info("Found authorizer role id: " + authorizerRoleId + " for security request role: " + requestRole.getRoleId());
+        LOG.info("getRoleMembersFromDerivedRole() Found authorizer role id: " + authorizerRoleId + " for security request role: " + requestRole.getRoleId());
 
         Map<String, List<Map<String, String>>> addedMembers = new HashMap<String, List<Map<String, String>>>();
 
@@ -137,7 +137,7 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
             if (addMember) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Adding member role id: " + authorizerRoleId);
+                    LOG.trace("getRoleMembersFromDerivedRole() Adding member role id: " + authorizerRoleId);
                 }
 
                 List<RoleMembership> authorizerRoleMembers = getAuthorizerRoleMembers(authorizerRoleId, new HashMap<String, String>());
@@ -152,21 +152,21 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
     public List<RoleMembership> getRoleMembersFromDerivedRole(String namespaceCode, String roleName, Map<String, String> qualification) {
         final List<RoleMembership> members = new ArrayList<RoleMembership>();
 
-        LOG.info("Generating role membership for role: " + roleName + " with qualification " + qualification);
+        LOG.info("getRoleMembersFromDerivedRole() Generating role membership for role: " + roleName + " with qualification " + qualification);
 
         String documentNumber = qualification.get(AttributeConstants.DOCUMENT_NUMBER);
         SecurityRequestDocument document = null;
         try {
             document = (SecurityRequestDocument) KRADServiceLocatorWeb.getDocumentService().getByDocumentHeaderId(documentNumber);
         } catch (WorkflowException e) {
-            LOG.error("Unable to retrieve security request document: " + documentNumber, e);
+            LOG.error("getRoleMembersFromDerivedRole() Unable to retrieve security request document: " + documentNumber, e);
             throw new RuntimeException("Unable to retrieve security request document: " + documentNumber, e);
         }
 
         for (final SecurityRequestRole requestRole : document.getSecurityRequestRoles()) {
             members.addAll(getRoleMembersFromDerivedRole(roleName, document, requestRole));
         }
-        LOG.info("Returning " + members.size() + " members");
+        LOG.info("getRoleMembersFromDerivedRole() Returning " + members.size() + " members");
 
         return members;
     }
