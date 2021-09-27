@@ -9,6 +9,7 @@ import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.api.type.KimTypeInfoService;
 import org.kuali.kfs.kim.framework.services.KimFrameworkServiceLocator;
 import org.kuali.kfs.kim.framework.type.KimTypeService;
+import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
@@ -16,6 +17,7 @@ import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.KSRKeyConstants;
@@ -23,6 +25,7 @@ import edu.cornell.kfs.ksr.KSRPropertyConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityProvisioning;
 import edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup;
 import edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroupDependentRoles;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 
@@ -74,7 +77,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 					GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
 				}
 				if ((index == -1) || (index > i)) {
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_UNIQUE, new String[] { securityProvisioningGroup.getRole().getName() });
+					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_UNIQUE,
+							getRoleNameForErrorMessage(securityProvisioningGroup.getRole()));
 				}
 				if (newErrorPath) {
 					GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
@@ -112,7 +116,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 					GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
 				}
 				if ((indexRole == -1) || (indexRole > i)) {
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_UNIQUE, new String[] { dependentRole.getRole().getName() });
+					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_UNIQUE,
+							getRoleNameForErrorMessage(dependentRole.getRole()));
 				}
 				if (newErrorPath) {
 					GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
@@ -183,7 +188,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 				}
 
 				GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME,
-				        KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_DERIVED, new String[] { securityProvisioningGroup.getRole().getName() });
+				        KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_DERIVED,
+						getRoleNameForErrorMessage(securityProvisioningGroup.getRole()));
 
 				if (newErrorPath) {
 					GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
@@ -286,7 +292,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 				break;
 			}
 			if (securityProvisioningGroup.getTabId().equals(securityProvisioningGroupList.get(i).getTabId())) {
-				if (securityProvisioningGroup.getRoleTabOrder() == securityProvisioningGroupList.get(i).getRoleTabOrder()) {
+				if (securityProvisioningGroup.getRoleTabOrder() != null
+						&& securityProvisioningGroup.getRoleTabOrder().equals(securityProvisioningGroupList.get(i).getRoleTabOrder())) {
 					success = false;
 					MessageMap map = GlobalVariables.getMessageMap();
 					String errorPathPrefix = (index != -1 ? "" : "add.")
@@ -299,7 +306,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 						GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
 					}
 
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_TAB_ORDER_UNIQUE);
+					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_TAB_ORDER_UNIQUE,
+							getRoleNameForErrorMessage(securityProvisioningGroup.getRole()));
 
 					if (newErrorPath) {
 						GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
@@ -368,7 +376,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 						GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
 					}
 
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_CIRCULAR_REFERENCE, new String[] { securityProvisioning.getSecurityProvisioningGroups().get(i).getRole().getName() });
+					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_CIRCULAR_REFERENCE,
+							getRoleNameForErrorMessage(securityProvisioning.getSecurityProvisioningGroups().get(i).getRole()));
 
 					if (newErrorPath) {
 						GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
@@ -405,7 +414,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 				GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
 				GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
 			}
-			GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_MATCH, new String[] { dependentRole.getRole().getName() });
+			GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_MATCH,
+					getRoleNameForErrorMessage(dependentRole.getRole()));
 
 			if (newErrorPath) {
 				GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
@@ -413,6 +423,10 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 			}
 		}
 		return success;
+	}
+
+	private String getRoleNameForErrorMessage(Role role) {
+		return ObjectUtils.isNotNull(role) ? role.getName() : CUKFSConstants.NULL;
 	}
 
 	private String buildDependentString(String roleID, Map<String, SecurityProvisioningGroup> provisioningMap) {
