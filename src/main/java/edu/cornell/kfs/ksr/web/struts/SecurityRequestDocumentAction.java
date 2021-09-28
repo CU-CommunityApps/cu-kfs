@@ -178,7 +178,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         List<SecurityGroupTab> securityGroupTabs = document.getSecurityGroup().getSecurityGroupTabs().stream().collect(Collectors.toList());
         Collections.sort(securityGroupTabs, new BeanPropertyComparator(sortPropertyNames));
 
-        for (SecurityGroupTab groupTab : document.getSecurityGroup().getSecurityGroupTabs()) {
+        for (SecurityGroupTab groupTab : securityGroupTabs) {
             SecurityRequestDocumentForm.TabRoleIndexes tabIndexes = new SecurityRequestDocumentForm.TabRoleIndexes();
             tabIndexes.setTabId(groupTab.getTabId());
             tabIndexes.setTabName(groupTab.getTabName());
@@ -190,7 +190,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
             Collections.sort(provisioningGroups, new BeanPropertyComparator(sortPropertyNames));
 
             List<Integer> requestRoleIndexes = new ArrayList<Integer>();
-            for (SecurityProvisioningGroup provisioningGroup : groupTab.getSecurityProvisioningGroups()) {
+            for (SecurityProvisioningGroup provisioningGroup : provisioningGroups) {
                 if (provisioningGroup.isActive()) {
                     int roleIndex = findSecurityRequestRoleIndex(document, provisioningGroup.getRoleId());
                     if (roleIndex == -1) {

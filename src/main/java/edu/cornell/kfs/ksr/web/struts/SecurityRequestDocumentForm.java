@@ -36,7 +36,7 @@ public class SecurityRequestDocumentForm extends FinancialSystemTransactionalDoc
     	private static final long serialVersionUID = 6981150675755290581L;
     	
     	private Long tabId;
-        private String tabName;
+    	private String tabName;
         private List<Integer> roleRequestIndexes;
 
         public Long getTabId() {
