@@ -36,6 +36,7 @@
 		<field-descriptor name="securityGroupId" column="SEC_GRP_ID" jdbc-type="BIGINT" primarykey="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
 		<reference-descriptor name="securityGroup" class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="securityGroupId" />
@@ -59,6 +60,7 @@
 		<field-descriptor name="active" column="actv_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
 		<reference-descriptor name="securityGroup" class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="securityGroupId" />
@@ -75,7 +77,77 @@
 		<field-descriptor name="roleId" column="RL_ID" jdbc-type="VARCHAR" primarykey="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
 		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+	</class-descriptor>
+	
+	<class-descriptor class="edu.cornell.kfs.ksr.document.SecurityRequestDocument" table="KRSR_SEC_RQ_T">
+		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
+		<field-descriptor name="principalId" column="PRNCPL_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="primaryDepartmentCode" column="PRMRY_DEPT_CD" jdbc-type="VARCHAR" />
+		<field-descriptor name="securityGroupId" column="SEC_GRP_ID" jdbc-type="BIGINT" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
+		<reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object">
+			<foreignkey field-ref="documentNumber" />
+		</reference-descriptor>
+
+		<reference-descriptor name="securityGroup" class-ref="edu.cornell.kfs.ksr.businessobject.SecurityGroup" auto-retrieve="true" auto-update="none" auto-delete="none">
+			<foreignkey field-ref="securityGroupId" />
+		</reference-descriptor>
+
+		<collection-descriptor name="securityRequestRoles" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityRequestRole" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+			<inverse-foreignkey field-ref="documentNumber" />
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.ksr.businessobject.SecurityRequestRole" table="KRSR_SEC_RQ_RL_T">
+		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
+		<field-descriptor name="roleRequestId" column="RL_RQ_ID" jdbc-type="BIGINT" primarykey="true" />
+		<field-descriptor name="roleId" column="RL_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="nextQualificationId" column="NEXT_QUAL_ID" jdbc-type="SMALLINT" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="currentActive" column="CUR_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="currentQualifications" column="CUR_QUAL" jdbc-type="VARCHAR" />
+		<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+		
+		<collection-descriptor name="requestRoleQualifications" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityRequestRoleQualification" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+			<inverse-foreignkey field-ref="documentNumber" />
+			<inverse-foreignkey field-ref="roleRequestId" />
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.ksr.businessobject.SecurityRequestRoleQualification" table="KRSR_SEC_RQ_RL_QUAL_T">
+		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
+		<field-descriptor name="roleRequestId" column="RL_RQ_ID" jdbc-type="BIGINT" primarykey="true" />
+		<field-descriptor name="qualificationId" column="QUAL_ID" jdbc-type="SMALLINT" primarykey="true" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
+		<collection-descriptor name="roleQualificationDetails" element-class-ref="edu.cornell.kfs.ksr.businessobject.SecurityRequestRoleQualificationDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+			proxy="true" auto-retrieve="true" auto-update="object" auto-delete="object">
+			<inverse-foreignkey field-ref="documentNumber" />
+			<inverse-foreignkey field-ref="roleRequestId" />
+			<inverse-foreignkey field-ref="qualificationId" />
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="edu.cornell.kfs.ksr.businessobject.SecurityRequestRoleQualificationDetail" table="KRSR_SEC_RQ_RL_QUAL_DTL_T">
+		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
+		<field-descriptor name="roleRequestId" column="RL_RQ_ID" jdbc-type="BIGINT" primarykey="true" />
+		<field-descriptor name="qualificationId" column="QUAL_ID" jdbc-type="SMALLINT" primarykey="true" />
+		<field-descriptor name="attributeId" column="ATTR_ID" jdbc-type="VARCHAR" primarykey="true" />
+		<field-descriptor name="roleTypeId" column="RL_TYP_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="attributeValue" column="ATTR_VAL" jdbc-type="VARCHAR" />
+		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+		<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 	</class-descriptor>
 
 </descriptor-repository>
