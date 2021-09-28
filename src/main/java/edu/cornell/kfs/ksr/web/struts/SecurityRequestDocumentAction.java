@@ -175,7 +175,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
         List sortPropertyNames = new ArrayList();
         sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_TAB_ORDER);
         
-        List<SecurityGroupTab> securityGroupTabs = document.getSecurityGroup().getSecurityGroupTabs().stream().collect(Collectors.toList());
+        List<SecurityGroupTab> securityGroupTabs = document.getSecurityGroup().getSecurityGroupTabs().stream().collect(Collectors.toCollection(ArrayList::new));
         Collections.sort(securityGroupTabs, new BeanPropertyComparator(sortPropertyNames));
 
         for (SecurityGroupTab groupTab : securityGroupTabs) {
@@ -186,7 +186,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
             sortPropertyNames = new ArrayList();
             sortPropertyNames.add(KSRPropertyConstants.SECURITY_REQUEST_DOCUMENT_ROLE_TAB_ORDER);
 
-            List<SecurityProvisioningGroup> provisioningGroups = groupTab.getSecurityProvisioningGroups().stream().collect(Collectors.toList());
+            List<SecurityProvisioningGroup> provisioningGroups = groupTab.getSecurityProvisioningGroups().stream().collect(Collectors.toCollection(ArrayList::new));
             Collections.sort(provisioningGroups, new BeanPropertyComparator(sortPropertyNames));
 
             List<Integer> requestRoleIndexes = new ArrayList<Integer>();
