@@ -27,6 +27,9 @@
                     <!-- Security Request Wizard Form -->
         <form-bean name="SecurityRequestWizardForm"
 			type="edu.cornell.kfs.ksr.web.struts.SecurityRequestWizardForm" />
+                    <!-- Security Request Document Form -->
+		<form-bean name="SecurityRequestDocumentForm"
+            type="edu.cornell.kfs.ksr.web.struts.SecurityRequestDocumentForm" />  
                             <!-- Check Recon Form -->
         <form-bean name="CheckReconciliationReportForm"
             type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
@@ -244,6 +247,11 @@
                 type="edu.cornell.kfs.ksr.web.struts.SecurityRequestWizardAction" scope="request"  parameter="methodToCall">
             <forward name="wizard" path="/jsp/ksr/SecurityRequestWizard.jsp" />
         </action>
+        
+        <action path="/securityRequestDocument" name="SecurityRequestDocumentForm" attribute="KualiForm" scope="request"
+               type="edu.cornell.kfs.ksr.web.struts.SecurityRequestDocumentAction" parameter="methodToCall">
+           <forward name="basic" path="/jsp/ksr/SecurityRequestDocument.jsp" />
+        </action> 
 		
         <!-- Override of maintenance document mapping to use a CU-specific action class. -->
         <action path="/maintenance" name="KualiMaintenanceForm" attribute="KualiForm" scope="request"
