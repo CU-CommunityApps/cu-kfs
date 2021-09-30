@@ -18,6 +18,7 @@
 				<ref bean="SecurityProvisioningGroupDependentRoles-roleId" />
 				<ref bean="SecurityProvisioningGroupDependentRoles-roleName" />
 				<ref bean="SecurityProvisioningGroupDependentRoles-versionNumber" />
+				<ref bean="SecurityProvisioningGroupDependentRoles-active" />
 			</list>
 		</property>
 		<property name="relationships">
@@ -78,5 +79,10 @@
 
 	<bean id="SecurityProvisioningGroupDependentRoles-versionNumber" parent="SecurityProvisioningGroupDependentRoles-versionNumber-parentBean" />
 	<bean id="SecurityProvisioningGroupDependentRoles-versionNumber-parentBean" abstract="true" parent="AttributeReferenceDummy-versionNumber"></bean>
+
+    <bean id="SecurityProvisioningGroupDependentRoles-active" parent="SecurityProvisioningGroupDependentRoles-active-parentBean" />
+    <bean id="SecurityProvisioningGroupDependentRoles-active-parentBean" abstract="true"
+          parent="AttributeReferenceDummy-activeIndicator"
+          p:name="active"/>
 
 </beans>
