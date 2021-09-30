@@ -224,6 +224,9 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
                 if (securityProvisioningGroup != null) {
                     for (int j = 0; j < securityProvisioningGroup.getDependentRoles().size(); j++) {
                         SecurityProvisioningGroupDependentRoles dependentRole = securityProvisioningGroup.getDependentRoles().get(j);
+                        if (!dependentRole.isActive()) {
+                            continue;
+                        }
                         boolean found = false;
                         for (int k = 0; k < activeRoles.size(); k++) {
                             if (activeRoles.get(k).getRoleId().equals(dependentRole.getRoleId())) {
