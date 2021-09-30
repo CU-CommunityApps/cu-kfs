@@ -90,7 +90,7 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		return success;
 	}
 
-	private boolean isDuplicateDependentRole(MaintenanceDocument document, SecurityProvisioningGroupDependentRoles dependentRole, int index, int indexRole) {
+	private boolean isDependentRoleUniqueForGroup(MaintenanceDocument document, SecurityProvisioningGroupDependentRoles dependentRole, int index, int indexRole) {
 		boolean success = true;
 
 		SecurityProvisioning securityProvisioning = (SecurityProvisioning) document.getDocumentDataObject();
@@ -347,7 +347,7 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 			// Validate the SecurityProvisioningGroup and check it for duplicates.
 			for (int j = 0; j < securityProvisioningGroup.getDependentRoles().size(); j++) {
 				success &= validateDependentRole(securityProvisioningGroup.getDependentRoles().get(j), i, j);
-				success &= isDuplicateDependentRole(document, securityProvisioningGroup.getDependentRoles().get(j), i, j);
+				success &= isDependentRoleUniqueForGroup(document, securityProvisioningGroup.getDependentRoles().get(j), i, j);
 				success &= hasSecurityProvisioningGroup(document, securityProvisioningGroup.getDependentRoles().get(j), i, j);
 			}
 		}
@@ -391,6 +391,9 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 	}
 
 	private boolean hasSecurityProvisioningGroup(MaintenanceDocument document, SecurityProvisioningGroupDependentRoles dependentRole, int index, int indexRole) {
+		if (!dependentRole.isActive()) {
+			return true;
+		}
 		boolean success = false;
 		SecurityProvisioning securityProvisioning = (SecurityProvisioning) document.getDocumentDataObject();
 		List<SecurityProvisioningGroup> securityProvisioningGroups = securityProvisioning.getSecurityProvisioningGroups();
@@ -435,9 +438,11 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		provisioningMap.remove(roleID);
 		if ((securityProvisioningGroup != null)
 				&& (securityProvisioningGroup.getDependentRoles().size() > 0)) {
-			for (int i = 0; i < securityProvisioningGroup.getDependentRoles().size(); i++) {
-				String dependentRoleID = securityProvisioningGroup.getDependentRoles().get(i).getRoleId();
-				temp += buildDependentString(dependentRoleID, provisioningMap);
+			for (SecurityProvisioningGroupDependentRoles dependentRole : securityProvisioningGroup.getDependentRoles()) {
+				if (dependentRole.isActive()) {
+					String dependentRoleID = dependentRole.getRoleId();
+					temp += buildDependentString(dependentRoleID, provisioningMap);
+				}
 			}
 		}
 		return "," + temp;
