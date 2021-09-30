@@ -111,6 +111,8 @@
                                               p:required="true"/>
                                         <bean parent="MaintainableFieldDefinition" p:name="roleName"
                                               p:unconditionallyReadOnly="true" p:required="false"/>
+                                        <bean parent="MaintainableFieldDefinition" p:name="active"
+                                              p:defaultValue="true" p:required="false"/>
                                     </list>
                                 </property>
                             </bean>
