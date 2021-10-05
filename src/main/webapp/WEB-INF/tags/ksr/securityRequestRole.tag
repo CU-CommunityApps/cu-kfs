@@ -7,11 +7,8 @@
 
 <c:set var="securityRequestRole" value="${KualiForm.document.securityRequestRoles[securityRequestRoleIndex]}" />
 
+<h3>${securityRequestRole.roleInfo.id} : ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.name}</h3>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="datatable">
-    <tr>
-        <td class="tab-subhead" colspan="2">${securityRequestRole.roleInfo.id} : ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.name}</td>
-    </tr>
-    
     <tr>     
         <th class="right">
             <kul:htmlAttributeLabel attributeEntry="${genericAttributes.activeIndicator}"/>
@@ -19,7 +16,7 @@
         <td width="50%">
           <kul:htmlControlAttribute property="document.securityRequestRoles[${securityRequestRoleIndex}].active"
                 attributeEntry="${genericAttributes.activeIndicator}" readOnly="${readOnly}"/> 
-                
+          <br/>
           <span class="current_qual">
             <c:if test="${securityRequestRole.currentActive}">
               Currently Active
@@ -34,7 +31,7 @@
     <c:if test="${securityRequestRole.qualifiedRole && ( (!empty securityRequestRole.requestRoleQualifications)
                 || (!empty securityRequestRole.currentQualifications) || !readOnly )}">
       <tr>
-          <kul:htmlAttributeHeaderCell literalLabel="Qualifications:" align="right" horizontal="true"/>
+          <kul:htmlAttributeHeaderCell literalLabel="Qualifications:" align="right" horizontal="true" addClass="right"/>
           <td style="padding: 5px;">
              <c:if test="${!empty securityRequestRole.requestRoleQualifications || !readOnly}">
                <ksr:securityRequestRoleQualifications securityRequestRoleIndex="${securityRequestRoleIndex}" />
