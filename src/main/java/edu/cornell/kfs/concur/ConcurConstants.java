@@ -30,13 +30,6 @@ public class ConcurConstants {
     public static final String CONCUR_CONSUMER_KEY = "concur.consumer.key";
     public static final String CONCUR_SECRET_KEY = "concur.secret.key";
     public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
-    
-    public static final String CONCUR_WEB_SERVICE_GROUP_CODE_OAUTH_2 = "CNCROAUTH2";
-    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_CLIENT_ID = "concur.client_id";
-    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_SECRET_ID = "concur.secret_id";
-    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_USER_NAME = "concur.user_name";
-    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_REQUEST_TOKEN = "concur.request_token";
-    public static final String CONCUR_OAUTH2_WEB_SERVICE_CREDENTIAL_REFRESH_TOKEN = "concur.refresh_token";
 
     public static final String USERNAME_PASSWORD_SEPARATOR = ":";
     public static final String TLS_V1_2_PROTOCOL = "TLSv1.2";
@@ -153,6 +146,25 @@ public class ConcurConstants {
     public static class ConcurXmlNamespaces {
         public static final String NOTIFICATION = "http://www.concursolutions.com/api/notification/2012/06";
         public static final String TRAVEL_REQUEST = "http://www.concursolutions.com/api/travelrequest/2012/06";
+    }
+    
+    public class CONCUR_OAUTH2 {
+        public class WEB_SERVICE_CREDENTIAL_KEYS {
+            public static final String GROUP_CODE = "CNCROAUTH2";
+            public static final String CLIENT_ID = "concur.client_id";
+            public static final String SECRET_ID = "concur.secret_id";
+            public static final String USER_NAME = "concur.user_name";
+            public static final String REQUEST_TOKEN = "concur.request_token";
+            public static final String REFRESH_TOKEN = "concur.refresh_token";
+        }
+        public class FORM_FIELD_KEYS {
+            public static final String CLIENT_ID = "client_id";
+            public static final String CLIENT_SECRET = "client_secret";
+            public static final String REFRESH_TOKEN = "refresh_token";
+            public static final String GRANT_TYPE = "grant_type";
+        }
+        public static final String GRANT_TYPE_REFRESH_TOKEN_VALUE = "refresh_token";
+        public static final String REQUST_HEADER_CONTENT_TYPE_KEY_NAME = "Content-Type";
     }
     
     public enum ConcurEventNoticationVersion2EventType {
