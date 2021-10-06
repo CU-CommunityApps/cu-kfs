@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurOauth2;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
@@ -47,16 +47,16 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     
     private ConcurOauth2PersistedValues getConcurOauth2PersistedValuesFromWebServiceCredentials() {
         ConcurOauth2PersistedValues values = new ConcurOauth2PersistedValues();
-        values.setClientId(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.CLIENT_ID));
-        values.setSecretId(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.SECRET_ID));
-        values.setUserName(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.USER_NAME));
-        values.setRefreshToken(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.REFRESH_TOKEN));
-        values.setRequestToken(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.REQUEST_TOKEN));
+        values.setClientId(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.CLIENT_ID));
+        values.setSecretId(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.SECRET_ID));
+        values.setUserName(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.USER_NAME));
+        values.setRefreshToken(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REFRESH_TOKEN));
+        values.setRequestToken(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REQUEST_TOKEN));
         return values;
     }
     
     private String getWebserviceCredentialValue(String credentialKey) {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.GROUP_CODE, 
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.GROUP_CODE, 
                 credentialKey);
     }
     
@@ -122,13 +122,13 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
             throw new RuntimeException("An error occured while building the refresh access token URI: ", e);
         }
         final MultivaluedHashMap<String, String> entity = new MultivaluedHashMap<>();
-        entity.add(ConcurOauth2.FormFieldKeys.CLIENT_ID, credentialValues.getClientId());
-        entity.add(ConcurOauth2.FormFieldKeys.CLIENT_SECRET, credentialValues.getSecretId());
-        entity.add(ConcurOauth2.FormFieldKeys.REFRESH_TOKEN, credentialValues.getRefreshToken());
-        entity.add(ConcurOauth2.FormFieldKeys.GRANT_TYPE, ConcurOauth2.GRANT_TYPE_REFRESH_TOKEN_VALUE);
+        entity.add(ConcurOAuth2.FormFieldKeys.CLIENT_ID, credentialValues.getClientId());
+        entity.add(ConcurOAuth2.FormFieldKeys.CLIENT_SECRET, credentialValues.getSecretId());
+        entity.add(ConcurOAuth2.FormFieldKeys.REFRESH_TOKEN, credentialValues.getRefreshToken());
+        entity.add(ConcurOAuth2.FormFieldKeys.GRANT_TYPE, ConcurOAuth2.GRANT_TYPE_REFRESH_TOKEN_VALUE);
         return client.target(uri)
                 .request()
-                .header(ConcurOauth2.REQUST_HEADER_CONTENT_TYPE_KEY_NAME, MediaType.TEXT_PLAIN)
+                .header(ConcurOAuth2.REQUEST_HEADER_CONTENT_TYPE_KEY_NAME, MediaType.TEXT_PLAIN)
                 .accept(MediaType.APPLICATION_JSON)
                 .post(Entity.form(entity));
     }
@@ -138,8 +138,8 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
             LOG.info("updateRefreshTokenIfRequired, refresh token from Concur is the same as we have in storage, no need to update");
         } else {
             LOG.info("updateRefreshTokenIfRequired, Concur sent a new refresh token, we must update the value in storage");
-            webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.GROUP_CODE, 
-                    ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.REFRESH_TOKEN, tokenResponse.getRefresh_token());
+            webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.GROUP_CODE, 
+                    ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REFRESH_TOKEN, tokenResponse.getRefresh_token());
         }
     }
     

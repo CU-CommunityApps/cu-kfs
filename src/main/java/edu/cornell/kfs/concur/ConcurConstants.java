@@ -148,7 +148,7 @@ public class ConcurConstants {
         public static final String TRAVEL_REQUEST = "http://www.concursolutions.com/api/travelrequest/2012/06";
     }
     
-    public static final class ConcurOauth2 {
+    public static final class ConcurOAuth2 {
         public static final class WebServiceCredentialKeys {
             public static final String GROUP_CODE = "CNCROAUTH2";
             public static final String CLIENT_ID = "concur.client_id";
@@ -164,7 +164,7 @@ public class ConcurConstants {
             public static final String GRANT_TYPE = "grant_type";
         }
         public static final String GRANT_TYPE_REFRESH_TOKEN_VALUE = "refresh_token";
-        public static final String REQUST_HEADER_CONTENT_TYPE_KEY_NAME = "Content-Type";
+        public static final String REQUEST_HEADER_CONTENT_TYPE_KEY_NAME = "Content-Type";
     }
     
     public enum ConcurEventNoticationVersion2EventType {

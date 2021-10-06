@@ -34,12 +34,12 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
         LOG.info("validateTravelRequests, has not been implemented yet.");
     }
     
-    private void generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingReults) {
+    private void generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         LOG.info("generateReport, full report has not bee implemented yet");
-        if (processingReults.isEmpty()) {
+        if (processingResults.isEmpty()) {
             LOG.info("generateReport, no reports nor travel requests were validated");
         } else {
-            processingReults.stream().forEach(result -> logIndividualResult(result));
+            processingResults.stream().forEach(result -> logIndividualResult(result));
         }
     }
     

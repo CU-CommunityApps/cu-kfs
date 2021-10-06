@@ -40,17 +40,21 @@ public class ConcurDTOJsonTest {
     public static final String EXPECTED_TOKEN_VALUES_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/jsonValues.txt";
     
     private ObjectMapper objectMapper;
-    private Map<String, Object> exptectedJsonValues;
+    private Map<String, Object> expectedJsonValues;
 
     @BeforeEach
     public void setUp() throws Exception {
         objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
-        buildExptectedJsonValues();
+        buildExpectedJsonValues();
     }
     
-    private void buildExptectedJsonValues() {
-        exptectedJsonValues = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(EXPECTED_TOKEN_VALUES_FILE_NAME));) {
+    private void buildExpectedJsonValues() {
+        expectedJsonValues = new HashMap<>();
+        
+        try (
+                FileReader expectedTokenFile = new FileReader(EXPECTED_TOKEN_VALUES_FILE_NAME);
+                BufferedReader br = new BufferedReader(expectedTokenFile);
+            ) {
             String line = br.readLine();
             while (line != null) {
                 String[] lineValues = StringUtils.split(line, CUKFSConstants.EQUALS_SIGN);
@@ -61,11 +65,11 @@ public class ConcurDTOJsonTest {
                 } else {
                     value = lineValues[1];
                 }
-                exptectedJsonValues.put(key, value);
+                expectedJsonValues.put(key, value);
                 line = br.readLine();
             }
         } catch (Exception e) {
-            LOG.error("buildExptectedJsonValues, had an error reading the json expected values file", e);
+            LOG.error("buildExpectedJsonValues, had an error reading the json expected values file", e);
             throw new RuntimeException(e);
         }
     }
@@ -73,7 +77,7 @@ public class ConcurDTOJsonTest {
     @AfterEach
     public void tearDown() throws Exception {
         objectMapper = null;
-        exptectedJsonValues = null;
+        expectedJsonValues = null;
     }
 
     @Test
@@ -91,14 +95,14 @@ public class ConcurDTOJsonTest {
     }
 
     private void validateConcurOauth2TokenResponseDTO(ConcurOauth2TokenResponseDTO dto) {
-        assertEquals(exptectedJsonValues.get(ACCESS_TOKEN), dto.getAccess_token());
-        assertEquals(exptectedJsonValues.get(EXPIRES_IN), dto.getExpires_in());
-        assertEquals(exptectedJsonValues.get(GEOLOCATION), dto.getGeolocation());
-        assertEquals(exptectedJsonValues.get(ID_TOKEN), dto.getId_token());
-        assertEquals(exptectedJsonValues.get(REFRESH_EXPIRES_IN), dto.getRefresh_expires_in());
-        assertEquals(exptectedJsonValues.get(REFRESH_TOKEN), dto.getRefresh_token());
-        assertEquals(exptectedJsonValues.get(SCOPE), dto.getScope());
-        assertEquals(exptectedJsonValues.get(TOKEN_TYPE), dto.getToken_type());
+        assertEquals(expectedJsonValues.get(ACCESS_TOKEN), dto.getAccess_token());
+        assertEquals(expectedJsonValues.get(EXPIRES_IN), dto.getExpires_in());
+        assertEquals(expectedJsonValues.get(GEOLOCATION), dto.getGeolocation());
+        assertEquals(expectedJsonValues.get(ID_TOKEN), dto.getId_token());
+        assertEquals(expectedJsonValues.get(REFRESH_EXPIRES_IN), dto.getRefresh_expires_in());
+        assertEquals(expectedJsonValues.get(REFRESH_TOKEN), dto.getRefresh_token());
+        assertEquals(expectedJsonValues.get(SCOPE), dto.getScope());
+        assertEquals(expectedJsonValues.get(TOKEN_TYPE), dto.getToken_type());
     }
     
     @Test
