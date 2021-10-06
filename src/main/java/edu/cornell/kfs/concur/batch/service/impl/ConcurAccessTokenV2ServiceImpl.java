@@ -40,22 +40,22 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     @Override
     public String retrieveNewAccessBearerToken() {
         ConcurOauth2PersistedValues credentialValues = getConcurOauth2PersistedValuesFromWebServiceCredentials();
-        ConcurOauth2TokenResponseDTO tokenResopnse = getAccessTokenFromConcurEndPoint(credentialValues);
-        updateRefreshTokenIfRequired(credentialValues, tokenResopnse);
-        return tokenResopnse.getAccess_token();
+        ConcurOauth2TokenResponseDTO tokenResponse = getAccessTokenFromConcurEndPoint(credentialValues);
+        updateRefreshTokenIfRequired(credentialValues, tokenResponse);
+        return tokenResponse.getAccess_token();
     }
     
     private ConcurOauth2PersistedValues getConcurOauth2PersistedValuesFromWebServiceCredentials() {
         ConcurOauth2PersistedValues values = new ConcurOauth2PersistedValues();
-        values.setClientId(getWebserviceCredentailValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.CLIENT_ID));
-        values.setSecretId(getWebserviceCredentailValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.SECRET_ID));
-        values.setUserName(getWebserviceCredentailValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.USER_NAME));
-        values.setRefreshToken(getWebserviceCredentailValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.REFRESH_TOKEN));
-        values.setRequestToken(getWebserviceCredentailValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.REQUEST_TOKEN));
+        values.setClientId(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.CLIENT_ID));
+        values.setSecretId(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.SECRET_ID));
+        values.setUserName(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.USER_NAME));
+        values.setRefreshToken(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.REFRESH_TOKEN));
+        values.setRequestToken(getWebserviceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.REQUEST_TOKEN));
         return values;
     }
     
-    private String getWebserviceCredentailValue(String credentialKey) {
+    private String getWebserviceCredentialValue(String credentialKey) {
         return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.ConcurOauth2.WebServiceCredentialKeys.GROUP_CODE, 
                 credentialKey);
     }

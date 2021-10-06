@@ -16,12 +16,12 @@ public class ConcurEventNotificationProcessingResultsDTO {
     private List<String> messages;
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingReults, String reportNumber) {
-        this(eventType, processingReults, reportNumber, new ArrayList<String>());
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber) {
+        this(eventType, processingResults, reportNumber, new ArrayList<String>());
     }
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingReults, String reportNumber, List<String> messages) {
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, List<String> messages) {
         this.eventType = eventType;
         this.processingResults = processingResults;
         this.reportNumber = reportNumber;
