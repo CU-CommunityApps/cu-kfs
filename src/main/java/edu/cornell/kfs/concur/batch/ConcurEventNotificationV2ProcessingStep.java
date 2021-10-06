@@ -19,18 +19,18 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         String accessToken = concurAccessTokenV2Service.retrieveNewAccessBearerToken();
-        List<ConcurEventNotificationProcessingResultsDTO> processingReults = new ArrayList<ConcurEventNotificationProcessingResultsDTO>();
-        validateExpenseReports(accessToken, processingReults);
-        validateTravelRequests(accessToken, processingReults);
-        generateReport(processingReults);
+        List<ConcurEventNotificationProcessingResultsDTO> processingResults = new ArrayList<>();
+        validateExpenseReports(accessToken, processingResults);
+        validateTravelRequests(accessToken, processingResults);
+        generateReport(processingResults);
         return true;
     }
     
-    private void validateExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingReults) {
+    private void validateExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         LOG.info("validateExpenseReports, has not been implemented yet.");
     }
     
-    private void validateTravelRequests(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingReults) {
+    private void validateTravelRequests(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         LOG.info("validateTravelRequests, has not been implemented yet.");
     }
     

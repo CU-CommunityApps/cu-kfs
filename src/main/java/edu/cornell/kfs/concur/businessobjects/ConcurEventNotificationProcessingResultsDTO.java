@@ -12,8 +12,8 @@ import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2Pro
 public class ConcurEventNotificationProcessingResultsDTO {
     private ConcurEventNoticationVersion2EventType eventType;
     private ConcurEventNotificationVersion2ProcessingResults processingResults;
-    String reportNumber;
-    List<String> messages;
+    private String reportNumber;
+    private List<String> messages;
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
             ConcurEventNotificationVersion2ProcessingResults processingReults, String reportNumber) {

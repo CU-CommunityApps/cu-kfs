@@ -148,8 +148,8 @@ public class ConcurConstants {
         public static final String TRAVEL_REQUEST = "http://www.concursolutions.com/api/travelrequest/2012/06";
     }
     
-    public class CONCUR_OAUTH2 {
-        public class WEB_SERVICE_CREDENTIAL_KEYS {
+    public static final class ConcurOauth2 {
+        public static final class WebServiceCredentialKeys {
             public static final String GROUP_CODE = "CNCROAUTH2";
             public static final String CLIENT_ID = "concur.client_id";
             public static final String SECRET_ID = "concur.secret_id";
@@ -157,7 +157,7 @@ public class ConcurConstants {
             public static final String REQUEST_TOKEN = "concur.request_token";
             public static final String REFRESH_TOKEN = "concur.refresh_token";
         }
-        public class FORM_FIELD_KEYS {
+        public static final class FormFieldKeys {
             public static final String CLIENT_ID = "client_id";
             public static final String CLIENT_SECRET = "client_secret";
             public static final String REFRESH_TOKEN = "refresh_token";
