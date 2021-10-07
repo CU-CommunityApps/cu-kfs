@@ -8,12 +8,10 @@
   
   <kul:tab tabTitle="Request Access to ${tab.tabName}" defaultOpen="true" tabErrorKey="${tabErrorKey}">
       <div class="tab-container" align="center">
-         <h3>Roles</h3>
-         
          <c:forEach var="roleIndex" items="${tab.roleRequestIndexes}">
            <ksr:securityRequestRole securityRequestRoleIndex="${roleIndex}" />
          </c:forEach>
       </div>
-  </kul:tab>        
+  </kul:tab>
 </c:forEach>
  
