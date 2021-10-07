@@ -32,6 +32,7 @@
 		<property name="jobNames">
 			<list>
 				<value>concurEventNotificationProcessingBatchJob</value>
+				<value>concurEventNotificationProcessingV2BatchJob</value>
 				<value>concurRequestExtractToPdpFeedJob</value>
 				<value>concurStandardAccountingExtractToPdpAndCollectorBatchJob</value>
 			</list>
@@ -654,5 +655,23 @@
 	    <property name="configurationService" ref="configurationService"/>
 	    <property name="parameterService" ref="parameterService"/>	    
     </bean>
+    
+  <bean id="concurEventNotificationProcessingV2BatchJob" parent="unscheduledJobDescriptor">
+    <property name="steps">
+      <list>
+        <ref bean="concurEventNotificationV2ProcessingStep" />
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="concurEventNotificationV2ProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationV2ProcessingStep">
+   <property name="concurAccessTokenV2Service" ref="concurAccessTokenV2Service" />
+  </bean>
+  
+  <bean id="concurAccessTokenV2Service" parent="concurAccessTokenV2Service-parentBean" />
+  <bean id="concurAccessTokenV2Service-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurAccessTokenV2ServiceImpl" abstract="true">
+      <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
+      <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+  </bean>
     
 </beans>
