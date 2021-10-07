@@ -25,8 +25,8 @@ import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.businessobjects.ConcurOauth2PersistedValues;
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOauth2TokenResponseDTO;
+import edu.cornell.kfs.concur.businessobjects.ConcurOAuth2PersistedValues;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOAuth2TokenResponseDTO;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
@@ -39,14 +39,14 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
 
     @Override
     public String retrieveNewAccessBearerToken() {
-        ConcurOauth2PersistedValues credentialValues = getConcurOauth2PersistedValuesFromWebServiceCredentials();
-        ConcurOauth2TokenResponseDTO tokenResponse = getAccessTokenFromConcurEndPoint(credentialValues);
+        ConcurOAuth2PersistedValues credentialValues = getConcurOAuth2PersistedValuesFromWebServiceCredentials();
+        ConcurOAuth2TokenResponseDTO tokenResponse = getAccessTokenFromConcurEndPoint(credentialValues);
         updateRefreshTokenIfRequired(credentialValues, tokenResponse);
         return tokenResponse.getAccess_token();
     }
     
-    private ConcurOauth2PersistedValues getConcurOauth2PersistedValuesFromWebServiceCredentials() {
-        ConcurOauth2PersistedValues values = new ConcurOauth2PersistedValues();
+    private ConcurOAuth2PersistedValues getConcurOAuth2PersistedValuesFromWebServiceCredentials() {
+        ConcurOAuth2PersistedValues values = new ConcurOAuth2PersistedValues();
         values.setClientId(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.CLIENT_ID));
         values.setSecretId(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.SECRET_ID));
         values.setUserName(getWebserviceCredentialValue(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.USER_NAME));
@@ -60,7 +60,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
                 credentialKey);
     }
     
-    protected ConcurOauth2TokenResponseDTO getAccessTokenFromConcurEndPoint(ConcurOauth2PersistedValues credentialValues) {
+    protected ConcurOAuth2TokenResponseDTO getAccessTokenFromConcurEndPoint(ConcurOAuth2PersistedValues credentialValues) {
         String tokenResponseString = null;
         int maxRetryCount = findMaxRetries();
         String accessTokenEndpoint = findAccessTokenEndpoint();
@@ -74,7 +74,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
             throw new RuntimeException("Unable to retrieve an access token.");
         }
         
-        return convertJsonTokenToConcurOauth2TokenResponseDTO(tokenResponseString);
+        return convertJsonTokenToConcurOAuth2TokenResponseDTO(tokenResponseString);
     }
     
     protected int findMaxRetries() {
@@ -89,7 +89,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         return endpoint;
     }
 
-    protected String callConcurAccessTokenEndpoint(ConcurOauth2PersistedValues credentialValues, String accessTokenEndpoint) {
+    protected String callConcurAccessTokenEndpoint(ConcurOAuth2PersistedValues credentialValues, String accessTokenEndpoint) {
         Client client = null;
         Response response = null;
         try {
@@ -113,7 +113,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         return null;
     }
     
-    protected Response buildRefreshAccessTokenClientRequest(Client client, ConcurOauth2PersistedValues credentialValues, String accessTokenEndpoint) {
+    protected Response buildRefreshAccessTokenClientRequest(Client client, ConcurOAuth2PersistedValues credentialValues, String accessTokenEndpoint) {
         URI uri;
         try {
             uri = new URI(accessTokenEndpoint);
@@ -133,7 +133,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
                 .post(Entity.form(entity));
     }
     
-    private void updateRefreshTokenIfRequired(ConcurOauth2PersistedValues credentialValues, ConcurOauth2TokenResponseDTO tokenResponse) {
+    private void updateRefreshTokenIfRequired(ConcurOAuth2PersistedValues credentialValues, ConcurOAuth2TokenResponseDTO tokenResponse) {
         if (StringUtils.equals(credentialValues.getRefreshToken(), tokenResponse.getRefresh_token())) {
             LOG.info("updateRefreshTokenIfRequired, refresh token from Concur is the same as we have in storage, no need to update");
         } else {
@@ -143,13 +143,13 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         }
     }
     
-    private ConcurOauth2TokenResponseDTO convertJsonTokenToConcurOauth2TokenResponseDTO(String tokenResponse) {
+    private ConcurOAuth2TokenResponseDTO convertJsonTokenToConcurOAuth2TokenResponseDTO(String tokenResponse) {
         ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
-        ConcurOauth2TokenResponseDTO dto;
+        ConcurOAuth2TokenResponseDTO dto;
         try {
-            dto = objectMapper.readValue(tokenResponse, ConcurOauth2TokenResponseDTO.class);
+            dto = objectMapper.readValue(tokenResponse, ConcurOAuth2TokenResponseDTO.class);
         } catch (JsonProcessingException e) {
-            LOG.error("convertJsonTokenToConcurOauth2TokenResponseDTO, unable to convert json to ConcurOauth2TokenResponseDTO", e);
+            LOG.error("convertJsonTokenToConcurOAuth2TokenResponseDTO, unable to convert json to ConcurOAuth2TokenResponseDTO", e);
             throw new RuntimeException(e);
         }
         return dto;

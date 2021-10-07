@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOauth2TokenResponseDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOAuth2TokenResponseDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 
@@ -35,8 +35,8 @@ public class ConcurDTOJsonTest {
     private static final String EXPIRES_IN = "expires_in";
     private static final String ACCESS_TOKEN = "access_token";
     private static final Logger LOG = LogManager.getLogger();
-    public static final String OAUTH2_TOKEN_RESPONSE_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/ConcurOauth2TokenResponse.json";
-    public static final String OAUTH2_TOKEN_RESPONSE_WITH_EXTRA_VALUES_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/ConcurOauth2TokenResponseWithExtraValues.json";
+    public static final String OAUTH2_TOKEN_RESPONSE_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/ConcurOAuth2TokenResponse.json";
+    public static final String OAUTH2_TOKEN_RESPONSE_WITH_EXTRA_VALUES_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/ConcurOAuth2TokenResponseWithExtraValues.json";
     public static final String EXPECTED_TOKEN_VALUES_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/jsonValues.txt";
     
     private ObjectMapper objectMapper;
@@ -83,18 +83,18 @@ public class ConcurDTOJsonTest {
     @Test
     public void testCreateConcurOauth2TokenResponseDTOFromJsonFile() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(OAUTH2_TOKEN_RESPONSE_FILE_NAME); 
-        ConcurOauth2TokenResponseDTO dto = objectMapper.readValue(jsonFile, ConcurOauth2TokenResponseDTO.class);
+        ConcurOAuth2TokenResponseDTO dto = objectMapper.readValue(jsonFile, ConcurOAuth2TokenResponseDTO.class);
         validateConcurOauth2TokenResponseDTO(dto);
     }
     
     @Test
     public void testCreateConcurOauth2TokenResponseDTOFromJsonFileWithExtraValues() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(OAUTH2_TOKEN_RESPONSE_WITH_EXTRA_VALUES_FILE_NAME); 
-        ConcurOauth2TokenResponseDTO dto = objectMapper.readValue(jsonFile, ConcurOauth2TokenResponseDTO.class);
+        ConcurOAuth2TokenResponseDTO dto = objectMapper.readValue(jsonFile, ConcurOAuth2TokenResponseDTO.class);
         validateConcurOauth2TokenResponseDTO(dto);
     }
 
-    private void validateConcurOauth2TokenResponseDTO(ConcurOauth2TokenResponseDTO dto) {
+    private void validateConcurOauth2TokenResponseDTO(ConcurOAuth2TokenResponseDTO dto) {
         assertEquals(expectedJsonValues.get(ACCESS_TOKEN), dto.getAccess_token());
         assertEquals(expectedJsonValues.get(EXPIRES_IN), dto.getExpires_in());
         assertEquals(expectedJsonValues.get(GEOLOCATION), dto.getGeolocation());
@@ -107,7 +107,7 @@ public class ConcurDTOJsonTest {
     
     @Test
     public void testCreateJsonStringFromConcurOauth2TokenResponseDTO() throws JsonProcessingException {
-        ConcurOauth2TokenResponseDTO dto = new ConcurOauth2TokenResponseDTO();
+        ConcurOAuth2TokenResponseDTO dto = new ConcurOAuth2TokenResponseDTO();
         dto.setAccess_token("access");
         dto.setExpires_in(321);
         dto.setGeolocation("https://www.cornell.edu");

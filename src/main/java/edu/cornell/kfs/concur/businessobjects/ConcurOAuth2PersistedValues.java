@@ -1,13 +1,13 @@
 package edu.cornell.kfs.concur.businessobjects;
 
-public class ConcurOauth2PersistedValues {
+public class ConcurOAuth2PersistedValues {
     private String clientId;
     private String secretId;
     private String userName;
     private String requestToken;
     private String refreshToken;
     
-    public ConcurOauth2PersistedValues() {
+    public ConcurOAuth2PersistedValues() {
         super();
     }
 
