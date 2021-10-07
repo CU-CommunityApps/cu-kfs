@@ -12,24 +12,21 @@
             		<kul:htmlAttributeLabel attributeEntry="${securityRequestAttributes['requestPerson.principalName']}"/>
         		</th>
                 <td valign="middle" class="left" width="50%">
-                
-                    <html:hidden property="document.principalId" />
-                        
+                    <kul:user userIdFieldName="document.requestPerson.principalName"
+                          userId="${KualiForm.document.requestPerson.principalName}"
+                          universalIdFieldName="document.principalId"
+                          universalId="${KualiForm.document.principalId}"
+                          userNameFieldName="document.requestPerson.name"
+                          userName="${KualiForm.document.requestPerson.name}"
+                          readOnly="true"
+                          hasErrors="${hasErrors}"/>
                     <c:if test="${!readOnly}">
-
-                      <kul:user userIdFieldName="document.requestPerson.principalName"
-                      userId="${KualiForm.document.requestPerson.principalName}"
-                      universalIdFieldName="document.principalId"
-                      universalId="${KualiForm.document.principalId}"
-                      userNameFieldName="document.requestPerson.name"
-                      userName="${KualiForm.document.requestPerson.name}"
-                      readOnly="${readOnly}"
-                      fieldConversions="principalName:document.requestPerson.principalName,principalId:document.principalId,name:document.requestPerson.name"
-                      lookupParameters="document.requestPerson.principalName:principalName,document.principalId:principalId,document.requestPerson.name:name"
-                      hasErrors="${hasErrors}"
-                      onblur="loadDepartments(this.form)"
-                      />
-                    </c:if>    
+                        <kul:lookup boClassName="org.kuali.kfs.kim.impl.identity.PersonImpl"
+                              fieldConversions="principalName:document.requestPerson.principalName,principalId:document.principalId,name:document.requestPerson.name"
+                              lookupParameters="document.requestPerson.principalName:principalName,document.principalId:principalId,document.requestPerson.name:name"
+                              fieldLabel="${securityRequestAttributes['requestPerson.principalName'].label}"
+                              anchor="${currentTabIndex}"/>
+                    </c:if>
                 </td>
             </tr>
             <tr>

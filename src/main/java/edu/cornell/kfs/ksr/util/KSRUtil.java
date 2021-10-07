@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
@@ -63,6 +64,12 @@ public class KSRUtil {
 		}
 
 		return typeAttributes;
+	}
+
+	public static Map<String, KimTypeAttribute> getTypeAttributesMappedByAttributeId(KimType kimType) {
+	    return kimType.getAttributeDefinitions().stream()
+	            .collect(Collectors.toUnmodifiableMap(
+	                    KimTypeAttribute::getKimAttributeId, attribute -> attribute));
 	}
 
 	public static KimType getTypeInfoForRoleRequest(SecurityRequestRole requestRole) {
