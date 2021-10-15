@@ -16,4 +16,14 @@
 <!DOCTYPE doc>
 <Context path="/kfs" reloadable="true">
   <CookieProcessor sameSiteCookies="none" />
+
+  <!-- CU Customization: backport FINP-7556 changes from the 2021-05-13 patch.
+        
+     The default value is 10240 kbytes, even when not added to context.xml.
+     We are increasing it to avoid issues with Tomcat not being able to cache web resources and logging a bunch of
+     warning messages. 
+  -->
+  <Resources cacheMaxSize="51200" />
+  <!-- end of CU Customization: backport FINP-7556 -->
+  
 </Context>
