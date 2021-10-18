@@ -465,7 +465,7 @@ public class CashControlDocument extends GeneralLedgerPostingDocumentBase implem
         cashControlTotalAmount = total;
         getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(total);
 
-        // backport FINP-7430
+        // backport FINP-7340
         // We only want to recalculate GLPEs for pending statuses, otherwise the GLPE approved indicator can get reset
         // from 'A' to 'N' and GLPEs won't be correctly processed into G/L entries / cleared.
         if (getDocumentHeader().getWorkflowDocument().isInitiated()
@@ -474,7 +474,7 @@ public class CashControlDocument extends GeneralLedgerPostingDocumentBase implem
                 || getDocumentHeader().getWorkflowDocument().isException()) {
             recalculateGeneralLedgerPendingEntries();
         }
-        // end of FINP-7430
+        // end of FINP-7340
     }
 
     private void recalculateGeneralLedgerPendingEntries() {
