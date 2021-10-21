@@ -284,56 +284,6 @@
 	<bean id="paymentSourceHelperService" parent="paymentSourceHelpService-parentBean"
 			class="edu.cornell.kfs.sys.document.service.impl.CuPaymentSourceHelperServiceImpl"/>
 
-	<bean id="modulesLockJob" parent="modulesLockJob-parentBean">
-		<property name="steps">
-			<list merge="true">
-				<ref bean="lockCoreServiceModuleStep"/>
-				<ref bean="lockSECModuleStep"/>
-				<ref bean="lockCRModuleStep"/>
-				<ref bean="lockTAXModuleStep"/>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="lockCoreServiceModuleStep" class="edu.cornell.kfs.sys.batch.NoOpStep"/>
-
-	<bean id="lockSECModuleStep" parent="lockModuleStep">
-		<property name="namespaceCode" value="KFS-SEC"/>
-	</bean>
-
-	<bean id="lockCRModuleStep" parent="lockModuleStep">
-		<property name="namespaceCode" value="KFS-CR"/>
-	</bean>
-
-	<bean id="lockTAXModuleStep" parent="lockModuleStep">
-		<property name="namespaceCode" value="KFS-TAX"/>
-	</bean>
-
-	<bean id="modulesUnlockJob" parent="modulesUnlockJob-parentBean">
-		<property name="steps">
-			<list merge="true">
-				<ref bean="unlockCoreServiceModuleStep"/>
-				<ref bean="unlockSECModuleStep"/>
-				<ref bean="unlockCRModuleStep"/>
-				<ref bean="unlockTAXModuleStep"/>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="unlockCoreServiceModuleStep" class="edu.cornell.kfs.sys.batch.NoOpStep"/>
-
-	<bean id="unlockSECModuleStep" parent="unlockModuleStep">
-		<property name="namespaceCode" value="KFS-SEC"/>
-	</bean>
-
-	<bean id="unlockCRModuleStep" parent="unlockModuleStep">
-		<property name="namespaceCode" value="KFS-CR"/>
-	</bean>
-
-	<bean id="unlockTAXModuleStep" parent="unlockModuleStep">
-		<property name="namespaceCode" value="KFS-TAX"/>
-	</bean>
-	
 	<bean id="batchFileLookupableHelperService" parent="batchFileLookupableHelperService-parentBean"
           scope="prototype"/>
     <bean id="batchFileLookupableHelperService-parentBean"
