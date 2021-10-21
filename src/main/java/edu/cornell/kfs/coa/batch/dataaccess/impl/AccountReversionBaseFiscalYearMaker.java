@@ -12,14 +12,13 @@ import org.kuali.kfs.sys.batch.FiscalYearMakerStep;
 import org.kuali.kfs.sys.batch.dataaccess.impl.FiscalYearMakerImpl;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
-public class AccountReversionDetailFiscalYearMaker extends FiscalYearMakerImpl {
+public class AccountReversionBaseFiscalYearMaker extends FiscalYearMakerImpl {
     private static final Logger LOG = LogManager.getLogger();
     
     private ParameterService parameterService;
     
     @Override
     public Criteria createSelectionCriteria(Integer baseFiscalYear) {
-        LOG.info("createSelectionCriteria, entering custom create selection criteria");
         if (LOG.isDebugEnabled()) {
             LOG.debug("starting createSelectionCriteria() for bo class " + businessObjectClass.getName());
         }
@@ -40,10 +39,12 @@ public class AccountReversionDetailFiscalYearMaker extends FiscalYearMakerImpl {
     protected boolean onlySelectActiveAccountReversions() {
         boolean replaceMode = parameterService.getParameterValueAsBoolean(FiscalYearMakerStep.class,
                 KFSConstants.FISCAL_YEAR_MAKER_REPLACE_MODE);
-        LOG.info("onlySelectActiveAccountReversions, returning " + replaceMode);
+        if (LOG.isDebugEnabled()) {
+            LOG.info("onlySelectActiveAccountReversions, returning " + replaceMode);
+        }
         return replaceMode;
     }
-    
+
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }

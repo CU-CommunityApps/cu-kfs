@@ -152,7 +152,7 @@
     </bean>
 
 	<bean id="accountReversionFiscalYearMaker"
-		class="edu.cornell.kfs.coa.batch.dataaccess.impl.AccountReversionFiscalYearMaker"
+		class="edu.cornell.kfs.coa.batch.dataaccess.impl.AccountReversionBaseFiscalYearMaker"
 		parent="FiscalYearMaker"
 		p:businessObjectClass="edu.cornell.kfs.coa.businessobject.AccountReversion">
 		<property name="parameterService">
@@ -161,7 +161,7 @@
 	</bean>
 
 	<bean id="accountReversionDetailFiscalYearMaker"
-		class="edu.cornell.kfs.coa.batch.dataaccess.impl.AccountReversionDetailFiscalYearMaker"
+		class="edu.cornell.kfs.coa.batch.dataaccess.impl.AccountReversionBaseFiscalYearMaker"
 		parent="FiscalYearMaker"
 		p:businessObjectClass="edu.cornell.kfs.coa.businessobject.AccountReversionDetail">
 		<property name="parameterService">
