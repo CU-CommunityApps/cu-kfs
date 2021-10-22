@@ -399,7 +399,7 @@
                                                     <%-- CU Customization: Add column for Action List Notes. --%>
                                                     <c:if test="${preferences.showNotes == KewApiConstants.PREFERENCES_YES_VAL}">
                                                         <display:column sortable="true" title="${actionItemNotesLabel}"
-                                                              sortProperty="actionItemExtension.actionNoteForSorting" class="infocell">
+                                                              sortProperty="extension.actionNoteForSorting" class="infocell">
                                                             <html-el:textarea cols="50" rows="2"
                                                                   disabled="${ActionListForm.viewOutbox}"
                                                                   property="actions[${result.actionListIndex}].actionNote"
