@@ -42,7 +42,7 @@
         <jsp-api.version>2.3.1</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.7.0</junit.version>
-        <ojdbc6.version>11.2.0.4</ojdbc6.version>
+        <ojdbc11.version>21.3.0.0</ojdbc11.version>
         <opencsv.version>4.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
         <mockito.version>3.5.13</mockito.version>
@@ -635,6 +635,10 @@
             <version>${cynergy.version}-${cynergy.version.suffix}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc6</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.kuali.rice</groupId>
                     <artifactId>rice-core-framework</artifactId>
                 </exclusion>
@@ -880,9 +884,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>${ojdbc6.version}</version>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+            <version>${ojdbc11.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
