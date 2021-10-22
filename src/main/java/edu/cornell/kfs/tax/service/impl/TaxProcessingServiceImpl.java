@@ -102,7 +102,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
                 // Current tax year; set report year to current year and end date to current date.
                 reportYear = tempCalendar.get(Calendar.YEAR);
                 endDate = new java.sql.Date(tempCalendar.getTime().getTime());
-                
+
             } else if (CUTaxConstants.PREVIOUS_YEAR_TO_DATE.equals(yearValue)) {
                 // Previous tax year; set report year to previous year and end date to December 31 of previous year.
                 tempCalendar.set(tempCalendar.get(Calendar.YEAR) - 1, Calendar.DECEMBER, DAY_31);
@@ -117,7 +117,8 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
                     throw new IllegalStateException("Dates-to-process parameter's literal year value was not an integer");
                 }
                 if (reportYear != tempCalendar.get(Calendar.YEAR)) {
-                    tempCalendar.set(reportYear, Calendar.DECEMBER, DAY_31);
+                    tempCalendar.set(reportYear, Calendar.JANUARY, DAY_31);
+//                    tempCalendar.set(reportYear, Calendar.DECEMBER, DAY_31);
                 }
                 endDate = new java.sql.Date(tempCalendar.getTime().getTime());
                 

@@ -70,6 +70,7 @@ public class TransactionDetail extends TransientBusinessObjectBase {
     private KualiInteger disbursementNbr;
     private String paymentStatusCode;
     private String disbursementTypeCode;
+    private String ledgerDocumentTypeCode;
 
     public String getTransactionDetailId() {
         return transactionDetailId;
@@ -517,5 +518,13 @@ public class TransactionDetail extends TransientBusinessObjectBase {
 
     public void setDisbursementTypeCode(String disbursementTypeCode) {
         this.disbursementTypeCode = disbursementTypeCode;
+    }
+
+    public String getLedgerDocumentTypeCode() {
+        return ledgerDocumentTypeCode;
+    }
+
+    public void setLedgerDocumentTypeCode(String ledgerDocumentTypeCode) {
+        this.ledgerDocumentTypeCode = ledgerDocumentTypeCode;
     }
 }
