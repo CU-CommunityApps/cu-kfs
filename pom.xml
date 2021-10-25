@@ -42,7 +42,7 @@
         <jsp-api.version>2.3.1</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.7.0</junit.version>
-        <ojdbc11.version>21.3.0.0</ojdbc11.version>
+        <ojdbc10.version>19.9.0.0</ojdbc10.version>
         <opencsv.version>4.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
         <mockito.version>3.5.13</mockito.version>
@@ -885,8 +885,8 @@
 
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc11</artifactId>
-            <version>${ojdbc11.version}</version>
+            <artifactId>ojdbc10</artifactId>
+            <version>${ojdbc10.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
