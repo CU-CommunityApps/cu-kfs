@@ -358,7 +358,8 @@ public final class CUTaxBatchConstants {
         public static final String DISBURSEMENT_NUMBER = "disbursementNbr";
         public static final String PAYMENT_STATUS_CODE = "paymentStatusCode";
         public static final String DISBURSEMENT_TYPE_CODE = "disbursementTypeCode";
-        
+        public static final String LEDGER_DOCUMENT_TYPE_CODE = "ledgerDocumentTypeCode";
+
         private TransactionDetailFieldNames() {
             throw new UnsupportedOperationException("do not call TransactionDetailFieldNames constructor");
         }

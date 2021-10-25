@@ -288,6 +288,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
         insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, null);
         insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
         insertStatement.setString(detailRow.paymentReasonCode.index - offset, null);
+        insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, null);
     }
 
 

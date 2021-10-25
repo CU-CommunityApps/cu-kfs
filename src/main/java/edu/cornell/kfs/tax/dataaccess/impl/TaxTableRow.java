@@ -538,6 +538,7 @@ abstract class TaxTableRow {
         final TaxTableField disbursementNbr;
         final TaxTableField paymentStatusCode;
         final TaxTableField disbursementTypeCode;
+        final TaxTableField ledgerDocumentTypeCode;
 
         TransactionDetailRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields,
                 Integer insertOffset) {
@@ -600,6 +601,7 @@ abstract class TaxTableRow {
             this.disbursementNbr = getAliasedField(TransactionDetailFieldNames.DISBURSEMENT_NUMBER);
             this.paymentStatusCode = getAliasedField(TransactionDetailFieldNames.PAYMENT_STATUS_CODE);
             this.disbursementTypeCode = getAliasedField(TransactionDetailFieldNames.DISBURSEMENT_TYPE_CODE);
+            this.ledgerDocumentTypeCode = getAliasedField(TransactionDetailFieldNames.LEDGER_DOCUMENT_TYPE_CODE);
         }
     }
 
