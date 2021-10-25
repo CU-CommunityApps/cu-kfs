@@ -1,6 +1,7 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
 import edu.cornell.cynergy.kew.routeheader.service.CynergyRouteHeaderService;
+import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
@@ -307,6 +308,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));
             insertStatement.setString(detailRow.paymentReasonCode.index - offset, rs.getString(dvRow.disbVchrPaymentReasonCode.index));
+
+            insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, getLedgerDocumentTypeCode(rs, dvRow));
             
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
             
@@ -331,7 +334,14 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         prepareForSecondPass(summary, docIds);
     }
 
-
+    private String getLedgerDocumentTypeCode(ResultSet rs, DvSourceRow dvRow) throws SQLException {
+        String paymentMethodCode = rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index);
+        String ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH;
+        if (paymentMethodCode == PaymentMethod.PM_CODE_WIRE) {
+            ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_WTFD;
+        }
+        return ledgerDocumentTypeCode;
+    }
 
     @Override
     void updateTransactionRowsFromWorkflowDocuments(ResultSet rs, T summary) throws SQLException {

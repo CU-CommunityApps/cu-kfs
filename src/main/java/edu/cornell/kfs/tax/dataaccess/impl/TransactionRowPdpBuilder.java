@@ -236,8 +236,10 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             insertStatement.setString(detailRow.paymentStatusCode.index - offset, rs.getString(pdpRow.paymentStatusCode.index));
             insertStatement.setString(detailRow.disbursementTypeCode.index - offset, rs.getString(pdpRow.disbursementTypeCode.index));
 
+            insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, rs.getString(pdpRow.financialDocumentTypeCode.index));
+
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
-            
+
             // Add to batch, and execute batch if needed.
             insertStatement.addBatch();
             currentBatchSize++;
@@ -288,7 +290,6 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
         insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, null);
         insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
         insertStatement.setString(detailRow.paymentReasonCode.index - offset, null);
-        insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, null);
     }
 
 
