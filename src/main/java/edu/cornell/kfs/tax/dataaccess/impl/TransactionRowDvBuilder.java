@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
@@ -308,7 +309,6 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));
             insertStatement.setString(detailRow.paymentReasonCode.index - offset, rs.getString(dvRow.disbVchrPaymentReasonCode.index));
-
             insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, getLedgerDocumentTypeCode(rs, dvRow));
             
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
@@ -337,7 +337,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
     private String getLedgerDocumentTypeCode(ResultSet rs, DvSourceRow dvRow) throws SQLException {
         String paymentMethodCode = rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index);
         String ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH;
-        if (paymentMethodCode == PaymentMethod.PM_CODE_WIRE) {
+        if (ObjectUtils.isNotNull(paymentMethodCode) && paymentMethodCode.equals(PaymentMethod.PM_CODE_WIRE)) {
             ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_WTFD;
         }
         return ledgerDocumentTypeCode;
