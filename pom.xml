@@ -635,10 +635,6 @@
             <version>${cynergy.version}-${cynergy.version.suffix}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>com.oracle</groupId>
-                    <artifactId>ojdbc6</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.kuali.rice</groupId>
                     <artifactId>rice-core-framework</artifactId>
                 </exclusion>
