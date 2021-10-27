@@ -235,7 +235,6 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             insertStatement.setString(detailRow.disbursementNbr.index - offset, rs.getString(pdpRow.disbursementNbr.index));
             insertStatement.setString(detailRow.paymentStatusCode.index - offset, rs.getString(pdpRow.paymentStatusCode.index));
             insertStatement.setString(detailRow.disbursementTypeCode.index - offset, rs.getString(pdpRow.disbursementTypeCode.index));
-
             insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, rs.getString(pdpRow.financialDocumentTypeCode.index));
 
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
