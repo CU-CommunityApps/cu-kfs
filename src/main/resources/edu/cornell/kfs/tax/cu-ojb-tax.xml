@@ -82,7 +82,7 @@
         <field-descriptor name="disbursementNbr" column="DISB_NBR" jdbc-type="BIGINT" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiIntegerFieldConversion" />
         <field-descriptor name="paymentStatusCode" column="PMT_STAT_CD" jdbc-type="VARCHAR" />
         <field-descriptor name="disbursementTypeCode" column="DISB_TYP_CD" jdbc-type="VARCHAR" />
-        <field-descriptor name="ledgerDocumentTypeCode" column="DOCUMENT_LEDGER_TYPE_CODE" jdbc-type="VARCHAR" />
+        <field-descriptor name="ledgerDocumentTypeCode" column="LEDGER_DOCUMENT_TYPE_CODE" jdbc-type="VARCHAR" />
     </class-descriptor>
 
 </descriptor-repository>
