@@ -27,7 +27,6 @@ import edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHe
 
 public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider {
     private static final Logger LOG = LogManager.getLogger(CreateDoneBatchFileActionsProvider.class);
-    protected static String KRAD_URL_PREFIX = "kr/";
     
     protected CreateDoneBatchFileAuthorizationService createDoneAuthorizationService;
     
@@ -37,7 +36,7 @@ public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider
         List<Action> actionLinks = new LinkedList<>();
 
         if (canCreateDoneFile(batchFile, user)) {
-            actionLinks.add(new Action("Create Done", "GET", KRAD_URL_PREFIX + getCreateDoneUrl(batchFile)));
+            actionLinks.add(new Action("Create Done", "GET", getCreateDoneUrl(batchFile)));
         }
 
         return actionLinks;
@@ -48,7 +47,7 @@ public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider
         parameters.put("filePath",
                 BatchFileUtils.pathRelativeToRootDirectory(batchFile.retrieveFile().getAbsolutePath()));
         parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "createDone");
-        return UrlFactory.parameterizeUrl("../createDoneBatchFileAdmin.do", parameters);
+        return UrlFactory.parameterizeUrl("createDoneBatchFileAdmin.do", parameters);
     }
     
     protected boolean canCreateDoneFile(BatchFile batchFile, Person user) {
