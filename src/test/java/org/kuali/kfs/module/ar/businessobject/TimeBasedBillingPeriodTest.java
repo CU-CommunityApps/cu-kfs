@@ -12,7 +12,7 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants.BillingFrequencyValues;
 import org.mockito.Mockito;
 
-public class TimeBasedBillingPeriodSTest {
+public class TimeBasedBillingPeriodTest {
 
     private TimeBasedBillingPeriod timeBasedBillingPeriod;
     private BillingFrequencyValues billingFrequency;

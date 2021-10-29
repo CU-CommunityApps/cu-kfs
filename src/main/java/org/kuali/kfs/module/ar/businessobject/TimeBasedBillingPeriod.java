@@ -18,21 +18,14 @@
  */
 package org.kuali.kfs.module.ar.businessobject;
 
-import java.sql.Date;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants;
 
-public class TimeBasedBillingPeriod extends BillingPeriod {
+import java.sql.Date;
 
-    /*
-     * CU Customization
-     */
-    private static final Logger LOG = LogManager.getLogger();
+public class TimeBasedBillingPeriod extends BillingPeriod {
 
     public TimeBasedBillingPeriod(ArConstants.BillingFrequencyValues billingFrequency, Date awardStartDate,
             Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService) {
@@ -45,11 +38,9 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         return accountingPeriod.getUniversityFiscalPeriodEndDate();
     }
 
-    protected Integer calculatePreviousPeriodByFrequency(Integer currentAccountingPeriodCode,
-            int periodsInBillingFrequency) {
+    protected Integer calculatePreviousPeriodByFrequency(Integer currentAccountingPeriodCode, int periodsInBillingFrequency) {
         Integer previousAccountingPeriodCode;
-        final int subAmt = (currentAccountingPeriodCode % periodsInBillingFrequency) == 0 ? periodsInBillingFrequency
-                : currentAccountingPeriodCode % periodsInBillingFrequency;
+        final int subAmt = (currentAccountingPeriodCode % periodsInBillingFrequency) == 0 ? periodsInBillingFrequency : currentAccountingPeriodCode % periodsInBillingFrequency;
 
         previousAccountingPeriodCode = currentAccountingPeriodCode - subAmt;
         return previousAccountingPeriodCode;
@@ -57,15 +48,15 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
 
     @Override
     protected boolean canThisBeBilledByBillingFrequency() {
-        if (ArConstants.BillingFrequencyValues.ANNUALLY.equals(billingFrequency) && accountingPeriodService
-                .getByDate(lastBilledDate).getUniversityFiscalYear() >= accountingPeriodService.getByDate(currentDate)
-                        .getUniversityFiscalYear()) {
+        if (ArConstants.BillingFrequencyValues.ANNUALLY.equals(billingFrequency)
+                && accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear() >=
+                    accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear()) {
             return false;
         } else {
             return !StringUtils.equals(findPreviousAccountingPeriod(currentDate).getUniversityFiscalPeriodCode(),
-                    findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode())
+                        findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode())
                     || !accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear()
-                            .equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear());
+                        .equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear());
         }
 
     }
@@ -85,24 +76,15 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         return determineStartDateByFrequency();
     }
 
-    /*
-     * CU Customization
-     */
     @Override
     protected Date determineStartDateByFrequency() {
-        if (lastBilledDate == null) {
-            LOG.info(
-                    "determineStartDateByFrequency, no previous billed date, so award start date is the next start date");
-            return awardStartDate;
-        }
-
-        return calculateNextDay(lastBilledDate);
+        AccountingPeriod lastBilledDateAccountingPeriod = findPreviousAccountingPeriod(lastBilledDate);
+        return calculateNextDay(lastBilledDateAccountingPeriod.getUniversityFiscalPeriodEndDate());
     }
 
     protected AccountingPeriod findPreviousAccountingPeriod(final Date date) {
         final AccountingPeriod currentAccountingPeriod = findAccountingPeriodBy(date);
-        final Integer currentAccountingPeriodCode = Integer
-                .parseInt(currentAccountingPeriod.getUniversityFiscalPeriodCode());
+        final Integer currentAccountingPeriodCode = Integer.parseInt(currentAccountingPeriod.getUniversityFiscalPeriodCode());
         Integer previousAccountingPeriodCode;
         previousAccountingPeriodCode = findPreviousAccountingPeriodCode(currentAccountingPeriodCode);
 
@@ -124,10 +106,10 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
 
     protected Integer findPreviousAccountingPeriodCode(Integer currentAccountingPeriodCode) {
         Integer previousAccountingPeriodCode;
-        if (ArConstants.BillingFrequencyValues.MONTHLY.equals(billingFrequency)
-                || ArConstants.BillingFrequencyValues.MANUAL.equals(billingFrequency)
-                || ArConstants.BillingFrequencyValues.MILESTONE.equals(billingFrequency)
-                || ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.equals(billingFrequency)) {
+        if (ArConstants.BillingFrequencyValues.MONTHLY.equals(billingFrequency) ||
+            ArConstants.BillingFrequencyValues.MANUAL.equals(billingFrequency) ||
+            ArConstants.BillingFrequencyValues.MILESTONE.equals(billingFrequency) ||
+            ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING.equals(billingFrequency)) {
             previousAccountingPeriodCode = calculatePreviousPeriodByFrequency(currentAccountingPeriodCode, 1);
         } else if (ArConstants.BillingFrequencyValues.QUARTERLY.equals(billingFrequency)) {
             previousAccountingPeriodCode = calculatePreviousPeriodByFrequency(currentAccountingPeriodCode, 3);
