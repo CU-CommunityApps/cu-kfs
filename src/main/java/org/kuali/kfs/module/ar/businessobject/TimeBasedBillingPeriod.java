@@ -19,6 +19,8 @@
 package org.kuali.kfs.module.ar.businessobject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants;
@@ -26,6 +28,11 @@ import org.kuali.kfs.module.ar.ArConstants;
 import java.sql.Date;
 
 public class TimeBasedBillingPeriod extends BillingPeriod {
+    
+    /*
+     * CU Customization
+     */
+    private static final Logger LOG = LogManager.getLogger();
 
     public TimeBasedBillingPeriod(ArConstants.BillingFrequencyValues billingFrequency, Date awardStartDate,
             Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService) {
@@ -76,10 +83,16 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         return determineStartDateByFrequency();
     }
 
+    /*
+     * CU Customization
+     */
     @Override
     protected Date determineStartDateByFrequency() {
-        AccountingPeriod lastBilledDateAccountingPeriod = findPreviousAccountingPeriod(lastBilledDate);
-        return calculateNextDay(lastBilledDateAccountingPeriod.getUniversityFiscalPeriodEndDate());
+        if (lastBilledDate == null) {
+            LOG.info("determineStartDateByFrequency, no previous billed date, so award start date is the next start date");
+            return awardStartDate;
+        }
+        return calculateNextDay(lastBilledDate);
     }
 
     protected AccountingPeriod findPreviousAccountingPeriod(final Date date) {
