@@ -337,10 +337,15 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
     private String getLedgerDocumentTypeCode(ResultSet rs, DvSourceRow dvRow) throws SQLException {
         String paymentMethodCode = rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index);
         String ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH;
-        if (ObjectUtils.isNotNull(paymentMethodCode) && paymentMethodCode.equals(PaymentMethod.PM_CODE_WIRE)) {
+        if (isPaymentCodeWireOrForeignDraft(paymentMethodCode)) {
             ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_WTFD;
         }
         return ledgerDocumentTypeCode;
+    }
+
+    private boolean isPaymentCodeWireOrForeignDraft(String paymentMethodCode) {
+        return ObjectUtils.isNotNull(paymentMethodCode) &&
+                (paymentMethodCode.equals(PaymentMethod.PM_CODE_WIRE) || paymentMethodCode.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT));
     }
 
     @Override
