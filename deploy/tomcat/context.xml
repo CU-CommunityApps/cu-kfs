@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE doc>
 <!--
     CU Customizations:
 
@@ -28,6 +27,7 @@
     * Backported FINP-7585 context.xml bundling fix from the 2021-05-27 patch (which moved this file
           to a new location and required adjusting the POM's maven-war-plugin configuration).
  -->
+<!DOCTYPE doc>
 <Context path="/kfs" reloadable="true">
   <CookieProcessor sameSiteCookies="none" />
 
