@@ -45,7 +45,7 @@ public class TimeBasedBillingPeriodTest {
     }
 
     @Test
-    public void testDetermineStartDateByFrequencyNewYeara() {
+    public void testDetermineStartDateByFrequencyNewYears() {
         Date lastBilledDate = buildDate(2018, Calendar.DECEMBER, 31);
         Date expectedNextDate = buildDate(2019, Calendar.JANUARY, 1);
         assertEquals(expectedNextDate.toString(), findNextBillingDate(lastBilledDate).toString());
