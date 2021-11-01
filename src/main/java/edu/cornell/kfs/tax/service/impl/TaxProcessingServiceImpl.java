@@ -117,7 +117,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
                     throw new IllegalStateException("Dates-to-process parameter's literal year value was not an integer");
                 }
                 if (reportYear != tempCalendar.get(Calendar.YEAR)) {
-                    tempCalendar.set(reportYear, Calendar.JANUARY, DAY_31);
+                    tempCalendar.set(reportYear, Calendar.DECEMBER, DAY_31);
                 }
                 endDate = new java.sql.Date(tempCalendar.getTime().getTime());
                 
