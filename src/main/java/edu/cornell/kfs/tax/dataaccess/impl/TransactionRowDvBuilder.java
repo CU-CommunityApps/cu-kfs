@@ -334,6 +334,25 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         prepareForSecondPass(summary, docIds);
     }
 
+    /**
+     * Overridden to also insert nulls for the following field placeholders:
+     *
+     * <ul>
+     *   <li>disbursementNbr</li>
+     *   <li>paymentStatusCode</li>
+     * </ul>
+     *
+     * @see edu.cornell.kfs.tax.dataaccess.impl.TransactionRowBuilder#insertNullsForTransactionRow(java.sql.PreparedStatement,
+     * edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow, int)
+     */
+    @Override
+    void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
+        super.insertNullsForTransactionRow(insertStatement, detailRow, offset);
+        insertStatement.setString(detailRow.disbursementNbr.index - offset, null);
+        insertStatement.setString(detailRow.paymentStatusCode.index - offset, null);
+    }
+
+
     private String getLedgerDocumentTypeCode(ResultSet rs, DvSourceRow dvRow) throws SQLException {
         String paymentMethodCode = rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index);
         String ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH;
