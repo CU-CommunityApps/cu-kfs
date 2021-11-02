@@ -120,6 +120,8 @@ public final class CUTaxBatchConstants {
         public static final String PAYEE_ID_TYPE_CODE = "payeeIdTypeCode";
         public static final String LINE1_ADDRESS = "line1Address";
         public static final String NRA_PAYMENT_IND = "nraPayment";
+        public static final String PAYMENT_STATUS_CODE = "paymentStatusCode";
+        public static final String DISBURSEMENT_TYPE_CODE = "disbursementTypeCode";
         // Fields from PDP_PMT_DTL_T (PaymentDetail)
         public static final String PAYMENT_DETAIL_ID = "paymentDetail.id";
         public static final String CUSTOMER_PAYMENT_DOC_NUMBER = "custPaymentDocNbr";
@@ -353,7 +355,11 @@ public final class CUTaxBatchConstants {
         public static final String FORM_1042S_OVERRIDDEN_BOX = "form1042SOverriddenBox";
         public static final String PAYMENT_REASON_CODE = "paymentReasonCode";
         
-        
+        public static final String DISBURSEMENT_NUMBER = "disbursementNbr";
+        public static final String PAYMENT_STATUS_CODE = "paymentStatusCode";
+        public static final String DISBURSEMENT_TYPE_CODE = "disbursementTypeCode";
+        public static final String LEDGER_DOCUMENT_TYPE_CODE = "ledgerDocumentTypeCode";
+
         private TransactionDetailFieldNames() {
             throw new UnsupportedOperationException("do not call TransactionDetailFieldNames constructor");
         }

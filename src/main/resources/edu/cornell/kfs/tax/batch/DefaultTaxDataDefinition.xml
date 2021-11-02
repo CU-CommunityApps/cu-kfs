@@ -44,6 +44,8 @@
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::payeeIdTypeCd" alias="payeeIdTypeCode" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::line1Address" alias="line1Address" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::nonresidentPayment" alias="nraPayment" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::paymentStatusCode" alias="paymentStatusCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.PaymentGroup::disbursementTypeCode" alias="disbursementTypeCode" />
         <!-- ==== Fields from PDP_PMT_DTL_T ==== -->
         <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::id" alias="paymentDetail.id" />
         <field name="org.kuali.kfs.pdp.businessobject.PaymentDetail::custPaymentDocNbr" alias="custPaymentDocNbr" />
@@ -303,6 +305,10 @@
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SBox" alias="form1042SBox" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::form1042SOverriddenBox" alias="form1042SOverriddenBox" />
         <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentReasonCode" alias="paymentReasonCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::disbursementNbr" alias="disbursementNbr" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::paymentStatusCode" alias="paymentStatusCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::disbursementTypeCode" alias="disbursementTypeCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.TransactionDetail::ledgerDocumentTypeCode" alias="ledgerDocumentTypeCode" />
     </row>
     <!--
         ===========================================================================================
