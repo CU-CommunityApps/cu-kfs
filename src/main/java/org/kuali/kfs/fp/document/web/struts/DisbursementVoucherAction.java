@@ -77,7 +77,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -752,7 +751,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.DOC_NUM, dvForm.getDocument().getDocumentNumber());
 
         // TODO: how should this forward be handled
-        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/kr/" + KRADConstants.LOOKUP_ACTION, props);
+        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION, props);
 
         dvForm.registerEditableProperty("methodToCall");
 
@@ -830,7 +829,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.DOC_NUM, dvForm.getDocument().getDocumentNumber());
 
         // TODO: how should this forward be handled
-        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/kr/" + KRADConstants.LOOKUP_ACTION,
+        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION,
                 props);
 
         dvForm.registerEditableProperty("methodToCall");
