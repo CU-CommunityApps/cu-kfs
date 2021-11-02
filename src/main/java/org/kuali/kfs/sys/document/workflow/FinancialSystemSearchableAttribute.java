@@ -219,11 +219,11 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         try {
             searchAttrValues = super.extractDocumentAttributes(extensionDefinition,
                 documentWithContent);
-        } catch (NullPointerException npe) {
-            LOG.error("Caught: NPE: ", npe);
+        } catch (Exception ex) {
+            LOG.error("Caught: Exception: ", ex);
             LOG.error("extractDocumentAttributes( " + extensionDefinition + ", " + documentWithContent + " )");
-            LOG.error("Rethrowing NullPointerException to preserve existing processing.");
-            throw npe;
+            LOG.error("Rethrowing to preserve existing processing.");
+            throw ex;
         }
 
         String docId = documentWithContent.getDocument().getDocumentId();
