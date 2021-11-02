@@ -59,6 +59,8 @@
 		
 		<form-bean name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm" />
 		
+		<form-bean name="ConcurManageRequestTokenForm" type="edu.cornell.kfs.concur.web.struts.form.ConcurManageRequestTokenForm" />
+		
 		<form-bean name="KualiMaintenanceForm" type="org.kuali.kfs.kns.web.struts.form.KualiMaintenanceForm"/>
 
     </form-beans>
@@ -203,6 +205,11 @@
 
         <action path="/concur/manageAccessToken" name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.ConcurManageAccessTokenAction" 
         		scope="request" parameter="methodToCall" attribute="KualiForm">
+            <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
+        </action>
+        
+        <action path="/concur/manageRequestToken" name="ConcurManageRequestTokenForm" type="edu.cornell.kfs.concur.web.struts.ConcurManageRequestTokenAction" 
+            scope="request" parameter="methodToCall" attribute="KualiForm">
             <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
         </action>
 
