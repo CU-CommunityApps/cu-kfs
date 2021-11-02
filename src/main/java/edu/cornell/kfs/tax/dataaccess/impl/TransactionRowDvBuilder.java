@@ -349,6 +349,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
     void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
         super.insertNullsForTransactionRow(insertStatement, detailRow, offset);
         insertStatement.setString(detailRow.disbursementNbr.index - offset, null);
+        insertStatement.setString(detailRow.disbursementTypeCode.index - offset, null);
         insertStatement.setString(detailRow.paymentStatusCode.index - offset, null);
     }
 
