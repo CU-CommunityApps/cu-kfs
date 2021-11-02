@@ -678,7 +678,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
         favoriteAccountLine.append("<td valign=\"top\" class=\"infoline\">");
         favoriteAccountLine.append("<div style=\"text-align: center;\">");
-        favoriteAccountLine.append("<input type=\"image\" name=\"methodToCall.addFavoriteAccount.line").append(itemIdx).append(".anchorFavoriteAnchor\" src=\"kr/static/images/tinybutton-add1.gif\" tabindex=\"0\" class=\"tinybutton\"");
+        favoriteAccountLine.append("<input type=\"image\" name=\"methodToCall.addFavoriteAccount.line").append(itemIdx).append(".anchorFavoriteAnchor\" src=\"static/images/tinybutton-add1.gif\" tabindex=\"0\" class=\"tinybutton\"");
         favoriteAccountLine.append(" title=\"Add Favorite  Accounting Line\" alt=\"Add Favorite Accounting Line\">");
         favoriteAccountLine.append("</input>");
         favoriteAccountLine.append("<br></div></td>");
