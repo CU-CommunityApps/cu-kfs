@@ -1,15 +1,11 @@
 package edu.cornell.kfs.sys.businessobject.actions;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.Action;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -19,15 +15,9 @@ import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.businessobject.actions.BatchFileActionsProvider;
 import org.kuali.kfs.kim.api.identity.Person;
 
-import org.kuali.kfs.krad.util.KRADConstants;
-
-import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
-import edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl;
 
 public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider {
-    private static final Logger LOG = LogManager.getLogger(CreateDoneBatchFileActionsProvider.class);
-    protected static String KRAD_URL_PREFIX = "kr/";
     
     protected CreateDoneBatchFileAuthorizationService createDoneAuthorizationService;
     
@@ -37,7 +27,7 @@ public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider
         List<Action> actionLinks = new LinkedList<>();
 
         if (canCreateDoneFile(batchFile, user)) {
-            actionLinks.add(new Action("Create Done", "GET", KRAD_URL_PREFIX + getCreateDoneUrl(batchFile)));
+            actionLinks.add(new Action("Create Done", "GET", getCreateDoneUrl(batchFile)));
         }
 
         return actionLinks;
@@ -48,7 +38,7 @@ public class CreateDoneBatchFileActionsProvider extends BatchFileActionsProvider
         parameters.put("filePath",
                 BatchFileUtils.pathRelativeToRootDirectory(batchFile.retrieveFile().getAbsolutePath()));
         parameters.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, "createDone");
-        return UrlFactory.parameterizeUrl("../createDoneBatchFileAdmin.do", parameters);
+        return UrlFactory.parameterizeUrl("createDoneBatchFileAdmin.do", parameters);
     }
     
     protected boolean canCreateDoneFile(BatchFile batchFile, Person user) {
