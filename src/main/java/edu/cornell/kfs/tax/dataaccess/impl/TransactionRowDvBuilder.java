@@ -339,6 +339,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
      *
      * <ul>
      *   <li>disbursementNbr</li>
+     *   <li>disbursementTypeCode</li>
      *   <li>paymentStatusCode</li>
      * </ul>
      *
