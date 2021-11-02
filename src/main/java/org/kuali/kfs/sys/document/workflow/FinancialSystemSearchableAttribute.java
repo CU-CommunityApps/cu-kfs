@@ -215,8 +215,16 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         if (LOG.isDebugEnabled()) {
             LOG.debug("extractDocumentAttributes( " + extensionDefinition + ", " + documentWithContent + " )");
         }
-        List<DocumentAttribute> searchAttrValues = super.extractDocumentAttributes(extensionDefinition,
+        List<DocumentAttribute> searchAttrValues = null;
+        try {
+            searchAttrValues = super.extractDocumentAttributes(extensionDefinition,
                 documentWithContent);
+        } catch (Exception ex) {
+            LOG.error("Caught: Exception: ", ex);
+            LOG.error("extractDocumentAttributes( " + extensionDefinition + ", " + documentWithContent + " )");
+            LOG.error("Rethrowing to preserve existing processing.");
+            throw ex;
+        }
 
         String docId = documentWithContent.getDocument().getDocumentId();
         DocumentService docService = SpringContext.getBean(DocumentService.class);
