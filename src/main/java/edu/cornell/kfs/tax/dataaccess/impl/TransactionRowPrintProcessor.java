@@ -137,7 +137,6 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
                 break;
             
             case java.sql.Types.INTEGER :
-            case java.sql.Types.BIGINT :
                 recordPiece = new TransactionDetailIntPiece(name, len, detailField.index);
                 break;
             

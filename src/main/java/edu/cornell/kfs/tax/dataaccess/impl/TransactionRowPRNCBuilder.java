@@ -360,11 +360,6 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
         insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
         insertStatement.setString(detailRow.paymentReasonCode.index - offset, null);
         insertStatement.setString(detailRow.paymentDescription.index - offset, null);
-
-        insertStatement.setString(detailRow.disbursementNbr.index - offset, null);
-        insertStatement.setString(detailRow.disbursementTypeCode.index - offset, null);
-        insertStatement.setString(detailRow.paymentStatusCode.index - offset, null);
-        insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, null);
     }
 
     @Override
