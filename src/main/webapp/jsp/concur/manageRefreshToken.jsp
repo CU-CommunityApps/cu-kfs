@@ -11,6 +11,7 @@
       <div style="font-weight: bold">if you ware doing this action in a non-production environment, be sure to update .</div>
       <div>
         <html:submit property="methodToCall.replaceRefreshToken" styleClass="btn btn-default" value="Replace Refresh Token" />
+        <html:submit property="methodToCall.cancel" styleClass="btn btn-default" value="Cancel" />
       </div>
     </div>
 
