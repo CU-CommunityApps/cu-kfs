@@ -51,5 +51,5 @@ public class ConcurKeyConstants {
     public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCES_NO_REPORT_EMAIL_BODY = "message.concur.sae.requested.cash.advance.no.report.email.body";
     public static final String MESSAGE_CONCUR_REFRESH_TOKEN_NONPROD_WARNING = "message.concur.refresh.token.nonprod.warning";
     public static final String MESSAGE_CONCUR_REFRESH_TOKEN_REFRESH_DATE = "message.concur.refresh.token.refresh.date";
-    public static final String MESSAGE_CONCUR_REFRESH_TOKEN_UPDATE_SUCCESS = "MESSAGE.CONCUR.REFRESH.TOKEN.UPDATE.SUCCESS";
+    public static final String MESSAGE_CONCUR_REFRESH_TOKEN_UPDATE_SUCCESS = "message.concur.refresh.token.update.success";
 }
