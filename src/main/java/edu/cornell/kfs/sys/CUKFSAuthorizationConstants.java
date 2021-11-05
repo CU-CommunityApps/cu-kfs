@@ -9,9 +9,4 @@ public class CUKFSAuthorizationConstants  {
         public static final String DISPLAY_INVOICE_FIELDS = "displayInvoiceFields";
 
     }
-    
-    public static class AdvanceDepositEditMode extends TransactionalEditMode {
-        public static final String EDITABLE_ADVANCE_DEPOSITS = "editableAdvanceDeposits";
-
-    }
 }
