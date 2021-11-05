@@ -9,14 +9,7 @@
     <import resource="classpath:edu/cornell/kfs/sys/cu-sys-lookup-beans.xml"/>
     
 	<bean id="AdvanceDepositDocument" parent="AdvanceDepositDocument-parentBean" p:attachmentTypesValuesFinder-ref="cuConfidentialAttachmentTypeValuesFinder">
-		<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentPresentationController"/>
-		<property name="documentAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentAuthorizer"/>
 		<property name="allowsErrorCorrection" value="false"/>
-	</bean>
-	
-	<bean id="AdvanceDepositDocument-sourceAccountingLineGroup" parent="AdvanceDepositDocument-sourceAccountingLineGroup-parentBean">
-	  <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositAccountingLineAuthorizer"/>
-
 	</bean>
 	
 	<bean id="AdvanceDepositDocument-workflowAttributes" parent="AdvanceDepositDocument-workflowAttributes-parentBean">
