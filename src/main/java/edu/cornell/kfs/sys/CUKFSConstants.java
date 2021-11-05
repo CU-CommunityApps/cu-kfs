@@ -34,7 +34,6 @@ public class CUKFSConstants {
     
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
-        public static final String ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME = "Advanced Deposit Organization Review";
         public static final String CREATE_DONE_FILE_PERMISSION_TEMPLATE_NAME = "Create Done File";
         public static final String DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME = "Download Batch File";
     }       
