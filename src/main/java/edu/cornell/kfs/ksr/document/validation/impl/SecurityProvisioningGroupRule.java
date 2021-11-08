@@ -16,8 +16,8 @@ import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.KSRKeyConstants;
@@ -66,23 +66,12 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 			}
 			if (securityProvisioning.getSecurityProvisioningGroups().get(i).getRoleId().equals(securityProvisioningGroup.getRoleId())) {
 				success = false;
-				MessageMap map = GlobalVariables.getMessageMap();
-				String errorPathPrefix = (index != -1 ? "" : "add.")
-						+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-						+ showIndex(index);
-				boolean newErrorPath = false;
-				if (map.getErrorPath().size() == 0) {
-					newErrorPath = true;
-					GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-					GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-				}
+				String errorPath = (index < 0) ? KSRPropertyConstants.PROVISIONING_ROLE_ID : buildPropertyPath(
+						buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+						KSRPropertyConstants.PROVISIONING_ROLE_ID);
 				if ((index == -1) || (index > i)) {
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_UNIQUE,
+					GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_UNIQUE,
 							getRoleNameForErrorMessage(securityProvisioningGroup.getRole()));
-				}
-				if (newErrorPath) {
-					GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-					GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
 				}
 			}
 
@@ -103,25 +92,13 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 			}
 			if (securityProvisioningGroup.getDependentRoles().get(i).getRoleId().equals(dependentRole.getRoleId())) {
 				success = false;
-				MessageMap map = GlobalVariables.getMessageMap();
-				String errorPathPrefix = (indexRole != -1 ? "" : "add.")
-						+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-						+ showIndex(index) + "." + KSRConstants.DEPENDENT_ROLES
-						+ showIndex(indexRole);
-
-				boolean newErrorPath = false;
-				if (map.getErrorPath().size() == 0) {
-					newErrorPath = true;
-					GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-					GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-				}
+				String errorPath = (indexRole < 0 || index < 0) ? KSRPropertyConstants.PROVISIONING_ROLE_ID : buildPropertyPath(
+						buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+						buildIndexedProperty(KSRConstants.DEPENDENT_ROLES, indexRole),
+						KSRPropertyConstants.PROVISIONING_ROLE_ID);
 				if ((indexRole == -1) || (indexRole > i)) {
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_UNIQUE,
+					GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_UNIQUE,
 							getRoleNameForErrorMessage(dependentRole.getRole()));
-				}
-				if (newErrorPath) {
-					GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-					GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
 				}
 			}
 
@@ -138,24 +115,11 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 
 		if (StringUtils.isBlank(dependentRole.getRoleId())) {
 			success = false;
-			MessageMap map = GlobalVariables.getMessageMap();
-			String errorPathPrefix = (indexRole != -1 ? "" : "add.")
-					+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-					+ showIndex(index) + "." + KSRConstants.DEPENDENT_ROLES
-					+ showIndex(indexRole);
-
-			boolean newErrorPath = false;
-			if (map.getErrorPath().size() == 0) {
-				newErrorPath = true;
-				GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-				GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-			}
-			GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_BLANK);
-
-			if (newErrorPath) {
-				GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-				GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-			}
+			String errorPath = (indexRole < 0 || index < 0) ? KSRPropertyConstants.PROVISIONING_ROLE_ID : buildPropertyPath(
+					buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+					buildIndexedProperty(KSRConstants.DEPENDENT_ROLES, indexRole),
+					KSRPropertyConstants.PROVISIONING_ROLE_ID);
+			GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_BLANK);
 		}
 
 		return success;
@@ -176,25 +140,11 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 			
 			if (kimTypeService != null && kimTypeService instanceof org.kuali.kfs.kns.kim.role.DerivedRoleTypeServiceBase) {
 				success = false;
-				MessageMap map = GlobalVariables.getMessageMap();
-				String errorPathPrefix = (index != -1 ? "" : "add.")
-						+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-						+ showIndex(index);
-				boolean newErrorPath = false;
-				if (map.getErrorPath().size() == 0) {
-					newErrorPath = true;
-					GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-					GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-				}
-
-				GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME,
-				        KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_DERIVED,
+				String errorPath = (index < 0) ? KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME : buildPropertyPath(
+						buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+						KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME);
+				GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_ROLE_DERIVED,
 						getRoleNameForErrorMessage(securityProvisioningGroup.getRole()));
-
-				if (newErrorPath) {
-					GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-					GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-				}
 			}
 		}
 
@@ -206,49 +156,25 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 				if (StringUtils.isNotBlank(securityProvisioningGroup.getAdditionalAuthorizerRoleId())) {
 					if (securityProvisioningGroup.getDistributedAuthorizerRoleId().equals(securityProvisioningGroup.getAdditionalAuthorizerRoleId())) {
 						success = false;
-						MessageMap map = GlobalVariables.getMessageMap();
-						String errorPathPrefix = (index != -1 ? "" : "add.")
-								+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-								+ showIndex(index);
-						boolean newErrorPath = false;
-						if (map.getErrorPath().size() == 0) {
-							newErrorPath = true;
-							GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-							GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-						}
-
-						GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ADD_AUTH_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_AUTH_UNIQUE, new String[] {
+						String errorPath = (index < 0) ? KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ADD_AUTH_ROLE_ID : buildPropertyPath(
+								buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+								KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ADD_AUTH_ROLE_ID);
+						GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_AUTH_UNIQUE, new String[] {
 								KSRConstants.SECURITY_PROVISIONING_GROUP_ADD_AUTH_LBL,
 								KSRConstants.SECURITY_PROVISIONING_GROUP_DIST_AUTH_LBL,
 								KSRConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_LBL });
-						if (newErrorPath) {
-							GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-							GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-						}
 					}
 				}
 				if (StringUtils.isNotBlank(securityProvisioningGroup.getCentralAuthorizerRoleId())) {
 					if (securityProvisioningGroup.getDistributedAuthorizerRoleId().equals(securityProvisioningGroup.getCentralAuthorizerRoleId())) {
 						success = false;
-						MessageMap map = GlobalVariables.getMessageMap();
-						String errorPathPrefix = (index != -1 ? "" : "add.")
-								+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-								+ showIndex(index);
-						boolean newErrorPath = false;
-						if (map.getErrorPath().size() == 0) {
-							newErrorPath = true;
-							GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-							GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-						}
-
-						GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_AUTH_UNIQUE, new String[] {
+						String errorPath = (index < 0) ? KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_ROLE_ID : buildPropertyPath(
+								buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+								KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_ROLE_ID);
+						GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_AUTH_UNIQUE, new String[] {
 								KSRConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_LBL,
 								KSRConstants.SECURITY_PROVISIONING_GROUP_DIST_AUTH_LBL,
 								KSRConstants.SECURITY_PROVISIONING_GROUP_ADD_AUTH_LBL });
-						if (newErrorPath) {
-							GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-							GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-						}
 					}
 				}
 
@@ -257,25 +183,13 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 				if (StringUtils.isNotBlank(securityProvisioningGroup.getCentralAuthorizerRoleId())) {
 					if (securityProvisioningGroup.getAdditionalAuthorizerRoleId().equals(securityProvisioningGroup.getCentralAuthorizerRoleId())) {
 						success = false;
-						MessageMap map = GlobalVariables.getMessageMap();
-						String errorPathPrefix = (index != -1 ? "" : "add.")
-								+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-								+ showIndex(index);
-						boolean newErrorPath = false;
-						if (map.getErrorPath().size() == 0) {
-							newErrorPath = true;
-							GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-							GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-						}
-
-						GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_AUTH_UNIQUE, new String[] {
+						String errorPath = (index < 0) ? KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_ROLE_ID : buildPropertyPath(
+								buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+								KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_ROLE_ID);
+						GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_AUTH_UNIQUE, new String[] {
 								KSRConstants.SECURITY_PROVISIONING_GROUP_CENT_AUTH_LBL,
 								KSRConstants.SECURITY_PROVISIONING_GROUP_DIST_AUTH_LBL,
 								KSRConstants.SECURITY_PROVISIONING_GROUP_ADD_AUTH_LBL });
-						if (newErrorPath) {
-							GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-							GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-						}
 					}
 				}
 
@@ -295,25 +209,12 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 				if (securityProvisioningGroup.getRoleTabOrder() != null
 						&& securityProvisioningGroup.getRoleTabOrder().equals(securityProvisioningGroupList.get(i).getRoleTabOrder())) {
 					success = false;
-					MessageMap map = GlobalVariables.getMessageMap();
-					String errorPathPrefix = (index != -1 ? "" : "add.")
-							+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-							+ showIndex(index);
-					boolean newErrorPath = false;
-					if (map.getErrorPath().size() == 0) {
-						newErrorPath = true;
-						GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-						GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-					}
+					String errorPath = (index < 0) ? KSRPropertyConstants.PROVISIONING_ROLE_TAB_ORDER : buildPropertyPath(
+							buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+							KSRPropertyConstants.PROVISIONING_ROLE_TAB_ORDER);
 
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_TAB_ORDER_UNIQUE,
+					GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_TAB_ORDER_UNIQUE,
 							getRoleNameForErrorMessage(securityProvisioningGroup.getRole()));
-
-					if (newErrorPath) {
-						GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-						GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-					}
-
 				}
 			}
 
@@ -322,15 +223,12 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		return success;
 	}
 
-	private String showIndex(int index) {
-		return (index == -1 ? "" : "[" + index + "]");
-	}
-
 	@Override
 	protected boolean dataDictionaryValidate(MaintenanceDocument document) {
 		boolean success = true;
 		Map<String, SecurityProvisioningGroup> provisioningMap = new HashMap<String, SecurityProvisioningGroup>();
 		SecurityProvisioning securityProvisioning = (SecurityProvisioning) document.getDocumentDataObject();
+		GlobalVariables.getMessageMap().addToErrorPath(MaintenanceDocumentRuleBase.MAINTAINABLE_ERROR_PATH);
 
 		// Loop through all SecurityProvisioningGroups
 		// Validate the SecurityProvisioningGroup and check it for duplicates
@@ -366,26 +264,15 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 						+ "|");
 				if (matches > 1) {
 					success = false;
-					MessageMap map = GlobalVariables.getMessageMap();
-					String errorPathPrefix = KSRConstants.SECURITY_PROVISIONING_GROUPS
-							+ showIndex(i);
-					boolean newErrorPath = false;
-					if (map.getErrorPath().size() == 0) {
-						newErrorPath = true;
-						GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-						GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-					}
-
-					GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_CIRCULAR_REFERENCE,
+					String errorPath = buildPropertyPath(
+							buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, i),
+							KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME);
+					GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_CIRCULAR_REFERENCE,
 							getRoleNameForErrorMessage(securityProvisioning.getSecurityProvisioningGroups().get(i).getRole()));
-
-					if (newErrorPath) {
-						GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-						GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-					}
 				}
 			}
 		}
+		GlobalVariables.getMessageMap().removeFromErrorPath(MaintenanceDocumentRuleBase.MAINTAINABLE_ERROR_PATH);
 		return super.dataDictionaryValidate(document) && success;
 
 	}
@@ -405,25 +292,12 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		}
 
 		if (!success) {
-			MessageMap map = GlobalVariables.getMessageMap();
-			String errorPathPrefix = (indexRole != -1 ? "" : "add.")
-					+ KSRConstants.SECURITY_PROVISIONING_GROUPS
-					+ showIndex(index) + "." + KSRConstants.DEPENDENT_ROLES
-					+ showIndex(indexRole);
-
-			boolean newErrorPath = false;
-			if (map.getErrorPath().size() == 0) {
-				newErrorPath = true;
-				GlobalVariables.getMessageMap().addToErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-				GlobalVariables.getMessageMap().addToErrorPath(errorPathPrefix);
-			}
-			GlobalVariables.getMessageMap().putError(KSRPropertyConstants.PROVISIONING_ROLE_ID, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_MATCH,
+			String errorPath = (indexRole < 0 || index < 0) ? KSRPropertyConstants.PROVISIONING_ROLE_ID : buildPropertyPath(
+					buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
+					buildIndexedProperty(KSRConstants.DEPENDENT_ROLES, indexRole),
+					KSRPropertyConstants.PROVISIONING_ROLE_ID);
+			GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_DEPENDENT_ROLE_MATCH,
 					getRoleNameForErrorMessage(dependentRole.getRole()));
-
-			if (newErrorPath) {
-				GlobalVariables.getMessageMap().removeFromErrorPath(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE);
-				GlobalVariables.getMessageMap().removeFromErrorPath(errorPathPrefix);
-			}
 		}
 		return success;
 	}
@@ -447,6 +321,18 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		}
 		return "," + temp;
 	}
+
+    private String buildPropertyPath(Object... pathSections) {
+        return StringUtils.joinWith(KFSConstants.DELIMITER, pathSections);
+    }
+
+    private String buildIndexedProperty(String propertyName, int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Invalid negative index '" + index + "'; this should NEVER happen");
+        }
+        return StringUtils.join(propertyName, KFSConstants.SQUARE_BRACKET_LEFT,
+                index, KFSConstants.SQUARE_BRACKET_RIGHT);
+    }
 
 	protected KimTypeInfoService getKimTypeInfoService() {
 	    return KimApiServiceLocator.getKimTypeInfoService();
