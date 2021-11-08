@@ -27,6 +27,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
 import edu.cornell.kfs.concur.web.struts.form.ConcurManageRefreshTokenForm;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
@@ -52,6 +53,7 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
     public ActionForward replaceRefreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) 
             throws Exception {
         LOG.info("replaceRefreshToken, entering");
+        getConcurAccessTokenV2Service().retrieveAndPersistNewRefreshToken();
         updateFormValues((ConcurManageRefreshTokenForm) form, true);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -93,12 +95,16 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
         return isProd;
     }
     
-    public ConfigurationService getConfigurationService() {
+    protected ConfigurationService getConfigurationService() {
         return SpringContext.getBean(ConfigurationService.class);
     }
     
-    public BusinessObjectService getBusinessObjectService() {
+    protected BusinessObjectService getBusinessObjectService() {
         return SpringContext.getBean(BusinessObjectService.class);
+    }
+    
+    protected ConcurAccessTokenV2Service getConcurAccessTokenV2Service() {
+        return SpringContext.getBean(ConcurAccessTokenV2Service.class);
     }
 
 }
