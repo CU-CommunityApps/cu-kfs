@@ -558,6 +558,16 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>secretsmanager</artifactId>
             <version>${aws-java-sdk.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>io.netty</groupId>
+            		<artifactId>netty-buffer</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>io.netty</groupId>
+            		<artifactId>netty-codec</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency> 
         <dependency>
             <groupId>backport-util-concurrent</groupId>

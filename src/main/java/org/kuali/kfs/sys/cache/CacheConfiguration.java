@@ -82,7 +82,7 @@ public class CacheConfiguration {
     @Bean
     public List<String> cacheNames() {
         return List.of(
-                Account.CACHE_NAME,
+                Account.CACHE_NAME ,
                 AccountingPeriod.CACHE_NAME,
                 AccountsReceivableCustomerInvoiceDetail.CACHE_NAME,
                 BalanceType.CACHE_NAME,
@@ -130,12 +130,14 @@ public class CacheConfiguration {
     public Map<String, Long> cacheExpires() {
         // These caches have a TTL value different from the default specified in the redis.default.ttl property
         return Map.ofEntries(
+        		
                 entry(DocumentType.CACHE_NAME, 3600L),
                 entry(MenuService.MENU_LINKS_CACHE_NAME, 86760L),
                 entry(Namespace.CACHE_NAME, 3600L),
                 entry(Parameter.CACHE_NAME, 3600L),
                 entry(RoutePath.CACHE_NAME, 3600L),
                 entry(RuleAttribute.CACHE_NAME, 3600L)
+                
         );
     }
 
@@ -167,6 +169,7 @@ public class CacheConfiguration {
             List<String> cacheNames,
             Map<String, Long> cacheExpires
     ) {
+    	cacheNames.remove(0);
         final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate, cacheNames, true);
         redisCacheManager.setDefaultExpiration(redisDefaultTtl);
         redisCacheManager.setExpires(cacheExpires);
