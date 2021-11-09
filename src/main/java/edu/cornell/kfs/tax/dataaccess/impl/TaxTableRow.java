@@ -335,6 +335,11 @@ abstract class TaxTableRow {
         final TaxTableField paidDate;
         // Fields from SH_UNIV_DATE_T (UniversityDate)
         final TaxTableField universityDate;
+        // Fields from TX_DV_DISBURSEMENT_V (Disbursement Fields)
+        final TaxTableField custPaymentDocNbr;
+        final TaxTableField disbursementNbr;
+        final TaxTableField paymentStatusCode;
+        final TaxTableField disbursementTypeCode;
         
         DvSourceRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields, Integer insertOffset) {
             super(rowId, fields, tables, aliasedFields, insertOffset);
@@ -367,6 +372,12 @@ abstract class TaxTableRow {
             this.extractDate = getAliasedField(CommonDvSourceFieldNames.EXTRACT_DATE);
             this.paidDate = getAliasedField(CommonDvSourceFieldNames.PAID_DATE);
             this.universityDate = getAliasedField(CommonDvSourceFieldNames.UNIVERSITY_DATE);
+
+            this.custPaymentDocNbr = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_PAYMENT_DOC_NUMBER);
+            this.disbursementNbr = getAliasedField(CommonDvSourceFieldNames.DISBURSEMENT_NUMBER);
+            this.disbursementTypeCode = getAliasedField(CommonDvSourceFieldNames.DISBURSEMENT_TYPE_CODE);
+            this.paymentStatusCode = getAliasedField(CommonDvSourceFieldNames.PAYMENT_STATUS_CODE);
+
             // Vendor-related fields will be configured by the superclass.
         }
     }

@@ -87,6 +87,7 @@
             <objectClass name="org.kuali.kfs.fp.document.DisbursementVoucherDocument" />
             <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
             <objectClass name="org.kuali.kfs.sys.businessobject.UniversityDate" />
+            <objectClass name="edu.cornell.kfs.tax.businessobject.DvDisbursementView" />
         </objectClasses>
         <!-- ==== Fields from FP_DV_PAYEE_DTL_T ==== -->
         <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail::documentNumber" alias="payeeDetail.documentNumber" />
@@ -128,6 +129,11 @@
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorForeignIndicator" alias="vendorForeignIndicator" />
         <!-- ==== Fields from SH_UNIV_DATE_T ==== -->
         <field name="org.kuali.kfs.sys.businessobject.UniversityDate::universityDate" alias="universityDate" />
+        <!-- ==== Fields from TX_DV_DISBURSEMENT_V ==== -->
+        <field name="edu.cornell.kfs.tax.businessobject.DvDisbursementView::custPaymentDocNbr" alias="custPaymentDocNbr" />
+        <field name="edu.cornell.kfs.tax.businessobject.DvDisbursementView::disbursementNbr" alias="disbursementNbr" />
+        <field name="edu.cornell.kfs.tax.businessobject.DvDisbursementView::paymentStatusCode" alias="paymentStatusCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.DvDisbursementView::disbursementTypeCode" alias="disbursementTypeCode" />
     </row>
     <!--
         =================================================================

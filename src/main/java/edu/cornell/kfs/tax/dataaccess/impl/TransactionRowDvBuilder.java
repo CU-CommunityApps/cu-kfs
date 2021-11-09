@@ -139,6 +139,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                         dvRow.payeeDetailDocumentNumber, SqlText.EQUALS, dvRow.accountingLineDocumentNumber,
                 SqlText.AND,
                         dvRow.payeeDetailDocumentNumber, SqlText.EQUALS, dvRow.dvDocumentNumber,
+                SqlText.AND,
+                    dvRow.custPaymentDocNbr, SqlText.CONDITIONAL_EQUALS_JOIN, dvRow.payeeDetailDocumentNumber,
                 
                 // Add various IS NOT NULL criteria.
                 SqlText.AND,
@@ -309,8 +311,17 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));
             insertStatement.setString(detailRow.paymentReasonCode.index - offset, rs.getString(dvRow.disbVchrPaymentReasonCode.index));
-            insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, getLedgerDocumentTypeCode(rs, dvRow));
-            
+
+            String paymentMethodCode = rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index);
+            String disbursementNbr = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null: rs.getString(dvRow.disbursementNbr.index);
+            String disbursementTypeCode = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null : rs.getString(dvRow.disbursementTypeCode.index);
+            String paymentStatusCode = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null : rs.getString(dvRow.paymentStatusCode.index);
+            String ledgerDocumentType = getLedgerDocumentTypeCode(paymentStatusCode);
+            insertStatement.setString(detailRow.disbursementNbr.index - offset, disbursementNbr);
+            insertStatement.setString(detailRow.disbursementTypeCode.index - offset, disbursementTypeCode);
+            insertStatement.setString(detailRow.paymentStatusCode.index - offset, paymentStatusCode);
+            insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, ledgerDocumentType);
+
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
             
             // Add to batch, and execute batch if needed.
@@ -334,29 +345,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         prepareForSecondPass(summary, docIds);
     }
 
-    /**
-     * Overridden to also insert nulls for the following field placeholders:
-     *
-     * <ul>
-     *   <li>disbursementNbr</li>
-     *   <li>disbursementTypeCode</li>
-     *   <li>paymentStatusCode</li>
-     * </ul>
-     *
-     * @see edu.cornell.kfs.tax.dataaccess.impl.TransactionRowBuilder#insertNullsForTransactionRow(java.sql.PreparedStatement,
-     * edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow, int)
-     */
-    @Override
-    void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
-        super.insertNullsForTransactionRow(insertStatement, detailRow, offset);
-        insertStatement.setString(detailRow.disbursementNbr.index - offset, null);
-        insertStatement.setString(detailRow.disbursementTypeCode.index - offset, null);
-        insertStatement.setString(detailRow.paymentStatusCode.index - offset, null);
-    }
 
-
-    private String getLedgerDocumentTypeCode(ResultSet rs, DvSourceRow dvRow) throws SQLException {
-        String paymentMethodCode = rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index);
+    private String getLedgerDocumentTypeCode(String paymentMethodCode){
         String ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH;
         if (isPaymentCodeWireOrForeignDraft(paymentMethodCode)) {
             ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_WTFD;

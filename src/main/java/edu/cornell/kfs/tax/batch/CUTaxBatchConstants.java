@@ -197,6 +197,10 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_FOREIGN_IND = CommonVendorFieldNames.VENDOR_FOREIGN_IND;
         // Fields from SH_UNIV_DATE_T (UniversityDate)
         public static final String UNIVERSITY_DATE = "universityDate";
+        // Fields from PDP_PMT_GRP_T (PaymentGroup)
+        public static final String DISBURSEMENT_NUMBER = "disbursementNbr";
+        public static final String PAYMENT_STATUS_CODE = "paymentStatusCode";
+        public static final String DISBURSEMENT_TYPE_CODE = "disbursementTypeCode";
         
         
         
