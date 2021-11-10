@@ -346,7 +346,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
     }
 
 
-    private String getLedgerDocumentTypeCode(String paymentMethodCode){
+    private String getLedgerDocumentTypeCode(String paymentMethodCode) {
         String ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH;
         if (isPaymentCodeWireOrForeignDraft(paymentMethodCode)) {
             ledgerDocumentTypeCode = DisbursementVoucherConstants.DOCUMENT_TYPE_WTFD;

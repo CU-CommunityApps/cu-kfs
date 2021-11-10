@@ -20,6 +20,7 @@ public class DvDisbursementView extends TransientBusinessObjectBase {
     public void setCustPaymentDocNbr(String custPaymentDocNbr) {
         this.custPaymentDocNbr = custPaymentDocNbr;
     }
+
     public KualiInteger getDisbursementNbr() {
         return disbursementNbr;
     }
