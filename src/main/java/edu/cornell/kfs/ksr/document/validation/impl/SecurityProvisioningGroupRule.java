@@ -58,13 +58,14 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		SecurityProvisioning securityProvisioning = (SecurityProvisioning) document.getDocumentDataObject();
 
 		for (int i = 0; i < securityProvisioning.getSecurityProvisioningGroups().size(); i++) {
+			SecurityProvisioningGroup tempProvisioningGroup = securityProvisioning.getSecurityProvisioningGroups().get(i);
 			if (i == index) {
 				continue;
 			}
-			if (!securityProvisioning.getSecurityProvisioningGroups().get(i).isActive()) {
+			if (!tempProvisioningGroup.isActive() || StringUtils.isBlank(tempProvisioningGroup.getRoleId())) {
 				continue;
 			}
-			if (securityProvisioning.getSecurityProvisioningGroups().get(i).getRoleId().equals(securityProvisioningGroup.getRoleId())) {
+			if (StringUtils.equals(tempProvisioningGroup.getRoleId(), securityProvisioningGroup.getRoleId())) {
 				success = false;
 				String errorPath = (index < 0) ? KSRPropertyConstants.PROVISIONING_ROLE_ID : buildPropertyPath(
 						buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
@@ -87,10 +88,11 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		SecurityProvisioningGroup securityProvisioningGroup = securityProvisioningGroupList.get(index);
 
 		for (int i = 0; i < securityProvisioningGroup.getDependentRoles().size(); i++) {
-			if (i == indexRole) {
+			SecurityProvisioningGroupDependentRoles tempDependentRole = securityProvisioningGroup.getDependentRoles().get(i);
+			if (i == indexRole || StringUtils.isBlank(tempDependentRole.getRoleId())) {
 				continue;
 			}
-			if (securityProvisioningGroup.getDependentRoles().get(i).getRoleId().equals(dependentRole.getRoleId())) {
+			if (StringUtils.equals(tempDependentRole.getRoleId(), dependentRole.getRoleId())) {
 				success = false;
 				String errorPath = (indexRole < 0 || index < 0) ? KSRPropertyConstants.PROVISIONING_ROLE_ID : buildPropertyPath(
 						buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, index),
@@ -133,7 +135,8 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 	private boolean validateSecurityProvisioningGroup(MaintenanceDocument document, SecurityProvisioningGroup securityProvisioningGroup, int index) {
 		boolean success = true;
 
-		RoleLite role = getRoleService().getRoleWithoutMembers(securityProvisioningGroup.getRoleId());
+		RoleLite role = StringUtils.isBlank(securityProvisioningGroup.getRoleId()) ? null :
+				getRoleService().getRoleWithoutMembers(securityProvisioningGroup.getRoleId());
 		if (role != null) {
 			KimType kimType = getKimTypeInfoService().getKimType(role.getKimTypeId());
 			KimTypeService kimTypeService = getKimTypeService(kimType);
@@ -239,7 +242,9 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 				continue;
 			}
 			success &= isDuplicateSecurityProvisioningGroup(document, securityProvisioningGroup, i);
-			provisioningMap.put(securityProvisioningGroup.getRoleId(), securityProvisioningGroup);
+			if (StringUtils.isNotBlank(securityProvisioningGroup.getRoleId())) {
+				provisioningMap.put(securityProvisioningGroup.getRoleId(), securityProvisioningGroup);
+			}
 
 			// Loop through all SecurityProvisioningGroupDependentRoles of the current SecurityProvisioningGroup.
 			// Validate the SecurityProvisioningGroup and check it for duplicates.
@@ -252,15 +257,16 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		if (success) {
 			// Loop through each SecurityProvisioningGroup to find a circular reference
 			for (int i = 0; i < securityProvisioning.getSecurityProvisioningGroups().size(); i++) {
-				if (!securityProvisioning.getSecurityProvisioningGroups().get(i).isActive()) {
+				SecurityProvisioningGroup securityProvisioningGroup = securityProvisioning.getSecurityProvisioningGroups().get(i);
+				if (!securityProvisioningGroup.isActive() || StringUtils.isBlank(securityProvisioningGroup.getRoleId())) {
 					continue;
 				}
 				Map<String, SecurityProvisioningGroup> provisioningMapTemp = new HashMap<String, SecurityProvisioningGroup>();
 				provisioningMapTemp.putAll(provisioningMap);
-				String roleStr = buildDependentString(securityProvisioning.getSecurityProvisioningGroups().get(i).getRoleId(), provisioningMapTemp);
+				String roleStr = buildDependentString(securityProvisioningGroup.getRoleId(), provisioningMapTemp);
 				roleStr = StringUtils.strip(roleStr, ",");
 				int matches = StringUtils.countMatches(roleStr, "|"
-						+ securityProvisioning.getSecurityProvisioningGroups().get(i).getRoleId()
+						+ securityProvisioningGroup.getRoleId()
 						+ "|");
 				if (matches > 1) {
 					success = false;
@@ -268,7 +274,7 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 							buildIndexedProperty(KSRConstants.SECURITY_PROVISIONING_GROUPS, i),
 							KSRPropertyConstants.SECURITY_PROVISIONING_GROUP_ROLE_NAME);
 					GlobalVariables.getMessageMap().putError(errorPath, KSRKeyConstants.ERROR_SECURITY_PROVISIONING_GROUP_CIRCULAR_REFERENCE,
-							getRoleNameForErrorMessage(securityProvisioning.getSecurityProvisioningGroups().get(i).getRole()));
+							getRoleNameForErrorMessage(securityProvisioningGroup.getRole()));
 				}
 			}
 		}
@@ -285,8 +291,10 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		SecurityProvisioning securityProvisioning = (SecurityProvisioning) document.getDocumentDataObject();
 		List<SecurityProvisioningGroup> securityProvisioningGroups = securityProvisioning.getSecurityProvisioningGroups();
 		for (int i = 0; i < securityProvisioningGroups.size(); i++) {
-			if (securityProvisioningGroups.get(i).getRoleId().equals(dependentRole.getRoleId())
-					&& securityProvisioningGroups.get(i).isActive()) {
+			SecurityProvisioningGroup securityProvisioningGroup = securityProvisioningGroups.get(i);
+			if (StringUtils.isNotBlank(securityProvisioningGroup.getRoleId())
+					&& StringUtils.equals(securityProvisioningGroup.getRoleId(), dependentRole.getRoleId())
+					&& securityProvisioningGroup.isActive()) {
 				success = true;
 			}
 		}
@@ -313,7 +321,7 @@ public class SecurityProvisioningGroupRule extends MaintenanceDocumentRuleBase {
 		if ((securityProvisioningGroup != null)
 				&& (securityProvisioningGroup.getDependentRoles().size() > 0)) {
 			for (SecurityProvisioningGroupDependentRoles dependentRole : securityProvisioningGroup.getDependentRoles()) {
-				if (dependentRole.isActive()) {
+				if (dependentRole.isActive() && StringUtils.isNotBlank(dependentRole.getRoleId())) {
 					String dependentRoleID = dependentRole.getRoleId();
 					temp += buildDependentString(dependentRoleID, provisioningMap);
 				}
