@@ -214,8 +214,6 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
             insertStatement.setString(detailRow.paymentLine1Address.index - offset, rs.getString(prncRow.vendorLine1Address.index));
             insertStatement.setString(detailRow.paymentCountryName.index - offset, rs.getString(prncRow.vendorCountryCode.index));
 
-            insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, CUTaxConstants.TAX_SOURCE_PRNC);
-
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
             
             // Add to batch, and execute batch if needed.
@@ -362,10 +360,6 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
         insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
         insertStatement.setString(detailRow.paymentReasonCode.index - offset, null);
         insertStatement.setString(detailRow.paymentDescription.index - offset, null);
-
-        insertStatement.setString(detailRow.disbursementNbr.index - offset, null);
-        insertStatement.setString(detailRow.disbursementTypeCode.index - offset, null);
-        insertStatement.setString(detailRow.paymentStatusCode.index - offset, null);
     }
 
     @Override
