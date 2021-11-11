@@ -316,7 +316,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             String disbursementNbr = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null: rs.getString(dvRow.disbursementNbr.index);
             String disbursementTypeCode = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null : rs.getString(dvRow.disbursementTypeCode.index);
             String paymentStatusCode = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null : rs.getString(dvRow.paymentStatusCode.index);
-            String ledgerDocumentType = getLedgerDocumentTypeCode(paymentStatusCode);
+            String ledgerDocumentType = getLedgerDocumentTypeCode(paymentMethodCode);
             insertStatement.setString(detailRow.disbursementNbr.index - offset, disbursementNbr);
             insertStatement.setString(detailRow.disbursementTypeCode.index - offset, disbursementTypeCode);
             insertStatement.setString(detailRow.paymentStatusCode.index - offset, paymentStatusCode);
