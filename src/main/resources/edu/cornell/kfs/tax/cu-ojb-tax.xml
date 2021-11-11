@@ -79,6 +79,17 @@
         <field-descriptor name="form1042SBox" column="FORM_1042S_BOX" jdbc-type="VARCHAR" />
         <field-descriptor name="form1042SOverriddenBox" column="FORM_1042S_OVERRIDDEN_BOX" jdbc-type="VARCHAR" />
         <field-descriptor name="paymentReasonCode" column="PMT_REASON_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="disbursementNbr" column="DISB_NBR" jdbc-type="BIGINT" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiIntegerFieldConversion" />
+        <field-descriptor name="paymentStatusCode" column="PMT_STAT_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="disbursementTypeCode" column="DISB_TYP_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="ledgerDocumentTypeCode" column="LEDGER_DOC_TYP_CD" jdbc-type="VARCHAR" />
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.tax.businessobject.DvDisbursementView" table="TX_DV_DISBURSEMENT_V">
+        <field-descriptor name="custPaymentDocNbr" column="CUST_PMT_DOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="disbursementNbr" column="DISB_NBR" jdbc-type="BIGINT" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiIntegerFieldConversion" />
+        <field-descriptor name="paymentStatusCode" column="PMT_STAT_CD" jdbc-type="VARCHAR" />
+        <field-descriptor name="disbursementTypeCode" column="DISB_TYP_CD" jdbc-type="VARCHAR" />
     </class-descriptor>
 
 </descriptor-repository>
