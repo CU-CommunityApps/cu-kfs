@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.sys.cache;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -169,7 +170,8 @@ public class CacheConfiguration {
             List<String> cacheNames,
             Map<String, Long> cacheExpires
     ) {
-    	cacheNames.remove(0);
+        // Cornell customization: add fix to remove empty cache name that is causing an exception
+        cacheNames.remove(StringUtils.EMPTY);
         final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate, cacheNames, true);
         redisCacheManager.setDefaultExpiration(redisDefaultTtl);
         redisCacheManager.setExpires(cacheExpires);

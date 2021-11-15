@@ -66,7 +66,7 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void clearKfsBusinessObjectCache(Class boClass) {
-    	String cacheName = boClass.getSimpleName();
+        String cacheName = boClass.getSimpleName();
         clearNamedCache(cacheName);
     }
 

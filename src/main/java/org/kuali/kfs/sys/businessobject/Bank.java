@@ -32,7 +32,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 /* Cornell Customization: backport redis*/
 public class Bank extends PersistableBusinessObjectBase implements MutableInactivatable {
 
-	public static final String CACHE_NAME = "Bank";
+    public static final String CACHE_NAME = "Bank";
 
     protected String bankCode;
     protected String bankName;

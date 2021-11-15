@@ -27,7 +27,7 @@ import org.kuali.kfs.krad.bo.KualiCodeBase;
 /* Cornell Customization: backport redis*/
 public class BalanceType extends KualiCodeBase implements MutableInactivatable {
 	
-	public static final String CACHE_NAME = "BalanceType";
+    public static final String CACHE_NAME = "BalanceType";
 
     protected String financialBalanceTypeShortNm;
     protected boolean financialOffsetGenerationIndicator;

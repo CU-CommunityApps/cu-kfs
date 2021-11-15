@@ -28,8 +28,8 @@ import java.util.Calendar;
 
 /* Cornell Customization: backport redis*/
 public class AccountingPeriod extends PersistableBusinessObjectBase implements MutableInactivatable, FiscalYearBasedBusinessObject {
-
-	public static final String CACHE_NAME = "AccountingPeriod";
+	
+    public static final String CACHE_NAME = "AccountingPeriod";
 	
     private Integer universityFiscalYear;
     private String universityFiscalPeriodCode;

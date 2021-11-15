@@ -23,7 +23,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 /* Cornell Customization: backport redis*/
 public class HomeOrigination extends PersistableBusinessObjectBase {
 
-	public static final String CACHE_NAME = "HomeOrigination";
+    public static final String CACHE_NAME = "HomeOrigination";
 
     private String finSystemHomeOriginationCode;
     private OriginationCode originationCode;

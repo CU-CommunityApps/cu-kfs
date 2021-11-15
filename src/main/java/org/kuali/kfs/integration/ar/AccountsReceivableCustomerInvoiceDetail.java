@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 /* Cornell Customization: backport redis */
 public interface AccountsReceivableCustomerInvoiceDetail extends ExternalizableBusinessObject {
 	
-	String CACHE_NAME = "CustomerInvoiceDetail";
+    String CACHE_NAME = "CustomerInvoiceDetail";
 
     void setDocumentNumber(String documentNumber);
 

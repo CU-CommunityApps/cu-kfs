@@ -24,7 +24,7 @@ import org.kuali.kfs.krad.bo.KualiCodeBase;
 /* Cornell Customization: backport redis*/
 public class ObjectType extends KualiCodeBase implements MutableInactivatable {
 	
-	public static final String CACHE_NAME = "ObjectType";
+    public static final String CACHE_NAME = "ObjectType";
 
     protected String finObjectTypeDebitcreditCd;
     protected boolean finObjectTypeIcrSelectionIndicator;

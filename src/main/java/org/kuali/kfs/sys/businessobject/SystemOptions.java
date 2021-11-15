@@ -26,7 +26,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 /* Cornell Customization: backport redis*/
 public class SystemOptions extends PersistableBusinessObjectBase implements FiscalYearBasedBusinessObject {
 
-	public static final String CACHE_NAME = "SystemOptions";
+    public static final String CACHE_NAME = "SystemOptions";
 
     private Integer universityFiscalYear;
     private String actualFinancialBalanceTypeCd;

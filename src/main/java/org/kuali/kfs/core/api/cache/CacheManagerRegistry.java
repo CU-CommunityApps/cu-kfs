@@ -25,7 +25,6 @@ import java.util.List;
 /**
  * Allows access to a registry of {@link CacheManager} instances that are identified by name.
  *
- * @since 2.0
  */
 /* Cornell Customization: backport redis*/
 public interface CacheManagerRegistry {

@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 
 /* Cornell Customization: backport redis*/
 public class MenuService {
-	public static final String MENU_LINKS_CACHE_NAME = "MenuLinks";
+    public static final String MENU_LINKS_CACHE_NAME = "MenuLinks";
 
     private PermissionService permissionService;
     private DocumentTypeService documentTypeService;
