@@ -18,7 +18,12 @@
 	<bean id="concurModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration"
 		abstract="true">
 		<property name="namespaceCode" value="KFS-CNCR" />
-		<property name="initializeDataDictionary" value="false" />
+		<property name="initializeDataDictionary" value="true" />
+		<property name="dataDictionaryPackages">
+      <list merge="true">
+                <value>classpath:edu/cornell/kfs/concur/web/struts/form/datadictionary/*.xml</value>
+      </list>
+    </property>
 		<property name="packagePrefixes">
 			<list>
 				<value>edu.cornell.kfs.concur</value>
