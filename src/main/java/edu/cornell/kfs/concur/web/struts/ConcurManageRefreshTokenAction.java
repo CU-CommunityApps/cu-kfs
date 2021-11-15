@@ -27,7 +27,9 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.web.struts.form.ConcurManageRefreshTokenForm;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
@@ -40,7 +42,7 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) 
             throws Exception {
         LOG.info("start, entering");
-        updateFormValues((ConcurManageRefreshTokenForm) form, false);
+        updateFormValues((ConcurManageRefreshTokenForm) form, false, false);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
@@ -50,41 +52,69 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
         return mapping.findForward(KRADConstants.MAPPING_PORTAL);
     }
     
+    public ActionForward replaceRequestToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) 
+            throws Exception {
+        LOG.info("replaceRequestToken, entering");
+        updateFormValues((ConcurManageRefreshTokenForm) form, false, true);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
     public ActionForward replaceRefreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) 
             throws Exception {
         LOG.info("replaceRefreshToken, entering");
         getConcurAccessTokenV2Service().retrieveAndPersistNewRefreshToken();
-        updateFormValues((ConcurManageRefreshTokenForm) form, true);
+        updateFormValues((ConcurManageRefreshTokenForm) form, true, false);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
-    protected void updateFormValues(ConcurManageRefreshTokenForm concurTokenForm, boolean displayUpdateSuccessMessage) {
+    protected void updateFormValues(ConcurManageRefreshTokenForm concurTokenForm, boolean displayUpdateRefreshTokenMessage, 
+            boolean displayUpdateRequestTokenMessage) {
         ConfigurationService configService = getConfigurationService();
-        String nonProdWarningMessage = configService
-                .getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REFRESH_TOKEN_NONPROD_WARNING);
-        String refreshDateMessage = MessageFormat.format(
-                configService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REFRESH_TOKEN_REFRESH_DATE),
-                getRefreshTokenDate().toString());
-        String updateSuccessMessage = configService
-                .getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REFRESH_TOKEN_UPDATE_SUCCESS);
         
-        concurTokenForm.setNonProdWarning(nonProdWarningMessage);
-        concurTokenForm.setRefreshDateMessage(refreshDateMessage);
-        concurTokenForm.setUpdateSuccessMessage(updateSuccessMessage);
-        concurTokenForm.setDisplayUpdateSuccessMessage(displayUpdateSuccessMessage);
+        concurTokenForm.setNonProdWarning(configService.getPropertyValueAsString(
+                ConcurKeyConstants.MESSAGE_CONCUR_REFRESH_TOKEN_NONPROD_WARNING));
         concurTokenForm.setDispayNonProdWarning(!isProduction());
+        
+        String refreshTokenUpdateDate = MessageFormat.format(
+                configService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_DATE),
+                "refresh", getRefreshTokenDate().toString());
+        String updateRefeshSuccessMessage = MessageFormat.format(configService
+                .getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_UPDATE_SUCCESS), "refresh");
+        concurTokenForm.setRefreshTokenUpdateDate(refreshTokenUpdateDate); 
+        concurTokenForm.setUpdateRefreshTokenMessage(updateRefeshSuccessMessage);
+        concurTokenForm.setDisplayUpdateRefreshTokenMessage(displayUpdateRefreshTokenMessage);
+        
+        String requestTokenUpdateDate = MessageFormat.format(
+                configService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_DATE),
+                "request", getRequestTokenDate().toString());
+        String updateRequestSuccessMessage = MessageFormat.format(configService
+                .getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_UPDATE_SUCCESS), "request");
+        concurTokenForm.setRequestTokenUpdateDate(requestTokenUpdateDate);
+        concurTokenForm.setUpdateRequestTokenMessage(updateRequestSuccessMessage);
+        concurTokenForm.setDisplayUpdateRequestTokenMessage(displayUpdateRequestTokenMessage);
+        concurTokenForm.setUpdateRequestTokenInstructions(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_OAUTH2_REPLACE_REQUEST_TOKEN_INSTRUCTIONS));
         
     }
     
     protected Timestamp getRefreshTokenDate() {
+        String refreshTokenName = ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REFRESH_TOKEN;
+        return getTokenUpdateTimestamp(refreshTokenName);
+    }
+
+    private Timestamp getTokenUpdateTimestamp(String tokenName) {
         Map<String, String> keyMap = new HashMap<String, String>();
         keyMap.put(CUKFSPropertyConstants.WEB_SERVICE_CREDENTIAL_GROUP_CODE,
                 ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.GROUP_CODE);
         keyMap.put(CUKFSPropertyConstants.WEB_SERVICE_CREDENTIAL_KEY,
-                ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REFRESH_TOKEN);
+                tokenName);
         WebServiceCredential refreshCredential = getBusinessObjectService().findByPrimaryKey(WebServiceCredential.class,
                 keyMap);
         return refreshCredential.getLastUpdatedTimestamp();
+    }
+    
+    protected Timestamp getRequestTokenDate() {
+        String requestTokenName = ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REQUEST_TOKEN;
+        return getTokenUpdateTimestamp(requestTokenName);
     }
     
     protected boolean isProduction() {
@@ -105,6 +135,10 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
     
     protected ConcurAccessTokenV2Service getConcurAccessTokenV2Service() {
         return SpringContext.getBean(ConcurAccessTokenV2Service.class);
+    }
+    
+    protected ConcurBatchUtilityService getConcurBatchUtilityService() {
+        return SpringContext.getBean(ConcurBatchUtilityService.class);
     }
 
 }
