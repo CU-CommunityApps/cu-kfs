@@ -98,7 +98,7 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    @Cacheable(value = Chart.CACHE_NAME, key = "'ReportsToHierarchy'")
+    @Cacheable(cacheNames = Chart.CACHE_NAME, key = "'ReportsToHierarchy'")
     public Map<String, String> getReportsToHierarchy() {
         Map<String, String> reportsToHierarchy = new HashMap<>();
 

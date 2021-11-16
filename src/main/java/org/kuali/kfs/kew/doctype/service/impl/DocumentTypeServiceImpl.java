@@ -453,7 +453,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         return docType != null && docType.isActive();
     }
 
-    @Cacheable(value = RoutePath.CACHE_NAME, key = "'documentTypeName=' + #p0")
+    @Cacheable(value = RoutePath.CACHE_NAME, key = "'{getRoutePathForDocumentTypeName}|documentTypeName=' + #p0")
     @Override
     public RoutePath getRoutePathForDocumentTypeName(String documentTypeName) {
         if (StringUtils.isBlank(documentTypeName)) {

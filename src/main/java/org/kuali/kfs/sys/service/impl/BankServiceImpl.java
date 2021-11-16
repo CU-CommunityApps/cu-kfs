@@ -78,7 +78,7 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    @Cacheable(value = Bank.CACHE_NAME, key = "'DefaultByDocClass-'+#p0")
+    @Cacheable(cacheNames = Bank.CACHE_NAME, key = "'DefaultByDocClass-'+#p0")
     public Bank getDefaultBankByDocType(Class<?> documentClass) {
         String documentTypeCode = dataDictionaryService.getDocumentTypeNameByClass(documentClass);
 
@@ -89,7 +89,7 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    @Cacheable(value = Bank.CACHE_NAME, key = "'isBankSpecificationEnabled'")
+    @Cacheable(cacheNames = Bank.CACHE_NAME, key = "'isBankSpecificationEnabled'")
     public boolean isBankSpecificationEnabled() {
         return parameterService.getParameterValueAsBoolean(Bank.class,
                 KFSParameterKeyConstants.ENABLE_BANK_SPECIFICATION_IND);

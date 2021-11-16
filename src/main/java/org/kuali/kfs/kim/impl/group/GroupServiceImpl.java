@@ -132,7 +132,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
         return false;
     }
 
-    @Cacheable(cacheNames = GroupMember.CACHE_NAME, key = "'{getDirectGroupIdsByPrincipalId}' + 'principalId=' + #p0")
+    @Cacheable(cacheNames = GroupMember.CACHE_NAME, key = "'{getGroupIdsByPrincipalId}' + 'principalId=' + #p0")
     @Override
     public List<String> getGroupIdsByPrincipalId(String principalId) throws IllegalArgumentException {
         incomingParamCheck(principalId, "principalId");
@@ -154,7 +154,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
         return Collections.unmodifiableList(result);
     }
 
-    @Cacheable(value = GroupMember.CACHE_NAME, key = "'{getDirectGroupIdsByPrincipalId}' + 'principalId=' + #p0")
+    @Cacheable(cacheNames = GroupMember.CACHE_NAME, key = "'{getDirectGroupIdsByPrincipalId}' + 'principalId=' + #p0")
     @Override
     public List<String> getDirectGroupIdsByPrincipalId(String principalId) throws IllegalArgumentException {
         incomingParamCheck(principalId, "principalId");
