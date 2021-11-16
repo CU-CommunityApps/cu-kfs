@@ -391,7 +391,7 @@
     />
     
     <!-- backport changes for redis -->
-    <bean id="menuService-parentBean" class="org.kuali.kfs.sys.service.MenuService" p:dao-ref="menuDao"
+    <bean id="menuService-parentBean" class="org.kuali.kfs.sys.service.MenuService" abstract="true" p:dao-ref="menuDao"
           p:permissionService-ref="permissionService" p:documentDictionaryService-ref="documentDictionaryService"
           p:documentTypeService-ref="documentTypeService" p:cacheManagerRegistry-ref="cacheManagerRegistry"
           p:configurationService-ref="configurationService" p:institutionLogoDao-ref="logoDao"
