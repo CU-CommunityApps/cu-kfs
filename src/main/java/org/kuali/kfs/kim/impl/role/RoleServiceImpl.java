@@ -76,6 +76,8 @@ import static java.util.Map.entry;
  * CU Customization:
  * Updated the member-removal methods to properly convert the qualifiers where needed,
  * similar to the setup in the Rice-side and Cynergy-side versions of this service.
+ * 
+ * Additional changes added to backport the redis implementation.
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
@@ -165,7 +167,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(RoleMember.class, queryByCriteria, lc.build());
     }
 
-    @Cacheable(value = RoleMember.CACHE_NAME, key = "'{getRoleTypeRoleMemberIds}' + 'roleId=' + #p0")
+    // backport redis annotations
+    @Cacheable(cacheNames = RoleMember.CACHE_NAME, key = "'{getRoleTypeRoleMemberIds}' + 'roleId=' + #p0")
     @Override
     public Set<String> getRoleTypeRoleMemberIds(String roleId) throws IllegalArgumentException {
         incomingParamCheck(roleId, "roleId");
@@ -175,7 +178,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableSet(results);
     }
 
-    @Cacheable(value = RoleMembership.CACHE_NAME, key = "'memberType=' + #p0 + '|' + 'memberId=' + #p1")
+    // backport redis annotations
+    @Cacheable(cacheNames = RoleMembership.CACHE_NAME, key = "'memberType=' + #p0 + '|' + 'memberId=' + #p1")
     @Override
     public List<String> getMemberParentRoleIds(String memberType, String memberId) throws IllegalStateException {
         incomingParamCheck(memberType, "memberType");
@@ -192,7 +196,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return parentRoleIds;
     }
 
-    @Cacheable(value = RoleResponsibility.CACHE_NAME, key = "'roleMemberId=' + #p0")
+    // backport redis annotations
+    @Cacheable(cacheNames = RoleResponsibility.CACHE_NAME, key = "'roleMemberId=' + #p0")
     @Override
     public List<RoleResponsibilityAction> getRoleMemberResponsibilityActions(String roleMemberId) throws
             IllegalStateException {
@@ -217,7 +222,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(DelegateMember.class, queryByCriteria, lc.build());
     }
 
-    @Cacheable(value = Role.CACHE_NAME, key = "'id=' + #p0")
+    // backport redis annotations
+    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{getRoleWithoutMembers}-id=' + #p0")
     @Override
     public RoleLite getRoleWithoutMembers(String roleId) throws IllegalStateException {
         incomingParamCheck(roleId, "roleId");
@@ -290,7 +296,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return result;
     }
 
-    @Cacheable(value = Role.CACHE_NAME, key = "'ids=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0)")
+    // backport redis annotations
+    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'ids=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0)")
     @Override
     public List<RoleLite> getRoles(List<String> roleIds) throws IllegalStateException {
         if (CollectionUtils.isEmpty(roleIds)) {
@@ -328,7 +335,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return new ArrayList<>(roleMap.values());
     }
 
-    @Cacheable(value = Role.CACHE_NAME, key = "'namespaceCode=' + #p0 + '|' + 'name=' + #p1")
+    // bacport redis annotation
+    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{getRoleByNamespaceCodeAndName}-namespaceCode=' + #p0 + '|' + 'name=' + #p1")
     @Override
     public RoleLite getRoleByNamespaceCodeAndName(String namespaceCode, String roleName) throws IllegalStateException {
         incomingParamCheck(namespaceCode, "namespaceCode");
@@ -355,7 +363,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return role;
     }
 
-    @Cacheable(value = Role.CACHE_NAME,
+    // backport redis annotations
+    @Cacheable(cacheNames = Role.CACHE_NAME,
             key = "'{getRoleIdByNamespaceCodeAndName}' + 'namespaceCode=' + #p0 + '|' + 'name=' + #p1")
     @Override
     public String getRoleIdByNamespaceCodeAndName(String namespaceCode, String roleName) throws
@@ -371,7 +380,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
     }
 
-    @Cacheable(value = Role.CACHE_NAME, key = "'{isRoleActive}' + 'id=' + #p0")
+    // backport redis annotations
+    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{isRoleActive}' + 'id=' + #p0")
     @Override
     public boolean isRoleActive(String roleId) throws IllegalStateException {
         incomingParamCheck(roleId, "roleId");
@@ -474,7 +484,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableList(results);
     }
 
-    @Cacheable(value = RoleMember.CACHE_NAME,
+    // backport redis annotations
+    @Cacheable(cacheNames = RoleMember.CACHE_NAME,
             key = "'namespaceCode=' + #p0 + '|' + 'roleName=' + #p1 + '|' + 'qualification=' +" +
                     "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).mapKey(#p2)",
             condition = "!T(org.kuali.kfs.kim.api.cache.KimCacheUtils).isDynamicMembshipRoleByNamespaceAndName(#p0, #p1)")
@@ -498,7 +509,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableSet(principalIds);
     }
 
-    @Cacheable(value = RoleMember.CACHE_NAME,
+    // backport redis annotations
+    @Cacheable(cacheNames = RoleMember.CACHE_NAME,
             key = "'getPrincipalIdSubListWithRole' + 'principalIds=' + " +
                 "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0) + '|' + 'roleNamespaceCode=' + #p1 + " +
                 "'|' + 'roleName=' + #p2 + '|' + 'qualification=' + " +
@@ -529,7 +541,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(RoleLite.class, queryByCriteria);
     }
 
-    @Cacheable(value = RoleMembership.CACHE_NAME,
+    // backport redis annotations
+    @Cacheable(cacheNames = RoleMembership.CACHE_NAME,
             key = "'roleIds=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0)")
     @Override
     public List<RoleMembership> getFirstLevelRoleMembers(List<String> roleIds) throws IllegalStateException {
@@ -552,7 +565,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableList(roleMemberships);
     }
 
-    @Cacheable(value = DelegateMember.CACHE_NAME, key = "'id=' + #p0")
+    // backport redis annotations
+    @Cacheable(cacheNames = DelegateMember.CACHE_NAME, key = "'{getDelegationMemberById}-id=' + #p0")
     @Override
     public DelegateMember getDelegationMemberById(String delegationMemberId) throws IllegalStateException {
         incomingParamCheck(delegationMemberId, "delegationMemberId");
@@ -560,7 +574,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getDelegateMember(delegationMemberId);
     }
 
-    @Cacheable(value = RoleResponsibility.CACHE_NAME, key = "'roleId=' + #p0")
+    // backport redis annotations
+    @Cacheable(cacheNames = RoleResponsibility.CACHE_NAME, key = "'{getRoleResponsibilities}-roleId=' + #p0")
     @Override
     public List<RoleResponsibility> getRoleResponsibilities(String roleId) throws IllegalStateException {
         incomingParamCheck(roleId, "roleId");
@@ -571,7 +586,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 criteria);
     }
 
-    @Cacheable(value = DelegateType.CACHE_NAME, key = "'roleId=' + #p0 + '|' + 'delegateType=' + #p1")
+    // backport redis annotations
+    @Cacheable(cacheNames = DelegateType.CACHE_NAME, key = "'roleId=' + #p0 + '|' + 'delegateType=' + #p1")
     @Override
     public DelegateType getDelegateTypeByRoleIdAndDelegateTypeCode(String roleId, DelegationType delegationType)
             throws IllegalStateException {
@@ -581,7 +597,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getDelegationOfType(roleId, delegationType);
     }
 
-    @Cacheable(value = DelegateType.CACHE_NAME, key = "'delegationId=' + #p0")
+    // backport redis annotations
+    @Cacheable(cacheNames = DelegateType.CACHE_NAME, key = "'delegationId=' + #p0")
     @Override
     public DelegateType getDelegateTypeByDelegationId(String delegationId) throws IllegalStateException {
         incomingParamCheck(delegationId, "delegationId");
