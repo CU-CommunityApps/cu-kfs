@@ -31,7 +31,8 @@ import java.util.Date;
 
 public class BatchFile extends TransientBusinessObjectBase {
     private static final Logger LOG = LogManager.getLogger();
-    public static final String CACHE_NAME = KFSConstants.APPLICATION_NAMESPACE_CODE + "/" + "BatchFile";
+    // backport redis changes
+    public static final String CACHE_NAME = "BatchFile";
 
     private File file;
     
