@@ -22,7 +22,8 @@
     </bean>
 
     <bean id="cf.coreServiceDistributedCacheManager" class="org.kuali.kfs.core.impl.cache.DistributedCacheManagerDecorator">
-        <property name="cacheManager" ref="cf.coreServiceLocalCacheManager"/>
+    	<!--Cornell Customization: backport redis-->
+        <property name="cacheManager" ref="cacheManager"/>
         <property name="serviceName" value="{${kfs.service.namespace.uri}}coreServiceCacheAdminService"/>
     </bean>
 

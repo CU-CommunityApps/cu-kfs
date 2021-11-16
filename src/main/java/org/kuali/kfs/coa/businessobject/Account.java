@@ -57,8 +57,9 @@ import java.util.Map;
 public class Account extends PersistableBusinessObjectBase implements AccountIntf, MutableInactivatable {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    public static final String CACHE_NAME = KFSConstants.APPLICATION_NAMESPACE_CODE + "/" + "Account";
+    
+    //backport redis changes
+    public static final String CACHE_NAME = "Account";
 
     protected String chartOfAccountsCode;
     protected String accountNumber;
