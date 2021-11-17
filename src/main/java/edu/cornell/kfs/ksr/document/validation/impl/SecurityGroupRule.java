@@ -1,15 +1,15 @@
 package edu.cornell.kfs.ksr.document.validation.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
+import org.kuali.kfs.core.api.criteria.PredicateFactory;
+import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -22,6 +22,8 @@ import edu.cornell.kfs.ksr.businessobject.SecurityGroupTab;
 
 public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 
+    private CriteriaLookupService criteriaLookupService;
+
 	/**
 	 * Validate the new SecurityGroupTab against ones that are already in the list - tab order must be unique - tab name must be unique
 	 */
@@ -32,18 +34,15 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
         if (line instanceof SecurityGroupTab) {
             SecurityGroup securityGroup = (SecurityGroup) document.getDocumentDataObject();
             SecurityGroupTab tempTab = (SecurityGroupTab) line;
-            if (securityGroup.getSecurityGroupTabs() != null) {
-                success = validateSecurityGroupTabs(document);
-                if (success) {
-                    for (SecurityGroupTab tab : securityGroup.getSecurityGroupTabs()) {
-                        if (tab.getTabOrder().equals(tempTab.getTabOrder())) {
-                            GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_GROUP_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
-                            success = false;
-                        }
-                        if (tab.getTabName().equals(tempTab.getTabName())) {
-                            GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_GROUP_TAB_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
-                            success = false;
-                        }
+            if (CollectionUtils.isNotEmpty(securityGroup.getSecurityGroupTabs())) {
+                for (SecurityGroupTab tab : securityGroup.getSecurityGroupTabs()) {
+                    if (tab.getTabOrder() != null && tab.getTabOrder().equals(tempTab.getTabOrder())) {
+                        GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_GROUP_TAB_ORDER, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
+                        success = false;
+                    }
+                    if (StringUtils.isNotBlank(tab.getTabName()) && StringUtils.equalsIgnoreCase(tab.getTabName(), tempTab.getTabName())) {
+                        GlobalVariables.getMessageMap().putError(KSRPropertyConstants.SECURITY_GROUP_TAB_NAME, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
+                        success = false;
                     }
                 }
             }
@@ -87,8 +86,8 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
         SecurityGroup temp = retrieveSecurityGroupByName(securityGroup.getSecurityGroupName());
         if (ObjectUtils.isNotNull(temp)) {
             if (securityGroup.getSecurityGroupId() != null) {
-                if (temp.getSecurityGroupName().equals(securityGroup.getSecurityGroupName())
-                        && (!temp.getSecurityGroupId().equals(securityGroup.getSecurityGroupId()))) {
+                if (StringUtils.equalsIgnoreCase(temp.getSecurityGroupName(), securityGroup.getSecurityGroupName())
+                        && !temp.getSecurityGroupId().equals(securityGroup.getSecurityGroupId())) {
                     GlobalVariables.getMessageMap().putError(KSRPropertyConstants.KSR_DOCUMENT_MAINTAINABLE + "." + KSRPropertyConstants.SECURITY_GROUP_NAME,
                             KSRKeyConstants.ERROR_SECURITY_GROUP_NAME_UNIQUE);
                     success = false;
@@ -106,15 +105,22 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
     }
 
     private SecurityGroup retrieveSecurityGroupByName(String securityGroupName) {
+        if (StringUtils.isBlank(securityGroupName)) {
+            return null;
+        }
         SecurityGroup securityGroup = null;
-        Map<String, Object> hashMap = new HashMap<String, Object>();
-        hashMap.put(KSRPropertyConstants.SECURITY_GROUP_NAME, securityGroupName);
+        QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
+                PredicateFactory.equalIgnoreCase(KSRPropertyConstants.SECURITY_GROUP_NAME, securityGroupName));
 
-        BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-        Collection<SecurityGroup> securityGroups = businessObjectService.findMatching(SecurityGroup.class, hashMap);
-
+        List<SecurityGroup> securityGroups = getCriteriaLookupService()
+                .lookup(SecurityGroup.class, criteria)
+                .getResults();
         if (CollectionUtils.isNotEmpty(securityGroups)) {
-            securityGroup = securityGroups.iterator().next();
+            if (securityGroups.size() > 1) {
+                throw new IllegalStateException("Found multiple security groups with name '" +
+                        securityGroupName + "' (case-insensitive); this should NEVER happen!");
+            }
+            securityGroup = securityGroups.get(0);
         }
         return securityGroup;
     }
@@ -131,29 +137,18 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 		boolean successTabName = true;
 
 		List<SecurityGroupTab> securityGroupTabs = ((SecurityGroup) document.getDocumentDataObject()).getSecurityGroupTabs();
-		if (securityGroupTabs != null) {
+		if (CollectionUtils.isNotEmpty(securityGroupTabs)) {
 			for (int i = 0; i < securityGroupTabs.size(); i++) {
 				SecurityGroupTab tab = securityGroupTabs.get(i);
-
-				if ((tab.getTabOrder() == null) && (tab.getTabName() == null)) {
-					securityGroupTabs.remove(i);
-				}
-				else if (tab.getTabOrder() == null) { // Reset to old value
-					tab.setTabOrder(((SecurityGroup) document.getOldMaintainableObject().getDataObject()).getSecurityGroupTabs().get(i).getTabOrder());
-				}
-				if (tab.getTabName() == null) {
-					tab.setTabName(((SecurityGroup) document.getOldMaintainableObject().getDataObject()).getSecurityGroupTabs().get(i).getTabName());
-				}
-
 				for (int j = i + 1; j < securityGroupTabs.size(); j++) {
 					SecurityGroupTab tempTab = securityGroupTabs.get(j);
-					if (successTabOrder
+					if (successTabOrder && tab.getTabOrder() != null
 							&& tab.getTabOrder().equals(tempTab.getTabOrder())) {
 						GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_ORDER_UNIQUE);
 						successTabOrder = false;
 					}
-					if (successTabName
-							&& tab.getTabName().equals(tempTab.getTabName())) {
+					if (successTabName && StringUtils.isNotBlank(tab.getTabName())
+							&& StringUtils.equalsIgnoreCase(tab.getTabName(), tempTab.getTabName())) {
 						GlobalVariables.getMessageMap().putErrorForSectionId(KSRConstants.SECTION_SECURITY_TABS, KSRKeyConstants.ERROR_SECURITY_GROUP_TAB_NAME_UNIQUE);
 						successTabName = false;
 					}
@@ -164,5 +159,12 @@ public class SecurityGroupRule extends MaintenanceDocumentRuleBase {
 
 		return successTabOrder && successTabName;
 	}
+
+    public CriteriaLookupService getCriteriaLookupService() {
+        if (criteriaLookupService == null) {
+            criteriaLookupService = SpringContext.getBean(CriteriaLookupService.class);
+        }
+        return criteriaLookupService;
+    }
 
 }
