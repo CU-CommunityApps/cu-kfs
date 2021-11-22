@@ -58,7 +58,7 @@
 	</div>
 
 	<div class="main-panel">
-		<div class="center" style="margin: 30px 0;" ]>
+		<div class="center" style="margin: 30px 0;" >
 			<div style="font-weight: bold">Manage Refresh Token</div>
 			<c:choose>
 				<c:when test="${KualiForm.displayUpdateRefreshTokenMessage}">
