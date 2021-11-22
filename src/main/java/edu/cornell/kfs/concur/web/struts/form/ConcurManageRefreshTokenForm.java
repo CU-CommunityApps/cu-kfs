@@ -1,8 +1,15 @@
 package edu.cornell.kfs.concur.web.struts.form;
 
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.kfs.kns.web.struts.form.KualiForm;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+
 @SuppressWarnings("deprecation")
+@NAMESPACE(namespace = CUKFSConstants.ParameterNamespaces.CONCUR)
+@COMPONENT(component = CUKFSParameterKeyConstants.ALL_COMPONENTS)
 public class ConcurManageRefreshTokenForm extends KualiForm {
 
     private static final long serialVersionUID = -2705859791711917748L;

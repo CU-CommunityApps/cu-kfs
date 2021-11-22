@@ -37,20 +37,20 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
 
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        LOG.info("start, entering");
+        LOG.debug("start, entering");
         updateFormValues((ConcurManageRefreshTokenForm) form, false, false);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        LOG.info("cancel, entering");
+        LOG.debug("cancel, entering");
         return mapping.findForward(KRADConstants.MAPPING_PORTAL);
     }
 
     public ActionForward replaceRequestToken(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        LOG.info("replaceRequestToken, entering");
+        LOG.debug("replaceRequestToken, entering");
         ConcurManageRefreshTokenForm tokenForm = (ConcurManageRefreshTokenForm) form;
         saveNewRequestToken(tokenForm.getNewRequestToken());
         updateFormValues(tokenForm, false, true);
@@ -59,14 +59,14 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
 
     public ActionForward replaceRefreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        LOG.info("replaceRefreshToken, entering");
+        LOG.debug("replaceRefreshToken, entering");
         getConcurAccessTokenV2Service().retrieveAndPersistNewRefreshToken();
         updateFormValues((ConcurManageRefreshTokenForm) form, true, false);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     private void saveNewRequestToken(String newRequestTokenValue) {
-        LOG.info("saveNewRequestToken, entering");
+        LOG.debug("saveNewRequestToken, entering");
         WebServiceCredential requestTokenCredential = findWebserviceCredential(
                 ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REQUEST_TOKEN);
         requestTokenCredential.setCredentialValue(newRequestTokenValue);
@@ -94,11 +94,11 @@ public class ConcurManageRefreshTokenAction extends KualiAction {
         String refreshTokenUpdateDate = MessageFormat.format(
                 configService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_DATE), "refresh",
                 getTokenUpdateTimestamp(ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys.REFRESH_TOKEN).toString());
-        String updateRefeshSuccessMessage = MessageFormat.format(
+        String updateRefreshSuccessMessage = MessageFormat.format(
                 configService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_UPDATE_SUCCESS),
                 "refresh");
         concurTokenForm.setRefreshTokenUpdateDate(refreshTokenUpdateDate);
-        concurTokenForm.setUpdateRefreshTokenMessage(updateRefeshSuccessMessage);
+        concurTokenForm.setUpdateRefreshTokenMessage(updateRefreshSuccessMessage);
         concurTokenForm.setDisplayUpdateRefreshTokenMessage(displayUpdateRefreshTokenMessage);
 
         String requestTokenUpdateDate = MessageFormat.format(

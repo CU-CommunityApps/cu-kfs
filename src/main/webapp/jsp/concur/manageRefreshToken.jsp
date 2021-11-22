@@ -11,7 +11,7 @@
 	<c:choose>
 		<c:when test="${KualiForm.displayNonProdWarning}">
 			<div class="main-panel">
-				<div class="center" style="margin: 30px 0;" ]>
+				<div class="center" style="margin: 30px 0;">
 					<div style="font-weight: bold">
 						<c:out value="${KualiForm.nonProdWarning}" />
 					</div>
@@ -21,7 +21,7 @@
 	</c:choose>
 
 	<div class="main-panel">
-		<div class="center" style="margin: 30px 0;" ]>
+		<div class="center" style="margin: 30px 0;">
 			<div style="font-weight: bold">Manage Request Token</div>
 			<c:choose>
 				<c:when test="${KualiForm.displayUpdateRequestTokenMessage}">
