@@ -22,8 +22,8 @@
 		<property name="dataDictionaryPackages">
 		  <list merge="true">
 		    <value>classpath:edu/cornell/kfs/concur/web/struts/form/datadictionary/*.xml</value>
-	    </list>
-    </property>
+		  </list>
+		</property>
 		<property name="packagePrefixes">
 			<list>
 				<value>edu.cornell.kfs.concur</value>
