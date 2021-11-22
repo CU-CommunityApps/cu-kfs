@@ -20,9 +20,9 @@
 		<property name="namespaceCode" value="KFS-CNCR" />
 		<property name="initializeDataDictionary" value="true" />
 		<property name="dataDictionaryPackages">
-	   <list merge="true">
+		  <list merge="true">
 		    <value>classpath:edu/cornell/kfs/concur/web/struts/form/datadictionary/*.xml</value>
-	   </list>
+	    </list>
     </property>
 		<property name="packagePrefixes">
 			<list>
