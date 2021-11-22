@@ -54,7 +54,7 @@ public class CornellLoginFilter implements Filter {
     
     private void logNullUser(HttpServletRequest request) {
         LOG.error("logNullUser, the remote user was not found in the HTTP request header.  Path: "  + request.getPathInfo() + 
-                " auth type: " + request.getAuthType() + " query string: " + request.getQueryString());
+                 " query string: " + request.getQueryString() + " auth type: " + request.getAuthType() + " class: " + request.getClass());
     }
 
     @Override
