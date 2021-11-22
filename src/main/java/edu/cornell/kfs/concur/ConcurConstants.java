@@ -161,9 +161,14 @@ public class ConcurConstants {
             public static final String CLIENT_ID = "client_id";
             public static final String CLIENT_SECRET = "client_secret";
             public static final String REFRESH_TOKEN = "refresh_token";
+            public static final String USER_NAME = "username";
             public static final String GRANT_TYPE = "grant_type";
+            public static final String CREDTYPE = "credtype";
+            public static final String PASSWORD = "password";
         }
         public static final String GRANT_TYPE_REFRESH_TOKEN_VALUE = "refresh_token";
+        public static final String GRANT_TYPE_PASSWORD_VALUE = "password";
+        public static final String CRED_TYPE_AUTHTOKEN_VALUE = "authtoken";
         public static final String REQUEST_HEADER_CONTENT_TYPE_KEY_NAME = "Content-Type";
     }
     

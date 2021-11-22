@@ -47,5 +47,6 @@ public class ConcurParameterConstants {
     
     public static final String WEBSERVICE_MAX_RETRIES = "WEBSERVICE_MAX_RETRIES";
     public static final String CONCUR_ACCESS_TOKEN_ENDPOINT = "CONCUR_ACCESS_TOKEN_ENDPOINT";
+    public static final String CONCUR_OAUTH2_REPLACE_REQUEST_TOKEN_INSTRUCTIONS = "CONCUR_OAUTH2_REPLACE_REQUEST_TOKEN_INSTRUCTIONS";
 
 }
