@@ -43,7 +43,7 @@ import edu.cornell.kfs.ksr.service.impl.SecurityRequestDerivedRoleTypeServiceImp
 
 public class SecurityRequestDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
 
-    private static final Logger LOG = LogManager.getLogger(SecurityRequestDocumentAction.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
@@ -194,10 +194,12 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
                 if (provisioningGroup.isActive()) {
                     int roleIndex = findSecurityRequestRoleIndex(document, provisioningGroup.getRoleId());
                     if (roleIndex == -1) {
-                        throw new RuntimeException("Unable to find security request role record for role id: " + provisioningGroup.getRoleId());
+                        LOG.warn("buildTabRoleIndexes, Unable to find security request role record for role id '"
+                                + provisioningGroup.getRoleId() + "' on document '" + document.getDocumentNumber()
+                                + "'; this role will be omitted from the document");
+                    } else {
+                        requestRoleIndexes.add(new Integer(roleIndex));
                     }
-
-                    requestRoleIndexes.add(new Integer(roleIndex));
                 }
 
             }
