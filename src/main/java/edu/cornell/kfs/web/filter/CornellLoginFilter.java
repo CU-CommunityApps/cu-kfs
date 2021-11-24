@@ -11,10 +11,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.util.Locale;
 
 public class CornellLoginFilter implements Filter {
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -41,7 +46,15 @@ public class CornellLoginFilter implements Filter {
         if (user == null) {
             user = request.getHeader(CUWebAuthAuthenticationService.CUWAL_REMOTE_USER_HEADER.toUpperCase(Locale.US));
         }
+        if (user == null) {
+            logNullUser(request);
+        }
         return user;
+    }
+    
+    private void logNullUser(HttpServletRequest request) {
+        LOG.error("logNullUser, the remote user was not found in the HTTP request header.  Path: "  + request.getPathInfo() + 
+                 " query string: " + request.getQueryString() + " auth type: " + request.getAuthType() + " class: " + request.getClass());
     }
 
     @Override
