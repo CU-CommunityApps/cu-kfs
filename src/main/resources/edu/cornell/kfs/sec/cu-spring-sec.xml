@@ -30,4 +30,8 @@
         </property>
     </bean>
 
+    <bean id="securityAccountDelegateModelLookupableHelperService"
+          class="edu.cornell.kfs.sec.businessobject.lookup.CuAccessSecurityAccountDelegateModelLookupableHelperServiceImpl"
+          parent="securityAccountDelegateModelLookupableHelperService-parentBean" scope="prototype"/>
+
 </beans>
