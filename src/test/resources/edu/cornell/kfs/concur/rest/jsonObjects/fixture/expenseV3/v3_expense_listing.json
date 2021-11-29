@@ -1,8 +1,7 @@
-
 {
     "Items": [
         {
-            "Name": "Feb 6 2020 Test Call Out",
+            "Name": "Expense Report 1",
             "Total": 5.00000000,
             "CurrencyCode": "USD",
             "Country": "US",
@@ -108,7 +107,7 @@
             "URI": "https://concururl/api/v3.0/expense/reports/reportid1"
         },
         {
-            "Name": "3/5/20 expense report",
+            "Name": "Expense Report 2",
             "Total": 1800.00000000,
             "CurrencyCode": "USD",
             "Country": "US",
@@ -142,13 +141,13 @@
             "OrgUnit1": {
                 "Type": "ConnectedList",
                 "Value": "ITHACA CAMPUS",
-                "Code": "IT",
+                "Code": "EX",
                 "ListItemID": "itemguid9"
             },
             "OrgUnit2": {
                 "Type": "ConnectedList",
                 "Value": "FIS GENERAL OPERATING",
-                "Code": "G224700",
+                "Code": "EXO4769",
                 "ListItemID": "itemguid10"
             },
             "OrgUnit3": null,
