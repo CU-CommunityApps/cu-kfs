@@ -1,0 +1,126 @@
+{
+    "href": "https://concururl.com/travelrequest/v4/requests/reportId",
+    "id": "reportId",
+    "approvalStatus": {
+        "code": "SUBMITTED",
+        "name": "Submitted & Pending Approval"
+    },
+    "approved": false,
+    "approver": {
+        "id": "guid1",
+        "firstName": "Christopher",
+        "middleInitial": "D",
+        "lastName": "Jacobsen"
+    },
+    "businessPurpose": "Weisberg/Hyman Event 12/14/21\nOther meeting requests attached",
+    "canceledPostApproval": false,
+    "closed": false,
+    "comments": {
+        "href": "https://concururl.com/travelrequest/v4/requests/reportId/comments",
+        "id": "reportId",
+        "template": "https://concururl.com/travelrequest/v4/requests/{id}/comments"
+    },
+    "creationDate": "2021-11-24T15:36:59.000Z",
+    "custom1": {
+        "code": "IT",
+        "value": "guiid2",
+        "isValid": true
+    },
+    "custom11": {
+        "code": "1",
+        "value": "guiid3",
+        "isValid": true
+    },
+    "custom12": {
+        "code": "5950",
+        "value": "guid4",
+        "isValid": true
+    },
+    "custom2": {
+        "code": "G884736",
+        "value": "guid5",
+        "isValid": true
+    },
+    "custom7": {
+        "code": "Employee",
+        "value": "guid6",
+        "isValid": true
+    },
+    "custom8": {
+        "code": "Domestic Travel",
+        "value": "guid7",
+        "isValid": true
+    },
+    "custom9": {
+        "code": "Fundraising",
+        "value": "guid8",
+        "isValid": true
+    },
+    "endDate": "2021-12-15",
+    "everSentBack": false,
+    "exceptions": {
+        "href": "https://concururl.com/travelrequest/v4/requests/reportId/exceptions",
+        "id": "reportId",
+        "template": "https://concururl.com/travelrequest/v4/requests/{id}/exceptions"
+    },
+    "expensePolicy": {
+        "id": "policyId"
+    },
+    "expenses": [
+        {
+            "href": "https://concururl.com/travelrequest/v4/expenses/expenseId1",
+            "id": "expenseId1",
+            "template": "https://concururl.com/travelrequest/v4/expenses/{id}"
+        },
+        {
+            "href": "https://concururl.com/travelrequest/v4/expenses/expenseId2",
+            "id": "expenseId2",
+            "template": "https://concururl.com/travelrequest/v4/expenses/{id}"
+        },
+        {
+            "href": "https://concururl.com/travelrequest/v4/expenses/expenseId3",
+            "id": "expenseId3",
+            "template": "https://concururl.com/travelrequest/v4/expenses/{id}"
+        }
+    ],
+    "isUserReviewed": true,
+    "lastModified": "2021-11-24T15:52:24.000Z",
+    "mainDestination": {
+        "id": "guid9",
+        "countryCode": "US",
+        "countrySubDivisionCode": "US-CA",
+        "city": "Los Angeles, California",
+        "name": "Los Angeles, California",
+        "lnKey": 30482
+    },
+    "name": "Los Angeles 12.13.21",
+    "owner": {
+        "id": "guid10",
+        "firstName": "Laura",
+        "middleInitial": "M",
+        "lastName": "Estephan"
+    },
+    "pendingApproval": true,
+    "policy": {
+        "id": "policyud"
+    },
+    "requestId": "3G9A",
+    "startDate": "2021-12-13",
+    "submitDate": "2021-11-24T15:52:24.000Z",
+    "totalApprovedAmount": {
+        "value": 1290.00000000,
+        "currency": "USD"
+    },
+    "totalPostedAmount": {
+        "value": 1290.00000000,
+        "currency": "USD"
+    },
+    "totalRemainingAmount": {
+        "value": 1290.00000000,
+        "currency": "USD"
+    },
+    "type": {
+        "code": "TRAVEL",
+        "label": "Travel"
+    }
+}

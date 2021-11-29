@@ -1,0 +1,106 @@
+{
+    "Name": "Feb 6 2020 Test Call Out",
+    "Total": 5.00000000,
+    "CurrencyCode": "USD",
+    "Country": "US",
+    "CountrySubdivision": "US-NY",
+    "CreateDate": "2020-02-06T18:29:35.633",
+    "SubmitDate": "2020-02-06T18:30:11.207",
+    "ProcessingPaymentDate": null,
+    "PaidDate": null,
+    "ReceiptsReceived": false,
+    "UserDefinedDate": "2020-02-06T00:00:00",
+    "LastComment": "",
+    "OwnerLoginID": "jd101@cornell.edu",
+    "OwnerName": "Jane Doe",
+    "ApproverLoginID": null,
+    "ApproverName": null,
+    "ApprovalStatusName": "Pending External Validation",
+    "ApprovalStatusCode": "A_EXTV",
+    "PaymentStatusName": "Not Paid",
+    "PaymentStatusCode": "P_NOTP",
+    "LastModifiedDate": "2020-02-06T18:30:11.247",
+    "PersonalAmount": 0.00000000,
+    "AmountDueEmployee": 5.00000000,
+    "AmountDueCompanyCard": 0.00000000,
+    "TotalClaimedAmount": 5.00000000,
+    "TotalApprovedAmount": 5.00000000,
+    "LedgerName": "CORNELL",
+    "PolicyID": "policyGuid",
+    "EverSentBack": false,
+    "HasException": false,
+    "WorkflowActionUrl": "http://concururl/api/v3.0/expense/reports/reportguid/report/reportguid2/WorkFlowAction?user=jd101@cornell.edu",
+    "OrgUnit1": {
+        "Type": "ConnectedList",
+        "Value": "ITHACA CAMPUS",
+        "Code": "IT",
+        "ListItemID": "listguid1"
+    },
+    "OrgUnit2": {
+        "Type": "ConnectedList",
+        "Value": "FIS GENERAL OPERATING",
+        "Code": "G224700",
+        "ListItemID": "listguid2"
+    },
+    "OrgUnit3": null,
+    "OrgUnit4": null,
+    "OrgUnit5": null,
+    "OrgUnit6": null,
+    "Custom1": {
+        "Type": "List",
+        "Value": "Employee",
+        "Code": "Employee",
+        "ListItemID": "listguid3"
+    },
+    "Custom2": {
+        "Type": "List",
+        "Value": "1.  Domestic Travel",
+        "Code": "Domestic Travel",
+        "ListItemID": "listguid4"
+    },
+    "Custom3": {
+        "Type": "List",
+        "Value": "Conference",
+        "Code": "Conference",
+        "ListItemID": "listguid5"
+    },
+    "Custom4": null,
+    "Custom5": {
+        "Type": "Text",
+        "Value": "6104",
+        "Code": null,
+        "ListItemID": null
+    },
+    "Custom6": null,
+    "Custom7": null,
+    "Custom8": {
+        "Type": "ConnectedList",
+        "Value": "University Business Service Center",
+        "Code": "1",
+        "ListItemID": "listguid6"
+    },
+    "Custom9": {
+        "Type": "ConnectedList",
+        "Value": "AVP/UNIVERSITY CONTROLLER",
+        "Code": "6104",
+        "ListItemID": "listguid7"
+    },
+    "Custom10": null,
+    "Custom11": null,
+    "Custom12": null,
+    "Custom13": null,
+    "Custom14": null,
+    "Custom15": {
+        "Type": "List",
+        "Value": "Test Cornell",
+        "Code": "Test Cornell",
+        "ListItemID": "listguid8"
+    },
+    "Custom16": null,
+    "Custom17": null,
+    "Custom18": null,
+    "Custom19": null,
+    "Custom20": null,
+    "ID": "reportguid",
+    "URI": "http://concururl/api/v3.0/expense/reports/reportguid"
+}
