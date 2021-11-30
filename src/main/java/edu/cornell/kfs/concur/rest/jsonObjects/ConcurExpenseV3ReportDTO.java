@@ -9,133 +9,133 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExpenseListItemDTO {
+public class ConcurExpenseV3ReportDTO {
     @JsonProperty("Name")
-    public String name;
+    private String name;
     
     @JsonProperty("Total")
-    public double total;
+    private double total;
     
     @JsonProperty("CurrencyCode")
-    public String currencyCode;
+    private String currencyCode;
     
     @JsonProperty("Country")
-    public String country;
+    private String country;
     
     @JsonProperty("CountrySubdivision")
-    public String countrySubdivision;
+    private String countrySubdivision;
     
     @JsonProperty("CreateDate")
-    public Date createDate;
+    private Date createDate;
     
     @JsonProperty("SubmitDate")
-    public Date submitDate;
+    private Date submitDate;
     
     @JsonProperty("ProcessingPaymentDate")
-    public Object processingPaymentDate;
+    private Object processingPaymentDate;
     
     @JsonProperty("PaidDate")
-    public Object paidDate;
+    private Object paidDate;
     
     @JsonProperty("ReceiptsReceived")
-    public boolean receiptsReceived;
+    private boolean receiptsReceived;
     
     @JsonProperty("UserDefinedDate")
-    public Date userDefinedDate;
+    private Date userDefinedDate;
     
     @JsonProperty("LastComment")
-    public String lastComment;
+    private String lastComment;
     
     @JsonProperty("OwnerLoginID")
-    public String ownerLoginID;
+    private String ownerLoginID;
     
     @JsonProperty("OwnerName")
-    public String ownerName;
+    private String ownerName;
     
     @JsonProperty("ApproverLoginID")
-    public String approverLoginID;
+    private Object approverLoginID;
     
     @JsonProperty("ApproverName")
-    public String approverName;
+    private Object approverName;
     
     @JsonProperty("ApprovalStatusName")
-    public String approvalStatusName;
+    private String approvalStatusName;
     
     @JsonProperty("ApprovalStatusCode")
-    public String approvalStatusCode;
+    private String approvalStatusCode;
     
     @JsonProperty("PaymentStatusName")
-    public String paymentStatusName;
+    private String paymentStatusName;
     
     @JsonProperty("PaymentStatusCode")
-    public String paymentStatusCode;
+    private String paymentStatusCode;
     
     @JsonProperty("LastModifiedDate")
-    public Date lastModifiedDate;
-
+    private Date lastModifiedDate;
+    
     @JsonProperty("PersonalAmount")
-    public double personalAmount;
+    private double personalAmount;
     
     @JsonProperty("AmountDueEmployee")
-    public double amountDueEmployee;
+    private double amountDueEmployee;
     
     @JsonProperty("AmountDueCompanyCard")
-    public double amountDueCompanyCard;
+    private double amountDueCompanyCard;
     
     @JsonProperty("TotalClaimedAmount")
-    public double totalClaimedAmount;
+    private double totalClaimedAmount;
     
     @JsonProperty("TotalApprovedAmount")
-    public double totalApprovedAmount;
+    private double totalApprovedAmount;
     
     @JsonProperty("LedgerName")
-    public String ledgerName;
+    private String ledgerName;
     
     @JsonProperty("PolicyID")
-    public String policyID;
+    private String policyID;
     
     @JsonProperty("EverSentBack")
-    public boolean everSentBack;
+    private boolean everSentBack;
     
     @JsonProperty("HasException")
-    public boolean hasException;
+    private boolean hasException;
     
     @JsonProperty("WorkflowActionUrl")
-    public String workflowActionUrl;
+    private String workflowActionUrl;
     
     @JsonProperty("OrgUnit1")
-    public ConcurV3ExpenseReportItemDTO chart;
+    private ConcurExpenseV3ReportItemDTO chart;
     
     @JsonProperty("OrgUnit2")
-    public ConcurV3ExpenseReportItemDTO account;
+    private ConcurExpenseV3ReportItemDTO account;
     
     @JsonProperty("Custom1")
-    public ConcurV3ExpenseReportItemDTO travlerType;
+    private ConcurExpenseV3ReportItemDTO travlerType;
     
     @JsonProperty("Custom2")
-    public ConcurV3ExpenseReportItemDTO reportTupe;
+    private ConcurExpenseV3ReportItemDTO reportTupe;
     
     @JsonProperty("Custom3")
-    public ConcurV3ExpenseReportItemDTO businessPurpose;
+    private ConcurExpenseV3ReportItemDTO businessPurpose;
     
     @JsonProperty("Custom5")
-    public ConcurV3ExpenseReportItemDTO departmentOrgCode;
+    private ConcurExpenseV3ReportItemDTO departmentOrgCode;
     
     @JsonProperty("Custom8")
-    public ConcurV3ExpenseReportItemDTO ftcBsc;
+    private ConcurExpenseV3ReportItemDTO ftcBsc;
     
     @JsonProperty("Custom9")
-    public ConcurV3ExpenseReportItemDTO departmentName;
+    private ConcurExpenseV3ReportItemDTO departmentName;
     
     @JsonProperty("Custom15")
-    public ConcurV3ExpenseReportItemDTO userType;
+    private ConcurExpenseV3ReportItemDTO userType;
     
     @JsonProperty("ID")
-    public String iD;
+    private String id;
     
     @JsonProperty("URI")
-    public String uri;
-
+    private String uri;
+    
     public String getName() {
         return name;
     }
@@ -248,19 +248,19 @@ public class ExpenseListItemDTO {
         this.ownerName = ownerName;
     }
 
-    public String getApproverLoginID() {
+    public Object getApproverLoginID() {
         return approverLoginID;
     }
 
-    public void setApproverLoginID(String approverLoginID) {
+    public void setApproverLoginID(Object approverLoginID) {
         this.approverLoginID = approverLoginID;
     }
 
-    public String getApproverName() {
+    public Object getApproverName() {
         return approverName;
     }
 
-    public void setApproverName(String approverName) {
+    public void setApproverName(Object approverName) {
         this.approverName = approverName;
     }
 
@@ -384,84 +384,84 @@ public class ExpenseListItemDTO {
         this.workflowActionUrl = workflowActionUrl;
     }
 
-    public ConcurV3ExpenseReportItemDTO getChart() {
+    public ConcurExpenseV3ReportItemDTO getChart() {
         return chart;
     }
 
-    public void setChart(ConcurV3ExpenseReportItemDTO chart) {
+    public void setChart(ConcurExpenseV3ReportItemDTO chart) {
         this.chart = chart;
     }
 
-    public ConcurV3ExpenseReportItemDTO getAccount() {
+    public ConcurExpenseV3ReportItemDTO getAccount() {
         return account;
     }
 
-    public void setAccount(ConcurV3ExpenseReportItemDTO account) {
+    public void setAccount(ConcurExpenseV3ReportItemDTO account) {
         this.account = account;
     }
 
-    public ConcurV3ExpenseReportItemDTO getTravlerType() {
+    public ConcurExpenseV3ReportItemDTO getTravlerType() {
         return travlerType;
     }
 
-    public void setTravlerType(ConcurV3ExpenseReportItemDTO travlerType) {
+    public void setTravlerType(ConcurExpenseV3ReportItemDTO travlerType) {
         this.travlerType = travlerType;
     }
 
-    public ConcurV3ExpenseReportItemDTO getReportTupe() {
+    public ConcurExpenseV3ReportItemDTO getReportTupe() {
         return reportTupe;
     }
 
-    public void setReportTupe(ConcurV3ExpenseReportItemDTO reportTupe) {
+    public void setReportTupe(ConcurExpenseV3ReportItemDTO reportTupe) {
         this.reportTupe = reportTupe;
     }
 
-    public ConcurV3ExpenseReportItemDTO getBusinessPurpose() {
+    public ConcurExpenseV3ReportItemDTO getBusinessPurpose() {
         return businessPurpose;
     }
 
-    public void setBusinessPurpose(ConcurV3ExpenseReportItemDTO businessPurpose) {
+    public void setBusinessPurpose(ConcurExpenseV3ReportItemDTO businessPurpose) {
         this.businessPurpose = businessPurpose;
     }
 
-    public ConcurV3ExpenseReportItemDTO getDepartmentOrgCode() {
+    public ConcurExpenseV3ReportItemDTO getDepartmentOrgCode() {
         return departmentOrgCode;
     }
 
-    public void setDepartmentOrgCode(ConcurV3ExpenseReportItemDTO departmentOrgCode) {
+    public void setDepartmentOrgCode(ConcurExpenseV3ReportItemDTO departmentOrgCode) {
         this.departmentOrgCode = departmentOrgCode;
     }
 
-    public ConcurV3ExpenseReportItemDTO getFtcBsc() {
+    public ConcurExpenseV3ReportItemDTO getFtcBsc() {
         return ftcBsc;
     }
 
-    public void setFtcBsc(ConcurV3ExpenseReportItemDTO ftcBsc) {
+    public void setFtcBsc(ConcurExpenseV3ReportItemDTO ftcBsc) {
         this.ftcBsc = ftcBsc;
     }
 
-    public ConcurV3ExpenseReportItemDTO getDepartmentName() {
+    public ConcurExpenseV3ReportItemDTO getDepartmentName() {
         return departmentName;
     }
 
-    public void setDepartmentName(ConcurV3ExpenseReportItemDTO departmentName) {
+    public void setDepartmentName(ConcurExpenseV3ReportItemDTO departmentName) {
         this.departmentName = departmentName;
     }
 
-    public ConcurV3ExpenseReportItemDTO getUserType() {
+    public ConcurExpenseV3ReportItemDTO getUserType() {
         return userType;
     }
 
-    public void setUserType(ConcurV3ExpenseReportItemDTO userType) {
+    public void setUserType(ConcurExpenseV3ReportItemDTO userType) {
         this.userType = userType;
     }
 
-    public String getiD() {
-        return iD;
+    public String getId() {
+        return id;
     }
 
-    public void setiD(String iD) {
-        this.iD = iD;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUri() {

@@ -9,18 +9,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExpenseListingDTO{
+public class ConcurExpenseV3ListingDTO{
     @JsonProperty("Items") 
-    public List<ExpenseListItemDTO> items;
+    public List<ConcurExpenseV3ListItemDTO> items;
     
     @JsonProperty("NextPage") 
     public String nextPage;
     
-    public List<ExpenseListItemDTO> getItems() {
+    public List<ConcurExpenseV3ListItemDTO> getItems() {
         return items;
     }
 
-    public void setItems(List<ExpenseListItemDTO> items) {
+    public void setItems(List<ConcurExpenseV3ListItemDTO> items) {
         this.items = items;
     }
 

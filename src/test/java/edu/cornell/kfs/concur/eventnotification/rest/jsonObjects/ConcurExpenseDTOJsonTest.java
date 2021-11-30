@@ -16,9 +16,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurV3ExpenseReportDTO;
-import edu.cornell.kfs.concur.rest.jsonObjects.ExpenseListItemDTO;
-import edu.cornell.kfs.concur.rest.jsonObjects.ExpenseListingDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ReportDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 
 class ConcurExpenseDTOJsonTest {
@@ -49,7 +49,7 @@ class ConcurExpenseDTOJsonTest {
     @Test
     void testConcurV3ExpenseReportDTO() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(EXPENSE_REPORT_JSON_EXAMPLE_FILE); 
-        ConcurV3ExpenseReportDTO dto = objectMapper.readValue(jsonFile, ConcurV3ExpenseReportDTO.class);
+        ConcurExpenseV3ReportDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ReportDTO.class);
         LOG.info("testConcurV3ExpenseReportDTO, dto: " + dto.toString());
         assertEquals(CHART_IT, dto.getChart().getCode());
         assertEquals(ACCOUNT_G224700, dto.getAccount().getCode());
@@ -58,16 +58,16 @@ class ConcurExpenseDTOJsonTest {
     @Test
     void testConcurV3ExpenseListingDTO() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(EXPENSE_LISTING_JSON_EXAMPLE_FILE); 
-        ExpenseListingDTO dto = objectMapper.readValue(jsonFile, ExpenseListingDTO.class);
+        ConcurExpenseV3ListingDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ListingDTO.class);
         LOG.info("testConcurV3ExpenseListingDTO, dto: " + dto.toString());
-        ExpenseListItemDTO firstExpenseItem = dto.getItems().stream()
+        ConcurExpenseV3ListItemDTO firstExpenseItem = dto.getItems().stream()
                 .filter(item -> item.getName().equals(REPORT_1_NAME))
                 .collect(Collectors.toList()).get(0);
         assertEquals(REPORTID1, firstExpenseItem.getiD());
         assertEquals(CHART_IT, firstExpenseItem.getChart().getCode());
         assertEquals(ACCOUNT_G224700, firstExpenseItem.getAccount().getCode());
         
-        ExpenseListItemDTO secondExpenseItem = dto.getItems().stream()
+        ConcurExpenseV3ListItemDTO secondExpenseItem = dto.getItems().stream()
                 .filter(item -> item.getName().equals(REPORT_2_NAME))
                 .collect(Collectors.toList()).get(0);
         assertEquals(REPORTID2, secondExpenseItem.getiD());
