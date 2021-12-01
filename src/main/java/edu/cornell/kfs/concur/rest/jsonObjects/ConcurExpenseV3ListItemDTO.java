@@ -12,127 +12,127 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConcurExpenseV3ListItemDTO {
     @JsonProperty("Name")
     public String name;
-    
+
     @JsonProperty("Total")
     public double total;
-    
+
     @JsonProperty("CurrencyCode")
     public String currencyCode;
-    
+
     @JsonProperty("Country")
     public String country;
-    
+
     @JsonProperty("CountrySubdivision")
     public String countrySubdivision;
-    
+
     @JsonProperty("CreateDate")
     public Date createDate;
-    
+
     @JsonProperty("SubmitDate")
     public Date submitDate;
-    
+
     @JsonProperty("ProcessingPaymentDate")
     public Object processingPaymentDate;
-    
+
     @JsonProperty("PaidDate")
     public Object paidDate;
-    
+
     @JsonProperty("ReceiptsReceived")
     public boolean receiptsReceived;
-    
+
     @JsonProperty("UserDefinedDate")
     public Date userDefinedDate;
-    
+
     @JsonProperty("LastComment")
     public String lastComment;
-    
+
     @JsonProperty("OwnerLoginID")
     public String ownerLoginID;
-    
+
     @JsonProperty("OwnerName")
     public String ownerName;
-    
+
     @JsonProperty("ApproverLoginID")
     public String approverLoginID;
-    
+
     @JsonProperty("ApproverName")
     public String approverName;
-    
+
     @JsonProperty("ApprovalStatusName")
     public String approvalStatusName;
-    
+
     @JsonProperty("ApprovalStatusCode")
     public String approvalStatusCode;
-    
+
     @JsonProperty("PaymentStatusName")
     public String paymentStatusName;
-    
+
     @JsonProperty("PaymentStatusCode")
     public String paymentStatusCode;
-    
+
     @JsonProperty("LastModifiedDate")
     public Date lastModifiedDate;
 
     @JsonProperty("PersonalAmount")
     public double personalAmount;
-    
+
     @JsonProperty("AmountDueEmployee")
     public double amountDueEmployee;
-    
+
     @JsonProperty("AmountDueCompanyCard")
     public double amountDueCompanyCard;
-    
+
     @JsonProperty("TotalClaimedAmount")
     public double totalClaimedAmount;
-    
+
     @JsonProperty("TotalApprovedAmount")
     public double totalApprovedAmount;
-    
+
     @JsonProperty("LedgerName")
     public String ledgerName;
-    
+
     @JsonProperty("PolicyID")
     public String policyID;
-    
+
     @JsonProperty("EverSentBack")
     public boolean everSentBack;
-    
+
     @JsonProperty("HasException")
     public boolean hasException;
-    
+
     @JsonProperty("WorkflowActionUrl")
     public String workflowActionUrl;
-    
+
     @JsonProperty("OrgUnit1")
     public ConcurExpenseV3ReportItemDTO chart;
-    
+
     @JsonProperty("OrgUnit2")
     public ConcurExpenseV3ReportItemDTO account;
-    
+
     @JsonProperty("Custom1")
     public ConcurExpenseV3ReportItemDTO travlerType;
-    
+
     @JsonProperty("Custom2")
     public ConcurExpenseV3ReportItemDTO reportTupe;
-    
+
     @JsonProperty("Custom3")
     public ConcurExpenseV3ReportItemDTO businessPurpose;
-    
+
     @JsonProperty("Custom5")
     public ConcurExpenseV3ReportItemDTO departmentOrgCode;
-    
+
     @JsonProperty("Custom8")
     public ConcurExpenseV3ReportItemDTO ftcBsc;
-    
+
     @JsonProperty("Custom9")
     public ConcurExpenseV3ReportItemDTO departmentName;
-    
+
     @JsonProperty("Custom15")
     public ConcurExpenseV3ReportItemDTO userType;
-    
+
     @JsonProperty("ID")
     public String iD;
-    
+
     @JsonProperty("URI")
     public String uri;
 

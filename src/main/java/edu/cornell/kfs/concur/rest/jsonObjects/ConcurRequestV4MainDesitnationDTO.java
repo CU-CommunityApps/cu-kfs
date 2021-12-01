@@ -10,22 +10,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConcurRequestV4MainDesitnationDTO {
     @JsonProperty("id")
     private String id;
-    
+
     @JsonProperty("countryCode")
     private String countryCode;
-    
+
     @JsonProperty("countrySubDivisionCode")
     private String countrySubDivisionCode;
-    
+
     @JsonProperty("city")
     private String city;
-    
+
     @JsonProperty("name")
     private String name;
-    
+
     @JsonProperty("lnKey")
     private Integer lnKey;
-    
+
     public String getId() {
         return id;
     }

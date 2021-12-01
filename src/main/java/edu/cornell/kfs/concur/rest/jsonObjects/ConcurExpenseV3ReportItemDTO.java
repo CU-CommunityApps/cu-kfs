@@ -8,10 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConcurExpenseV3ReportItemDTO {
-    
+
     @JsonProperty("Value")
     private String description;
-    
+
     @JsonProperty("Code")
     private String code;
 

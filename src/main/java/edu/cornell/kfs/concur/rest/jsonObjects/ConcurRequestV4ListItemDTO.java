@@ -10,73 +10,73 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConcurRequestV4ListItemDTO {
     @JsonProperty("href")
     private String href;
-    
+
     @JsonProperty("id")
     private String id;
-    
+
     @JsonProperty("approvalStatus")
     private ConcurRequestV4StatusDTO approvalStatus;
-    
+
     @JsonProperty("approved")
     private Boolean approved;
-    
+
     @JsonProperty("approver")
     private ConcurRequestV4PersonDTO approver;
-    
+
     @JsonProperty("businessPurpose")
     private String businessPurpose;
-    
+
     @JsonProperty("canceledPostApproval")
     private Boolean canceledPostApproval;
-    
+
     @JsonProperty("closed")
     private Boolean closed;
-    
+
     @JsonProperty("creationDate")
     private String creationDate;
-    
+
     @JsonProperty("endDate")
     private String endDate;
-    
+
     @JsonProperty("everSentBack")
     private Boolean everSentBack;
-    
+
     @JsonProperty("highestExceptionLevel")
     private String highestExceptionLevel;
-    
+
     @JsonProperty("isUserReviewed")
     private Boolean isUserReviewed;
-    
+
     @JsonProperty("name")
     private String name;
-    
+
     @JsonProperty("owner")
     public ConcurRequestV4PersonDTO owner;
-    
+
     @JsonProperty("pendingApproval")
     private Boolean pendingApproval;
-    
+
     @JsonProperty("requestId")
     private String requestId;
-    
+
     @JsonProperty("startDate")
     private String startDate;
-    
+
     @JsonProperty("submitDate")
     private String submitDate;
-    
+
     @JsonProperty("totalApprovedAmount")
     private ConcurRequestV4AmountDTO totalApprovedAmount;
-    
+
     @JsonProperty("totalPostedAmount")
     private ConcurRequestV4AmountDTO totalPostedAmount;
-    
+
     @JsonProperty("totalRemainingAmount")
     private ConcurRequestV4AmountDTO totalRemainingAmount;
 
     @JsonProperty("type")
     private ConcurRequestV4TypeDTO type;
-    
+
     public String getHref() {
         return href;
     }

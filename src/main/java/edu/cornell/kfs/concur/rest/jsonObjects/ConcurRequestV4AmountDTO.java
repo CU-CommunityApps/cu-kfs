@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConcurRequestV4AmountDTO {
     @JsonProperty("value")
     private Double value;
-    
+
     @JsonProperty("currency")
     private String currency;
-    
+
     public Double getValue() {
         return value;
     }

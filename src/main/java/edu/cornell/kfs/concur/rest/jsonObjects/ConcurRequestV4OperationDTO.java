@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConcurRequestV4OperationDTO {
     @JsonProperty("rel")
     private String name;
-    
+
     @JsonProperty("href")
     private String href;
-    
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

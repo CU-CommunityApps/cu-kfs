@@ -10,13 +10,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConcurRequestV4PersonDTO {
     @JsonProperty("firstName")
     private String firstName;
-    
+
     @JsonProperty("middleInitial")
     private String middleInitial;
-    
+
     @JsonProperty("lastName")
     private String lastName;
-    
+
     public String getFirstName() {
         return firstName;
     }

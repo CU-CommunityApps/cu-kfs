@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConcurRequestV4TypeDTO {
     @JsonProperty("code")
     private String code;
-    
+
     @JsonProperty("label")
     private String label;
-    
+
     public String getCode() {
         return code;
     }

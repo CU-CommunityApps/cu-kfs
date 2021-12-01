@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConcurExpenseV3ListingDTO{
-    @JsonProperty("Items") 
+public class ConcurExpenseV3ListingDTO {
+    @JsonProperty("Items")
     public List<ConcurExpenseV3ListItemDTO> items;
-    
-    @JsonProperty("NextPage") 
+
+    @JsonProperty("NextPage")
     public String nextPage;
-    
+
     public List<ConcurExpenseV3ListItemDTO> getItems() {
         return items;
     }
