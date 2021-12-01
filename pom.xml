@@ -1014,16 +1014,6 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>secretsmanager</artifactId>
             <version>${aws-java-sdk.version}</version>
-            <exclusions>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-buffer</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-codec</artifactId>
-            	</exclusion>
-            </exclusions>
         </dependency> 
         <dependency>
             <groupId>backport-util-concurrent</groupId>
@@ -1300,6 +1290,28 @@
             <groupId>biz.paluch.redis</groupId>
             <artifactId>lettuce</artifactId>
             <version>${lettuce.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>io.netty</groupId>
+            		<artifactId>netty-common</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>io.netty</groupId>
+            		<artifactId>netty-transport</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>io.netty</groupId>
+            		<artifactId>netty-buffer</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>io.netty</groupId>
+            		<artifactId>netty-handler</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>io.netty</groupId>
+            		<artifactId>netty-codec</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
