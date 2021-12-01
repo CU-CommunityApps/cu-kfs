@@ -44,15 +44,6 @@
 
     <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"
           class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"/>
-
-    <bean id="groupLookupable" class="org.kuali.kfs.kim.lookup.GroupLookupableImpl" parent="kualiLookupable"
-          scope="prototype"  p:configurationService-ref="configurationService">
-        <property name="lookupableHelperService">
-            <bean class="edu.cornell.kfs.kim.lookup.CuGroupLookupableHelperServiceImpl"
-                  parent="lookupableHelperService">
-            </bean>
-        </property>
-    </bean>
     
     <!-- backport changes for redis -->
     <bean id="roleService" class="org.kuali.kfs.kim.impl.role.RoleServiceImpl"
