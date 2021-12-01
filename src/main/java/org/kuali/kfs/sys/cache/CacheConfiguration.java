@@ -170,9 +170,8 @@ public class CacheConfiguration {
             List<String> cacheNames,
             Map<String, Long> cacheExpires
     ) {
-        // Cornell customization: add fix to remove empty cache name that is causing an exception
-        cacheNames.remove(StringUtils.EMPTY);
-        final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate, cacheNames, true);
+        // Cornell customization: add fix to call cacheNames() method instead of using the cacheNames variable that is causing an exception
+        final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate, cacheNames(), true);
         redisCacheManager.setDefaultExpiration(redisDefaultTtl);
         redisCacheManager.setExpires(cacheExpires);
 
