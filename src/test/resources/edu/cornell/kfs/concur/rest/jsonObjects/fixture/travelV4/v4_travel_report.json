@@ -8,9 +8,9 @@
     "approved": false,
     "approver": {
         "id": "guid1",
-        "firstName": "Christopher",
-        "middleInitial": "D",
-        "lastName": "Jacobsen"
+        "firstName": "John",
+        "middleInitial": "Q",
+        "lastName": "Doe"
     },
     "businessPurpose": "Weisberg/Hyman Event 12/14/21\nOther meeting requests attached",
     "canceledPostApproval": false,
@@ -108,7 +108,7 @@
     "startDate": "2021-12-13",
     "submitDate": "2021-11-24T15:52:24.000Z",
     "totalApprovedAmount": {
-        "value": 1290.00000000,
+        "value": 879.07000000,
         "currency": "USD"
     },
     "totalPostedAmount": {

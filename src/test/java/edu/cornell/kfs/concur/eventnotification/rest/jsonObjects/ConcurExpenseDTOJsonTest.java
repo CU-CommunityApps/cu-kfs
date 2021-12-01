@@ -37,17 +37,17 @@ class ConcurExpenseDTOJsonTest {
     private static final String EXPENSE_LISTING_JSON_EXAMPLE_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/expenseV3/v3_expense_listing.json";
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         objectMapper = null;
     }
 
     @Test
-    void testConcurV3ExpenseReportDTO() throws JsonParseException, JsonMappingException, IOException {
+    public void testConcurV3ExpenseReportDTO() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(EXPENSE_REPORT_JSON_EXAMPLE_FILE); 
         ConcurExpenseV3ReportDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ReportDTO.class);
         LOG.info("testConcurV3ExpenseReportDTO, dto: " + dto.toString());
@@ -56,7 +56,7 @@ class ConcurExpenseDTOJsonTest {
     }
     
     @Test
-    void testConcurV3ExpenseListingDTO() throws JsonParseException, JsonMappingException, IOException {
+    public void testConcurV3ExpenseListingDTO() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(EXPENSE_LISTING_JSON_EXAMPLE_FILE); 
         ConcurExpenseV3ListingDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ListingDTO.class);
         LOG.info("testConcurV3ExpenseListingDTO, dto: " + dto.toString());
