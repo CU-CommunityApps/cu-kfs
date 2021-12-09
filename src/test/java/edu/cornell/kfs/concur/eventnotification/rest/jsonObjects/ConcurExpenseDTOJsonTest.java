@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ReportDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
@@ -48,8 +46,8 @@ class ConcurExpenseDTOJsonTest {
 
     @Test
     public void testConcurV3ExpenseReportDTO() throws JsonParseException, JsonMappingException, IOException {
-        File jsonFile = new File(EXPENSE_REPORT_JSON_EXAMPLE_FILE); 
-        ConcurExpenseV3ReportDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ReportDTO.class);
+        File jsonFile = new File(EXPENSE_REPORT_JSON_EXAMPLE_FILE);
+        ConcurExpenseV3ListItemDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ListItemDTO.class);
         LOG.info("testConcurV3ExpenseReportDTO, dto: " + dto.toString());
         assertEquals(CHART_IT, dto.getChart().getCode());
         assertEquals(ACCOUNT_G224700, dto.getAccount().getCode());
@@ -62,14 +60,14 @@ class ConcurExpenseDTOJsonTest {
         LOG.info("testConcurV3ExpenseListingDTO, dto: " + dto.toString());
         ConcurExpenseV3ListItemDTO firstExpenseItem = dto.getItems().stream()
                 .filter(item -> item.getName().equals(REPORT_1_NAME))
-                .collect(Collectors.toList()).get(0);
+                .findFirst().orElseThrow();
         assertEquals(REPORTID1, firstExpenseItem.getId());
         assertEquals(CHART_IT, firstExpenseItem.getChart().getCode());
         assertEquals(ACCOUNT_G224700, firstExpenseItem.getAccount().getCode());
         
         ConcurExpenseV3ListItemDTO secondExpenseItem = dto.getItems().stream()
                 .filter(item -> item.getName().equals(REPORT_2_NAME))
-                .collect(Collectors.toList()).get(0);
+                .findFirst().orElseThrow();
         assertEquals(REPORTID2, secondExpenseItem.getId());
         assertEquals(CHART_EX, secondExpenseItem.getChart().getCode());
         assertEquals(ACCOUNT_EXO4769, secondExpenseItem.getAccount().getCode());

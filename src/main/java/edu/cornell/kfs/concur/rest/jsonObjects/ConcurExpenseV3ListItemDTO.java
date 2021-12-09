@@ -1,12 +1,13 @@
 package edu.cornell.kfs.concur.rest.jsonObjects;
 
-import java.sql.Date;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConcurExpenseV3ListItemDTO {
@@ -14,7 +15,7 @@ public class ConcurExpenseV3ListItemDTO {
     private String name;
 
     @JsonProperty("Total")
-    private double total;
+    private KualiDecimal total;
 
     @JsonProperty("CurrencyCode")
     private String currencyCode;
@@ -32,10 +33,10 @@ public class ConcurExpenseV3ListItemDTO {
     private Date submitDate;
 
     @JsonProperty("ProcessingPaymentDate")
-    private Object processingPaymentDate;
+    private Date processingPaymentDate;
 
     @JsonProperty("PaidDate")
-    private Object paidDate;
+    private Date paidDate;
 
     @JsonProperty("ReceiptsReceived")
     private boolean receiptsReceived;
@@ -74,19 +75,19 @@ public class ConcurExpenseV3ListItemDTO {
     private Date lastModifiedDate;
 
     @JsonProperty("PersonalAmount")
-    private double personalAmount;
+    private KualiDecimal personalAmount;
 
     @JsonProperty("AmountDueEmployee")
-    private double amountDueEmployee;
+    private KualiDecimal amountDueEmployee;
 
     @JsonProperty("AmountDueCompanyCard")
-    private double amountDueCompanyCard;
+    private KualiDecimal amountDueCompanyCard;
 
     @JsonProperty("TotalClaimedAmount")
-    private double totalClaimedAmount;
+    private KualiDecimal totalClaimedAmount;
 
     @JsonProperty("TotalApprovedAmount")
-    private double totalApprovedAmount;
+    private KualiDecimal totalApprovedAmount;
 
     @JsonProperty("LedgerName")
     private String ledgerName;
@@ -144,11 +145,11 @@ public class ConcurExpenseV3ListItemDTO {
         this.name = name;
     }
 
-    public double getTotal() {
+    public KualiDecimal getTotal() {
         return total;
     }
 
-    public void setTotal(double total) {
+    public void setTotal(KualiDecimal total) {
         this.total = total;
     }
 
@@ -192,19 +193,19 @@ public class ConcurExpenseV3ListItemDTO {
         this.submitDate = submitDate;
     }
 
-    public Object getProcessingPaymentDate() {
+    public java.util.Date getProcessingPaymentDate() {
         return processingPaymentDate;
     }
 
-    public void setProcessingPaymentDate(Object processingPaymentDate) {
+    public void setProcessingPaymentDate(Date processingPaymentDate) {
         this.processingPaymentDate = processingPaymentDate;
     }
 
-    public Object getPaidDate() {
+    public Date getPaidDate() {
         return paidDate;
     }
 
-    public void setPaidDate(Object paidDate) {
+    public void setPaidDate(Date paidDate) {
         this.paidDate = paidDate;
     }
 
@@ -304,43 +305,43 @@ public class ConcurExpenseV3ListItemDTO {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public double getPersonalAmount() {
+    public KualiDecimal getPersonalAmount() {
         return personalAmount;
     }
 
-    public void setPersonalAmount(double personalAmount) {
+    public void setPersonalAmount(KualiDecimal personalAmount) {
         this.personalAmount = personalAmount;
     }
 
-    public double getAmountDueEmployee() {
+    public KualiDecimal getAmountDueEmployee() {
         return amountDueEmployee;
     }
 
-    public void setAmountDueEmployee(double amountDueEmployee) {
+    public void setAmountDueEmployee(KualiDecimal amountDueEmployee) {
         this.amountDueEmployee = amountDueEmployee;
     }
 
-    public double getAmountDueCompanyCard() {
+    public KualiDecimal getAmountDueCompanyCard() {
         return amountDueCompanyCard;
     }
 
-    public void setAmountDueCompanyCard(double amountDueCompanyCard) {
+    public void setAmountDueCompanyCard(KualiDecimal amountDueCompanyCard) {
         this.amountDueCompanyCard = amountDueCompanyCard;
     }
 
-    public double getTotalClaimedAmount() {
+    public KualiDecimal getTotalClaimedAmount() {
         return totalClaimedAmount;
     }
 
-    public void setTotalClaimedAmount(double totalClaimedAmount) {
+    public void setTotalClaimedAmount(KualiDecimal totalClaimedAmount) {
         this.totalClaimedAmount = totalClaimedAmount;
     }
 
-    public double getTotalApprovedAmount() {
+    public KualiDecimal getTotalApprovedAmount() {
         return totalApprovedAmount;
     }
 
-    public void setTotalApprovedAmount(double totalApprovedAmount) {
+    public void setTotalApprovedAmount(KualiDecimal totalApprovedAmount) {
         this.totalApprovedAmount = totalApprovedAmount;
     }
 

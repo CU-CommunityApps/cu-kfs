@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +66,7 @@ class ConcurRequestDTOJsonTest {
         ConcurRequestV4ListItemDTO purposeOneItem = dto.getListItems()
                 .stream()
                 .filter(item -> item.getBusinessPurpose().equals(PURPOSE1))
-                .collect(Collectors.toList()).get(0);
+                .findFirst().orElseThrow();
         assertEquals(EZRA, purposeOneItem.getApprover().getFirstName());
     }
 
