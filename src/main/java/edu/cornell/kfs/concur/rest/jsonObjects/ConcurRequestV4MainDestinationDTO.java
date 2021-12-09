@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConcurRequestV4MainDesitnationDTO {
+public class ConcurRequestV4MainDestinationDTO {
     @JsonProperty("id")
     private String id;
 

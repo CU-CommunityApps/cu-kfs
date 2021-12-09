@@ -55,7 +55,7 @@ public class ConcurRequestV4ReportDTO {
     private String lastModified;
 
     @JsonProperty("mainDestination")
-    private ConcurRequestV4MainDesitnationDTO mainDestination;
+    private ConcurRequestV4MainDestinationDTO mainDestination;
 
     @JsonProperty("name")
     private String name;
@@ -207,11 +207,11 @@ public class ConcurRequestV4ReportDTO {
         this.lastModified = lastModified;
     }
 
-    public ConcurRequestV4MainDesitnationDTO getMainDestination() {
+    public ConcurRequestV4MainDestinationDTO getMainDestination() {
         return mainDestination;
     }
 
-    public void setMainDestination(ConcurRequestV4MainDesitnationDTO mainDestination) {
+    public void setMainDestination(ConcurRequestV4MainDestinationDTO mainDestination) {
         this.mainDestination = mainDestination;
     }
 

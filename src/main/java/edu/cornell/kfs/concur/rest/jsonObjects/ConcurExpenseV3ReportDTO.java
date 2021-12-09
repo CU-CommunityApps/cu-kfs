@@ -53,10 +53,10 @@ public class ConcurExpenseV3ReportDTO {
     private String ownerName;
 
     @JsonProperty("ApproverLoginID")
-    private Object approverLoginID;
+    private String approverLoginID;
 
     @JsonProperty("ApproverName")
-    private Object approverName;
+    private String approverName;
 
     @JsonProperty("ApprovalStatusName")
     private String approvalStatusName;
@@ -110,10 +110,10 @@ public class ConcurExpenseV3ReportDTO {
     private ConcurExpenseV3ReportItemDTO account;
 
     @JsonProperty("Custom1")
-    private ConcurExpenseV3ReportItemDTO travlerType;
+    private ConcurExpenseV3ReportItemDTO travelerType;
 
     @JsonProperty("Custom2")
-    private ConcurExpenseV3ReportItemDTO reportTupe;
+    private ConcurExpenseV3ReportItemDTO reportType;
 
     @JsonProperty("Custom3")
     private ConcurExpenseV3ReportItemDTO businessPurpose;
@@ -252,7 +252,7 @@ public class ConcurExpenseV3ReportDTO {
         return approverLoginID;
     }
 
-    public void setApproverLoginID(Object approverLoginID) {
+    public void setApproverLoginID(String approverLoginID) {
         this.approverLoginID = approverLoginID;
     }
 
@@ -260,7 +260,7 @@ public class ConcurExpenseV3ReportDTO {
         return approverName;
     }
 
-    public void setApproverName(Object approverName) {
+    public void setApproverName(String approverName) {
         this.approverName = approverName;
     }
 
@@ -400,20 +400,20 @@ public class ConcurExpenseV3ReportDTO {
         this.account = account;
     }
 
-    public ConcurExpenseV3ReportItemDTO getTravlerType() {
-        return travlerType;
+    public ConcurExpenseV3ReportItemDTO getTravelerType() {
+        return travelerType;
     }
 
-    public void setTravlerType(ConcurExpenseV3ReportItemDTO travlerType) {
-        this.travlerType = travlerType;
+    public void setTravelerType(ConcurExpenseV3ReportItemDTO travelerType) {
+        this.travelerType = travelerType;
     }
 
-    public ConcurExpenseV3ReportItemDTO getReportTupe() {
-        return reportTupe;
+    public ConcurExpenseV3ReportItemDTO getReportType() {
+        return reportType;
     }
 
-    public void setReportTupe(ConcurExpenseV3ReportItemDTO reportTupe) {
-        this.reportTupe = reportTupe;
+    public void setReportType(ConcurExpenseV3ReportItemDTO reportType) {
+        this.reportType = reportType;
     }
 
     public ConcurExpenseV3ReportItemDTO getBusinessPurpose() {

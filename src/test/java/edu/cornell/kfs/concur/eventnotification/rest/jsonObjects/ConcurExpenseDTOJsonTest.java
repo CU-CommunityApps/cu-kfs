@@ -63,14 +63,14 @@ class ConcurExpenseDTOJsonTest {
         ConcurExpenseV3ListItemDTO firstExpenseItem = dto.getItems().stream()
                 .filter(item -> item.getName().equals(REPORT_1_NAME))
                 .collect(Collectors.toList()).get(0);
-        assertEquals(REPORTID1, firstExpenseItem.getiD());
+        assertEquals(REPORTID1, firstExpenseItem.getId());
         assertEquals(CHART_IT, firstExpenseItem.getChart().getCode());
         assertEquals(ACCOUNT_G224700, firstExpenseItem.getAccount().getCode());
         
         ConcurExpenseV3ListItemDTO secondExpenseItem = dto.getItems().stream()
                 .filter(item -> item.getName().equals(REPORT_2_NAME))
                 .collect(Collectors.toList()).get(0);
-        assertEquals(REPORTID2, secondExpenseItem.getiD());
+        assertEquals(REPORTID2, secondExpenseItem.getId());
         assertEquals(CHART_EX, secondExpenseItem.getChart().getCode());
         assertEquals(ACCOUNT_EXO4769, secondExpenseItem.getAccount().getCode());
         

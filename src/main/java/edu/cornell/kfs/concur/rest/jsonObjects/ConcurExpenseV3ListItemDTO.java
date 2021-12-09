@@ -11,130 +11,130 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConcurExpenseV3ListItemDTO {
     @JsonProperty("Name")
-    public String name;
+    private String name;
 
     @JsonProperty("Total")
-    public double total;
+    private double total;
 
     @JsonProperty("CurrencyCode")
-    public String currencyCode;
+    private String currencyCode;
 
     @JsonProperty("Country")
-    public String country;
+    private String country;
 
     @JsonProperty("CountrySubdivision")
-    public String countrySubdivision;
+    private String countrySubdivision;
 
     @JsonProperty("CreateDate")
-    public Date createDate;
+    private Date createDate;
 
     @JsonProperty("SubmitDate")
-    public Date submitDate;
+    private Date submitDate;
 
     @JsonProperty("ProcessingPaymentDate")
-    public Object processingPaymentDate;
+    private Object processingPaymentDate;
 
     @JsonProperty("PaidDate")
-    public Object paidDate;
+    private Object paidDate;
 
     @JsonProperty("ReceiptsReceived")
-    public boolean receiptsReceived;
+    private boolean receiptsReceived;
 
     @JsonProperty("UserDefinedDate")
-    public Date userDefinedDate;
+    private Date userDefinedDate;
 
     @JsonProperty("LastComment")
-    public String lastComment;
+    private String lastComment;
 
     @JsonProperty("OwnerLoginID")
-    public String ownerLoginID;
+    private String ownerLoginID;
 
     @JsonProperty("OwnerName")
-    public String ownerName;
+    private String ownerName;
 
     @JsonProperty("ApproverLoginID")
-    public String approverLoginID;
+    private String approverLoginID;
 
     @JsonProperty("ApproverName")
-    public String approverName;
+    private String approverName;
 
     @JsonProperty("ApprovalStatusName")
-    public String approvalStatusName;
+    private String approvalStatusName;
 
     @JsonProperty("ApprovalStatusCode")
-    public String approvalStatusCode;
+    private String approvalStatusCode;
 
     @JsonProperty("PaymentStatusName")
-    public String paymentStatusName;
+    private String paymentStatusName;
 
     @JsonProperty("PaymentStatusCode")
-    public String paymentStatusCode;
+    private String paymentStatusCode;
 
     @JsonProperty("LastModifiedDate")
-    public Date lastModifiedDate;
+    private Date lastModifiedDate;
 
     @JsonProperty("PersonalAmount")
-    public double personalAmount;
+    private double personalAmount;
 
     @JsonProperty("AmountDueEmployee")
-    public double amountDueEmployee;
+    private double amountDueEmployee;
 
     @JsonProperty("AmountDueCompanyCard")
-    public double amountDueCompanyCard;
+    private double amountDueCompanyCard;
 
     @JsonProperty("TotalClaimedAmount")
-    public double totalClaimedAmount;
+    private double totalClaimedAmount;
 
     @JsonProperty("TotalApprovedAmount")
-    public double totalApprovedAmount;
+    private double totalApprovedAmount;
 
     @JsonProperty("LedgerName")
-    public String ledgerName;
+    private String ledgerName;
 
     @JsonProperty("PolicyID")
-    public String policyID;
+    private String policyID;
 
     @JsonProperty("EverSentBack")
-    public boolean everSentBack;
+    private boolean everSentBack;
 
     @JsonProperty("HasException")
-    public boolean hasException;
+    private boolean hasException;
 
     @JsonProperty("WorkflowActionUrl")
-    public String workflowActionUrl;
+    private String workflowActionUrl;
 
     @JsonProperty("OrgUnit1")
-    public ConcurExpenseV3ReportItemDTO chart;
+    private ConcurExpenseV3ReportItemDTO chart;
 
     @JsonProperty("OrgUnit2")
-    public ConcurExpenseV3ReportItemDTO account;
+    private ConcurExpenseV3ReportItemDTO account;
 
     @JsonProperty("Custom1")
-    public ConcurExpenseV3ReportItemDTO travlerType;
+    private ConcurExpenseV3ReportItemDTO travelerType;
 
     @JsonProperty("Custom2")
-    public ConcurExpenseV3ReportItemDTO reportTupe;
+    private ConcurExpenseV3ReportItemDTO reportType;
 
     @JsonProperty("Custom3")
-    public ConcurExpenseV3ReportItemDTO businessPurpose;
+    private ConcurExpenseV3ReportItemDTO businessPurpose;
 
     @JsonProperty("Custom5")
-    public ConcurExpenseV3ReportItemDTO departmentOrgCode;
+    private ConcurExpenseV3ReportItemDTO departmentOrgCode;
 
     @JsonProperty("Custom8")
-    public ConcurExpenseV3ReportItemDTO ftcBsc;
+    private ConcurExpenseV3ReportItemDTO ftcBsc;
 
     @JsonProperty("Custom9")
-    public ConcurExpenseV3ReportItemDTO departmentName;
+    private ConcurExpenseV3ReportItemDTO departmentName;
 
     @JsonProperty("Custom15")
-    public ConcurExpenseV3ReportItemDTO userType;
+    private ConcurExpenseV3ReportItemDTO userType;
 
     @JsonProperty("ID")
-    public String iD;
+    private String id;
 
     @JsonProperty("URI")
-    public String uri;
+    private String uri;
 
     public String getName() {
         return name;
@@ -400,20 +400,20 @@ public class ConcurExpenseV3ListItemDTO {
         this.account = account;
     }
 
-    public ConcurExpenseV3ReportItemDTO getTravlerType() {
-        return travlerType;
+    public ConcurExpenseV3ReportItemDTO getTravelerType() {
+        return travelerType;
     }
 
-    public void setTravlerType(ConcurExpenseV3ReportItemDTO travlerType) {
-        this.travlerType = travlerType;
+    public void setTravelerType(ConcurExpenseV3ReportItemDTO travelerType) {
+        this.travelerType = travelerType;
     }
 
-    public ConcurExpenseV3ReportItemDTO getReportTupe() {
-        return reportTupe;
+    public ConcurExpenseV3ReportItemDTO getReportType() {
+        return reportType;
     }
 
-    public void setReportTupe(ConcurExpenseV3ReportItemDTO reportTupe) {
-        this.reportTupe = reportTupe;
+    public void setReportType(ConcurExpenseV3ReportItemDTO reportType) {
+        this.reportType = reportType;
     }
 
     public ConcurExpenseV3ReportItemDTO getBusinessPurpose() {
@@ -456,12 +456,12 @@ public class ConcurExpenseV3ListItemDTO {
         this.userType = userType;
     }
 
-    public String getiD() {
-        return iD;
+    public String getId() {
+        return id;
     }
 
-    public void setiD(String iD) {
-        this.iD = iD;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUri() {
