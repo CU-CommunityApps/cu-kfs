@@ -6,6 +6,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConcurRequestV4ListItemDTO {
     @JsonProperty("href")
@@ -33,10 +35,10 @@ public class ConcurRequestV4ListItemDTO {
     private Boolean closed;
 
     @JsonProperty("creationDate")
-    private String creationDate;
+    private Date creationDate;
 
     @JsonProperty("endDate")
-    private String endDate;
+    private Date endDate;
 
     @JsonProperty("everSentBack")
     private Boolean everSentBack;
@@ -60,10 +62,10 @@ public class ConcurRequestV4ListItemDTO {
     private String requestId;
 
     @JsonProperty("startDate")
-    private String startDate;
+    private Date startDate;
 
     @JsonProperty("submitDate")
-    private String submitDate;
+    private Date submitDate;
 
     @JsonProperty("totalApprovedAmount")
     private ConcurRequestV4AmountDTO totalApprovedAmount;
@@ -141,19 +143,19 @@ public class ConcurRequestV4ListItemDTO {
         this.closed = closed;
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -213,19 +215,19 @@ public class ConcurRequestV4ListItemDTO {
         this.requestId = requestId;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getSubmitDate() {
+    public Date getSubmitDate() {
         return submitDate;
     }
 
-    public void setSubmitDate(String submitDate) {
+    public void setSubmitDate(Date submitDate) {
         this.submitDate = submitDate;
     }
 
