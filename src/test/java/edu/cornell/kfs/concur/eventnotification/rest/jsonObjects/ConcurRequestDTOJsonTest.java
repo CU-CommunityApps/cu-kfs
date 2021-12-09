@@ -28,6 +28,13 @@ class ConcurRequestDTOJsonTest {
     
     private static final String TRAVEL_REPORT_JSON_EXAMPLE_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/travelV4/v4_travel_report.json";
     private static final String TRAVEL_LIST_JSON_EXAMPLE_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/travelV4/v4_travel_request_listing.json";
+    private static final String REPORT_ID = "reportId";
+    private static final String PURPOSE1 = "purpose1";
+    private static final String DOE = "Doe";
+    private static final String EZRA     = "Ezra";
+    private static final Double REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT = 1290.0;
+    private static final Double REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT = 879.07;
+    private static final Integer LISTING_EXPECTED_TOTAL_COUNT = 5;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -44,12 +51,11 @@ class ConcurRequestDTOJsonTest {
         File jsonFile = new File(TRAVEL_REPORT_JSON_EXAMPLE_FILE);
         ConcurRequestV4ReportDTO dto = objectMapper.readValue(jsonFile, ConcurRequestV4ReportDTO.class);
         LOG.info("testConcurRequestV4ReportDTO, dto: " + dto.toString());
-        assertEquals("reportId", dto.getId());
+        assertEquals(REPORT_ID, dto.getId());
         assertFalse(dto.getApproved());
-        assertEquals("Doe", dto.getApprover().getLastName());
-        assertEquals(1290, dto.getTotalRemainingAmount().getValue());
-        assertEquals(879.07, dto.getTotalApprovedAmount().getValue());
-        
+        assertEquals(DOE, dto.getApprover().getLastName());
+        assertEquals(REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT, dto.getTotalRemainingAmount().getValue());
+        assertEquals(REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT, dto.getTotalApprovedAmount().getValue());
     }
     
     @Test
@@ -57,12 +63,12 @@ class ConcurRequestDTOJsonTest {
         File jsonFile = new File(TRAVEL_LIST_JSON_EXAMPLE_FILE);
         ConcurRequestV4ListingDTO dto = objectMapper.readValue(jsonFile, ConcurRequestV4ListingDTO.class);
         LOG.info("testConcurRequestV4ListingDTO, dto: " + dto.toString());
-        assertEquals(5, dto.getTotalCount());
-        ConcurRequestV4ListItemDTO purooseOneItem = dto.getListItems()
+        assertEquals(LISTING_EXPECTED_TOTAL_COUNT, dto.getTotalCount());
+        ConcurRequestV4ListItemDTO purposeOneItem = dto.getListItems()
                 .stream()
-                .filter(item -> item.getBusinessPurpose().equals("purpose1"))
+                .filter(item -> item.getBusinessPurpose().equals(PURPOSE1))
                 .collect(Collectors.toList()).get(0);
-        assertEquals("Ezra", purooseOneItem.getApprover().getFirstName());
+        assertEquals(EZRA, purposeOneItem.getApprover().getFirstName());
     }
 
 }
