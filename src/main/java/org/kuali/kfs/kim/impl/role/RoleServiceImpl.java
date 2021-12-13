@@ -74,8 +74,7 @@ import static java.util.Map.entry;
 
 /**
  * CU Customization:
- * Updated the member-removal methods to properly convert the qualifiers where needed,
- * similar to the setup in the Rice-side and Cynergy-side versions of this service.
+ * Updated the member-removal methods to properly convert the qualifiers where needed.
  * 
  * Additional changes added to backport the redis implementation.
  */

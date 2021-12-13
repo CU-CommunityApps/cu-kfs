@@ -75,7 +75,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
     private boolean hideDetails;
     // KFSPTS-985
-    private String riceImageBase;
+    private String imageBase;
     private BusinessObjectService businessObjectService;
 
     /**
@@ -626,8 +626,8 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     // Begin KFSPTS-985, KFSUPGRADE-75 customization
-    public void setRiceImageBase(String riceImageBase) {
-        this.riceImageBase = riceImageBase;
+    public void setImageBase(String imageBase) {
+        this.imageBase = imageBase;
     }
 
     private boolean isDocumentIntegratedFavoriteAccount() {
@@ -710,14 +710,14 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     private String getErrorIconImageSrc() {
-        return getRiceImageBase()+"errormark.gif";
+        return getImageBase()+"errormark.gif";
     }
 
-    private String getRiceImageBase() {
-        if (riceImageBase == null) {
-            riceImageBase = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KRADConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
+    private String getImageBase() {
+        if (imageBase == null) {
+            imageBase = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KRADConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
         }
-        return riceImageBase;
+        return imageBase;
     }
 
     private int getItemIdx(String accountPrefix) {

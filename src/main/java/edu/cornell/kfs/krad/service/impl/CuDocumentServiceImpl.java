@@ -19,9 +19,6 @@ import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
  * to a no-op implementation, and instead this class will perform
  * the XML conversion on the entire maintenance XML payload if necessary.
  * This allows for adding the features without overlaying KFS code.
- *
- * This KFS version is based on its Cynergy counterpart:
- * edu.cornell.cynergy.krad.service.impl.CynergyDocumentServiceImpl
  */
 @TransactionalNoValidationExceptionRollback
 public class CuDocumentServiceImpl extends DocumentServiceImpl {

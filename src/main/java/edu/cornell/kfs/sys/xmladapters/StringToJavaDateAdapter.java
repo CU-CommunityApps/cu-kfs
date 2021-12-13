@@ -13,8 +13,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 /**
  * XML adapter for converting between java.util.Date instances and "MM/dd/yyyy"-formatted date strings.
- * Unlike Rice's StringToDateTimeAdapter, this adapter only supports one pattern,
- * and it does not depend on having Rice's DateTimeService deployed to the bus.
+ * This adapter only supports one pattern.
  */
 public class StringToJavaDateAdapter extends XmlAdapter<String, Date> {
 

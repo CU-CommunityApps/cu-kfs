@@ -15,10 +15,6 @@
  */
 package edu.cornell.kfs.fp.businessobject;
 
-import java.util.LinkedHashMap;
-
-import org.kuali.kfs.sys.KFSPropertyConstants;
-
 public class PurchasingDataDetail extends PurchasingDataBase {
     private static final long serialVersionUID = 1L;
     private String documentNumber;
@@ -42,19 +38,6 @@ public class PurchasingDataDetail extends PurchasingDataBase {
 
     public void setFinancialDocumentTransactionLineNumber(String financialDocumentTransactionLineNumber) {
         this.financialDocumentTransactionLineNumber = Integer.valueOf(financialDocumentTransactionLineNumber);
-    }
-
-    /**
-     * @see org.kuali.kfs.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    @SuppressWarnings("rawtypes")
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap<String, String> m = new LinkedHashMap<String, String>();
-        m.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
-        if (this.financialDocumentTransactionLineNumber != null) {
-            m.put("financialDocumentTransactionLineNumber", this.financialDocumentTransactionLineNumber.toString());
-        }
-        return m;
     }
 
     public void populateFromRecord(PurchasingDataRecord record) {

@@ -1,4 +1,4 @@
-package cynergy;
+package edu.cornell.kfs.kim;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,9 +23,9 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import util.SimpleCommandLineParser;
 
-public class CynergyKimFeed {
+public class KimFeed {
 
-    private static final Logger LOG = LogManager.getLogger(CynergyKimFeed.class);
+    private static final Logger LOG = LogManager.getLogger(KimFeed.class);
 
 	// Helper constant for inserting blank address rows.
 	private static final String BLANK_ADDRESS_LINE = " ";
@@ -292,7 +292,7 @@ public class CynergyKimFeed {
 	 * 
 	 * @param dbPropFileName
 	 */
-	public CynergyKimFeed(Properties props) {
+	public KimFeed(Properties props) {
 		dbProps = props;		
         String serverDBUrl = dbProps.getProperty(SERVER_DB_URL_PROP);
         serverTemplate = new JdbcTemplate(createDataSource(serverDBUrl, dbProps.getProperty(SERVER_DB_USERNAME_PROP), dbProps.getProperty(SERVER_DB_PASSWORD_PROP)));
@@ -1070,7 +1070,7 @@ public class CynergyKimFeed {
 			configfile = "-";
 		}
 		
-		CynergyKimFeed kimfeed = new CynergyKimFeed(props); 
+		KimFeed kimfeed = new KimFeed(props); 
 		
 		if (type != null && type.equals("full")) {
 			LOG.info("runKimFeed: Running full refresh");

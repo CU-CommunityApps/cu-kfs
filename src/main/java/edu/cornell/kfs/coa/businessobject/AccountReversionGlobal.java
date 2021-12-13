@@ -18,7 +18,6 @@ package edu.cornell.kfs.coa.businessobject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
@@ -70,16 +68,6 @@ public class AccountReversionGlobal extends PersistableBusinessObjectBase implem
         super();
         accountReversionGlobalDetails = new ArrayList<AccountReversionGlobalDetail>();
         accountReversionGlobalAccounts = new ArrayList<AccountReversionGlobalAccount>();
-    }
-
-    /**
-     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
-     */
-    protected LinkedHashMap toStringMapperr_RICE20_REFACTORME() {
-        LinkedHashMap stringMapper = new LinkedHashMap();
-        stringMapper.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
-        stringMapper.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, this.universityFiscalYear);
-        return stringMapper;
     }
 
     /**

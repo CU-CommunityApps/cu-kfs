@@ -299,7 +299,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
 
     /**
      * Convenience method for preparing to retrieve and reprocess the created transaction rows.
-     * This allows for bulk retrieval of Cynergy-side data, thus dividing the transaction row
+     * This allows for bulk retrieval of data, thus dividing the transaction row
      * creation into a two-pass process.
      * 
      * @param summary The object encapsulating the tax-type-specific summary info.
