@@ -996,6 +996,7 @@
             <version>${gson.version}</version>
         </dependency>
         
+        <!-- these lo4j dependencies can be removed when we backport FINP-8061 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -1023,6 +1024,72 @@
             <artifactId>log4j-1.2-api</artifactId>
             <version>${log4j.version}</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.rice</groupId>
+            <artifactId>rice-core-impl</artifactId>
+            <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.rice</groupId>
+            <artifactId>rice-ksb-api</artifactId>
+            <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.rice</groupId>
+            <artifactId>rice-krad-data</artifactId>
+            <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.rice</groupId>
+            <artifactId>rice-ksb-client-impl</artifactId>
+            <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.rice</groupId>
+            <artifactId>rice-core-service-api</artifactId>
+            <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.rice</groupId>
+            <artifactId>rice-ksb-web</artifactId>
+            <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
     </dependencies>
