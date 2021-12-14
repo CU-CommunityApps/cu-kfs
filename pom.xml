@@ -358,6 +358,34 @@
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
             	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
+            	</exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -371,6 +399,34 @@
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
             	</exclusion>
+            	<exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jcl</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jul</artifactId>
+              </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -383,6 +439,34 @@
             	<exclusion>
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
@@ -409,6 +493,34 @@
             	<exclusion>
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
@@ -435,6 +547,34 @@
             	<exclusion>
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
@@ -461,6 +601,34 @@
             	<exclusion>
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
@@ -487,6 +655,34 @@
             	<exclusion>
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
@@ -513,6 +709,34 @@
             	<exclusion>
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
@@ -538,6 +762,34 @@
             	<exclusion>
             		<groupId>xml-apis</groupId>
             		<artifactId>xml-apis</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-web</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jcl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-slf4j-impl</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-1.2-api</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-jul</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
@@ -576,6 +828,34 @@
                     <groupId>org.glassfish</groupId>
                     <artifactId>javax.json</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -594,6 +874,34 @@
                 <exclusion>
                     <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -998,34 +1306,6 @@
         
         <!-- these lo4j dependencies can be removed when we backport FINP-8061 -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-jul</artifactId>
-            <version>${log4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>${log4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-core-impl</artifactId>
             <version>${rice.version}</version>
@@ -1033,6 +1313,34 @@
                 <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1045,6 +1353,34 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1055,6 +1391,34 @@
                 <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1067,6 +1431,34 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1078,6 +1470,34 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1088,6 +1508,34 @@
                 <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.apache.logging.log4j</groupId>
+                	<artifactId>log4j-jul</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
