@@ -236,12 +236,12 @@
                             	<exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>
                             	<exclude>WEB-INF/lib/httpclient-4.5.5.jar</exclude>
                             	<exclude>WEB-INF/lib/log4j-1.2-api-2.13.2.jar</exclude>
-							                <exclude>WEB-INF/lib/log4j-api-2.13.2.jar</exclude>
-							                <exclude>WEB-INF/lib/log4j-core-2.13.2.jar</exclude>
-							                <exclude>WEB-INF/lib/log4j-jcl-2.13.2.jar</exclude>
-							                <exclude>WEB-INF/lib/log4j-jul-2.13.2.jar</exclude>
-							                <exclude>WEB-INF/lib/log4j-slf4j-impl-2.13.2.jar</exclude>
-							                <exclude>WEB-INF/lib/log4j-web-2.13.2.jar</exclude>
+                            	<exclude>WEB-INF/lib/log4j-api-2.13.2.jar</exclude>
+                            	<exclude>WEB-INF/lib/log4j-core-2.13.2.jar</exclude>
+                            	<exclude>WEB-INF/lib/log4j-jcl-2.13.2.jar</exclude>
+                            	<exclude>WEB-INF/lib/log4j-jul-2.13.2.jar</exclude>
+                            	<exclude>WEB-INF/lib/log4j-slf4j-impl-2.13.2.jar</exclude>
+                            	<exclude>WEB-INF/lib/log4j-web-2.13.2.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -1507,7 +1507,6 @@
             <version>${gson.version}</version>
         </dependency>
         
-        <!-- these lo4j dependencies can be removed when we backport FINP-8061 -->
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-core-impl</artifactId>
@@ -1744,10 +1743,10 @@
         </dependency>
         
         <dependency>
-		      <groupId>org.apache.logging.log4j</groupId>
-		      <artifactId>log4j-api</artifactId>
-		      <version>${log4j.version}</version>
-		    </dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
+          <version>${log4j.version}</version>
+        </dependency>
 		    
 		    <dependency>
 		      <groupId>org.apache.logging.log4j</groupId>
