@@ -27,7 +27,7 @@ public class AchBundlerAdviceDaoObj extends PlatformAwareDaoBaseOjb implements A
      * Returns distinct disbursement numbers for ACH payments needing advice email notifications.
      * 
      * NOTE:
-     * This method was made transactional per fix described in KULRICE-6914 for the iterator no longer
+     * This method was made transactional for the iterator no longer
      * containing the data and iter.hasNext() causing a run time exception.
      * 
      * @return an iterator of Disbursement Numbers matching the given criteria
@@ -52,12 +52,12 @@ public class AchBundlerAdviceDaoObj extends PlatformAwareDaoBaseOjb implements A
         return results;        
     }
     
-    //KFSPTS--1460
+    //KFSPTS-1460
     /**
      * Returns all PaymentDetail records needing ACH advice email notifications for a given disbursement number
      * 
      * NOTE:
-     * This method was made transactional per fix described in KULRICE-6914 for the iterator no longer
+     * This method was made transactional for the iterator no longer
      * containing the data and iter.hasNext() causing a run time exception.
      * 
      * @return an iterator of PaymentDetail records matching the given criteria

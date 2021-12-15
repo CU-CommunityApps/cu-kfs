@@ -1,7 +1,7 @@
 /*
  * This script sets up an event handler that will update the procurementMethods property
  * based on the procurementMethodsArray multiselect values. This is needed because of
- * current Rice/KFS limitations in handling multiselect fields on maintenance documents.
+ * current KFS limitations in handling multiselect fields on maintenance documents.
  */
 (function(){
 	jQuery(document).ready(function() {

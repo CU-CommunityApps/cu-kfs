@@ -10,9 +10,6 @@ import org.kuali.kfs.kns.question.QuestionBase;
  * confirmation page for when the status transition is successful, and as such is not really
  * a "question" page per se but just a page with a message and a "close" button.
  * 
- * <p>The actual class contents are similar to Rice's ConfirmationQuestion class, but have
- * been modified to only generate a "close" button instead of "yes" and "no" buttons.
- * 
  * <p>This class is needed for the KFSPTS-1457 feature.
  */
 public class PurchaseOrderStatusOverrideQuestion extends QuestionBase {

@@ -238,7 +238,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 	    }
         	            updateSummaryCounts(EXTRACT_FAILURES);
                }
-                clearErrorMessagesToPreventRiceSaveAndRouteErrors();
+                clearErrorMessagesToPreventSaveAndRouteErrors();
 
                 //Do not execute rest of code below
                 //continue;
@@ -1056,7 +1056,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
 			                
 			                if (orderHolder.isInvoiceRejected()) {
-			                    clearErrorMessagesToPreventRiceSaveAndRouteErrors();
+			                    clearErrorMessagesToPreventSaveAndRouteErrors();
 			                    
 			                    ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order, eInvoiceLoad);
 			                    
@@ -1228,7 +1228,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     
     @Override
     protected void rejectElectronicInvoiceFile(ElectronicInvoiceLoad eInvoiceLoad, String fileDunsNumber, File invoiceFile, String extraDescription, String rejectReasonTypeCode) {
-        clearErrorMessagesToPreventRiceSaveAndRouteErrors();
+        clearErrorMessagesToPreventSaveAndRouteErrors();
         if (LOG.isInfoEnabled()) {
             LOG.info("Rejecting the entire invoice file - " + invoiceFile.getName());
         }
@@ -1283,12 +1283,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
     }
 
-    private void clearErrorMessagesToPreventRiceSaveAndRouteErrors() {
+    private void clearErrorMessagesToPreventSaveAndRouteErrors() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("clearErrorMessagesToPreventRiceSaveAndRouteErrors, Logging previously created error messages");
+            LOG.debug("clearErrorMessagesToPreventSaveAndRouteErrors, Logging previously created error messages");
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             for (String key : errorMessages.keySet()) {
-                LOG.debug("clearErrorMessagesToPreventRiceSaveAndRouteErrors, key: " + key + ", value: " + buldErrorString(errorMessages.get(key)));
+                LOG.debug("clearErrorMessagesToPreventSaveAndRouteErrors, key: " + key + ", value: " + buldErrorString(errorMessages.get(key)));
             }
         }
         GlobalVariables.getMessageMap().clearErrorMessages();
@@ -1462,7 +1462,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         //  if no reject reasons, then clear error messages
         if (rejectDocument.getInvoiceRejectReasons().isEmpty()) {
-            clearErrorMessagesToPreventRiceSaveAndRouteErrors();
+            clearErrorMessagesToPreventSaveAndRouteErrors();
         }
 
         //  this automatically returns false if there are no reject reasons
