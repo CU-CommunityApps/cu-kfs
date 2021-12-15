@@ -217,7 +217,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     protected ExtraButton createContinueToItemsButton() {
         ExtraButton continueButton = new ExtraButton();
         continueButton.setExtraButtonProperty("methodToCall.continueToItems");
-        continueButton.setExtraButtonSource("${" + KFSConstants.RICE_EXTERNALIZABLE_IMAGES_URL_KEY
+        continueButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY
                 + "}buttonsmall_continue.gif");
         continueButton.setExtraButtonAltText("Continue");
         return continueButton;
@@ -231,7 +231,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     protected ExtraButton createContinueToVendorButton() {
         ExtraButton clearButton = new ExtraButton();
         clearButton.setExtraButtonProperty("methodToCall.continueToVendor");
-        clearButton.setExtraButtonSource("${" + KFSConstants.RICE_EXTERNALIZABLE_IMAGES_URL_KEY
+        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY
                 + "}buttonsmall_continue.gif");
         clearButton.setExtraButtonAltText("Continue");
         return clearButton;
@@ -258,7 +258,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     protected ExtraButton createContinueToRoutingButton() {
         ExtraButton printButton = new ExtraButton();
         printButton.setExtraButtonProperty("methodToCall.continueToRouting");
-        printButton.setExtraButtonSource("${" + KFSConstants.RICE_EXTERNALIZABLE_IMAGES_URL_KEY
+        printButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY
                 + "}buttonsmall_continue.gif");
         printButton.setExtraButtonAltText("Continue");
         return printButton;
@@ -298,7 +298,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     protected ExtraButton createSubmitButton() {
         ExtraButton clearButton = new ExtraButton();
         clearButton.setExtraButtonProperty("methodToCall.route");
-        clearButton.setExtraButtonSource("${" + KFSConstants.RICE_EXTERNALIZABLE_IMAGES_URL_KEY
+        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY
                 + "}buttonsmall_submit.gif");
         clearButton.setExtraButtonAltText("Submit");
         return clearButton;

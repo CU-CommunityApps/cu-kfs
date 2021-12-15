@@ -55,21 +55,15 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	}
 
     /**
-     * This method is being added to handle calls to perform re-indexing of documents following change events performed on the documents.  This is necessary to correct problems
-     * with searches not returning accurate results due to changes being made to documents, but those changes not be indexed.
+     * This method is being added to handle calls to force re-indexing of documents following change events performed on the documents.
+     * This is necessary to correct problems with searches not returning accurate results due to changes being made to documents, 
+     * but those changes not be indexed.
      * 
      * @param document - The document to be re-indexed.
      */
     private void reIndexDocument(PurchaseOrderDocument document) {
-        //force reindexing
-//        DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService().getRouteHeader(document.getDocumentNumber());
-//		SearchableAttributeProcessingService searchableAttributeService = MessageServiceNames.getSearchableAttributeService(routeHeader);
-//		searchableAttributeService.indexDocument(Long.valueOf(document.getDocumentNumber()));
-        //RICE20 replaced searchableAttributeProcessingService.indexDocument with DocumentAttributeIndexingQueue.indexDocument
         final DocumentAttributeIndexingQueue documentAttributeIndexingQueue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
-
         documentAttributeIndexingQueue.indexDocument(document.getDocumentNumber());
-
     }
     
 	public ActionForward openPoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {

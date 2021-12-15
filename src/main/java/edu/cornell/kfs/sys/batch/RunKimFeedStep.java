@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
-import cynergy.CynergyKimFeed;
+import edu.cornell.kfs.kim.KimFeed;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
@@ -27,7 +27,7 @@ public class RunKimFeedStep extends AbstractStep {
         try {
             LOG.info("execute: Starting run of KIM feed");
             Properties kimFeedProperties = buildKimFeedProperties();
-            CynergyKimFeed.runKimFeed(kimFeedProperties, DELTA_RUN_TYPE);
+            KimFeed.runKimFeed(kimFeedProperties, DELTA_RUN_TYPE);
             LOG.info("execute: Successfully finished running KIM feed");
             return true;
         } catch (Exception e) {
@@ -46,19 +46,19 @@ public class RunKimFeedStep extends AbstractStep {
                 KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.BATCH_COMPONENT,
                 CUKFSParameterKeyConstants.KIM_FEED_DELTAS_TO_LOAD);
         
-        kimFeedProperties.setProperty(CynergyKimFeed.SKIP_DELTA_FLAG_UPDATES_PROP, skipDeltaFlagUpdates.toString());
+        kimFeedProperties.setProperty(KimFeed.SKIP_DELTA_FLAG_UPDATES_PROP, skipDeltaFlagUpdates.toString());
         
         if (StringUtils.isBlank(deltasToLoad)) {
             throw new IllegalStateException(CUKFSParameterKeyConstants.KIM_FEED_DELTAS_TO_LOAD + " parameter cannot be blank");
         } else if (StringUtils.equals(CUKFSConstants.KimFeedConstants.ALL_UNPROCESSED_DELTAS_MODE, deltasToLoad)) {
-            kimFeedProperties.setProperty(CynergyKimFeed.LOAD_LATEST_DELTA_ONLY_PROP, KFSConstants.Booleans.FALSE);
-            kimFeedProperties.setProperty(CynergyKimFeed.LOAD_DELTA_WITH_DATE_PROP, KFSConstants.EMPTY_STRING);
+            kimFeedProperties.setProperty(KimFeed.LOAD_LATEST_DELTA_ONLY_PROP, KFSConstants.Booleans.FALSE);
+            kimFeedProperties.setProperty(KimFeed.LOAD_DELTA_WITH_DATE_PROP, KFSConstants.EMPTY_STRING);
         } else if (StringUtils.equals(CUKFSConstants.KimFeedConstants.LATEST_DATE_ONLY_MODE, deltasToLoad)) {
-            kimFeedProperties.setProperty(CynergyKimFeed.LOAD_LATEST_DELTA_ONLY_PROP, KFSConstants.Booleans.TRUE);
-            kimFeedProperties.setProperty(CynergyKimFeed.LOAD_DELTA_WITH_DATE_PROP, KFSConstants.EMPTY_STRING);
+            kimFeedProperties.setProperty(KimFeed.LOAD_LATEST_DELTA_ONLY_PROP, KFSConstants.Booleans.TRUE);
+            kimFeedProperties.setProperty(KimFeed.LOAD_DELTA_WITH_DATE_PROP, KFSConstants.EMPTY_STRING);
         } else {
-            kimFeedProperties.setProperty(CynergyKimFeed.LOAD_LATEST_DELTA_ONLY_PROP, KFSConstants.Booleans.FALSE);
-            kimFeedProperties.setProperty(CynergyKimFeed.LOAD_DELTA_WITH_DATE_PROP, deltasToLoad);
+            kimFeedProperties.setProperty(KimFeed.LOAD_LATEST_DELTA_ONLY_PROP, KFSConstants.Booleans.FALSE);
+            kimFeedProperties.setProperty(KimFeed.LOAD_DELTA_WITH_DATE_PROP, deltasToLoad);
         }
         
         return kimFeedProperties;
