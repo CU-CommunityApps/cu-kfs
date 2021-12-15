@@ -350,10 +350,10 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     /**
      * CU Customization:
      * 
-     * There is a known Rice issue where the KFS document headers are not auto-saved when a KFS
-     * document gets recalled to the action list. This is due to Rice explicitly avoiding any
-     * auto-saves on documents moving to SAVED status, to prevent Optimistic Locking problems
-     * for end-users as per the Rice PostProcessorServiceImpl code comments.
+     * There is a known issue where the KFS document headers are not auto-saved when a KFS
+     * document gets recalled to the action list. The auto-saves are not being performed to
+     * explicitly avoid Optimistic Locking problems for end users in the PostProcessorServiceImpl
+     * code on documents that are being moved into SAVED status.
      * 
      * Therefore, to prevent problems with auto-disapprovals accidentally targeting recalled
      * documents (due to them being retrieved based on KFS document header status), this method

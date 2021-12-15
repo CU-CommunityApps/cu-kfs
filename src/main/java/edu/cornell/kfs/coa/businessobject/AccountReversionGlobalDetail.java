@@ -16,7 +16,6 @@
 package edu.cornell.kfs.coa.businessobject;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -27,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
@@ -48,16 +46,6 @@ public class AccountReversionGlobalDetail extends GlobalBusinessObjectDetailBase
     private ReversionCategory reversionCategory;
     private AccountReversionGlobal parentGlobalAccountReversion;
     private ObjectCode accountReversionObject;
-
-    /**
-     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
-     */
-    protected LinkedHashMap toStringMapperr_RICE20_REFACTORME() {
-        LinkedHashMap stringMapper = new LinkedHashMap();
-        stringMapper.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
-        stringMapper.put("AccountReversionCategoryCode", this.accountReversionCategoryCode);
-        return stringMapper;
-    }
 
     /**
      * Constructs an OrganizationReversionGlobalDocumentDetail.

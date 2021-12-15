@@ -58,8 +58,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 /**
  * CU Customization:
- * Updated this class to include improved KIM attribute handling,
- * similar to that from the Rice version of this class.
+ * Updated this class to include improved KIM attribute handling.
  */
 abstract class RoleServiceBase {
 
@@ -178,8 +177,7 @@ abstract class RoleServiceBase {
     }
 
     /*
-     * CU Customization: Create mappings from attribute names to attribute IDs,
-     * similarly to the Map-creation logic from Rice's RoleServiceBase class.
+     * CU Customization: Create mappings from attribute names to attribute IDs.
      */
     protected Map<String, String> getAttributeNameToAttributeIdMappings(
             Collection<String> roleIds, Map<String, String> qualification) {
@@ -656,7 +654,6 @@ abstract class RoleServiceBase {
      * 
      * Modified this method to include kimTypeId as an argument,
      * and to also retrieve the attribute ID from the KimType if possible.
-     * This is a modified version of similar code and logic from Rice's RoleServiceBase class.
      */
     protected String getKimAttributeId(String kimTypeId, String attributeName) {
         String attributeId = getAttributeIdFromKimType(kimTypeId, attributeName);
