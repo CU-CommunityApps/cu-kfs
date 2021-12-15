@@ -17,12 +17,10 @@
 package edu.cornell.kfs.fp.businessobject;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 
 /**
  * This class is used to represent a procurement card transaction detail business object.
@@ -69,18 +67,5 @@ public class ProcurementCardTransactionDetailExtendedAttribute extends Persistab
     public void setPurchasingDataDetails(List<PurchasingDataDetail> purchasingDataDetails) {
         this.purchasingDataDetails = purchasingDataDetails;
     }
-
-    /**
-     * @see org.kuali.kfs.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    @SuppressWarnings("rawtypes")
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap<String, String> m = new LinkedHashMap<String, String>();
-        m.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
-        if (this.financialDocumentTransactionLineNumber != null) {
-            m.put("financialDocumentTransactionLineNumber", this.financialDocumentTransactionLineNumber.toString());
-        }
-        return m;
-    }
-    
+   
 }

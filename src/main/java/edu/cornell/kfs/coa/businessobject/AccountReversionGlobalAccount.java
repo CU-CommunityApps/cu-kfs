@@ -16,16 +16,12 @@
 package edu.cornell.kfs.coa.businessobject;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashMap;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 /**
@@ -46,20 +42,6 @@ public class AccountReversionGlobalAccount extends GlobalBusinessObjectDetailBas
 	 */
 	public AccountReversionGlobalAccount() {
 		super();
-	}
-
-	/**
-	 * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
-	 */
-	protected LinkedHashMap toStringMapperr_RICE20_REFACTORME() {
-		LinkedHashMap stringMapper = new LinkedHashMap();
-		stringMapper.put(KFSPropertyConstants.DOCUMENT_NUMBER,
-				this.documentNumber);
-		stringMapper.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,
-				this.chartOfAccountsCode);
-		stringMapper.put(KFSPropertyConstants.ACCOUNT_NUMBER,
-				this.accountNumber);
-		return stringMapper;
 	}
 
 	/**

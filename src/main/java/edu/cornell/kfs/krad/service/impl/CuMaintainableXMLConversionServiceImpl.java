@@ -210,8 +210,7 @@ public class CuMaintainableXMLConversionServiceImpl implements MaintainableXMLCo
     }
 
     /*
-     * Uses a tweaked version of the date-rule-map-parsing code from MaintainableXMLConversionServiceImpl.setRuleMaps(),
-     * but from the archaic Rice krad-development-tools version of that class.
+     * Uses a tweaked archaic version of the date-rule-map-parsing code from MaintainableXMLConversionServiceImpl.setRuleMaps().
      */
     protected Map<String,String> getDateRuleMapFromXML(Document domDocument, XPath xpath) throws XPathExpressionException {
         Map<String,String> ruleMap = new HashMap<>();
