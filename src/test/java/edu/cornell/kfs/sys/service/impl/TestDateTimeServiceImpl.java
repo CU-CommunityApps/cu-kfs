@@ -8,7 +8,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * Micro-testable DateTimeService implementation that will only use
- * Rice's default datetime formats.
+ * the default datetime formats.
  */
 public class TestDateTimeServiceImpl extends DateTimeServiceImpl {
 
