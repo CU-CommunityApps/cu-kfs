@@ -1,7 +1,6 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -66,9 +65,7 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * Any matching attributes will have their attribute *values* replaced accordingly.
  * If the replacement value is blank, then the attribute will be removed altogether.
  * 
- * The custom date field processing from the Rice krad-development-tools version
- * of the conversion feature has been added as well, and behaves about the same
- * as it does in base Rice.
+ * There is custom date field processing for the conversion feature.
  * 
  * Similar to element name replacement in default KFS, elements will generally
  * be renamed to the replacement value if the replacement is non-blank, and elements
@@ -97,10 +94,7 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  * (CONVERT_LEGACY_NOTES) -- The element itself will be removed, but all of its
  * child elements and text content will be converted and will be moved into a new
  * "notes" element and OJB-list-proxy wrapper sub-element, and that content chunk
- * will be placed just prior to the end of the whole XML document. (Although Rice
- * typically places the "notes" element at the beginning of the maintainable XML
- * when saving maintenance documents, Rice is lax about that element's location
- * when it reads the notes from the XML.)
+ * will be placed just prior to the end of the whole XML document.
  * 
  * (ADD_WRAPPER_ELEMENT) -- The element will be wrapped inside a new element
  * when it gets written out to the converted XML. To specify the name

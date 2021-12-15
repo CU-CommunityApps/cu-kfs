@@ -18,7 +18,7 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
     }
     
     protected Client getClient() {
-        // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
+        // Use double-checked locking to lazy-load the Client object.
         // See effective java 2nd ed. pg. 71
         Client jerseyClient = client;
         if (jerseyClient == null) {
@@ -35,7 +35,7 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
     }
 
     protected void closeClientQuietly() {
-        // Use double-checked locking to retrieve the Client object, similar to related locking in Rice.
+        // Use double-checked locking to retrieve the Client object.
         // See effective java 2nd ed. pg. 71
         Client jerseyClient = client;
         if (jerseyClient == null) {

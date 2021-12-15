@@ -25,12 +25,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.kfs.sys.mail.BodyMailMessage;
-import org.kuali.kfs.sys.service.EmailService;
-import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.springframework.transaction.annotation.Transactional;
@@ -395,13 +390,13 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         int listIndex = 1;
         
         if (ObjectUtils.isNull(payee) || StringUtils.isBlank(payee.getEntityId())) {
-            // Person doesn't exist in Rice/KFS.
+            // Person doesn't exist in KFS.
             appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
             failureMessage.append(" Payee does not exist in KFS. ");
         } else {
             // Some validations can only occur if payee exists.
             if (!StringUtils.equals(achDetail.getEmployeeID(), payee.getEmployeeId())) {
-                // Employee ID mismatch between input file and Rice/KFS.
+                // Employee ID mismatch between input file and KFS.
                 appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
                 failureMessage.append(" Payee has an employee ID of \"").append(achDetail.getEmployeeID()).append(
                         "\" in input file, but has an employee ID of \"").append(payee.getEmployeeId()).append("\" in KFS. ");

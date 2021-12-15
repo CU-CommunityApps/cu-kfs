@@ -32,7 +32,6 @@ public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
             doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
             getPurapService().saveDocumentNoValidation(doc);
             
-            //RICE20 replaced searchableAttributeProcessingService.indexDocument with DocumentAttributeIndexingQueue.indexDocument
             DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());
             DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
             queue.indexDocument(doc.getDocumentNumber());

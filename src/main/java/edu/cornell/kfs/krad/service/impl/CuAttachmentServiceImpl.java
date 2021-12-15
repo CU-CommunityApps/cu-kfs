@@ -25,9 +25,6 @@ import java.io.InputStream;
  * Custom subclass of AttachmentServiceImpl featuring the following enhancements:
  * Added anti-virus scanning for attachments.
  * Added the ability to retrieve attachments by attachment ID.
- *
- * This is very similar to the CynergyAttachmentServiceImpl, but needed since KFS
- * now has it's own AttachmentService separate from Rice.
  */
 @Transactional
 public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
