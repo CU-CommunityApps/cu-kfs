@@ -1,7 +1,6 @@
 package edu.cornell.kfs.coa.businessobject;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,8 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
-import org.kuali.kfs.coa.businessobject.SubObjectCodeGlobal;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
@@ -237,15 +234,6 @@ public class SubObjectCodeGlobalEdit extends PersistableBusinessObjectBase imple
      */
     public void setChartOfAccounts(Chart chartOfAccounts) {
         this.chartOfAccounts = chartOfAccounts;
-    }
-
-    /**
-     * @see org.kuali.kfs.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-        m.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
-        return m;
     }
 
     public List<SubObjectCodeGlobalEditDetail> getSubObjCdGlobalEditDetails() {
