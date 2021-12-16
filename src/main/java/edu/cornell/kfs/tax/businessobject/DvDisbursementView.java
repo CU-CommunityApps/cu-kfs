@@ -1,7 +1,7 @@
 package edu.cornell.kfs.tax.businessobject;
 
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
-import org.kuali.rice.core.api.util.type.KualiInteger;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 /**
  * Convenience lightweight BO to allow for ORM tools to map to the DvDisbursementView
