@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur.rest.jsonObjects;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -19,7 +21,7 @@ public class ConcurRequestV4ReportDTO {
     private ConcurRequestV4StatusDTO approvalStatus;
 
     @JsonProperty("approved")
-    private Boolean approved;
+    private boolean approved;
 
     @JsonProperty("approver")
     private ConcurRequestV4PersonDTO approver;
@@ -28,13 +30,13 @@ public class ConcurRequestV4ReportDTO {
     private String businessPurpose;
 
     @JsonProperty("canceledPostApproval")
-    private Boolean canceledPostApproval;
+    private boolean canceledPostApproval;
 
     @JsonProperty("closed")
-    private Boolean closed;
+    private boolean closed;
 
     @JsonProperty("creationDate")
-    private String creationDate;
+    private Date creationDate;
 
     @JsonProperty("custom1")
     private ConcurRequestV4CustomItemDTO chart;
@@ -43,13 +45,13 @@ public class ConcurRequestV4ReportDTO {
     private ConcurRequestV4CustomItemDTO Account;
 
     @JsonProperty("endDate")
-    private String endDate;
+    private Date endDate;
 
     @JsonProperty("everSentBack")
-    private Boolean everSentBack;
+    private boolean everSentBack;
 
     @JsonProperty("isUserReviewed")
-    private Boolean isUserReviewed;
+    private boolean isUserReviewed;
 
     @JsonProperty("lastModified")
     private String lastModified;
@@ -70,10 +72,10 @@ public class ConcurRequestV4ReportDTO {
     private String requestId;
 
     @JsonProperty("startDate")
-    private String startDate;
+    private Date startDate;
 
     @JsonProperty("submitDate")
-    private String submitDate;
+    private Date submitDate;
 
     @JsonProperty("totalApprovedAmount")
     private ConcurRequestV4AmountDTO totalApprovedAmount;
@@ -111,11 +113,11 @@ public class ConcurRequestV4ReportDTO {
         this.approvalStatus = approvalStatus;
     }
 
-    public Boolean getApproved() {
+    public boolean isApproved() {
         return approved;
     }
 
-    public void setApproved(Boolean approved) {
+    public void setApproved(boolean approved) {
         this.approved = approved;
     }
 
@@ -135,27 +137,27 @@ public class ConcurRequestV4ReportDTO {
         this.businessPurpose = businessPurpose;
     }
 
-    public Boolean getCanceledPostApproval() {
+    public boolean isCanceledPostApproval() {
         return canceledPostApproval;
     }
 
-    public void setCanceledPostApproval(Boolean canceledPostApproval) {
+    public void setCanceledPostApproval(boolean canceledPostApproval) {
         this.canceledPostApproval = canceledPostApproval;
     }
 
-    public Boolean getClosed() {
+    public boolean isClosed() {
         return closed;
     }
 
-    public void setClosed(Boolean closed) {
+    public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -175,27 +177,27 @@ public class ConcurRequestV4ReportDTO {
         Account = account;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    public Boolean getEverSentBack() {
+    public boolean isEverSentBack() {
         return everSentBack;
     }
 
-    public void setEverSentBack(Boolean everSentBack) {
+    public void setEverSentBack(boolean everSentBack) {
         this.everSentBack = everSentBack;
     }
 
-    public Boolean getIsUserReviewed() {
+    public boolean isUserReviewed() {
         return isUserReviewed;
     }
 
-    public void setIsUserReviewed(Boolean isUserReviewed) {
+    public void setUserReviewed(boolean isUserReviewed) {
         this.isUserReviewed = isUserReviewed;
     }
 
@@ -247,19 +249,19 @@ public class ConcurRequestV4ReportDTO {
         this.requestId = requestId;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getSubmitDate() {
+    public Date getSubmitDate() {
         return submitDate;
     }
 
-    public void setSubmitDate(String submitDate) {
+    public void setSubmitDate(Date submitDate) {
         this.submitDate = submitDate;
     }
 

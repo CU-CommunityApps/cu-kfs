@@ -11,10 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConcurRequestV4ListingDTO {
     @JsonProperty("data")
-    public List<ConcurRequestV4ListItemDTO> listItems = null;
+    public List<ConcurRequestV4ListItemDTO> listItems;
 
     @JsonProperty("operations")
-    public List<ConcurRequestV4OperationDTO> operations = null;
+    public List<ConcurRequestV4OperationDTO> operations;
 
     @JsonProperty("totalCount")
     public Integer totalCount;

@@ -13,7 +13,7 @@ public class ConcurRequestV4CustomItemDTO {
     private String code;
 
     @JsonProperty("isValid")
-    private boolean isValid;
+    private boolean valid;
 
     public String getCode() {
         return code;
@@ -23,12 +23,12 @@ public class ConcurRequestV4CustomItemDTO {
         this.code = code;
     }
 
-    public boolean getIsValid() {
-        return isValid;
+    public boolean isValid() {
+        return valid;
     }
 
-    public void setIsValid(boolean isValid) {
-        this.isValid = isValid;
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 
     @Override

@@ -20,7 +20,7 @@ public class ConcurRequestV4ListItemDTO {
     private ConcurRequestV4StatusDTO approvalStatus;
 
     @JsonProperty("approved")
-    private Boolean approved;
+    private boolean approved;
 
     @JsonProperty("approver")
     private ConcurRequestV4PersonDTO approver;
@@ -29,10 +29,10 @@ public class ConcurRequestV4ListItemDTO {
     private String businessPurpose;
 
     @JsonProperty("canceledPostApproval")
-    private Boolean canceledPostApproval;
+    private boolean canceledPostApproval;
 
     @JsonProperty("closed")
-    private Boolean closed;
+    private boolean closed;
 
     @JsonProperty("creationDate")
     private Date creationDate;
@@ -41,13 +41,13 @@ public class ConcurRequestV4ListItemDTO {
     private Date endDate;
 
     @JsonProperty("everSentBack")
-    private Boolean everSentBack;
+    private boolean everSentBack;
 
     @JsonProperty("highestExceptionLevel")
     private String highestExceptionLevel;
 
     @JsonProperty("isUserReviewed")
-    private Boolean isUserReviewed;
+    private boolean isUserReviewed;
 
     @JsonProperty("name")
     private String name;
@@ -56,7 +56,7 @@ public class ConcurRequestV4ListItemDTO {
     public ConcurRequestV4PersonDTO owner;
 
     @JsonProperty("pendingApproval")
-    private Boolean pendingApproval;
+    private boolean pendingApproval;
 
     @JsonProperty("requestId")
     private String requestId;
@@ -103,11 +103,11 @@ public class ConcurRequestV4ListItemDTO {
         this.approvalStatus = approvalStatus;
     }
 
-    public Boolean getApproved() {
+    public boolean isApproved() {
         return approved;
     }
 
-    public void setApproved(Boolean approved) {
+    public void setApproved(boolean approved) {
         this.approved = approved;
     }
 
@@ -127,19 +127,19 @@ public class ConcurRequestV4ListItemDTO {
         this.businessPurpose = businessPurpose;
     }
 
-    public Boolean getCanceledPostApproval() {
+    public boolean isCanceledPostApproval() {
         return canceledPostApproval;
     }
 
-    public void setCanceledPostApproval(Boolean canceledPostApproval) {
+    public void setCanceledPostApproval(boolean canceledPostApproval) {
         this.canceledPostApproval = canceledPostApproval;
     }
 
-    public Boolean getClosed() {
+    public boolean isClosed() {
         return closed;
     }
 
-    public void setClosed(Boolean closed) {
+    public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
@@ -159,11 +159,11 @@ public class ConcurRequestV4ListItemDTO {
         this.endDate = endDate;
     }
 
-    public Boolean getEverSentBack() {
+    public boolean isEverSentBack() {
         return everSentBack;
     }
 
-    public void setEverSentBack(Boolean everSentBack) {
+    public void setEverSentBack(boolean everSentBack) {
         this.everSentBack = everSentBack;
     }
 
@@ -175,11 +175,11 @@ public class ConcurRequestV4ListItemDTO {
         this.highestExceptionLevel = highestExceptionLevel;
     }
 
-    public Boolean getIsUserReviewed() {
+    public boolean isUserReviewed() {
         return isUserReviewed;
     }
 
-    public void setIsUserReviewed(Boolean isUserReviewed) {
+    public void setUserReviewed(boolean isUserReviewed) {
         this.isUserReviewed = isUserReviewed;
     }
 
@@ -199,11 +199,11 @@ public class ConcurRequestV4ListItemDTO {
         this.owner = owner;
     }
 
-    public Boolean getPendingApproval() {
+    public boolean isPendingApproval() {
         return pendingApproval;
     }
 
-    public void setPendingApproval(Boolean pendingApproval) {
+    public void setPendingApproval(boolean pendingApproval) {
         this.pendingApproval = pendingApproval;
     }
 

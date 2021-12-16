@@ -30,7 +30,7 @@ class ConcurRequestDTOJsonTest {
     private static final String REPORT_ID = "reportId";
     private static final String PURPOSE1 = "purpose1";
     private static final String DOE = "Doe";
-    private static final String EZRA     = "Ezra";
+    private static final String EZRA = "Ezra";
     private static final Double REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT = 1290.0;
     private static final Double REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT = 879.07;
     private static final Integer LISTING_EXPECTED_TOTAL_COUNT = 5;
@@ -51,7 +51,7 @@ class ConcurRequestDTOJsonTest {
         ConcurRequestV4ReportDTO dto = objectMapper.readValue(jsonFile, ConcurRequestV4ReportDTO.class);
         LOG.info("testConcurRequestV4ReportDTO, dto: " + dto.toString());
         assertEquals(REPORT_ID, dto.getId());
-        assertFalse(dto.getApproved());
+        assertFalse(dto.isApproved());
         assertEquals(DOE, dto.getApprover().getLastName());
         assertEquals(REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT, dto.getTotalRemainingAmount().getValue());
         assertEquals(REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT, dto.getTotalApprovedAmount().getValue());
