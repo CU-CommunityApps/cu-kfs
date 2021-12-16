@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -31,8 +32,8 @@ class ConcurRequestDTOJsonTest {
     private static final String PURPOSE1 = "purpose1";
     private static final String DOE = "Doe";
     private static final String EZRA = "Ezra";
-    private static final Double REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT = 1290.0;
-    private static final Double REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT = 879.07;
+    private static final KualiDecimal REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT = new KualiDecimal(1290.0);
+    private static final KualiDecimal REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT = new KualiDecimal(879.07);
     private static final Integer LISTING_EXPECTED_TOTAL_COUNT = 5;
 
     @BeforeEach
