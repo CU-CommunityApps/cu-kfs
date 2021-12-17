@@ -1,0 +1,217 @@
+{
+    "Items": [
+        {
+            "Name": "Expense Report 1",
+            "Total": 5.00000000,
+            "CurrencyCode": "USD",
+            "Country": "US",
+            "CountrySubdivision": "US-NY",
+            "CreateDate": "2020-02-06T18:29:35.633",
+            "SubmitDate": "2020-02-06T18:30:11.207",
+            "ProcessingPaymentDate": null,
+            "PaidDate": null,
+            "ReceiptsReceived": false,
+            "UserDefinedDate": "2020-02-06T00:00:00",
+            "LastComment": "",
+            "OwnerLoginID": "jd101@cornell.edu",
+            "OwnerName": "Jane Doe",
+            "ApproverLoginID": null,
+            "ApproverName": null,
+            "ApprovalStatusName": "Pending External Validation",
+            "ApprovalStatusCode": "A_EXTV",
+            "PaymentStatusName": "Not Paid",
+            "PaymentStatusCode": "P_NOTP",
+            "LastModifiedDate": "2020-02-06T18:30:11.247",
+            "PersonalAmount": 0.00000000,
+            "AmountDueEmployee": 5.00000000,
+            "AmountDueCompanyCard": 0.00000000,
+            "TotalClaimedAmount": 5.00000000,
+            "TotalApprovedAmount": 5.00000000,
+            "LedgerName": "CORNELL",
+            "PolicyID": "policyguid",
+            "EverSentBack": false,
+            "HasException": false,
+            "WorkflowActionUrl": "http://concururl/api/v3.0/expense/reports/report/reportguid1/WorkFlowAction?approvalStatusCode=A_EXTV&limit=2&user=ALL&isTestUser=true",
+            "OrgUnit1": {
+                "Type": "ConnectedList",
+                "Value": "ITHACA CAMPUS",
+                "Code": "IT",
+                "ListItemID": "itemguid1"
+            },
+            "OrgUnit2": {
+                "Type": "ConnectedList",
+                "Value": "FIS GENERAL OPERATING",
+                "Code": "G224700",
+                "ListItemID": "itemguid2"
+            },
+            "OrgUnit3": null,
+            "OrgUnit4": null,
+            "OrgUnit5": null,
+            "OrgUnit6": null,
+            "Custom1": {
+                "Type": "List",
+                "Value": "Employee",
+                "Code": "Employee",
+                "ListItemID": "itemguid3"
+            },
+            "Custom2": {
+                "Type": "List",
+                "Value": "1.  Domestic Travel",
+                "Code": "Domestic Travel",
+                "ListItemID": "itemguid4"
+            },
+            "Custom3": {
+                "Type": "List",
+                "Value": "Conference",
+                "Code": "Conference",
+                "ListItemID": "itemguid5"
+            },
+            "Custom4": null,
+            "Custom5": {
+                "Type": "Text",
+                "Value": "6104",
+                "Code": null,
+                "ListItemID": null
+            },
+            "Custom6": null,
+            "Custom7": null,
+            "Custom8": {
+                "Type": "ConnectedList",
+                "Value": "University Business Service Center",
+                "Code": "1",
+                "ListItemID": "itemguid6"
+            },
+            "Custom9": {
+                "Type": "ConnectedList",
+                "Value": "AVP/UNIVERSITY CONTROLLER",
+                "Code": "6104",
+                "ListItemID": "itemguid7"
+            },
+            "Custom10": null,
+            "Custom11": null,
+            "Custom12": null,
+            "Custom13": null,
+            "Custom14": null,
+            "Custom15": {
+                "Type": "List",
+                "Value": "Test Cornell",
+                "Code": "Test Cornell",
+                "ListItemID": "itemguid8"
+            },
+            "Custom16": null,
+            "Custom17": null,
+            "Custom18": null,
+            "Custom19": null,
+            "Custom20": null,
+            "ID": "reportid1",
+            "URI": "https://concururl/api/v3.0/expense/reports/reportid1"
+        },
+        {
+            "Name": "Expense Report 2",
+            "Total": 1800.00000000,
+            "CurrencyCode": "USD",
+            "Country": "US",
+            "CountrySubdivision": "US-NY",
+            "CreateDate": "2020-03-05T18:21:54.143",
+            "SubmitDate": "2020-03-12T16:54:16.49",
+            "ProcessingPaymentDate": null,
+            "PaidDate": null,
+            "ReceiptsReceived": true,
+            "UserDefinedDate": "2020-03-05T00:00:00",
+            "LastComment": "Approved via Concur Connect",
+            "OwnerLoginID": "jd101@cornell.edu",
+            "OwnerName": "Jane Doe",
+            "ApproverLoginID": null,
+            "ApproverName": null,
+            "ApprovalStatusName": "Pending External Validation",
+            "ApprovalStatusCode": "A_EXTV",
+            "PaymentStatusName": "Not Paid",
+            "PaymentStatusCode": "P_NOTP",
+            "LastModifiedDate": "2020-03-12T16:54:16.473",
+            "PersonalAmount": 0.00000000,
+            "AmountDueEmployee": 1800.00000000,
+            "AmountDueCompanyCard": 0.00000000,
+            "TotalClaimedAmount": 1800.00000000,
+            "TotalApprovedAmount": 1800.00000000,
+            "LedgerName": "CORNELL",
+            "PolicyID": "policyguid",
+            "EverSentBack": false,
+            "HasException": false,
+            "WorkflowActionUrl": "http://concururl/api/v3.0/expense/reports/report/reportguid2/WorkFlowAction?approvalStatusCode=A_EXTV&limit=2&user=ALL&isTestUser=true",
+            "OrgUnit1": {
+                "Type": "ConnectedList",
+                "Value": "ITHACA CAMPUS",
+                "Code": "EX",
+                "ListItemID": "itemguid9"
+            },
+            "OrgUnit2": {
+                "Type": "ConnectedList",
+                "Value": "FIS GENERAL OPERATING",
+                "Code": "EXO4769",
+                "ListItemID": "itemguid10"
+            },
+            "OrgUnit3": null,
+            "OrgUnit4": null,
+            "OrgUnit5": null,
+            "OrgUnit6": null,
+            "Custom1": {
+                "Type": "List",
+                "Value": "Employee",
+                "Code": "Employee",
+                "ListItemID": "itemguid11"
+            },
+            "Custom2": {
+                "Type": "List",
+                "Value": "1.  Domestic Travel",
+                "Code": "Domestic Travel",
+                "ListItemID": "itemguid12"
+            },
+            "Custom3": {
+                "Type": "List",
+                "Value": "Conference",
+                "Code": "Conference",
+                "ListItemID": "itemguid13"
+            },
+            "Custom4": null,
+            "Custom5": {
+                "Type": "Text",
+                "Value": "6104",
+                "Code": null,
+                "ListItemID": null
+            },
+            "Custom6": null,
+            "Custom7": null,
+            "Custom8": {
+                "Type": "ConnectedList",
+                "Value": "University Business Service Center",
+                "Code": "1",
+                "ListItemID": "itemguid14"
+            },
+            "Custom9": {
+                "Type": "ConnectedList",
+                "Value": "AVP/UNIVERSITY CONTROLLER",
+                "Code": "6104",
+                "ListItemID": "itemguid15"
+            },
+            "Custom10": null,
+            "Custom11": null,
+            "Custom12": null,
+            "Custom13": null,
+            "Custom14": null,
+            "Custom15": {
+                "Type": "List",
+                "Value": "Test Cornell",
+                "Code": "Test Cornell",
+                "ListItemID": "itemguid16"
+            },
+            "Custom16": null,
+            "Custom17": null,
+            "Custom18": null,
+            "Custom19": null,
+            "Custom20": null,
+            "ID": "reportid2",
+            "URI": "https://concururl/api/v3.0/expense/reports/reportid2"
+        }
+    ],
+    "NextPage": "https://concururl/api/v3.0/expense/reports?approvalStatusCode=A_EXTV&limit=2&user=ALL&isTestUser=true&offset=anotherGuid"
+}
