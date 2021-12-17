@@ -25,7 +25,7 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOAuth2TokenResponseDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 
-public class ConcurDTOJsonTest {
+public class ConcurOAuth2ToJsonTest {
     private static final String TOKEN_TYPE = "token_type";
     private static final String SCOPE = "scope";
     private static final String REFRESH_TOKEN = "refresh_token";

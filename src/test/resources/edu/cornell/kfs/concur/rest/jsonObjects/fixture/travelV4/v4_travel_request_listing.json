@@ -1,0 +1,134 @@
+{
+    "data": [
+        {
+            "href": "https://concurURL/travelrequest/v4/requests/reportID1",
+            "id": "reportID1",
+            "approvalStatus": {
+                "code": "SUBMITTED",
+                "name": "Submitted & Pending Approval"
+            },
+            "approved": false,
+            "approver": {
+                "id": "guid1",
+                "firstName": "Ezra",
+                "middleInitial": "D",
+                "lastName": "Cornell"
+            },
+            "businessPurpose": "purpose1",
+            "canceledPostApproval": false,
+            "closed": false,
+            "creationDate": "2021-11-24T15:36:59.000Z",
+            "endDate": "2021-12-15",
+            "everSentBack": false,
+            "highestExceptionLevel": "NONE",
+            "isUserReviewed": false,
+            "name": "Los Angeles 12.13.21",
+            "owner": {
+                "id": "guid2",
+                "firstName": "Jane",
+                "middleInitial": "M",
+                "lastName": "Doe"
+            },
+            "pendingApproval": true,
+            "requestId": "requestID1",
+            "startDate": "2021-12-13",
+            "submitDate": "2021-11-24T15:52:24.000Z",
+            "totalApprovedAmount": {
+                "value": 1290.00000000,
+                "currency": "USD"
+            },
+            "totalPostedAmount": {
+                "value": 1290.00000000,
+                "currency": "USD"
+            },
+            "totalRemainingAmount": {
+                "value": 1290.00000000,
+                "currency": "USD"
+            },
+            "type": {
+                "code": "TRAVEL",
+                "label": "Travel"
+            }
+        },
+        {
+            "href": "https://concurURL/travelrequest/v4/requests/reportID2",
+            "id": "reportID2",
+            "approvalStatus": {
+                "code": "SUBMITTED",
+                "name": "Submitted & Pending Approval"
+            },
+            "approved": false,
+            "approver": {
+                "id": "guid3",
+                "firstName": "John",
+                "middleInitial": "A",
+                "lastName": "Doe"
+            },
+            "businessPurpose": "Attend AGU Fall meeting; convene sessions, present scientific research, and participate in scientific workshops and townhalls.",
+            "canceledPostApproval": false,
+            "closed": false,
+            "creationDate": "2021-11-17T15:17:10.000Z",
+            "endDate": "2021-12-18",
+            "everSentBack": false,
+            "highestExceptionLevel": "NONE",
+            "isUserReviewed": false,
+            "name": "AGU 2021",
+            "owner": {
+                "id": "guid4",
+                "firstName": "Frank",
+                "middleInitial": "M",
+                "lastName": "Doe"
+            },
+            "pendingApproval": true,
+            "requestId": "requestID2",
+            "startDate": "2021-12-10",
+            "submitDate": "2021-11-17T15:36:39.000Z",
+            "totalApprovedAmount": {
+                "value": 591.00000000,
+                "currency": "USD"
+            },
+            "totalPostedAmount": {
+                "value": 591.00000000,
+                "currency": "USD"
+            },
+            "totalRemainingAmount": {
+                "value": 591.00000000,
+                "currency": "USD"
+            },
+            "type": {
+                "code": "TRAVEL",
+                "label": "Travel"
+            }
+        }
+    ],
+    "operations": [
+        {
+            "rel": "next",
+            "href": "https://concurURL/travelrequest/v4/requests?view=TOAPPROVE&limit=2&start=2&sortField=startDate&sortOrder=DESC",
+            "hreflang": null,
+            "media": null,
+            "title": null,
+            "type": null,
+            "deprecation": null
+        },
+        {
+            "rel": "first",
+            "href": "https://concurURL/travelrequest/v4/requests?view=TOAPPROVE&limit=2&start=0&sortField=startDate&sortOrder=DESC",
+            "hreflang": null,
+            "media": null,
+            "title": null,
+            "type": null,
+            "deprecation": null
+        },
+        {
+            "rel": "last",
+            "href": "https://concurURL/travelrequest/v4/requests?view=TOAPPROVE&limit=2&start=48&sortField=startDate&sortOrder=DESC",
+            "hreflang": null,
+            "media": null,
+            "title": null,
+            "type": null,
+            "deprecation": null
+        }
+    ],
+    "totalCount": 5
+}
