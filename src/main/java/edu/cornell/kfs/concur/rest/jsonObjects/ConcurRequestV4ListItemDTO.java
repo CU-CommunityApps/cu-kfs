@@ -47,7 +47,7 @@ public class ConcurRequestV4ListItemDTO {
     private String highestExceptionLevel;
 
     @JsonProperty("isUserReviewed")
-    private boolean isUserReviewed;
+    private boolean userReviewed;
 
     @JsonProperty("name")
     private String name;
@@ -176,11 +176,11 @@ public class ConcurRequestV4ListItemDTO {
     }
 
     public boolean isUserReviewed() {
-        return isUserReviewed;
+        return userReviewed;
     }
 
-    public void setUserReviewed(boolean isUserReviewed) {
-        this.isUserReviewed = isUserReviewed;
+    public void setUserReviewed(boolean userReviewed) {
+        this.userReviewed = userReviewed;
     }
 
     public String getName() {

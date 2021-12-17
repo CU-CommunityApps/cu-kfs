@@ -37,6 +37,7 @@ class ConcurRequestDTOJsonTest {
     private static final KualiDecimal REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT = new KualiDecimal(1290.0);
     private static final KualiDecimal REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT = new KualiDecimal(879.07);
     private static final Date REPORT_CREATION_DATE = buildDateFromString("2021-11-24T15:36:59.000Z");
+    private static final Date REPORT_LAST_MODIFIED_DATE = buildDateFromString("2021-11-24T15:52:24.000Z");
     private static final Integer LISTING_EXPECTED_TOTAL_COUNT = 5;
     public static final Date EZRA_REPORT_END_DATE = buildDateFromString("2021-12-15");
     public static final KualiDecimal EZRA_TOTAL_POSTED_AMOUNT = new KualiDecimal("1290.00000000");
@@ -67,6 +68,7 @@ class ConcurRequestDTOJsonTest {
         assertEquals(REPORT_EXPECTED_TOTAL_REMAINING_AMOUNT, dto.getTotalRemainingAmount().getValue());
         assertEquals(REPORT_EXPECTED_TOTAL_APPROVED_AMOUNT, dto.getTotalApprovedAmount().getValue());
         assertEquals(REPORT_CREATION_DATE, dto.getCreationDate());
+        assertEquals(REPORT_LAST_MODIFIED_DATE, dto.getLastModifiedDate());
     }
     
     @Test

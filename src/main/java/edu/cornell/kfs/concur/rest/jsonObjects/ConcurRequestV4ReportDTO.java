@@ -42,7 +42,7 @@ public class ConcurRequestV4ReportDTO {
     private ConcurRequestV4CustomItemDTO chart;
 
     @JsonProperty("custom2")
-    private ConcurRequestV4CustomItemDTO Account;
+    private ConcurRequestV4CustomItemDTO account;
 
     @JsonProperty("endDate")
     private Date endDate;
@@ -51,10 +51,10 @@ public class ConcurRequestV4ReportDTO {
     private boolean everSentBack;
 
     @JsonProperty("isUserReviewed")
-    private boolean isUserReviewed;
+    private boolean userReviewed;
 
     @JsonProperty("lastModified")
-    private String lastModified;
+    private Date lastModifiedDate;
 
     @JsonProperty("mainDestination")
     private ConcurRequestV4MainDestinationDTO mainDestination;
@@ -66,7 +66,7 @@ public class ConcurRequestV4ReportDTO {
     private ConcurRequestV4PersonDTO owner;
 
     @JsonProperty("pendingApproval")
-    private Boolean pendingApproval;
+    private boolean pendingApproval;
 
     @JsonProperty("requestId")
     private String requestId;
@@ -170,11 +170,11 @@ public class ConcurRequestV4ReportDTO {
     }
 
     public ConcurRequestV4CustomItemDTO getAccount() {
-        return Account;
+        return account;
     }
 
     public void setAccount(ConcurRequestV4CustomItemDTO account) {
-        Account = account;
+        this.account = account;
     }
 
     public Date getEndDate() {
@@ -194,19 +194,19 @@ public class ConcurRequestV4ReportDTO {
     }
 
     public boolean isUserReviewed() {
-        return isUserReviewed;
+        return userReviewed;
     }
 
-    public void setUserReviewed(boolean isUserReviewed) {
-        this.isUserReviewed = isUserReviewed;
+    public void setUserReviewed(boolean userReviewed) {
+        this.userReviewed = userReviewed;
     }
 
-    public String getLastModified() {
-        return lastModified;
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public void setLastModified(String lastModified) {
-        this.lastModified = lastModified;
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public ConcurRequestV4MainDestinationDTO getMainDestination() {
@@ -233,11 +233,11 @@ public class ConcurRequestV4ReportDTO {
         this.owner = owner;
     }
 
-    public Boolean getPendingApproval() {
+    public boolean isPendingApproval() {
         return pendingApproval;
     }
 
-    public void setPendingApproval(Boolean pendingApproval) {
+    public void setPendingApproval(boolean pendingApproval) {
         this.pendingApproval = pendingApproval;
     }
 
