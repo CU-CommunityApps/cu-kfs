@@ -83,7 +83,9 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     
     protected int findMaxRetries() {
         String retryCountString = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES);
-        LOG.info("findMaxRetries, the maximum number of retries is " + retryCountString);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("findMaxRetries, the maximum number of retries is " + retryCountString);
+        }
         return Integer.valueOf(retryCountString);
     }
     
@@ -96,8 +98,12 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             client = ClientBuilder.newClient(clientConfig);
             response = buildConcurClientRequest(client, accessToken, concurEndPoint);
             if (Family.SUCCESSFUL == response.getStatusInfo().getFamily()) {
-                LOG.info("callConcurEndpoint, successfully got a response");
-                return response.readEntity(String.class);
+                LOG.debug("callConcurEndpoint, successfully got a response");
+                String responseString = response.readEntity(String.class);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("callConcurEndpoint, responseString: " + responseString);
+                }
+                return responseString;
             } else {
                 LOG.error("callConcurEndpoint, unsuccessful response code returned when trying to call endpoint: " 
                         + response.getStatus());
@@ -141,29 +147,29 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        for (ConcurExpenseV3ListItemDTO expenseItem : expenseList.getItems()) {
-            ConcurExpenseV3ReportItemDTO expenseReport = getConcurExpenseReport(accessToken, expenseItem.getId(), expenseItem.getOwnerLoginID());
-            LOG.info("processExpenseListing, expenseReport: " + expenseReport.toString());
+        for (ConcurExpenseV3ListItemDTO partialExpenseReportFromListing : expenseList.getItems()) {
+            ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken, partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
+            LOG.debug("processExpenseListing, expenseItem: " + partialExpenseReportFromListing.toString());
             ArrayList<String> validationMessages = new ArrayList<>();
             validationMessages.add("Validation not implemented yet");
             processingResults.add(new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport, 
-                    ConcurEventNotificationVersion2ProcessingResults.processingError, expenseItem.getId(), validationMessages));
+                    ConcurEventNotificationVersion2ProcessingResults.processingError, partialExpenseReportFromListing.getId(), validationMessages));
             /*
              * @todo implement validation here
              */
         }
-        if (StringUtils.isBlank(expenseList.getNextPage())) {
+        if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = getConcurExpenseListing(accessToken, expenseList.getNextPage());
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
         }
     }
     
-    protected ConcurExpenseV3ReportItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
+    protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
         //Https://us.api.concursolutions.com/api/v3.0/expense/reports/04CF0D6919AA4B2CB0F4?user=clk3@cornell.edu
         
         String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + "?user=" + userName;
         LOG.info("getConcurExpenseReport, calling endpoint " + expenseReportEndpoint);
-        return buildConcurDTOFromEndpoint(accessToken, expenseReportEndpoint, ConcurExpenseV3ReportItemDTO.class);
+        return buildConcurDTOFromEndpoint(accessToken, expenseReportEndpoint, ConcurExpenseV3ListItemDTO.class);
     }
     
     protected String findBaseExpenseReportEndPoint() {

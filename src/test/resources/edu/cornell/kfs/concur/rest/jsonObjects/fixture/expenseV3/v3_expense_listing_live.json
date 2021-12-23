@@ -1,0 +1,217 @@
+{
+	"Items": [
+		{
+			"Name": "Feb 6 2020 Test Call Out",
+			"Total": 5.00000000,
+			"CurrencyCode": "USD",
+			"Country": "US",
+			"CountrySubdivision": "US-NY",
+			"CreateDate": "2020-02-06T18:29:35.633",
+			"SubmitDate": "2020-02-06T18:30:11.207",
+			"ProcessingPaymentDate": null,
+			"PaidDate": null,
+			"ReceiptsReceived": false,
+			"UserDefinedDate": "2020-02-06T00:00:00",
+			"LastComment": "",
+			"OwnerLoginID": "clk3@cornell.edu",
+			"OwnerName": "Cheri Knapp",
+			"ApproverLoginID": null,
+			"ApproverName": null,
+			"ApprovalStatusName": "Pending External Validation",
+			"ApprovalStatusCode": "A_EXTV",
+			"PaymentStatusName": "Not Paid",
+			"PaymentStatusCode": "P_NOTP",
+			"LastModifiedDate": "2020-02-06T18:30:11.247",
+			"PersonalAmount": 0.00000000,
+			"AmountDueEmployee": 5.00000000,
+			"AmountDueCompanyCard": 0.00000000,
+			"TotalClaimedAmount": 5.00000000,
+			"TotalApprovedAmount": 5.00000000,
+			"LedgerName": "CORNELL",
+			"PolicyID": "gWo8fzZUkDtCXpW9IxjeK0OC5QV9RxmgW4g",
+			"EverSentBack": false,
+			"HasException": false,
+			"WorkflowActionUrl": "http://us.api.concursolutions.com/api/v3.0/expense/reports/report/gWphteYl31NcjbtIA3zu27CvxGYzbgG8zvcgT8lYk/WorkFlowAction?approvalStatusCode=A_EXTV&limit=2&user=ALL&isTestUser=true",
+			"OrgUnit1": {
+				"Type": "ConnectedList",
+				"Value": "ITHACA CAMPUS",
+				"Code": "IT",
+				"ListItemID": "gWkuMlKqGJK96iF05NV79qux$sypuqIx0SGw"
+			},
+			"OrgUnit2": {
+				"Type": "ConnectedList",
+				"Value": "FIS GENERAL OPERATING",
+				"Code": "G224700",
+				"ListItemID": "gWkuMlKryVdZ4ku9OBLaXpdnsz2trNTl4jQ"
+			},
+			"OrgUnit3": null,
+			"OrgUnit4": null,
+			"OrgUnit5": null,
+			"OrgUnit6": null,
+			"Custom1": {
+				"Type": "List",
+				"Value": "Employee",
+				"Code": "Employee",
+				"ListItemID": "gWkuMlKqGItwAMKVwoLfmZ0TbTgf9rlbf6g"
+			},
+			"Custom2": {
+				"Type": "List",
+				"Value": "1.  Domestic Travel",
+				"Code": "Domestic Travel",
+				"ListItemID": "gWkuMlKqGItx9Hh$sNmVGn0On2egebjjywWQ"
+			},
+			"Custom3": {
+				"Type": "List",
+				"Value": "Conference",
+				"Code": "Conference",
+				"ListItemID": "gWkuMlKqGIt99leZE2COUNa9mU7wikxzQ4A"
+			},
+			"Custom4": null,
+			"Custom5": {
+				"Type": "Text",
+				"Value": "6104",
+				"Code": null,
+				"ListItemID": null
+			},
+			"Custom6": null,
+			"Custom7": null,
+			"Custom8": {
+				"Type": "ConnectedList",
+				"Value": "University Business Service Center",
+				"Code": "1",
+				"ListItemID": "gWkuMlKuCVNt4ReqlJeeQsllNv449LHp$pxw"
+			},
+			"Custom9": {
+				"Type": "ConnectedList",
+				"Value": "AVP/UNIVERSITY CONTROLLER",
+				"Code": "6104",
+				"ListItemID": "gWkuMlKuCVawICg5ZMUd06$pf02FieRB7pzw"
+			},
+			"Custom10": null,
+			"Custom11": null,
+			"Custom12": null,
+			"Custom13": null,
+			"Custom14": null,
+			"Custom15": {
+				"Type": "List",
+				"Value": "Test Cornell",
+				"Code": "Test Cornell",
+				"ListItemID": "gWkuMlKuCJ90KoO9Jp$puNgJ2LrZx0ureHQw"
+			},
+			"Custom16": null,
+			"Custom17": null,
+			"Custom18": null,
+			"Custom19": null,
+			"Custom20": null,
+			"ID": "04CF0D6919AA4B2CB0F4",
+			"URI": "https://us.api.concursolutions.com/api/v3.0/expense/reports/04CF0D6919AA4B2CB0F4"
+		},
+		{
+			"Name": "3/5/20 expense report",
+			"Total": 1800.00000000,
+			"CurrencyCode": "USD",
+			"Country": "US",
+			"CountrySubdivision": "US-NY",
+			"CreateDate": "2020-03-05T18:21:54.143",
+			"SubmitDate": "2020-03-12T16:54:16.49",
+			"ProcessingPaymentDate": null,
+			"PaidDate": null,
+			"ReceiptsReceived": true,
+			"UserDefinedDate": "2020-03-05T00:00:00",
+			"LastComment": "Approved via Concur Connect",
+			"OwnerLoginID": "clk3@cornell.edu",
+			"OwnerName": "Cheri Knapp",
+			"ApproverLoginID": null,
+			"ApproverName": null,
+			"ApprovalStatusName": "Pending External Validation",
+			"ApprovalStatusCode": "A_EXTV",
+			"PaymentStatusName": "Not Paid",
+			"PaymentStatusCode": "P_NOTP",
+			"LastModifiedDate": "2020-03-12T16:54:16.473",
+			"PersonalAmount": 0.00000000,
+			"AmountDueEmployee": 1800.00000000,
+			"AmountDueCompanyCard": 0.00000000,
+			"TotalClaimedAmount": 1800.00000000,
+			"TotalApprovedAmount": 1800.00000000,
+			"LedgerName": "CORNELL",
+			"PolicyID": "gWo8fzZUkDtCXpW9IxjeK0OC5QV9RxmgW4g",
+			"EverSentBack": false,
+			"HasException": false,
+			"WorkflowActionUrl": "http://us.api.concursolutions.com/api/v3.0/expense/reports/report/gWphgeIVx1Ncjb9MF0jVQZZv8o4eLAiMgfgEBYvZg/WorkFlowAction?approvalStatusCode=A_EXTV&limit=2&user=ALL&isTestUser=true",
+			"OrgUnit1": {
+				"Type": "ConnectedList",
+				"Value": "ITHACA CAMPUS",
+				"Code": "IT",
+				"ListItemID": "gWkuMlKqGJK96iF05NV79qux$sypuqIx0SGw"
+			},
+			"OrgUnit2": {
+				"Type": "ConnectedList",
+				"Value": "FIS GENERAL OPERATING",
+				"Code": "G224700",
+				"ListItemID": "gWkuMlKryVdZ4ku9OBLaXpdnsz2trNTl4jQ"
+			},
+			"OrgUnit3": null,
+			"OrgUnit4": null,
+			"OrgUnit5": null,
+			"OrgUnit6": null,
+			"Custom1": {
+				"Type": "List",
+				"Value": "Employee",
+				"Code": "Employee",
+				"ListItemID": "gWkuMlKqGItwAMKVwoLfmZ0TbTgf9rlbf6g"
+			},
+			"Custom2": {
+				"Type": "List",
+				"Value": "1.  Domestic Travel",
+				"Code": "Domestic Travel",
+				"ListItemID": "gWkuMlKqGItx9Hh$sNmVGn0On2egebjjywWQ"
+			},
+			"Custom3": {
+				"Type": "List",
+				"Value": "Conference",
+				"Code": "Conference",
+				"ListItemID": "gWkuMlKqGIt99leZE2COUNa9mU7wikxzQ4A"
+			},
+			"Custom4": null,
+			"Custom5": {
+				"Type": "Text",
+				"Value": "6104",
+				"Code": null,
+				"ListItemID": null
+			},
+			"Custom6": null,
+			"Custom7": null,
+			"Custom8": {
+				"Type": "ConnectedList",
+				"Value": "University Business Service Center",
+				"Code": "1",
+				"ListItemID": "gWkuMlKuCVNt4ReqlJeeQsllNv449LHp$pxw"
+			},
+			"Custom9": {
+				"Type": "ConnectedList",
+				"Value": "AVP/UNIVERSITY CONTROLLER",
+				"Code": "6104",
+				"ListItemID": "gWkuMlKuCVawICg5ZMUd06$pf02FieRB7pzw"
+			},
+			"Custom10": null,
+			"Custom11": null,
+			"Custom12": null,
+			"Custom13": null,
+			"Custom14": null,
+			"Custom15": {
+				"Type": "List",
+				"Value": "Test Cornell",
+				"Code": "Test Cornell",
+				"ListItemID": "gWkuMlKuCJ90KoO9Jp$puNgJ2LrZx0ureHQw"
+			},
+			"Custom16": null,
+			"Custom17": null,
+			"Custom18": null,
+			"Custom19": null,
+			"Custom20": null,
+			"ID": "6C5A6ADEF6274EED974F",
+			"URI": "https://us.api.concursolutions.com/api/v3.0/expense/reports/6C5A6ADEF6274EED974F"
+		}
+	],
+	"NextPage": "https://us.api.concursolutions.com/api/v3.0/expense/reports?approvalStatusCode=A_EXTV&limit=2&user=ALL&isTestUser=true&offset=gWmAOWvmdHFtSnHL9QcfdTY$scR88xJA"
+}
