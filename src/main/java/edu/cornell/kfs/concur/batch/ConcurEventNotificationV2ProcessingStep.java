@@ -9,12 +9,18 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
+import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
 
 public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     private static final Logger LOG = LogManager.getLogger();
     
     protected ConcurAccessTokenV2Service concurAccessTokenV2Service;
+    protected ConcurExpenseV3Service concurExpenseV3Service;
+
+    public void setConcurExpenseV3Service(ConcurExpenseV3Service concurExpenseV3Service) {
+        this.concurExpenseV3Service = concurExpenseV3Service;
+    }
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
@@ -27,7 +33,7 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     }
     
     private void validateExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        LOG.info("validateExpenseReports, has not been implemented yet.");
+        concurExpenseV3Service.validateExpenseReports(accessToken, processingResults);
     }
     
     private void validateTravelRequests(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
