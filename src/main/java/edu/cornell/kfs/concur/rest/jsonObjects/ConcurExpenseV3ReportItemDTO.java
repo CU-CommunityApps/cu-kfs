@@ -35,5 +35,4 @@ public class ConcurExpenseV3ReportItemDTO {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
-    
 }
