@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur.rest.jsonObjects;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -479,9 +478,4 @@ public class ConcurExpenseV3ListItemDTO {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
     
-    @Override
-    public boolean equals(Object o) {
-        ConcurExpenseV3ListItemDTO other = (ConcurExpenseV3ListItemDTO) o;
-        return EqualsBuilder.reflectionEquals(this, other);
-    }
 }

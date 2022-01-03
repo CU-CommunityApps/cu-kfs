@@ -27,10 +27,13 @@ import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2Pro
 import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
+import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
+import edu.cornell.kfs.concur.businessobjects.ConcurReport;
+import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ReportItemDTO;
+import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
@@ -38,6 +41,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     private static final Logger LOG = LogManager.getLogger();
     
     private ConcurBatchUtilityService concurBatchUtilityService;
+    private ConcurAccountValidationService concurAccountValidationService;
 
     @Override
     public void validateExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
@@ -60,25 +64,25 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected ConcurExpenseV3ListingDTO getConcurExpenseListing(String accessToken, String expenseListEndpoint) {
-        LOG.info("getConcurExpenseListing, calling endpoint " + expenseListEndpoint);
         return buildConcurDTOFromEndpoint(accessToken, expenseListEndpoint, ConcurExpenseV3ListingDTO.class);
         
     }
     
     protected <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType) {
-        String tokenResponseString = null;
+        LOG.info("buildConcurDTOFromEndpoint, about to call endpoint: " + concurEndPoint);
+        String jsonResponseString = null;
         int maxRetryCount = findMaxRetries();
         int retryCount = 0;
-        while (retryCount < maxRetryCount && tokenResponseString == null) {
+        while (retryCount < maxRetryCount && jsonResponseString == null) {
             LOG.info("buildConcurDTOFromEndpoint, trying to build " + dtoType + " from concur endpoint, attempt number " + retryCount);
-            tokenResponseString = callConcurEndpoint(accessToken, concurEndPoint);
+            jsonResponseString = callConcurEndpoint(accessToken, concurEndPoint);
             retryCount++;
         }
-        if (StringUtils.isBlank(tokenResponseString)) {
+        if (StringUtils.isBlank(jsonResponseString)) {
             throw new RuntimeException("buildConcurClientRequest, Unable to call concur endpoint " + concurEndPoint);
         }
         
-        return convertJsonToConcurDTO(tokenResponseString, dtoType);
+        return convertJsonToConcurDTO(jsonResponseString, dtoType);
     }
     
     protected int findMaxRetries() {
@@ -98,16 +102,14 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             client = ClientBuilder.newClient(clientConfig);
             response = buildConcurClientRequest(client, accessToken, concurEndPoint);
             if (Family.SUCCESSFUL == response.getStatusInfo().getFamily()) {
-                LOG.debug("callConcurEndpoint, successfully got a response");
                 String responseString = response.readEntity(String.class);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("callConcurEndpoint, responseString: " + responseString);
+                    LOG.debug("callConcurEndpoint, got a successful response, responseString: " + responseString);
                 }
                 return responseString;
             } else {
                 LOG.error("callConcurEndpoint, unsuccessful response code returned when trying to call endpoint: " 
-                        + response.getStatus());
-                LOG.debug("callConcurEndpoint, the response: " + response.toString());
+                        + response.getStatus() + " with details of " + response.toString());
             }
         } catch (Exception e) {
             LOG.error("callConcurEndpoint, had an error trying to call concur end point", e);
@@ -134,11 +136,11 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 .get();
     }
     
-    private <T> T convertJsonToConcurDTO(String tokenResponse,  Class<T> dtoType) {
+    private <T> T convertJsonToConcurDTO(String jsonString,  Class<T> dtoType) {
         ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         T dto;
         try {
-            dto = objectMapper.readValue(tokenResponse, dtoType);
+            dto = objectMapper.readValue(jsonString, dtoType);
         } catch (JsonProcessingException e) {
             LOG.error("convertJsonToConcurDTO, unable to convert json to " + dtoType, e);
             throw new RuntimeException("convertJsonToConcurDTO, unable to convert roken response to a java dto ", e);
@@ -149,26 +151,28 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         for (ConcurExpenseV3ListItemDTO partialExpenseReportFromListing : expenseList.getItems()) {
             ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken, partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
-            LOG.debug("processExpenseListing, expenseItem: " + partialExpenseReportFromListing.toString());
-            ArrayList<String> validationMessages = new ArrayList<>();
-            validationMessages.add("Validation not implemented yet");
-            processingResults.add(new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport, 
-                    ConcurEventNotificationVersion2ProcessingResults.processingError, partialExpenseReportFromListing.getId(), validationMessages));
-            /*
-             * @todo implement validation here
-             */
+            validateConcurExpenseReport(processingResults, fullExpenseReport);
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = getConcurExpenseListing(accessToken, expenseList.getNextPage());
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
         }
     }
+
+    public void validateConcurExpenseReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults,
+            ConcurExpenseV3ListItemDTO fullExpenseReport) {
+        LOG.info("validateConcurExpenseReport, validation step not implemented yet.");
+        ArrayList<String> validationMessages = new ArrayList<>();
+        validationMessages.add("Validation not implemented yet");
+        processingResults.add(new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport, 
+                ConcurEventNotificationVersion2ProcessingResults.processingError, fullExpenseReport.getId(), validationMessages));
+        /*
+         * @todo implement validation here
+         */
+    }
     
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
-        //Https://us.api.concursolutions.com/api/v3.0/expense/reports/04CF0D6919AA4B2CB0F4?user=clk3@cornell.edu
-        
         String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + "?user=" + userName;
-        LOG.info("getConcurExpenseReport, calling endpoint " + expenseReportEndpoint);
         return buildConcurDTOFromEndpoint(accessToken, expenseReportEndpoint, ConcurExpenseV3ListItemDTO.class);
     }
     
@@ -177,6 +181,24 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
          * @todo pull this value from a parameter
          */
         return "Https://us.api.concursolutions.com/api/v3.0/expense/reports/";
+    }
+    
+    private ValidationResult validateReportAccountInfo(ConcurReport concurReport){
+        ValidationResult reportValidationResult = new ValidationResult();
+        LOG.info("validateReportAccountInfo()");
+        if (concurReport.getAccountInfos() != null && concurReport.getAccountInfos().size() > 0) {            
+            for (ConcurAccountInfo concurAccountInfo : concurReport.getAccountInfos()) {
+                LOG.info(concurAccountInfo.toString());
+                if(concurAccountInfo.isForPersonalCorporateCardExpense()){
+                    reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfoObjectCodeNotRequired(concurAccountInfo));
+                }
+                else {
+                    reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo));    
+                }
+            }
+        }
+        LOG.info("Validation Result: " + reportValidationResult.isValid() + ", validation messages: " + reportValidationResult.getErrorMessagesAsOneFormattedString());
+        return reportValidationResult;
     }
     
     protected boolean isProduction() {

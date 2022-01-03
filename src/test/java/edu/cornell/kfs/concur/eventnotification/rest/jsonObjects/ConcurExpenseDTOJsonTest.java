@@ -27,9 +27,7 @@ class ConcurExpenseDTOJsonTest {
     private ObjectMapper objectMapper;
     
     private static final String EXPENSE_REPORT_JSON_EXAMPLE_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/expenseV3/v3_expense_report.json";
-    private static final String EXPENSE_REPORT_LIVE_JSON_EXAMPLE_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/expenseV3/v3_expense_report_live.json";
     private static final String EXPENSE_LISTING_JSON_EXAMPLE_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/expenseV3/v3_expense_listing.json";
-    private static final String EXPENSE_LISTING_LIVE_JSON_EXAMPLE_FILE = "src/test/resources/edu/cornell/kfs/concur/rest/jsonObjects/fixture/expenseV3/v3_expense_listing_live.json";
     
     private static final String REPORT_2_NAME = "Expense Report 2";
     private static final String REPORT_1_NAME = "Expense Report 1";
@@ -71,13 +69,6 @@ class ConcurExpenseDTOJsonTest {
     }
     
     @Test
-    public void testConcurV3ExpenseReportDTO_Live() throws JsonParseException, JsonMappingException, IOException {
-        File jsonFile = new File(EXPENSE_REPORT_LIVE_JSON_EXAMPLE_FILE);
-        ConcurExpenseV3ListItemDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ListItemDTO.class);
-        LOG.info("testConcurV3ExpenseReportDTO, dto: " + dto.toString());
-    }
-    
-    @Test
     public void testConcurV3ExpenseListingDTO() throws JsonParseException, JsonMappingException, IOException {
         File jsonFile = new File(EXPENSE_LISTING_JSON_EXAMPLE_FILE); 
         ConcurExpenseV3ListingDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ListingDTO.class);
@@ -100,13 +91,6 @@ class ConcurExpenseDTOJsonTest {
         assertEquals(REPORT_2_TOTAL, secondExpenseItem.getTotal());
         assertEquals(REPORT_2_CREATE_DATE, secondExpenseItem.getCreateDate());
         
-    }
-    
-    @Test
-    public void testConcurV3ExpenseListingDTO_live() throws JsonParseException, JsonMappingException, IOException {
-        File jsonFile = new File(EXPENSE_LISTING_LIVE_JSON_EXAMPLE_FILE); 
-        ConcurExpenseV3ListingDTO dto = objectMapper.readValue(jsonFile, ConcurExpenseV3ListingDTO.class);
-        LOG.info("testConcurV3ExpenseListingDTO, dto: " + dto.toString());
     }
 
 }
