@@ -27,10 +27,7 @@ import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2Pro
 import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
-import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
-import edu.cornell.kfs.concur.businessobjects.ConcurReport;
-import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
@@ -55,10 +52,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected String findDefaultExpenseListingEndPoint() {
-        /*
-         * @todo pull this value from a parameter
-         */
-        String baseUrl = "https://us.api.concursolutions.com/api/v3.0/expense/reports?approvalStatusCode=A_EXTV&limit=2&user=ALL&isTestUser=";
+        String baseUrl = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_LISTING_ENDPOINT);
         baseUrl = baseUrl + !isProduction();
         return baseUrl;
     }
@@ -177,28 +171,8 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected String findBaseExpenseReportEndPoint() {
-        /*
-         * @todo pull this value from a parameter
-         */
-        return "Https://us.api.concursolutions.com/api/v3.0/expense/reports/";
-    }
-    
-    private ValidationResult validateReportAccountInfo(ConcurReport concurReport){
-        ValidationResult reportValidationResult = new ValidationResult();
-        LOG.info("validateReportAccountInfo()");
-        if (concurReport.getAccountInfos() != null && concurReport.getAccountInfos().size() > 0) {            
-            for (ConcurAccountInfo concurAccountInfo : concurReport.getAccountInfos()) {
-                LOG.info(concurAccountInfo.toString());
-                if(concurAccountInfo.isForPersonalCorporateCardExpense()){
-                    reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfoObjectCodeNotRequired(concurAccountInfo));
-                }
-                else {
-                    reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo));    
-                }
-            }
-        }
-        LOG.info("Validation Result: " + reportValidationResult.isValid() + ", validation messages: " + reportValidationResult.getErrorMessagesAsOneFormattedString());
-        return reportValidationResult;
+        String reportUrl = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_REPORT_ENDPOINT);
+        return reportUrl;
     }
     
     protected boolean isProduction() {
