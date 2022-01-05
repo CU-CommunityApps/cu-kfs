@@ -18,10 +18,6 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     protected ConcurAccessTokenV2Service concurAccessTokenV2Service;
     protected ConcurExpenseV3Service concurExpenseV3Service;
 
-    public void setConcurExpenseV3Service(ConcurExpenseV3Service concurExpenseV3Service) {
-        this.concurExpenseV3Service = concurExpenseV3Service;
-    }
-
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         String accessToken = concurAccessTokenV2Service.retrieveNewAccessBearerToken();
@@ -55,6 +51,10 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
 
     public void setConcurAccessTokenV2Service(ConcurAccessTokenV2Service concurAccessTokenV2Service) {
         this.concurAccessTokenV2Service = concurAccessTokenV2Service;
+    }
+    
+    public void setConcurExpenseV3Service(ConcurExpenseV3Service concurExpenseV3Service) {
+        this.concurExpenseV3Service = concurExpenseV3Service;
     }
 
 }

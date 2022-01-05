@@ -20,34 +20,39 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
 
 public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     private static final Logger LOG = LogManager.getLogger();
-    
+
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
 
     @Override
-    public void processExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+    public void processExpenseReports(String accessToken,
+            List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         ConcurExpenseV3ListingDTO expenseList = getConcurStartingExpenseListing(accessToken);
         processExpenseListing(accessToken, expenseList, processingResults);
+    }
 
-    }
-    
     protected ConcurExpenseV3ListingDTO getConcurStartingExpenseListing(String accessToken) {
-        return concurEventNotificationV2WebserviceService.getConcurExpenseListing(accessToken, findDefaultExpenseListingEndPoint());
+        return concurEventNotificationV2WebserviceService.getConcurExpenseListing(accessToken,
+                findDefaultExpenseListingEndPoint());
     }
-    
+
     protected String findDefaultExpenseListingEndPoint() {
-        String baseUrl = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_LISTING_ENDPOINT);
+        String baseUrl = concurBatchUtilityService
+                .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_LISTING_ENDPOINT);
         baseUrl = baseUrl + !isProduction();
         return baseUrl;
     }
-    
-    protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+
+    protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList,
+            List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         for (ConcurExpenseV3ListItemDTO partialExpenseReportFromListing : expenseList.getItems()) {
-            ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken, partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
+            ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken,
+                    partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
             validateConcurExpenseReport(processingResults, fullExpenseReport);
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
-            ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationV2WebserviceService.getConcurExpenseListing(accessToken, expenseList.getNextPage());
+            ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationV2WebserviceService
+                    .getConcurExpenseListing(accessToken, expenseList.getNextPage());
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
         }
     }
@@ -57,23 +62,27 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         LOG.info("validateConcurExpenseReport, validation step not implemented yet.");
         ArrayList<String> validationMessages = new ArrayList<>();
         validationMessages.add("Validation not implemented yet");
-        processingResults.add(new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport, 
-                ConcurEventNotificationVersion2ProcessingResults.processingError, fullExpenseReport.getId(), validationMessages));
+        processingResults.add(
+                new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
+                        ConcurEventNotificationVersion2ProcessingResults.processingError, fullExpenseReport.getId(),
+                        validationMessages));
         /*
          * @todo implement validation here
          */
     }
-    
+
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
         String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + "?user=" + userName;
-        return concurEventNotificationV2WebserviceService.getConcurExpenseV3ListItemDTO(accessToken, expenseReportEndpoint);
+        return concurEventNotificationV2WebserviceService.getConcurExpenseV3ListItemDTO(accessToken,
+                expenseReportEndpoint);
     }
-    
+
     protected String findBaseExpenseReportEndPoint() {
-        String reportUrl = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_REPORT_ENDPOINT);
+        String reportUrl = concurBatchUtilityService
+                .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_REPORT_ENDPOINT);
         return reportUrl;
     }
-    
+
     protected boolean isProduction() {
         boolean isProd = ConfigContext.getCurrentContextConfig().isProductionEnvironment();
         if (LOG.isDebugEnabled()) {
