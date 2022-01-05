@@ -21,8 +21,8 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
 public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     private static final Logger LOG = LogManager.getLogger();
     
-    private ConcurBatchUtilityService concurBatchUtilityService;
-    private ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
+    protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
 
     @Override
     public void processExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
@@ -66,7 +66,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
         String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + "?user=" + userName;
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken, expenseReportEndpoint, ConcurExpenseV3ListItemDTO.class);
+        return concurEventNotificationV2WebserviceService.getConcurExpenseV3ListItemDTO(accessToken, expenseReportEndpoint);
     }
     
     protected String findBaseExpenseReportEndPoint() {
@@ -84,6 +84,11 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
+    }
+
+    public void setConcurEventNotificationV2WebserviceService(
+            ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService) {
+        this.concurEventNotificationV2WebserviceService = concurEventNotificationV2WebserviceService;
     }
 
 }

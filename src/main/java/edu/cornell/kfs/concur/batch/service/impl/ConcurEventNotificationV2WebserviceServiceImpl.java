@@ -22,6 +22,7 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
@@ -29,7 +30,7 @@ import edu.cornell.kfs.sys.util.CURestClientUtils;
 public class ConcurEventNotificationV2WebserviceServiceImpl implements ConcurEventNotificationV2WebserviceService {
     private static final Logger LOG = LogManager.getLogger();
     
-    private ConcurBatchUtilityService concurBatchUtilityService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
     
     @Override
     public ConcurExpenseV3ListingDTO getConcurExpenseListing(String accessToken, String expenseListEndpoint) {
@@ -38,7 +39,11 @@ public class ConcurEventNotificationV2WebserviceServiceImpl implements ConcurEve
     }
     
     @Override
-    public <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType) {
+    public ConcurExpenseV3ListItemDTO getConcurExpenseV3ListItemDTO(String accessToken, String expenseReportEndPoint) {
+        return buildConcurDTOFromEndpoint(accessToken, expenseReportEndPoint, ConcurExpenseV3ListItemDTO.class);
+    }
+    
+    protected <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType) {
         LOG.info("buildConcurDTOFromEndpoint, about to call endpoint: " + concurEndPoint);
         String jsonResponseString = null;
         int maxRetryCount = findMaxRetries();
@@ -106,7 +111,7 @@ public class ConcurEventNotificationV2WebserviceServiceImpl implements ConcurEve
                 .get();
     }
     
-    private <T> T convertJsonToConcurDTO(String jsonString,  Class<T> dtoType) {
+    protected <T> T convertJsonToConcurDTO(String jsonString,  Class<T> dtoType) {
         ObjectMapper objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
         T dto;
         try {
