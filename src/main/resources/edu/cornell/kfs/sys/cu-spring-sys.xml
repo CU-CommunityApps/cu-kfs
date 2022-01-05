@@ -52,24 +52,6 @@
 			</map>
 		</property>
 	</bean>
-
-	<bean id="batchContainerStep" class="org.kuali.kfs.sys.batch.BatchContainerStep" parent="step">
- 	    <property name="batchContainerDirectory" value="${staging.directory.sys.batchContainer}"/>
- 	    <property name="batchContainerStopStep" ref="stopBatchContainerStep" />
- 	</bean>
- 	        
- 	<bean id="stopBatchContainerStep" class="org.kuali.kfs.sys.batch.StopBatchContainerStep" parent="step"/>
- 	        
- 	<bean id="semaphoreInputFileTypeError" class="org.kuali.kfs.sys.batch.SemaphoreInputFileType">
- 	    <property name="directoryPath" value="${staging.directory.sys.batchContainer}"/>
- 	    <property name="fileExtension" value="error"/>
- 	    <property name="fileTypeIdentifier" value="semaphoreInputFileTypeError" />
- 	</bean>
- 	        
- 	<bean id="namespaceOrFilePathPermissionTypeService" class="org.kuali.kfs.sys.identity.NamespaceWildcardAllowedAndOrStringWildcardAllowedPermissionTypeServiceImpl">
- 	    <property name="wildcardMatchStringAttributeName" value="filePath"/>
- 	    <property name="namespaceRequiredOnStoredAttributeSet" value="false" />
- 	</bean>
  	
  	<bean id="documentRequeuerJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
