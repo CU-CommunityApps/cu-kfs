@@ -6,6 +6,6 @@ import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingR
 
 public interface ConcurExpenseV3Service {
     
-    public void validateExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults);
+    public void processExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults);
 
 }

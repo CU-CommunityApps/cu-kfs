@@ -33,7 +33,7 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     }
     
     private void validateExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        concurExpenseV3Service.validateExpenseReports(accessToken, processingResults);
+        concurExpenseV3Service.processExpenseReports(accessToken, processingResults);
     }
     
     private void validateTravelRequests(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
