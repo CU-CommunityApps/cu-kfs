@@ -54,7 +54,7 @@ public class ConcurEventNotificationV2WebserviceServiceImpl implements ConcurEve
             retryCount++;
         }
         if (StringUtils.isBlank(jsonResponseString)) {
-            throw new RuntimeException("buildConcurClientRequest, Unable to call concur endpoint " + concurEndPoint);
+            throw new RuntimeException("buildConcurClientRequest, unable to call concur endpoint " + concurEndPoint);
         }
 
         return convertJsonToConcurDTO(jsonResponseString, dtoType);
@@ -103,7 +103,7 @@ public class ConcurEventNotificationV2WebserviceServiceImpl implements ConcurEve
         } catch (URISyntaxException e) {
             LOG.error("buildConcurClientRequest, there was a problem building client request.", e);
             throw new RuntimeException(
-                    "buildConcurClientRequest, An error occured while building URI: " + concurEndPoint, e);
+                    "buildConcurClientRequest, An error occurred while building URI: " + concurEndPoint, e);
         }
         return client.target(uri)
                 .request()
@@ -120,7 +120,7 @@ public class ConcurEventNotificationV2WebserviceServiceImpl implements ConcurEve
             dto = objectMapper.readValue(jsonString, dtoType);
         } catch (JsonProcessingException e) {
             LOG.error("convertJsonToConcurDTO, unable to convert json to " + dtoType, e);
-            throw new RuntimeException("convertJsonToConcurDTO, unable to convert roken response to a java dto ", e);
+            throw new RuntimeException("convertJsonToConcurDTO, unable to convert token response to a java dto ", e);
         }
         return dto;
     }

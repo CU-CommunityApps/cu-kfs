@@ -66,9 +66,6 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
                         ConcurEventNotificationVersion2ProcessingResults.processingError, fullExpenseReport.getId(),
                         validationMessages));
-        /*
-         * @todo implement validation here
-         */
     }
 
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
