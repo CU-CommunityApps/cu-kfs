@@ -36,7 +36,7 @@
           abstract="true"/>
     <bean id="CustomerInvoice-detailUnitOfMeasureValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.CustomerInvoiceDetailUnitOfMeasureValidation"
-          abstract="true" p:businessObjectService-ref="businessObjectService"/>
+          abstract="true" p:businessObjectService-ref="grl.businessObjectService"/>
     <bean id="CustomerInvoice-detailAmountValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.CustomerInvoiceDetailAmountValidation"/>
     <bean id="CustomerInvoice-detailChartCodeReceivableValidation"
@@ -53,7 +53,7 @@
           abstract="true"/>
     <bean id="CustomerInvoice-billingOrgOptionValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.CustomerInvoiceBillingOrgOptionValidation"
-          abstract="true" p:businessObjectService-ref="businessObjectService"/>
+          abstract="true" p:businessObjectService-ref="grl.businessObjectService"/>
     <bean id="CustomerInvoice-dueDateValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.CustomerInvoiceDueDateValidation" abstract="true"
           p:dateTimeService-ref="dateTimeService" p:parameterService-ref="parameterService"/>
@@ -74,7 +74,7 @@
           abstract="true" p:customerAddressService-ref="customerAddressService"/>
     <bean id="CustomerInvoice-detailSystemInformationDiscountValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.CustomerInvoiceDetailSystemInformationDiscountValidation"
-          abstract="true" p:businessObjectService-ref="businessObjectService"
+          abstract="true" p:businessObjectService-ref="grl.businessObjectService"
           p:universityDateService-ref="universityDateService"/>
     <bean id="CustomerInvoice-recurrenceDataSufficiencyValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.CustomerInvoiceRecurrenceDataSufficiencyValidation"
@@ -109,7 +109,7 @@
 
     <bean id="ContractsGrantsInvoice-documentValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.ContractsGrantsInvoiceDocumentValidation"
-          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
+          abstract="true" p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
     <bean id="ContractsGrantsInvoice-invoiceDetailAccountObjectCode-financialObjectCodesValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.ContractsGrantsInvoiceDocumentInvoiceDetailAccountObjectCodeFinancialObjectCodesValidation"
           abstract="true"/>
