@@ -109,7 +109,7 @@
 
     <bean id="ContractsGrantsInvoice-documentValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.ContractsGrantsInvoiceDocumentValidation"
-          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
+          abstract="true" p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
     <bean id="ContractsGrantsInvoice-invoiceDetailAccountObjectCode-financialObjectCodesValidation"
           class="org.kuali.kfs.module.ar.document.validation.impl.ContractsGrantsInvoiceDocumentInvoiceDetailAccountObjectCodeFinancialObjectCodesValidation"
           abstract="true"/>
