@@ -48,7 +48,7 @@ import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.ArKeyConstants;
@@ -94,11 +94,11 @@ import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -1573,7 +1573,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         document.setOpenInvoiceIndicator(true);
 
         // To set LOC creation type and appropriate values from award.
-        if (!StringUtils.isBlank(locCreationType)) {
+        if (StringUtils.isNotBlank(locCreationType)) {
             document.getInvoiceGeneralDetail().setLetterOfCreditCreationType(locCreationType);
         }
         // To set up values for Letter of Credit Fund and Fund Group irrespective of the LOC Creation type.
