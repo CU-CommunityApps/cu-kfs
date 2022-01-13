@@ -24,6 +24,7 @@
 
 package org.kuali.kfs.module.ar.document.service.impl;
 
+import com.lowagie.text.DocumentException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,12 +33,24 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCodeCurrent;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.coa.service.ObjectCodeService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.search.SearchOperator;
+import org.kuali.kfs.core.api.util.type.AbstractKualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.kfs.integration.cg.ContractAndGrantsProposal;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleBillingService;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.permission.PermissionService;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.DocumentHeader;
@@ -100,21 +113,7 @@ import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.search.SearchOperator;
-import org.kuali.rice.core.api.util.type.AbstractKualiDecimal;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.api.permission.PermissionService;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.lowagie.text.DocumentException;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -317,7 +316,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
             final String accountKey = StringUtils.join(
                     new String[]{invoiceDetailAccountObjectCode.getChartOfAccountsCode(),
                             invoiceDetailAccountObjectCode.getAccountNumber()}, "-");
-            if (!StringUtils.isBlank(invoiceDetailAccountObjectCode.getCategoryCode())) {
+            if (StringUtils.isNotBlank(invoiceDetailAccountObjectCode.getCategoryCode())) {
                 KualiDecimal total = expenditureAmounts.get(accountKey);
                 if (ObjectUtils.isNull(total)) {
                     total = KualiDecimal.ZERO;
@@ -344,7 +343,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
             final String accountKey = StringUtils.join(
                     new String[]{invoiceDetailAccountObjectCode.getChartOfAccountsCode(),
                             invoiceDetailAccountObjectCode.getAccountNumber()}, "-");
-            if (!StringUtils.isBlank(invoiceDetailAccountObjectCode.getCategoryCode())) {
+            if (StringUtils.isNotBlank(invoiceDetailAccountObjectCode.getCategoryCode())) {
                 KualiDecimal total = totalBilledAmounts.get(accountKey);
                 if (ObjectUtils.isNull(total)) {
                     total = KualiDecimal.ZERO;
@@ -1169,7 +1168,7 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
                 invoice.getAccountsReceivableDocumentHeader().getProcessingOrganizationCode());
 
         String customerName = invoice.getCustomerName();
-        if (!StringUtils.isBlank(customerName)) {
+        if (StringUtils.isNotBlank(customerName)) {
             qualification.put(ArKimAttributes.CUSTOMER_NAME, customerName);
         }
 
@@ -2246,9 +2245,10 @@ public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrant
         try {
             return GlobalVariables.doInNewGlobalVariables(
                     new UserSession(getContractsGrantsInvoiceBatchCreationUserPrincipal().getPrincipalName()),
-                    new Callable<Boolean>() {
+                    new Callable<>() {
                         /**
                          * Checks if the given document passes rule validation with no errors
+                         *
                          * @see Callable#call()
                          */
                         @Override
