@@ -18,6 +18,7 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.ArPropertyConstants.ContractsGrantsInvoiceDocumentErrorLogLookupFields;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog;
@@ -174,8 +175,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
                     boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
-                    //CUMod KFSPTS-13256
-                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod)
+                    //CUMod KFSPTS-13256, KFSPTS-23675
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod, creationProcessType)
                             && isNotExpenditureAccount(awardAccount)) {
                         LOG.info("getValidAwardAccounts: Evaluation of account sub-fund not being an expenditure was performed.");
                         validAwardAccounts.add(awardAccount);
@@ -213,19 +214,91 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         }
         return false;
     }
-    
+
+    /*
+     * CUMod: KFSPTS-23675
+     * Add creationProcessType method argument.
+     */
     @Override
     public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(ContractsAndGrantsBillingAward awd,
             List<ContractsAndGrantsBillingAwardAccount> accounts, String chartOfAccountsCode, String organizationCode,
             List<ErrorMessage> errorMessages, List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
-            String locCreationType) {
+            String locCreationType, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         ContractsGrantsInvoiceDocument cgInvoiceDocument = super.createCGInvoiceDocumentByAwardInfo(awd, accounts, chartOfAccountsCode, 
-                organizationCode, errorMessages, accountDetails, locCreationType);
+                organizationCode, errorMessages, accountDetails, locCreationType, creationProcessType);
         //CUMod: KFSPTS-12866
         populateDocumentDescription(cgInvoiceDocument);
         return cgInvoiceDocument;
     }
-    
+
+    /*
+     * CUMod: KFSPTS-23675
+     * 
+     * Allow for using excluded-from-invoicing awards when creating a manual invoice.
+     * Also include creationProcessType in the validateBillingFrequency() method call.
+     * 
+     * TODO: The related suspension category for the former change (AwardSuspendedByUserSuspensionCategory)
+     * was removed by KualiCo in the 2021-03-04 patch. When we upgrade to this patch or later,
+     * we will need to add that suspension category back in (or at least a CU-specific version of it).
+     */
+    @Override
+    protected void performAwardValidation(Collection<ContractsAndGrantsBillingAward> awards,
+            Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
+            List<ContractsAndGrantsBillingAward> qualifiedAwards, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+        Set<ContractsAndGrantsBillingAward> awardsWithDuplicateAccounts = findAwardsWithDuplicateAccounts(awards);
+
+        for (ContractsAndGrantsBillingAward award : awards) {
+            List<String> errorList = new ArrayList<>();
+
+            // CUMod: KFSPTS-23675 (portion for excluded-from-invoicing handling)
+            if (award.isExcludedFromInvoicing()
+                    && ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType) {
+                errorList.add(configurationService.getPropertyValueAsString(
+                        ArKeyConstants.CGINVOICE_CREATION_AWARD_EXCLUDED_FROM_INVOICING));
+            } else if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType
+                    && StringUtils.equals(award.getBillingFrequencyCode(), ArConstants.BillingFrequencyValues.MANUAL.getCode())) {
+                errorList.add(configurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_CREATION_MANUAL_BILLING_FREQUENCY));
+            } else {
+                if (awardsWithDuplicateAccounts.contains(award)) {
+                    errorList.add(configurationService.getPropertyValueAsString(
+                            ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_ON_MULTIPLE_AWARDS));
+                }
+                if (ArConstants.BillingFrequencyValues.isLetterOfCredit(award)
+                        && ContractsAndGrantsInvoiceDocumentCreationProcessType.LOC != creationProcessType) {
+                    errorList.add(configurationService.getPropertyValueAsString(
+                            ArKeyConstants.CGINVOICE_CREATION_AWARD_LOCB_BILLING_FREQUENCY));
+                } else {
+                    if (award.getAwardBeginningDate() != null) {
+                        if (award.getBillingFrequencyCode() != null
+                                && getContractsGrantsBillingAwardVerificationService()
+                                    .isValueOfBillingFrequencyValid(award)) {
+                            boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
+                            // CUMod: KFSPTS-23675 (portion for billing frequency handling)
+                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod, creationProcessType)) {
+                                validateAward(errorList, award, creationProcessType);
+                            } else {
+                                errorList.add(configurationService.getPropertyValueAsString(
+                                        ArKeyConstants.CGINVOICE_CREATION_AWARD_INVALID_BILLING_PERIOD));
+                            }
+                        } else {
+                            errorList.add(configurationService.getPropertyValueAsString(
+                                    ArKeyConstants.CGINVOICE_CREATION_BILLING_FREQUENCY_MISSING_ERROR));
+                        }
+                    } else {
+                        errorList.add(configurationService.getPropertyValueAsString(
+                                ArKeyConstants.CGINVOICE_CREATION_AWARD_START_DATE_MISSING_ERROR));
+                    }
+                }
+            }
+
+            if (errorList.size() > 0) {
+                invalidGroup.put(award, errorList);
+            } else {
+                qualifiedAwards.add(award);
+            }
+        }
+    }
+
     /*
      * CUMod: KFSPTS-14929
      */

@@ -26,6 +26,7 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants;
 
 import java.sql.Date;
+import java.util.Objects;
 
 public class TimeBasedBillingPeriod extends BillingPeriod {
     
@@ -132,5 +133,19 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
             previousAccountingPeriodCode = calculatePreviousPeriodByFrequency(currentAccountingPeriodCode, 12);
         }
         return previousAccountingPeriodCode;
+    }
+
+    // CU Customization: Override custom method for adjusting the billing period end date for manual invoices.
+    @Override
+    protected Date determineEndDateForManualBilling() {
+        Objects.requireNonNull(startDate, "startDate should have been initialized prior to invoking this method");
+        Objects.requireNonNull(endDate, "endDate should have been initialized prior to invoking this method");
+        if (startDate.after(endDate)) {
+            LOG.info("determineEndDateForManualBilling: Start date is after end date, returning current date instead");
+            return currentDate;
+        } else {
+            LOG.info("determineEndDateForManualBilling: No adjustments necessary, returning existing end date");
+            return endDate;
+        }
     }
 }
