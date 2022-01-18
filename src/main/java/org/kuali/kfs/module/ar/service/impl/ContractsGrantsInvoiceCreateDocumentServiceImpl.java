@@ -429,9 +429,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
                 awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
                 KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
+        /*
+         * CU Customization (KFSPTS-23675):
+         * Include creationProcessType in the method call.
+         */
         ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, validAwardAccounts,
                 chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,
-                accountDetails, locCreationType);
+                accountDetails, locCreationType, creationProcessType);
         if (ObjectUtils.isNotNull(cgInvoiceDocument)) {
             if (cgInvoiceDocument.getTotalInvoiceAmount().isPositive()
                     || getContractsGrantsInvoiceDocumentService().getInvoiceMilestoneTotal(cgInvoiceDocument).isPositive()
@@ -462,11 +466,15 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         }
     }
 
+    /*
+     * CU Customization (KFSPTS-23675):
+     * Added creationProcessType argument and its usage of it.
+     */
     @Override
     public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(ContractsAndGrantsBillingAward awd,
             List<ContractsAndGrantsBillingAwardAccount> accounts, String chartOfAccountsCode, String organizationCode,
             List<ErrorMessage> errorMessages, List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
-            String locCreationType) {
+            String locCreationType, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         ContractsGrantsInvoiceDocument cgInvoiceDocument = null;
         if (ObjectUtils.isNotNull(accounts) && !accounts.isEmpty()) {
             if (chartOfAccountsCode != null && organizationCode != null) {
@@ -507,7 +515,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
                     cgInvoiceDocument.setAccountsReceivableDocumentHeader(accountsReceivableDocumentHeader);
 
-                    populateInvoiceFromAward(awd, accounts, cgInvoiceDocument, accountDetails, locCreationType);
+                    populateInvoiceFromAward(awd, accounts, cgInvoiceDocument, accountDetails, locCreationType, creationProcessType);
                     contractsGrantsInvoiceDocumentService.createSourceAccountingLines(cgInvoiceDocument, accounts);
 
                     if (ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail().getAward())) {
@@ -553,6 +561,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         return StringUtils.left(description, descriptionMaxLength);
     }
 
+    /*
+     * CU Customization (KFSPTS-23675):
+     * Added creationProcessType argument and its usage of it.
+     */
     /**
      * This method takes all the applicable attributes from the associated award object and sets those attributes into
      * their corresponding invoice attributes.
@@ -562,10 +574,12 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      * @param document
      * @param accountDetails  letter of credit details if we're creating via loc
      * @param locCreationType letter of credit creation type if we're creating via loc
+     * @param creationProcessType The creation process type for the related invoice
      */
     protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award,
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
-            List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
+            List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType,
+            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         if (ObjectUtils.isNotNull(award)) {
             InvoiceGeneralDetail invoiceGeneralDetail = new InvoiceGeneralDetail();
             invoiceGeneralDetail.setDocumentNumber(document.getDocumentNumber());
@@ -576,7 +590,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             java.sql.Date today = new java.sql.Date(ts.getTime());
             AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
             BillingPeriod billingPeriod = verifyBillingFrequencyService
-                    .getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod);
+                    .getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod, creationProcessType);
             invoiceGeneralDetail.setBillingPeriod(getDateTimeService().toDateString(billingPeriod.getStartDate()) +
                     " to " + getDateTimeService().toDateString(billingPeriod.getEndDate()));
             invoiceGeneralDetail.setLastBilledDate(billingPeriod.getEndDate());
@@ -1788,7 +1802,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                                 && getContractsGrantsBillingAwardVerificationService()
                                     .isValueOfBillingFrequencyValid(award)) {
                             boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
-                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)) {
+                            /*
+                             * CU Customization (KFSPTS-23675):
+                             * Include creationProcessType in the method call.
+                             */
+                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod, creationProcessType)) {
                                 validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
@@ -2201,7 +2219,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
                     boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
-                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod)) {
+                    /*
+                     * CU Customization (KFSPTS-23675):
+                     * Include creationProcessType in the method call.
+                     */
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod, creationProcessType)) {
                         validAwardAccounts.add(awardAccount);
                     }
                 }
