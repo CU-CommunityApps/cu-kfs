@@ -238,7 +238,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
      * Also include creationProcessType in the validateBillingFrequency() method call.
      * 
      * TODO: The related suspension category for the former change (AwardSuspendedByUserSuspensionCategory)
-     * was removed by KualiCo in the 2021-03-04 patch. When we upgrade to this patch or later,
+     * was removed by KualiCo in the 2021-03-04 patch (for FINP-7120). When we upgrade to this patch or later,
      * we will need to add that suspension category back in (or at least a CU-specific version of it).
      */
     @Override
