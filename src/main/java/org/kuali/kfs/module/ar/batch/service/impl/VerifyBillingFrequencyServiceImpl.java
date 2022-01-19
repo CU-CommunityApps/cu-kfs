@@ -32,7 +32,7 @@ import org.kuali.kfs.module.ar.businessobject.BillingPeriod;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import java.sql.Date;
 import java.util.Calendar;
