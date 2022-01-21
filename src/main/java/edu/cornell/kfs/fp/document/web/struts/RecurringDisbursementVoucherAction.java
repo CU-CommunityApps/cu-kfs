@@ -29,6 +29,9 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class RecurringDisbursementVoucherAction extends CuDisbursementVoucherAction implements Serializable {
 
+    /*
+     * just a change to test utest
+     */
     private static final long serialVersionUID = -6417266354906825200L;
     private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherAction.class);
     
