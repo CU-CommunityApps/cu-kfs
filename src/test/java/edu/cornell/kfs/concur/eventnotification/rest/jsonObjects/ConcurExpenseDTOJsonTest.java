@@ -118,13 +118,13 @@ class ConcurExpenseDTOJsonTest {
         assertEquals("6760", allOcationItem.getObjectCode());
         validateAllocationDetail(allOcationItem.getChart(), IT, ITHACA_CAMPUS, IT);
         validateAllocationDetail(allOcationItem.getAccount(), S565015, MCNAIR_GRANT, S565015);
-        validateAllocationDetail(allOcationItem.getSubObject(), StringUtils.EMPTY, MARYLAND, MARYLAND);
+        validateAllocationDetail(allOcationItem.getSubObject(), null, MARYLAND, MARYLAND);
     }
     
-    private void validateAllocationDetail(ConcurExpenseAllocationV3ListItemDetailDTO dto, String code, String value, String codeOrValue) {
-        assertEquals("check code", code, dto.getCode());
-        assertEquals("check value", value, dto.getValue());
-        assertEquals("check code/value", code, dto.getCodeOrValue());
+    private void validateAllocationDetail(ConcurExpenseAllocationV3ListItemDetailDTO dto, String expectedcode, String expectedValue, String expectedCodeOrValue) {
+        assertEquals(expectedcode, dto.getCode());
+        assertEquals(expectedValue, dto.getValue());
+        assertEquals(expectedCodeOrValue, dto.getCodeOrValue());
     }
 
 }
