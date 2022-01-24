@@ -60,6 +60,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,10 +78,16 @@ import static java.util.Map.entry;
  * Updated the member-removal methods to properly convert the qualifiers where needed.
  * 
  * Additional changes added to backport the redis implementation.
+ * 
+ * Additional changes to improve cache key handling for the Redis implementation (KFSPTS-23531).
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     private static final Logger LOG = LogManager.getLogger();
+
+    // CU Customization (KFSPTS-23531): Add MessageFormat-related constants for generating various cache keys.
+    private static final String ROLE_BY_ID_CACHE_KEY_PATTERN = "'{getRoleFromCache}'-id={0}";
+    private static final String ROLE_BY_NAME_CACHE_KEY_PATTERN = "'{getRoleFromCache}'-namespaceCode={0}|name={1}";
 
     private static final Map<String, RoleDaoAction> memberTypeToRoleDaoActionMap = populateMemberTypeToRoleDaoActionMap();
     private RoleService proxiedRoleService;
@@ -247,7 +254,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(String id) {
         Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        Cache.ValueWrapper cachedValue = cache.get("id=" + id);
+        // CU Customization (KFSPTS-23531): Build a more specific cache key
+        String idKey = MessageFormat.format(ROLE_BY_ID_CACHE_KEY_PATTERN, id);
+        Cache.ValueWrapper cachedValue = cache.get(idKey);
         if (cachedValue != null) {
             return (RoleLite) cachedValue.get();
         }
@@ -256,7 +265,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(String namespaceCode, String name) {
         Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        Cache.ValueWrapper cachedValue = cache.get("namespaceCode=" + namespaceCode + "|name=" + name);
+        // CU Customization (KFSPTS-23531): Build a more specific cache key
+        String nameKey = MessageFormat.format(ROLE_BY_NAME_CACHE_KEY_PATTERN, namespaceCode, name);
+        Cache.ValueWrapper cachedValue = cache.get(nameKey);
         if (cachedValue != null) {
             return (RoleLite) cachedValue.get();
         }
@@ -266,8 +277,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     protected void putRoleInCache(RoleLite role) {
         if (role != null) {
             Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-            String idKey = "id=" + role.getId();
-            String nameKey = "namespaceCode=" + role.getNamespaceCode() + "|name=" + role.getName();
+            // CU Customization (KFSPTS-23531): Build more specific cache keys
+            String idKey = MessageFormat.format(ROLE_BY_ID_CACHE_KEY_PATTERN, role.getId());
+            String nameKey = MessageFormat.format(ROLE_BY_NAME_CACHE_KEY_PATTERN, role.getNamespaceCode(), role.getName());
             cache.put(idKey, role);
             cache.put(nameKey, role);
         }
