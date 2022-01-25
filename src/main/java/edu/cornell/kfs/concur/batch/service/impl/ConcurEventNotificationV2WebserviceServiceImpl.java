@@ -22,8 +22,6 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
@@ -33,21 +31,12 @@ public class ConcurEventNotificationV2WebserviceServiceImpl implements ConcurEve
     protected ConcurBatchUtilityService concurBatchUtilityService;
 
     @Override
-    public ConcurExpenseV3ListingDTO getConcurExpenseListing(String accessToken, String expenseListEndpoint) {
-        return buildConcurDTOFromEndpoint(accessToken, expenseListEndpoint, ConcurExpenseV3ListingDTO.class);
-    }
-
-    @Override
-    public ConcurExpenseV3ListItemDTO getConcurExpenseV3ListItemDTO(String accessToken, String expenseReportEndPoint) {
-        return buildConcurDTOFromEndpoint(accessToken, expenseReportEndPoint, ConcurExpenseV3ListItemDTO.class);
-    }
-
-    protected <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType) {
-        LOG.info("buildConcurDTOFromEndpoint, about to call endpoint: " + concurEndPoint);
+    public <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType, String logMessageDetail) {
+        LOG.info("buildConcurDTOFromEndpoint, " + logMessageDetail + " about to call endpoint: " + concurEndPoint);
         String jsonResponseString = null;
         int maxRetryCount = findMaxRetries();
-        int retryCount = 0;
-        while (retryCount < maxRetryCount && jsonResponseString == null) {
+        int retryCount = 1;
+        while (retryCount <= maxRetryCount && jsonResponseString == null) {
             LOG.info("buildConcurDTOFromEndpoint, trying to build " + dtoType + " from concur endpoint, attempt number "
                     + retryCount);
             jsonResponseString = callConcurEndpoint(accessToken, concurEndPoint);
