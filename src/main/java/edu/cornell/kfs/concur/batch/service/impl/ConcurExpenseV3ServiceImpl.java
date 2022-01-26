@@ -1,5 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,10 +8,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
@@ -31,17 +34,15 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
     protected ConcurAccountValidationService concurAccountValidationService;
+    protected ConfigurationService configurationService;
 
     @Override
     public void processExpenseReports(String accessToken,
             List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        ConcurExpenseV3ListingDTO expenseList = getConcurStartingExpenseListing(accessToken);
+        String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_INTIAL_EXPENSE_LISTING);
+        ConcurExpenseV3ListingDTO expenseList = concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
+                findDefaultExpenseListingEndPoint(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
         processExpenseListing(accessToken, expenseList, processingResults);
-    }
-
-    protected ConcurExpenseV3ListingDTO getConcurStartingExpenseListing(String accessToken) {
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
-                findDefaultExpenseListingEndPoint(), ConcurExpenseV3ListingDTO.class, "Initial expense listing");
     }
 
     protected String findDefaultExpenseListingEndPoint() {
@@ -62,8 +63,9 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             validateExepsneAllocations(accessToken, processingResults, allocationItems, fullExpenseReport.getId());
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
+            String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE);
             ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationV2WebserviceService
-                    .buildConcurDTOFromEndpoint(accessToken, expenseList.getNextPage(), ConcurExpenseV3ListingDTO.class, "Expense listing next page");
+                    .buildConcurDTOFromEndpoint(accessToken, expenseList.getNextPage(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
         } else {
             /*
@@ -72,32 +74,46 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             String reportIdForReportWithFullAccountingString = "BA0B0EDFB51649DA9158";
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, reportIdForReportWithFullAccountingString);
             validateExepsneAllocations(accessToken, processingResults, allocationItems, reportIdForReportWithFullAccountingString);
+            
+            String reportWithManyAllocations = "819DBBF2D392468DBE7A";
+            allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, reportWithManyAllocations);
+            validateExepsneAllocations(accessToken, processingResults, allocationItems, reportWithManyAllocations);
         }
     }
     
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
         String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + "?user=" + userName;
+        String logMessageDetail = MessageFormat.format(
+                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_REPORT), reportId);
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
-                expenseReportEndpoint, ConcurExpenseV3ListItemDTO.class, "expense report for " + reportId);
+                expenseReportEndpoint, ConcurExpenseV3ListItemDTO.class, logMessageDetail);
     }
     
     protected List<ConcurExpenseAllocationV3ListItemDTO> getConcurExpenseAllocationV3ListItemsForReport(String accessToken, String reportId) {
         String baseAllocationEndpoint = findBaseAllocationEndPoint() + reportId;
-        ConcurExpenseAllocationV3ListingDTO allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, reportId, baseAllocationEndpoint);
+        
+        String logMessageDetail = MessageFormat.format(
+                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING), reportId);
+        ConcurExpenseAllocationV3ListingDTO allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, reportId, baseAllocationEndpoint, 
+                logMessageDetail);
         
         List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = allocationList.getItems();
         
         while(StringUtils.isNotBlank(allocationList.getNextPage())) {
-            allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, reportId, allocationList.getNextPage());
+            String nextPageLogMessageDetail = MessageFormat.format(
+                    configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING_NEXT_PAGE), reportId);
+            allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, reportId, allocationList.getNextPage(), 
+                    nextPageLogMessageDetail);
             allocationItems.addAll(allocationList.getItems());
         }
         
         return allocationItems;
     }
     
-    protected ConcurExpenseAllocationV3ListingDTO getConcurExpenseAllocationV3ListingDTO(String accessToken, String reportId, String allocationEndpoint) {
+    protected ConcurExpenseAllocationV3ListingDTO getConcurExpenseAllocationV3ListingDTO(String accessToken, String reportId, String allocationEndpoint, 
+            String logMessageDetail) {
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
-                allocationEndpoint, ConcurExpenseAllocationV3ListingDTO.class, "expense report for " + reportId);
+                allocationEndpoint, ConcurExpenseAllocationV3ListingDTO.class, logMessageDetail);
     }
 
 
@@ -188,6 +204,10 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
 
     public void setConcurAccountValidationService(ConcurAccountValidationService concurAccountValidationService) {
         this.concurAccountValidationService = concurAccountValidationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

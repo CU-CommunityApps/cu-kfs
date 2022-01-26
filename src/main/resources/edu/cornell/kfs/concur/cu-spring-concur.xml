@@ -685,6 +685,7 @@
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
       <property name="concurEventNotificationV2WebserviceService" ref="concurEventNotificationV2WebserviceService"/>
       <property name="concurAccountValidationService" ref="concurAccountValidationService"/>
+      <property name="configurationService" ref="configurationService"/>
   </bean>
   
   <bean id="concurEventNotificationV2WebserviceService" parent="concurEventNotificationV2WebserviceService-parentBean" />
