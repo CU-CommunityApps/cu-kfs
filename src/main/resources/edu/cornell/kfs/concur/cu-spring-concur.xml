@@ -684,6 +684,7 @@
   <bean id="concurExpenseV3Service-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurExpenseV3ServiceImpl" abstract="true">
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
       <property name="concurEventNotificationV2WebserviceService" ref="concurEventNotificationV2WebserviceService"/>
+      <property name="concurAccountValidationService" ref="concurAccountValidationService"/>
   </bean>
   
   <bean id="concurEventNotificationV2WebserviceService" parent="concurEventNotificationV2WebserviceService-parentBean" />

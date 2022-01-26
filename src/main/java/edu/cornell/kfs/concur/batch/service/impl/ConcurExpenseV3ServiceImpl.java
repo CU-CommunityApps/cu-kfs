@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
@@ -14,17 +15,22 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
+import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
+import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListItemDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListItemDetailDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
+import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 
 public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     private static final Logger LOG = LogManager.getLogger();
 
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
+    protected ConcurAccountValidationService concurAccountValidationService;
 
     @Override
     public void processExpenseReports(String accessToken,
@@ -48,20 +54,24 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList,
             List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         for (ConcurExpenseV3ListItemDTO partialExpenseReportFromListing : expenseList.getItems()) {
-            /*
-             * @todo maybe remove fullExpenseReport
-             */
             ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken,
                     partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
             
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, fullExpenseReport.getId());
             
-            validateExepsneALlocations(processingResults, allocationItems, fullExpenseReport.getId());
+            validateExepsneAllocations(accessToken, processingResults, allocationItems, fullExpenseReport.getId());
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationV2WebserviceService
                     .buildConcurDTOFromEndpoint(accessToken, expenseList.getNextPage(), ConcurExpenseV3ListingDTO.class, "Expense listing next page");
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
+        } else {
+            /*
+             * @todo remove this testing block
+             */
+            String reportIdForReportWithFullAccountingString = "BA0B0EDFB51649DA9158";
+            List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, reportIdForReportWithFullAccountingString);
+            validateExepsneAllocations(accessToken, processingResults, allocationItems, reportIdForReportWithFullAccountingString);
         }
     }
     
@@ -72,7 +82,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected List<ConcurExpenseAllocationV3ListItemDTO> getConcurExpenseAllocationV3ListItemsForReport(String accessToken, String reportId) {
-        String baseAllocationEndpoint = findAllocationEndPoint() + reportId;
+        String baseAllocationEndpoint = findBaseAllocationEndPoint() + reportId;
         ConcurExpenseAllocationV3ListingDTO allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, reportId, baseAllocationEndpoint);
         
         List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = allocationList.getItems();
@@ -85,34 +95,78 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         return allocationItems;
     }
     
-    protected String findAllocationEndPoint() {
-        /*
-         * @todo pull this from a parameter
-         */
-        return "https://www.concursolutions.com/api/v3.0/expense/allocations?reportID=";
-    }
-    
     protected ConcurExpenseAllocationV3ListingDTO getConcurExpenseAllocationV3ListingDTO(String accessToken, String reportId, String allocationEndpoint) {
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
                 allocationEndpoint, ConcurExpenseAllocationV3ListingDTO.class, "expense report for " + reportId);
     }
 
 
-    protected void validateExepsneALlocations(List<ConcurEventNotificationProcessingResultsDTO> processingResults,
+    protected void validateExepsneAllocations(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults,
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportId) {
-        LOG.info("validateExepsneALlocations, validation step not implemented yet.");
+        boolean reportValid = true;
         ArrayList<String> validationMessages = new ArrayList<>();
-        validationMessages.add("Validation not implemented yet");
-        processingResults.add(
-                new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
-                        ConcurEventNotificationVersion2ProcessingResults.processingError, reportId,
-                        validationMessages));
+        ConcurEventNotificationVersion2ProcessingResults reportResults = ConcurEventNotificationVersion2ProcessingResults.validAccounts;
+        try {
+            for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
+                ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
+                LOG.info("validateExepsneAllocations, for report " + reportId + " account info: " + info.toString());
+                ValidationResult results = concurAccountValidationService.validateConcurAccountInfo(info);
+                reportValid &= results.isValid();
+                validationMessages.addAll(results.getMessages());
+            }
+            if (!reportValid) {
+                reportResults = ConcurEventNotificationVersion2ProcessingResults.invalidAccounts;
+            }
+        } catch (Exception e) {
+            reportValid = false;
+            reportResults = ConcurEventNotificationVersion2ProcessingResults.processingError;
+            validationMessages.add("Encountered an error validating this report");
+            LOG.error("validateExepsneAllocations, had an error validating report " + reportId, e);
+        }
+        
+        ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
+                reportResults, reportId, validationMessages);
+        processingResults.add(resultsDTO);
+        updateStatusInConcur(accessToken, reportId, resultsDTO);
+        
+    }
+    
+    
+    protected void updateStatusInConcur(String accessToken, String reportId, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        LOG.info("updateStatusInConcur, update of status in Concur not implemented yet");
+    }
+    
+    protected ConcurAccountInfo buildConcurAccountInfo(ConcurExpenseAllocationV3ListItemDTO allocationItem) {
+        String chart = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getChart());
+        String account = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getAccount());
+        String subAccount = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getSubAccount());
+        String objectCode = allocationItem.getObjectCode();
+        String subObject = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getSubObject());
+        String project = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getProjectCode());
+        String orgRefId = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getOrgRefId());
+        ConcurAccountInfo info = new ConcurAccountInfo(chart, account, subAccount, objectCode, subObject, project, orgRefId);
+        return info;
+    }
+    
+    protected String getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(ConcurExpenseAllocationV3ListItemDetailDTO dto) {
+        if (ObjectUtils.isNull(dto)) {
+            return StringUtils.EMPTY;
+        } else {
+            return dto.getCodeOrValue();
+        }
     }
 
     protected String findBaseExpenseReportEndPoint() {
         String reportUrl = concurBatchUtilityService
                 .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_REPORT_ENDPOINT);
         return reportUrl;
+    }
+    
+    protected String findBaseAllocationEndPoint() {
+        /*
+         * @todo pull this from a parameter
+         */
+        return "https://www.concursolutions.com/api/v3.0/expense/allocations?reportID=";
     }
 
     protected boolean isProduction() {
@@ -130,6 +184,10 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     public void setConcurEventNotificationV2WebserviceService(
             ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService) {
         this.concurEventNotificationV2WebserviceService = concurEventNotificationV2WebserviceService;
+    }
+
+    public void setConcurAccountValidationService(ConcurAccountValidationService concurAccountValidationService) {
+        this.concurAccountValidationService = concurAccountValidationService;
     }
 
 }
