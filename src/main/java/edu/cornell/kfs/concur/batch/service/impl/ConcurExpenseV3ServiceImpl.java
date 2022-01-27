@@ -179,10 +179,9 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected String findBaseAllocationEndPoint() {
-        /*
-         * @todo pull this from a parameter
-         */
-        return "https://www.concursolutions.com/api/v3.0/expense/allocations?reportID=";
+        String allocationUrl = concurBatchUtilityService
+                .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_ALLOCATION_ENDPOINT);
+        return allocationUrl;
     }
 
     protected boolean isProduction() {
