@@ -11,6 +11,7 @@ import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -39,10 +40,15 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     @Override
     public void processExpenseReports(String accessToken,
             List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+        ConcurExpenseV3ListingDTO expenseList = getConcurStartingExpenseListing(accessToken);
+        processExpenseListing(accessToken, expenseList, processingResults);
+    }
+
+    public ConcurExpenseV3ListingDTO getConcurStartingExpenseListing(String accessToken) {
         String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_INTIAL_EXPENSE_LISTING);
         ConcurExpenseV3ListingDTO expenseList = concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
                 findDefaultExpenseListingEndPoint(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
-        processExpenseListing(accessToken, expenseList, processingResults);
+        return expenseList;
     }
 
     protected String findDefaultExpenseListingEndPoint() {
@@ -82,7 +88,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
-        String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + "?user=" + userName;
+        String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + ConcurConstants.QUESTION_MARK_USER_EQUALS + userName;
         String logMessageDetail = MessageFormat.format(
                 configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_REPORT), reportId);
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
@@ -153,18 +159,18 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected ConcurAccountInfo buildConcurAccountInfo(ConcurExpenseAllocationV3ListItemDTO allocationItem) {
-        String chart = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getChart());
-        String account = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getAccount());
-        String subAccount = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getSubAccount());
+        String chart = getValueFromAllocationDetailDTO(allocationItem.getChart());
+        String account = getValueFromAllocationDetailDTO(allocationItem.getAccount());
+        String subAccount = getValueFromAllocationDetailDTO(allocationItem.getSubAccount());
         String objectCode = allocationItem.getObjectCode();
-        String subObject = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getSubObject());
-        String project = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getProjectCode());
-        String orgRefId = getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(allocationItem.getOrgRefId());
+        String subObject = getValueFromAllocationDetailDTO(allocationItem.getSubObject());
+        String project = getValueFromAllocationDetailDTO(allocationItem.getProjectCode());
+        String orgRefId = getValueFromAllocationDetailDTO(allocationItem.getOrgRefId());
         ConcurAccountInfo info = new ConcurAccountInfo(chart, account, subAccount, objectCode, subObject, project, orgRefId);
         return info;
     }
     
-    protected String getCodeValueFromConcurExpenseAllocationV3ListItemDetailDTO(ConcurExpenseAllocationV3ListItemDetailDTO dto) {
+    protected String getValueFromAllocationDetailDTO(ConcurExpenseAllocationV3ListItemDetailDTO dto) {
         if (ObjectUtils.isNull(dto)) {
             return StringUtils.EMPTY;
         } else {
