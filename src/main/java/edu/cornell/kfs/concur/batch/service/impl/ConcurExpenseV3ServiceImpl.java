@@ -44,7 +44,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         processExpenseListing(accessToken, expenseList, processingResults);
     }
 
-    public ConcurExpenseV3ListingDTO getConcurStartingExpenseListing(String accessToken) {
+    protected ConcurExpenseV3ListingDTO getConcurStartingExpenseListing(String accessToken) {
         String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_INTIAL_EXPENSE_LISTING);
         ConcurExpenseV3ListingDTO expenseList = concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
                 findDefaultExpenseListingEndPoint(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
@@ -73,18 +73,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationV2WebserviceService
                     .buildConcurDTOFromEndpoint(accessToken, expenseList.getNextPage(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
-        } else {
-            /*
-             * @todo remove this testing block
-             */
-            String reportIdForReportWithFullAccountingString = "BA0B0EDFB51649DA9158";
-            List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, reportIdForReportWithFullAccountingString);
-            validateExepsneAllocations(accessToken, processingResults, allocationItems, reportIdForReportWithFullAccountingString);
-            
-            String reportWithManyAllocations = "819DBBF2D392468DBE7A";
-            allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, reportWithManyAllocations);
-            validateExepsneAllocations(accessToken, processingResults, allocationItems, reportWithManyAllocations);
-        }
+        } 
     }
     
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
