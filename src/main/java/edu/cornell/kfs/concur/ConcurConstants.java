@@ -90,6 +90,8 @@ public class ConcurConstants {
     public static final String CORPORATE_CARD_PAYMENT_TYPE = "Cornell Corp Card";
     
     public static final String CONCUR_FAILED_EVENT_QUEUE_READONLY = "R";
+    
+    public static final String QUESTION_MARK_USER_EQUALS = "?user=";
 
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";

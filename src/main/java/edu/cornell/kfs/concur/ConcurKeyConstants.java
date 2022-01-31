@@ -52,4 +52,10 @@ public class ConcurKeyConstants {
     public static final String MESSAGE_CONCUR_REFRESH_TOKEN_NONPROD_WARNING = "message.concur.refresh.token.nonprod.warning";
     public static final String MESSAGE_CONCUR_TOKEN_DATE = "message.concur.token.date";
     public static final String MESSAGE_CONCUR_TOKEN_UPDATE_SUCCESS = "message.concur.token.update.success";
+    
+    public static final String MESSAGE_CONCUR_EXPENSEV3_INTIAL_EXPENSE_LISTING = "message.concur.expensev3.intial.expense.listing";
+    public static final String MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE = "message.concur.expensev3.intial.expense.listing.next.page";
+    public static final String MESSAGE_CONCUR_EXPENSEV3_EXPENSE_REPORT = "message.concur.expensev3.expense.report";
+    public static final String MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING = "message.concur.expensev3.expense.allocation.listing";
+    public static final String MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING_NEXT_PAGE = "message.concur.expensev3.expense.allocation.listing.next.page";
 }
