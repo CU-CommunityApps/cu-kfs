@@ -55,11 +55,7 @@ public class ConcurExpenseAllocationV3ListItemDetailDTO {
     }
     
     public String getCodeOrValue() {
-        if (StringUtils.isNotBlank(code)) {
-            return code;
-        } else {
-            return value;
-        }
+        return StringUtils.isNotBlank(code) ? code : value;
     }
 
     @Override

@@ -66,7 +66,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, fullExpenseReport.getId());
             
-            validateExepsneAllocations(accessToken, processingResults, allocationItems, fullExpenseReport.getId());
+            validateExpenseAllocations(accessToken, processingResults, allocationItems, fullExpenseReport.getId());
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE);
@@ -89,30 +89,27 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         
         String logMessageDetail = MessageFormat.format(
                 configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING), reportId);
-        ConcurExpenseAllocationV3ListingDTO allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, reportId, baseAllocationEndpoint, 
-                logMessageDetail);
+        ConcurExpenseAllocationV3ListingDTO allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, baseAllocationEndpoint, logMessageDetail);
         
         List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = allocationList.getItems();
         
         while(StringUtils.isNotBlank(allocationList.getNextPage())) {
             String nextPageLogMessageDetail = MessageFormat.format(
                     configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING_NEXT_PAGE), reportId);
-            allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, reportId, allocationList.getNextPage(), 
-                    nextPageLogMessageDetail);
+            allocationList = getConcurExpenseAllocationV3ListingDTO(accessToken, allocationList.getNextPage(), nextPageLogMessageDetail);
             allocationItems.addAll(allocationList.getItems());
         }
         
         return allocationItems;
     }
     
-    protected ConcurExpenseAllocationV3ListingDTO getConcurExpenseAllocationV3ListingDTO(String accessToken, String reportId, String allocationEndpoint, 
-            String logMessageDetail) {
+    protected ConcurExpenseAllocationV3ListingDTO getConcurExpenseAllocationV3ListingDTO(String accessToken, String allocationEndpoint, String logMessageDetail) {
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
                 allocationEndpoint, ConcurExpenseAllocationV3ListingDTO.class, logMessageDetail);
     }
 
 
-    protected void validateExepsneAllocations(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults,
+    protected void validateExpenseAllocations(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults,
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportId) {
         boolean reportValid = true;
         ArrayList<String> validationMessages = new ArrayList<>();
@@ -120,7 +117,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         try {
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
                 ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
-                LOG.info("validateExepsneAllocations, for report " + reportId + " account info: " + info.toString());
+                LOG.info("validateExpenseAllocations, for report " + reportId + " account info: " + info.toString());
                 ValidationResult results = concurAccountValidationService.validateConcurAccountInfo(info);
                 reportValid &= results.isValid();
                 validationMessages.addAll(results.getMessages());
@@ -132,18 +129,20 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             reportValid = false;
             reportResults = ConcurEventNotificationVersion2ProcessingResults.processingError;
             validationMessages.add("Encountered an error validating this report");
-            LOG.error("validateExepsneAllocations, had an error validating report " + reportId, e);
+            LOG.error("validateExpenseAllocations, had an error validating report " + reportId, e);
         }
         
         ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
                 reportResults, reportId, validationMessages);
         processingResults.add(resultsDTO);
-        updateStatusInConcur(accessToken, reportId, resultsDTO);
+        updateStatusInConcur(accessToken, reportId, reportValid, resultsDTO);
         
     }
     
     
-    protected void updateStatusInConcur(String accessToken, String reportId, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+    protected void updateStatusInConcur(String accessToken, String reportId, boolean reportValid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        LOG.info("updateStatusInConcur, for report id " + reportId + " the over all validation status will be set to " + reportValid);
+        
         LOG.info("updateStatusInConcur, update of status in Concur not implemented yet");
     }
     
@@ -160,11 +159,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected String getValueFromAllocationDetailDTO(ConcurExpenseAllocationV3ListItemDetailDTO dto) {
-        if (ObjectUtils.isNull(dto)) {
-            return StringUtils.EMPTY;
-        } else {
-            return dto.getCodeOrValue();
-        }
+        return ObjectUtils.isNull(dto) ? StringUtils.EMPTY : dto.getCodeOrValue();
     }
 
     protected String findBaseExpenseReportEndPoint() {

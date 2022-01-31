@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -112,17 +111,17 @@ class ConcurExpenseDTOJsonTest {
         LOG.info("testConcurExpenseAllocationV3ListingDTO, dto: " + dto.toString());
         assertEquals(3, dto.getItems().size());
         
-        ConcurExpenseAllocationV3ListItemDTO allOcationItem = dto.getItems().get(2);
-        assertEquals(new KualiDecimal(50), allOcationItem.getPercentage());
-        assertFalse(allOcationItem.isHidden());
-        assertEquals("6760", allOcationItem.getObjectCode());
-        validateAllocationDetail(allOcationItem.getChart(), IT, ITHACA_CAMPUS, IT);
-        validateAllocationDetail(allOcationItem.getAccount(), S565015, MCNAIR_GRANT, S565015);
-        validateAllocationDetail(allOcationItem.getSubObject(), null, MARYLAND, MARYLAND);
+        ConcurExpenseAllocationV3ListItemDTO allocationItem = dto.getItems().get(2);
+        assertEquals(new KualiDecimal(50), allocationItem.getPercentage());
+        assertFalse(allocationItem.isHidden());
+        assertEquals("6760", allocationItem.getObjectCode());
+        validateAllocationDetail(allocationItem.getChart(), IT, ITHACA_CAMPUS, IT);
+        validateAllocationDetail(allocationItem.getAccount(), S565015, MCNAIR_GRANT, S565015);
+        validateAllocationDetail(allocationItem.getSubObject(), null, MARYLAND, MARYLAND);
     }
     
-    private void validateAllocationDetail(ConcurExpenseAllocationV3ListItemDetailDTO dto, String expectedcode, String expectedValue, String expectedCodeOrValue) {
-        assertEquals(expectedcode, dto.getCode());
+    private void validateAllocationDetail(ConcurExpenseAllocationV3ListItemDetailDTO dto, String expectedCode, String expectedValue, String expectedCodeOrValue) {
+        assertEquals(expectedCode, dto.getCode());
         assertEquals(expectedValue, dto.getValue());
         assertEquals(expectedCodeOrValue, dto.getCodeOrValue());
     }
