@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/* Cornell Customization: backport redis*/
+/* Cornell Customization: backport redis; backport redis fix on FINP-8169*/
 public class AccountServiceImpl implements AccountService {
     private static final Logger LOG = LogManager.getLogger();
 
@@ -70,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
      * @return Account
      */
     @Override
-    @Cacheable(cacheNames = Account.CACHE_NAME, key = "'{getByPrimaryId}'+#p0+'-'+#p1")
+    @Cacheable(cacheNames = Account.CACHE_NAME, key = "'{" + Account.CACHE_NAME + "}'+#p0+'-'+#p1")
     public Account getByPrimaryId(String chartOfAccountsCode, String accountNumber) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("retrieving account by primaryId (" + chartOfAccountsCode + "," + accountNumber + ")");
@@ -92,7 +92,7 @@ public class AccountServiceImpl implements AccountService {
      * @see org.kuali.kfs.coa.service.impl.AccountServiceImpl#getByPrimaryId(java.lang.String, java.lang.String)
      */
     @Override
-    @Cacheable(value = Account.CACHE_NAME, key = "'{getByPrimaryIdWithCaching}'+#p0+'-'+#p1")
+    @Cacheable(value = Account.CACHE_NAME, key = "'{" + Account.CACHE_NAME + "}'+#p0+'-'+#p1")
     public Account getByPrimaryIdWithCaching(String chartOfAccountsCode, String accountNumber) {
         Account account = getByPrimaryId(chartOfAccountsCode, accountNumber);
         if (account != null) {

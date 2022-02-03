@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/* Cornell Customization: backport redis*/
+/* Cornell Customization: backport redis; backport redis fix on FINP-8169*/
 public class OrganizationServiceImpl implements OrganizationService {
     private static final Logger LOG = LogManager.getLogger();
 
@@ -67,7 +67,7 @@ public class OrganizationServiceImpl implements OrganizationService {
      * @see org.kuali.kfs.coa.service.impl.OrganizationServiceImpl#getByPrimaryId(java.lang.String, java.lang.String)
      */
     @Override
-    @Cacheable(cacheNames = Organization.CACHE_NAME, key = "#p0+'-'+#p1")
+    @Cacheable(cacheNames = Organization.CACHE_NAME, key = "'{" + Organization.CACHE_NAME + "}'+#p0+'-'+#p1")
     public Organization getByPrimaryIdWithCaching(String chartOfAccountsCode, String organizationCode) {
         return getByPrimaryId(chartOfAccountsCode, organizationCode);
     }

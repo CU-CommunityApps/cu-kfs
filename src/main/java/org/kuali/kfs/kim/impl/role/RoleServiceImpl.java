@@ -60,7 +60,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -79,15 +78,11 @@ import static java.util.Map.entry;
  * 
  * Additional changes added to backport the redis implementation.
  * 
- * Additional changes to improve cache key handling for the Redis implementation (KFSPTS-23531).
+ * Backported redis fixes on FINP-8169
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     private static final Logger LOG = LogManager.getLogger();
-
-    // CU Customization (KFSPTS-23531): Add MessageFormat-related constants for generating various cache keys.
-    private static final String ROLE_BY_ID_CACHE_KEY_PATTERN = "'{getRoleFromCache}'-id={0}";
-    private static final String ROLE_BY_NAME_CACHE_KEY_PATTERN = "'{getRoleFromCache}'-namespaceCode={0}|name={1}";
 
     private static final Map<String, RoleDaoAction> memberTypeToRoleDaoActionMap = populateMemberTypeToRoleDaoActionMap();
     private RoleService proxiedRoleService;
@@ -229,7 +224,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     // backport redis annotations
-    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{getRoleWithoutMembers}-id=' + #p0")
+    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{" + Role.CACHE_NAME + "}id=' + #p0")
     @Override
     public RoleLite getRoleWithoutMembers(String roleId) throws IllegalStateException {
         incomingParamCheck(roleId, "roleId");
@@ -254,9 +249,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(String id) {
         Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        // CU Customization (KFSPTS-23531): Build a more specific cache key
-        String idKey = MessageFormat.format(ROLE_BY_ID_CACHE_KEY_PATTERN, id);
-        Cache.ValueWrapper cachedValue = cache.get(idKey);
+        // backport FINP-8169
+        Cache.ValueWrapper cachedValue = cache.get("{" + Role.CACHE_NAME + "}id=" + id);
         if (cachedValue != null) {
             return (RoleLite) cachedValue.get();
         }
@@ -265,9 +259,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(String namespaceCode, String name) {
         Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        // CU Customization (KFSPTS-23531): Build a more specific cache key
-        String nameKey = MessageFormat.format(ROLE_BY_NAME_CACHE_KEY_PATTERN, namespaceCode, name);
-        Cache.ValueWrapper cachedValue = cache.get(nameKey);
+        // backport FINP-8169
+        final String key = "{" + Role.CACHE_NAME + "}namespaceCode=" + namespaceCode + "|name=" + name;
+        Cache.ValueWrapper cachedValue = cache.get(key);
         if (cachedValue != null) {
             return (RoleLite) cachedValue.get();
         }
@@ -277,9 +271,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     protected void putRoleInCache(RoleLite role) {
         if (role != null) {
             Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-            // CU Customization (KFSPTS-23531): Build more specific cache keys
-            String idKey = MessageFormat.format(ROLE_BY_ID_CACHE_KEY_PATTERN, role.getId());
-            String nameKey = MessageFormat.format(ROLE_BY_NAME_CACHE_KEY_PATTERN, role.getNamespaceCode(), role.getName());
+            // backport FINP-8169
+            String idKey = "{" + Role.CACHE_NAME + "}id=" + role.getId();
+            String nameKey = "{" + Role.CACHE_NAME + "}namespaceCode=" + role.getNamespaceCode() + "|name="
+                     + role.getName();
             cache.put(idKey, role);
             cache.put(nameKey, role);
         }
@@ -346,8 +341,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return new ArrayList<>(roleMap.values());
     }
 
-    // bacport redis annotation
-    @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{getRoleByNamespaceCodeAndName}-namespaceCode=' + #p0 + '|' + 'name=' + #p1")
+    // bacport redis annotation; backport fix on FINP-8169
+    @Cacheable(cacheNames = Role.CACHE_NAME,
+            key = "'{" + Role.CACHE_NAME + "}-namespaceCode=' + #p0 + '|' + 'name='+ #p1")
     @Override
     public RoleLite getRoleByNamespaceCodeAndName(String namespaceCode, String roleName) throws IllegalStateException {
         incomingParamCheck(namespaceCode, "namespaceCode");
