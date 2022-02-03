@@ -15,6 +15,7 @@ public class CreateAccountingDocumentReportItemDetail {
     private boolean successfullyRouted;
     private boolean rawDataValidationError;
     private String rawDocumentData;
+    private String warningMessage;
 
     public int getIndexNumber() {
         return indexNumber;
@@ -92,9 +93,23 @@ public class CreateAccountingDocumentReportItemDetail {
         this.rawDocumentData = rawDocumentData;
     }
     
+    public String getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(String warningMessage) {
+        this.warningMessage = warningMessage;
+    }
+
     public void appendErrorMessageToExistingErrorMessage(String additionalErrorMessageContent) {
-        this.setErrorMessage((ObjectUtils.isNotNull(this.getErrorMessage()) ? this.getErrorMessage() : KFSConstants.EMPTY_STRING)
+        setErrorMessage((ObjectUtils.isNotNull(errorMessage) ? errorMessage : KFSConstants.EMPTY_STRING)
                 + KFSConstants.NEWLINE + KFSConstants.NEWLINE + additionalErrorMessageContent);
+         
+    }
+    
+    public void appendWarningrMessageToExistingWarningMessage(String additionalWarningMessageContent) {
+        setWarningMessage((ObjectUtils.isNotNull(warningMessage) ? warningMessage : KFSConstants.EMPTY_STRING)
+                + KFSConstants.NEWLINE + KFSConstants.NEWLINE + additionalWarningMessageContent);
          
     }
 

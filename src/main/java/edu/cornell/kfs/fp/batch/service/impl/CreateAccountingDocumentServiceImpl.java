@@ -164,6 +164,16 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             reportDetail.setSuccessfullyRouted(true);
             reportDetail.setDocumentNumber(document.getDocumentNumber());
             reportItem.getDocumentsSuccessfullyRouted().add(reportDetail);
+            if (!GlobalVariables.getMessageMap().getWarningMessages().isEmpty()) {
+                for (AutoPopulatingList<ErrorMessage> warning : GlobalVariables.getMessageMap().getWarningMessages().values()) {
+                    if (!warning.isEmpty()) {
+                        //warning.
+                    }
+                    
+                }
+                //GlobalVariables.getMessageMap().getWarningMessages().forEach(ErrorMessage message : reportDetail.appendWarningrMessageToExistingWarningMessage(em.get));
+                //reportDetail.setWarningMessage(GlobalVariables.getMessageMap().getWarningMessages());
+            }
         } catch (RuntimeException | WorkflowException e) {
             reportDetail.setSuccessfullyRouted(false);
             if (e instanceof ValidationException) {
@@ -178,6 +188,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             reportItem.getDocumentsInError().add(reportDetail);
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
+            GlobalVariables.getMessageMap().clearWarningMessages();
         }
     }
 

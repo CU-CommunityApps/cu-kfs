@@ -197,5 +197,6 @@ public class CuFPConstants {
         public static final String OBJECT_CD = "object_cd";
         public static final String OVERVIEW = "Overview";
         public static final String REPORT_EMAIL = "ReportEmail";
+        public static final String PAYEE_NAME = "payee_name";
     }
 }
