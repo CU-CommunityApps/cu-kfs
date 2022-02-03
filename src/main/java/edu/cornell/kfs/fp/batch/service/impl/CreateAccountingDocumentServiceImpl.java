@@ -164,15 +164,13 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             reportDetail.setSuccessfullyRouted(true);
             reportDetail.setDocumentNumber(document.getDocumentNumber());
             reportItem.getDocumentsSuccessfullyRouted().add(reportDetail);
-            if (!GlobalVariables.getMessageMap().getWarningMessages().isEmpty()) {
-                for (AutoPopulatingList<ErrorMessage> warning : GlobalVariables.getMessageMap().getWarningMessages().values()) {
-                    if (!warning.isEmpty()) {
-                        //warning.
-                    }
-                    
-                }
-                //GlobalVariables.getMessageMap().getWarningMessages().forEach(ErrorMessage message : reportDetail.appendWarningrMessageToExistingWarningMessage(em.get));
-                //reportDetail.setWarningMessage(GlobalVariables.getMessageMap().getWarningMessages());
+            if (!GlobalVariables.getMessageMap().getWarningMessages().isEmpty()
+                    && GlobalVariables.getMessageMap().getWarningMessages()
+                            .containsKey(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME)) {
+                AutoPopulatingList<ErrorMessage> payeeError = GlobalVariables.getMessageMap().getWarningMessages()
+                        .get(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME);
+                payeeError.stream()
+                        .forEach(em -> reportDetail.appendWarningrMessageToExistingWarningMessage(em.toString()));
             }
         } catch (RuntimeException | WorkflowException e) {
             reportDetail.setSuccessfullyRouted(false);
