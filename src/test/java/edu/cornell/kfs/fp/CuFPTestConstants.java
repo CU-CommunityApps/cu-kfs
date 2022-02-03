@@ -20,8 +20,6 @@ public class CuFPTestConstants {
     public static final int FY_2016 = 2016;
     public static final int FY_2018 = 2018;
     public static final String DATE_02_21_2019 = "02/21/2019";
-    public static final String AUXILIARY_VOUCHER_COMPONENT = "AuxiliaryVoucher";
-    public static final String DOCUMENT_VALIDATION_PARAMETER_TYPE = "VALID";
     public static final String AV_VALIDATION_MESSAGE_KEY_PREFIX = "error.create.accounting.document.av.";
 
     public static final String UOM_EACH = "EA";
