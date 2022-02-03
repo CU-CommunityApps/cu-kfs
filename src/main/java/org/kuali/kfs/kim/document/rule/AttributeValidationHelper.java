@@ -47,6 +47,7 @@ import java.util.Map;
  * CU Customization (KFSPTS-23531):
  * 
  * Updated the generation of the cache keys for improved compatibility with Redis.
+ * Backported redis fix on FINP-8169
  */
 public class AttributeValidationHelper {
 
@@ -54,7 +55,6 @@ public class AttributeValidationHelper {
     private static final String DOCUMENT_PROPERTY_PREFIX = KRADConstants.DOCUMENT_PROPERTY_NAME + ".";
 
     // CU Customization (KFSPTS-23531): Add MessageFormat-related constants for generating various cache keys.
-    private static final String ATTRIBUTE_BY_ID_CACHE_KEY_PATTERN = "'{getAttributeDefinitionById}'-id={0}";
     private static final String ATTRIBUTE_BY_NAME_CACHE_KEY_PATTERN = "'{getAttributeDefinitionByName}'-name={0}";
 
     protected BusinessObjectService businessObjectService;
@@ -63,8 +63,7 @@ public class AttributeValidationHelper {
         CacheManager cm = CoreImplServiceLocator.getCacheManagerRegistry()
                 .getCacheManagerByCacheName(KimAttribute.CACHE_NAME);
         Cache cache = cm.getCache(KimAttribute.CACHE_NAME);
-        // CU Customization (KFSPTS-23531): Build a more specific cache key
-        String cacheKey = MessageFormat.format(ATTRIBUTE_BY_ID_CACHE_KEY_PATTERN, id);
+        String cacheKey = "{" + KimAttribute.CACHE_NAME + "}id=" + id;
         ValueWrapper valueWrapper = cache.get(cacheKey);
 
         if (valueWrapper != null) {

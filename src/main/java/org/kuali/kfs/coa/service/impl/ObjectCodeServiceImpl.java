@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-/* Cornell Customization: backport redis*/
+/* Cornell Customization: backport redis; backport redis fix on FINP-8169*/
 public class ObjectCodeServiceImpl implements ObjectCodeService {
 
     protected ObjectCodeDao objectCodeDao;
@@ -45,7 +45,7 @@ public class ObjectCodeServiceImpl implements ObjectCodeService {
     protected BusinessObjectService businessObjectService;
 
     @Override
-    @Cacheable(cacheNames = ObjectCode.CACHE_NAME, key = "#p0+'-'+#p1+'-'+#p2")
+    @Cacheable(cacheNames = ObjectCode.CACHE_NAME, key = "'{" + ObjectCode.CACHE_NAME + "}'+#p0+'-'+#p1+'-'+#p2")
     public ObjectCode getByPrimaryId(Integer universityFiscalYear, String chartOfAccountsCode,
             String financialObjectCode) {
         Map<String, Object> keys = new HashMap<>(3);
@@ -56,7 +56,7 @@ public class ObjectCodeServiceImpl implements ObjectCodeService {
     }
 
     @Override
-    @Cacheable(cacheNames = ObjectCode.CACHE_NAME, key = "#p0+'-'+#p1+'-'+#p2")
+    @Cacheable(cacheNames = ObjectCode.CACHE_NAME, key = "'{" + ObjectCode.CACHE_NAME + "}'+#p0+'-'+#p1+'-'+#p2")
     public ObjectCode getByPrimaryIdWithCaching(Integer universityFiscalYear, String chartOfAccountsCode,
             String financialObjectCode) {
         return getByPrimaryId(universityFiscalYear, chartOfAccountsCode, financialObjectCode);
