@@ -41,7 +41,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/* Cornell Customization: backport redis */
+/* Cornell Customization: backport redis; backport redis fix on FINP-8169 */
 public class RuleAttributeServiceImpl implements RuleAttributeService {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -69,7 +69,7 @@ public class RuleAttributeServiceImpl implements RuleAttributeService {
         return getRuleAttributeDAO().findByRuleAttribute(ruleAttribute);
     }
 
-    @Cacheable(cacheNames = RuleAttribute.CACHE_NAME, key = "'{findByRuleAttributeId}|id=' + #p0")
+    @Cacheable(cacheNames = RuleAttribute.CACHE_NAME, key = "'{" + RuleAttribute.CACHE_NAME + "}|id=' + #p0")
     public RuleAttribute findByRuleAttributeId(String ruleAttributeId) {
         return getRuleAttributeDAO().findByRuleAttributeId(ruleAttributeId);
     }
@@ -78,7 +78,7 @@ public class RuleAttributeServiceImpl implements RuleAttributeService {
         return getRuleAttributeDAO().getAllRuleAttributes();
     }
 
-    @Cacheable(cacheNames = RuleAttribute.CACHE_NAME, key = "'name=' + #p0")
+    @Cacheable(cacheNames = RuleAttribute.CACHE_NAME, key = "'{" + RuleAttribute.CACHE_NAME + "}|name=' + #p0")
     public RuleAttribute findByName(String name) {
         return getRuleAttributeDAO().findByName(name);
     }

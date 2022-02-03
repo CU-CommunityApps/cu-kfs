@@ -27,7 +27,7 @@ import org.springframework.cache.annotation.Cacheable;
 import java.util.HashMap;
 import java.util.Map;
 
-/* Cornell Customization: backport redis*/
+/* Cornell Customization: backport redis; backport redis fix on FINP-8169*/
 public class SubAccountServiceImpl implements SubAccountService {
 
     protected BusinessObjectService businessObjectService;
@@ -47,7 +47,7 @@ public class SubAccountServiceImpl implements SubAccountService {
      * @see org.kuali.kfs.coa.service.impl.SubAccountServiceImpl#getByPrimaryId(String, String, String)
      */
     @Override
-    @Cacheable(cacheNames = SubAccount.CACHE_NAME, key = "#p0+'-'+#p1+'-'+#p2")
+    @Cacheable(cacheNames = SubAccount.CACHE_NAME, key = "'{" + SubAccount.CACHE_NAME + "}'+#p0+'-'+#p1+'-'+#p2")
     public SubAccount getByPrimaryIdWithCaching(String chartOfAccountsCode, String accountNumber, String subAccountNumber) {
         return getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber);
     }
