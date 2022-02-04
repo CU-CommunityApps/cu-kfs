@@ -152,37 +152,6 @@ public class CuFPConstants {
         public static final String PDP_PRE_EXTRACTION_STATUS = "Pre-Extraction";
     }
     
-    public static class AmazonWebServiceBillingConstants {
-        public static final String AWS_PROCESSING_DATE_PARAMETER_NAME = "AWS_PROCESSING_DATE";
-        public static final String AWS_FROM_ACCOUNT_PARAMETER_NAME = "AWS_FROM_ACCOUNT_NUMBER";
-        public static final String AWS_OBJECT_CODE_PARAMETER_NAME = "AWS_OBJECT_CODE";
-        public static final String AWS_CHART_CODE_PARAMETER_NAME = "AWS_CHART_CODE";
-        public static final String AWS_NOTE_HELP_TEXT_PARAMETER_NAME = "AWS_NOTE_HELP_TEXT";
-        public static final String AWS_ADMIN_EMAIL_PARAMETER_NAME = "AWS_ADMIN_EMAIL";
-        public static final String AWS_CORNELL_MASTER_ACCOUNTS_PARAMETER_NAME = "AWS_MASTER_ACCOUNTS";
-        public static final String AWS_COMPONENT_NAME = "LoadAWSBillsStep";
-        
-        public static final int PROCESSING_DAY_OF_MONTH = 15;
-        public static final String DATE_FORMAT = "yyyy-MM-dd";
-        public static final String AWS_BILL_CREDENTIAL_GROUP_CODE = "AWSBILL";
-        public static final String AWS_BILL_AUTH_HEADER_TOKEN_KEY = "x-api-key";
-        
-        public static final String DEFAULT_BILLING_PERIOD_PARAMETER = "CURRENT";
-        public static final String INTERNAL_KFS_ACCOUNT_DESCRIPTION = "internal";
-        public static final String DI_ROUTE_ANNOTATION = "DI automatically created by AWS Billing Batch Job";
-        public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
-        public static final String ACCOUNT_NONE = "None";
-    }
-    
-    public static class CLOUDCHECKR {
-        public static final String GROUP_LEVEL_AWS_ACCOUNT = "Account";
-        public static final String GROUP_LEVEL_COST_CENTER = "Cost Center";
-        public static final String CLOUDCHECKR_CREDENTIAL_GROUP_CODE = "CLOUDCHECKR";
-        public static final String CLOUDCHECKR_ENDPOINT_CREDENTIAL_KEY = "CLOUDCHECKR_URL";
-        public static final String DEFAULT_KFS_ACCOUNT_ENDPOINT_CREDENTIAL_KEY = "DEFAULT_ACCOUNT_URL";
-        public static final String CLOUDCHECKR_ATTACH_URL = "CLOUDCHECKR_ATTACH_URL";
-    }
-    
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
     public static final String DI = "DI";
 
@@ -194,7 +163,6 @@ public class CuFPConstants {
         public static final String DOCUMENT_TYPE = "DocumentType";
         public static final String EXPLANATION = "Explanation";
         public static final String INDEX = "Index";
-        public static final String OBJECT_CD = "object_cd";
         public static final String OVERVIEW = "Overview";
         public static final String REPORT_EMAIL = "ReportEmail";
     }

@@ -61,7 +61,6 @@
             <list merge="true">
                 <value>incomingACHandWiresBatchJob</value>
                 <value>procurementCardSummaryFeedJob</value>
-                <value>loadAWSBillsBatchJob</value>
                 <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
                 <value>corporateBilledCorporatePaidDocumentJob</value>
                 <value>createAccountingDocumentsJob</value>
@@ -358,50 +357,6 @@
         <property name="offsetDefinitionService" ref="offsetDefinitionService" />  
         <property name="parameterService" ref="parameterService" />  
         <property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />              
-    </bean>
-    
-    <bean id="loadAWSBillsBatchJob" parent="scheduledJobDescriptor">
-        <property name="steps">
-            <list>
-                <ref bean="loadAWSBillsStep"/>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="loadAWSBillsStep" class="edu.cornell.kfs.fp.batch.LoadAWSBillsStep" parent="step">
-       <property name="amazonWebServicesBillingService" ref="amazonWebServicesBillingService"/>
-    </bean>
-    
-    <bean id="amazonWebServicesBillingService" parent="amazonWebServicesBillingService-parent"/>
-    <bean id="amazonWebServicesBillingService-parent" class="edu.cornell.kfs.fp.service.impl.AmazonWebServicesBillingServiceImpl" abstract="true">
-    	<property name="directoryPath" value="${staging.directory}/fp/accountingXmlDocument"/>
-        <property name="parameterService" ref="parameterService"/>
-        <property name="documentService" ref="documentService"/>
-        <property name="businessObjectService" ref="businessObjectService"/>
-        <property name="cloudCheckrService" ref="cloudCheckrService"/>
-        <property name="awsAccountingXmlDocumentAccountingLineService" ref="awsAccountingXmlDocumentAccountingLineService"/>
-        <property name="cuMarshalService" ref="cuMarshalService"/>
-        <property name="fileStorageService" ref="fileStorageService"/>
-        <property name="configurationService" ref="configurationService"/>
-        <property name="dataDictionaryService" ref="dataDictionaryService"/>
-        <property name="emailService" ref="emailService"/>
-    </bean>
-    
-    <bean id="cloudCheckrService" parent="cloudCheckrService-parent"/>
-    <bean id="cloudCheckrService-parent" class="edu.cornell.kfs.fp.batch.service.impl.CloudCheckrServiceImpl" abstract="true">
-    	<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
-    </bean>
-
-    <bean id="awsAccountingXmlDocumentAccountingLineService" parent="awsAccountingXmlDocumentAccountingLineService-parent"/>
-    <bean id="awsAccountingXmlDocumentAccountingLineService-parent" class="edu.cornell.kfs.fp.batch.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl" abstract="true">
-        <property name="parameterService" ref="parameterService"/>
-        <property name="chartService" ref="chartService"/>
-        <property name="accountService" ref="accountService"/>
-        <property name="subAccountService" ref="subAccountService"/>
-        <property name="objectCodeService" ref="objectCodeService"/>
-        <property name="subObjectCodeService" ref="subObjectCodeService"/>
-        <property name="projectCodeService" ref="projectCodeService"/>
-        <property name="configurationService" ref="configurationService"/>
     </bean>
 
     <bean id="incomingACHandWiresBatchJob" parent="scheduledJobDescriptor">
