@@ -170,7 +170,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
                 AutoPopulatingList<ErrorMessage> payeeError = GlobalVariables.getMessageMap().getWarningMessages()
                         .get(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME);
                 payeeError.stream()
-                        .forEach(em -> reportDetail.appendWarningrMessageToExistingWarningMessage(em.toString()));
+                        .forEach(em -> reportDetail.appendWarningrMessageToExistingWarningMessage(em.getMessageParameters()[0]));
             }
         } catch (RuntimeException | WorkflowException e) {
             reportDetail.setSuccessfullyRouted(false);

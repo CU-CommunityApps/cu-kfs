@@ -198,7 +198,11 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             LOG.error("addWarningMEssageIfPayeeNameNotAccurate, " + messageString);
 
             GlobalVariables.getMessageMap().getWarningMessages()
-                    .putIfAbsent(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, errorMessages);
+                    .put(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, errorMessages);
+        } else {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("addWarningMEssageIfPayeeNameNotAccurate, the vendorPayeeName: '" + vendorPayeeName + "' dvPayeeName: '" + dvPayeeName + "'");
+            }
         }
     }
     
