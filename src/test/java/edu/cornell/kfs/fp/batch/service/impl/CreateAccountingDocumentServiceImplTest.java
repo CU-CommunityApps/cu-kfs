@@ -824,6 +824,8 @@ public class CreateAccountingDocumentServiceImplTest {
                 .thenReturn(CuFPTestConstants.XML_ADAPTER_ERROR_MESSAGE);
         Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.VALIDATION_CREATE_ACCOUNTING_DOCUMENT_EXCEPTION_MESSAGE_REGEX))
                 .thenReturn(CuFPTestConstants.EXCEPTION_MESSAGE_REGEX);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_NAME_NOT_SAME_AS_VENDOR))
+        .thenReturn(CuFPTestConstants.TEST_CREATE_ACCOUNT_DOCUMENT_PAYEE_MISMATCH);
         return configurationService;
     }
 
