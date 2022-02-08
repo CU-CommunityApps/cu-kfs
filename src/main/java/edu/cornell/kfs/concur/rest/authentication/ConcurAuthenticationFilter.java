@@ -33,7 +33,7 @@ public class ConcurAuthenticationFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         LOG.debug("doFilter() started");
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        logRequst(httpServletRequest);
+        logRequest(httpServletRequest);
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String authorizationHeader = httpServletRequest.getHeader(ConcurConstants.AUTHORIZATION_PROPERTY);
 
@@ -54,22 +54,22 @@ public class ConcurAuthenticationFilter implements Filter {
         filterChain.doFilter(servletRequest, response);
     }
     
-    private void logRequst(HttpServletRequest request) {
-        LOG.info("logRequst, entering");
+    private void logRequest(HttpServletRequest request) {
+        LOG.info("logRequest, entering");
         boolean isProd = ConfigContext.getCurrentContextConfig().isProductionEnvironment();
         if (!isProd) {
             for (String attributeKey : request.getParameterMap().keySet()) {
-                LOG.info("logRequst, attributeKey: '" + attributeKey + "' and attribute value: '" + request.getParameterMap().get(attributeKey) + "'");
+                LOG.info("logRequest, attributeKey: '" + attributeKey + "' and attribute value: '" + request.getParameterMap().get(attributeKey) + "'");
             }
             
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String headerKey = headerNames.nextElement();
                 String headerValue = request.getHeader(headerKey);
-                LOG.info("logRequst, headerKey: '" + headerKey + "' and header value: '" + headerValue + "'");
+                LOG.info("logRequest, headerKey: '" + headerKey + "' and header value: '" + headerValue + "'");
             }
         } else {
-            LOG.info("logRequst, this is production, so we aren't dooing this logging.");
+            LOG.info("logRequest, this is production, so we aren't doing this logging.");
         }
     }
 
