@@ -61,8 +61,6 @@ public class CuFPConstants {
     public static final String BATCH_DETAIL_TYPE = "Batch";
     public static final String ENCUMBRANCE_AUTOMATIC_PARTIAL_DIS_ENCUMBRANCES_TITLE = "Encumbrance Automatic Partial Dis-Encumbrances";
     public static final String GENERAL_LEDGER_PENDING_ENTRIES_TITLE = "General Ledger Pending Entries";
-    public static final String LEFT_PARENTHESIS = "(";
-    public static final String RIGHT_PARENTHESIS = ")";
     
     public static final String CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE = "CBCP";
     public static final String CORPORATE_BILLED_CORPORATE_PAID_FLAT_INPUT_FILE_TYPE = "corporateBilledCorporatePaidFlatInputFileType";
@@ -153,7 +151,6 @@ public class CuFPConstants {
     }
     
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
-    public static final String DI = "DI";
 
     public static class CreateAccountingDocumentValidatedDataElements {
         public static final String ACCOUNT_NBR = "account_nbr";
