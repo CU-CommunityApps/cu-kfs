@@ -199,4 +199,19 @@ public class ConcurConstants {
         }
     }
 
+    public static final class ConcurApiParameters {
+        public static final String VIEW = "view";
+        public static final String USER_ID = "userId";
+        public static final String START = "start";
+        public static final String LIMIT = "limit";
+    }
+
+    public static final class ConcurApiOperations {
+        public static final String NEXT = "next";
+    }
+
+    public static final class RequestV4Views {
+        public static final String TO_APPROVE = "TOAPPROVE";
+    }
+
 }
