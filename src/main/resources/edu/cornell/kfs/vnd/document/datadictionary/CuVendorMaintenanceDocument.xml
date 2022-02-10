@@ -30,7 +30,7 @@
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.vnd.document.validation.impl.CuVendorPreRules"/>
     <property name="webScriptFiles">
       <list merge="true">
-        <value>../scripts/vnd/procMethods.js</value>
+        <value>scripts/vnd/procMethods.js</value>
       </list>
     </property>
     

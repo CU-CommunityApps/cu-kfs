@@ -50,8 +50,8 @@
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountReversionPreRules"/>
     <property name="webScriptFiles">
       <list>
-        <value>../dwr/interface/ObjectCodeService.js</value>
-        <value>../scripts/coa/reversionDocument.js</value>
+        <value>dwr/interface/ObjectCodeService.js</value>
+        <value>scripts/coa/reversionDocument.js</value>
       </list>
     </property>
 
