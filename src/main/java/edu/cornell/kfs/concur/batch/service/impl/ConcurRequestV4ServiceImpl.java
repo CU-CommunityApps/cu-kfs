@@ -87,7 +87,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         List<String> validationMessages = new ArrayList<>();
         boolean requestValid = true;
         try {
-            ConcurRequestV4ReportDTO request = findPendingTravelRequest(accessToken, requestUuid);
+            ConcurRequestV4ReportDTO request = findTravelRequest(accessToken, requestUuid);
             ConcurAccountInfo accountInfo = buildAccountInfo(request);
         } catch (Exception e) {
             LOG.error("processTravelRequest, Unexpected error encountered while processing request " + requestUuid, e);
@@ -103,6 +103,16 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         return accountInfo;
     }
 
+    protected ConcurRequestV4ReportDTO findTravelRequest(String accessToken, String requestUuid) {
+        String messageDetail = MessageFormat.format(
+                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_REQUEST),
+                requestUuid);
+        String queryUrl = findRequestV4Endpoint() + CUKFSConstants.SLASH + UrlFactory.encode(requestUuid);
+        
+        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
+                accessToken, queryUrl, ConcurRequestV4ReportDTO.class, messageDetail);
+    }
+
     protected ConcurRequestV4ListingDTO findPendingTravelRequests(String accessToken, int startIndex,
             Optional<String> approverId) {
         String messageKey = (startIndex == 0) ? ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING
@@ -112,16 +122,6 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
                 accessToken, queryUrl, ConcurRequestV4ListingDTO.class, messageDetail);
-    }
-
-    protected ConcurRequestV4ReportDTO findPendingTravelRequest(String accessToken, String requestUuid) {
-        String messageDetail = MessageFormat.format(
-                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_REQUEST),
-                requestUuid);
-        String queryUrl = findRequestV4Endpoint() + CUKFSConstants.SLASH + UrlFactory.encode(requestUuid);
-        
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
-                accessToken, queryUrl, ConcurRequestV4ReportDTO.class, messageDetail);
     }
 
     protected String buildRequestQueryUrl(int startIndex, Optional<String> approverId) {

@@ -44,6 +44,15 @@ public class ConcurRequestV4ReportDTO {
     @JsonProperty("custom2")
     private ConcurRequestV4CustomItemDTO account;
 
+    @JsonProperty("custom3")
+    private ConcurRequestV4CustomItemDTO subAccount;
+
+    @JsonProperty("custom4")
+    private ConcurRequestV4CustomItemDTO subObjectCode;
+
+    @JsonProperty("custom5")
+    private ConcurRequestV4CustomItemDTO projectCode;
+
     @JsonProperty("endDate")
     private Date endDate;
 
@@ -175,6 +184,30 @@ public class ConcurRequestV4ReportDTO {
 
     public void setAccount(ConcurRequestV4CustomItemDTO account) {
         this.account = account;
+    }
+
+    public ConcurRequestV4CustomItemDTO getSubAccount() {
+        return subAccount;
+    }
+
+    public void setSubAccount(ConcurRequestV4CustomItemDTO subAccount) {
+        this.subAccount = subAccount;
+    }
+
+    public ConcurRequestV4CustomItemDTO getSubObjectCode() {
+        return subObjectCode;
+    }
+
+    public void setSubObjectCode(ConcurRequestV4CustomItemDTO subObjectCode) {
+        this.subObjectCode = subObjectCode;
+    }
+
+    public ConcurRequestV4CustomItemDTO getProjectCode() {
+        return projectCode;
+    }
+
+    public void setProjectCode(ConcurRequestV4CustomItemDTO projectCode) {
+        this.projectCode = projectCode;
     }
 
     public Date getEndDate() {
