@@ -28,11 +28,11 @@
     <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="webScriptFiles">
       <list>
-        <value>../dwr/interface/PostalCodeService.js</value>
-        <value>../dwr/interface/OrganizationService.js</value>
-        <value>../scripts/sys/objectInfo.js</value>
-        <value>../scripts/coa/organizationDocument.js</value>
-        <value>../scripts/coa/organizationGlobal.js</value>
+        <value>dwr/interface/PostalCodeService.js</value>
+        <value>dwr/interface/OrganizationService.js</value>
+        <value>scripts/sys/objectInfo.js</value>
+        <value>scripts/coa/organizationDocument.js</value>
+        <value>scripts/coa/organizationGlobal.js</value>
       </list>
     </property>
     <property name="workflowAttributes">

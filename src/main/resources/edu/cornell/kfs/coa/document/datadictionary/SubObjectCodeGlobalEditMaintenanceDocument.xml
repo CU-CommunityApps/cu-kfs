@@ -30,7 +30,7 @@
     </property>
     <property name="webScriptFiles">
       <list>
-        <value>../dwr/interface/AccountService.js</value>
+        <value>dwr/interface/AccountService.js</value>
       </list>
     </property>
 
