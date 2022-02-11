@@ -8,6 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConcurRequestV4PersonDTO {
+
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("firstName")
     private String firstName;
 
@@ -16,6 +20,14 @@ public class ConcurRequestV4PersonDTO {
 
     @JsonProperty("lastName")
     private String lastName;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
