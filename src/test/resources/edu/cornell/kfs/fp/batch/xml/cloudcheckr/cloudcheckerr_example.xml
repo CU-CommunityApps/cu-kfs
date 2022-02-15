@@ -1,0 +1,84 @@
+<GetDetailedBillingWithGroupingResponseV2 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Total>30.7983416200</Total>
+    <Max>30.7983416200</Max>
+    <Min>30.7983416200</Min>
+    <Average>30.798698086413034906518967198</Average>
+    <CostsByGroup>
+        <GroupingLevel>
+            <GroupName>Service</GroupName>
+            <GroupValue>AmazonS3</GroupValue>
+            <FriendlyName>S3</FriendlyName>
+            <Cost>0.1099985400</Cost>
+            <NextLevel>
+                <GroupingLevel>
+                    <GroupName>aws:createdBy</GroupName>
+                    <GroupValue>IAMUser:AIDAI5X7LBFKDHYABCDE:mikeb</GroupValue>
+                    <FriendlyName />
+                    <Cost>0.1083478400</Cost>
+                    <NextLevel />
+                </GroupingLevel>
+            </NextLevel>
+        </GroupingLevel>
+        <GroupingLevel>
+            <GroupName>Service</GroupName>
+            <GroupValue>AmazonEC2</GroupValue>
+            <FriendlyName>EC2</FriendlyName>
+            <Cost>22.6078574000</Cost>
+            <NextLevel>
+                <GroupingLevel>
+                    <GroupName>aws:createdBy</GroupName>
+                    <GroupValue>IAMUser:AIDAI4NZVQK6IW45ABCDE:paul.vanw</GroupValue>
+                    <FriendlyName />
+                    <Cost>0.0750056100</Cost>
+                    <NextLevel />
+                </GroupingLevel>
+            </NextLevel>
+        </GroupingLevel>
+    </CostsByGroup>
+    <CostsByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Service</GroupName>
+                    <GroupValue>AmazonEC2</GroupValue>
+                    <FriendlyName>EC2</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>aws:createdBy</GroupName>
+                    <GroupValue>IAMUser:AIDAI4NZVQK6IW45ABCDE:paul.vanw</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>1/20/2017 12:00:00 AM</Date>
+                    <Cost>0.0750056100</Cost>
+                    <UsageQuantity>24.0000619600</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Service</GroupName>
+                    <GroupValue>AmazonS3</GroupValue>
+                    <FriendlyName>S3</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>aws:createdBy</GroupName>
+                    <GroupValue>IAMUser:AIDAI5X7LBFKDHYABCDE:mikeb</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>1/20/2017 12:00:00 AM</Date>
+                    <Cost>0.1083478400</Cost>
+                    <UsageQuantity>418.5352970600</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+    </CostsByTime>
+</GetDetailedBillingWithGroupingResponseV2>
