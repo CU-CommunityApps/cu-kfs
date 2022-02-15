@@ -39,34 +39,6 @@ public class CuFPKeyConstants {
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_SUB_HEADER = "report.create.accounting.document.file.failure.summary.sub.header";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_REPORT_ITEM_MESSAGE = "report.create.accounting.document.file.failure.summary.report.item.message";
 
-    public static final String ERROR_INVALID_GROUP_LEVEL_TYPE = "error.aws.billing.invalid.group.level.type";
-    public static final String ERROR_CHART_NOT_FOUND = "error.aws.billing.chart.not.found";
-    public static final String ERROR_CHART_INACTIVE = "error.aws.billing.chart.inactive";
-    public static final String ERROR_ACCOUNT_NUMBER_BLANK = "error.aws.billing.account.blank";
-    public static final String ERROR_ACCOUNT_NOT_FOUND = "error.aws.billing.account.not.found";
-    public static final String ERROR_ACCOUNT_CLOSED = "error.aws.billing.account.closed";
-    public static final String ERROR_ACCOUNT_EXPIRED = "error.aws.billing.account.expired";
-    public static final String ERROR_OBJECT_CODE_NOT_FOUND = "error.aws.billing.object.code.not.found";
-    public static final String ERROR_OBJECT_CODE_INACTIVE = "error.aws.billing.object.code.inactive";
-    public static final String ERROR_SUB_ACCOUNT_NOT_FOUND = "error.aws.billing.sub.account.not.found";
-    public static final String ERROR_SUB_ACCOUNT_INACTIVE = "error.aws.billing.sub.account.inactive";
-    public static final String ERROR_SUB_OBJECT_NOT_FOUND = "error.aws.billing.sub.object.not.found";
-    public static final String ERROR_SUB_OBJECT_INACTIVE = "error.aws.billing.sub.object.inactive";
-    public static final String ERROR_PROJECT_CODE_NOT_FOUND = "error.aws.billing.project.code.not.found";
-    public static final String ERROR_PROJECT_CODE_INACTIVE = "error.aws.billing.project.code.inactive";
-    public static final String ERROR_ORG_REF_ID_TOO_LONG = "error.aws.billing.org.ref.id.too.long";
-    
-    public static final String MESSAGE_AWS_BILLING_JOB_START_MESSAGE = "message.aws.billing.service.start.message";
-    public static final String AWS_BILLING_SERVICE_OUTPUT_FILE_NAME_FORMAT = "aws.billing.service.output.file.name.format";
-    public static final String AWS_BILLING_SERVICE_INVOICE_FILE_NAME_FORMAT = "aws.billing.service.invoice.pdf.file.name.format";
-    public static final String AWS_BILLING_SERVICE_INVOICE_NOTE_TEXT_FORMAT = "aws.billing.service.invoice.note.text.format";
-    public static final String AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT = "aws.billing.service.document.description.format";
-    public static final String AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT = "aws.billing.service.document.explanation.format";
-    public static final String AWS_BILLING_SERVICE_ACCOUNTING_LINE_DESCRIPTION = "aws.billing.service.accounting.line.description";
-    public static final String AWS_BILLING_SERVICE_ACCOUNTING_XML_OVERVIEW = "aws.billing.service.xml.document.overview.format";
-    public static final String AWS_BILLING_SERVICE_ERROR_EMAIL_SUBJECT = "aws.billing.service.error.email.subject";
-    public static final String AWS_BILLING_SERVICE_ERROR_EMAIL_BODY = "aws.billing.service.error.email.body";
-    
     public static final String CREATE_ACCOUNTING_DOCUMENT_EMPLOYEE_ID_BAD = "create.accounting.document.employee.id.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD = "create.accounting.document.principle.id.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_VENDOR_ID_BAD = "create.accounting.document.vendor.id.bad";
