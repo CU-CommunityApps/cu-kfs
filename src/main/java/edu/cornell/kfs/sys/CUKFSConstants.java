@@ -16,9 +16,7 @@ public class CUKFSConstants {
     public static final String RULE_CODE_CA = "CA";
     public static final String DELIMITER = ".";
     public static final String US_LOCALE_STRING = "en_US";
-    public static final String DATE_FORMAT_YYYY = "YYYY";
     public static final String DATE_FORMAT_yyyyMMdd = "yyyyMMdd";
-    public static final String DATE_FORMAT_yyyy_MM_dd_HH_mm_ss = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
     public static final String DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am = "MM/dd/yyyy hh:mm:ss a";
     public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
