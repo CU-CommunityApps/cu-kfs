@@ -204,6 +204,8 @@ public class ConcurConstants {
         public static final String USER_ID = "userId";
         public static final String START = "start";
         public static final String LIMIT = "limit";
+        public static final String MODIFIED_AFTER = "modifiedAfter";
+        public static final String MODIFIED_BEFORE = "modifiedBefore";
     }
 
     public static final class ConcurApiOperations {
@@ -211,7 +213,11 @@ public class ConcurConstants {
     }
 
     public static final class RequestV4Views {
-        public static final String TO_APPROVE = "TOAPPROVE";
+        public static final String APPROVED = "APPROVED";
+    }
+
+    public static final class RequestV4StatusNames {
+        public static final String PENDING_EXTERNAL_VALIDATION = "Pending External Validation";
     }
 
 }
