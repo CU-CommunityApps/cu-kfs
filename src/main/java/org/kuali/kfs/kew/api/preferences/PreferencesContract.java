@@ -23,6 +23,7 @@ import java.util.Map;
 /**
  * ====
  * CU Customization: Added a preference for controlling the visibility of the action list notes column.
+ * CU Customization: Added a preference for controlling the visibility of the action list last modified date column.
  * ====
  * 
  * A contract defining the method for a {@link Preferences} model object.
@@ -84,6 +85,8 @@ public interface PreferencesContract {
     String getNotifyFYI();
 
     String getShowNotes();
+    
+    String getShowLastModifiedDate();
 
     Map<String, String> getDocumentTypeNotificationPreferences();
 

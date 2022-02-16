@@ -44,6 +44,7 @@ import java.util.Map.Entry;
 /**
  * ====
  * CU Customization: Added handling of the custom "showNotes" action list preference.
+ * CU Customization: Added handling of the custom "showLastModifiedDate" action list preference.
  * ====
  * 
  * An implementation of the {@link PreferencesService}.
@@ -90,6 +91,7 @@ public class PreferencesServiceImpl implements PreferencesService {
         USER_OPTION_KEY_DEFAULT_MAP.put(Preferences.KEYS.NOTIFY_COMPLETE, "userOptions.default.notifyComplete");
         USER_OPTION_KEY_DEFAULT_MAP.put(Preferences.KEYS.NOTIFY_FYI, "userOptions.default.notifyFYI");
         USER_OPTION_KEY_DEFAULT_MAP.put(Preferences.KEYS.SHOW_NOTES, "userOptions.default.showNotes");
+        USER_OPTION_KEY_DEFAULT_MAP.put(Preferences.KEYS.SHOW_LAST_MODIFIED_DATE, "userOptions.default.showLastModifiedDate");
     }
 
     public Preferences getPreferences(String principalId) {
@@ -187,6 +189,7 @@ public class PreferencesServiceImpl implements PreferencesService {
         optionsMap.put(Preferences.KEYS.NOTIFY_COMPLETE, preferences.getNotifyComplete());
         optionsMap.put(Preferences.KEYS.NOTIFY_FYI, preferences.getNotifyFYI());
         optionsMap.put(Preferences.KEYS.SHOW_NOTES, preferences.getShowNotes());
+        optionsMap.put(Preferences.KEYS.SHOW_LAST_MODIFIED_DATE, preferences.getShowLastModifiedDate());
         if (ConfigContext.getCurrentContextConfig().getOutBoxOn()) {
             optionsMap.put(Preferences.KEYS.USE_OUT_BOX, preferences.getUseOutbox());
         }
