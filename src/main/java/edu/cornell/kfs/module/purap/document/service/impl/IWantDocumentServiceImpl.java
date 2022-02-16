@@ -96,6 +96,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     private EmailService emailService;
     private PersistenceService persistenceService;
     private DocumentService documentService;
+    private PhoneNumberService phoneNumberService;
 
     /**
      * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#getPersonCampusAddress(java.lang.String)
@@ -369,10 +370,12 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 requisitionDocument.setDeliveryCampusCode(deliverTo.getCampusCode());
                 requisitionDocument.setDeliveryToName(iWantDocument.getDeliverToName());
                 requisitionDocument.setDeliveryToEmailAddress(iWantDocument.getDeliverToEmailAddress());
-                requisitionDocument.setDeliveryToPhoneNumber(iWantDocument.getDeliverToPhoneNumber());
+                requisitionDocument.setDeliveryToPhoneNumber(
+                        phoneNumberService.formatNumberIfPossible(iWantDocument.getDeliverToPhoneNumber()));
                 requisitionDocument.setRequestorPersonName(iWantDocument.getInitiatorName());
                 requisitionDocument.setRequestorPersonEmailAddress(iWantDocument.getInitiatorEmailAddress());
-                requisitionDocument.setRequestorPersonPhoneNumber(iWantDocument.getInitiatorPhoneNumber());
+                requisitionDocument.setRequestorPersonPhoneNumber(
+                        phoneNumberService.formatNumberIfPossible(iWantDocument.getInitiatorPhoneNumber()));
                 parseAndSetRequestorAddress(iWantDocument.getDeliverToAddress(), requisitionDocument);
 
                 requisitionDocument.setOrganizationAutomaticPurchaseOrderLimit(
@@ -407,12 +410,12 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 requisitionDocument.setDeliveryCampusCode(deliverTo.getCampusCode());
                 requisitionDocument.setDeliveryToName(deliverTo.getName());
                 requisitionDocument.setDeliveryToEmailAddress(deliverTo.getEmailAddressUnmasked());
-                requisitionDocument.setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class)
-                        .formatNumberIfPossible(deliverTo.getPhoneNumber()));
+                requisitionDocument.setDeliveryToPhoneNumber(
+                        phoneNumberService.formatNumberIfPossible(deliverTo.getPhoneNumber()));
                 requisitionDocument.setRequestorPersonName(deliverTo.getName());
                 requisitionDocument.setRequestorPersonEmailAddress(deliverTo.getEmailAddressUnmasked());
-                requisitionDocument.setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class)
-                        .formatNumberIfPossible(deliverTo.getPhoneNumber()));
+                requisitionDocument.setRequestorPersonPhoneNumber(
+                        phoneNumberService.formatNumberIfPossible(deliverTo.getPhoneNumber()));
 
                 DefaultPrincipalAddress defaultPrincipalAddress = new DefaultPrincipalAddress(
                         deliverTo.getPrincipalId());
@@ -1063,4 +1066,13 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
+
+    public PhoneNumberService getPhoneNumberService() {
+        return phoneNumberService;
+    }
+
+    public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
+        this.phoneNumberService = phoneNumberService;
+    }
+
 }

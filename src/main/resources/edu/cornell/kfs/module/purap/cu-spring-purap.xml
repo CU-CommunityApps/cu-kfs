@@ -132,6 +132,9 @@
 		<property name="personService">
 			<ref bean="personService" />
 		</property>
+		<property name="phoneNumberService">
+			<ref bean="phoneNumberService" />
+		</property>
 	</bean>
 	
 	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl"/>
