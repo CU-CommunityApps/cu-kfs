@@ -1,7 +1,13 @@
 package edu.cornell.kfs.fp.batch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class CreateAccountingDocumentReportItem {
 
@@ -101,4 +107,35 @@ public class CreateAccountingDocumentReportItem {
     public void setValidationErrorMessage(String validationErrorMessage) {
         this.validationErrorMessage = validationErrorMessage;
     }
+    
+    public boolean doWarningMessagesExist() {
+        return getDocumentDetailsWithWarnings().size() > 0;
+    }
+    
+    public Map<String, Integer> getDocumentTypeWarningMessmageCountMap() {
+        Map<String, Integer> docTypeCountMap = new HashMap<>();
+        getDocumentDetailsWithWarnings().stream().forEach(detail -> addDetailDataToDocTypeCountMap(detail, docTypeCountMap));
+        return docTypeCountMap;
+    }
+    
+    private void addDetailDataToDocTypeCountMap(CreateAccountingDocumentReportItemDetail detail, Map<String, Integer> docTypeCountMap) {
+        if (docTypeCountMap.containsKey(detail.getDocumentType())) {
+            int documentCount = docTypeCountMap.get(detail.getDocumentType());
+            docTypeCountMap.replace(detail.getDocumentType(), documentCount + 1);
+        } else {
+            docTypeCountMap.put(detail.getDocumentType(), 1);
+        }
+    }
+    
+    protected List<CreateAccountingDocumentReportItemDetail> getDocumentDetailsWithWarnings() {
+        return getAllDocumentDetails().stream()
+                .filter(detail -> StringUtils.isNotBlank(detail.getWarningMessage()))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    protected List<CreateAccountingDocumentReportItemDetail> getAllDocumentDetails() {
+        return Stream.concat(documentsInError.stream(), documentsSuccessfullyRouted.stream())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+    
 }
