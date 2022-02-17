@@ -212,10 +212,8 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
                     statement.setString(1, documentId);
                     resultSet = statement.executeQuery();
                     if (!resultSet.next()) {
-   LOG.info("LAST MODIFIED DATE HAVING A NULL RETURNED");
                         return null;
                     } else {
-   LOG.info("LAST MODIFIED DATE VALUE BEING RETURNED AS =" +resultSet.getTimestamp(1)+ "=");
                         return resultSet.getTimestamp(1);
                     }
                 } catch (Exception e) {

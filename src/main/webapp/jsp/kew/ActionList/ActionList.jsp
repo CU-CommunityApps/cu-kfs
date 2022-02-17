@@ -70,7 +70,7 @@
 </bean:define>
 <%-- CU Customization: Load label related to custom Last Modified Date column. --%>
 <bean:define id="lastModifiedDateLabel">
-    <bean-el:message key="actionList.ActionList.results.label.lastModifiedDate" />
+    <bean-el:message key="actionList.ActionList.results.label.dateLastModified" />
 </bean:define>
 <bean:define id="currentRouteNodesLabel">
     <bean-el:message key="actionList.ActionList.results.label.currentRouteNodes" />
@@ -379,11 +379,11 @@
                                                         </display:column>
                                                     </c:if>
                                                     <%-- CU Customization: Add column for Last Modified Date. --%>
-                                                    <c:if test="${preferences.showLastModifiedDate == Constants.PREFERENCES_YES_VAL}">
+                                                    <c:if test="${preferences.showLastModifiedDate == KewApiConstants.PREFERENCES_YES_VAL}">
                                                         <display:column sortable="true" title="${lastModifiedDateLabel}" 
                                                               sortProperty="lastModifiedDate" class="infocell">
                                                             <fmt:formatDate value="${result.lastModifiedDate}"
-                                                                            pattern="${Constants.DEFAULT_DATE_FORMAT_PATTERN}" />&nbsp;
+                                                                            pattern="${KewApiConstants.DEFAULT_DATE_FORMAT_PATTERN}" />&nbsp;
                                                         </display:column>
                                                     </c:if>
                                                     <c:if test="${preferences.showWorkgroupRequest == KewApiConstants.PREFERENCES_YES_VAL}">
