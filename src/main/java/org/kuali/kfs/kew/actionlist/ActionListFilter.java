@@ -58,7 +58,7 @@ public class ActionListFilter implements Serializable {
     private Date lastAssignedDateTo;
     private boolean excludeLastAssignedDate;
     private Date lastModifiedDateFrom;
-    private Date lastModifedDateTo;
+    private Date lastModifiedDateTo;
     private boolean excludeLastModifiedDate;
     private String delegatorId = "";
     private String primaryDelegateId = "";
@@ -91,7 +91,7 @@ public class ActionListFilter implements Serializable {
         this.lastAssignedDateTo = another.lastAssignedDateTo;
         this.excludeLastAssignedDate = another.excludeLastAssignedDate;
         this.lastModifiedDateFrom = another.lastModifiedDateFrom;
-        this.lastModifedDateTo = another.lastModifedDateTo;
+        this.lastModifiedDateTo = another.lastModifiedDateTo;
         this.excludeLastModifiedDate = another.excludeLastModifiedDate;
         this.delegatorId = another.delegatorId;
         this.primaryDelegateId = another.primaryDelegateId;
@@ -309,12 +309,12 @@ public class ActionListFilter implements Serializable {
         this.lastModifiedDateFrom = lastModifiedDateFrom;
     }
 
-    public Date getLastModifedDateTo() {
-        return lastModifedDateTo;
+    public Date getLastModifiedDateTo() {
+        return lastModifiedDateTo;
     }
 
-    public void setLastModifedDateTo(Date lastModifedDateTo) {
-        this.lastModifedDateTo = lastModifedDateTo;
+    public void setLastModifiedDateTo(Date lastModifiedDateTo) {
+        this.lastModifiedDateTo = lastModifiedDateTo;
     }
 
     public boolean isExcludeLastModifiedDate() {
