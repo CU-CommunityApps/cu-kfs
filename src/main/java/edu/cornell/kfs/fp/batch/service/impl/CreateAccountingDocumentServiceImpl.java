@@ -256,7 +256,20 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         }
         createAccountingDocumentReportService.sendReportEmail(toAddress, fromAddress);
         LOG.info("createAndEmailReport: Report created and emailed.");
+        
+        if (reportItem.doWarningMessagesExist()) {
+            reportItem.getDocumentTypeWarningMessmageCountMap().keySet().stream()
+                .forEach(key -> sendWarningEmail(key));
+        }
     }
+    
+    protected void sendWarningEmail(String docType) {
+        /*
+         * @todo implement document type warning email
+         */
+        LOG.info("sendWarningEmail, send warning email for doc type " + docType);
+    }
+        
     
     protected String getCreateAccountingDocumentReportEmailAddress() {
         return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 

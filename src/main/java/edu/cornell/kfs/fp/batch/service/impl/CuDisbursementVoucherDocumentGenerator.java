@@ -188,20 +188,20 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     
     protected void addWarningMEssageIfPayeeNameNotAccurate(String vendorPayeeName, String dvPayeeName) {
         if (StringUtils.isNotBlank(dvPayeeName) && !StringUtils.equalsIgnoreCase(vendorPayeeName, dvPayeeName)) {
-            AutoPopulatingList<ErrorMessage> errorMessages = new AutoPopulatingList(ErrorMessage.class);
+            AutoPopulatingList<ErrorMessage> warningMessages = new AutoPopulatingList(ErrorMessage.class);
             String messageString = MessageFormat.format(
                     configurationService.getPropertyValueAsString(
                             CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_NAME_NOT_SAME_AS_VENDOR),
                     vendorPayeeName, dvPayeeName);
-            errorMessages.add(new ErrorMessage(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, messageString));
+            warningMessages.add(new ErrorMessage(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, messageString));
 
             LOG.error("addWarningMEssageIfPayeeNameNotAccurate, " + messageString);
 
             GlobalVariables.getMessageMap().getWarningMessages()
-                    .put(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, errorMessages);
+                    .put(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, warningMessages);
         } else {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("addWarningMEssageIfPayeeNameNotAccurate, the vendorPayeeName: '" + vendorPayeeName + "' dvPayeeName: '" + dvPayeeName + "'");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("addWarningMEssageIfPayeeNameNotAccurate, the vendorPayeeName: '" + vendorPayeeName + "' dvPayeeName: '" + dvPayeeName + "'");
             }
         }
     }

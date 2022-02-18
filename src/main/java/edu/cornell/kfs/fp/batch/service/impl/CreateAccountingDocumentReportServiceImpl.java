@@ -103,14 +103,14 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         
         if (reportItem.doWarningMessagesExist()) {
             Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessmageCountMap();
-            docTypeCountMap.keySet().stream().forEach(key -> WriteWarningSummaryLine(docTypeCountMap, key));
+            docTypeCountMap.keySet().stream().forEach(key -> writeWarningSummaryLine(docTypeCountMap, key));
         }
     }
     
-    protected void WriteWarningSummaryLine(Map<String, Integer> docTypeCountMap, String dvType) {
-        Integer docWarningCount = docTypeCountMap.get(dvType);
+    protected void writeWarningSummaryLine(Map<String, Integer> docTypeCountMap, String docType) {
+        Integer docWarningCount = docTypeCountMap.get(docType);
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
-                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNINGS), dvType, docWarningCount));
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNINGS), docType, docWarningCount));
     }
 
     protected void writeFileName(CreateAccountingDocumentReportItem reportItem) {
