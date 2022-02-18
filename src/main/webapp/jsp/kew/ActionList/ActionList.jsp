@@ -383,7 +383,7 @@
                                                         <display:column sortable="true" title="${lastModifiedDateLabel}" 
                                                               sortProperty="lastModifiedDate" class="infocell">
                                                             <fmt:formatDate value="${result.lastModifiedDate}"
-                                                                            pattern="${KewApiConstants.DEFAULT_DATE_FORMAT_PATTERN}" />&nbsp;
+                                                                            pattern="${KFSConstants.DEFAULT_DATE_FORMAT_PATTERN}" />&nbsp;
                                                         </display:column>
                                                     </c:if>
                                                     <c:if test="${preferences.showWorkgroupRequest == KewApiConstants.PREFERENCES_YES_VAL}">
