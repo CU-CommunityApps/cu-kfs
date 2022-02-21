@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
 
-public enum ConcurV4PersonFixture {
+public enum RequestV4PersonFixture {
     JOHN_DOE("a1b2c3d4-efgh-5678-i9j0-111kk22llmm3", "John", "Q", "Doe"),
     JANE_DOE("99999999-zzzz-8888-yyyy-xxwwvvuu7766", "Jane", "J", "Doe"),
     BOB_SMITH("11111111-2222-3333-4444-555555555555", "Bob", "B", "Smith"),
@@ -17,7 +17,7 @@ public enum ConcurV4PersonFixture {
     public final String middleInitial;
     public final String lastName;
 
-    private ConcurV4PersonFixture(String id, String firstName, String middleInitial, String lastName) {
+    private RequestV4PersonFixture(String id, String firstName, String middleInitial, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.middleInitial = middleInitial;
