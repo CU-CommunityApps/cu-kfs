@@ -216,8 +216,22 @@ public class ConcurConstants {
         public static final String APPROVED = "APPROVED";
     }
 
-    public static final class RequestV4StatusNames {
-        public static final String PENDING_EXTERNAL_VALIDATION = "Pending External Validation";
+    public enum RequestV4Status {
+        NOT_SUBMITTED("NOT_SUBMITTED", "Not Submitted"),
+        SUBMITTED_AND_PENDING_APPROVAL("SUBMITTED", "Submitted & Pending Approval"),
+        PENDING_COST_OBJECT_APPROVAL("SUBMITTED", "Pending Cost Object Approval"),
+        PENDING_EXTERNAL_VALIDATION("SUBMITTED", "Pending External Validation"),
+        APPROVED("APPROVED", "Approved"),
+        CANCELED("CANCELED", "Canceled"),
+        SENTBACK("SENTBACK", "Sent Back");
+        
+        public final String code;
+        public final String name;
+        
+        private RequestV4Status(String code, String name) {
+            this.code = code;
+            this.name = name;
+        }
     }
 
 }

@@ -7,12 +7,14 @@ import java.util.Collections;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.gl.GeneralLedgerConstants;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
@@ -20,18 +22,17 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.FileStorageException;
 import org.kuali.kfs.sys.service.FileStorageService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService {
     private static final Logger LOG = LogManager.getLogger(ConcurBatchUtilityServiceImpl.class);
@@ -46,6 +47,21 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     public String getConcurParameterValue(String parameterName) {
         String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
         return parameterValue;
+    }
+    
+    @Override
+    public void updateConcurParameterValue(String parameterName, String newValue) {
+        if (StringUtils.isBlank(parameterName)) {
+            throw new IllegalArgumentException("parameterName cannot be blank");
+        }
+        String cleanedValue = StringUtils.defaultIfBlank(newValue, KFSConstants.EMPTY_STRING);
+        Parameter parameter = getParameterService().getParameter(
+                CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
+        if (ObjectUtils.isNull(parameter)) {
+            throw new IllegalStateException("Concur parameter does not exist: " + parameterName);
+        }
+        parameter.setValue(cleanedValue);
+        getParameterService().updateParameter(parameter);
     }
     
     @Override

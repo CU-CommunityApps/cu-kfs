@@ -10,6 +10,7 @@ public class ConcurTestConstants {
     public static final String REPORT_ID_2 = "JJJJJKKKKK5555566666";
     public static final String REPORT_ID_3 = "ZZYYXXVVWW7766554433";
     public static final String REPORT_ID_SHORT = "GGGG5555";
+    public static final String CHART_IT = "IT";
     public static final String CHART_QQ = "QQ";
     public static final String OBJ_6200 = "6200";
     public static final String OBJ_7777 = "7777";
@@ -50,11 +51,15 @@ public class ConcurTestConstants {
     public static final String DASH_SUB_OBJECT_CODE = "---";
     public static final String DASH_PROJECT_CODE = "----------";
 
+    public static final String CURRENCY_USD = "USD";
+    public static final String REQUEST_TRAVEL_TYPE_CODE = "TRAVEL";
+    public static final String REQUEST_TRAVEL_TYPE_LABEL = "Travel";
+    public static final String REQUEST_EXCEPTION_LEVEL_NONE = "NONE";
+
     public static class PropertyTestValues {
         public static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance with key {0} had no matching Request Extract entry.";
         public static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE = "Line not processed due to orphaned Cash Advance with same Report ID.";
-        public static final String REQUESTV4_REQUEST_LIST_SEARCH_MESSAGE = "Travel Request listing (first page)";
-        public static final String REQUESTV4_REQUEST_LIST_SEARCH_NEXT_PAGE_MESSAGE = "Travel Request listing (next page)";
+        public static final String REQUESTV4_REQUEST_LIST_SEARCH_MESSAGE = "Travel Request Listing (page {0})";
         public static final String REQUESTV4_SINGLE_REQUEST_SEARCH_MESSAGE = "Travel Request {0}";
     }
 

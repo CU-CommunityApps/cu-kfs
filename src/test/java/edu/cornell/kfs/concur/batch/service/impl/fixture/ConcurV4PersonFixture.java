@@ -7,6 +7,8 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
 public enum ConcurV4PersonFixture {
     JOHN_DOE("a1b2c3d4-efgh-5678-i9j0-111kk22llmm3", "John", "Q", "Doe"),
     JANE_DOE("99999999-zzzz-8888-yyyy-xxwwvvuu7766", "Jane", "J", "Doe"),
+    BOB_SMITH("11111111-2222-3333-4444-555555555555", "Bob", "B", "Smith"),
+    MARY_GRANT("pppppppp-qqqq-rrrr-ssss-tttttttttttt", "Mary", "R", "Grant"),
     TEST_MANAGER("11111111-1111-1111-1111-111111111111", "TestManager", "", "TestManager"),
     TEST_APPROVER("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "TestApprover", "", "TestApprover");
 
