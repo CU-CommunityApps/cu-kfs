@@ -1,8 +1,10 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +21,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.MutableDateTime;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -29,10 +33,11 @@ import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
-import edu.cornell.kfs.concur.ConcurConstants.RequestV4StatusNames;
+import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
+import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestV4Service;
@@ -42,6 +47,7 @@ import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4CustomItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
@@ -78,6 +84,9 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         
         List<ConcurEventNotificationProcessingResultsDTO> finalResults = streamResults.collect(
                 Collectors.toUnmodifiableList());
+        
+        resetQueryDateParametersIfNecessary();
+        
         LOG.info("processTravelRequests, Finished processing " + finalResults.size() + " travel requests");
         return finalResults;
     }
@@ -172,14 +181,14 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         String messageDetail = MessageFormat.format(
                 configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_REQUEST),
                 requestUuid);
-        String queryUrl = findRequestV4Endpoint() + CUKFSConstants.SLASH + UrlFactory.encode(requestUuid);
+        String queryUrl = getRequestV4Endpoint() + CUKFSConstants.SLASH + UrlFactory.encode(requestUuid);
         
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
                 accessToken, queryUrl, ConcurRequestV4ReportDTO.class, messageDetail);
     }
 
     protected Set<String> findIdsOfPendingRequestsApprovedByTestUsers(String accessToken) {
-        Map<String, String> testApprovers = findRequestV4TestApproverMappings();
+        Map<String, String> testApprovers = getRequestV4TestApproverMappings();
         Set<String> approverNames = testApprovers.keySet();
         LOG.info("findIdsOfPendingRequestsApprovedByTestUsers, Finding requests pending external validation "
                 + "and approved by test approvers: " + approverNames.toString());
@@ -205,69 +214,72 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     protected boolean isRequestPendingExternalValidation(ConcurRequestV4ListItemDTO requestAsListItem) {
         ConcurRequestV4StatusDTO approvalStatus = requestAsListItem.getApprovalStatus();
         return ObjectUtils.isNotNull(approvalStatus) && StringUtils.equalsIgnoreCase(
-                RequestV4StatusNames.PENDING_EXTERNAL_VALIDATION, approvalStatus.getName());
+                RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, approvalStatus.getName());
     }
 
     protected <T> Stream<T> findAndProcessPendingTravelRequests(String accessToken, Optional<String> approverId,
             BiFunction<String, ConcurRequestV4ListingDTO, Stream<T>> requestListingProcessor) {
         Stream.Builder<Stream<T>> subResults = Stream.builder();
         Stream<T> subResult;
-        int startIndex = 0;
-        int pageSize = findRequestV4QueryPageSize();
+        String currentQueryUrl = buildInitialRequestQueryUrl(approverId);
+        int page = 1;
         ConcurRequestV4ListingDTO requestListing;
         
         do {
-            requestListing = findPendingTravelRequests(accessToken, startIndex, approverId);
+            requestListing = findPendingTravelRequests(accessToken, page, currentQueryUrl);
             subResult = requestListingProcessor.apply(accessToken, requestListing);
             subResults.add(subResult);
-            startIndex += pageSize;
-        } while (requestListingHasMorePages(requestListing));
+            page++;
+            currentQueryUrl = getQueryUrlForNextResultsPageIfPresent(requestListing);
+        } while (StringUtils.isNotBlank(currentQueryUrl));
         
         return subResults.build()
                 .flatMap(subResultStream -> subResultStream);
     }
 
-    protected boolean requestListingHasMorePages(ConcurRequestV4ListingDTO requestListing) {
-        return CollectionUtils.isNotEmpty(requestListing.getOperations())
-                && requestListing.getOperations().stream()
-                        .anyMatch(operation -> StringUtils.equalsIgnoreCase(
-                                ConcurApiOperations.NEXT, operation.getName()));
+    protected String getQueryUrlForNextResultsPageIfPresent(ConcurRequestV4ListingDTO requestListing) {
+        return Stream.of(requestListing.getOperations())
+                .filter(CollectionUtils::isNotEmpty)
+                .flatMap(List::stream)
+                .filter(operation -> StringUtils.equalsIgnoreCase(ConcurApiOperations.NEXT, operation.getName()))
+                .map(ConcurRequestV4OperationDTO::getHref)
+                .findFirst()
+                .orElse(KFSConstants.EMPTY_STRING);
     }
 
-    protected ConcurRequestV4ListingDTO findPendingTravelRequests(String accessToken, int startIndex,
-            Optional<String> approverId) {
-        String messageKey = (startIndex == 0) ? ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING
-                : ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING_NEXT_PAGE;
-        String messageDetail = configurationService.getPropertyValueAsString(messageKey);
-        String queryUrl = buildRequestQueryUrl(startIndex, approverId);
-        
+    protected ConcurRequestV4ListingDTO findPendingTravelRequests(String accessToken, int page, String queryUrl) {
+        String messageDetail = MessageFormat.format(
+                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING),
+                page);
         return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
                 accessToken, queryUrl, ConcurRequestV4ListingDTO.class, messageDetail);
     }
 
-    protected String buildRequestQueryUrl(int startIndex, Optional<String> approverId) {
-        String baseUrl = findRequestV4Endpoint();
-        int pageSize = findRequestV4QueryPageSize();
+    protected String buildInitialRequestQueryUrl(Optional<String> approverId) {
+        String baseUrl = getRequestV4Endpoint();
+        int pageSize = getRequestV4QueryPageSize();
         Map<String, String> urlParameters = new HashMap<>();
         urlParameters.put(ConcurApiParameters.VIEW, RequestV4Views.APPROVED);
-        urlParameters.put(ConcurApiParameters.START, Integer.toString(startIndex));
+        urlParameters.put(ConcurApiParameters.START, Integer.toString(0));
         urlParameters.put(ConcurApiParameters.LIMIT, Integer.toString(pageSize));
+        urlParameters.put(ConcurApiParameters.MODIFIED_AFTER, getLastModifiedFromDateInUTCFormat());
+        urlParameters.put(ConcurApiParameters.MODIFIED_BEFORE, getLastModifiedToDateInUTCFormat());
         if (approverId.isPresent()) {
             urlParameters.put(ConcurApiParameters.USER_ID, approverId.get());
         }
         return UrlFactory.parameterizeUrl(baseUrl, urlParameters);
     }
 
-    protected String findRequestV4Endpoint() {
+    protected String getRequestV4Endpoint() {
         String requestEndpoint = concurBatchUtilityService.getConcurParameterValue(
-                ConcurParameterConstants.REQUEST_V4_LISTING_ENDPOINT);
+                ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT);
         if (StringUtils.isBlank(requestEndpoint)) {
             throw new IllegalStateException("Endpoint for Request V4 API was not specified in the parameter");
         }
         return requestEndpoint;
     }
 
-    protected int findRequestV4QueryPageSize() {
+    protected int getRequestV4QueryPageSize() {
         String pageSize = concurBatchUtilityService.getConcurParameterValue(
                 ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE);
         if (!StringUtils.isNumeric(pageSize)) {
@@ -281,7 +293,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
     }
 
-    protected Map<String, String> findRequestV4TestApproverMappings() {
+    protected Map<String, String> getRequestV4TestApproverMappings() {
         String testApproversString = concurBatchUtilityService.getConcurParameterValue(
                 ConcurParameterConstants.REQUEST_V4_TEST_APPROVERS);
         if (StringUtils.isBlank(testApproversString)) {
@@ -293,6 +305,58 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                 .collect(Collectors.toMap(
                         keyValuePair -> keyValuePair[0], keyValuePair -> keyValuePair[1],
                         (value1, value2) -> value2, LinkedHashMap::new));
+    }
+
+    protected String getLastModifiedFromDateInUTCFormat() {
+        return getOrDefaultDateTimeFromParameter(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE_OVERRIDE,
+                this::getDefaultLastModifiedFromDate);
+    }
+
+    protected Date getDefaultLastModifiedFromDate() {
+        Date currentDate = dateTimeService.getCurrentDate();
+        MutableDateTime dateTime = new MutableDateTime(currentDate.getTime());
+        dateTime.setTime(0, 0, 0, 0);
+        return new Date(dateTime.getMillis());
+    }
+
+    protected String getLastModifiedToDateInUTCFormat() {
+        return getOrDefaultDateTimeFromParameter(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE_OVERRIDE,
+                this::getDefaultLastModifiedToDate);
+    }
+
+    protected Date getDefaultLastModifiedToDate() {
+        Date currentDate = dateTimeService.getCurrentDate();
+        MutableDateTime dateTime = new MutableDateTime(currentDate.getTime());
+        dateTime.setTime(0, 0, 0, 0);
+        dateTime.addDays(1);
+        return new Date(dateTime.getMillis());
+    }
+
+    protected String getOrDefaultDateTimeFromParameter(String parameterName, Supplier<Date> defaultValueSupplier) {
+        String parameterValue = concurBatchUtilityService.getConcurParameterValue(parameterName);
+        Date dateValue;
+        if (StringUtils.isNotBlank(parameterValue)) {
+            try {
+                dateValue = dateTimeService.convertToDate(parameterValue);
+            } catch (ParseException e) {
+                throw new IllegalStateException("Invalid date format detected for parameter " + parameterName);
+            }
+        } else {
+            dateValue = defaultValueSupplier.get();
+        }
+        return ConcurUtils.formatAsUTCDate(dateValue);
+    }
+
+    protected void resetQueryDateParametersIfNecessary() {
+        resetParameterToEmptyValueIfNecessary(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE_OVERRIDE);
+        resetParameterToEmptyValueIfNecessary(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE_OVERRIDE);
+    }
+
+    protected void resetParameterToEmptyValueIfNecessary(String parameterName) {
+        String currentValue = concurBatchUtilityService.getConcurParameterValue(parameterName);
+        if (StringUtils.isNotBlank(currentValue)) {
+            concurBatchUtilityService.updateConcurParameterValue(parameterName, KFSConstants.EMPTY_STRING);
+        }
     }
 
     protected boolean isProduction() {

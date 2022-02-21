@@ -46,6 +46,10 @@ public class ConcurFixtureUtils {
         return new java.sql.Date(dateTime.getMillis());
     }
 
+    public static DateTime toDateTimeAtMidnight(String dateString) {
+        return CONCUR_DATE_FORMATTER.parseDateTime(dateString);
+    }
+
     /**
      * Builds an immutable Map.Entry instance that can be used with the buildOverrideMap() static method.
      * It is meant to provide a convenient way for enum constants to use another enum constant as a base,
