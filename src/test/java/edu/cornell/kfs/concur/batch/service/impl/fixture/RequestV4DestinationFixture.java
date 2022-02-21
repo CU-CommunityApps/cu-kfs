@@ -2,7 +2,7 @@ package edu.cornell.kfs.concur.batch.service.impl.fixture;
 
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4MainDestinationDTO;
 
-public enum ConcurV4DestinationFixture {
+public enum RequestV4DestinationFixture {
     MIAMI_FL("A12BC34DE56FG78HI90JK12LM34NO56P", "US", "US-FL", "Miami, Florida", 24680);
 
     public final String id;
@@ -11,7 +11,7 @@ public enum ConcurV4DestinationFixture {
     public final String city;
     public final int lnKey;
 
-    private ConcurV4DestinationFixture(String id, String countryCode, String countrySubDivisionCode,
+    private RequestV4DestinationFixture(String id, String countryCode, String countrySubDivisionCode,
             String city, int lnKey) {
         this.id = id;
         this.countryCode = countryCode;

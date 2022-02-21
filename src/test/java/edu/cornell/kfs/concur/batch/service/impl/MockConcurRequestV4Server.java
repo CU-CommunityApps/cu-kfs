@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
 import edu.cornell.kfs.concur.ConcurUtils;
-import edu.cornell.kfs.concur.batch.service.impl.fixture.ConcurV4RequestFixture;
+import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
@@ -29,8 +29,8 @@ public class MockConcurRequestV4Server {
         this.objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
     }
 
-    public void addTravelRequests(ConcurV4RequestFixture... requestsToAdd) {
-        for (ConcurV4RequestFixture travelRequest : requestsToAdd) {
+    public void addTravelRequests(RequestV4DetailFixture... requestsToAdd) {
+        for (RequestV4DetailFixture travelRequest : requestsToAdd) {
             travelRequests.put(travelRequest.id, new RequestEntry(travelRequest));
         }
     }
@@ -94,11 +94,11 @@ public class MockConcurRequestV4Server {
     }
 
     private static class RequestEntry {
-        private final ConcurV4RequestFixture requestFixture;
+        private final RequestV4DetailFixture requestFixture;
         private ConcurRequestV4ListItemDTO requestAsListItem;
         private ConcurRequestV4ReportDTO requestDetail;
         
-        public RequestEntry(ConcurV4RequestFixture requestFixture) {
+        public RequestEntry(RequestV4DetailFixture requestFixture) {
             this.requestFixture = requestFixture;
             this.requestAsListItem = requestFixture.toConcurRequestV4ListItemDTO();
             this.requestDetail = requestFixture.toConcurRequestV4ReportDTO();

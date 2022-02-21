@@ -19,7 +19,7 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.impl.fixture.ConcurV4PersonFixture;
+import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
@@ -63,7 +63,7 @@ public class ConcurRequestV4ServiceImplTest {
     }
 
     private String buildTestApproversParameterValue() {
-        return Stream.of(ConcurV4PersonFixture.TEST_MANAGER, ConcurV4PersonFixture.TEST_APPROVER)
+        return Stream.of(RequestV4PersonFixture.TEST_MANAGER, RequestV4PersonFixture.TEST_APPROVER)
                 .map(fixture -> fixture.firstName + CUKFSConstants.EQUALS_SIGN + fixture.id)
                 .collect(Collectors.joining(CUKFSConstants.SEMICOLON));
     }
