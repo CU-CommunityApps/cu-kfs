@@ -1,25 +1,39 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.UrlFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
+import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
+import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 
 public class MockConcurRequestV4Server {
+
+    private static final int MAX_RESULT_LIMIT = 100;
 
     private ConcurrentMap<String, RequestEntry> travelRequests;
     private ObjectMapper objectMapper;
@@ -41,16 +55,89 @@ public class MockConcurRequestV4Server {
 
     public ConcurRequestV4ListingDTO findRequests(Map<String, String> queryParameters) {
         String view = getExistingParameter(queryParameters, ConcurApiParameters.VIEW);
-        int start = getExistingIntParameter(queryParameters, ConcurApiParameters.START);
+        int startIndex = getExistingIntParameter(queryParameters, ConcurApiParameters.START);
         int limit = getExistingIntParameter(queryParameters, ConcurApiParameters.LIMIT);
         Date modifiedAfter = getExistingDateParameter(queryParameters, ConcurApiParameters.MODIFIED_AFTER);
         Date modifiedBefore = getExistingDateParameter(queryParameters, ConcurApiParameters.MODIFIED_BEFORE);
         Optional<String> userId = getOptionalParameter(queryParameters, ConcurApiParameters.USER_ID);
         
-        //Stream<ConcurV4RequestFixture> results = travelRequests.stream()
-                //;
+        Comparator<ConcurRequestV4ListItemDTO> requestSorter = Comparator.comparing(
+                ConcurRequestV4ListItemDTO::getStartDate, Comparator.reverseOrder());
         
-        return null;
+        if (!StringUtils.equalsIgnoreCase(RequestV4Views.APPROVED, view)) {
+            throw new IllegalArgumentException("This mock server only supports the APPROVED view; requested view was: "
+                    + view);
+        } else if (startIndex < 0) {
+            throw new IllegalArgumentException("start index cannot be negative");
+        } else if (limit < 1 || limit > MAX_RESULT_LIMIT) {
+            throw new IllegalArgumentException("limit cannot be non-positive and cannot be greater than 100");
+        } else if (modifiedAfter.compareTo(modifiedBefore) > 0) {
+            throw new IllegalArgumentException("modifiedAfter date cannot be later than modifiedBefore date");
+        }
+        
+        List<ConcurRequestV4ListItemDTO> unboundedResults = travelRequests.values().stream()
+                .filter(requestEntry -> requestWasLastModifiedBetweenDates(
+                        requestEntry, modifiedAfter, modifiedBefore))
+                .filter(requestEntry -> userId.isEmpty() || requestHasApprover(requestEntry, userId.get()))
+                .map(requestEntry -> requestEntry.requestAsListItem)
+                .map(listItem -> copyJsonDTO(listItem, ConcurRequestV4ListItemDTO.class))
+                .sorted(requestSorter)
+                .collect(Collectors.toUnmodifiableList());
+        
+        return buildRequestListing(unboundedResults, queryParameters);
+    }
+
+    private boolean requestWasLastModifiedBetweenDates(RequestEntry requestEntry, Date rangeStart, Date rangeEnd) {
+        Date lastModifiedDate = requestEntry.requestDetail.getLastModifiedDate();
+        return lastModifiedDate != null && lastModifiedDate.compareTo(rangeStart) >= 0
+                && lastModifiedDate.compareTo(rangeEnd) <= 0;
+    }
+
+    private boolean requestHasApprover(RequestEntry requestEntry, String approverId) {
+        ConcurRequestV4PersonDTO approver = requestEntry.requestDetail.getApprover();
+        return ObjectUtils.isNotNull(approver) && StringUtils.equalsIgnoreCase(approver.getId(), approverId);
+    }
+
+    private ConcurRequestV4ListingDTO buildRequestListing(List<ConcurRequestV4ListItemDTO> unboundedResults,
+            Map<String, String> queryParameters) {
+        int startIndex = getExistingIntParameter(queryParameters, ConcurApiParameters.START);
+        int limit = getExistingIntParameter(queryParameters, ConcurApiParameters.LIMIT);
+        int totalCount = unboundedResults.size();
+        int endIndex = Math.min(startIndex + limit, totalCount);
+        int countModLimit = totalCount % limit;
+        int startIndexForLastPage = (countModLimit == 0)
+                ? Math.max(totalCount - limit, 0)
+                : totalCount - countModLimit;
+        
+        Stream.Builder<ConcurRequestV4OperationDTO> operationsBuilder = Stream.builder();
+        if (startIndex - limit >= 0) {
+            operationsBuilder.add(buildOperation(queryParameters, ConcurApiOperations.PREV, startIndex - limit));
+        }
+        if (startIndex + limit < totalCount) {
+            operationsBuilder.add(buildOperation(queryParameters, ConcurApiOperations.NEXT, startIndex + limit));
+        }
+        operationsBuilder.add(buildOperation(queryParameters, ConcurApiOperations.FIRST, 0));
+        operationsBuilder.add(buildOperation(queryParameters, ConcurApiOperations.LAST, startIndexForLastPage));
+        List<ConcurRequestV4OperationDTO> operations = operationsBuilder.build()
+                .collect(Collectors.toUnmodifiableList());
+        
+        ConcurRequestV4ListingDTO requestListing = new ConcurRequestV4ListingDTO();
+        requestListing.setTotalCount(Integer.valueOf(totalCount));
+        requestListing.setListItems(unboundedResults.subList(startIndex, endIndex));
+        requestListing.setOperations(operations);
+        return requestListing;
+    }
+
+    private ConcurRequestV4OperationDTO buildOperation(Map<String, String> queryParameters,
+            String name, int startIndex) {
+        Map<String, String> operationParameters = new HashMap<>(queryParameters);
+        operationParameters.put(ConcurApiParameters.START, String.valueOf(startIndex));
+        
+        ConcurRequestV4OperationDTO operation = new ConcurRequestV4OperationDTO();
+        operation.setName(name);
+        operation.setHref(UrlFactory.parameterizeUrl(
+                ParameterTestValues.REQUEST_V4_LOCALHOST_ENDPOINT, operationParameters));
+        return operation;
     }
 
     private Date getExistingDateParameter(Map<String, String> queryParameters, String key) {

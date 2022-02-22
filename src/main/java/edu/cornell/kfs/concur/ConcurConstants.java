@@ -209,7 +209,10 @@ public class ConcurConstants {
     }
 
     public static final class ConcurApiOperations {
+        public static final String FIRST = "first";
+        public static final String PREV = "prev";
         public static final String NEXT = "next";
+        public static final String LAST = "last";
     }
 
     public static final class RequestV4Views {
