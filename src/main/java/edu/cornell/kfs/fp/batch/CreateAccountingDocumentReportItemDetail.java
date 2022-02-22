@@ -102,7 +102,7 @@ public class CreateAccountingDocumentReportItemDetail {
     }
 
     public void appendErrorMessageToExistingErrorMessage(String additionalErrorMessageContent) {
-        setErrorMessage((ObjectUtils.isNotNull(errorMessage) ? errorMessage : KFSConstants.EMPTY_STRING)
+        this.setErrorMessage((ObjectUtils.isNotNull(this.getErrorMessage()) ? this.getErrorMessage() : KFSConstants.EMPTY_STRING)
                 + KFSConstants.NEWLINE + KFSConstants.NEWLINE + additionalErrorMessageContent);
          
     }

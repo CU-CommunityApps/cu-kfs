@@ -19,11 +19,11 @@ public class CuFPKeyConstants {
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_SUCCESSFULLY_ROUTED = "report.create.accounting.document.summary.documents.successfully.routed";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_NOT_SAVED = "report.create.accounting.document.summary.documents.not.saved";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNINGS = "report.create.accounting.document.summary.documents.with.warning";
+    public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_WARNING_DOCUMENTS_MESSAGE = "report.create.accounting.document.warning.documents.message";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_SUB_HEADER = "report.create.accounting.document.erred.validation.sub.header";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_RAW_DATA = "report.create.accounting.document.erred.validation.raw.data";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_DOCUMENTS_NONE = "report.create.accounting.document.erred.validation.documents.none";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_DOCUMENTS_MESSAGE = "report.create.accounting.document.erred.validation.documents.message";
-    public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_WARNING_DOCUMENTS_MESSAGE = "report.create.accounting.document.warning.documents.message";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_SUB_HEADER = "report.create.accounting.document.erred.business.rule.sub.header";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_DOCUMENTS_NONE = "report.create.accounting.document.erred.business.rule.documents.none";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_DOCUMENTS_MESSAGE = "report.create.accounting.document.erred.business.rule.documents.message";
