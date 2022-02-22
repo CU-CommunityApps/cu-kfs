@@ -109,6 +109,7 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
     
     protected void writeWarningSummaryLine(Map<String, Integer> docTypeCountMap, String docType) {
         Integer docWarningCount = docTypeCountMap.get(docType);
+        reportWriterService.writeNewLines(1);
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNINGS), docType, docWarningCount));
     }
