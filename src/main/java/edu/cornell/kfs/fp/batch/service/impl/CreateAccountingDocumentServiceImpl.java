@@ -258,7 +258,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         LOG.info("createAndEmailReport: Report created and emailed.");
         
         if (reportItem.doWarningMessagesExist()) {
-            reportItem.getDocumentTypeWarningMessmageCountMap().keySet().stream()
+            reportItem.getDocumentTypeWarningMessageCountMap().keySet().stream()
                 .forEach(key -> sendWarningEmail(key, fromAddress));
         }
     }

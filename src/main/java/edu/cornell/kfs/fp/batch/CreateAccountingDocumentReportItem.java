@@ -112,7 +112,7 @@ public class CreateAccountingDocumentReportItem {
         return getDocumentDetailsWithWarnings().size() > 0;
     }
     
-    public Map<String, Integer> getDocumentTypeWarningMessmageCountMap() {
+    public Map<String, Integer> getDocumentTypeWarningMessageCountMap() {
         Map<String, Integer> docTypeCountMap = new HashMap<>();
         getDocumentDetailsWithWarnings().stream().forEach(detail -> addDetailDataToDocTypeCountMap(detail, docTypeCountMap));
         return docTypeCountMap;

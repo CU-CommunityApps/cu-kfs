@@ -102,7 +102,7 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_NOT_SAVED), reportItem.getDocumentsInError().size()));
         
         if (reportItem.doWarningMessagesExist()) {
-            Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessmageCountMap();
+            Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessageCountMap();
             docTypeCountMap.keySet().stream().forEach(key -> writeWarningSummaryLine(docTypeCountMap, key));
         }
     }
@@ -111,7 +111,7 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         Integer docWarningCount = docTypeCountMap.get(docType);
         reportWriterService.writeNewLines(1);
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
-                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNINGS), docType, docWarningCount));
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNING), docType, docWarningCount));
     }
 
     protected void writeFileName(CreateAccountingDocumentReportItem reportItem) {

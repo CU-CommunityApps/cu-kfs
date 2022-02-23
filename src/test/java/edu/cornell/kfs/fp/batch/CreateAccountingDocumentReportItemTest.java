@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,26 +65,26 @@ class CreateAccountingDocumentReportItemTest {
     }
     
     @Test
-    public void testGetDocumentTypeWarningMessmageCountMapNoWarnings() {
-        Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessmageCountMap();
+    public void testGetDocumentTypeWarningMessageCountMap_NoWarnings() {
+        Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessageCountMap();
         assertEquals(0, docTypeCountMap.size());
     }
     
     @Test
-    public void testGetDocumentTypeWarningMessmageCountMapWithWarnings1() {
+    public void testGetDocumentTypeWarningMessageCountMap_WithWarnings() {
         addWarningDetails();
-        Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessmageCountMap();
+        Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessageCountMap();
         assertEquals(2, docTypeCountMap.size());
         assertEquals(1, docTypeCountMap.get(DOCUMENT_TYPE_DI));
         assertEquals(2, docTypeCountMap.get(DOCUMENT_TYPE_DV));
     }
     
     @Test
-    public void testGetDocumentTypeWarningMessmageCountMapWithWarnings2() {
+    public void testGetDocumentTypeWarningMessageCountMap_WithWarningsDoubled() {
         addWarningDetails();
         addWarningDetails();
         reportItem.getDocumentsInError().add(createCreateAccountingDocumentReportItemDetail(DOCUMENT_TYPE_SB, TWO_SPACES));
-        Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessmageCountMap();
+        Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessageCountMap();
         assertEquals(2, docTypeCountMap.size());
         assertEquals(2, docTypeCountMap.get(DOCUMENT_TYPE_DI));
         assertEquals(4, docTypeCountMap.get(DOCUMENT_TYPE_DV));
