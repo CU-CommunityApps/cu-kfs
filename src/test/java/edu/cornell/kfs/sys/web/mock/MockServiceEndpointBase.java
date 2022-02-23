@@ -59,7 +59,6 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
 
 	private static final Logger LOG = LogManager.getLogger(MockServiceEndpointBase.class);
 
-    protected String baseUrl;
     protected String multiPartContentDirectory;
 
     public abstract String getRelativeUrlPatternForHandlerRegistration();
@@ -226,6 +225,10 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         }
         
         return jsonText;
+    }
+
+    protected void onServerInitialized(String baseUrl) {
+        
     }
 
 }

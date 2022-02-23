@@ -5,6 +5,7 @@ public class ConcurConstants {
     public static final String CONSUMER_KEY_PROPERTY = "X-ConsumerKey";
     public static final String BASIC_AUTHENTICATION_SCHEME = "Basic";
     public static final String OAUTH_AUTHENTICATION_SCHEME = "OAuth";
+    public static final String BEARER_AUTHENTICATION_SCHEME = "Bearer";
 
     public static final int VALIDATION_RESULT_MESSAGE_MAX_LENGTH = 2000;
 
