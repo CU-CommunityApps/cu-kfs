@@ -6,7 +6,6 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurTestConstants;
-import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4AmountDTO;
@@ -46,7 +45,25 @@ public enum RequestV4DetailFixture {
             "04/05/2022", "04/15/2022", "2022-01-01T05:00:00Z", "2022-01-01T05:06:07Z", "2022-01-03T08:30:55Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_1234321, ConcurTestConstants.SUB_ACCT_88888,
             ConcurTestConstants.SUB_OBJ_333, ConcurTestConstants.PROJ_AA_778899,
-            false, RequestV4DestinationFixture.MIAMI_FL, 159.99, 159.99, 159.99);
+            false, RequestV4DestinationFixture.MIAMI_FL, 159.99, 159.99, 159.99),
+
+    APPROVED_TEST_REQUEST_JANE_DOE(
+            "AABBCCAABBCCAABBCCAABBCCAABBCCAA", "7XQJ",
+            "Test Team Meeting In Denver", "There is a test meeting over in Colorado",
+            RequestV4PersonFixture.JANE_DOE, RequestV4PersonFixture.TEST_MANAGER,
+            RequestV4Status.APPROVED,
+            "05/01/2022", "05/31/2022", "2022-03-03T08:08:08Z", "2022-03-03T09:09:09Z", "2022-03-03T10:10:10Z",
+            ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_4455667, null, null, null,
+            false, RequestV4DestinationFixture.DENVER_CO, 250.00, 250.00, 250.00),
+
+    PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JANE_DOE(
+            "AAZZBBYYCCXXDDWWEEVVFFUUGGTTHHSS", "3QRS",
+            "Another Test Meeting In Denver", "Another test meeting is taking place in the state of Colorado",
+            RequestV4PersonFixture.JANE_DOE, RequestV4PersonFixture.TEST_MANAGER,
+            RequestV4Status.APPROVED,
+            "06/01/2022", "06/30/2022", "2022-03-03T08:09:08Z", "2022-03-03T09:10:09Z", "2022-03-03T10:11:10Z",
+            ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_4455667, null, null, null,
+            false, RequestV4DestinationFixture.DENVER_CO, 250.00, 250.00, 250.00);
 
     public final String id;
     public final String requestId;
@@ -101,9 +118,9 @@ public enum RequestV4DetailFixture {
         this.totalRemainingAmount = new KualiDecimal(totalRemainingAmount);
     }
 
-    public ConcurRequestV4ReportDTO toConcurRequestV4ReportDTO() {
+    public ConcurRequestV4ReportDTO toConcurRequestV4ReportDTO(String baseRequestUrl) {
         ConcurRequestV4ReportDTO requestDTO = new ConcurRequestV4ReportDTO();
-        requestDTO.setHref(buildRequestHref());
+        requestDTO.setHref(buildRequestHref(baseRequestUrl));
         requestDTO.setId(id);
         requestDTO.setApprovalStatus(buildApprovalStatusDTO());
         requestDTO.setApproved(isApproved());
@@ -136,9 +153,9 @@ public enum RequestV4DetailFixture {
         return requestDTO;
     }
 
-    public ConcurRequestV4ListItemDTO toConcurRequestV4ListItemDTO() {
+    public ConcurRequestV4ListItemDTO toConcurRequestV4ListItemDTO(String baseRequestUrl) {
         ConcurRequestV4ListItemDTO listItemDTO = new ConcurRequestV4ListItemDTO();
-        listItemDTO.setHref(buildRequestHref());
+        listItemDTO.setHref(buildRequestHref(baseRequestUrl));
         listItemDTO.setId(id);
         listItemDTO.setApprovalStatus(buildApprovalStatusDTO());
         listItemDTO.setApproved(isApproved());
@@ -166,8 +183,8 @@ public enum RequestV4DetailFixture {
         return listItemDTO;
     }
 
-    private String buildRequestHref() {
-        return ParameterTestValues.REQUEST_V4_LOCALHOST_ENDPOINT + CUKFSConstants.SLASH + id;
+    private String buildRequestHref(String baseRequestUrl) {
+        return baseRequestUrl + CUKFSConstants.SLASH + id;
     }
 
     private ConcurRequestV4StatusDTO buildApprovalStatusDTO() {

@@ -3,7 +3,8 @@ package edu.cornell.kfs.concur.batch.service.impl.fixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4MainDestinationDTO;
 
 public enum RequestV4DestinationFixture {
-    MIAMI_FL("A12BC34DE56FG78HI90JK12LM34NO56P", "US", "US-FL", "Miami, Florida", 24680);
+    MIAMI_FL("A12BC34DE56FG78HI90JK12LM34NO56P", "US", "US-FL", "Miami, Florida", 24680),
+    DENVER_CO("ZZ11ZZ22ZZ33ZZ44ZZ55ZZ66ZZ77ZZ88", "US", "US-CO", "Denver, Colorado", 55555);
 
     public final String id;
     public final String countryCode;

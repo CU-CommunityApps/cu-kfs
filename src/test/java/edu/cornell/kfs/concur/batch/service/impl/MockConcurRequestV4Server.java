@@ -1,11 +1,14 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -14,9 +17,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
@@ -29,31 +29,51 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
-import edu.cornell.kfs.sys.util.CUJsonUtils;
 
-public class MockConcurRequestV4Server {
+public class MockConcurRequestV4Server implements Closeable {
 
     private static final int MAX_RESULT_LIMIT = 100;
 
-    private ConcurrentMap<String, RequestEntry> travelRequests;
-    private ObjectMapper objectMapper;
+    private static final Set<String> ALLOWED_REQUEST_LIST_QUERY_PARAMETERS = Set.of(
+            ConcurApiParameters.VIEW, ConcurApiParameters.START, ConcurApiParameters.LIMIT,
+            ConcurApiParameters.MODIFIED_AFTER, ConcurApiParameters.MODIFIED_BEFORE, ConcurApiParameters.USER_ID);
 
-    public MockConcurRequestV4Server() {
+    private ConcurrentMap<String, RequestEntry> travelRequests;
+    private String baseUrl;
+
+    public MockConcurRequestV4Server(String baseUrl, RequestV4DetailFixture... requestsToAdd) {
         this.travelRequests = new ConcurrentHashMap<>();
-        this.objectMapper = CUJsonUtils.buildObjectMapperUsingDefaultTimeZone();
+        this.baseUrl = baseUrl;
+        addTravelRequests(requestsToAdd);
+    }
+
+    @Override
+    public void close() throws IOException {
+        travelRequests.clear();
+        travelRequests = null;
+        baseUrl = null;
     }
 
     public void addTravelRequests(RequestV4DetailFixture... requestsToAdd) {
+        String baseRequestUrl = getBaseRequestV4Url();
         for (RequestV4DetailFixture travelRequest : requestsToAdd) {
-            travelRequests.put(travelRequest.id, new RequestEntry(travelRequest));
+            travelRequests.put(travelRequest.id, new RequestEntry(travelRequest, baseRequestUrl));
         }
     }
 
-    public ConcurRequestV4ListingDTO findRequests(String queryUrl) {
-        return null;
+    public Optional<ConcurRequestV4ReportDTO> findRequest(String id) {
+        RequestEntry matchingEntry = travelRequests.get(id);
+        return Optional.ofNullable(matchingEntry)
+                .map(entry -> entry.requestDetail);
     }
 
     public ConcurRequestV4ListingDTO findRequests(Map<String, String> queryParameters) {
+        Set<String> unsupportedParameters = searchForUnsupportedRequestListQueryParameters(queryParameters);
+        if (!unsupportedParameters.isEmpty()) {
+            throw new IllegalArgumentException("Query contains unsupported parameters: "
+                    + unsupportedParameters.toString());
+        }
+        
         String view = getExistingParameter(queryParameters, ConcurApiParameters.VIEW);
         int startIndex = getExistingIntParameter(queryParameters, ConcurApiParameters.START);
         int limit = getExistingIntParameter(queryParameters, ConcurApiParameters.LIMIT);
@@ -80,11 +100,16 @@ public class MockConcurRequestV4Server {
                         requestEntry, modifiedAfter, modifiedBefore))
                 .filter(requestEntry -> userId.isEmpty() || requestHasApprover(requestEntry, userId.get()))
                 .map(requestEntry -> requestEntry.requestAsListItem)
-                .map(listItem -> copyJsonDTO(listItem, ConcurRequestV4ListItemDTO.class))
                 .sorted(requestSorter)
                 .collect(Collectors.toUnmodifiableList());
         
         return buildRequestListing(unboundedResults, queryParameters);
+    }
+
+    private Set<String> searchForUnsupportedRequestListQueryParameters(Map<String, String> queryParameters) {
+        return queryParameters.keySet().stream()
+                .filter(paramName -> !ALLOWED_REQUEST_LIST_QUERY_PARAMETERS.contains(paramName))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private boolean requestWasLastModifiedBetweenDates(RequestEntry requestEntry, Date rangeStart, Date rangeEnd) {
@@ -133,11 +158,16 @@ public class MockConcurRequestV4Server {
         Map<String, String> operationParameters = new HashMap<>(queryParameters);
         operationParameters.put(ConcurApiParameters.START, String.valueOf(startIndex));
         
+        String concurRequestsEndpoint = getBaseRequestV4Url();
+        
         ConcurRequestV4OperationDTO operation = new ConcurRequestV4OperationDTO();
         operation.setName(name);
-        operation.setHref(UrlFactory.parameterizeUrl(
-                ParameterTestValues.REQUEST_V4_LOCALHOST_ENDPOINT, operationParameters));
+        operation.setHref(UrlFactory.parameterizeUrl(concurRequestsEndpoint, operationParameters));
         return operation;
+    }
+
+    private String getBaseRequestV4Url() {
+        return baseUrl + ParameterTestValues.REQUEST_V4_RELATIVE_ENDPOINT;
     }
 
     private Date getExistingDateParameter(Map<String, String> queryParameters, String key) {
@@ -171,24 +201,13 @@ public class MockConcurRequestV4Server {
                 .filter(StringUtils::isNotBlank);
     }
 
-    private <T> T copyJsonDTO(T jsonObject, Class<T> objectClass) {
-        try {
-            String jsonString = objectMapper.writeValueAsString(jsonObject);
-            return objectMapper.readValue(jsonString, objectClass);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unexpected exception encountered while copying JSON DTO", e);
-        }
-    }
-
     private static class RequestEntry {
-        private final RequestV4DetailFixture requestFixture;
         private ConcurRequestV4ListItemDTO requestAsListItem;
         private ConcurRequestV4ReportDTO requestDetail;
         
-        public RequestEntry(RequestV4DetailFixture requestFixture) {
-            this.requestFixture = requestFixture;
-            this.requestAsListItem = requestFixture.toConcurRequestV4ListItemDTO();
-            this.requestDetail = requestFixture.toConcurRequestV4ReportDTO();
+        public RequestEntry(RequestV4DetailFixture requestFixture, String baseRequestUrl) {
+            this.requestAsListItem = requestFixture.toConcurRequestV4ListItemDTO(baseRequestUrl);
+            this.requestDetail = requestFixture.toConcurRequestV4ReportDTO(baseRequestUrl);
         }
     }
 
