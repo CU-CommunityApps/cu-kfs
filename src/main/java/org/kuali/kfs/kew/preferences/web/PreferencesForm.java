@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 /**
  * ====
  * CU Customization: Added handling for the custom "showNotes" preference.
+ * CU Customization: Added handling for the custom "showLastModifiedDate" preference.
  * ====
  * 
  * Struts ActionForm for {@link PreferencesAction}.
@@ -218,6 +219,9 @@ public class PreferencesForm extends KualiForm {
                 (StringUtils.isNotBlank(preferences.getShowDateApproved())) &&
                         (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
                                 .contains(preferences.getShowDateApproved())) ||
+                (StringUtils.isNotBlank(preferences.getShowLastModifiedDate())) &&
+                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                                .contains(preferences.getShowLastModifiedDate())) ||
                 (StringUtils.isNotBlank(preferences.getShowCurrentNode())) &&
                         (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
                                 .contains(preferences.getShowCurrentNode())) ||

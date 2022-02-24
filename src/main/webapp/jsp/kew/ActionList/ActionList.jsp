@@ -68,6 +68,10 @@
 <bean:define id="dateApprovedLabel">
     <bean-el:message key="actionList.ActionList.results.label.dateApproved" />
 </bean:define>
+<%-- CU Customization: Load label related to custom Last Modified Date column. --%>
+<bean:define id="lastModifiedDateLabel">
+    <bean-el:message key="actionList.ActionList.results.label.dateLastModified" />
+</bean:define>
 <bean:define id="currentRouteNodesLabel">
     <bean-el:message key="actionList.ActionList.results.label.currentRouteNodes" />
 </bean:define>
@@ -371,6 +375,14 @@
                                                     <c:if test="${preferences.showDateApproved == KewApiConstants.PREFERENCES_YES_VAL}">
                                                         <display:column sortable="true" title="${dateApprovedLabel}" sortProperty="lastApprovedDate" class="infocell">
                                                             <fmt:formatDate value="${result.lastApprovedDate}"
+                                                                            pattern="${KFSConstants.DEFAULT_DATE_FORMAT_PATTERN}" />&nbsp;
+                                                        </display:column>
+                                                    </c:if>
+                                                    <%-- CU Customization: Add column for Last Modified Date. --%>
+                                                    <c:if test="${preferences.showLastModifiedDate == KewApiConstants.PREFERENCES_YES_VAL}">
+                                                        <display:column sortable="true" title="${lastModifiedDateLabel}" 
+                                                              sortProperty="lastModifiedDate" class="infocell">
+                                                            <fmt:formatDate value="${result.lastModifiedDate}"
                                                                             pattern="${KFSConstants.DEFAULT_DATE_FORMAT_PATTERN}" />&nbsp;
                                                         </display:column>
                                                     </c:if>

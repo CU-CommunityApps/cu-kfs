@@ -142,6 +142,14 @@
           <html-el:checkbox styleClass="nobord" property="preferences.showDateApproved" value="${KewApiConstants.PREFERENCES_YES_VAL }"/>
         </td>
       </tr>
+      
+      <%-- CU Customization: Add option for custom Last Modified Date column. --%>
+      <tr>
+        <th>Date Last Modified</th>
+        <td class="datacell">
+          <html-el:checkbox styleClass="nobord" property="preferences.showLastModifiedDate" value="${KewApiConstants.PREFERENCES_YES_VAL }"/>
+        </td>
+      </tr>
       <tr>
         <th>Current Route Node(s)</th>
         <td class="datacell">
