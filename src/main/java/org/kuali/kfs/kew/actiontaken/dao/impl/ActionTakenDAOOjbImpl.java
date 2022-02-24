@@ -27,7 +27,7 @@ import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.actiontaken.dao.ActionTakenDAO;
 import org.kuali.kfs.kew.api.WorkflowRuntimeException;
-import org.kuali.kfs.kew.api.action.ActionType;
+import org.kuali.kfs.kew.api.action.WorkflowAction;
 import org.springmodules.orm.ojb.PersistenceBrokerCallback;
 import org.springmodules.orm.ojb.support.PersistenceBrokerDaoSupport;
 
@@ -159,7 +159,7 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         return count > 0;
     }
 
-    public Timestamp getLastActionTakenDate(final String documentId, final ActionType actionType) {
+    public Timestamp getLastActionTakenDate(final String documentId, final WorkflowAction actionType) {
         return (Timestamp) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
             public Object doInPersistenceBroker(PersistenceBroker broker) {
                 PreparedStatement statement = null;

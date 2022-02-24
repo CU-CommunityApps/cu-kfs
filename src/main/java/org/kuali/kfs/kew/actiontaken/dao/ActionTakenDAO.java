@@ -19,7 +19,7 @@
 package org.kuali.kfs.kew.actiontaken.dao;
 
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
-import org.kuali.kfs.kew.api.action.ActionType;
+import org.kuali.kfs.kew.api.action.WorkflowAction;
 
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -56,7 +56,7 @@ public interface ActionTakenDAO {
 
     boolean hasUserTakenAction(String workflowId, String documentId);
 
-    Timestamp getLastActionTakenDate(String documentId, ActionType actionType);
+    Timestamp getLastActionTakenDate(String documentId, WorkflowAction actionType);
     
     Timestamp getLastModifiedDate(String documentId);
 }

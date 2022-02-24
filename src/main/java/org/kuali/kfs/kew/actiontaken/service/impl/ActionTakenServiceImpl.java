@@ -26,7 +26,7 @@ import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.actiontaken.dao.ActionTakenDAO;
 import org.kuali.kfs.kew.actiontaken.service.ActionTakenService;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.api.action.ActionType;
+import org.kuali.kfs.kew.api.action.WorkflowAction;
 import org.kuali.kfs.kew.exception.WorkflowServiceErrorException;
 import org.kuali.kfs.kew.exception.WorkflowServiceErrorImpl;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
@@ -197,7 +197,7 @@ public class ActionTakenServiceImpl implements ActionTakenService {
     }
 
     public Timestamp getLastApprovedDate(String documentId) {
-        return getActionTakenDAO().getLastActionTakenDate(documentId, ActionType.APPROVE);
+        return getActionTakenDAO().getLastActionTakenDate(documentId, WorkflowAction.APPROVE);
     }
     
     public Timestamp getLastModifiedDate(String documentId) {
