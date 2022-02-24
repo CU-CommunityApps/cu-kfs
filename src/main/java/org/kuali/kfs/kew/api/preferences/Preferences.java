@@ -29,6 +29,7 @@ import java.util.Map;
 /**
  * ====
  * CU Customization: Added a preference for controlling the visibility of the action list notes column.
+ * CU Customization: Added a preference for controlling the visibility of the action list last modified date column.
  * ====
  * 
  * When loaded, Preferences could be in a state where they require being saved to the database.
@@ -69,6 +70,7 @@ public final class Preferences implements PreferencesContract, Serializable {
     private final String notifyFYI;
 
     private final String showNotes;
+    private final String showLastModifiedDate;
 
     /*
      * @Deprecated for 2.1.1.  Invalid @XmlJavaTypeAdapter.  Use documentTypeNotitificationPreferenceMap instead.
@@ -106,6 +108,7 @@ public final class Preferences implements PreferencesContract, Serializable {
         this.notifyComplete = builder.getNotifyComplete();
         this.notifyFYI = builder.getNotifyFYI();
         this.showNotes = builder.getShowNotes();
+        this.showLastModifiedDate = builder.getShowLastModifiedDate();
         this.documentTypeNotificationPreferences = null;
         this.documentTypeNotificationPreferenceMap = builder.getDocumentTypeNotificationPreferences();
     }
@@ -244,6 +247,10 @@ public final class Preferences implements PreferencesContract, Serializable {
     public String getShowNotes() {
         return this.showNotes;
     }
+    
+    public String getShowLastModifiedDate() {
+        return this.showLastModifiedDate;
+    }
 
     public String getDocumentTypeNotificationPreference(String documentType) {
         String preferenceName = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
@@ -294,6 +301,7 @@ public final class Preferences implements PreferencesContract, Serializable {
         private String notifyComplete;
         private String notifyFYI;
         private String showNotes;
+        private String showLastModifiedDate;
         private Map<String, String> documentTypeNotificationPreferences;
 
         private Builder() {
@@ -307,7 +315,7 @@ public final class Preferences implements PreferencesContract, Serializable {
                 String refreshRate, String delegatorFilter, String useOutbox,
                 String showDateApproved, String showCurrentNode, String primaryDelegateFilter,
                 String notifyAcknowledge,
-                String notifyApprove, String notifyComplete, String notifyFYI, String showNotes,
+                String notifyApprove, String notifyComplete, String notifyFYI, String showNotes, String showLastModifiedDate,
                 Map<String, String> documentTypeNotificationPreferences,
                 boolean requiresSave) {
             this.emailNotification = emailNotification;
@@ -337,6 +345,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifyComplete = notifyComplete;
             this.notifyFYI = notifyFYI;
             this.showNotes = showNotes;
+            this.showLastModifiedDate = showLastModifiedDate;
             this.documentTypeNotificationPreferences = documentTypeNotificationPreferences;
         }
 
@@ -356,7 +365,7 @@ public final class Preferences implements PreferencesContract, Serializable {
                 String refreshRate, String delegatorFilter, String useOutbox,
                 String showDateApproved, String showCurrentNode, String primaryDelegateFilter,
                 String notifyAcknowledge,
-                String notifyApprove, String notifyComplete, String notifyFYI, String showNotes,
+                String notifyApprove, String notifyComplete, String notifyFYI, String showNotes, String showLastModifiedDate,
                 Map<String, String> documentTypeNotificationPreferences,
                 boolean requiresSave) {
             return new Builder(emailNotification, notifyPrimaryDelegation, notifySecondaryDelegation, openNewWindow,
@@ -365,7 +374,7 @@ public final class Preferences implements PreferencesContract, Serializable {
                     showWorkgroupRequest, showDelegator, showClearFyi,
                     pageSize, refreshRate, delegatorFilter, useOutbox, showDateApproved,
                     showCurrentNode, primaryDelegateFilter,
-                    notifyAcknowledge, notifyApprove, notifyComplete, notifyFYI, showNotes,
+                    notifyAcknowledge, notifyApprove, notifyComplete, notifyFYI, showNotes, showLastModifiedDate,
                     documentTypeNotificationPreferences, requiresSave);
         }
 
@@ -383,7 +392,7 @@ public final class Preferences implements PreferencesContract, Serializable {
                     contract.getUseOutbox(), contract.getShowDateApproved(),
                     contract.getShowCurrentNode(), contract.getPrimaryDelegateFilter(),
                     contract.getNotifyAcknowledge(), contract.getNotifyApprove(), contract.getNotifyComplete(),
-                    contract.getNotifyFYI(), contract.getShowNotes(),
+                    contract.getNotifyFYI(), contract.getShowNotes(), contract.getShowLastModifiedDate(),
                     contract.getDocumentTypeNotificationPreferences(), contract.isRequiresSave());
         }
 
@@ -403,7 +412,7 @@ public final class Preferences implements PreferencesContract, Serializable {
                     map.get(KEYS.SHOW_CURRENT_NODE), map.get(KEYS.PRIMARY_DELEGATE_FILTER),
                     map.get(KEYS.NOTIFY_ACKNOWLEDGE), map.get(
                             KEYS.NOTIFY_APPROVE), map.get(KEYS.NOTIFY_COMPLETE),
-                    map.get(KEYS.NOTIFY_FYI), map.get(KEYS.SHOW_NOTES),
+                    map.get(KEYS.NOTIFY_FYI), map.get(KEYS.SHOW_NOTES), map.get(KEYS.SHOW_LAST_MODIFIED_DATE),
                     documentTypeNotificationPreferences, requiresSave);
         }
 
@@ -622,6 +631,15 @@ public final class Preferences implements PreferencesContract, Serializable {
         public synchronized void setShowNotes(String showNotes) {
             this.showNotes = showNotes;
         }
+        
+        public synchronized String getShowLastModifiedDate() {
+            return this.showLastModifiedDate;
+        }
+
+        public synchronized void setShowLastModifiedDate(String showLastModifiedDate) {
+            this.showLastModifiedDate = showLastModifiedDate;
+        }
+
 
         public synchronized String getDocumentTypeNotificationPreference(String documentType) {
             String preferenceName = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
@@ -694,6 +712,7 @@ public final class Preferences implements PreferencesContract, Serializable {
         public static final String NOTIFY_COMPLETE = "NOTIFY_COMPLETE";
         public static final String NOTIFY_FYI = "NOTIFY_FYI";
         public static final String SHOW_NOTES = "SHOW_NOTES";
+        public static final String SHOW_LAST_MODIFIED_DATE = "SHOW_LAST_MODIFIED_DATE";
         public static final String DOCUMENT_TYPE_NOTIFICATION_PREFERENCES = "DOCUMENT_TYPE_NOTIFICATION_PREFERENCES";
     }
 }
