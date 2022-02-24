@@ -220,14 +220,22 @@ public class ConcurConstants {
         public static final String APPROVED = "APPROVED";
     }
 
+    public static final class RequestV4StatusCodes {
+        public static final String NOT_SUBMITTED = "NOT_SUBMITTED";
+        public static final String SUBMITTED = "SUBMITTED";
+        public static final String APPROVED = "APPROVED";
+        public static final String CANCELED = "CANCELED";
+        public static final String SENTBACK = "SENTBACK";
+    }
+
     public enum RequestV4Status {
-        NOT_SUBMITTED("NOT_SUBMITTED", "Not Submitted"),
-        SUBMITTED_AND_PENDING_APPROVAL("SUBMITTED", "Submitted & Pending Approval"),
-        PENDING_COST_OBJECT_APPROVAL("SUBMITTED", "Pending Cost Object Approval"),
-        PENDING_EXTERNAL_VALIDATION("SUBMITTED", "Pending External Validation"),
-        APPROVED("APPROVED", "Approved"),
-        CANCELED("CANCELED", "Canceled"),
-        SENTBACK("SENTBACK", "Sent Back");
+        NOT_SUBMITTED(RequestV4StatusCodes.NOT_SUBMITTED, "Not Submitted"),
+        SUBMITTED_AND_PENDING_APPROVAL(RequestV4StatusCodes.SUBMITTED, "Submitted & Pending Approval"),
+        PENDING_COST_OBJECT_APPROVAL(RequestV4StatusCodes.SUBMITTED, "Pending Cost Object Approval"),
+        PENDING_EXTERNAL_VALIDATION(RequestV4StatusCodes.SUBMITTED, "Pending External Validation"),
+        APPROVED(RequestV4StatusCodes.APPROVED, "Approved"),
+        CANCELED(RequestV4StatusCodes.CANCELED, "Canceled"),
+        SENTBACK(RequestV4StatusCodes.SENTBACK, "Sent Back");
         
         public final String code;
         public final String name;

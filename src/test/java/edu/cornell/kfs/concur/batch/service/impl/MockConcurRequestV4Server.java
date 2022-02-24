@@ -15,20 +15,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
+import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
+import edu.cornell.kfs.concur.ConcurConstants.RequestV4StatusCodes;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
-import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurUtils;
+import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
+import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
-import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
 
 public class MockConcurRequestV4Server implements Closeable {
 
@@ -39,25 +41,26 @@ public class MockConcurRequestV4Server implements Closeable {
             ConcurApiParameters.MODIFIED_AFTER, ConcurApiParameters.MODIFIED_BEFORE, ConcurApiParameters.USER_ID);
 
     private ConcurrentMap<String, RequestEntry> travelRequests;
-    private String baseUrl;
+    private String baseRequestV4Url;
 
-    public MockConcurRequestV4Server(String baseUrl, RequestV4DetailFixture... requestsToAdd) {
+    public MockConcurRequestV4Server(String baseRequestV4Url, RequestV4DetailFixture... requestsToAdd) {
         this.travelRequests = new ConcurrentHashMap<>();
-        this.baseUrl = baseUrl;
+        this.baseRequestV4Url = baseRequestV4Url;
         addTravelRequests(requestsToAdd);
     }
 
     @Override
     public void close() throws IOException {
-        travelRequests.clear();
+        if (travelRequests != null) {
+            travelRequests.clear();
+        }
         travelRequests = null;
-        baseUrl = null;
+        baseRequestV4Url = null;
     }
 
     public void addTravelRequests(RequestV4DetailFixture... requestsToAdd) {
-        String baseRequestUrl = getBaseRequestV4Url();
         for (RequestV4DetailFixture travelRequest : requestsToAdd) {
-            travelRequests.put(travelRequest.id, new RequestEntry(travelRequest, baseRequestUrl));
+            travelRequests.put(travelRequest.id, new RequestEntry(travelRequest, baseRequestV4Url));
         }
     }
 
@@ -98,7 +101,7 @@ public class MockConcurRequestV4Server implements Closeable {
         List<ConcurRequestV4ListItemDTO> unboundedResults = travelRequests.values().stream()
                 .filter(requestEntry -> requestWasLastModifiedBetweenDates(
                         requestEntry, modifiedAfter, modifiedBefore))
-                .filter(requestEntry -> userId.isEmpty() || requestHasApprover(requestEntry, userId.get()))
+                .filter(requestEntry -> requestHasAppropriateApproverOrStatus(requestEntry, userId))
                 .map(requestEntry -> requestEntry.requestAsListItem)
                 .sorted(requestSorter)
                 .collect(Collectors.toUnmodifiableList());
@@ -118,9 +121,18 @@ public class MockConcurRequestV4Server implements Closeable {
                 && lastModifiedDate.compareTo(rangeEnd) <= 0;
     }
 
-    private boolean requestHasApprover(RequestEntry requestEntry, String approverId) {
-        ConcurRequestV4PersonDTO approver = requestEntry.requestDetail.getApprover();
-        return ObjectUtils.isNotNull(approver) && StringUtils.equalsIgnoreCase(approver.getId(), approverId);
+    private boolean requestHasAppropriateApproverOrStatus(RequestEntry requestEntry, Optional<String> approverId) {
+        ConcurRequestV4StatusDTO latestStatus = requestEntry.requestDetail.getApprovalStatus();
+        if (approverId.isPresent()) {
+            List<RequestV4PersonFixture> approvers = requestEntry.requestFixture.approvers;
+            return StringUtils.equalsAnyIgnoreCase(
+                    latestStatus.getCode(), RequestV4StatusCodes.SUBMITTED, RequestV4StatusCodes.APPROVED)
+                    && approvers.stream().anyMatch(
+                            approver -> StringUtils.equalsIgnoreCase(approver.id, approverId.get()));
+        } else {
+            return StringUtils.equalsAnyIgnoreCase(latestStatus.getName(),
+                    RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, RequestV4Status.APPROVED.name);
+        }
     }
 
     private ConcurRequestV4ListingDTO buildRequestListing(List<ConcurRequestV4ListItemDTO> unboundedResults,
@@ -129,10 +141,8 @@ public class MockConcurRequestV4Server implements Closeable {
         int limit = getExistingIntParameter(queryParameters, ConcurApiParameters.LIMIT);
         int totalCount = unboundedResults.size();
         int endIndex = Math.min(startIndex + limit, totalCount);
-        int countModLimit = totalCount % limit;
-        int startIndexForLastPage = (countModLimit == 0)
-                ? Math.max(totalCount - limit, 0)
-                : totalCount - countModLimit;
+        int startIndexForLastPage = ConcurFixtureUtils
+                .calculateSearchStartIndexForLastPageOfResults(totalCount, limit);
         
         Stream.Builder<ConcurRequestV4OperationDTO> operationsBuilder = Stream.builder();
         if (startIndex - limit >= 0) {
@@ -158,16 +168,10 @@ public class MockConcurRequestV4Server implements Closeable {
         Map<String, String> operationParameters = new HashMap<>(queryParameters);
         operationParameters.put(ConcurApiParameters.START, String.valueOf(startIndex));
         
-        String concurRequestsEndpoint = getBaseRequestV4Url();
-        
         ConcurRequestV4OperationDTO operation = new ConcurRequestV4OperationDTO();
         operation.setName(name);
-        operation.setHref(UrlFactory.parameterizeUrl(concurRequestsEndpoint, operationParameters));
+        operation.setHref(UrlFactory.parameterizeUrl(baseRequestV4Url, operationParameters));
         return operation;
-    }
-
-    private String getBaseRequestV4Url() {
-        return baseUrl + ParameterTestValues.REQUEST_V4_RELATIVE_ENDPOINT;
     }
 
     private Date getExistingDateParameter(Map<String, String> queryParameters, String key) {
@@ -202,10 +206,12 @@ public class MockConcurRequestV4Server implements Closeable {
     }
 
     private static class RequestEntry {
-        private ConcurRequestV4ListItemDTO requestAsListItem;
-        private ConcurRequestV4ReportDTO requestDetail;
+        private final RequestV4DetailFixture requestFixture;
+        private final ConcurRequestV4ListItemDTO requestAsListItem;
+        private final ConcurRequestV4ReportDTO requestDetail;
         
         public RequestEntry(RequestV4DetailFixture requestFixture, String baseRequestUrl) {
+            this.requestFixture = requestFixture;
             this.requestAsListItem = requestFixture.toConcurRequestV4ListItemDTO(baseRequestUrl);
             this.requestDetail = requestFixture.toConcurRequestV4ReportDTO(baseRequestUrl);
         }
