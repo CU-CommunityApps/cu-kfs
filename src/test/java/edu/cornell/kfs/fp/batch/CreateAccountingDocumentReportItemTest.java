@@ -54,12 +54,12 @@ class CreateAccountingDocumentReportItemTest {
     }
     
     @Test
-    public void testGetDocumentDetailsWithWarningsNoWarnings() {
+    public void testGetDocumentDetailsWithWarnings_noWarnings() {
         assertEquals(0, reportItem.getDocumentDetailsWithWarnings().size());
     }
     
     @Test
-    public void testGetDocumentDetailsWithWarningsWithWarnings() {
+    public void testgetDocumentDetailsWithWarnings_withWarnings() {
         addWarningDetails();
         assertEquals(3, reportItem.getDocumentDetailsWithWarnings().size());
     }
