@@ -6,23 +6,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
@@ -34,6 +30,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
+import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
@@ -58,6 +56,7 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
     private MockConcurRequestV4Server mockBackendServer;
     private String expectedAccessToken;
     private RequestV4DetailFixture[] initialRequestDetails;
+    private String baseRequestV4Url;
 
     public MockConcurRequestV4ServiceEndpoint(String expectedAccessToken,
             RequestV4DetailFixture... initialRequestDetails) {
@@ -74,12 +73,15 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         return jsonObjectMapper;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void close() throws IOException {
+        IOUtils.closeQuietly(mockBackendServer);
         objectMapper = null;
         mockBackendServer = null;
         expectedAccessToken = null;
         initialRequestDetails = null;
+        baseRequestV4Url = null;
     }
 
     @Override
@@ -90,7 +92,8 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
     @Override
     protected void onServerInitialized(String baseUrl) {
         super.onServerInitialized(baseUrl);
-        mockBackendServer = new MockConcurRequestV4Server(baseUrl, initialRequestDetails);
+        baseRequestV4Url = baseUrl + ParameterTestValues.REQUEST_V4_RELATIVE_ENDPOINT;
+        mockBackendServer = new MockConcurRequestV4Server(baseRequestV4Url, initialRequestDetails);
     }
 
     public MockConcurRequestV4Server getMockBackendServer() {
@@ -101,6 +104,14 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         return mockBackendServer;
     }
 
+    public String getBaseRequestV4Url() {
+        if (StringUtils.isBlank(baseRequestV4Url)) {
+            throw new IllegalStateException("Base URL for the Request V4 endpoint was null; this endpoint may not "
+                    + "have been initialized yet by the HTTP server, or this endpoint may have already been closed");
+        }
+        return baseRequestV4Url;
+    }
+
     @Override
     protected void processRequest(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
@@ -108,14 +119,14 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         assertEquals(getExpectedAuthorizationHeader(), actualAuthorizationHeader,
                 "Request has a malformed authorization header and/or an invalid token");
         
-        String uri = request.getRequestLine().getUri();
-        Matcher endpointMatcher = REQUESTS_ENDPOINT_REGEX.matcher(uri);
+        String url = request.getRequestLine().getUri();
+        Matcher endpointMatcher = REQUESTS_ENDPOINT_REGEX.matcher(url);
         if (!endpointMatcher.matches()) {
-            fail("Invalid endpoint was invoked: " + uri);
+            fail("Invalid endpoint was invoked: " + url);
         }
         
         if (urlRepresentsSearchForRequestListing(endpointMatcher)) {
-            handleSearchForRequestListing(request, response, uri);
+            handleSearchForRequestListing(request, response, url);
         } else if (urlRepresentsSearchForSingleRequest(endpointMatcher)) {
             handleSearchForSingleRequest(request, response, endpointMatcher);
         } else {
@@ -140,9 +151,9 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         return substringStartIndex >= 0;
     }
 
-    private void handleSearchForRequestListing(HttpRequest request, HttpResponse response, String uri) {
+    private void handleSearchForRequestListing(HttpRequest request, HttpResponse response, String url) {
         assertRequestHasCorrectHttpMethod(request, HttpMethod.GET);
-        Map<String, String> queryParameters = getQueryParametersFromURI(uri);
+        Map<String, String> queryParameters = ConcurFixtureUtils.getQueryParametersFromUrl(url);
         try {
             ConcurRequestV4ListingDTO result = mockBackendServer.findRequests(queryParameters);
             String jsonResult = convertObjectToJsonString(result);
@@ -152,15 +163,6 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             response.setEntity(new StringEntity(e.getMessage(), ContentType.TEXT_PLAIN));
         }
-    }
-
-    private Map<String, String> getQueryParametersFromURI(String uri) {
-        String uriParameterChunk = StringUtils.substringAfter(uri, KFSConstants.QUESTION_MARK);
-        List<NameValuePair> nameValuePairsFromUri = URLEncodedUtils.parse(uriParameterChunk, StandardCharsets.UTF_8);
-        return nameValuePairsFromUri.stream()
-                .collect(Collectors.toUnmodifiableMap(
-                        NameValuePair::getName,
-                        pair -> StringUtils.defaultIfBlank(pair.getValue(), KFSConstants.EMPTY_STRING)));
     }
 
     private void handleSearchForSingleRequest(HttpRequest request, HttpResponse response, Matcher endpointMatcher) {

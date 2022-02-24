@@ -19,6 +19,7 @@ public class ConcurTestConstants {
     public static final String SUB_OBJ_864 = "864";
     public static final String ACCT_1234321 = "1234321";
     public static final String ACCT_4455667 = "4455667";
+    public static final String ACCT_XXXXXXX = "XXXXXXX";
     public static final String SUB_ACCT_55655 = "55655";
     public static final String SUB_ACCT_88888 = "88888";
     public static final String SUB_ACCT_13579 = "13579";

@@ -1,5 +1,6 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
+import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,9 +11,13 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 
@@ -73,6 +78,22 @@ public class ConcurFixtureUtils {
             overrideMap.put(override.getKey(), override.getValue());
         }
         return overrideMap;
+    }
+
+    public static Map<String, String> getQueryParametersFromUrl(String url) {
+        String uriParameterChunk = StringUtils.substringAfter(url, KFSConstants.QUESTION_MARK);
+        List<NameValuePair> nameValuePairsFromUri = URLEncodedUtils.parse(uriParameterChunk, StandardCharsets.UTF_8);
+        return nameValuePairsFromUri.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        NameValuePair::getName,
+                        pair -> StringUtils.defaultIfBlank(pair.getValue(), KFSConstants.EMPTY_STRING)));
+    }
+
+    public static int calculateSearchStartIndexForLastPageOfResults(int totalCount, int pageSize) {
+        int countModPageSize = totalCount % pageSize;
+        return (countModPageSize == 0)
+                ? Math.max(totalCount - pageSize, 0)
+                : totalCount - countModPageSize;
     }
 
 }
