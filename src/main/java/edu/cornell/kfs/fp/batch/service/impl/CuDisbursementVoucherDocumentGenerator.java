@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,6 +35,7 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetailXml;
@@ -152,7 +154,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             }
             convertedPayeeTypeCode = cuDisbursementVoucherPayeeService.getPayeeTypeCodeForVendorType(
                     vendorDetail.getVendorHeader().getVendorTypeCode());
-            addWarningMEssageIfPayeeNameNotAccurate(vendorDetail.getVendorName(), paymentInfo.getPayeeName());
+            addWarningMessageIfPayeeNameNotAccurate(vendorDetail.getVendorName(), paymentInfo.getPayeeName());
             vendorPayeeName = vendorDetail.getVendorName();
         } else if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_EMPLOYEE)) {
             Person employee = personService.getPersonByEmployeeId(payeeId);
@@ -160,7 +162,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
                 throwPayeeIdValidationError(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_EMPLOYEE_ID_BAD, payeeId);
             } else {
                 isEmployee = true;
-                addWarningMEssageIfPayeeNameNotAccurate(employee.getName(), paymentInfo.getPayeeName());
+                addWarningMessageIfPayeeNameNotAccurate(employee.getName(), paymentInfo.getPayeeName());
                 vendorPayeeName = employee.getName();
             }
         } else if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_ALUMNI) || StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_STUDENT)) {
@@ -168,7 +170,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             if (ObjectUtils.isNull(person)) {
                 throwPayeeIdValidationError(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD, payeeId);
             } else {
-                addWarningMEssageIfPayeeNameNotAccurate(person.getName(), paymentInfo.getPayeeName());
+                addWarningMessageIfPayeeNameNotAccurate(person.getName(), paymentInfo.getPayeeName());
                 vendorPayeeName = person.getName();
             }
         } else {
@@ -186,7 +188,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         throw new ValidationException(MessageFormat.format(employeeErrorMessage, payeeId));
     }
     
-    protected void addWarningMEssageIfPayeeNameNotAccurate(String vendorPayeeName, String dvPayeeName) {
+    protected void addWarningMessageIfPayeeNameNotAccurate(String vendorPayeeName, String dvPayeeName) {
         if (StringUtils.isNotBlank(dvPayeeName) && !StringUtils.equalsIgnoreCase(vendorPayeeName, dvPayeeName)) {
             AutoPopulatingList<ErrorMessage> warningMessages = new AutoPopulatingList(ErrorMessage.class);
             String messageString = MessageFormat.format(
@@ -195,7 +197,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
                     vendorPayeeName, dvPayeeName);
             warningMessages.add(new ErrorMessage(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, messageString));
 
-            LOG.error("addWarningMEssageIfPayeeNameNotAccurate, " + messageString);
+            LOG.warn("addWarningMessageIfPayeeNameNotAccurate, " + messageString);
 
             GlobalVariables.getMessageMap().getWarningMessages()
                     .put(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, warningMessages);
@@ -379,6 +381,22 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public void handleDocumentWarningMessage(CreateAccountingDocumentReportItemDetail reportDetail) {
+        if (!GlobalVariables.getMessageMap().getWarningMessages().isEmpty()) {
+            GlobalVariables.getMessageMap().getWarningMessages().entrySet().forEach(message -> processWarning(message, reportDetail));
+        }
+    }
+    
+    protected void processWarning(Entry<String, AutoPopulatingList<ErrorMessage>> message, CreateAccountingDocumentReportItemDetail reportDetail) {
+        if (StringUtils.equalsIgnoreCase(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, message.getKey())) {
+            message.getValue().stream().forEach(em -> reportDetail.appendWarningMessageToExistingWarningMessage(em.getMessageParameters()[0]));
+        } else {
+            LOG.warn("processWarning, unexpected warning message with a key of " + message.getKey());
+        }
+        
     }
     
     public void setUniversityDateService(UniversityDateService universityDateService) {

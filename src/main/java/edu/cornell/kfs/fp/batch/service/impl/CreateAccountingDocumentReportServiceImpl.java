@@ -2,7 +2,6 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -102,13 +101,12 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_NOT_SAVED), reportItem.getDocumentsInError().size()));
         
         if (reportItem.doWarningMessagesExist()) {
-            Map<String, Integer> docTypeCountMap = reportItem.getDocumentTypeWarningMessageCountMap();
-            docTypeCountMap.keySet().stream().forEach(key -> writeWarningSummaryLine(docTypeCountMap, key));
+            reportItem.getDocumentTypeWarningMessageCountMap().entrySet()
+                .forEach(entry -> writeWarningSummaryLine(entry.getKey(), entry.getValue()));
         }
     }
     
-    protected void writeWarningSummaryLine(Map<String, Integer> docTypeCountMap, String docType) {
-        Integer docWarningCount = docTypeCountMap.get(docType);
+    protected void writeWarningSummaryLine(String docType, Integer docWarningCount) {
         reportWriterService.writeNewLines(1);
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNING), docType, docWarningCount));

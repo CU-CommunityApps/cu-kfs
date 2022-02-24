@@ -107,7 +107,7 @@ public class CreateAccountingDocumentReportItemDetail {
          
     }
     
-    public void appendWarningrMessageToExistingWarningMessage(String additionalWarningMessageContent) {
+    public void appendWarningMessageToExistingWarningMessage(String additionalWarningMessageContent) {
         setWarningMessage((ObjectUtils.isNotNull(warningMessage) ? warningMessage : KFSConstants.EMPTY_STRING)
                 + KFSConstants.NEWLINE + KFSConstants.NEWLINE + additionalWarningMessageContent);
          

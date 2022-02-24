@@ -113,18 +113,9 @@ public class CreateAccountingDocumentReportItem {
     }
     
     public Map<String, Integer> getDocumentTypeWarningMessageCountMap() {
-        Map<String, Integer> docTypeCountMap = new HashMap<>();
-        getDocumentDetailsWithWarnings().stream().forEach(detail -> addDetailDataToDocTypeCountMap(detail, docTypeCountMap));
-        return docTypeCountMap;
-    }
-    
-    private void addDetailDataToDocTypeCountMap(CreateAccountingDocumentReportItemDetail detail, Map<String, Integer> docTypeCountMap) {
-        if (docTypeCountMap.containsKey(detail.getDocumentType())) {
-            int documentCount = docTypeCountMap.get(detail.getDocumentType());
-            docTypeCountMap.replace(detail.getDocumentType(), documentCount + 1);
-        } else {
-            docTypeCountMap.put(detail.getDocumentType(), 1);
-        }
+        return getDocumentDetailsWithWarnings().stream()
+                .collect(Collectors.toMap(detail -> detail.getDocumentType(), detail -> 1, 
+                        (priorDocumentTypeCount, addendCount) -> priorDocumentTypeCount + addendCount));
     }
     
     protected List<CreateAccountingDocumentReportItemDetail> getDocumentDetailsWithWarnings() {
