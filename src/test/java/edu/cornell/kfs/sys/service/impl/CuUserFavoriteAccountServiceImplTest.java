@@ -45,14 +45,14 @@ public class CuUserFavoriteAccountServiceImplTest {
 
     @Test
     public void testPopulatedNewRequisitionAccount() {
-        final String accountType = PurapConstants.REQUISITION_DOCUMENT_TYPE;
+        final String accountType = PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE;
         final Class<TestableRequisitionAccount> accountClass = TestableRequisitionAccount.class;
         validateAccount(accountType, accountClass);
     }
 
     @Test
     public void testPopulatedNewPurchaseOrderAccount() {
-        final String accountType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT;
+        final String accountType = PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT;
         final Class<PurchaseOrderAccount> accountClass = PurchaseOrderAccount.class;
         validateAccount(accountType, accountClass);
     }

@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -92,7 +92,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
      * Also overridden to use the alternate CuPurapService method for setting the APO limit.
      */
     @Override
-    public void initiateDocument() throws WorkflowException {
+    public void initiateDocument() {
         super.initiateDocument();
 
         Person currentUser = GlobalVariables.getUserSession().getPerson();
@@ -142,11 +142,8 @@ public class CuRequisitionDocument extends RequisitionDocument {
                 autoPOAmount = new KualiDecimal(paramVal);
             }
         }
-        RequisitionDocument document = null;
-        try {
-            document = (RequisitionDocument) (SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(this.getDocumentNumber()));
-        } catch (WorkflowException we) {            
-        }
+        RequisitionDocument document = (RequisitionDocument) (SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(this.getDocumentNumber()));
+
         KualiDecimal totalAmount = document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) {  
             returnValue = true;
@@ -161,17 +158,14 @@ public class CuRequisitionDocument extends RequisitionDocument {
         DocumentService documentService = SpringContext.getBean(DocumentService.class);
         RequisitionDocument document = null;
         String principalId = null;
-        try {
-            document = (RequisitionDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
-            principalId = document.getDocumentHeader().getWorkflowDocument().getRoutedByPrincipalId();
-        } catch (WorkflowException we) {
+        document = (RequisitionDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
+        principalId = document.getDocumentHeader().getWorkflowDocument().getRoutedByPrincipalId();
 
-        }
         return principalId;
     }
     
     @Override
-    public void toCopy() throws WorkflowException, ValidationException {
+    public void toCopy() throws ValidationException {
         super.toCopy();
         this.setObjectId(null);
         this.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
@@ -401,17 +395,13 @@ public class CuRequisitionDocument extends RequisitionDocument {
     	super.doRouteLevelChange(change);
     	
     	// if route node is CommodityAPO change to app doc status Awaiting Commodity Review
-    	try {
-    		String nodeName = change.getNewNodeName();
-    		
-    		if (RequisitionStatuses.NODE_COMMODITY_CODE_APO_REVIEW.equalsIgnoreCase(nodeName)) {
-    			if (!RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW.equals(this.getApplicationDocumentStatus())) {
-    				this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
+		String nodeName = change.getNewNodeName();
+		
+		if (RequisitionStatuses.NODE_COMMODITY_CODE_APO_REVIEW.equalsIgnoreCase(nodeName)) {
+			if (!RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW.equals(this.getApplicationDocumentStatus())) {
+				this.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
 
-	            }    
-			}
-		} catch (WorkflowException e) {
-			logAndThrowRuntimeException("Error saving app doc status while changing route level for document with id " + getDocumentNumber(), e);
+            }    
 		}
     	
     }

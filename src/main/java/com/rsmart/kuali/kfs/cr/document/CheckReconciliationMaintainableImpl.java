@@ -33,27 +33,22 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
 
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
             MaintenanceDocument document;
-            try {
-                document = (MaintenanceDocument) documentService.getByDocumentHeaderId(documentHeader.getDocumentNumber());
+            document = (MaintenanceDocument) documentService.getByDocumentHeaderId(documentHeader.getDocumentNumber());
 
 
-                CheckReconciliation oldCr = (CheckReconciliation) document.getOldMaintainableObject().getBusinessObject();
-                CheckReconciliation newCr = (CheckReconciliation) document.getNewMaintainableObject().getBusinessObject();
+            CheckReconciliation oldCr = (CheckReconciliation) document.getOldMaintainableObject().getBusinessObject();
+            CheckReconciliation newCr = (CheckReconciliation) document.getNewMaintainableObject().getBusinessObject();
 
-                if (ObjectUtils.isNotNull(oldCr) && !oldCr.getStatus().equalsIgnoreCase(newCr.getStatus())) {
+            if (ObjectUtils.isNotNull(oldCr) && !oldCr.getStatus().equalsIgnoreCase(newCr.getStatus())) {
 
-                    Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
+                Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
 
-                    newCr.setStatusChangeDate(currentDate);
-                    
-                    //KFSUPGRADE-377
-                    if(CRConstants.CANCELLED.equalsIgnoreCase(newCr.getStatus())){
-                        newCr.setCancelDocHdrId(documentHeader.getDocumentNumber());
-                    }
+                newCr.setStatusChangeDate(currentDate);
+                
+                //KFSUPGRADE-377
+                if(CRConstants.CANCELLED.equalsIgnoreCase(newCr.getStatus())){
+                    newCr.setCancelDocHdrId(documentHeader.getDocumentNumber());
                 }
-
-            } catch (WorkflowException e) {
-                throw new RuntimeCacheException(e);
             }
 
         }

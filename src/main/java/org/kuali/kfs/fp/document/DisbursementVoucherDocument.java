@@ -954,7 +954,7 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
     }
 
     @Override
-    public void toCopy() throws WorkflowException {
+    public void toCopy() {
         super.toCopy();
 
         clearFieldsThatShouldNotBeCopied();

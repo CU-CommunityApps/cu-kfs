@@ -146,14 +146,9 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
         if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
-            try {
-                String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-                String disapprovalStatus = PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
-                updateAndSaveAppDocStatus(disapprovalStatus);
-
-            } catch (WorkflowException e) {
-                logAndThrowRuntimeException("Error saving routing data while saving App Doc Status " + getDocumentNumber(), e);
-            }
+            String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
+            String disapprovalStatus = PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
+            updateAndSaveAppDocStatus(disapprovalStatus);
         }
     }
 

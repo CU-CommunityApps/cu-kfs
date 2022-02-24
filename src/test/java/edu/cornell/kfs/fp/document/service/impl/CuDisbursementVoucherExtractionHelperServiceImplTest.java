@@ -22,7 +22,6 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
@@ -50,14 +49,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImplTest extends KualiI
                   
 	public void test(){
 		
-		CuDisbursementVoucherDocument dv = null;
-		
-        try {
-            dv = (CuDisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
-        }
-        catch (WorkflowException e) {
-            throw new RuntimeException("Error creating new disbursement voucher document: " + e.getMessage(), e);
-        }
+		CuDisbursementVoucherDocument dv = (CuDisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
 		
         if(dv != null) {
 			dv.getDocumentHeader().setDocumentDescription("Test Document Description");
@@ -90,23 +82,14 @@ public class CuDisbursementVoucherExtractionHelperServiceImplTest extends KualiI
 			accountingLine.setAccountNumber("G081040");
 			accountingLine.setFinancialObjectCode("8462");
 			accountingLine.setAmount((new KualiDecimal(86.00)));
-			
-			
-			 accountingLine.setPostingYear(dv.getPostingYear());
-			 accountingLine.setDocumentNumber(dv.getDocumentNumber());
+						
+			accountingLine.setPostingYear(dv.getPostingYear());
+			accountingLine.setDocumentNumber(dv.getDocumentNumber());
 
 		
 			dv.addSourceAccountingLine(accountingLine);
-												
-			try {
+
 			documentService.saveDocument(dv);
-			}
-			catch (WorkflowException e) {
-	            throw new RuntimeException("Error saving new disbursement voucher document: " + e.getMessage(), e);
-	        }
-			
-			
-			
 			
 		}			        
 		

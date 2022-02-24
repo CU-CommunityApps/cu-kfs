@@ -137,29 +137,23 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
     private boolean kfsVendorMaintenceDocumentActionProcessed(MaintenanceDocument vendorMaintenceDoc, PaymentWorksNewVendorRequestsBatchReportData reportData,
             PaymentWorksVendor pmwVendor, DocumentAction documentAction) {
         boolean documentActionProcessed = false;
-        try {
-            if (DocumentAction.SAVE.equals(documentAction)) {
-                getDocumentService().saveDocument(vendorMaintenceDoc);
-                LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc saved.");
-            } else if (DocumentAction.ROUTE.equals(documentAction)) {
-                String annotationMessage = PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_CREATE_ROUTE_ANNOTATION + 
-                        pmwVendor.getPmwVendorRequestId();
-                getDocumentService().routeDocument(vendorMaintenceDoc, annotationMessage, null);
-                LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc routed.");
-            } else {
-                LOG.info("kfsVendorMaintenceDocumentActionProcessed: document action not supported.");
-                return false;
-            }
-
-            documentActionProcessed = true;
-        } catch (WorkflowException we) {
-            List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
-            captureKfsProcessingErrorsForVendor(pmwVendor, reportData, edocCreateErrors);
-            LOG.error("kfsVendorMaintenceDocumentActionProcessed: eDoc error(s): " + edocCreateErrors.toString());
-            LOG.error("kfsVendorMaintenceDocumentActionProcessed: eDoc exception caught: " + we.getMessage());
-        } finally {
-            GlobalVariables.getMessageMap().clearErrorMessages();
+        
+        if (DocumentAction.SAVE.equals(documentAction)) {
+            getDocumentService().saveDocument(vendorMaintenceDoc);
+            LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc saved.");
+        } else if (DocumentAction.ROUTE.equals(documentAction)) {
+            String annotationMessage = PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_CREATE_ROUTE_ANNOTATION + 
+                    pmwVendor.getPmwVendorRequestId();
+            getDocumentService().routeDocument(vendorMaintenceDoc, annotationMessage, null);
+            LOG.info("kfsVendorMaintenceDocumentActionProcessed: vendorMaintenceDoc routed.");
+        } else {
+            LOG.info("kfsVendorMaintenceDocumentActionProcessed: document action not supported.");
+            return false;
         }
+
+        documentActionProcessed = true;
+        GlobalVariables.getMessageMap().clearErrorMessages();
+            
         return documentActionProcessed;
     }
     

@@ -46,7 +46,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.KimConstants;
 
 import java.util.ArrayList;
@@ -134,7 +133,7 @@ public class PurApRelatedViews {
             poIDstr = view.getPurapDocumentIdentifier().toString();
         }
 
-        if (PurapConstants.PurapDocTypeCodes.PO_DOCUMENT.equals(view.getDocumentTypeName())) {
+        if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT.equals(view.getDocumentTypeName())) {
             DocumentStatus documentStatus = KewApiServiceLocator.getWorkflowDocumentService().getDocumentStatus(
                     view.getDocumentNumber());
             if (!(StringUtils.equals(documentStatus.getCode(), DocumentStatus.FINAL.getCode()))) {
@@ -185,7 +184,7 @@ public class PurApRelatedViews {
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        } catch (WorkflowException | UnknownDocumentTypeException ex) {
+        } catch (UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
         }
 

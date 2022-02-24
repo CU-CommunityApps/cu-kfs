@@ -16,12 +16,6 @@ import edu.cornell.kfs.kew.actionitem.dao.CuActionItemDAO;
 
 public class CuActionItemDAOOjbImpl extends ActionItemDAOOjbImpl implements CuActionItemDAO {
 
-    @Override
-    public void deleteActionItems(Long actionRequestId) {
-        deleteActionItemExtensionsByActionRequestId(actionRequestId);
-        super.deleteActionItems(actionRequestId);
-    }
-
     private void deleteActionItemExtensionsByActionRequestId(Long actionRequestId) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo(CuKewPropertyConstants.ACTION_REQUEST_ID, actionRequestId);
@@ -42,12 +36,6 @@ public class CuActionItemDAOOjbImpl extends ActionItemDAOOjbImpl implements CuAc
         if (ObjectUtils.isNotNull(extension)) {
             getPersistenceBrokerTemplate().delete(extension);
         }
-    }
-
-    @Override
-    public void deleteByDocumentIdWorkflowUserId(String documentId, String workflowUserId) {
-        deleteActionItemExtensionsByDocumentIdWorkflowUserId(documentId, workflowUserId);
-        super.deleteByDocumentIdWorkflowUserId(documentId, workflowUserId);
     }
 
     private void deleteActionItemExtensionsByDocumentIdWorkflowUserId(String documentId, String workflowUserId) {

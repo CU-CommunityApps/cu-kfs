@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
@@ -159,10 +158,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 		headerBuilder.append(TAB);
 		headerBuilder.append(max.getActionTakenLabel());
 		headerBuilder.append(TAB);
-
-//    	} catch (WorkflowException e) {
-//    		e.printStackTrace();
-//    	}
     	
     	String headerString = headerBuilder.toString(); 
     	StringBuilder builder = new StringBuilder();
@@ -367,22 +362,13 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
             Collection<FinancialSystemDocumentHeader> documentList, DocumentStatus status) {
         final int SCALED_SET_SIZE = (int) (documentList.size() * 1.4);
         Set<String> documentIds = new HashSet<String>(SCALED_SET_SIZE);
-        Collection<DocumentRouteHeaderValue> routeHeaders;
         Collection<FinancialSystemDocumentHeader> finalList = new ArrayList<FinancialSystemDocumentHeader>(documentList.size());
         
         // Assemble document IDs, then search for workflow headers.
         for (FinancialSystemDocumentHeader docHeader : documentList) {
-            documentIds.add(docHeader.getDocumentNumber());
-        }
-        routeHeaders = routeHeaderService.getRouteHeaders(documentIds);
-        
-        // Track which headers have the expected document status.
-        documentIds = new HashSet<String>(SCALED_SET_SIZE);
-        if (routeHeaders != null) {
-            for (DocumentRouteHeaderValue routeHeader : routeHeaders) {
-                if (status.equals(routeHeader.getStatus())) {
-                    documentIds.add(routeHeader.getDocumentId());
-                }
+        	DocumentRouteHeaderValue routeHeader = routeHeaderService.getRouteHeader(docHeader.getDocumentNumber());
+        	if (status.equals(routeHeader.getStatus())) {
+                documentIds.add(routeHeader.getDocumentId());
             }
         }
         
@@ -407,8 +393,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
         try {
             document = getDocumentService().getByDocumentHeaderId(documentHeaderId);
-        } catch (WorkflowException ex) {
-            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
         } catch (UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
             LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);

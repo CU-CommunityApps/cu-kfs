@@ -44,7 +44,6 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
@@ -70,7 +69,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     UserFavoriteAccountService userFavoriteAccountService;
 
     @Override
-    public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) throws WorkflowException {
+    public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) {
         LOG.debug("createRequisitionsFromCxml() started");
         // for returning requisitions
         ArrayList requisitions = new ArrayList();
@@ -86,7 +85,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
             VendorDetail vendor = (VendorDetail) iter.next();
 
             // create requisition
-            RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.REQUISITION_DOCUMENT_TYPE);
+            RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE);
             String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
             String businessPurpose = ((CuB2BShoppingCart)message).getBusinessPurpose();
 

@@ -439,8 +439,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         WorkflowDocument workFlowDocument = this.getFinancialSystemDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentTypeName();
 
-        if ((documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT)) ||
-            (documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT))) {
+        if ((documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) ||
+            (documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_SPLIT_DOCUMENT))) {
             if (workFlowDocument.isCanceled()) {
                 // if doc is FINAL or canceled, saving should not be creating GL entries
                 setGeneralLedgerPendingEntries(new ArrayList<>());
@@ -657,7 +657,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             if (!((PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(this.getApplicationDocumentStatus())
                     || PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(
                             this.getApplicationDocumentStatus()))
-                    && PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(
+                    && PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(
                             currentDocumentTypeName))) {
                 docIdStrings.add(poView.getDocumentNumber());
             }
@@ -678,46 +678,35 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 .getDocumentTypeName();
         // child classes need to call super, but we don't want to inherit the post-processing done by this PO class
         // other than to the Split
-        if (PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT.equals(currentDocumentTypeName)
-                || PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(currentDocumentTypeName)) {
-            try {
-                if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed()) {
-                    SpringContext.getBean(PurchaseOrderService.class).completePurchaseOrder(this);
-                    SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(
-                            this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-                } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
-                    // DOCUMENT DISAPPROVED
-                    String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(
-                            this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-                    String disapprovalStatus = findDisapprovalStatus(nodeName);
+        if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT.equals(currentDocumentTypeName)
+                || PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(currentDocumentTypeName)) {
+            if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed()) {
+                SpringContext.getBean(PurchaseOrderService.class).completePurchaseOrder(this);
+                SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(
+                        this.getFinancialSystemDocumentHeader().getWorkflowDocument());
+            } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
+                // DOCUMENT DISAPPROVED
+                String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(
+                        this.getFinancialSystemDocumentHeader().getWorkflowDocument());
+                String disapprovalStatus = findDisapprovalStatus(nodeName);
 
-                    if (ObjectUtils.isNotNull(disapprovalStatus)) {
-                        //update the appDocStatus and save the workflow data
-                        updateAndSaveAppDocStatus(disapprovalStatus);
-                    } else {
-                        logAndThrowRuntimeException("No status found to set for document being disapproved in node '" +
-                                nodeName + "'");
-                    }
-
-                } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isCanceled()) {
-                    // DOCUMENT CANCELED
-                    updateAndSaveAppDocStatus(PurchaseOrderStatuses.APPDOC_CANCELLED);
+                if (ObjectUtils.isNotNull(disapprovalStatus)) {
+                    //update the appDocStatus and save the workflow data
+                    updateAndSaveAppDocStatus(disapprovalStatus);
+                } else {
+                    logAndThrowRuntimeException("No status found to set for document being disapproved in node '" +
+                            nodeName + "'");
                 }
-            } catch (WorkflowException e) {
-                logAndThrowRuntimeException("Error saving routing data while saving document with id " +
-                        getDocumentNumber(), e);
+
+            } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isCanceled()) {
+                // DOCUMENT CANCELED
+                updateAndSaveAppDocStatus(PurchaseOrderStatuses.APPDOC_CANCELLED);
             }
         }
 
         if (shouldAdhocFyi()) {
-
-            try {
-                SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(
-                        this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-            } catch (WorkflowException ex) {
-                logAndThrowRuntimeException("Error saving routing data while saving document with id " +
-                        getDocumentNumber(), ex);
-            }
+            SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(
+                    this.getFinancialSystemDocumentHeader().getWorkflowDocument());
             SpringContext.getBean(PurchaseOrderService.class).sendAdhocFyi(this);
         }
     }
@@ -1215,7 +1204,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     @Override
     public String getPurApSourceDocumentLabelIfPossible() {
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName(
-                KFSConstants.FinancialDocumentTypeCodes.REQUISITION);
+                PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE);
     }
 
     public Integer getNewQuoteVendorDetailAssignedIdentifier() {
@@ -1455,15 +1444,15 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
         SpringContext.getBean(PurapGeneralLedgerService.class).customizeGeneralLedgerPendingEntry(this,
                 (AccountingLine) postable, explicitEntry, getPurapDocumentIdentifier(), KFSConstants.GL_DEBIT_CODE,
-                PurapDocTypeCodes.PO_DOCUMENT, true);
+                PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT, true);
 
         KualiDecimal accountTotalGLEntryAmount;
 
         // KFSMI-9842: if the entry's financial document type is POA (or POC or POR - KFSMI-9879) then generate GLPEs
         // only for the updated amount or new items, not for the entire items' accounts.
-        if (PurapDocTypeCodes.PO_AMENDMENT_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
-            PurapDocTypeCodes.PO_CLOSE_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
-            PurapDocTypeCodes.PO_REOPEN_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode())) {
+        if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
+        	PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_CLOSE_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
+        	PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_REOPEN_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode())) {
             accountTotalGLEntryAmount = explicitEntry.getTransactionLedgerEntryAmount();
         } else {
             accountTotalGLEntryAmount = this.getAccountTotalGLEntryAmount((AccountingLine) postable);
@@ -1473,7 +1462,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         handleNegativeEntryAmount(explicitEntry);
 
         // don't think i should have to override this, but default isn't getting the right PO doc
-        explicitEntry.setFinancialDocumentTypeCode(PurapDocTypeCodes.PO_DOCUMENT);
+        explicitEntry.setFinancialDocumentTypeCode(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT);
     }
 
     protected void handleNegativeEntryAmount(GeneralLedgerPendingEntry explicitEntry) {

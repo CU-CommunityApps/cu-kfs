@@ -39,6 +39,7 @@ public class CuPurapServiceImplTest {
     private static final KualiDecimal TEST_ORG_PARM_APO_LIMIT = new KualiDecimal(7000);
     private static final KualiDecimal TEST_DEFAULT_REGULAR_APO_LIMIT = new KualiDecimal(25000);
     private static final KualiDecimal TEST_DEFAULT_FEDERAL_APO_LIMIT = new KualiDecimal(10000);
+	public static final String PARAMETER_CONFIG_TYPE_CODE = "CONFG";
 
     private static final String TEST_EXCLUDED_COST_SOURCES = CuPurapTestConstants.COST_SOURCE_PRICING_AGREEMENT
             + CUKFSConstants.SEMICOLON + CuPurapTestConstants.COST_SOURCE_EDU_AND_INST_COOP;
@@ -269,7 +270,7 @@ public class CuPurapServiceImplTest {
         Parameter parameter = new Parameter();
         parameter.setNamespaceCode(PurapConstants.PURAP_NAMESPACE);
         parameter.setComponentCode("Requisition");
-        parameter.setParameterTypeCode(KfsParameterConstants.PARAMETER_CONFIG_TYPE_CODE);
+        parameter.setParameterTypeCode(PARAMETER_CONFIG_TYPE_CODE);
         parameter.setName(parameterName);
         parameter.setValue(parameterValue);
         parameter.setEvaluationOperatorCode(evaluationOperator.getCode());

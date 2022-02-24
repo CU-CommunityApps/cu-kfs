@@ -156,12 +156,7 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
         String documentNumber = qualification.get(AttributeConstants.DOCUMENT_NUMBER);
         SecurityRequestDocument document = null;
-        try {
-            document = (SecurityRequestDocument) KRADServiceLocatorWeb.getDocumentService().getByDocumentHeaderId(documentNumber);
-        } catch (WorkflowException e) {
-            LOG.error("getRoleMembersFromDerivedRole() Unable to retrieve security request document: " + documentNumber, e);
-            throw new RuntimeException("Unable to retrieve security request document: " + documentNumber, e);
-        }
+        document = (SecurityRequestDocument) KRADServiceLocatorWeb.getDocumentService().getByDocumentHeaderId(documentNumber);
 
         for (final SecurityRequestRole requestRole : document.getSecurityRequestRoles()) {
             members.addAll(getRoleMembersFromDerivedRole(roleName, document, requestRole));

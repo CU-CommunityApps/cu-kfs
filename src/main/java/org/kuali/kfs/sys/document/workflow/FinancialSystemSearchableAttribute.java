@@ -43,7 +43,6 @@ import org.kuali.kfs.kew.api.document.attribute.DocumentAttribute;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeDecimal;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeString;
 import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.rule.bo.RuleAttribute;
 import org.kuali.kfs.kns.datadictionary.DocumentEntry;
@@ -220,11 +219,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         String docId = document.getDocumentId();
         DocumentService docService = SpringContext.getBean(DocumentService.class);
         Document doc = null;
-        try {
-            doc = docService.getByDocumentHeaderId(docId);
-        } catch (WorkflowException we) {
-            // ignore
-        }
+        doc = docService.getByDocumentHeaderId(docId);
+
         if (doc != null) {
             if (doc instanceof AmountTotaling && ((AmountTotaling) doc).getTotalDollarAmount() != null) {
                 DocumentAttributeDecimal searchableAttributeValue =

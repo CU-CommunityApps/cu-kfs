@@ -99,7 +99,6 @@ import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1510,7 +1509,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     }
 
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
         PurchasingFormBase formBase = (PurchasingFormBase) kualiDocumentFormBase;
         if (StringUtils.isEmpty(formBase.getInitialZipCode())) {

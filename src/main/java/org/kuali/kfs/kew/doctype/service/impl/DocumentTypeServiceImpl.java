@@ -404,8 +404,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         }
     }
 
-    @Override
-    public boolean hasRouteNodeForDocumentTypeId(String routeNodeName, String documentTypeId)
+    private boolean hasRouteNodeForDocumentTypeId(String routeNodeName, String documentTypeId)
             throws IllegalArgumentException {
         if (StringUtils.isBlank(routeNodeName)) {
             throw new IllegalArgumentException("routeNodeName was null or blank");

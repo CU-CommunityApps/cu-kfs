@@ -18,14 +18,6 @@
  */
 package org.kuali.kfs.kim.impl.role;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,6 +48,15 @@ import org.kuali.kfs.krad.service.LookupService;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * CU Customization:
  * Updated this class to include improved KIM attribute handling.
@@ -74,23 +75,31 @@ abstract class RoleServiceBase {
     protected KimTypeInfoService kimTypeInfoService;
 
     /**
-     * CU Customization: Modified this method to accept an attributeName-to-attributeId map,
-     * and to use that map when performing the qualifier key conversion.
-     * 
      * Converts the Qualifier Name/Value Role qualification set into Qualifier AttributeID/Value set
      *
      * @param qualification The original role qualification attribute set
-     * @param validAttributeIds validAttributeIds The mapping of attribute names to their matching attribute ids
+     * @param roleId        The role id used to find the kim attributes applicable to the specific role
      * @return Converted Map<String, String> containing ID/value pairs
      */
-    protected Map<String, String> convertQualifierKeys(
-            Map<String, String> qualification, Map<String, String> validAttributeIds) {
+    protected Map<String, String> convertQualifierKeys(Map<String, String> qualification, String roleId) {
         Map<String, String> convertedQualification = new HashMap<>();
-        if (qualification != null && CollectionUtils.isNotEmpty(qualification.entrySet())) {
-            for (Map.Entry<String, String> entry : qualification.entrySet()) {
-                String kimAttributeId = validAttributeIds.get(entry.getKey());
-                if (StringUtils.isNotEmpty(kimAttributeId)) {
-                    convertedQualification.put(kimAttributeId, entry.getValue());
+
+        if (StringUtils.isNotBlank(roleId)) {
+            Role role = getBusinessObjectService().findBySinglePrimaryKey(Role.class, roleId);
+
+            // resolve the KimAttributes: attributeName to Id from the role
+            if (ObjectUtils.isNotNull(role) && ObjectUtils.isNotNull(role.getKimType())) {
+                Map<String, String> attributeKeyMap = role.getKimType().getAttributeDefinitions().stream().collect(
+                        Collectors.toMap(kimTypeAttribute -> kimTypeAttribute.getKimAttribute().getAttributeName(),
+                                KimTypeAttribute::getKimAttributeId));
+
+                if (qualification != null && CollectionUtils.isNotEmpty(qualification.entrySet())) {
+                    qualification.forEach((key, value) -> {
+                        String kimAttributeId = attributeKeyMap.get(key);
+                        if (StringUtils.isNotEmpty(kimAttributeId)) {
+                            convertedQualification.put(kimAttributeId, value);
+                        }
+                    });
                 }
             }
         }
@@ -98,9 +107,7 @@ abstract class RoleServiceBase {
     }
 
     protected void getNestedRoleTypeMemberIds(String roleId, Set<String> members) {
-        ArrayList<String> roleList = new ArrayList<>(1);
-        roleList.add(roleId);
-        List<RoleMember> firstLevelMembers = getStoredRoleMembersForRoleIds(roleList, MemberType.ROLE.getCode(),
+        List<RoleMember> firstLevelMembers = getStoredRoleMembersForRoleId(roleId, MemberType.ROLE.getCode(),
                 Collections.emptyMap());
         for (RoleMember member : firstLevelMembers) {
             if (MemberType.ROLE.equals(member.getType())) {
@@ -128,7 +135,7 @@ abstract class RoleServiceBase {
      *
      * @param daoActionToTake An indicator for which KimRoleDao method should be used to get the results if the
      *                        desired RoleMembers are not cached.
-     * @param roleIds         The role IDs to filter by; may get used as the IDs for members that are also roles,
+     * @param roleId          The role ID to filter by; may get used as the ID for members that are also roles,
      *                        depending on the daoActionToTake value.
      * @param principalId     The principal ID to filter by; may get ignored depending on the daoActionToTake value.
      * @param groupIds        The group IDs to filter by; may get ignored depending on the daoActionToTake value.
@@ -139,19 +146,15 @@ abstract class RoleServiceBase {
      * @throws IllegalArgumentException if daoActionToTake refers to an enumeration constant that is not
      * role-member-related.
      */
-    protected List<RoleMember> getRoleMemberList(RoleDaoAction daoActionToTake, Collection<String> roleIds,
+    protected List<RoleMember> getRoleMemberList(RoleDaoAction daoActionToTake, String roleId,
                                                  String principalId, Collection<String> groupIds, String memberTypeCode, Map<String, String> qualification) {
-        // CU Customization: Update the qualifier conversion to use an attributeName-to-attributeId map.
-        Map<String, String> validAttributeIds = getAttributeNameToAttributeIdMappings(roleIds, qualification);
-        Map<String, String> convertedQualification = convertQualifierKeys(qualification, validAttributeIds);
+        Map<String, String> convertedQualification = convertQualifierKeys(qualification, roleId);
 
-        if (roleIds == null || roleIds.isEmpty()) {
-            roleIds = Collections.emptyList();
-        }
         if (groupIds == null || groupIds.isEmpty()) {
             groupIds = Collections.emptyList();
         }
 
+        final Collection<String> roleIds = StringUtils.isNotBlank(roleId) ? List.of(roleId) : Collections.emptyList();
         switch (daoActionToTake) {
             case ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS:
                 // Search for principal role members only.
@@ -176,48 +179,13 @@ abstract class RoleServiceBase {
         }
     }
 
-    /*
-     * CU Customization: Create mappings from attribute names to attribute IDs.
-     */
-    protected Map<String, String> getAttributeNameToAttributeIdMappings(
-            Collection<String> roleIds, Map<String, String> qualification) {
-        if (CollectionUtils.isEmpty(roleIds) || qualification == null || qualification.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        KimTypeInfoService typeInfoService = getKimTypeInfoService();
-        Set<String> attributeNames = qualification.keySet();
-        Map<String, String> validAttributeIds = new HashMap<>();
-
-        roleIds.stream()
-                .map(this::getRoleLite)
-                .filter(ObjectUtils::isNotNull)
-                .map(RoleLite::getKimTypeId)
-                .distinct()
-                .map(typeInfoService::getKimType)
-                .filter(ObjectUtils::isNotNull)
-                .flatMap(kimType -> kimType.getAttributeDefinitions().stream())
-                .map(KimTypeAttribute::getKimAttribute)
-                .filter(attribute -> ObjectUtils.isNotNull(attribute)
-                        && attributeNames.contains(attribute.getAttributeName()))
-                .forEach(attribute ->
-                        validAttributeIds.put(attribute.getAttributeName(), attribute.getId()));
-
-        for (String attributeName : attributeNames) {
-            validAttributeIds.computeIfAbsent(attributeName, this::getAttributeIdByName);
-        }
-
-        return validAttributeIds;
-    }
-
-
     /**
      * Calls the KimRoleDao's "getRolePrincipalsForPrincipalIdAndRoleIds" method and/or retrieves any corresponding
      * members from the cache.
      */
-    protected List<RoleMember> getStoredRolePrincipalsForPrincipalIdAndRoleIds(Collection<String> roleIds,
-                                                                               String principalId, Map<String, String> qualification) {
-        return getRoleMemberList(RoleDaoAction.ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS, roleIds, principalId,
+    protected List<RoleMember> getStoredRolePrincipalsForPrincipalIdAndRoleId(String roleId, String principalId,
+            Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS, roleId, principalId,
                 Collections.emptyList(), null, qualification);
     }
 
@@ -225,9 +193,9 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleGroupsForGroupIdsAndRoleIds" method and/or retrieves any corresponding members
      * from the cache.
      */
-    protected List<RoleMember> getStoredRoleGroupsForGroupIdsAndRoleIds(Collection<String> roleIds,
-                                                                        Collection<String> groupIds, Map<String, String> qualification) {
-        return getRoleMemberList(RoleDaoAction.ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS, roleIds, null, groupIds,
+    protected List<RoleMember> getStoredRoleGroupsForGroupIdsAndRoleId(String roleId, Collection<String> groupIds,
+            Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS, roleId, null, groupIds,
                 null, qualification);
     }
 
@@ -235,9 +203,9 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleMembersForRoleIds" method and/or retrieves any corresponding members from the
      * cache.
      */
-    protected List<RoleMember> getStoredRoleMembersForRoleIds(Collection<String> roleIds, String memberTypeCode,
-                                                              Map<String, String> qualification) {
-        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS, roleIds, null, Collections.emptyList(),
+    protected List<RoleMember> getStoredRoleMembersForRoleId(String roleId, String memberTypeCode,
+            Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS, roleId, null, Collections.emptyList(),
                 memberTypeCode, qualification);
     }
 
@@ -245,9 +213,9 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleMembershipsForRoleIdsAsMembers" method and/or retrieves any corresponding
      * members from the cache.
      */
-    protected List<RoleMember> getStoredRoleMembershipsForRoleIdsAsMembers(Collection<String> roleIds,
-                                                                           Map<String, String> qualification) {
-        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS, roleIds, null,
+    protected List<RoleMember> getStoredRoleMembershipsForRoleIdAsMembers(String roleId,
+            Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS, roleId, null,
                 Collections.emptyList(), null, qualification);
     }
 
@@ -255,9 +223,9 @@ abstract class RoleServiceBase {
      * Calls the KimRoleDao's "getRoleMembersForRoleIdsWithFilters" method and/or retrieves any corresponding members
      * from the cache.
      */
-    protected List<RoleMember> getStoredRoleMembersForRoleIdsWithFilters(Collection<String> roleIds,
-                                                                         String principalId, List<String> groupIds, Map<String, String> qualification) {
-        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS_WITH_FILTERS, roleIds, principalId,
+    protected List<RoleMember> getStoredRoleMembersForRoleIdWithFilters(String roleId, String principalId,
+            List<String> groupIds, Map<String, String> qualification) {
+        return getRoleMemberList(RoleDaoAction.ROLE_MEMBERS_FOR_ROLE_IDS_WITH_FILTERS, roleId, principalId,
                 groupIds, null, qualification);
     }
 
@@ -302,12 +270,10 @@ abstract class RoleServiceBase {
     /**
      * Calls the KimRoleDao's "getDelegationBosForRoleIds" method and/or retrieves any corresponding delegations from
      * the cache.
+     * @param roleId roleId used to find delegations
      */
-    protected List<DelegateType> getStoredDelegationImplsForRoleIds(Collection<String> roleIds) {
-        if (roleIds != null && !roleIds.isEmpty()) {
-            return roleDao.getDelegationBosForRoleIds(roleIds);
-        }
-        return Collections.emptyList();
+    protected List<DelegateType> getStoredDelegationImplsForRoleIds(String roleId) {
+        return roleDao.getDelegationBosForRoleId(roleId);
     }
 
     /**
@@ -492,7 +458,7 @@ abstract class RoleServiceBase {
         if (roleId == null) {
             return new ArrayList<>();
         }
-        return getStoredDelegationImplsForRoleIds(Collections.singletonList(roleId));
+        return getStoredDelegationImplsForRoleIds(roleId);
 
     }
 
@@ -535,20 +501,19 @@ abstract class RoleServiceBase {
                 switch (daoActionToTake) {
                     case ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS:
                         // Search for group role members only.
-                        rms = getStoredRoleGroupsForGroupIdsAndRoleIds(Collections.singletonList(role.getId()),
+                        rms = getStoredRoleGroupsForGroupIdsAndRoleId(role.getId(),
                                 Collections.singletonList(memberId), populateQualifiersForExactMatch(qualifier,
                                         attributesForExactMatch));
                         break;
                     case ROLE_PRINCIPALS_FOR_PRINCIPAL_ID_AND_ROLE_IDS:
                         // Search for principal role members only.
-                        rms = getStoredRolePrincipalsForPrincipalIdAndRoleIds(Collections.singletonList(role.getId()),
-                                memberId, populateQualifiersForExactMatch(qualifier, attributesForExactMatch));
+                        rms = getStoredRolePrincipalsForPrincipalIdAndRoleId(role.getId(), memberId,
+                                populateQualifiersForExactMatch(qualifier, attributesForExactMatch));
                         break;
                     case ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS:
                         // Search for roles as role members only.
-                        List<RoleMember> allRoleMembers = getStoredRoleMembershipsForRoleIdsAsMembers(
-                                Collections.singletonList(role.getId()), populateQualifiersForExactMatch(qualifier,
-                                        attributesForExactMatch));
+                        List<RoleMember> allRoleMembers = getStoredRoleMembershipsForRoleIdAsMembers(role.getId(),
+                                populateQualifiersForExactMatch(qualifier, attributesForExactMatch));
                         for (RoleMember rm : allRoleMembers) {
                             if (rm.getMemberId().equals(memberId)) {
                                 rms.add(rm);

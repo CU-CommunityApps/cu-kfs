@@ -51,6 +51,7 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.batch.service.CuPayeeAddressService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
 
 public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
@@ -59,6 +60,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     
     protected AchBundlerHelperService achBundlerHelperService;
     protected CuPayeeAddressService cuPayeeAddressService;
+    
+    public CuExtractPaymentServiceImpl() {
+    	super(null);
+    }
     
     /**
     * MOD: Overridden to detect if the Bundle ACH Payments system parameter is on and if so, to 

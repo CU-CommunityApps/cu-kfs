@@ -61,7 +61,6 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -114,7 +113,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
      * All document-load operations get routed through here
      */
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
         KualiAccountingDocumentFormBase tform = (KualiAccountingDocumentFormBase) kualiDocumentFormBase;
 

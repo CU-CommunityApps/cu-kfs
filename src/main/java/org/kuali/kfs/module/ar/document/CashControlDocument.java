@@ -57,7 +57,6 @@ import org.kuali.kfs.sys.service.ElectronicPaymentClaimingService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.web.format.CurrencyFormatter;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,7 +110,7 @@ public class CashControlDocument extends GeneralLedgerPostingDocumentBase implem
             DocumentDictionaryService docDictionaryService = SpringContext.getBean(DocumentDictionaryService.class);
             DataDictionaryService ddService = SpringContext.getBean(DataDictionaryService.class);
             DocumentEntry docEntry = docDictionaryService.getDocumentEntry(
-                    ddService.getValidDocumentClassByTypeName(KFSConstants.FinancialDocumentTypeCodes.CASH_CONTROL)
+                    ddService.getValidDocumentClassByTypeName(ArConstants.ArDocumentTypeCodes.CASH_CONTROL)
                             .getCanonicalName());
             String documentTypeCode = docEntry.getDocumentTypeName();
             if (SpringContext.getBean(BankService.class).isBankSpecificationEnabled()) {
@@ -395,13 +394,7 @@ public class CashControlDocument extends GeneralLedgerPostingDocumentBase implem
 
     public Document getReferenceFinancialDocument() {
         DocumentService documentService = SpringContext.getBean(DocumentService.class);
-        Document document = null;
-        try {
-            document = documentService.getByDocumentHeaderId(getReferenceFinancialDocumentNumber());
-        } catch (WorkflowException we) {
-            LOG.warn("Unable to retrieve reference financial document: " + getReferenceFinancialDocumentNumber(), we);
-        }
-        return document;
+        return documentService.getByDocumentHeaderId(getReferenceFinancialDocumentNumber());
     }
 
     public String getBankCode() {

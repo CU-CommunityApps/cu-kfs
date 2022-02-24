@@ -171,10 +171,6 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
                     }
                 }
             }
-            catch (WorkflowException e) {
-                LOG.error("Unable to route DV: " + e.getMessage());
-                throw new RuntimeException("Unable to route DV: " + e.getMessage(), e);
-            }
             catch (ValidationException e1) {
                 // will be reported in audit report
             }
@@ -290,13 +286,7 @@ public class DisbursementVoucherDocumentBatchServiceImpl implements Disbursement
      */
     protected DisbursementVoucherDocument populateDisbursementVoucherDocument(DisbursementVoucherBatch disbursementVoucherBatch, BatchDisbursementVoucherDocument batchDisbursementVoucherDocument, DisbursementVoucherBatchDefault batchDefault, MessageMap MessageMap) {
         DisbursementVoucherDocument disbursementVoucherDocument = null;
-        try {
-            disbursementVoucherDocument = (DisbursementVoucherDocument) documentService.getNewDocument(DisbursementVoucherDocument.class);
-        }
-        catch (WorkflowException e) {
-            LOG.error("Error creating new disbursement voucher document: " + e.getMessage());
-            throw new RuntimeException("Error creating new disbursement voucher document: " + e.getMessage(), e);
-        }
+        disbursementVoucherDocument = (DisbursementVoucherDocument) documentService.getNewDocument(DisbursementVoucherDocument.class);
 
         // populate extension with batch id
         DisbursementVoucherDocumentExtension disbursementVoucherDocumentExtension = new DisbursementVoucherDocumentExtension();

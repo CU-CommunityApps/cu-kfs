@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
-import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderDocTypes;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.document.LineItemReceivingDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
@@ -9,11 +8,11 @@ import org.kuali.kfs.module.purap.document.ReceivingDocument;
 import org.kuali.kfs.module.purap.document.service.LogicContainer;
 import org.kuali.kfs.module.purap.document.service.impl.ReceivingServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.module.purap.PurapConstants;
 
 import edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument;
 
@@ -32,12 +31,12 @@ public class CuReceivingServiceImpl extends ReceivingServiceImpl {
 
                     LogicContainer logicToRun = new LogicContainer() {
                         @Override
-                        public Object runLogic(Object[] objects) throws Exception {
+                        public Object runLogic(Object[] objects) {
                             LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)objects[0];
                             String poDocNumber = (String)objects[1];
 
                             //create a PO amendment
-                            PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
+                            PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
 
                             // KFSPTS-1769, KFSUPGRADE-339
                             ((CuPurchaseOrderAmendmentDocument)amendmentPo).setSpawnPoa(true);
@@ -59,10 +58,6 @@ public class CuReceivingServiceImpl extends ReceivingServiceImpl {
                     };
 
                     purapService.performLogicWithFakedUserSession(newSessionUserId, logicToRun, new Object[] { rlDoc, po.getDocumentNumber() });
-                }
-                catch (WorkflowException e) {
-                    String errorMsg = "Workflow Exception caught: " + e.getLocalizedMessage();
-                    throw new RuntimeException(errorMsg, e);
                 }
                 catch (Exception e) {
                     throw new RuntimeException(e);

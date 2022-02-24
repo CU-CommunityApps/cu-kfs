@@ -15,7 +15,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl;
@@ -35,14 +34,7 @@ public class DebitDeterminerServiceImplTest extends KualiIntegTestBase {
                   
 	public void test(){
 		
-		CuDisbursementVoucherDocument dv = null;
-		
-        try {
-            dv = (CuDisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
-        }
-        catch (WorkflowException e) {
-            throw new RuntimeException("Error creating new disbursement voucher document: " + e.getMessage(), e);
-        }
+		CuDisbursementVoucherDocument dv = (CuDisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
 		
         if(dv != null) {
 			dv.getDocumentHeader().setDocumentDescription("Test Document Description");
@@ -90,20 +82,12 @@ public class DebitDeterminerServiceImplTest extends KualiIntegTestBase {
 			accountingLine2.setAmount((new KualiDecimal(100.00)));
 			
 			
-			 accountingLine2.setPostingYear(dv.getPostingYear());
-			 accountingLine2.setDocumentNumber(dv.getDocumentNumber());
+			accountingLine2.setPostingYear(dv.getPostingYear());
+			accountingLine2.setDocumentNumber(dv.getDocumentNumber());
 			
-			 dv.addSourceAccountingLine(accountingLine2);
+			dv.addSourceAccountingLine(accountingLine2);
 			
-			try {
 			documentService.saveDocument(dv);
-			}
-			catch (WorkflowException e) {
-	            throw new RuntimeException("Error saving new disbursement voucher document: " + e.getMessage(), e);
-	        }
-			
-			
-			
 			
 		}			        
 		

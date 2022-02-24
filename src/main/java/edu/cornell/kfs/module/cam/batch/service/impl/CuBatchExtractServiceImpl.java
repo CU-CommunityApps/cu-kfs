@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.batch.ExtractProcessLog;
 import org.kuali.kfs.module.cam.batch.service.ReconciliationService;
@@ -86,14 +85,14 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     @Override
     public void separatePOLines(List<Entry> fpLines, List<Entry> purapLines, Collection<Entry> elgibleGLEntries) {
         for (Entry entry : elgibleGLEntries) {
-            if (CamsConstants.PREQ.equals(entry.getFinancialDocumentTypeCode())) {
+            if (KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST.equals(entry.getFinancialDocumentTypeCode())) {
                 purapLines.add(entry);
-            } else if (!CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
+            } else if (!KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO.equals(entry.getFinancialDocumentTypeCode())) {
                 fpLines.add(entry);
-            } else if (CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
+            } else if (KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO.equals(entry.getFinancialDocumentTypeCode())) {
                 Map<String, String> fieldValues = new HashMap<>();
                 fieldValues.put(CamsPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, entry.getDocumentNumber());
-                Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
+                Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO);
                 // check if vendor credit memo, then include as FP line
                 Collection<? extends Document> matchingCreditMemos = businessObjectService.findMatching(docClass, fieldValues);
                 for (Document document : matchingCreditMemos) {
@@ -186,7 +185,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 papdMap.put(entry.getDocumentNumber(), cabPurapDoc);
 
                 // we only deal with PREQ or CM, so isPREQ = !isCM, isCM = !PREQ
-                boolean isPREQ = CamsConstants.PREQ.equals(entry.getFinancialDocumentTypeCode());
+                boolean isPREQ = KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST.equals(entry.getFinancialDocumentTypeCode());
                 boolean hasRevisionWithMixedLines = isPREQ && hasRevisionWithMixedLines(matchedPurApAcctLines);
 
                 for (PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {

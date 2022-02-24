@@ -534,19 +534,14 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         LOG.info("EIRTs to Route: "+documentIdList);
         
         for (String eirtDocumentId: documentIdList) {
-            try {
-                LOG.info("Retrieving EIRT document # " + eirtDocumentId + ".");
-                ElectronicInvoiceRejectDocument eirtDocument = (ElectronicInvoiceRejectDocument)documentService.getByDocumentHeaderId(eirtDocumentId);
-                LOG.info("Routing EIRT document # " + eirtDocumentId + ".");
-                documentService.prepareWorkflowDocument(eirtDocument);
-                LOG.info("EIRT document # " + eirtDocumentId + " prepared for workflow.");
-                // calling workflow service to bypass business rule checks
-                workflowDocumentService.route(eirtDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
-                LOG.info("EIRT document # " + eirtDocumentId + " routed.");
-            } catch (WorkflowException e) {
-                LOG.error("Error routing document # " + eirtDocumentId + " " + e.getMessage());
-                throw new RuntimeException(e.getMessage(),e);
-            }
+            LOG.info("Retrieving EIRT document # " + eirtDocumentId + ".");
+            ElectronicInvoiceRejectDocument eirtDocument = (ElectronicInvoiceRejectDocument)documentService.getByDocumentHeaderId(eirtDocumentId);
+            LOG.info("Routing EIRT document # " + eirtDocumentId + ".");
+            documentService.prepareWorkflowDocument(eirtDocument);
+            LOG.info("EIRT document # " + eirtDocumentId + " prepared for workflow.");
+            // calling workflow service to bypass business rule checks
+            workflowDocumentService.route(eirtDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
+            LOG.info("EIRT document # " + eirtDocumentId + " routed.");
         }
 
     	return true;
@@ -572,21 +567,16 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         LOG.info("PREQs to Route: "+documentIdList);
         
         for (String preqDocumentId: documentIdList) {
-            try {
-                LOG.info("Retrieving PREQ document # " + preqDocumentId + ".");
-            	PaymentRequestDocument preqDocument = (PaymentRequestDocument)documentService.getByDocumentHeaderId(preqDocumentId);
-                LOG.info("Routing PREQ document # " + preqDocumentId + ".");
+            LOG.info("Retrieving PREQ document # " + preqDocumentId + ".");
+        	PaymentRequestDocument preqDocument = (PaymentRequestDocument)documentService.getByDocumentHeaderId(preqDocumentId);
+            LOG.info("Routing PREQ document # " + preqDocumentId + ".");
 
-                if (preqDocument.getPaymentRequestElectronicInvoiceIndicator()) {
-                	documentService.prepareWorkflowDocument(preqDocument);
-             		LOG.info("PREQ document # " + preqDocumentId + " prepared for workflow.");
-                	// calling workflow service to bypass business rule checks
-                	workflowDocumentService.route(preqDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
-              		LOG.info("PREQ document # " + preqDocumentId + " routed.");
-                }
-            } catch (WorkflowException e) {
-                LOG.error("Error routing document # " + preqDocumentId + " " + e.getMessage());
-                throw new RuntimeException(e.getMessage(),e);
+            if (preqDocument.getPaymentRequestElectronicInvoiceIndicator()) {
+            	documentService.prepareWorkflowDocument(preqDocument);
+         		LOG.info("PREQ document # " + preqDocumentId + " prepared for workflow.");
+            	// calling workflow service to bypass business rule checks
+            	workflowDocumentService.route(preqDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
+          		LOG.info("PREQ document # " + preqDocumentId + " routed.");
             }
         }
     	
@@ -616,7 +606,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             crit = criteria.build();
             LOG.debug("Max Results: "+criteria.getStartAtIndex());
             DocumentSearchResults results = KEWServiceLocator.getDocumentSearchService().lookupDocuments(
-                    GlobalVariables.getUserSession().getPrincipalId(), crit);
+                    GlobalVariables.getUserSession().getPrincipalId(), crit, false);
             if (results.getSearchResults().isEmpty()) {
                 break;
             }
@@ -695,12 +685,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             rejectDoc.setInvoiceLoadSummary((ElectronicInvoiceLoadSummary) savedLoadSummariesMap.get(UNKNOWN_DUNS_IDENTIFIER));
         }
 
-        try{
-            documentService.saveDocument(rejectDoc, DocumentSystemSaveEvent.class);
-        }
-        catch (WorkflowException e) {
-            e.printStackTrace();
-        }
+        documentService.saveDocument(rejectDoc, DocumentSystemSaveEvent.class);
 
     }
 
@@ -724,19 +709,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             return null;
         }
 
-        PaymentRequestDocument preqDoc = null;
-        try {
-            preqDoc = (PaymentRequestDocument) documentService.getNewDocument("PREQ");
-        }
-        catch (WorkflowException e) {
-            String extraDescription = "Error=" + e.getMessage();
-            ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_WORKLOW_EXCEPTION,
-                                                                                            extraDescription,
-                                                                                            orderHolder.getFileName());
-            orderHolder.addInvoiceOrderRejectReason(rejectReason);
-            LOG.error("Error creating Payment request document - " + e.getMessage());
-            return null;
-        }
+        PaymentRequestDocument preqDoc = (PaymentRequestDocument) documentService.getNewDocument("PREQ");
 
         PurchaseOrderDocument poDoc = orderHolder.getPurchaseOrderDocument();
         if (poDoc == null) {
@@ -744,11 +717,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
 
         preqDoc.getDocumentHeader().setDocumentDescription(generatePREQDocumentDescription(poDoc));
-        try {
-            preqDoc.updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_IN_PROCESS);
-        } catch (WorkflowException we) {
-            throw new RuntimeException("Unable to save route status data for document: " + preqDoc.getDocumentNumber(), we);
-        }
+        preqDoc.updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_IN_PROCESS);
 
         preqDoc.setInvoiceDate(orderHolder.getInvoiceDate());
         preqDoc.setInvoiceNumber(orderHolder.getInvoiceNumber());
@@ -904,12 +873,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 documentService.saveDocument(preqDoc,DocumentSystemSaveEvent.class);
             }
         }
-        catch (WorkflowException e) {
-            e.printStackTrace();
-            ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_FAILURE, e.getMessage(), orderHolder.getFileName());
-            orderHolder.addInvoiceOrderRejectReason(rejectReason);
-            return null;
-        } catch(ValidationException e) {
+        catch(ValidationException e) {
             String extraDescription = GlobalVariables.getMessageMap().toString();
             ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
             orderHolder.addInvoiceOrderRejectReason(rejectReason);
@@ -1160,26 +1124,22 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         ElectronicInvoiceRejectDocument eInvoiceRejectDocument;
 
-        try {
-            eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
+        eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
-            String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
-            eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription(rejectdocDesc);
-            eInvoiceRejectDocument.setDocumentCreationInProgress(true);
+        eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
+        String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
+        eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription(rejectdocDesc);
+        eInvoiceRejectDocument.setDocumentCreationInProgress(true);
 
-            eInvoiceRejectDocument.setFileLevelData(eInvoice);
-            eInvoiceRejectDocument.setInvoiceOrderLevelData(eInvoice, electronicInvoiceOrder);
+        eInvoiceRejectDocument.setFileLevelData(eInvoice);
+        eInvoiceRejectDocument.setInvoiceOrderLevelData(eInvoice, electronicInvoiceOrder);
 
-            documentService.saveDocument(eInvoiceRejectDocument);
+        documentService.saveDocument(eInvoiceRejectDocument);
 
-            String noteText = "Invoice file";
-            attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
+        String noteText = "Invoice file";
+        attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
 
-            eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
-        }
+        eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
 
         LOG.info("Reject document has been created (DocNo=" + eInvoiceRejectDocument.getDocumentNumber() + ")");
 
@@ -1219,8 +1179,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         rejectReasonNotes.add(rejectReasonNote);
 
         emailTextErrorList.append("\n");
-        for (StringBuffer noteText : rejectReasonNotes) {
-        	addRejectReasonsToNote(noteText.toString(), eInvoiceRejectDocument);
+        for (StringBuffer note : rejectReasonNotes) {
+        	addRejectReasonsToNote(note.toString(), eInvoiceRejectDocument);
         }
 
         return eInvoiceRejectDocument;
@@ -1237,46 +1197,40 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         eInvoiceLoadSummary.addFailedInvoiceOrder();
         eInvoiceLoad.insertInvoiceLoadSummary(eInvoiceLoadSummary);
 
-        ElectronicInvoiceRejectDocument eInvoiceRejectDocument = null;
-        try {
-            eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
+        ElectronicInvoiceRejectDocument eInvoiceRejectDocument = eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
-            eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
-            eInvoiceRejectDocument.setVendorDunsNumber(fileDunsNumber);
-            eInvoiceRejectDocument.setDocumentCreationInProgress(true);
+        eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
+        eInvoiceRejectDocument.setVendorDunsNumber(fileDunsNumber);
+        eInvoiceRejectDocument.setDocumentCreationInProgress(true);
 
-            if (invoiceFile != null) {
-                eInvoiceRejectDocument.setInvoiceFileName(invoiceFile.getName());
-            }
-
-            List<ElectronicInvoiceRejectReason> list = new ArrayList<ElectronicInvoiceRejectReason>(1);
-
-            String message = "Complete failure document has been created for the Invoice with Filename '" + invoiceFile.getName() + "' due to the following error:\n";
-            emailTextErrorList.append(message);
-
-            ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(rejectReasonTypeCode,extraDescription, invoiceFile.getName());
-            list.add(rejectReason);
-
-            emailTextErrorList.append("    - " + rejectReason.getInvoiceRejectReasonDescription());
-            emailTextErrorList.append("\n\n");
-
-            eInvoiceRejectDocument.setInvoiceRejectReasons(list);
-            eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription("Complete failure");
-
-            // KFSCNTRB-1369: Need to Save document
-            documentService.saveDocument(eInvoiceRejectDocument);
-
-            String noteText = "Invoice file";
-    //        if (invoiceFile.length() > 0) {
-            	// empty file will casuse attachment creation exception.  Hence, job will be stopped
-            attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument,invoiceFile,noteText);
-    //        }
-
-            eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
-
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
+        if (invoiceFile != null) {
+            eInvoiceRejectDocument.setInvoiceFileName(invoiceFile.getName());
         }
+
+        List<ElectronicInvoiceRejectReason> list = new ArrayList<ElectronicInvoiceRejectReason>(1);
+
+        String message = "Complete failure document has been created for the Invoice with Filename '" + invoiceFile.getName() + "' due to the following error:\n";
+        emailTextErrorList.append(message);
+
+        ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(rejectReasonTypeCode,extraDescription, invoiceFile.getName());
+        list.add(rejectReason);
+
+        emailTextErrorList.append("    - " + rejectReason.getInvoiceRejectReasonDescription());
+        emailTextErrorList.append("\n\n");
+
+        eInvoiceRejectDocument.setInvoiceRejectReasons(list);
+        eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription("Complete failure");
+
+        // KFSCNTRB-1369: Need to Save document
+        documentService.saveDocument(eInvoiceRejectDocument);
+
+        String noteText = "Invoice file";
+//        if (invoiceFile.length() > 0) {
+        	// empty file will casuse attachment creation exception.  Hence, job will be stopped
+        attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument,invoiceFile,noteText);
+//        }
+
+        eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Complete failure document has been created (DocNo:" + eInvoiceRejectDocument.getDocumentNumber() + ")");

@@ -18,7 +18,6 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 import org.kuali.kfs.sys.document.service.impl.FinancialSystemDocumentServiceImpl;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
@@ -41,7 +40,6 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 	 *  new == blah, old == meh : changed
 	 *  new == null, old == blah : deleted
 	 *  new == blah, old == null : added
-	 * @throws WorkflowException 
 	 *  
 	 *  
      * @see org.kuali.kfs.sys.document.service.FinancialSystemDocumentService#checkAccountingLinesForChanges(org.kuali.kfs.sys.document.AccountingDocument)
@@ -53,12 +51,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         
         DocumentService docService = SpringContext.getBean(DocumentService.class);
         AccountingDocument savedDoc = null;
-        try {
-        	savedDoc = (AccountingDocument)docService.getByDocumentHeaderId(accountingDocument.getDocumentNumber());
-       
-        } catch (WorkflowException we) {
-        	LOG.error("Unable to retrieve document number "+ accountingDocument.getDocumentNumber()+ " to evaluate accounting line changes");
-        }
+        savedDoc = (AccountingDocument)docService.getByDocumentHeaderId(accountingDocument.getDocumentNumber());
 
         if (savedDoc == null) {
         	return;

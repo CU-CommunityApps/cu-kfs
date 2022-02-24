@@ -15,8 +15,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -39,14 +38,14 @@ public class CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl 
         // If necessary, filter out members based on the number of pay periods between doc creation and earliest accounting line payment.
         if (StringUtils.isNotBlank(documentTypeName) && StringUtils.isNotBlank(documentNumber)) {
             Collection<String> docTypesWithAwardExceptionRouting = CoreFrameworkServiceLocator.getParameterService().getParameterValuesAsString(
-                    KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION, ParameterConstants.DOCUMENT_COMPONENT,
+                    KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION, KfsParameterConstants.DOCUMENT_COMPONENT,
                             CuLaborParameterConstants.DOC_TYPES_WITH_AWARD_EXCEPTION_ROUTING);
             
             // If the document's doc type is in the list, then perform alternate/exception Award routing instead.
             if (docTypesWithAwardExceptionRouting.contains(documentTypeName)) {
                 // Get the maximum allowable fiscal/pay period difference for skipping Award routing.
                 String payPeriodDifferenceLimit = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
-                        KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION, ParameterConstants.DOCUMENT_COMPONENT,
+                        KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION, KfsParameterConstants.DOCUMENT_COMPONENT,
                                 CuLaborParameterConstants.DEFAULT_NUMBER_OF_FISCAL_PERIODS_FOR_AWARD_EXCEPTION_ROUTING);
                 
                 // If parameter is non-blank and difference is within limit, then skip the routing.
@@ -74,8 +73,6 @@ public class CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl 
         // Get the document, which is expected to be an accounting one.
         try {
             document = (AccountingDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentNumber);
-        } catch (WorkflowException e) {
-            document = null;
         } catch (ClassCastException e) {
             document = null;
         }

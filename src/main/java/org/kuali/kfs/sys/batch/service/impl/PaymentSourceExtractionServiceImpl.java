@@ -37,7 +37,6 @@ import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.springframework.transaction.annotation.Transactional;
@@ -288,22 +287,17 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
         Collection<DisbursementVoucherDocument> list = new ArrayList<>();
 
-        try {
-            Collection<DisbursementVoucherDocument> docs = financialSystemDocumentService.findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
-            for (DisbursementVoucherDocument element : docs) {
-                String dvdCampusCode = element.getCampusCode();
+        Collection<DisbursementVoucherDocument> docs = financialSystemDocumentService.findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
+        for (DisbursementVoucherDocument element : docs) {
+            String dvdCampusCode = element.getCampusCode();
 
-                if (dvdCampusCode.equals(campusCode)
-                        && KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK.equals(
-                                element.getDisbVchrPaymentMethodCode())) {
-                    if (!immediatesOnly || element.isImmediatePaymentIndicator()) {
-                        list.add(element);
-                    }
+            if (dvdCampusCode.equals(campusCode)
+                    && KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK.equals(
+                            element.getDisbVchrPaymentMethodCode())) {
+                if (!immediatesOnly || element.isImmediatePaymentIndicator()) {
+                    list.add(element);
                 }
             }
-        } catch (WorkflowException we) {
-            LOG.error("Could not load Disbursement Voucher Documents with status code = " + statusCode + ": " + we);
-            throw new RuntimeException(we);
         }
 
         return list;

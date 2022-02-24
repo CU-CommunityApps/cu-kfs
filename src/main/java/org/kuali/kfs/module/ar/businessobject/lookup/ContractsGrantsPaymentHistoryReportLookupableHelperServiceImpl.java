@@ -21,7 +21,6 @@ package org.kuali.kfs.module.ar.businessobject.lookup;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
 import org.kuali.kfs.kns.web.ui.ResultRow;
 import org.kuali.kfs.krad.document.Document;
@@ -238,8 +237,6 @@ public class ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl exte
                 }
             }
             buildResultTable(lookupForm, displayList, resultTable);
-        } catch (WorkflowException we) {
-            throw new RuntimeException("Could not open payment application document related to search", we);
         } catch (ParseException pe) {
             throw new RuntimeException("I tried to validate the date and amount fields related to search, I really " +
                     "did.  But...I guess I didn't try hard enough", pe);

@@ -39,7 +39,6 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantView;
@@ -51,21 +50,16 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
     @Override
     public void saveRoutingDataForRelatedDocuments(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
         super.saveRoutingDataForRelatedDocuments(accountsPayablePurchasingDocumentLinkIdentifier);
-        
-        try {
-            // Save IWNT routing data.
-            @SuppressWarnings("unchecked")
-            List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
-            for (Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
-                IWantView view = (IWantView) iterator.next();
-                Document doc = documentService.getByDocumentHeaderId(view.getDocumentNumber());
-                doc.getDocumentHeader().getWorkflowDocument().saveDocumentData();
-            }
 
-            
-        } catch (WorkflowException e) {
-            throw new InfrastructureException("unable to save routing data for related docs", e);
+        // Save IWNT routing data.
+        @SuppressWarnings("unchecked")
+        List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
+        for (Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
+            IWantView view = (IWantView) iterator.next();
+            Document doc = documentService.getByDocumentHeaderId(view.getDocumentNumber());
+            doc.getDocumentHeader().getWorkflowDocument().saveDocumentData();
         }
+
     }
 
     // ==== CU Customization (KFSPTS-1656): Get IWantDocument views. ====

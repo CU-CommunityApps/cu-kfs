@@ -159,7 +159,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        } catch (WorkflowException | UnknownDocumentTypeException ex) {
+        } catch (UnknownDocumentTypeException ex) {
             LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
         }
 

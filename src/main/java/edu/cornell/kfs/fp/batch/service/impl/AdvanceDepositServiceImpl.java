@@ -235,7 +235,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         criteria.setDocumentStatuses(routeStatuses);
         criteria.setInitiatorPrincipalName(principalName);
 
-        DocumentSearchResults results = getDocumentSearchService().lookupDocuments(systemUser.getPrincipalId(), criteria.build());
+        DocumentSearchResults results = getDocumentSearchService().lookupDocuments(systemUser.getPrincipalId(), criteria.build(), false);
 
         for (DocumentSearchResult resultRow : results.getSearchResults()) {
             DocumentRouteHeaderValue document = resultRow.getDocument();
@@ -280,7 +280,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
             advanceDepositDetail.setBank(bank);
 
             advanceDepositDocument.addAdvanceDeposit(advanceDepositDetail);
-        } catch (WorkflowException | ParseException e) {
+        } catch (ParseException e) {
             LOG.error("Error creating advance deposit documents: " + e.getMessage(), e);
             throw new RuntimeException("Error creating advance deposit documents: " + e.getMessage(), e);
         }
