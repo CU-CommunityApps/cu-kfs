@@ -14,30 +14,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
+import edu.cornell.kfs.concur.ConcurTestConstants.RequestV4Dates;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
@@ -45,6 +55,7 @@ import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4ListingFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4CustomItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
@@ -61,11 +72,12 @@ import edu.cornell.kfs.sys.web.mock.MockRemoteServerExtension;
 @Execution(ExecutionMode.SAME_THREAD)
 public class ConcurRequestV4ServiceImplTest {
 
-    private static final String DEFAULT_MOCK_CURRENT_DATE = "01/03/2022 11:22:33";
+    private static final String US_EASTERN_TIME_ZONE = "US/Eastern";
+    private static final String DEFAULT_MOCK_CURRENT_DATE = RequestV4Dates.DATE_2022_01_03;
+
     private static final String VALIDATION_ERROR_MISSING_CHART = "Missing Chart Code";
     private static final String VALIDATION_ERROR_MISSING_ACCOUNT = "Missing Account Number";
     private static final String VALIDATION_ERROR_INVALID_ACCOUNT = "Invalid Account Number";
-    
 
     private String mockAccessToken;
     private MockConcurRequestV4Server mockConcurBackendServer;
@@ -76,6 +88,7 @@ public class ConcurRequestV4ServiceImplTest {
     private Map<String, String> concurProperties;
     private TestDateTimeServiceImpl testDateTimeService;
     private TestConcurRequestV4ServiceImpl requestV4Service;
+    private DateTimeZone easternTimeZone;
     private long mockCurrentTimeMillis;
 
     @BeforeEach
@@ -105,6 +118,7 @@ public class ConcurRequestV4ServiceImplTest {
         
         ConcurBatchUtilityService mockConcurBatchUtilityService = buildMockConcurBatchUtilityService();
         testDateTimeService = buildDateTimeService();
+        easternTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone(US_EASTERN_TIME_ZONE));
         mockCurrentTimeMillis = getTimeInMilliseconds(DEFAULT_MOCK_CURRENT_DATE);
         
         requestV4Service = new TestConcurRequestV4ServiceImpl();
@@ -113,7 +127,7 @@ public class ConcurRequestV4ServiceImplTest {
         requestV4Service.setConcurEventNotificationV2WebserviceService(
                 buildConcurEventNotificationV2WebserviceService(mockConcurBatchUtilityService));
         requestV4Service.setConfigurationService(buildMockConfigurationService());
-        requestV4Service.setDateTimeService(buildDateTimeServiceWithOverridableCurrentDate(testDateTimeService));
+        requestV4Service.setDateTimeService(buildSpiedDateTimeService(testDateTimeService));
         requestV4Service.setConcurAccountValidationService(buildMockConcurAccountValidationService());
     }
 
@@ -145,6 +159,10 @@ public class ConcurRequestV4ServiceImplTest {
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE,
                 ParameterTestValues.REQUEST_V4_PAGE_SIZE_2);
         parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_APPROVERS, buildTestApproversParameterValue());
+        parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE,
+                ParameterTestValues.REQUEST_V4_DEFAULT_FROM_DATE_2022_01_02);
+        parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE,
+                ConcurConstants.REQUEST_QUERY_CURRENT_DATE_INDICATOR);
         return parameters;
     }
 
@@ -152,6 +170,22 @@ public class ConcurRequestV4ServiceImplTest {
         return Stream.of(RequestV4PersonFixture.TEST_MANAGER, RequestV4PersonFixture.TEST_APPROVER)
                 .map(fixture -> fixture.firstName + CUKFSConstants.EQUALS_SIGN + fixture.id)
                 .collect(Collectors.joining(CUKFSConstants.SEMICOLON));
+    }
+
+    private void overrideQueryFromDate(String newDate) {
+        overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE, newDate);
+    }
+
+    private void overrideQueryToDate(String newDate) {
+        overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE, newDate);
+    }
+
+    private void overrideQueryPageSize(int newPageSize) {
+        overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE, String.valueOf(newPageSize));
+    }
+
+    private void overrideParameter(String parameterName, String parameterValue) {
+        concurParameters.put(parameterName, parameterValue);
     }
 
     private ConcurBatchUtilityService buildMockConcurBatchUtilityService() {
@@ -183,11 +217,13 @@ public class ConcurRequestV4ServiceImplTest {
         return dateTimeService;
     }
 
-    private DateTimeService buildDateTimeServiceWithOverridableCurrentDate(
-            TestDateTimeServiceImpl actualDateTimeService) {
+    private DateTimeService buildSpiedDateTimeService(
+            TestDateTimeServiceImpl actualDateTimeService) throws Exception {
         TestDateTimeServiceImpl dateTimeService = Mockito.spy(actualDateTimeService);
         Mockito.doAnswer(invocation -> getMockCurrentDate())
                 .when(dateTimeService).getCurrentDate();
+        Mockito.doAnswer(invocation -> convertToSameTimeOfDayInEasternTime((Date) invocation.callRealMethod()))
+                .when(dateTimeService).convertToDateTime(Mockito.anyString());
         return dateTimeService;
     }
 
@@ -203,7 +239,17 @@ public class ConcurRequestV4ServiceImplTest {
             throw new IllegalStateException("testDateTimeService has not been initialized yet");
         }
         Date parsedDate = testDateTimeService.convertToDateTime(dateString);
+        parsedDate = convertToSameTimeOfDayInEasternTime(parsedDate);
         return parsedDate.getTime();
+    }
+
+    private Date convertToSameTimeOfDayInEasternTime(Date dateValue) {
+        if (easternTimeZone == null) {
+            throw new IllegalStateException("easternTimeZone has not been initialized yet");
+        }
+        MutableDateTime dateTime = new MutableDateTime(dateValue);
+        dateTime.setZoneRetainFields(easternTimeZone);
+        return new Date(dateTime.getMillis());
     }
 
     private void overrideCurrentTime(String newDate) throws ParseException {
@@ -244,39 +290,191 @@ public class ConcurRequestV4ServiceImplTest {
         return new ValidationResult(messages.isEmpty(), messages);
     }
 
-    @Test
-    void testFindSingleTravelRequest() throws Exception {
-        RequestV4DetailFixture fixture = RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_DOE;
+    static Stream<Arguments> travelRequests() {
+        return Stream.of(
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.PENDING_APPROVAL_TEST_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.CANCELED_TEST_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.APPROVED_TEST_REQUEST_JANE_DOE,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JANE_DOE,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
+                RequestV4DetailFixture.SENTBACK_INVALID_TEST_REQUEST_JANE_DOE,
+                RequestV4DetailFixture.PENDING_COST_APPROVAL_REGULAR_REQUEST_BOB_SMITH,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_BOB_SMITH,
+                RequestV4DetailFixture.NOT_SUBMITTED_REGULAR_REQUEST_BOB_SMITH
+        ).map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testFindSingleTravelRequest(RequestV4DetailFixture fixture) throws Exception {
         ConcurRequestV4ReportDTO requestDetail = requestV4Service.findTravelRequest(mockAccessToken, fixture.id);
         assertExpectedTravelRequestWasRetrieved(fixture, requestDetail);
     }
 
     @Test
     void testFindTravelRequestListingForDefaultSettings() throws Exception {
-        String queryUrl = requestV4Service.buildInitialRequestQueryUrl(Optional.empty());
-        ConcurRequestV4ListingDTO requestListing = requestV4Service.findPendingTravelRequests(
-                mockAccessToken, 1, queryUrl);
-        assertExpectedTravelRequestListingWasRetrieved(
-                queryUrl, RequestV4ListingFixture.DEFAULT_ALL_SEARCH_2022_01_03_PAGE_1, requestListing);
+        assertSearchForRequestListingReturnsExpectedResults(
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03);
     }
 
-    private void assertExpectedTravelRequestListingWasRetrieved(String queryUrl,
-            RequestV4ListingFixture expectedResult, ConcurRequestV4ListingDTO actualResult) {
-        assertEquals(expectedResult.totalCount, actualResult.getTotalCount(), "Wrong total count for search");
-        assertTravelRequestListingHasExpectedListItems(expectedResult, actualResult);
-        assertTravelRequestListingHasExpectedOperations(queryUrl, expectedResult, actualResult);
+    static Stream<Arguments> travelRequestListingQueries() {
+        return Stream.of(
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03,
+                RequestV4ListingFixture.SEARCH_TEST_MANAGER_2022_01_02_TO_2022_01_03,
+                RequestV4ListingFixture.SEARCH_TEST_APPROVER_2022_01_02_TO_2022_01_03,
+                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_06,
+                RequestV4ListingFixture.SEARCH_TEST_MANAGER_2022_04_05_TO_2022_04_06,
+                RequestV4ListingFixture.SEARCH_MARY_GRANT_2022_04_05_TO_2022_04_06,
+                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_07,
+                RequestV4ListingFixture.SEARCH_MARY_GRANT_2022_04_05_TO_2022_04_07,
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30,
+                RequestV4ListingFixture.SEARCH_TEST_MANAGER_2022_01_01_TO_2022_04_30,
+                RequestV4ListingFixture.SEARCH_TEST_APPROVER_2022_01_01_TO_2022_04_30
+        ).map(Arguments::of);
     }
 
-    private void assertTravelRequestListingHasExpectedOperations(String queryUrl,
-            RequestV4ListingFixture expectedResult, ConcurRequestV4ListingDTO actualResult) {
-        Map<String, Map<String, String>> expectedParametersForOperations = expectedResult
-                .buildExpectedParametersForOperations(queryUrl);
+    static Stream<Arguments> travelRequestListingQueriesWithPageSizeOverrides() {
+        return Stream.of(
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_MARY_GRANT_2022_04_05_TO_2022_04_06_PAGE_SIZE_7,
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
+        ).map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequestListingQueries")
+    void testFindTravelRequestListingAfterOverridingQueryFromDateAndCurrentDate(
+            RequestV4ListingFixture expectedResults) throws Exception {
+        overrideQueryFromDate(expectedResults.modifiedFromDate);
+        overrideCurrentTime(expectedResults.modifiedToDate);
+        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequestListingQueries")
+    void testFindTravelRequestListingAfterOverridingQueryFromDateAndQueryToDate(
+            RequestV4ListingFixture expectedResults) throws Exception {
+        overrideQueryFromDate(expectedResults.modifiedFromDate);
+        overrideQueryToDate(expectedResults.modifiedToDate);
+        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequestListingQueriesWithPageSizeOverrides")
+    void testFindTravelRequestListingAfterOverridingQueryDatesAndPageSize(
+            RequestV4ListingFixture expectedResults) throws Exception {
+        overrideQueryFromDate(expectedResults.modifiedFromDate);
+        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryPageSize(expectedResults.pageSize);
+        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
+    }
+
+    @Test
+    void testValidateTravelRequestsForDefaultSettings() throws Exception {
+        assertProcessingOfRequestListingHasExpectedResults(
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03);
+    }
+
+    static Stream<Arguments> travelRequestListingsForValidation() {
+        return Stream.of(
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03,
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_06,
+                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_07,
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30,
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
+        ).map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequestListingsForValidation")
+    private void testValidateTravelRequestsAfterOverridingQueryDatesAndPageSize(
+            RequestV4ListingFixture expectedResults) throws Exception {
+        overrideQueryFromDate(expectedResults.modifiedFromDate);
+        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryPageSize(expectedResults.pageSize);
+        assertProcessingOfRequestListingHasExpectedResults(expectedResults);
+    }
+
+    private void assertProcessingOfRequestListingHasExpectedResults(
+            RequestV4ListingFixture expectedListing) {
+        Map<String, RequestV4DetailFixture> expectedResults = expectedListing
+                .getExpectedProcessedRequestsKeyedByRequestId();
+        List<ConcurEventNotificationProcessingResultsDTO> actualResults = requestV4Service.processTravelRequests(
+                mockAccessToken);
+        assertRequestsWereValidatedAsExpected(expectedResults, actualResults);
+    }
+
+    private void assertRequestsWereValidatedAsExpected(Map<String, RequestV4DetailFixture> expectedResults,
+            List<ConcurEventNotificationProcessingResultsDTO> actualResults) {
+        Set<String> encounteredResults = new HashSet<>();
+        assertEquals(expectedResults.size(), actualResults.size(), "Wrong number of validation results");
+        
+        for (ConcurEventNotificationProcessingResultsDTO actualResult : actualResults) {
+            String requestId = actualResult.getReportNumber();
+            assertTrue(StringUtils.isNotBlank(requestId), "Validation result should have had a Request ID");
+            assertTrue(encounteredResults.add(requestId), "Unexpected duplicate result for Request ID: " + requestId);
+            
+            RequestV4DetailFixture expectedResult = expectedResults.get(requestId);
+            assertNotNull(expectedResult, "Unexpected validation result for Request ID: " + requestId);
+            
+            assertRequestWasValidatedAsExpected(expectedResult, actualResult);
+        }
+    }
+
+    private void assertRequestWasValidatedAsExpected(
+            RequestV4DetailFixture expectedResult, ConcurEventNotificationProcessingResultsDTO actualResult) {
+        assertEquals(expectedResult.requestId, actualResult.getReportNumber(), "Wrong Request ID for result");
+        assertEquals(ConcurEventNoticationVersion2EventType.TravelRequest, actualResult.getEventType(),
+                "Wrong validation event type for result");
+        assertEquals(expectedResult.getExpectedProcessingResult(), actualResult.getProcessingResults(),
+                "Wrong validation outcome for result");
+        if (!expectedResult.isExpectedToPassAccountValidation()) {
+            assertTrue(CollectionUtils.isNotEmpty(actualResult.getMessages()),
+                    "Unsuccessful validation result should have contained at least one error message");
+        }
+    }
+
+    private void assertSearchForRequestListingReturnsExpectedResults(RequestV4ListingFixture expectedResults) {
+        Optional<String> approverId = expectedResults.optionalApproverForQuery.map(fixture -> fixture.id);
+        String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl(approverId);
+        Stream<ConcurRequestV4ListingDTO> streamedResults = requestV4Service.findAndProcessPendingTravelRequests(
+                mockAccessToken, initialQueryUrl, (accessToken, requestListing) -> Stream.of(requestListing));
+        List<ConcurRequestV4ListingDTO> finalResults = streamedResults.collect(Collectors.toUnmodifiableList());
+        assertSearchReturnedExpectedResultListings(initialQueryUrl, expectedResults, finalResults);
+    }
+
+    private void assertSearchReturnedExpectedResultListings(String queryUrl,
+            RequestV4ListingFixture expectedResults, List<ConcurRequestV4ListingDTO> actualResults) {
+        assertEquals(expectedResults.totalPageCount, actualResults.size(), "Wrong number of result pages");
+        assertTravelRequestListingsHaveExpectedListItems(expectedResults, actualResults);
+        assertTravelRequestListingsHaveExpectedOperations(queryUrl, expectedResults, actualResults);
+    }
+
+    private void assertTravelRequestListingsHaveExpectedOperations(String queryUrl,
+            RequestV4ListingFixture expectedResults, List<ConcurRequestV4ListingDTO> actualResults) {
+        int pageIndex = 0;
+        for (ConcurRequestV4ListingDTO actualPage : actualResults) {
+            Map<String, Map<String, String>> expectedParametersForOperations = expectedResults
+                    .buildExpectedParametersForOperationsOnPage(pageIndex, queryUrl);
+            assertTravelRequestListingHasExpectedOperations(expectedParametersForOperations, actualPage);
+            pageIndex++;
+        }
+    }
+
+    private void assertTravelRequestListingHasExpectedOperations(
+            Map<String, Map<String, String>> expectedParametersForOperations, ConcurRequestV4ListingDTO actualPage) {
         Set<String> encounteredOperations = new HashSet<>();
         
-        assertNotNull(actualResult.getOperations(), "List of operations should have been present");
-        assertEquals(expectedParametersForOperations.size(), actualResult.getOperations().size(),
+        assertNotNull(actualPage.getOperations(), "List of operations should have been present");
+        assertEquals(expectedParametersForOperations.size(), actualPage.getOperations().size(),
                 "Wrong number of operations");
-        for (ConcurRequestV4OperationDTO operation : actualResult.getOperations()) {
+        for (ConcurRequestV4OperationDTO operation : actualPage.getOperations()) {
             String actualName = operation.getName();
             String actualHref = operation.getHref();
             
@@ -295,21 +493,29 @@ public class ConcurRequestV4ServiceImplTest {
         }
     }
 
-    private void assertTravelRequestListingHasExpectedListItems(
-            RequestV4ListingFixture expectedResult, ConcurRequestV4ListingDTO actualResult) {
+    private void assertTravelRequestListingsHaveExpectedListItems(
+            RequestV4ListingFixture expectedResults, List<ConcurRequestV4ListingDTO> actualResults) {
         Set<String> encounteredRequestUuids = new HashSet<>();
-        assertNotNull(actualResult.getListItems(), "Collection of list items should not have been null");
-        assertEquals(expectedResult.pageResults.size(), actualResult.getListItems().size(),
-                "Wrong number of items on current page of results");
+        int pageIndex = 0;
         
-        for (ConcurRequestV4ListItemDTO listItem : actualResult.getListItems()) {
-            String requestUuid = listItem.getId();
-            assertTrue(StringUtils.isNotBlank(requestUuid), "List item was missing a Request UUID");
-            assertTrue(encounteredRequestUuids.add(requestUuid), "Unexpected duplicate item for UUID: " + requestUuid);
+        for (ConcurRequestV4ListingDTO actualPage : actualResults) {
+            int expectedResultCountForPage = expectedResults.calculateExpectedResultCountForPage(pageIndex);
+            assertEquals(expectedResults.totalResultRowCount, actualPage.getTotalCount(), "Wrong total row count");
+            assertNotNull(actualPage.getListItems(), "Collection of list items should not have been null");
+            assertEquals(expectedResultCountForPage, actualPage.getListItems().size(),
+                    "Wrong number of items on results page at index " + pageIndex);
             
-            RequestV4DetailFixture expectedItem = expectedResult.pageResults.get(requestUuid);
-            assertNotNull(expectedItem, "Encountered an unexpected list item with UUID: " + requestUuid);
-            assertExpectedTravelRequestListItemWasRetrieved(expectedItem, listItem);
+            for (ConcurRequestV4ListItemDTO listItem : actualPage.getListItems()) {
+                String requestUuid = listItem.getId();
+                assertTrue(StringUtils.isNotBlank(requestUuid), "List item was missing a Request UUID");
+                assertTrue(encounteredRequestUuids.add(requestUuid),
+                        "Unexpected duplicate item for UUID: " + requestUuid);
+                
+                RequestV4DetailFixture expectedItem = expectedResults.searchResults.get(requestUuid);
+                assertNotNull(expectedItem, "Encountered an unexpected list item with UUID: " + requestUuid);
+                assertExpectedTravelRequestListItemWasRetrieved(expectedItem, listItem);
+            }
+            pageIndex++;
         }
     }
 
@@ -319,7 +525,7 @@ public class ConcurRequestV4ServiceImplTest {
         assertEquals(expectedResult.buildRequestHref(baseRequestV4Url), actualResult.getHref(), "Wrong Request HREF");
         assertUserIsPresent(expectedResult.owner, actualResult.getOwner(), "Request Owner");
         if (expectedResult.shouldAddApproverToRequestDTO()) {
-            assertUserIsPresent(expectedResult.approvers.get(0), actualResult.getApprover(), "Request Approver");
+            assertUserIsPresent(expectedResult.pendingApprover.get(), actualResult.getApprover(), "Request Approver");
         } else {
             assertNull(actualResult.getApprover(), "Request Approver should not have been present");
         }
@@ -336,7 +542,7 @@ public class ConcurRequestV4ServiceImplTest {
         assertEquals(expectedResult.buildRequestHref(baseRequestV4Url), actualResult.getHref(), "Wrong Request HREF");
         assertUserIsPresent(expectedResult.owner, actualResult.getOwner(), "Request Owner");
         if (expectedResult.shouldAddApproverToRequestDTO()) {
-            assertUserIsPresent(expectedResult.approvers.get(0), actualResult.getApprover(), "Request Approver");
+            assertUserIsPresent(expectedResult.pendingApprover.get(), actualResult.getApprover(), "Request Approver");
         } else {
             assertNull(actualResult.getApprover(), "Request Approver should not have been present");
         }

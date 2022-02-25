@@ -94,6 +94,8 @@ public class ConcurConstants {
     
     public static final String QUESTION_MARK_USER_EQUALS = "?user=";
 
+    public static final String REQUEST_QUERY_CURRENT_DATE_INDICATOR = "CURRENT";
+
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";
         public static final String NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE = "No records with validation errors.";

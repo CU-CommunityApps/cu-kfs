@@ -64,6 +64,16 @@ public class ConcurTestConstants {
         public static final String REQUESTV4_SINGLE_REQUEST_SEARCH_MESSAGE = "Travel Request {0}";
     }
 
+    public static final class RequestV4Dates {
+        public static final String DATE_2022_01_01 = "01/01/2022 11:22:33";
+        public static final String DATE_2022_01_02 = "01/02/2022 11:22:33";
+        public static final String DATE_2022_01_03 = "01/03/2022 11:22:33";
+        public static final String DATE_2022_04_05 = "04/05/2022 11:22:33";
+        public static final String DATE_2022_04_06 = "04/06/2022 11:22:33";
+        public static final String DATE_2022_04_07 = "04/07/2022 11:22:33";
+        public static final String DATE_2022_04_30 = "04/30/2022 11:22:33";
+    }
+
     public static class ParameterTestValues {
         public static final String OBJECT_CODE_OVERRIDE = "6750";
         public static final String COLLECTOR_DOCUMENT_TYPE = "CLTE";
@@ -88,6 +98,7 @@ public class ConcurTestConstants {
         public static final String DEFAULT_OBJECT_CODE_5500 = "5500";
         public static final String REQUEST_V4_RELATIVE_ENDPOINT = "/travelrequest/v4/requests";
         public static final String REQUEST_V4_PAGE_SIZE_2 = "2";
+        public static final String REQUEST_V4_DEFAULT_FROM_DATE_2022_01_02 = RequestV4Dates.DATE_2022_01_02;
         public static final String MAX_RETRIES_1 = "1";
     }
     

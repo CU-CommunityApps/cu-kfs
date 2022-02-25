@@ -124,7 +124,7 @@ public class MockConcurRequestV4Server implements Closeable {
     private boolean requestHasAppropriateApproverOrStatus(RequestEntry requestEntry, Optional<String> approverId) {
         ConcurRequestV4StatusDTO latestStatus = requestEntry.requestDetail.getApprovalStatus();
         if (approverId.isPresent()) {
-            List<RequestV4PersonFixture> approvers = requestEntry.requestFixture.approvers;
+            List<RequestV4PersonFixture> approvers = requestEntry.requestFixture.finishedApprovers;
             return StringUtils.equalsAnyIgnoreCase(
                     latestStatus.getCode(), RequestV4StatusCodes.SUBMITTED, RequestV4StatusCodes.APPROVED)
                     && approvers.stream().anyMatch(

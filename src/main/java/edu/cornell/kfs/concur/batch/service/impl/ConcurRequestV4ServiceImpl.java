@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +21,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -29,6 +30,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
@@ -219,9 +221,15 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
 
     protected <T> Stream<T> findAndProcessPendingTravelRequests(String accessToken, Optional<String> approverId,
             BiFunction<String, ConcurRequestV4ListingDTO, Stream<T>> requestListingProcessor) {
+        String initialQueryUrl = buildInitialRequestQueryUrl(approverId);
+        return findAndProcessPendingTravelRequests(accessToken, initialQueryUrl, requestListingProcessor);
+    }
+
+    protected <T> Stream<T> findAndProcessPendingTravelRequests(String accessToken, String initialQueryUrl,
+            BiFunction<String, ConcurRequestV4ListingDTO, Stream<T>> requestListingProcessor) {
         Stream.Builder<Stream<T>> subResults = Stream.builder();
         Stream<T> subResult;
-        String currentQueryUrl = buildInitialRequestQueryUrl(approverId);
+        String currentQueryUrl = initialQueryUrl;
         int page = 1;
         ConcurRequestV4ListingDTO requestListing;
         
@@ -308,48 +316,46 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     }
 
     protected String getLastModifiedFromDateInUTCFormat() {
-        return getOrDefaultDateTimeFromParameter(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE_OVERRIDE,
-                this::getDefaultLastModifiedFromDate);
-    }
-
-    protected Date getDefaultLastModifiedFromDate() {
-        Date currentDate = dateTimeService.getCurrentDate();
-        MutableDateTime dateTime = new MutableDateTime(currentDate.getTime());
-        dateTime.setTime(0, 0, 0, 0);
-        return new Date(dateTime.getMillis());
+        String dateString = concurBatchUtilityService.getConcurParameterValue(
+                ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE);
+        if (StringUtils.isBlank(dateString)) {
+            throw new IllegalStateException("Invalid blank value detected for parameter "
+                    + ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE);
+        }
+        return convertToUTCDateString(dateString);
     }
 
     protected String getLastModifiedToDateInUTCFormat() {
-        return getOrDefaultDateTimeFromParameter(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE_OVERRIDE,
-                this::getDefaultLastModifiedToDate);
-    }
-
-    protected Date getDefaultLastModifiedToDate() {
-        Date currentDate = dateTimeService.getCurrentDate();
-        MutableDateTime dateTime = new MutableDateTime(currentDate.getTime());
-        dateTime.setTime(0, 0, 0, 0);
-        dateTime.addDays(1);
-        return new Date(dateTime.getMillis());
-    }
-
-    protected String getOrDefaultDateTimeFromParameter(String parameterName, Supplier<Date> defaultValueSupplier) {
-        String parameterValue = concurBatchUtilityService.getConcurParameterValue(parameterName);
-        Date dateValue;
-        if (StringUtils.isNotBlank(parameterValue)) {
-            try {
-                dateValue = dateTimeService.convertToDate(parameterValue);
-            } catch (ParseException e) {
-                throw new IllegalStateException("Invalid date format detected for parameter " + parameterName);
-            }
+        String dateString = concurBatchUtilityService.getConcurParameterValue(
+                ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE);
+        if (StringUtils.isBlank(dateString)) {
+            throw new IllegalStateException("Invalid blank value detected for parameter "
+                    + ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE);
+        } else if (StringUtils.equalsIgnoreCase(dateString, ConcurConstants.REQUEST_QUERY_CURRENT_DATE_INDICATOR)) {
+            return ConcurUtils.formatAsUTCDate(dateTimeService.getCurrentDate());
         } else {
-            dateValue = defaultValueSupplier.get();
+            return convertToUTCDateString(dateString);
         }
-        return ConcurUtils.formatAsUTCDate(dateValue);
+    }
+
+    protected String convertToUTCDateString(String dateString) {
+        try {
+            Date dateValue = dateTimeService.convertToDateTime(dateString);
+            return ConcurUtils.formatAsUTCDate(dateValue);
+        } catch (ParseException e) {
+            throw new IllegalStateException("Could not parse date string", e);
+        }
+    }
+
+    protected MutableDateTime convertToStartOfDayInTimeZone(Date date, TimeZone timeZone) {
+        MutableDateTime dateTime = new MutableDateTime(date, DateTimeZone.forTimeZone(timeZone));
+        dateTime.setTime(0, 0, 0, 0);
+        return dateTime;
     }
 
     protected void resetQueryDateParametersIfNecessary() {
-        resetParameterToEmptyValueIfNecessary(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE_OVERRIDE);
-        resetParameterToEmptyValueIfNecessary(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE_OVERRIDE);
+        //resetParameterToEmptyValueIfNecessary(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE_OVERRIDE);
+        //resetParameterToEmptyValueIfNecessary(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE_OVERRIDE);
     }
 
     protected void resetParameterToEmptyValueIfNecessary(String parameterName) {

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.Closeable;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -69,7 +70,8 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
     private ObjectMapper buildObjectMapper() {
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.setTimeZone(TimeZone.getTimeZone(CUKFSConstants.TIME_ZONE_UTC));
-        jsonObjectMapper.setDateFormat(new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_Z));
+        jsonObjectMapper.setDateFormat(new SimpleDateFormat(
+                CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_Z, Locale.US));
         return jsonObjectMapper;
     }
 
