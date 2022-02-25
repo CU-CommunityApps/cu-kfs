@@ -18,6 +18,8 @@ public class CuFPKeyConstants {
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENT_PROCESSED = "report.create.accounting.document.summary.documents.processed";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_SUCCESSFULLY_ROUTED = "report.create.accounting.document.summary.documents.successfully.routed";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_NOT_SAVED = "report.create.accounting.document.summary.documents.not.saved";
+    public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNING = "report.create.accounting.document.summary.documents.with.warning";
+    public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_WARNING_DOCUMENTS_MESSAGE = "report.create.accounting.document.warning.documents.message";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_SUB_HEADER = "report.create.accounting.document.erred.validation.sub.header";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_RAW_DATA = "report.create.accounting.document.erred.validation.raw.data";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_DOCUMENTS_NONE = "report.create.accounting.document.erred.validation.documents.none";
@@ -43,6 +45,7 @@ public class CuFPKeyConstants {
     public static final String CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD = "create.accounting.document.principle.id.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_VENDOR_ID_BAD = "create.accounting.document.vendor.id.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_PAYEE_TYPE_CODE_BAD = "create.accounting.document.payee.type.code.bad";
+    public static final String CREATE_ACCOUNTING_DOCUMENT_PAYEE_NAME_NOT_SAME_AS_VENDOR = "create.accounting.document.payee.name.not.same.as.vendor";
 
     public static final String VALIDATION_CREATE_ACCOUNTING_DOCUMENT_EXCEPTION_MESSAGE_REGEX
             = "validation.create.accounting.document.exception.message.regex";

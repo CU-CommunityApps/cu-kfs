@@ -23,6 +23,7 @@ import org.kuali.kfs.kew.api.action.ActionRequestType;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -171,6 +172,12 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     protected void populateCustomAccountingDocumentData(T document, AccountingXmlDocumentEntry documentEntry) {
         // Do nothing by default.
     }
+    
+    @Override
+    public void handleDocumentWarningMessage(CreateAccountingDocumentReportItemDetail reportDetail) {
+        // Do nothing by default.
+    }
+    
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;

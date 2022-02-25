@@ -67,6 +67,7 @@ public class CuFPParameterConstants {
     public static class CreateAccountingDocumentService {
         public static final String CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME = "CreateAccountingDocumentService";
         public static final String CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS = "CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS";
+        public static final String WARNING_EMAIL_ADDRESS = "WARNING_EMAIL_ADDRESS";
     }
     
     public static class ProcurementCardDocument {

@@ -99,6 +99,17 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_NOT_SAVED), reportItem.getDocumentsInError().size()));
+        
+        if (reportItem.doWarningMessagesExist()) {
+            reportItem.getDocumentTypeWarningMessageCountMap().entrySet()
+                .forEach(entry -> writeWarningSummaryLine(entry.getKey(), entry.getValue()));
+        }
+    }
+    
+    protected void writeWarningSummaryLine(String docType, Integer docWarningCount) {
+        reportWriterService.writeNewLines(1);
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_WITH_WARNING), docType, docWarningCount));
     }
 
     protected void writeFileName(CreateAccountingDocumentReportItem reportItem) {
@@ -164,6 +175,11 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
             reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                     CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_DOCUMENTS_MESSAGE), detail.getErrorMessage()));
             reportWriterService.writeNewLines(1);
+            if (StringUtils.isNotBlank(detail.getWarningMessage())) {
+                reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                        CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_WARNING_DOCUMENTS_MESSAGE), detail.getWarningMessage()));
+                reportWriterService.writeNewLines(1);
+            }
         }
     }
     
@@ -181,6 +197,11 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ROUTED_DOCUMENTS_DOCUMENT_NUMBER), detail.getDocumentNumber()));
         reportWriterService.writeNewLines(1);
+        if (StringUtils.isNotBlank(detail.getWarningMessage())) {
+            reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_WARNING_DOCUMENTS_MESSAGE), detail.getWarningMessage()));
+            reportWriterService.writeNewLines(1);
+        }
     }
     
     private void generateSharedDetails(CreateAccountingDocumentReportItemDetail detail) {

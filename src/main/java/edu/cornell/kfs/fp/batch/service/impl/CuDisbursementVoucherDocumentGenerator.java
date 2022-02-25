@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,10 +15,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -26,9 +30,12 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.springframework.util.AutoPopulatingList;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetailXml;
@@ -100,8 +107,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             DisbursementVoucherPaymentInformationXml paymentInfo = dvDetail.getPaymentInformation();
             CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
             payeeDetail.setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
-            validateAndPopulatePayeeTypeCodeAndPayeeNumber(paymentInfo, payeeDetail);
-            payeeDetail.setDisbVchrPayeePersonName(paymentInfo.getPayeeName());
+            validateAndPopulatePayeeTypeCodeAndPayeeNumberAndPayeeName(paymentInfo, payeeDetail);
             populateAddressFields(paymentInfo, dvDocument);
             payeeDetail.setDisbVchrSpecialHandlingPersonName(paymentInfo.getSpecialHandlingName());
             payeeDetail.setDisbVchrSpecialHandlingLine1Addr(paymentInfo.getSpecialHandlingAddress1());
@@ -135,30 +141,37 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
 
-    protected void validateAndPopulatePayeeTypeCodeAndPayeeNumber(DisbursementVoucherPaymentInformationXml paymentInfo, CuDisbursementVoucherPayeeDetail payeeDetail) throws ValidationException {
+    protected void validateAndPopulatePayeeTypeCodeAndPayeeNumberAndPayeeName(DisbursementVoucherPaymentInformationXml paymentInfo, CuDisbursementVoucherPayeeDetail payeeDetail) throws ValidationException {
         String payeeTypeCode = paymentInfo.getPayeeTypeCode();
         String payeeId = paymentInfo.getPayeeId();
         boolean isEmployee = false;
         String convertedPayeeTypeCode = payeeTypeCode;
+        String vendorPayeeName = StringUtils.EMPTY;
         if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_VENDOR)) {
             VendorDetail vendorDetail = vendorService.getByVendorNumber(payeeId);
             if (ObjectUtils.isNull(vendorDetail) || ObjectUtils.isNull(vendorDetail.getVendorHeader())) {
-                String vendorErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_VENDOR_ID_BAD);
-                throw new ValidationException(MessageFormat.format(vendorErrorMessage,  payeeId));
+                throwPayeeIdValidationError(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_VENDOR_ID_BAD, payeeId);
             }
             convertedPayeeTypeCode = cuDisbursementVoucherPayeeService.getPayeeTypeCodeForVendorType(
                     vendorDetail.getVendorHeader().getVendorTypeCode());
+            addWarningMessageIfPayeeNameNotAccurate(vendorDetail.getVendorName(), paymentInfo.getPayeeName());
+            vendorPayeeName = vendorDetail.getVendorName();
         } else if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_EMPLOYEE)) {
-            if (ObjectUtils.isNull(personService.getPersonByEmployeeId(payeeId))) {
-                String employeeErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_EMPLOYEE_ID_BAD);
-                throw new ValidationException(MessageFormat.format(employeeErrorMessage, payeeId));
+            Person employee = personService.getPersonByEmployeeId(payeeId);
+            if (ObjectUtils.isNull(employee)) {
+                throwPayeeIdValidationError(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_EMPLOYEE_ID_BAD, payeeId);
             } else {
                 isEmployee = true;
+                addWarningMessageIfPayeeNameNotAccurate(employee.getName(), paymentInfo.getPayeeName());
+                vendorPayeeName = employee.getName();
             }
         } else if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_ALUMNI) || StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_STUDENT)) {
-            if (ObjectUtils.isNull(personService.getPerson(payeeId))) {
-                String personError = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD);
-                throw new ValidationException(MessageFormat.format(personError, payeeId));
+            Person person = personService.getPerson(payeeId);
+            if (ObjectUtils.isNull(person)) {
+                throwPayeeIdValidationError(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD, payeeId);
+            } else {
+                addWarningMessageIfPayeeNameNotAccurate(person.getName(), paymentInfo.getPayeeName());
+                vendorPayeeName = person.getName();
             }
         } else {
             String payeeTypeCodeErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_TYPE_CODE_BAD);
@@ -167,6 +180,32 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         payeeDetail.setDisbVchrPayeeEmployeeCode(isEmployee);
         payeeDetail.setDisbursementVoucherPayeeTypeCode(convertedPayeeTypeCode);
         payeeDetail.setDisbVchrPayeeIdNumber(payeeId);
+        payeeDetail.setDisbVchrPayeePersonName(vendorPayeeName);
+    }
+    
+    protected void throwPayeeIdValidationError(String errorMessageKey, String payeeId) { 
+        String employeeErrorMessage = configurationService.getPropertyValueAsString(errorMessageKey);
+        throw new ValidationException(MessageFormat.format(employeeErrorMessage, payeeId));
+    }
+    
+    protected void addWarningMessageIfPayeeNameNotAccurate(String vendorPayeeName, String dvPayeeName) {
+        if (StringUtils.isNotBlank(dvPayeeName) && !StringUtils.equalsIgnoreCase(vendorPayeeName, dvPayeeName)) {
+            AutoPopulatingList<ErrorMessage> warningMessages = new AutoPopulatingList<>(ErrorMessage.class);
+            String messageString = MessageFormat.format(
+                    configurationService.getPropertyValueAsString(
+                            CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_NAME_NOT_SAME_AS_VENDOR),
+                    vendorPayeeName, dvPayeeName);
+            warningMessages.add(new ErrorMessage(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, messageString));
+
+            LOG.warn("addWarningMessageIfPayeeNameNotAccurate, " + messageString);
+
+            GlobalVariables.getMessageMap().getWarningMessages()
+                    .put(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, warningMessages);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("addWarningMessageIfPayeeNameNotAccurate, the vendorPayeeName: '" + vendorPayeeName + "' dvPayeeName: '" + dvPayeeName + "'");
+            }
+        }
     }
     
     private void populateAddressFields(DisbursementVoucherPaymentInformationXml paymentInfo, CuDisbursementVoucherDocument dvDocument) {
@@ -342,6 +381,22 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public void handleDocumentWarningMessage(CreateAccountingDocumentReportItemDetail reportDetail) {
+        if (!GlobalVariables.getMessageMap().getWarningMessages().isEmpty()) {
+            GlobalVariables.getMessageMap().getWarningMessages().entrySet().forEach(message -> processWarning(message, reportDetail));
+        }
+    }
+    
+    protected void processWarning(Entry<String, AutoPopulatingList<ErrorMessage>> message, CreateAccountingDocumentReportItemDetail reportDetail) {
+        if (StringUtils.equalsIgnoreCase(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, message.getKey())) {
+            message.getValue().stream().forEach(em -> reportDetail.appendWarningMessageToExistingWarningMessage(em.getMessageParameters()[0]));
+        } else {
+            LOG.warn("processWarning, unexpected warning message with a key of " + message.getKey());
+        }
+        
     }
     
     public void setUniversityDateService(UniversityDateService universityDateService) {
