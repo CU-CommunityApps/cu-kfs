@@ -1,7 +1,13 @@
 package edu.cornell.kfs.fp.batch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class CreateAccountingDocumentReportItem {
 
@@ -101,4 +107,26 @@ public class CreateAccountingDocumentReportItem {
     public void setValidationErrorMessage(String validationErrorMessage) {
         this.validationErrorMessage = validationErrorMessage;
     }
+    
+    public boolean doWarningMessagesExist() {
+        return getDocumentDetailsWithWarnings().size() > 0;
+    }
+    
+    public Map<String, Integer> getDocumentTypeWarningMessageCountMap() {
+        return getDocumentDetailsWithWarnings().stream()
+                .collect(Collectors.toMap(detail -> detail.getDocumentType(), detail -> 1, 
+                        (priorDocumentTypeCount, addendCount) -> priorDocumentTypeCount + addendCount));
+    }
+    
+    protected List<CreateAccountingDocumentReportItemDetail> getDocumentDetailsWithWarnings() {
+        return getAllDocumentDetails().stream()
+                .filter(detail -> StringUtils.isNotBlank(detail.getWarningMessage()))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    protected List<CreateAccountingDocumentReportItemDetail> getAllDocumentDetails() {
+        return Stream.concat(documentsInError.stream(), documentsSuccessfullyRouted.stream())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+    
 }

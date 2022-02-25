@@ -164,6 +164,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             reportDetail.setSuccessfullyRouted(true);
             reportDetail.setDocumentNumber(document.getDocumentNumber());
             reportItem.getDocumentsSuccessfullyRouted().add(reportDetail);
+            documentGenerator.handleDocumentWarningMessage(reportDetail);
         } catch (RuntimeException | WorkflowException e) {
             reportDetail.setSuccessfullyRouted(false);
             if (e instanceof ValidationException) {
@@ -178,6 +179,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             reportItem.getDocumentsInError().add(reportDetail);
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
+            GlobalVariables.getMessageMap().clearWarningMessages();
         }
     }
 
@@ -247,12 +249,34 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         }
         createAccountingDocumentReportService.sendReportEmail(toAddress, fromAddress);
         LOG.info("createAndEmailReport: Report created and emailed.");
+        
+        if (reportItem.doWarningMessagesExist()) {
+            reportItem.getDocumentTypeWarningMessageCountMap().keySet().stream()
+                .forEach(key -> sendWarningEmail(key, fromAddress));
+        }
     }
     
     protected String getCreateAccountingDocumentReportEmailAddress() {
         return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS);
+    }
+    
+    protected void sendWarningEmail(String docType, String fromAddress) {
+        LOG.info("sendWarningEmail, send warning email for doc type " + docType);
+        try {
+            String toAddress = parameterService.getSubParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                    CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
+                    CuFPParameterConstants.CreateAccountingDocumentService.WARNING_EMAIL_ADDRESS, docType);
+            if (StringUtils.isNotBlank(toAddress)) {
+                LOG.info("sendWarningEmail. sending report to " + toAddress);
+                createAccountingDocumentReportService.sendReportEmail(toAddress, fromAddress);
+            } else {
+                LOG.error("sendWarningEmail, No warning email address for " + docType);
+            }
+        } catch (Exception e) {
+            LOG.error("sendWarningEmail, unable to send warning email for document type " + docType, e);
+        }
     }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
