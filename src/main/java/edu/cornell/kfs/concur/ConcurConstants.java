@@ -95,6 +95,7 @@ public class ConcurConstants {
     public static final String QUESTION_MARK_USER_EQUALS = "?user=";
 
     public static final String REQUEST_QUERY_CURRENT_DATE_INDICATOR = "CURRENT";
+    public static final String REQUEST_QUERY_LAST_DATE_INDICATOR = "PREVIOUS";
 
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";

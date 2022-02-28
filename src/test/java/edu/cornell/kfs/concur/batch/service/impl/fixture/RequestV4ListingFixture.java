@@ -110,14 +110,14 @@ public enum RequestV4ListingFixture {
                 .collect(Collectors.toUnmodifiableMap(resultItem -> resultItem.id, resultItem -> resultItem));
     }
 
-    // TODO: Rework this to account for the PROD-mode flag!
-    public Map<String, RequestV4DetailFixture> getExpectedProcessedRequestsKeyedByRequestId() {
+    public Map<String, RequestV4DetailFixture> getExpectedProcessedRequestsKeyedByRequestId(boolean productionMode) {
         if (optionalApproverForQuery.isPresent()) {
             throw new IllegalStateException("This method should only be called on instances "
                     + "that do not pre-filter the results based on an approver");
         }
         return searchResults.values().stream()
                 .filter(result -> result.approvalStatus == RequestV4Status.PENDING_EXTERNAL_VALIDATION)
+                .filter(result -> productionMode != result.isReceivedApprovalFromAnyTestUser())
                 .collect(Collectors.toUnmodifiableMap(result -> result.requestId, result -> result));
     }
 

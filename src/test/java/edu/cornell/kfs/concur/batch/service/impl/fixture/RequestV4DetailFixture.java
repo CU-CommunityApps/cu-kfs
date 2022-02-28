@@ -26,7 +26,7 @@ public enum RequestV4DetailFixture {
             "Test Pre-Trip Approval", "Need Pre-Trip Approval for Testing Purposes",
             RequestV4PersonFixture.JOHN_DOE, approvedBy(RequestV4PersonFixture.TEST_MANAGER), noPendingApprover(),
             RequestV4Status.PENDING_EXTERNAL_VALIDATION,
-            "04/05/2022", "04/15/2022", "2022-01-01T05:00:00Z", "2022-01-01T05:06:07Z", "2022-01-03T08:30:55Z",
+            "04/05/2022", "04/15/2022", "2022-01-01T05:00:00.000Z", "2022-01-01T05:06:07.000Z", "2022-01-03T08:30:55.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_1234321, ConcurTestConstants.SUB_ACCT_88888,
             ConcurTestConstants.SUB_OBJ_333, ConcurTestConstants.PROJ_AA_778899,
             false, RequestV4DestinationFixture.MIAMI_FL, 159.99, 159.99, 159.99),
@@ -37,7 +37,7 @@ public enum RequestV4DetailFixture {
             RequestV4PersonFixture.JOHN_DOE, approvedBy(RequestV4PersonFixture.TEST_MANAGER),
             pendingApprover(RequestV4PersonFixture.TEST_APPROVER),
             RequestV4Status.SUBMITTED_AND_PENDING_APPROVAL,
-            "03/01/2022", "03/05/2022", "2022-01-15T12:00:00Z", "2022-01-15T12:24:36Z", "2022-01-15T12:24:36Z",
+            "03/01/2022", "03/05/2022", "2022-01-15T12:00:00.000Z", "2022-01-15T12:24:36.000Z", "2022-01-15T12:24:36.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_1234321, ConcurTestConstants.SUB_ACCT_88888,
             ConcurTestConstants.SUB_OBJ_333, ConcurTestConstants.PROJ_AA_778899,
             false, RequestV4DestinationFixture.MIAMI_FL, 622.49, 622.49, 622.49),
@@ -47,7 +47,7 @@ public enum RequestV4DetailFixture {
             "Actual Pre-Trip Approval", "Need Pre-Trip Approval for Certain Purposes",
             RequestV4PersonFixture.JOHN_DOE, approvedBy(RequestV4PersonFixture.MARY_GRANT), noPendingApprover(),
             RequestV4Status.PENDING_EXTERNAL_VALIDATION,
-            "04/05/2022", "04/15/2022", "2022-01-01T05:00:00Z", "2022-01-01T05:06:07Z", "2022-01-03T08:30:55Z",
+            "04/05/2022", "04/15/2022", "2022-01-01T05:00:00.000Z", "2022-01-01T05:06:07.000Z", "2022-01-03T08:30:55.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_1234321, ConcurTestConstants.SUB_ACCT_88888,
             ConcurTestConstants.SUB_OBJ_333, ConcurTestConstants.PROJ_AA_778899,
             false, RequestV4DestinationFixture.MIAMI_FL, 159.99, 159.99, 159.99),
@@ -57,7 +57,7 @@ public enum RequestV4DetailFixture {
             "Test Pre-Trip Approval for Denver", "Need Pre-Trip Approval for Testing",
             RequestV4PersonFixture.JOHN_DOE, approvedBy(), pendingApprover(RequestV4PersonFixture.TEST_APPROVER),
             RequestV4Status.CANCELED,
-            "04/07/2022", "04/17/2022", "2022-01-03T05:01:00Z", "2022-01-03T05:07:09Z", "2022-01-03T08:30:55Z",
+            "04/07/2022", "04/17/2022", "2022-01-03T05:01:00.000Z", "2022-01-03T05:07:09.000Z", "2022-01-03T08:30:55.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_1234321, ConcurTestConstants.SUB_ACCT_88888,
             ConcurTestConstants.SUB_OBJ_333, ConcurTestConstants.PROJ_AA_778899,
             false, RequestV4DestinationFixture.DENVER_CO, 189.99, 189.99, 189.99),
@@ -67,7 +67,7 @@ public enum RequestV4DetailFixture {
             "Test Team Meeting In Denver", "There is a test meeting over in Colorado",
             RequestV4PersonFixture.JANE_DOE, approvedBy(RequestV4PersonFixture.TEST_MANAGER), noPendingApprover(),
             RequestV4Status.APPROVED,
-            "05/01/2022", "05/31/2022", "2022-03-03T08:08:08Z", "2022-03-03T09:09:09Z", "2022-03-03T10:10:10Z",
+            "05/01/2022", "05/31/2022", "2022-03-03T08:08:08.000Z", "2022-03-03T09:09:09.000Z", "2022-03-03T10:10:10.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_4455667, null, null, null,
             false, RequestV4DestinationFixture.DENVER_CO, 250.00, 250.00, 250.00),
 
@@ -76,7 +76,7 @@ public enum RequestV4DetailFixture {
             "Another Test Meeting In Denver", "Another test meeting is taking place in the state of Colorado",
             RequestV4PersonFixture.JANE_DOE, approvedBy(RequestV4PersonFixture.TEST_MANAGER), noPendingApprover(),
             RequestV4Status.PENDING_EXTERNAL_VALIDATION,
-            "06/01/2022", "06/30/2022", "2022-03-03T08:09:08Z", "2022-03-03T09:10:09Z", "2022-03-03T10:11:10Z",
+            "06/01/2022", "06/30/2022", "2022-03-03T08:09:08.000Z", "2022-03-03T09:10:09.000Z", "2022-03-03T10:11:10.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_4455667, null, null, null,
             false, RequestV4DestinationFixture.DENVER_CO, 250.00, 250.00, 250.00),
     
@@ -87,7 +87,7 @@ public enum RequestV4DetailFixture {
                     RequestV4PersonFixture.TEST_APPROVER, RequestV4PersonFixture.TEST_MANAGER),
             noPendingApprover(),
             RequestV4Status.PENDING_EXTERNAL_VALIDATION,
-            "04/22/2022", "04/26/2022", "2022-04-01T09:00:34Z", "2022-04-01T09:15:11Z", "2022-04-05T22:33:44Z",
+            "04/22/2022", "04/26/2022", "2022-04-01T09:00:34.000Z", "2022-04-01T09:15:11.000Z", "2022-04-05T22:33:44.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_XXXXXXX, null, null, null,
             false, RequestV4DestinationFixture.MIAMI_FL, 350.00, 350.00, 350.00),
 
@@ -96,7 +96,7 @@ public enum RequestV4DetailFixture {
             "More Test Business Travel to Miami", "Visiting Miami for another test-only business purpose",
             RequestV4PersonFixture.JANE_DOE, approvedBy(RequestV4PersonFixture.TEST_MANAGER), noPendingApprover(),
             RequestV4Status.SENTBACK,
-            "04/29/2022", "05/09/2022", "2022-04-01T09:05:34Z", "2022-04-01T09:25:11Z", "2022-04-05T22:33:47Z",
+            "04/29/2022", "05/09/2022", "2022-04-01T09:05:34.000Z", "2022-04-01T09:25:11.000Z", "2022-04-05T22:33:47.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_XXXXXXX, null, null, null,
             true, RequestV4DestinationFixture.MIAMI_FL, 422.00, 422.00, 422.00),
 
@@ -105,7 +105,7 @@ public enum RequestV4DetailFixture {
             "Actual Business Travel to Miami", "Visiting Miami for regular business purposes",
             RequestV4PersonFixture.BOB_SMITH, approvedBy(RequestV4PersonFixture.MARY_GRANT), noPendingApprover(),
             RequestV4Status.PENDING_COST_OBJECT_APPROVAL,
-            "04/22/2022", "04/26/2022", "2022-04-01T11:00:34Z", "2022-04-01T11:15:11Z", "2022-04-05T23:33:44Z",
+            "04/22/2022", "04/26/2022", "2022-04-01T11:00:34.000Z", "2022-04-01T11:15:11.000Z", "2022-04-05T23:33:44.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_4455667, null, null, null,
             false, RequestV4DestinationFixture.MIAMI_FL, 750.00, 750.00, 750.00),
 
@@ -114,7 +114,7 @@ public enum RequestV4DetailFixture {
             "Attend Convention in Denver", "Request related to a convention over in Colorado",
             RequestV4PersonFixture.BOB_SMITH, approvedBy(RequestV4PersonFixture.MARY_GRANT), noPendingApprover(),
             RequestV4Status.PENDING_EXTERNAL_VALIDATION,
-            "07/29/2022", "08/05/2022", "2022-04-04T18:00:35Z", "2022-04-04T18:25:22Z", "2022-04-05T23:44:55Z",
+            "07/29/2022", "08/05/2022", "2022-04-04T18:00:35.000Z", "2022-04-04T18:25:22.000Z", "2022-04-05T23:44:55.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_XXXXXXX, null, null, null,
             false, RequestV4DestinationFixture.DENVER_CO, 999.99, 999.99, 999.99),
 
@@ -123,7 +123,7 @@ public enum RequestV4DetailFixture {
             "Attend Convention in Miami", "Request related to a convention over in Florida",
             RequestV4PersonFixture.BOB_SMITH, approvedBy(RequestV4PersonFixture.MARY_GRANT), noPendingApprover(),
             RequestV4Status.PENDING_EXTERNAL_VALIDATION,
-            "08/16/2022", "08/20/2022", "2022-04-04T19:00:35Z", "2022-04-04T19:25:22Z", "2022-04-06T23:59:59Z",
+            "08/16/2022", "08/20/2022", "2022-04-04T19:00:35.000Z", "2022-04-04T19:25:22.000Z", "2022-04-06T23:59:59.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_4455667, null, null, null,
             false, RequestV4DestinationFixture.MIAMI_FL, 1024.55, 1024.55, 1024.55),
 
@@ -132,7 +132,7 @@ public enum RequestV4DetailFixture {
             "Pre-Trip Approval for Denver", "Requesting Pre-Trip Approval for an Event in Colorado",
             RequestV4PersonFixture.BOB_SMITH, approvedBy(), noPendingApprover(),
             RequestV4Status.NOT_SUBMITTED,
-            "12/01/2022", "12/12/2022", "2022-04-05T00:00:00Z", null, "2022-04-07T00:00:00Z",
+            "12/01/2022", "12/12/2022", "2022-04-05T00:00:00.000Z", null, "2022-04-07T00:00:00.000Z",
             ConcurTestConstants.CHART_IT, ConcurTestConstants.ACCT_4455667, null, null, null,
             false, RequestV4DestinationFixture.DENVER_CO, 1205.79, 1205.79, 1205.79);
 
@@ -337,5 +337,10 @@ public enum RequestV4DetailFixture {
     public boolean isExpectedToPassAccountValidation() {
         return StringUtils.isNotBlank(chartCode) && StringUtils.isNotBlank(accountNumber)
                 && !StringUtils.equalsIgnoreCase(ConcurTestConstants.ACCT_XXXXXXX, accountNumber);
+    }
+
+    public boolean isReceivedApprovalFromAnyTestUser() {
+        return finishedApprovers.stream()
+                .anyMatch(approver -> approver.testUser);
     }
 }

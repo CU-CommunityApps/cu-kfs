@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.ParseException;
@@ -33,11 +34,13 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
@@ -51,6 +54,7 @@ import edu.cornell.kfs.concur.ConcurTestConstants.RequestV4Dates;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
+import edu.cornell.kfs.concur.batch.service.impl.ConcurRequestV4ServiceImpl.RequestV4QuerySettings;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4ListingFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
@@ -74,6 +78,7 @@ public class ConcurRequestV4ServiceImplTest {
 
     private static final String US_EASTERN_TIME_ZONE = "US/Eastern";
     private static final String DEFAULT_MOCK_CURRENT_DATE = RequestV4Dates.DATE_2022_01_03;
+    private static final String NONEXISTENT_REQUEST_ID = "AAAAAAAAAAAAAAAA0000000000000000";
 
     private static final String VALIDATION_ERROR_MISSING_CHART = "Missing Chart Code";
     private static final String VALIDATION_ERROR_MISSING_ACCOUNT = "Missing Account Number";
@@ -160,9 +165,11 @@ public class ConcurRequestV4ServiceImplTest {
                 ParameterTestValues.REQUEST_V4_PAGE_SIZE_2);
         parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_APPROVERS, buildTestApproversParameterValue());
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE,
-                ParameterTestValues.REQUEST_V4_DEFAULT_FROM_DATE_2022_01_02);
+                ConcurConstants.REQUEST_QUERY_LAST_DATE_INDICATOR);
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE,
                 ConcurConstants.REQUEST_QUERY_CURRENT_DATE_INDICATOR);
+        parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE,
+                ParameterTestValues.REQUEST_V4_DEFAULT_LAST_PROCESSED_DATE_2022_01_02);
         return parameters;
     }
 
@@ -180,8 +187,17 @@ public class ConcurRequestV4ServiceImplTest {
         overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE, newDate);
     }
 
+    private void overrideQueryLastProcessedDate(String newDate) {
+        overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE, newDate);
+    }
+
     private void overrideQueryPageSize(int newPageSize) {
         overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE, String.valueOf(newPageSize));
+    }
+
+    private Object overrideParameter(InvocationOnMock invocation) {
+        overrideParameter(invocation.getArgument(0), invocation.getArgument(1));
+        return null;
     }
 
     private void overrideParameter(String parameterName, String parameterValue) {
@@ -192,6 +208,8 @@ public class ConcurRequestV4ServiceImplTest {
         ConcurBatchUtilityService concurBatchUtilityService = Mockito.mock(ConcurBatchUtilityService.class);
         Mockito.when(concurBatchUtilityService.getConcurParameterValue(Mockito.anyString()))
                 .then(invocation -> concurParameters.get(invocation.getArgument(0)));
+        Mockito.doAnswer(this::overrideParameter)
+                .when(concurBatchUtilityService).updateConcurParameterValue(Mockito.anyString(), Mockito.anyString());
         return concurBatchUtilityService;
     }
 
@@ -224,6 +242,8 @@ public class ConcurRequestV4ServiceImplTest {
                 .when(dateTimeService).getCurrentDate();
         Mockito.doAnswer(invocation -> convertToSameTimeOfDayInEasternTime((Date) invocation.callRealMethod()))
                 .when(dateTimeService).convertToDateTime(Mockito.anyString());
+        Mockito.doAnswer(invocation -> toDateTimeStringInDefaultZone(actualDateTimeService, invocation.getArgument(0)))
+                .when(dateTimeService).toDateTimeString(Mockito.any());
         return dateTimeService;
     }
 
@@ -249,6 +269,18 @@ public class ConcurRequestV4ServiceImplTest {
         }
         MutableDateTime dateTime = new MutableDateTime(dateValue);
         dateTime.setZoneRetainFields(easternTimeZone);
+        return new Date(dateTime.getMillis());
+    }
+
+    private String toDateTimeStringInDefaultZone(DateTimeService actualDateTimeService, Date dateValue) {
+        Date newDateValue = convertFromEasternTimeToSameTimeOfDayInDefaultZone(dateValue);
+        return actualDateTimeService.toDateTimeString(newDateValue);
+    }
+
+    private Date convertFromEasternTimeToSameTimeOfDayInDefaultZone(Date dateValue) {
+        DateTimeZone defaultTimeZone = DateTimeZone.forTimeZone(TimeZone.getDefault());
+        MutableDateTime dateTime = new MutableDateTime(dateValue, easternTimeZone);
+        dateTime.setZoneRetainFields(defaultTimeZone);
         return new Date(dateTime.getMillis());
     }
 
@@ -315,9 +347,30 @@ public class ConcurRequestV4ServiceImplTest {
     }
 
     @Test
+    void testSearchForSingleNonexistentTravelRequest() throws Exception {
+        assertThrows(RuntimeException.class,
+                () -> requestV4Service.findTravelRequest(mockAccessToken, NONEXISTENT_REQUEST_ID),
+                "The search should have encountered an error when the Travel Request does not exist");
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testSearchForSingleTravelRequestOnBrokenServer(RequestV4DetailFixture fixture) throws Exception {
+        mockConcurEndpoint.setForceServerError(true);
+        assertThrows(RuntimeException.class, () -> requestV4Service.findTravelRequest(mockAccessToken, fixture.id),
+                "The search should have encountered and error when the service endpoint is in a bad state");
+    }
+
+    @Test
     void testFindTravelRequestListingForDefaultSettings() throws Exception {
         assertSearchForRequestListingReturnsExpectedResults(
                 RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03);
+    }
+
+    @Test
+    void testSearchForTravelRequestListingForDefaultSettingsOnBrokenServer() throws Exception {
+        mockConcurEndpoint.setForceServerError(true);
+        assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03);
     }
 
     static Stream<Arguments> travelRequestListingQueries() {
@@ -347,10 +400,28 @@ public class ConcurRequestV4ServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("travelRequestListingQueries")
+    void testFindTravelRequestListingAfterOverridingLastProcessedDateAndCurrentDate(
+            RequestV4ListingFixture expectedResults) throws Exception {
+        overrideQueryLastProcessedDate(expectedResults.modifiedFromDate);
+        overrideCurrentTime(expectedResults.modifiedToDate);
+        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequestListingQueries")
     void testFindTravelRequestListingAfterOverridingQueryFromDateAndCurrentDate(
             RequestV4ListingFixture expectedResults) throws Exception {
         overrideQueryFromDate(expectedResults.modifiedFromDate);
         overrideCurrentTime(expectedResults.modifiedToDate);
+        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequestListingQueries")
+    void testFindTravelRequestListingAfterOverridingLastProcessedDateAndQueryToDate(
+            RequestV4ListingFixture expectedResults) throws Exception {
+        overrideQueryLastProcessedDate(expectedResults.modifiedFromDate);
+        overrideQueryToDate(expectedResults.modifiedToDate);
         assertSearchForRequestListingReturnsExpectedResults(expectedResults);
     }
 
@@ -373,10 +444,31 @@ public class ConcurRequestV4ServiceImplTest {
         assertSearchForRequestListingReturnsExpectedResults(expectedResults);
     }
 
-    @Test
-    void testValidateTravelRequestsForDefaultSettings() throws Exception {
+    @ParameterizedTest
+    @MethodSource("travelRequestListingQueries")
+    void testSearchForTravelRequestListingOnBrokenServer(RequestV4ListingFixture expectedResults) throws Exception {
+        mockConcurEndpoint.setForceServerError(true);
+        overrideQueryFromDate(expectedResults.modifiedFromDate);
+        overrideQueryToDate(expectedResults.modifiedToDate);
+        assertSearchForRequestListingEncountersAnError(expectedResults);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void testValidateTravelRequestsForDefaultSettings(boolean productionMode) throws Exception {
+        requestV4Service.setSimulateProductionMode(productionMode);
         assertProcessingOfRequestListingHasExpectedResults(
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03);
+                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03, productionMode);
+        assertLastProcessedDateInStorageHasCorrectValue(mockCurrentTimeMillis);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void testValidateTravelRequestsForDefaultSettingsOnBrokenServer(boolean productionMode) throws Exception {
+        requestV4Service.setSimulateProductionMode(productionMode);
+        mockConcurEndpoint.setForceServerError(true);
+        assertProcessingOfRequestListingEncountersAnError();
+        assertLastProcessedDateInStorageMatchesDefaultValue();
     }
 
     static Stream<Arguments> travelRequestListingsForValidation() {
@@ -388,23 +480,47 @@ public class ConcurRequestV4ServiceImplTest {
                 RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30,
                 RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
                 RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
-        ).map(Arguments::of);
+        ).flatMap(ConcurRequestV4ServiceImplTest::flatMapToFixturesPairedWithTrueFalseProductionModeFlags)
+                .map(Arguments::of);
+    }
+
+    static Stream<Object[]> flatMapToFixturesPairedWithTrueFalseProductionModeFlags(RequestV4ListingFixture fixture) {
+        return Stream.of(new Object[] { fixture, true }, new Object[] { fixture, false });
     }
 
     @ParameterizedTest
     @MethodSource("travelRequestListingsForValidation")
-    private void testValidateTravelRequestsAfterOverridingQueryDatesAndPageSize(
-            RequestV4ListingFixture expectedResults) throws Exception {
+    void testValidateTravelRequestsAfterOverridingQueryDatesAndPageSize(
+            RequestV4ListingFixture expectedResults, boolean productionMode) throws Exception {
+        requestV4Service.setSimulateProductionMode(productionMode);
         overrideQueryFromDate(expectedResults.modifiedFromDate);
         overrideQueryToDate(expectedResults.modifiedToDate);
         overrideQueryPageSize(expectedResults.pageSize);
-        assertProcessingOfRequestListingHasExpectedResults(expectedResults);
+        assertProcessingOfRequestListingHasExpectedResults(expectedResults, productionMode);
+        assertLastProcessedDateInStorageMatchesDefaultValue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequestListingsForValidation")
+    void testValidateTravelRequestsUsingQueryOverridesAndBrokenServer(
+            RequestV4ListingFixture expectedResults, boolean productionMode) throws Exception {
+        mockConcurEndpoint.setForceServerError(true);
+        requestV4Service.setSimulateProductionMode(productionMode);
+        overrideQueryFromDate(expectedResults.modifiedFromDate);
+        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryPageSize(expectedResults.pageSize);
+        assertProcessingOfRequestListingEncountersAnError();
+        assertLastProcessedDateInStorageMatchesDefaultValue();
+    }
+
+    private void assertProcessingOfRequestListingEncountersAnError() {
+        assertThrows(RuntimeException.class, () -> requestV4Service.processTravelRequests(mockAccessToken));
     }
 
     private void assertProcessingOfRequestListingHasExpectedResults(
-            RequestV4ListingFixture expectedListing) {
+            RequestV4ListingFixture expectedListing, boolean productionMode) {
         Map<String, RequestV4DetailFixture> expectedResults = expectedListing
-                .getExpectedProcessedRequestsKeyedByRequestId();
+                .getExpectedProcessedRequestsKeyedByRequestId(productionMode);
         List<ConcurEventNotificationProcessingResultsDTO> actualResults = requestV4Service.processTravelRequests(
                 mockAccessToken);
         assertRequestsWereValidatedAsExpected(expectedResults, actualResults);
@@ -434,15 +550,29 @@ public class ConcurRequestV4ServiceImplTest {
                 "Wrong validation event type for result");
         assertEquals(expectedResult.getExpectedProcessingResult(), actualResult.getProcessingResults(),
                 "Wrong validation outcome for result");
-        if (!expectedResult.isExpectedToPassAccountValidation()) {
+        if (expectedResult.isExpectedToPassAccountValidation()) {
+            assertTrue(CollectionUtils.isEmpty(actualResult.getMessages()),
+                    "Successful validation result should not have contained any error messages");
+        } else {
             assertTrue(CollectionUtils.isNotEmpty(actualResult.getMessages()),
                     "Unsuccessful validation result should have contained at least one error message");
         }
     }
 
+    private void assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture expectedResults) {
+        Optional<String> approverId = expectedResults.optionalApproverForQuery.map(fixture -> fixture.id);
+        RequestV4QuerySettings querySettings = new RequestV4QuerySettings(
+                mockAccessToken, mockCurrentTimeMillis, approverId);
+        String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl(querySettings);
+        assertThrows(RuntimeException.class, () -> requestV4Service.findAndProcessPendingTravelRequests(
+                mockAccessToken, initialQueryUrl, (accessToken, requestListing) -> Stream.of(requestListing)));
+    }
+
     private void assertSearchForRequestListingReturnsExpectedResults(RequestV4ListingFixture expectedResults) {
         Optional<String> approverId = expectedResults.optionalApproverForQuery.map(fixture -> fixture.id);
-        String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl(approverId);
+        RequestV4QuerySettings querySettings = new RequestV4QuerySettings(
+                mockAccessToken, mockCurrentTimeMillis, approverId);
+        String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl(querySettings);
         Stream<ConcurRequestV4ListingDTO> streamedResults = requestV4Service.findAndProcessPendingTravelRequests(
                 mockAccessToken, initialQueryUrl, (accessToken, requestListing) -> Stream.of(requestListing));
         List<ConcurRequestV4ListingDTO> finalResults = streamedResults.collect(Collectors.toUnmodifiableList());
@@ -600,6 +730,27 @@ public class ConcurRequestV4ServiceImplTest {
         } else {
             assertNull(actualDate, dateLabel + " should not have been present");
         }
+    }
+
+    private void assertLastProcessedDateInStorageHasCorrectValue(long expectedMillisecondValue) throws ParseException {
+        String actualLastProcessedDateString = concurParameters.get(
+                ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE);
+        assertTrue(StringUtils.isNotBlank(actualLastProcessedDateString),
+                "The last-processed-date parameter should not have been blank");
+        long actualMillisecondValue = getTimeInMilliseconds(actualLastProcessedDateString);
+        DateTime expectedDate = new DateTime(expectedMillisecondValue, DateTimeZone.UTC);
+        DateTime actualDate = new DateTime(actualMillisecondValue, DateTimeZone.UTC);
+        assertEquals(expectedDate, actualDate, "Wrong value stored in last-processed-date parameter");
+    }
+
+    private void assertLastProcessedDateInStorageMatchesDefaultValue() {
+        String actualLastProcessedDateString = concurParameters.get(
+                ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE);
+        assertTrue(StringUtils.isNotBlank(actualLastProcessedDateString),
+                "The last-processed-date parameter should not have been blank");
+        assertEquals(
+                ParameterTestValues.REQUEST_V4_DEFAULT_LAST_PROCESSED_DATE_2022_01_02, actualLastProcessedDateString,
+                "The last-processed-date parameter should not have been changed from its default value");
     }
 
     private static class TestConcurRequestV4ServiceImpl extends ConcurRequestV4ServiceImpl {
