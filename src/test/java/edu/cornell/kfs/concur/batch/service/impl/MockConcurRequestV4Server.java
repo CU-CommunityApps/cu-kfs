@@ -73,7 +73,8 @@ public class MockConcurRequestV4Server implements Closeable {
     public ConcurRequestV4ListingDTO findRequests(Map<String, String> queryParameters) {
         Set<String> unsupportedParameters = searchForUnsupportedRequestListQueryParameters(queryParameters);
         if (!unsupportedParameters.isEmpty()) {
-            throw new IllegalArgumentException("Query contains unsupported parameters: "
+            throw new IllegalArgumentException("Query contains unsupported parameters "
+                    + "(and this mock server might not support all the parameters from the real Concur web service): "
                     + unsupportedParameters.toString());
         }
         
@@ -99,7 +100,7 @@ public class MockConcurRequestV4Server implements Closeable {
         }
         
         List<ConcurRequestV4ListItemDTO> unboundedResults = travelRequests.values().stream()
-                .filter(requestEntry -> requestWasLastModifiedBetweenDates(
+                .filter(requestEntry -> requestWasLastModifiedWithinDateRange(
                         requestEntry, modifiedAfter, modifiedBefore))
                 .filter(requestEntry -> requestHasAppropriateApproverOrStatus(requestEntry, userId))
                 .map(requestEntry -> requestEntry.requestAsListItem)
@@ -115,10 +116,10 @@ public class MockConcurRequestV4Server implements Closeable {
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    private boolean requestWasLastModifiedBetweenDates(RequestEntry requestEntry, Date rangeStart, Date rangeEnd) {
+    private boolean requestWasLastModifiedWithinDateRange(RequestEntry requestEntry, Date rangeStart, Date rangeEnd) {
         Date lastModifiedDate = requestEntry.requestDetail.getLastModifiedDate();
         return lastModifiedDate != null && lastModifiedDate.compareTo(rangeStart) >= 0
-                && lastModifiedDate.compareTo(rangeEnd) <= 0;
+                && lastModifiedDate.compareTo(rangeEnd) < 0;
     }
 
     private boolean requestHasAppropriateApproverOrStatus(RequestEntry requestEntry, Optional<String> approverId) {
@@ -205,7 +206,7 @@ public class MockConcurRequestV4Server implements Closeable {
                 .filter(StringUtils::isNotBlank);
     }
 
-    private static class RequestEntry {
+    private static final class RequestEntry {
         private final RequestV4DetailFixture requestFixture;
         private final ConcurRequestV4ListItemDTO requestAsListItem;
         private final ConcurRequestV4ReportDTO requestDetail;

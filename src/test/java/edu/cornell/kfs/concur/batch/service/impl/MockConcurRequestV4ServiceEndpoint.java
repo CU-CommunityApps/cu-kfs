@@ -29,6 +29,8 @@ import org.springframework.http.HttpMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
@@ -45,7 +47,7 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
 
     private static final Pattern REQUESTS_ENDPOINT_REGEX = Pattern.compile(
             "^/travelrequest/v4/requests("
-                    + "(?<getRequestList>\\?(([\\w%\\-]+=[\\w%\\-]+)(\\&[\\w%\\-]+=[\\w%\\-]+)*))|"
+                    + "(?<getRequestList>\\?(([\\w%\\-]+=[\\w%\\-\\.]+)(\\&[\\w%\\-]+=[\\w%\\-\\.]+)*))|"
                     + "(?<getRequest>/(?<requestUuid>\\w+)/?)"
             + ")$");
 
@@ -53,11 +55,20 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
     private static final String GET_REQUEST_GROUP = "getRequest";
     private static final String REQUEST_UUID_GROUP = "requestUuid";
 
+    private static final String ERRORS_PROPERTY = "errors";
+    private static final String ERROR_CODE_PROPERTY = "errorCode";
+    private static final String ERROR_MESSAGE_PROPERTY = "errorMessage";
+
+    private static final String TEST_ERROR_CODE = "testError";
+    private static final String NOT_FOUND_MESSAGE = "Not Found";
+    private static final String INTERNAL_SERVER_ERROR_MESSAGE = "Internal Server Error";
+
     private ObjectMapper objectMapper;
     private MockConcurRequestV4Server mockBackendServer;
     private String expectedAccessToken;
     private RequestV4DetailFixture[] initialRequestDetails;
     private String baseRequestV4Url;
+    private boolean forceServerError;
 
     public MockConcurRequestV4ServiceEndpoint(String expectedAccessToken,
             RequestV4DetailFixture... initialRequestDetails) {
@@ -65,14 +76,19 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         this.mockBackendServer = null;
         this.expectedAccessToken = expectedAccessToken;
         this.initialRequestDetails = initialRequestDetails;
+        this.forceServerError = false;
     }
 
     private ObjectMapper buildObjectMapper() {
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.setTimeZone(TimeZone.getTimeZone(CUKFSConstants.TIME_ZONE_UTC));
         jsonObjectMapper.setDateFormat(new SimpleDateFormat(
-                CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_Z, Locale.US));
+                CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z, Locale.US));
         return jsonObjectMapper;
+    }
+
+    public void setForceServerError(boolean forceServerError) {
+        this.forceServerError = forceServerError;
     }
 
     @SuppressWarnings("deprecation")
@@ -117,6 +133,10 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
     @Override
     protected void processRequest(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
+        if (forceServerError) {
+            markResponseAsEncounteringInternalServerError(response);
+            return;
+        }
         String actualAuthorizationHeader = getNonBlankHeaderValue(request, ConcurConstants.AUTHORIZATION_PROPERTY);
         assertEquals(getExpectedAuthorizationHeader(), actualAuthorizationHeader,
                 "Request has a malformed authorization header and/or an invalid token");
@@ -162,8 +182,9 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
             response.setEntity(new StringEntity(jsonResult, ContentType.APPLICATION_JSON));
             response.setStatusCode(HttpStatus.SC_OK);
         } catch (IllegalArgumentException e) {
+            String errorResponse = buildErrorResponse(e.getMessage());
+            response.setEntity(new StringEntity(errorResponse, ContentType.APPLICATION_JSON));
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-            response.setEntity(new StringEntity(e.getMessage(), ContentType.TEXT_PLAIN));
         }
     }
 
@@ -178,6 +199,8 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
             response.setEntity(new StringEntity(jsonResult, ContentType.APPLICATION_JSON));
             response.setStatusCode(HttpStatus.SC_OK);
         } else {
+            String notFoundResponse = buildErrorResponse(NOT_FOUND_MESSAGE);
+            response.setEntity(new StringEntity(notFoundResponse, ContentType.APPLICATION_JSON));
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
         }
     }
@@ -188,6 +211,25 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unexpected error encountered while converting DTO to String", e);
         }
+    }
+
+    private void markResponseAsEncounteringInternalServerError(HttpResponse response) {
+        String errorResponse = buildErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE);
+        response.setEntity(new StringEntity(errorResponse, ContentType.APPLICATION_JSON));
+        response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    private String buildErrorResponse(String message) {
+        return buildJsonTextFromNode(rootNode -> {
+            ObjectNode errorNode = rootNode.objectNode();
+            errorNode.put(ERROR_CODE_PROPERTY, TEST_ERROR_CODE);
+            errorNode.put(ERROR_MESSAGE_PROPERTY, message);
+            
+            ArrayNode errorsNode = rootNode.arrayNode(1);
+            errorsNode.add(errorNode);
+            
+            rootNode.set(ERRORS_PROPERTY, errorsNode);
+        });
     }
 
 }

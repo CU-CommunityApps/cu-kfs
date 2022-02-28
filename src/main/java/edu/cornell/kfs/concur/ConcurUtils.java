@@ -22,7 +22,7 @@ public class ConcurUtils {
     private static final Logger LOG = LogManager.getLogger(ConcurUtils.class);
 
     private static final DateTimeFormatter UTC_DATE_FORMATTER = DateTimeFormat
-            .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_Z).withLocale(Locale.US).withZoneUTC();
+            .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US).withZoneUTC();
 
     private static final String CODE_PATTERN = "\\((.*?)\\)";
     private static final String CODE_AND_DESCRIPTION_PATTERN = CODE_PATTERN + "(.*?)";

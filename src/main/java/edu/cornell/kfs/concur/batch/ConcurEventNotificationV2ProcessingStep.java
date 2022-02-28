@@ -10,6 +10,7 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestV4Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
 
 public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
@@ -17,6 +18,7 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     
     protected ConcurAccessTokenV2Service concurAccessTokenV2Service;
     protected ConcurExpenseV3Service concurExpenseV3Service;
+    protected ConcurRequestV4Service concurRequestV4Service;
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
@@ -33,7 +35,9 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     }
     
     private void validateTravelRequests(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        LOG.info("validateTravelRequests, has not been implemented yet.");
+        List<ConcurEventNotificationProcessingResultsDTO> travelRequestProcessingResults = concurRequestV4Service
+                .processTravelRequests(accessToken);
+        processingResults.addAll(travelRequestProcessingResults);
     }
     
     private void generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
@@ -55,6 +59,10 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     
     public void setConcurExpenseV3Service(ConcurExpenseV3Service concurExpenseV3Service) {
         this.concurExpenseV3Service = concurExpenseV3Service;
+    }
+
+    public void setConcurRequestV4Service(ConcurRequestV4Service concurRequestV4Service) {
+        this.concurRequestV4Service = concurRequestV4Service;
     }
 
 }
