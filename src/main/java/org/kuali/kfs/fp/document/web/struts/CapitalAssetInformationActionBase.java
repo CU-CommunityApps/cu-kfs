@@ -43,7 +43,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.SegmentedLookupResultsService;
@@ -69,11 +68,10 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     private static final Logger LOG = LogManager.getLogger();
 
     /**
-     * Multi-value asset lookup is implemented through the integration package by module's service
-     * to gather the results. The results are processed for any capital accounting lines where
-     * the line is marked for selection.  After the capital assets are populated with the
-     * selected asset numbers, the system control amount is redistributed equally among the assets
-     * when the distribution method is "distribute cost equally".
+     * Multi-value asset lookup is implemented through the integration package by module's service to gather the
+     * results. The results are processed for any capital accounting lines where the line is marked for selection.
+     * After the capital assets are populated with the selected asset numbers, the system control amount is
+     * redistributed equally among the assets when the distribution method is "distribute cost equally".
      */
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -400,8 +398,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             assetQuantity = capitalAsset.getCapitalAssetQuantity();
         }
 
-        capitalAsset.setCapitalAssetLineAmount(capitalAsset.getCapitalAssetLineAmount().add(amount.multiply(new KualiDecimal(assetQuantity))));
-        int lastAccountIndex = 0;
+        capitalAsset.setCapitalAssetLineAmount(
+                capitalAsset.getCapitalAssetLineAmount().add(amount.multiply(new KualiDecimal(assetQuantity))));
         KualiDecimal appliedAccountingLinesTotal = KualiDecimal.ZERO;
 
         CapitalAssetAccountsGroupDetails lastLine = new CapitalAssetAccountsGroupDetails();
@@ -415,7 +413,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             groupAccountLine.setAmount(calculatedLineAmount.multiply(new KualiDecimal(assetQuantity)));
             appliedAccountingLinesTotal = appliedAccountingLinesTotal.add(groupAccountLine.getAmount());
 
-            lastAccountIndex++;
             lastLine = groupAccountLine;
         }
 
@@ -605,7 +602,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         KualiDecimal totalCapitalAccountsAmount = getTotalCapitalAccountsAmounts(selectedCapitalAccountingLines);
 
         CapitalAssetAccountsGroupDetails lastAccountLine = new CapitalAssetAccountsGroupDetails();
-        int lastAccountLineIndex = 0;
         KualiDecimal distributedAmount = KualiDecimal.ZERO;
 
         List<CapitalAssetAccountsGroupDetails> groupAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
@@ -615,8 +611,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             groupAccountLine.setAmount(new KualiDecimal(capitalAssetAmount.bigDecimalValue().multiply(linePercent)));
             lastAccountLine = groupAccountLine;
             distributedAmount = distributedAmount.add(groupAccountLine.getAmount());
-
-            lastAccountLineIndex++;
         }
 
         lastAccountLine.setAmount(lastAccountLine.getAmount().add(capitalAssetAmount.subtract(distributedAmount)));
@@ -1525,7 +1519,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @param capitalAccountingLines
      * @param existingCapitalAsset
      */
-    protected void addMissingAccountingLinesToCapitalAsset(List<CapitalAccountingLines> capitalAccountingLines, CapitalAssetInformation existingCapitalAsset) {
+    protected void addMissingAccountingLinesToCapitalAsset(List<CapitalAccountingLines> capitalAccountingLines,
+            CapitalAssetInformation existingCapitalAsset) {
         List<CapitalAssetAccountsGroupDetails> groupAccountLines = existingCapitalAsset.getCapitalAssetAccountsGroupDetails();
 
         for (CapitalAccountingLines capitalAccountingLine : capitalAccountingLines) {
@@ -1570,7 +1565,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         return ++nextLineNumber;
     }
 
-    protected void calculateRemainingDistributedAmount(CapitalAccountingLinesFormBase calfb, List<CapitalAssetInformation> capitalAssetInformation) {
+    protected void calculateRemainingDistributedAmount(CapitalAccountingLinesFormBase calfb,
+            List<CapitalAssetInformation> capitalAssetInformation) {
         calfb.setCreatedAssetsControlAmount(calfb.getSystemControlAmount());
 
         //get amount allocated so far....or the system control remainder amount field.
@@ -1774,7 +1770,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAccountingLinesFormBase calfb = (CapitalAccountingLinesFormBase) form;
         List<CapitalAccountingLines> selectedCapitalAccountingLines = new ArrayList<>();
 
-        KualiDecimal remainingAmountToDistribute = getRemainingAmounToDistribute(selectedCapitalAccountingLines, form);
+        KualiDecimal remainingAmountToDistribute = getRemainingAmountToDistribute(selectedCapitalAccountingLines, form);
 
         KualiAccountingDocumentFormBase kualiAccountingDocumentFormBase = (KualiAccountingDocumentFormBase) form;
         List<CapitalAssetInformation> capitalAssetInformation = this.getCurrentCapitalAssetInformationObject(kualiAccountingDocumentFormBase);
@@ -1809,7 +1805,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAccountingLinesFormBase calfb = (CapitalAccountingLinesFormBase) form;
         List<CapitalAccountingLines> selectedCapitalAccountingLines = new ArrayList<>();
 
-        KualiDecimal remainingAmountToDistribute = getRemainingAmounToDistribute(selectedCapitalAccountingLines, form);
+        KualiDecimal remainingAmountToDistribute = getRemainingAmountToDistribute(selectedCapitalAccountingLines, form);
 
         KualiAccountingDocumentFormBase kualiAccountingDocumentFormBase = (KualiAccountingDocumentFormBase) form;
         List<CapitalAssetInformation> capitalAssetInformation = this.getCurrentCapitalAssetInformationObject(kualiAccountingDocumentFormBase);
@@ -1846,7 +1842,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @param form
      * @return remainingAmountToDistribute
      */
-    protected KualiDecimal getRemainingAmounToDistribute(List<CapitalAccountingLines> selectedCapitalAccountingLines,
+    protected KualiDecimal getRemainingAmountToDistribute(List<CapitalAccountingLines> selectedCapitalAccountingLines,
             ActionForm form) {
         KualiDecimal capitalAccountsAmountToDistribute = KualiDecimal.ZERO;
         KualiDecimal capitalAssetsAllocatedAmount = KualiDecimal.ZERO;
@@ -1869,62 +1865,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         }
 
         return capitalAccountsAmountToDistribute.subtract(capitalAssetsAllocatedAmount);
-    }
-
-    /**
-     * Removes any matching accounting line in capital asset records
-     * whenever an accounting line is removed.
-     *
-     * @param financialDocumentForm
-     * @param accountingLine
-     */
-    protected void deleteCapitalAssetLines(KualiAccountingDocumentFormBase financialDocumentForm,
-            AccountingLine accountingLine) {
-        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase =
-                (CapitalAssetInformationDocumentBase) financialDocumentForm.getFinancialDocument();
-
-        List<CapitalAssetInformation> removalCaiList = new ArrayList<>();
-
-        List<CapitalAssetInformation> capitalAssets = capitalAssetInformationDocumentBase.getCapitalAssetInformation();
-        for (CapitalAssetInformation capitalAsset : capitalAssets) {
-            removeDistributedAccountingLine(capitalAsset, accountingLine);
-            if (capitalAsset.getCapitalAssetAccountsGroupDetails().size() == 0) {
-                capitalAsset.getCapitalAssetInformationDetails().clear();
-                removalCaiList.add(capitalAsset);
-            }
-        }
-
-        //if the removal list is not empty, remove these bunch of capital asset records for that accounting line.
-        if (ObjectUtils.isNotNull(removalCaiList)) {
-            capitalAssets.removeAll(removalCaiList);
-        }
-    }
-
-    /**
-     * Removes the matching accounting line that has been distributed to the capital asset
-     *
-     * @param capitalAsset
-     * @param accountingLine
-     */
-    protected void removeDistributedAccountingLine(CapitalAssetInformation capitalAsset, AccountingLine accountingLine) {
-        List<CapitalAssetAccountsGroupDetails> groupAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
-        CapitalAssetAccountsGroupDetails accountLineToDelete = null;
-
-        for (CapitalAssetAccountsGroupDetails groupAccountLine : groupAccountLines) {
-            if (groupAccountLine.getSequenceNumber().compareTo(accountingLine.getSequenceNumber()) == 0 &&
-                groupAccountLine.getFinancialDocumentLineTypeCode().equals(groupAccountLine.getFinancialDocumentLineTypeCode()) &&
-                groupAccountLine.getChartOfAccountsCode().equals(accountingLine.getChartOfAccountsCode()) &&
-                groupAccountLine.getAccountNumber().equals(accountingLine.getAccountNumber()) &&
-                groupAccountLine.getFinancialObjectCode().equals(accountingLine.getFinancialObjectCode())) {
-                accountLineToDelete = groupAccountLine;
-                break;
-            }
-        }
-
-        if (ObjectUtils.isNotNull(accountLineToDelete)) {
-            capitalAsset.setCapitalAssetLineAmount(capitalAsset.getCapitalAssetLineAmount().subtract(accountLineToDelete.getAmount()));
-            groupAccountLines.remove(accountLineToDelete);
-        }
     }
 
     /**
@@ -2020,11 +1960,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             } else {
                 CapitalAssetInformation existingCapitalAsset = getCapitalAssetCreated(capitalAccountingLine,
                         currentCapitalAssetInformation);
-                if (ObjectUtils.isNotNull(existingCapitalAsset)) {
-                    capitalAccountingLine.setSelectLine(true);
-                } else {
-                    capitalAccountingLine.setSelectLine(false);
-                }
+                capitalAccountingLine.setSelectLine(ObjectUtils.isNotNull(existingCapitalAsset));
             }
         }
     }

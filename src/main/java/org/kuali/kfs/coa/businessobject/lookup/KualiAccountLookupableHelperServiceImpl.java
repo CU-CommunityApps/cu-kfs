@@ -22,12 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.kim.api.identity.IdentityService;
 import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
 import org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -36,6 +38,7 @@ import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +53,7 @@ public class KualiAccountLookupableHelperServiceImpl extends KualiLookupableHelp
      */
     private static final Logger LOG = LogManager.getLogger();
 
+    private IdentityService identityService;
     private PermissionService permissionService;
 
     /**
@@ -104,11 +108,13 @@ public class KualiAccountLookupableHelperServiceImpl extends KualiLookupableHelp
             parameters.remove(KFSPropertyConstants.CLOSED);
         }
         if (parameters.containsKey(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + ".principalName")) {
-            String foPrincipalName = parameters.get(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + ".principalName");
+            final String foPrincipalName = parameters.get(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + ".principalName");
             if (StringUtils.isNotBlank(foPrincipalName)) {
-                String foPrincipalId = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(foPrincipalName).getPrincipalId();
-                parameters.put(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_SYSTEM_IDENTIFIER, foPrincipalId);
-                parameters.remove(KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER + ".principalName");
+                if (!findPrincipalAndUpdateParameters(parameters, foPrincipalName,
+                        KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_SYSTEM_IDENTIFIER,
+                        KFSPropertyConstants.ACCOUNT_FISCAL_OFFICER_USER)) {
+                    return Collections.emptyList();
+                }
             }
         }
         if (parameters.containsKey(KFSPropertyConstants.ACCOUNT_SUPERVISORY_USER + ".principalName")) {
@@ -120,27 +126,46 @@ public class KualiAccountLookupableHelperServiceImpl extends KualiLookupableHelp
                  * Moved the principalByPrincipalName to a variable to more clearly see what aspect is causing the NPE
                  */
                 try {
-                    Principal principalByPrincipalName = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(superPrincipalName);
-                    String superPrincipalId = principalByPrincipalName.getPrincipalId();
-                    parameters.put(KFSPropertyConstants.ACCOUNTS_SUPERVISORY_SYSTEMS_IDENTIFIER, superPrincipalId);
+                    if (!findPrincipalAndUpdateParameters(parameters, superPrincipalName,
+                            KFSPropertyConstants.ACCOUNTS_SUPERVISORY_SYSTEMS_IDENTIFIER,
+                            KFSPropertyConstants.ACCOUNT_SUPERVISORY_USER)) {
+                        return Collections.emptyList();
+                    }
                 } catch (NullPointerException npe ) {
                     LOG.error("getSearchResults, got an NPE trying to get the super principle ID for superPrincipalName: " + 
                             superPrincipalName, npe);
                     throw npe;
                 }
-                
-                parameters.remove(KFSPropertyConstants.ACCOUNT_SUPERVISORY_USER + ".principalName");
             }
         }
         if (parameters.containsKey(KFSPropertyConstants.ACCOUNT_MANAGER_USER + ".principalName")) {
             String mgrPrincipalName = parameters.get(KFSPropertyConstants.ACCOUNT_MANAGER_USER + ".principalName");
             if (StringUtils.isNotBlank(mgrPrincipalName)) {
-                String foPrincipalId = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(mgrPrincipalName).getPrincipalId();
-                parameters.put(KFSPropertyConstants.ACCOUNT_MANAGER_SYSTEM_IDENTIFIER, foPrincipalId);
-                parameters.remove(KFSPropertyConstants.ACCOUNT_MANAGER_USER + ".principalName");
+                if (!findPrincipalAndUpdateParameters(parameters, mgrPrincipalName,
+                        KFSPropertyConstants.ACCOUNT_MANAGER_SYSTEM_IDENTIFIER,
+                        KFSPropertyConstants.ACCOUNT_MANAGER_USER)) {
+                    return Collections.emptyList();
+                }
             }
         }
         return super.getSearchResults(parameters);
+    }
+
+    private boolean findPrincipalAndUpdateParameters(Map<String, String> parameters, String principalName,
+            String principalIdKey, String principalUserPrefix) {
+        final Principal principal = identityService.getPrincipalByPrincipalName(principalName);
+        if (principal == null) {
+            return false;
+        } else {
+            String principalId = principal.getPrincipalId();
+            parameters.put(principalIdKey, principalId);
+            parameters.remove(principalUserPrefix + ".principalName");
+        }
+        return true;
+    }
+
+    public void setIdentityService(IdentityService identityService) {
+        this.identityService = identityService;
     }
 
     public void setPermissionService(PermissionService permissionService) {
