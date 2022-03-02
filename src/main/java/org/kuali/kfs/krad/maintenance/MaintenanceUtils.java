@@ -154,7 +154,6 @@ public final class MaintenanceUtils {
      *
      * @param lockedDocument
      * @return
-     * @throws org.kuali.kfs.kew.api.exception.WorkflowException
      */
     private static boolean lockCanBeIgnored(WorkflowDocument lockedDocument) {
         // TODO: implement real authorization for Maintenance Document Save/Route - KULNRVSYS-948

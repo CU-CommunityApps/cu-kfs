@@ -25,7 +25,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -206,7 +205,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected void doApplicationOfFunds(PaymentApplicationForm paymentApplicationForm) throws WorkflowException {
+    protected void doApplicationOfFunds(PaymentApplicationForm paymentApplicationForm) {
         PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
 
         List<InvoicePaidApplied> invoicePaidApplieds = new ArrayList<>();
@@ -479,7 +478,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return invoicePaidApplieds;
     }
 
-    protected NonInvoiced applyNonInvoiced(PaymentApplicationForm payAppForm) throws WorkflowException {
+    protected NonInvoiced applyNonInvoiced(PaymentApplicationForm payAppForm) {
         PaymentApplicationDocument applicationDocument = (PaymentApplicationDocument) payAppForm.getDocument();
 
         NonInvoiced nonInvoiced = payAppForm.getNonInvoicedAddLine();
@@ -521,7 +520,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return nonInvoiced;
     }
 
-    protected NonAppliedHolding applyUnapplied(PaymentApplicationForm payAppForm) throws WorkflowException {
+    protected NonAppliedHolding applyUnapplied(PaymentApplicationForm payAppForm) {
         PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
         KualiDecimal amount = payAppForm.getNonAppliedHoldingAmount();
 
