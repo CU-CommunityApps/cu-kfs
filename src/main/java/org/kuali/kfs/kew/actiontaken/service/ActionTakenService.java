@@ -36,11 +36,7 @@ import java.util.List;
  */
 public interface ActionTakenService {
 
-    ActionTaken load(String id);
-
     ActionTaken findByActionTakenId(String actionTakenId);
-
-    Collection getActionsTaken(String documentId);
 
     void saveActionTaken(ActionTaken actionTaken);
 
@@ -50,17 +46,11 @@ public interface ActionTakenService {
 
     Collection<ActionTaken> findByDocumentId(String documentId);
 
-    Collection findByDocIdAndAction(String docId, String action);
-
     List<ActionTaken> findByDocumentIdWorkflowId(String documentId, String workflowId);
 
     void delete(ActionTaken actionTaken);
 
     List findByDocumentIdIgnoreCurrentInd(String documentId);
-
-    void deleteByDocumentId(String documentId);
-
-    void validateActionTaken(ActionTaken actionTaken);
 
     boolean hasUserTakenAction(String principalId, String documentId);
 

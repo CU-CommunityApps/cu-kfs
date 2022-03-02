@@ -167,7 +167,8 @@ public class IdentityServiceImpl implements IdentityService {
         incomingParamCheck(principalName, "principalName");
 
         Map<String, Object> criteria = new HashMap<>(1);
-        criteria.put(KIMPropertyConstants.Principal.PRINCIPAL_NAME, principalName.toLowerCase(Locale.US));
+        criteria.put("LOWER(" + KIMPropertyConstants.Principal.PRINCIPAL_NAME + ")",
+                principalName.toLowerCase(Locale.US));
         Collection<Principal> principals = businessObjectService.findMatching(Principal.class, criteria);
         if (principals.size() == 1) {
             return principals.iterator().next();

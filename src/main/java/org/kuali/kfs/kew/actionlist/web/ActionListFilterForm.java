@@ -38,10 +38,10 @@ import java.util.List;
 public class ActionListFilterForm extends KualiForm {
 
     private static final long serialVersionUID = -1149636352016711445L;
-    private static String CREATE_DATE_FROM = "createDateFrom";
-    private static String CREATE_DATE_TO = "createDateTo";
-    private static String LAST_ASSIGNED_DATE_FROM = "lastAssignedDateFrom";
-    private static String LAST_ASSIGNED_DATE_TO = "lastAssignedDateTo";
+    private static final String CREATE_DATE_FROM = "createDateFrom";
+    private static final String CREATE_DATE_TO = "createDateTo";
+    private static final String LAST_ASSIGNED_DATE_FROM = "lastAssignedDateFrom";
+    private static final String LAST_ASSIGNED_DATE_TO = "lastAssignedDateTo";
     private ActionListFilter filter;
     private String createDateFrom;
     private String createDateTo;
@@ -54,9 +54,7 @@ public class ActionListFilterForm extends KualiForm {
     private List userWorkgroups;
     private String cssFile = "kuali.css";
     private String test = "";
-    private String documentTargetSpec;
-    private String routeLogTargetSpec;
-    
+
     private static String LAST_MODIFIED_DATE_FROM = "lastModifiedDateFrom";
     private static String LAST_MODIFIED_DATE_TO = "lastModifiedDateTo";
     private String lastModifiedDateTo;
@@ -167,6 +165,7 @@ public class ActionListFilterForm extends KualiForm {
             this.lastAssignedDateTo = lastAssignedDate.trim();
         }
     }
+    
     public String getLastModifiedDateTo() {
         return lastModifiedDateTo;
     }
@@ -180,8 +179,6 @@ public class ActionListFilterForm extends KualiForm {
     }
 
     public void validateDates() {
-        //List errors = new ArrayList();
-        //ActionErrors errors = new ActionErrors();
         if (getCreateDateFrom() != null && getCreateDateFrom().length() != 0) {
             try {
                 KFSConstants.getDefaultDateFormat().parse(getCreateDateFrom());
@@ -302,19 +299,4 @@ public class ActionListFilterForm extends KualiForm {
         this.cssFile = cssFile;
     }
 
-    public String getDocumentTargetSpec() {
-        return documentTargetSpec;
-    }
-
-    public void setDocumentTargetSpec(String documentTargetSpec) {
-        this.documentTargetSpec = documentTargetSpec;
-    }
-
-    public String getRouteLogTargetSpec() {
-        return routeLogTargetSpec;
-    }
-
-    public void setRouteLogTargetSpec(String routeLogTargetSpec) {
-        this.routeLogTargetSpec = routeLogTargetSpec;
-    }
 }

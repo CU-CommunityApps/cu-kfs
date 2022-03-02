@@ -367,7 +367,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
                 matchingGroupIds.add(gm.getGroupId());
             }
         }
-        if (matchingGroupIds.isEmpty()) {
+        if (!matchingGroupIds.isEmpty()) {
             return getGroups(matchingGroupIds);
         }
         return Collections.emptyList();
