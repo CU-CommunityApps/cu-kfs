@@ -16,12 +16,15 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import edu.cornell.kfs.sys.service.impl.fixture.AwsSecretPojo;
 
+@Execution(ExecutionMode.SAME_THREAD)
 class AwsSecretServiceImplIntegrationTest {
     private static final Logger LOG = LogManager.getLogger();
     
