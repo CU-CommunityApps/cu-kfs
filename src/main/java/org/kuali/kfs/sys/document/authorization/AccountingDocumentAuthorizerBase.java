@@ -34,7 +34,7 @@ import java.util.Map;
  */
 /**
  * 
- * CU customization: Backport FINP-9249. The backport has been added to a copy of this file is from the 28-01-2021 version of financials.
+ * CU customization: Backport FINP-8249. The backport has been added to a copy of this file is from the 28-01-2021 version of financials.
  * This can be removed when we upgrade to the 20-02-2022 version of financials.
  *
  */
