@@ -141,7 +141,7 @@ import java.util.Set;
  * KualiDocumentActionBase.java in the 1/5/2022 release. The fix has been
  * backported to a copy of KualiDocumentActionBase.java from the 1/28/2021
  * version of financials. This will need to be updated accordingly when we
- * upgrade to the 1/5/2021 version of financials so that changes are moved to
+ * upgrade to the 1/5/2022 version of financials so that changes are moved to
  * KualiAction.java. This backport can be removed when we upgrade to the
  * 2/22/2022 financials release.
  *
