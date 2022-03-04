@@ -28,9 +28,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 
- * CU customization: backport FINP-8270.
- *
+ * CU customization: backport FINP-8270. This was backported to the 1/28/2021
+ * version of this file. This change can be removed with the 3/2/2022 upgrade.
  */
 public interface PaymentRequestDao {
 

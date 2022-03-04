@@ -45,9 +45,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * 
- * CU customization: backport FINP-8270
- *
+ * CU customization: backport FINP-8270. This was backported to the 1/28/2021
+ * version of this file. This change can be removed with the 3/2/2022 upgrade.
  */
 @Transactional
 public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements PaymentRequestDao {
