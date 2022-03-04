@@ -132,6 +132,20 @@ import java.util.Set;
  * This class handles all of the document handling related actions in terms of passing them from here at a central
  * point to the distributed transactions that actually implement document handling.
  */
+/**
+ * 
+ * CU customization: backport FINP-8250.
+ * 
+ * Changes from FINP-8250 were applied in base financials to KualiAction.java in
+ * the 2/22/2022 release. KualiAction.java has been merged with
+ * KualiDocumentActionBase.java in the 1/5/2022 release. The fix has been
+ * backported to a copy of KualiDocumentActionBase.java from the 1/28/2021
+ * version of financials. This will need to be updated accordingly when we
+ * upgrade to the 1/5/2021 version of financials so that changes are moved to
+ * KualiAction.java. This backport can be removed when we upgrade to the
+ * 2/22/2022 financials release.
+ *
+ */
 public class KualiDocumentActionBase extends KualiAction {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -2150,22 +2164,22 @@ public class KualiDocumentActionBase extends KualiAction {
         return false;
     }
 
-    private void populateRouteLogFormActionRequests(KualiForm form, DocumentRouteHeaderValue routeHeader) {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-
-        List<ActionRequest> rootRequests = getActionRequestService().getRootRequests(
+    /*
+     * CU customization: backport FINP-8250 changes
+     */
+    protected void populateRouteLogFormActionRequests(final KualiForm form,
+            final DocumentRouteHeaderValue routeHeader) {
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    	
+        final List<ActionRequest> rootRequests = getActionRequestService().getRootRequests(
                 routeHeader.getActionRequests());
-        Collections.sort(rootRequests, ROUTE_LOG_ACTION_REQUEST_SORTER);
+        rootRequests.sort(ROUTE_LOG_ACTION_REQUEST_SORTER);
 
-        List<ActionRequest> rootRequestsForDisplay = new ArrayList<>();
-
-        for (ActionRequest actionRequest : rootRequests) {
-            rootRequestsForDisplay.add(actionRequest.deepCopy(new HashMap<>()));
-        }
+        List<ActionRequest> rootRequestsForDisplay = new ArrayList<>(rootRequests);
 
         rootRequestsForDisplay = switchActionRequestPositionsIfPrimaryDelegatesPresent(rootRequestsForDisplay);
         int arCount = 0;
-        for (ActionRequest actionRequest : rootRequestsForDisplay) {
+        for (final ActionRequest actionRequest : rootRequestsForDisplay) {
             if (actionRequest.isPending()) {
                 arCount++;
 
@@ -2247,35 +2261,36 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param document the DocumentRouteHeaderValue for the document whose future routing is being simulated.
      * @throws Exception
      */
-    private void populateRouteLogFutureRequests(KualiForm form, DocumentRouteHeaderValue document) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-
-        SimulationCriteria criteria = SimulationCriteria.createSimulationCritUsingDocumentId(document.getDocumentId());
+    /*
+     * CU customization: backport changes from FINP-8250
+     */
+    protected void populateRouteLogFutureRequests(final KualiForm form, final DocumentRouteHeaderValue document)
+            throws Exception {
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    	
+        final SimulationCriteria criteria =
+                SimulationCriteria.createSimulationCritUsingDocumentId(document.getDocumentId());
 
         // gather the IDs for action requests that predate the simulation
-        Set<String> preexistingActionRequestIds = getActionRequestIds(document);
+        final Set<String> preexistingActionRequestIds = getActionRequestIds(document);
 
         // run the simulation
-        DocumentRouteHeaderValue documentRouteHeaderValue = KewApiServiceLocator.getWorkflowDocumentActionsService()
-                .executeSimulation(criteria);
-
+        final DocumentRouteHeaderValue documentRouteHeaderValue =
+                KewApiServiceLocator.getWorkflowDocumentActionsService().executeSimulation(criteria);
+        
         // fabricate our ActionRequestValueS from the results
-        List<ActionRequest> futureActionRequests =
+        final List<ActionRequest> futureActionRequests =
                 reconstituteActionRequestValues(documentRouteHeaderValue, preexistingActionRequestIds);
 
-        Collections.sort(futureActionRequests, ROUTE_LOG_ACTION_REQUEST_SORTER);
+        futureActionRequests.sort(ROUTE_LOG_ACTION_REQUEST_SORTER);
 
-        List<ActionRequest> futureActionRequestsForDisplay = new ArrayList<>();
-
-        for (ActionRequest actionRequest : futureActionRequests) {
-            futureActionRequestsForDisplay.add(actionRequest.deepCopy(new HashMap<>()));
-        }
+        List<ActionRequest> futureActionRequestsForDisplay = new ArrayList<>(futureActionRequests);
 
         futureActionRequestsForDisplay =
                 switchActionRequestPositionsIfPrimaryDelegatesPresent(futureActionRequestsForDisplay);
 
         int pendingActionRequestCount = 0;
-        for (ActionRequest actionRequest : futureActionRequestsForDisplay) {
+        for (final ActionRequest actionRequest : futureActionRequestsForDisplay) {
             if (actionRequest.isPending()) {
                 pendingActionRequestCount++;
 
