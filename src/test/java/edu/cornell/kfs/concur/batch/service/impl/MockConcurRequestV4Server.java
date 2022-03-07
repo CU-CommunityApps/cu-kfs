@@ -17,15 +17,14 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
-import edu.cornell.kfs.concur.ConcurConstants.RequestV4StatusCodes;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
-import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
@@ -38,7 +37,8 @@ public class MockConcurRequestV4Server implements Closeable {
 
     private static final Set<String> ALLOWED_REQUEST_LIST_QUERY_PARAMETERS = Set.of(
             ConcurApiParameters.VIEW, ConcurApiParameters.START, ConcurApiParameters.LIMIT,
-            ConcurApiParameters.MODIFIED_AFTER, ConcurApiParameters.MODIFIED_BEFORE, ConcurApiParameters.USER_ID);
+            ConcurApiParameters.MODIFIED_AFTER, ConcurApiParameters.MODIFIED_BEFORE,
+            ConcurApiParameters.SORT_FIELD, ConcurApiParameters.SORT_ORDER);
 
     private ConcurrentMap<String, RequestEntry> travelRequests;
     private String baseRequestV4Url;
@@ -51,9 +51,6 @@ public class MockConcurRequestV4Server implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (travelRequests != null) {
-            travelRequests.clear();
-        }
         travelRequests = null;
         baseRequestV4Url = null;
     }
@@ -83,26 +80,33 @@ public class MockConcurRequestV4Server implements Closeable {
         int limit = getExistingIntParameter(queryParameters, ConcurApiParameters.LIMIT);
         Date modifiedAfter = getExistingDateParameter(queryParameters, ConcurApiParameters.MODIFIED_AFTER);
         Date modifiedBefore = getExistingDateParameter(queryParameters, ConcurApiParameters.MODIFIED_BEFORE);
-        Optional<String> userId = getOptionalParameter(queryParameters, ConcurApiParameters.USER_ID);
+        String sortField = getExistingParameter(queryParameters, ConcurApiParameters.SORT_FIELD);
+        String sortOrder = getExistingParameter(queryParameters, ConcurApiParameters.SORT_ORDER);
         
         Comparator<ConcurRequestV4ListItemDTO> requestSorter = Comparator.comparing(
                 ConcurRequestV4ListItemDTO::getStartDate, Comparator.reverseOrder());
         
         if (!StringUtils.equalsIgnoreCase(RequestV4Views.APPROVED, view)) {
-            throw new IllegalArgumentException("This mock server only supports the APPROVED view; requested view was: "
-                    + view);
+            throw new IllegalArgumentException(
+                    "This mock server only supports the APPROVED view; actual requested view: " + view);
         } else if (startIndex < 0) {
             throw new IllegalArgumentException("start index cannot be negative");
         } else if (limit < 1 || limit > MAX_RESULT_LIMIT) {
             throw new IllegalArgumentException("limit cannot be non-positive and cannot be greater than 100");
         } else if (modifiedAfter.compareTo(modifiedBefore) > 0) {
             throw new IllegalArgumentException("modifiedAfter date cannot be later than modifiedBefore date");
+        } else if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_START_DATE_FIELD, sortField)) {
+            throw new IllegalArgumentException(
+                    "This mock server only supports sorting by start date; actual sort field: " + sortField);
+        } else if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_SORT_ORDER_DESC, sortOrder)) {
+            throw new IllegalArgumentException(
+                    "This mock server only supports descending sort order; actual sort order: " + sortOrder);
         }
         
         List<ConcurRequestV4ListItemDTO> unboundedResults = travelRequests.values().stream()
                 .filter(requestEntry -> requestWasLastModifiedWithinDateRange(
                         requestEntry, modifiedAfter, modifiedBefore))
-                .filter(requestEntry -> requestHasAppropriateApproverOrStatus(requestEntry, userId))
+                .filter(requestEntry -> requestHasAppropriateStatus(requestEntry))
                 .map(requestEntry -> requestEntry.requestAsListItem)
                 .sorted(requestSorter)
                 .collect(Collectors.toUnmodifiableList());
@@ -122,18 +126,10 @@ public class MockConcurRequestV4Server implements Closeable {
                 && lastModifiedDate.compareTo(rangeEnd) < 0;
     }
 
-    private boolean requestHasAppropriateApproverOrStatus(RequestEntry requestEntry, Optional<String> approverId) {
+    private boolean requestHasAppropriateStatus(RequestEntry requestEntry) {
         ConcurRequestV4StatusDTO latestStatus = requestEntry.requestDetail.getApprovalStatus();
-        if (approverId.isPresent()) {
-            List<RequestV4PersonFixture> approvers = requestEntry.requestFixture.finishedApprovers;
-            return StringUtils.equalsAnyIgnoreCase(
-                    latestStatus.getCode(), RequestV4StatusCodes.SUBMITTED, RequestV4StatusCodes.APPROVED)
-                    && approvers.stream().anyMatch(
-                            approver -> StringUtils.equalsIgnoreCase(approver.id, approverId.get()));
-        } else {
-            return StringUtils.equalsAnyIgnoreCase(latestStatus.getName(),
-                    RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, RequestV4Status.APPROVED.name);
-        }
+        return StringUtils.equalsAnyIgnoreCase(latestStatus.getName(),
+                RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, RequestV4Status.APPROVED.name);
     }
 
     private ConcurRequestV4ListingDTO buildRequestListing(List<ConcurRequestV4ListItemDTO> unboundedResults,
@@ -199,11 +195,6 @@ public class MockConcurRequestV4Server implements Closeable {
             throw new IllegalArgumentException("Query has blank or missing parameter: " + key);
         }
         return value;
-    }
-
-    private Optional<String> getOptionalParameter(Map<String, String> queryParameters, String key) {
-        return Optional.ofNullable(queryParameters.get(key))
-                .filter(StringUtils::isNotBlank);
     }
 
     private static final class RequestEntry {

@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -100,10 +99,10 @@ public class ConcurRequestV4ServiceImplTest {
     void setUp() throws Exception {
         mockAccessToken = buildMockAccessTokenFromUUID();
         mockConcurEndpoint = new MockConcurRequestV4ServiceEndpoint(mockAccessToken,
-                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_DOE,
-                RequestV4DetailFixture.PENDING_APPROVAL_TEST_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_TEST,
+                RequestV4DetailFixture.PENDING_APPROVAL_TEST_REQUEST_JOHN_TEST,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_JOHN_DOE,
-                RequestV4DetailFixture.CANCELED_TEST_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.CANCELED_TEST_REQUEST_JOHN_TEST,
                 RequestV4DetailFixture.APPROVED_TEST_REQUEST_JANE_DOE,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JANE_DOE,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
@@ -148,7 +147,10 @@ public class ConcurRequestV4ServiceImplTest {
         mockConcurBackendServer = null;
         mockConcurEndpoint = null;
         mockHttpServer = null;
+        baseRequestV4Url = null;
+        testDateTimeService = null;
         requestV4Service = null;
+        easternTimeZone = null;
     }
 
     private String buildMockAccessTokenFromUUID() {
@@ -163,7 +165,7 @@ public class ConcurRequestV4ServiceImplTest {
         parameters.put(ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT, requestV4Endpoint);
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE,
                 ParameterTestValues.REQUEST_V4_PAGE_SIZE_2);
-        parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_APPROVERS, buildTestApproversParameterValue());
+        parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_USERS, buildTestUsersParameterValue());
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE,
                 ConcurConstants.REQUEST_QUERY_LAST_DATE_INDICATOR);
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE,
@@ -173,9 +175,10 @@ public class ConcurRequestV4ServiceImplTest {
         return parameters;
     }
 
-    private String buildTestApproversParameterValue() {
-        return Stream.of(RequestV4PersonFixture.TEST_MANAGER, RequestV4PersonFixture.TEST_APPROVER)
-                .map(fixture -> fixture.firstName + CUKFSConstants.EQUALS_SIGN + fixture.id)
+    private String buildTestUsersParameterValue() {
+        return Stream.of(RequestV4PersonFixture.JOHN_TEST, RequestV4PersonFixture.JANE_DOE,
+                        RequestV4PersonFixture.TEST_MANAGER, RequestV4PersonFixture.TEST_APPROVER)
+                .map(RequestV4PersonFixture::toKeyValuePairForParameterEntry)
                 .collect(Collectors.joining(CUKFSConstants.SEMICOLON));
     }
 
@@ -324,10 +327,10 @@ public class ConcurRequestV4ServiceImplTest {
 
     static Stream<Arguments> travelRequests() {
         return Stream.of(
-                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_DOE,
-                RequestV4DetailFixture.PENDING_APPROVAL_TEST_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_TEST,
+                RequestV4DetailFixture.PENDING_APPROVAL_TEST_REQUEST_JOHN_TEST,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_JOHN_DOE,
-                RequestV4DetailFixture.CANCELED_TEST_REQUEST_JOHN_DOE,
+                RequestV4DetailFixture.CANCELED_TEST_REQUEST_JOHN_TEST,
                 RequestV4DetailFixture.APPROVED_TEST_REQUEST_JANE_DOE,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JANE_DOE,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
@@ -364,37 +367,31 @@ public class ConcurRequestV4ServiceImplTest {
     @Test
     void testFindTravelRequestListingForDefaultSettings() throws Exception {
         assertSearchForRequestListingReturnsExpectedResults(
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03);
+                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03);
     }
 
     @Test
     void testSearchForTravelRequestListingForDefaultSettingsOnBrokenServer() throws Exception {
         mockConcurEndpoint.setForceServerError(true);
-        assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03);
+        assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03);
     }
 
     static Stream<Arguments> travelRequestListingQueries() {
         return Stream.of(
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03,
-                RequestV4ListingFixture.SEARCH_TEST_MANAGER_2022_01_02_TO_2022_01_03,
-                RequestV4ListingFixture.SEARCH_TEST_APPROVER_2022_01_02_TO_2022_01_03,
-                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_06,
-                RequestV4ListingFixture.SEARCH_TEST_MANAGER_2022_04_05_TO_2022_04_06,
-                RequestV4ListingFixture.SEARCH_MARY_GRANT_2022_04_05_TO_2022_04_06,
-                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_07,
-                RequestV4ListingFixture.SEARCH_MARY_GRANT_2022_04_05_TO_2022_04_07,
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30,
-                RequestV4ListingFixture.SEARCH_TEST_MANAGER_2022_01_01_TO_2022_04_30,
-                RequestV4ListingFixture.SEARCH_TEST_APPROVER_2022_01_01_TO_2022_04_30
+                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02,
+                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_06,
+                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_07,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30
         ).map(Arguments::of);
     }
 
     static Stream<Arguments> travelRequestListingQueriesWithPageSizeOverrides() {
         return Stream.of(
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_MARY_GRANT_2022_04_05_TO_2022_04_06_PAGE_SIZE_7,
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
+                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
         ).map(Arguments::of);
     }
 
@@ -458,7 +455,7 @@ public class ConcurRequestV4ServiceImplTest {
     void testValidateTravelRequestsForDefaultSettings(boolean productionMode) throws Exception {
         requestV4Service.setSimulateProductionMode(productionMode);
         assertProcessingOfRequestListingHasExpectedResults(
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03, productionMode);
+                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03, productionMode);
         assertLastProcessedDateInStorageHasCorrectValue(mockCurrentTimeMillis);
     }
 
@@ -473,13 +470,15 @@ public class ConcurRequestV4ServiceImplTest {
 
     static Stream<Arguments> travelRequestListingsForValidation() {
         return Stream.of(
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03,
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_06,
-                RequestV4ListingFixture.SEARCH_ALL_2022_04_05_TO_2022_04_07,
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30,
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_ALL_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
+                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03,
+                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_06,
+                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_07,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
         ).flatMap(ConcurRequestV4ServiceImplTest::flatMapToFixturesPairedWithTrueFalseProductionModeFlags)
                 .map(Arguments::of);
     }
@@ -560,23 +559,19 @@ public class ConcurRequestV4ServiceImplTest {
     }
 
     private void assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture expectedResults) {
-        Optional<String> approverId = expectedResults.optionalApproverForQuery.map(fixture -> fixture.id);
         RequestV4QuerySettings querySettings = new RequestV4QuerySettings(
-                mockAccessToken, mockCurrentTimeMillis, approverId);
-        String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl(querySettings);
+                mockAccessToken, mockCurrentTimeMillis, userId -> true);
         assertThrows(RuntimeException.class, () -> requestV4Service.findAndProcessPendingTravelRequests(
-                mockAccessToken, initialQueryUrl, (accessToken, requestListing) -> Stream.of(requestListing)));
+                querySettings, (accessToken, requestListing) -> Stream.of(requestListing)));
     }
 
     private void assertSearchForRequestListingReturnsExpectedResults(RequestV4ListingFixture expectedResults) {
-        Optional<String> approverId = expectedResults.optionalApproverForQuery.map(fixture -> fixture.id);
         RequestV4QuerySettings querySettings = new RequestV4QuerySettings(
-                mockAccessToken, mockCurrentTimeMillis, approverId);
+                mockAccessToken, mockCurrentTimeMillis, userId -> true);
         String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl(querySettings);
-        Stream<ConcurRequestV4ListingDTO> streamedResults = requestV4Service.findAndProcessPendingTravelRequests(
-                mockAccessToken, initialQueryUrl, (accessToken, requestListing) -> Stream.of(requestListing));
-        List<ConcurRequestV4ListingDTO> finalResults = streamedResults.collect(Collectors.toUnmodifiableList());
-        assertSearchReturnedExpectedResultListings(initialQueryUrl, expectedResults, finalResults);
+        List<ConcurRequestV4ListingDTO> actualResults = requestV4Service.findAndProcessPendingTravelRequests(
+                querySettings, (accessToken, requestListing) -> Stream.of(requestListing));
+        assertSearchReturnedExpectedResultListings(initialQueryUrl, expectedResults, actualResults);
     }
 
     private void assertSearchReturnedExpectedResultListings(String queryUrl,

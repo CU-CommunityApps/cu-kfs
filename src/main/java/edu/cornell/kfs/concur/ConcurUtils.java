@@ -24,6 +24,9 @@ public class ConcurUtils {
     private static final DateTimeFormatter UTC_DATE_FORMATTER = DateTimeFormat
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US).withZoneUTC();
 
+    private static final Pattern URL_PARAMS_PATTERN = Pattern.compile(
+            "^[\\w%\\-\\.:]+=[\\w%\\-\\.:]*(\\&[\\w%\\-\\.:]+=[\\w%\\-\\.:]+)*$");
+
     private static final String CODE_PATTERN = "\\((.*?)\\)";
     private static final String CODE_AND_DESCRIPTION_PATTERN = CODE_PATTERN + "(.*?)";
 
@@ -103,6 +106,28 @@ public class ConcurUtils {
             throw new IllegalArgumentException("value cannot be blank");
         }
         return UTC_DATE_FORMATTER.parseMillis(value);
+    }
+
+    public static boolean validateFormatAndPrefixOfParameterizedUrl(String url, String expectedUrlPrefix) {
+        if (StringUtils.isBlank(url)) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL was blank");
+            return false;
+        } else if (!StringUtils.contains(url, KFSConstants.QUESTION_MARK)) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL was not parameterized");
+            return false;
+        }
+        String actualUrlPrefix = StringUtils.substringBefore(url, KFSConstants.QUESTION_MARK);
+        if (!StringUtils.equalsIgnoreCase(expectedUrlPrefix, actualUrlPrefix)) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL had the wrong prefix; expected: "
+                    + expectedUrlPrefix + " , actual: " + actualUrlPrefix);
+            return false;
+        }
+        String urlParameters = StringUtils.substringAfter(url, KFSConstants.QUESTION_MARK);
+        if (!URL_PARAMS_PATTERN.matcher(urlParameters).matches()) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL had malformed parameters");
+            return false;
+        }
+        return true;
     }
 
 }
