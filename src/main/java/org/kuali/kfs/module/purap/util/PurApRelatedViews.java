@@ -20,8 +20,11 @@ package org.kuali.kfs.module.purap.util;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantView;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.kuali.kfs.krad.document.Document;
@@ -44,9 +47,6 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.kew.api.KewApiServiceLocator;
-import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kim.api.KimConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

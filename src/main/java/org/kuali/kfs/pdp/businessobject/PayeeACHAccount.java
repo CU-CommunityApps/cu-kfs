@@ -21,7 +21,14 @@ package org.kuali.kfs.pdp.businessobject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.entity.Entity;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -30,13 +37,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.krad.bo.BusinessObject;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -52,6 +52,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     private String payeeIdentifierTypeCode;
     private String achTransactionType;
     private String bankAccountTypeCode;
+    private String standardEntryClass;
     private boolean active;
     private boolean autoInactivationIndicator;
 
@@ -419,6 +420,14 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      */
     public void setPayeeIdNumber(String payeeIdNumber) {
         this.payeeIdNumber = payeeIdNumber;
+    }
+
+    public String getStandardEntryClass() {
+        return standardEntryClass;
+    }
+
+    public void setStandardEntryClass(final String standardEntryClass) {
+        this.standardEntryClass = standardEntryClass;
     }
 
     /**

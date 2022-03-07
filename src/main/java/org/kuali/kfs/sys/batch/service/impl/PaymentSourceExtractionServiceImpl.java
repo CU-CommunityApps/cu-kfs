@@ -20,7 +20,12 @@ package org.kuali.kfs.sys.batch.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -34,11 +39,6 @@ import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.batch.service.PaymentSourceToExtractService;
 import org.kuali.kfs.sys.document.PaymentSource;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
@@ -287,7 +287,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
         Collection<DisbursementVoucherDocument> list = new ArrayList<>();
 
-        Collection<DisbursementVoucherDocument> docs = financialSystemDocumentService.findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
+        Collection<DisbursementVoucherDocument> docs = financialSystemDocumentService
+                .findByDocumentHeaderStatusCode(DisbursementVoucherDocument.class, statusCode);
         for (DisbursementVoucherDocument element : docs) {
             String dvdCampusCode = element.getCampusCode();
 
@@ -371,5 +372,4 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
         this.financialSystemDocumentService = financialSystemDocumentService;
     }
-
 }

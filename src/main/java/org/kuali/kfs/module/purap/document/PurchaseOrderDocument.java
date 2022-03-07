@@ -35,7 +35,6 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.action.ActionRequestType;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
@@ -59,7 +58,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.QuoteTypeDescriptions;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionSources;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -705,6 +703,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
 
         if (shouldAdhocFyi()) {
+
             SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(
                     this.getFinancialSystemDocumentHeader().getWorkflowDocument());
             SpringContext.getBean(PurchaseOrderService.class).sendAdhocFyi(this);
@@ -737,9 +736,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      *
      * @param wd the current workflow document.
      * @return the name of the current route node.
-     * @throws WorkflowException
      */
-    protected String getCurrentRouteNodeName(WorkflowDocument wd) throws WorkflowException {
+    protected String getCurrentRouteNodeName(WorkflowDocument wd) {
         ArrayList<String> nodeNames = new ArrayList(wd.getCurrentNodeNames());
         if (nodeNames.size() == 0) {
             return null;
@@ -755,10 +753,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * @param routePrincipalId the network ID of the user to be sent to.
      * @param annotation       the annotation notes contained in this document.
      * @param responsibility   the responsibility specified in the request.
-     * @throws WorkflowException
      */
     public void appSpecificRouteDocumentToUser(WorkflowDocument workflowDocument, String routePrincipalId,
-            String annotation, String responsibility) throws WorkflowException {
+            String annotation, String responsibility) {
         if (ObjectUtils.isNotNull(workflowDocument)) {
             boolean isActiveUser = this.isActiveUser(routePrincipalId);
             Map<String, String> permissionDetails = new HashMap<>();
@@ -1450,9 +1447,12 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
         // KFSMI-9842: if the entry's financial document type is POA (or POC or POR - KFSMI-9879) then generate GLPEs
         // only for the updated amount or new items, not for the entire items' accounts.
-        if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
-        	PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_CLOSE_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
-        	PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_REOPEN_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode())) {
+        if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT.equals(
+                explicitEntry.getFinancialDocumentTypeCode())
+                || PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_CLOSE_DOCUMENT.equals(
+                        explicitEntry.getFinancialDocumentTypeCode())
+                || PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_REOPEN_DOCUMENT.equals(
+                        explicitEntry.getFinancialDocumentTypeCode())) {
             accountTotalGLEntryAmount = explicitEntry.getTransactionLedgerEntryAmount();
         } else {
             accountTotalGLEntryAmount = this.getAccountTotalGLEntryAmount((AccountingLine) postable);
@@ -1639,7 +1639,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return purchaseOrderCurrentIndicator;
     }
 
-    public String getDocumentTitleForResult() throws WorkflowException {
+    public String getDocumentTitleForResult() {
         return KEWServiceLocator.getDocumentTypeService().getDocumentTypeByName(
                 this.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName()).getLabel();
     }
