@@ -47,7 +47,7 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
 
     private static final Pattern REQUESTS_ENDPOINT_REGEX = Pattern.compile(
             "^/travelrequest/v4/requests("
-                    + "(?<getRequestList>\\?(([\\w%\\-]+=[\\w%\\-\\.]+)(\\&[\\w%\\-]+=[\\w%\\-\\.]+)*))|"
+                    + "(?<getRequestList>\\?(([\\w%\\-\\.:]+=[\\w%\\-\\.:]*)(\\&[\\w%\\-\\.:]+=[\\w%\\-\\.:]*)*))|"
                     + "(?<getRequest>/(?<requestUuid>\\w+)/?)"
             + ")$");
 

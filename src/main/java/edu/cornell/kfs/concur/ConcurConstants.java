@@ -96,6 +96,8 @@ public class ConcurConstants {
 
     public static final String REQUEST_QUERY_CURRENT_DATE_INDICATOR = "CURRENT";
     public static final String REQUEST_QUERY_LAST_DATE_INDICATOR = "PREVIOUS";
+    public static final String REQUEST_QUERY_START_DATE_FIELD = "startDate";
+    public static final String REQUEST_QUERY_SORT_ORDER_DESC = "DESC";
 
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";
@@ -205,11 +207,12 @@ public class ConcurConstants {
 
     public static final class ConcurApiParameters {
         public static final String VIEW = "view";
-        public static final String USER_ID = "userId";
         public static final String START = "start";
         public static final String LIMIT = "limit";
         public static final String MODIFIED_AFTER = "modifiedAfter";
         public static final String MODIFIED_BEFORE = "modifiedBefore";
+        public static final String SORT_FIELD = "sortField";
+        public static final String SORT_ORDER = "sortOrder";
     }
 
     public static final class ConcurApiOperations {

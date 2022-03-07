@@ -6,12 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TimeZone;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -21,8 +17,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTimeZone;
-import org.joda.time.MutableDateTime;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -50,6 +44,7 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4CustomItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
@@ -71,32 +66,77 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     public List<ConcurEventNotificationProcessingResultsDTO> processTravelRequests(String accessToken) {
         LOG.info("processTravelRequests, Starting processing of travel requests");
         RequestV4QuerySettings querySettings = new RequestV4QuerySettings(
-                accessToken, dateTimeService.getCurrentDate(), Optional.empty());
-        Set<String> testRequestIds = findIdsOfPendingRequestsApprovedByTestUsers(querySettings);
-        Predicate<String> requestIdFilter;
-        if (isProduction()) {
-            LOG.info("processTravelRequests, Only Production travel requests will be processed for this run");
-            requestIdFilter = requestId -> !testRequestIds.contains(requestId);
-        } else {
-            LOG.info("processTravelRequests, Only non-Production travel requests will be processed for this run");
-            requestIdFilter = requestId -> testRequestIds.contains(requestId);
-        }
+                accessToken, dateTimeService.getCurrentDate(), buildUserIdFilter());
         
-        Stream<ConcurEventNotificationProcessingResultsDTO> streamResults = findAndProcessPendingTravelRequests(
-                querySettings,
-                (token, requestListing) -> processTravelRequestsSubset(token, requestListing, requestIdFilter));
-        
-        List<ConcurEventNotificationProcessingResultsDTO> finalResults = streamResults.collect(
-                Collectors.toUnmodifiableList());
+        List<ConcurEventNotificationProcessingResultsDTO> results = findAndProcessPendingTravelRequests(
+                querySettings, this::processTravelRequestsSubset);
         
         updateLastProcessedDateIfNecessary(querySettings);
         
-        LOG.info("processTravelRequests, Finished processing " + finalResults.size() + " travel requests");
-        return finalResults;
+        LOG.info("processTravelRequests, Finished processing " + results.size() + " travel requests");
+        return results;
+    }
+
+    protected Predicate<String> buildUserIdFilter() {
+        Map<String, String> testRequestUsers = getRequestV4TestUserMappings();
+        if (isProduction()) {
+            LOG.info("buildUserIdFilter, Only Production travel requests will be processed for this run");
+            return userId -> !testRequestUsers.containsKey(userId);
+        } else {
+            LOG.info("buildUserIdFilter, Only non-Production travel requests will be processed for this run");
+            return userId -> testRequestUsers.containsKey(userId);
+        }
+    }
+
+    protected <T> List<T> findAndProcessPendingTravelRequests(RequestV4QuerySettings querySettings,
+            BiFunction<RequestV4QuerySettings, ConcurRequestV4ListingDTO, Stream<T>> requestListingProcessor) {
+        Stream.Builder<Stream<T>> subResults = Stream.builder();
+        Stream<T> subResult;
+        String initialQueryUrl = buildInitialRequestQueryUrl(querySettings);
+        String currentQueryUrl = initialQueryUrl;
+        int page = 1;
+        ConcurRequestV4ListingDTO requestListing;
+        
+        do {
+            requestListing = findPendingTravelRequests(querySettings.accessToken, page, currentQueryUrl);
+            subResult = requestListingProcessor.apply(querySettings, requestListing);
+            subResults.add(subResult);
+            page++;
+            currentQueryUrl = getQueryUrlForNextResultsPageIfPresent(requestListing);
+        } while (StringUtils.isNotBlank(currentQueryUrl));
+        
+        return subResults.build()
+                .flatMap(subResultStream -> subResultStream)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    protected String getQueryUrlForNextResultsPageIfPresent(ConcurRequestV4ListingDTO requestListing) {
+        return Stream.of(requestListing.getOperations())
+                .filter(CollectionUtils::isNotEmpty)
+                .flatMap(List::stream)
+                .filter(operation -> StringUtils.equalsIgnoreCase(ConcurApiOperations.NEXT, operation.getName()))
+                .map(ConcurRequestV4OperationDTO::getHref)
+                .peek(this::verifyQueryUrlForNextResultsPageIsValid)
+                .findFirst()
+                .orElse(KFSConstants.EMPTY_STRING);
+    }
+
+    protected void verifyQueryUrlForNextResultsPageIsValid(String queryUrl) {
+        if (!ConcurUtils.validateFormatAndPrefixOfParameterizedUrl(queryUrl, getRequestV4Endpoint())) {
+            throw new RuntimeException("Query URL for next page of search results is malformed");
+        }
+    }
+
+    protected ConcurRequestV4ListingDTO findPendingTravelRequests(String accessToken, int page, String queryUrl) {
+        String messageDetail = MessageFormat.format(
+                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING),
+                page);
+        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
+                accessToken, queryUrl, ConcurRequestV4ListingDTO.class, messageDetail);
     }
 
     protected Stream<ConcurEventNotificationProcessingResultsDTO> processTravelRequestsSubset(
-            String accessToken, ConcurRequestV4ListingDTO requestListing, Predicate<String> requestIdFilter) {
+            RequestV4QuerySettings querySettings, ConcurRequestV4ListingDTO requestListing) {
         if (CollectionUtils.isEmpty(requestListing.getListItems())) {
             return Stream.empty();
         }
@@ -107,9 +147,9 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                 throw new IllegalStateException("Found a request item with a blank ID; this should NEVER happen");
             }
             if (isRequestPendingExternalValidation(requestAsListItem)
-                    && requestIdFilter.test(requestAsListItem.getId())) {
+                    && requestHasAppropriateOwner(requestAsListItem, querySettings.userIdFilter)) {
                 ConcurEventNotificationProcessingResultsDTO processingResultForRequest = processTravelRequest(
-                        accessToken, requestAsListItem);
+                        querySettings.accessToken, requestAsListItem);
                 subResults.add(processingResultForRequest);
             }
         }
@@ -117,11 +157,25 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         return subResults.build();
     }
 
-    
+    protected boolean isRequestPendingExternalValidation(ConcurRequestV4ListItemDTO requestAsListItem) {
+        ConcurRequestV4StatusDTO approvalStatus = requestAsListItem.getApprovalStatus();
+        return ObjectUtils.isNotNull(approvalStatus) && StringUtils.equalsIgnoreCase(
+                RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, approvalStatus.getName());
+    }
+
+    protected boolean requestHasAppropriateOwner(ConcurRequestV4ListItemDTO requestAsListItem,
+            Predicate<String> userIdFilter) {
+        ConcurRequestV4PersonDTO owner = requestAsListItem.getOwner();
+        return ObjectUtils.isNotNull(owner) && StringUtils.isNotBlank(owner.getId())
+                && userIdFilter.test(owner.getId());
+    }
 
     protected ConcurEventNotificationProcessingResultsDTO processTravelRequest(String accessToken,
             ConcurRequestV4ListItemDTO requestAsListItem) {
         String requestUuid = requestAsListItem.getId();
+        if (!StringUtils.isAlphanumeric(requestUuid)) {
+            throw new RuntimeException("Found a request with an unexpected non-alphanumeric ID: " + requestUuid);
+        }
         ConcurEventNotificationVersion2ProcessingResults processingResult;
         List<String> validationMessages = new ArrayList<>();
         boolean requestValid;
@@ -191,83 +245,6 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                 accessToken, queryUrl, ConcurRequestV4ReportDTO.class, messageDetail);
     }
 
-    protected Set<String> findIdsOfPendingRequestsApprovedByTestUsers(RequestV4QuerySettings basicSettings) {
-        Map<String, String> testApprovers = getRequestV4TestApproverMappings();
-        Set<String> approverNames = testApprovers.keySet();
-        LOG.info("findIdsOfPendingRequestsApprovedByTestUsers, Finding requests pending external validation "
-                + "and approved by test approvers: " + approverNames.toString());
-        Set<String> requestIds = testApprovers.values().stream()
-                .map(approverId -> new RequestV4QuerySettings(
-                        basicSettings.accessToken, basicSettings.currentTimeInMilliseconds, Optional.of(approverId)))
-                .flatMap(querySettings -> findAndProcessPendingTravelRequests(
-                        querySettings, this::findIdsOfPendingRequestsInListing))
-                .collect(Collectors.toUnmodifiableSet());
-        LOG.info("findIdsOfPendingRequestsApprovedByTestUsers, Found " + requestIds.size()
-                + " requests pending external validation and approved by test approvers: " + approverNames.toString());
-        return requestIds;
-    }
-
-    protected Stream<String> findIdsOfPendingRequestsInListing(
-            String accessToken, ConcurRequestV4ListingDTO requestListing) {
-        if (CollectionUtils.isEmpty(requestListing.getListItems())) {
-            return Stream.empty();
-        }
-        return requestListing.getListItems().stream()
-                .filter(this::isRequestPendingExternalValidation)
-                .map(ConcurRequestV4ListItemDTO::getId);
-    }
-
-    protected boolean isRequestPendingExternalValidation(ConcurRequestV4ListItemDTO requestAsListItem) {
-        ConcurRequestV4StatusDTO approvalStatus = requestAsListItem.getApprovalStatus();
-        return ObjectUtils.isNotNull(approvalStatus) && StringUtils.equalsIgnoreCase(
-                RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, approvalStatus.getName());
-    }
-
-    protected <T> Stream<T> findAndProcessPendingTravelRequests(RequestV4QuerySettings querySettings,
-            BiFunction<String, ConcurRequestV4ListingDTO, Stream<T>> requestListingProcessor) {
-        String initialQueryUrl = buildInitialRequestQueryUrl(querySettings);
-        return findAndProcessPendingTravelRequests(
-                querySettings.accessToken, initialQueryUrl, requestListingProcessor);
-    }
-
-    protected <T> Stream<T> findAndProcessPendingTravelRequests(String accessToken, String initialQueryUrl,
-            BiFunction<String, ConcurRequestV4ListingDTO, Stream<T>> requestListingProcessor) {
-        Stream.Builder<Stream<T>> subResults = Stream.builder();
-        Stream<T> subResult;
-        String currentQueryUrl = initialQueryUrl;
-        int page = 1;
-        ConcurRequestV4ListingDTO requestListing;
-        
-        do {
-            requestListing = findPendingTravelRequests(accessToken, page, currentQueryUrl);
-            subResult = requestListingProcessor.apply(accessToken, requestListing);
-            subResults.add(subResult);
-            page++;
-            currentQueryUrl = getQueryUrlForNextResultsPageIfPresent(requestListing);
-        } while (StringUtils.isNotBlank(currentQueryUrl));
-        
-        return subResults.build()
-                .flatMap(subResultStream -> subResultStream);
-    }
-
-    protected String getQueryUrlForNextResultsPageIfPresent(ConcurRequestV4ListingDTO requestListing) {
-        return Stream.of(requestListing.getOperations())
-                .filter(CollectionUtils::isNotEmpty)
-                .flatMap(List::stream)
-                .filter(operation -> StringUtils.equalsIgnoreCase(ConcurApiOperations.NEXT, operation.getName()))
-                .map(ConcurRequestV4OperationDTO::getHref)
-                .findFirst()
-                .orElse(KFSConstants.EMPTY_STRING);
-    }
-
-    protected ConcurRequestV4ListingDTO findPendingTravelRequests(String accessToken, int page, String queryUrl) {
-        String messageDetail = MessageFormat.format(
-                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING),
-                page);
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
-                accessToken, queryUrl, ConcurRequestV4ListingDTO.class, messageDetail);
-    }
-
     protected String buildInitialRequestQueryUrl(RequestV4QuerySettings querySettings) {
         String baseUrl = getRequestV4Endpoint();
         int pageSize = getRequestV4QueryPageSize();
@@ -278,9 +255,8 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         urlParameters.put(ConcurApiParameters.MODIFIED_AFTER, getLastModifiedFromDateInUTCFormat());
         urlParameters.put(ConcurApiParameters.MODIFIED_BEFORE,
                 getLastModifiedToDateInUTCFormat(querySettings.currentTimeInMilliseconds));
-        if (querySettings.approverId.isPresent()) {
-            urlParameters.put(ConcurApiParameters.USER_ID, querySettings.approverId.get());
-        }
+        urlParameters.put(ConcurApiParameters.SORT_FIELD, ConcurConstants.REQUEST_QUERY_START_DATE_FIELD);
+        urlParameters.put(ConcurApiParameters.SORT_ORDER, ConcurConstants.REQUEST_QUERY_SORT_ORDER_DESC);
         return UrlFactory.parameterizeUrl(baseUrl, urlParameters);
     }
 
@@ -307,18 +283,24 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
     }
 
-    protected Map<String, String> getRequestV4TestApproverMappings() {
-        String testApproversString = concurBatchUtilityService.getConcurParameterValue(
-                ConcurParameterConstants.REQUEST_V4_TEST_APPROVERS);
-        if (StringUtils.isBlank(testApproversString)) {
-            throw new IllegalStateException("Test approvers for Request V4 API were not specified in the parameter");
+    protected Map<String, String> getRequestV4TestUserMappings() {
+        String testUsersString = concurBatchUtilityService.getConcurParameterValue(
+                ConcurParameterConstants.REQUEST_V4_TEST_USERS);
+        if (StringUtils.isBlank(testUsersString)) {
+            throw new IllegalStateException("Test users for Request V4 API were not specified in the parameter");
         }
-        String[] testApproverEntries = StringUtils.split(testApproversString, CUKFSConstants.SEMICOLON);
-        return Arrays.stream(testApproverEntries)
-                .map(approverEntry -> StringUtils.split(approverEntry, CUKFSConstants.EQUALS_SIGN))
-                .collect(Collectors.toMap(
-                        keyValuePair -> keyValuePair[0], keyValuePair -> keyValuePair[1],
-                        (value1, value2) -> value2, LinkedHashMap::new));
+        String[] testUserEntries = StringUtils.split(testUsersString, CUKFSConstants.SEMICOLON);
+        return Arrays.stream(testUserEntries)
+                .collect(Collectors.toUnmodifiableMap(
+                        this::getTestUserUuidFromEntry, this::getTestUserNameFromEntry));
+    }
+
+    protected String getTestUserNameFromEntry(String keyValuePair) {
+        return StringUtils.substringBefore(keyValuePair, CUKFSConstants.EQUALS_SIGN);
+    }
+
+    protected String getTestUserUuidFromEntry(String keyValuePair) {
+        return StringUtils.substringAfter(keyValuePair, CUKFSConstants.EQUALS_SIGN);
     }
 
     protected String getLastModifiedFromDateInUTCFormat() {
@@ -356,12 +338,6 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
     }
 
-    protected MutableDateTime convertToStartOfDayInTimeZone(Date date, TimeZone timeZone) {
-        MutableDateTime dateTime = new MutableDateTime(date, DateTimeZone.forTimeZone(timeZone));
-        dateTime.setTime(0, 0, 0, 0);
-        return dateTime;
-    }
-
     protected void updateLastProcessedDateIfNecessary(RequestV4QuerySettings querySettings) {
         String fromDate = getNonBlankConcurParameterValue(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE);
         String toDate = getNonBlankConcurParameterValue(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE);
@@ -377,13 +353,6 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         } else {
             LOG.info("updateLastProcessedDateIfNecessary, Query from/to parameters have been overridden; "
                     + ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE + " will remain as-is");
-        }
-    }
-
-    protected void resetParameterToEmptyValueIfNecessary(String parameterName) {
-        String currentValue = concurBatchUtilityService.getConcurParameterValue(parameterName);
-        if (StringUtils.isNotBlank(currentValue)) {
-            concurBatchUtilityService.updateConcurParameterValue(parameterName, KFSConstants.EMPTY_STRING);
         }
     }
 
@@ -415,17 +384,17 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     protected static final class RequestV4QuerySettings {
         public final String accessToken;
         public final long currentTimeInMilliseconds;
-        public final Optional<String> approverId;
+        public final Predicate<String> userIdFilter;
         
-        public RequestV4QuerySettings(String accessToken, Date currentDate, Optional<String> approverId) {
-            this(accessToken, currentDate.getTime(), approverId);
+        public RequestV4QuerySettings(String accessToken, Date currentDate, Predicate<String> userIdFilter) {
+            this(accessToken, currentDate.getTime(), userIdFilter);
         }
         
         public RequestV4QuerySettings(String accessToken, long currentTimeInMilliseconds,
-                Optional<String> approverId) {
+                Predicate<String> userIdFilter) {
             this.accessToken = accessToken;
             this.currentTimeInMilliseconds = currentTimeInMilliseconds;
-            this.approverId = approverId;
+            this.userIdFilter = userIdFilter;
         }
     }
 

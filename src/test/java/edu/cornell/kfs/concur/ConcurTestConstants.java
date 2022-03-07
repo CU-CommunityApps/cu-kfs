@@ -52,6 +52,7 @@ public class ConcurTestConstants {
     public static final String DASH_SUB_OBJECT_CODE = "---";
     public static final String DASH_PROJECT_CODE = "----------";
 
+    public static final String TEST_NAME_PREFIX = "Test";
     public static final String CURRENCY_USD = "USD";
     public static final String REQUEST_TRAVEL_TYPE_CODE = "TRAVEL";
     public static final String REQUEST_TRAVEL_TYPE_LABEL = "Travel";
