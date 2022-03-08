@@ -38,7 +38,6 @@
 <%@ attribute name="headerTabActive" required="false" description="The name of the active header tab, if header navigation is used." %>
 <%@ attribute name="defaultMethodToCall" required="false" description="The name of default methodToCall on the action for this page." %>
 <%@ attribute name="errorKey" required="false" description="If present, this is the key which will be used to match errors that need to be rendered at the top of the page." %>
-<%@ attribute name="auditCount" required="false" description="The number of audit errors displayed on this page." %>
 <%@ attribute name="additionalScriptFiles" required="false" type="java.util.List" description="A List of JavaScript file names to have included on the page." %>
 <%@ attribute name="documentWebScope" required="false" description="The scope this page - which is hard coded to session, making this attribute somewhat useless." %>
 <%@ attribute name="maintenanceDocument" required="false" description="Boolean value of whether this page is rendering a maintenance document." %>
@@ -155,7 +154,7 @@
 				  renderMultipart="${renderMultipart}" showTabButtons="${showTabButtons}" headerDispatch="${headerDispatch}"
 				  defaultMethodToCall="${defaultMethodToCall}" lookup="${lookup}" extraTopButtons="${extraTopButtons}"
 				  headerMenuBar="${headerMenuBar}" headerTabActive="${headerTabActive}" alternativeHelp="${alternativeHelp}"
-				  errorKey="${errorKey}" auditCount="${auditCount}"
+				  errorKey="${errorKey}" 
 				  documentWebScope="${documentWebScope}" maintenanceDocument="${maintenanceDocument}"
 				  renderInnerDiv="${renderInnerDiv}" cachingTimestamp="${cachingTimestamp}" openNav="${openNav}"
 				  additionalBodyClass="${additionalBodyClass}">

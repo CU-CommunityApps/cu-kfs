@@ -30,7 +30,7 @@
 
 <c:set var="formAction" value="identityManagementRoleDocument" />
 <c:if test="${inquiry}">
-    <c:set var="formAction" value="identityManagementRoleInquiry" />
+	<c:set var="formAction" value="identityManagementRoleInquiry" />
 </c:if>
 
 <%-- CU Customization: Use a custom document page tag that supports modal inquiry display. --%>
@@ -44,24 +44,24 @@
     auditCount="0">
 
     <c:if test="${!inquiry}">
-        <kul:hiddenDocumentFields />
+	 	<kul:hiddenDocumentFields />
         <kul:documentOverview editingMode="${KualiForm.editingMode}" />
-    </c:if>
+	</c:if>
     <c:if test="${inquiry}">
         <%-- CU Customization: Add an extra empty line. --%>
         <br/>
         <div id="workarea">
     </c:if>
     <kim:roleOverview />
-    <kim:rolePermissions />
-    <kim:roleResponsibilities />
-    <kim:roleAssignees formAction="${formAction}"/>
-    <kim:roleDelegations />
+	<kim:rolePermissions />
+	<kim:roleResponsibilities />
+	<kim:roleAssignees formAction="${formAction}"/>
+	<kim:roleDelegations />
 
-    <c:if test="${!inquiry}">
-        <kul:adHocRecipients /> 
-        <kul:routeLog />
-    </c:if>
+	<c:if test="${!inquiry}">
+		<kul:adHocRecipients />	
+		<kul:routeLog />
+	</c:if>
     <%-- CU Customization: Do not display the superuser actions when in inquiry mode. --%>
     <c:if test="${!inquiry}">
         <kul:superUserActions />
@@ -69,12 +69,12 @@
     <c:if test="${inquiry}">
         </div>
     </c:if>
-    <c:choose>
-        <c:when test="${!inquiry}">
-            <kul:documentControls transactionalDocument="false" />
+	<c:choose>
+	    <c:when test="${!inquiry}">
+	        <kul:documentControls transactionalDocument="false" />
             <input type="hidden" name="roleId" value="${KualiForm.document.roleId}" />
             <script type="text/javascript">
-            function changeDelegationMemberTypeCode( frm ) {
+			function changeDelegationMemberTypeCode( frm ) {
                 postMethodToCall( frm, "changeDelegationMemberTypeCode" );
             }
             function changeMemberTypeCode( frm ) {
@@ -92,13 +92,13 @@
                 frm.submit();
             } 
             </script>
-        </c:when>
-        <c:otherwise>
+	    </c:when>
+	    <c:otherwise>
             <%-- CU Customization: Hide inquiry controls if form is displayed in a modal. --%>
             <c:if test="${param.mode ne 'modal'}">
                 <kul:inquiryControls />
             </c:if>
             <input type="hidden" name="roleId" value="${KualiForm.document.roleId}" />
-        </c:otherwise>
+	    </c:otherwise>
     </c:choose>
 </kul:documentPageWithModalInquiryMode>
