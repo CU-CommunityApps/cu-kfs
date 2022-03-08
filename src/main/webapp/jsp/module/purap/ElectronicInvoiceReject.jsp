@@ -52,64 +52,49 @@
                     </logic:iterate>
                 </ul>
             </c:if>
-            <table cellpadding="0" cellspacing="0" class="datatable" summary="Vendor Section">
+            <table cellpadding="0" cellspacing="0" class="standard side-margins" summary="Vendor Section">
                 <tr>
-                    <td colspan="4" class="subhead">Electronic Invoice Data</td>
+                    <td colspan="4" class="subhead"><h3>Electronic Invoice Data</h3></td>
                 </tr>
 
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.vendorDunsNumber}"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorDunsNumber}"/></div>
                     </th>
                     <td align=left valign=middle class="datacell" colspan="3">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.vendorDunsNumber}"
-                                                  property="document.vendorDunsNumber" readOnly="${not fullEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.vendorDunsNumber}" property="document.vendorDunsNumber" readOnly="${not fullEntryMode}"/>
                     </td>
                 </tr>
 
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${vendorAttributes.vendorName}"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${vendorAttributes.vendorName}"/></div>
                     </th>
                     <td align=left valign=middle class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${vendorAttributes.vendorName}"
-                                                  property="document.vendorDetail.vendorName" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${vendorAttributes.vendorName}" property="document.vendorDetail.vendorName" readOnly="true"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceFileNumber}"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceFileNumber}"/></div>
                     </th>
                     <td align=left valign=middle class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceFileNumber}"
-                                                  property="document.invoiceFileNumber"
-                                                  readOnly="${not fullEntryMode}"/>
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceNumberAcceptIndicator}"
-                                                  property="document.invoiceNumberAcceptIndicator"
-                                                  readOnly="${not fullEntryMode}"/>
-                        <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceNumberAcceptIndicator}"
-                                                noColon="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceFileNumber}" property="document.invoiceFileNumber" readOnly="${not fullEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceNumberAcceptIndicator}" property="document.invoiceNumberAcceptIndicator" readOnly="${not fullEntryMode}"/>
+                        <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceNumberAcceptIndicator}" noColon="true"/>
                     </td>
                 </tr>
 
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoicePurchaseOrderNumber}"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoicePurchaseOrderNumber}"/></div>
                     </th>
                     <td align=left valign=middle class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoicePurchaseOrderNumber}"
-                                                  property="document.invoicePurchaseOrderNumber"
-                                                  readOnly="${not fullEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoicePurchaseOrderNumber}" property="document.invoicePurchaseOrderNumber" readOnly="${not fullEntryMode}"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceFileDate}"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceFileDate}"/></div>
                     </th>
                     <td align=left valign=middle class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceFileDate}"
-                                                  property="document.invoiceFileDate" readOnly="${not fullEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceFileDate}" property="document.invoiceFileDate" readOnly="${not fullEntryMode}"/>
                     </td>
                 </tr>
 
@@ -121,24 +106,19 @@
                 <tr>
                     <td colspan="4">
 
-                        <table cellpadding="0" cellspacing="0" class="datatable" summary="Items section">
+                        <table cellpadding="0" cellspacing="0" class="datatable standard side-margins" summary="Items section">
                             <tr>
-                                <td colspan="${colCount}" class="subhead">Electronic Invoice Items:</td>
+                                <td colspan="${colCount}" class="subhead"><h4>Electronic Invoice Items</h4></td>
                             </tr>
                             <tr>
-                                <kul:htmlAttributeHeaderCell
-                                        attributeEntry="${itemAttributes.invoiceReferenceItemLineNumber}"/>
+                                <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceReferenceItemLineNumber}"/>
                                 <th>&nbsp;Inv Line #</th>
                                 <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemQuantity}"/>
-                                <kul:htmlAttributeHeaderCell
-                                        attributeEntry="${itemAttributes.invoiceItemUnitOfMeasureCode}"/>
-                                <kul:htmlAttributeHeaderCell
-                                        attributeEntry="${itemAttributes.invoiceItemCatalogNumber}"/>
-                                <kul:htmlAttributeHeaderCell
-                                        attributeEntry="${itemAttributes.invoiceReferenceItemDescription}"/>
+                                <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemUnitOfMeasureCode}"/>
+                                <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemCatalogNumber}"/>
+                                <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceReferenceItemDescription}"/>
                                 <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemUnitPrice}"/>
-                                <kul:htmlAttributeHeaderCell
-                                        attributeEntry="${itemAttributes.invoiceItemSubTotalAmount}"/>
+                                <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemSubTotalAmount}"/>
                                 <kul:htmlAttributeHeaderCell attributeEntry="${itemAttributes.invoiceItemTaxAmount}"/>
                                 <c:if test="${KualiForm.document.invoiceFileSpecialHandlingInLineIndicator || KualiForm.document.invoiceFileShippingInLineIndicator || KualiForm.document.invoiceFileDiscountInLineIndicator}">
                                     <th>Inline Item Values</th>
@@ -147,8 +127,7 @@
                             </tr>
                             <c:set var="colCountBeforeTotal" value="${colCount - 2}"/>
 
-                            <logic:iterate indexId="ctr" name="KualiForm" property="document.invoiceRejectItems"
-                                           id="itemLine">
+                            <logic:iterate indexId="ctr" name="KualiForm" property="document.invoiceRejectItems" id="itemLine">
                                 <tr>
                                     <td class="datacell">
                                         <kul:htmlControlAttribute
@@ -190,9 +169,7 @@
                                                 attributeEntry="${itemAttributes.catalogNumberAcceptIndicator}"
                                                 property="document.invoiceRejectItems[${ctr}].catalogNumberAcceptIndicator"
                                                 readOnly="${not fullEntryMode}"/>
-                                        <kul:htmlAttributeLabel
-                                                attributeEntry="${itemAttributes.catalogNumberAcceptIndicator}"
-                                                noColon="true"/>
+                                        <kul:htmlAttributeLabel attributeEntry="${itemAttributes.catalogNumberAcceptIndicator}" noColon="true"/>
                                     </td>
                                     <td class="datacell">
                                         <kul:htmlControlAttribute
@@ -221,27 +198,21 @@
                                     <c:if test="${KualiForm.document.invoiceFileSpecialHandlingInLineIndicator || KualiForm.document.invoiceFileShippingInLineIndicator || KualiForm.document.invoiceFileDiscountInLineIndicator}">
                                         <td class="datacell" nowrap>
                                             <c:if test="${KualiForm.document.invoiceFileSpecialHandlingInLineIndicator}">
-                                                <kul:htmlAttributeLabel
-                                                        attributeEntry="${itemAttributes.invoiceItemSpecialHandlingAmount}"
-                                                        useShortLabel="true"/>
+                                                <kul:htmlAttributeLabel attributeEntry="${itemAttributes.invoiceItemSpecialHandlingAmount}" useShortLabel="true"/>
                                                 <kul:htmlControlAttribute
                                                         attributeEntry="${itemAttributes.invoiceItemSpecialHandlingAmount}"
                                                         property="document.invoiceRejectItems[${ctr}].invoiceItemSpecialHandlingAmount"
                                                         readOnly="${true}"/><br/>
                                             </c:if>
                                             <c:if test="${KualiForm.document.invoiceFileShippingInLineIndicator}">
-                                                <kul:htmlAttributeLabel
-                                                        attributeEntry="${itemAttributes.invoiceItemShippingAmount}"
-                                                        useShortLabel="true"/>
+                                                <kul:htmlAttributeLabel attributeEntry="${itemAttributes.invoiceItemShippingAmount}" useShortLabel="true"/>
                                                 <kul:htmlControlAttribute
                                                         attributeEntry="${itemAttributes.invoiceItemShippingAmount}"
                                                         property="document.invoiceRejectItems[${ctr}].invoiceItemShippingAmount"
                                                         readOnly="${true}"/><br/>
                                             </c:if>
                                             <c:if test="${KualiForm.document.invoiceFileDiscountInLineIndicator}">
-                                                <kul:htmlAttributeLabel
-                                                        attributeEntry="${itemAttributes.invoiceItemDiscountAmount}"
-                                                        useShortLabel="true"/>
+                                                <kul:htmlAttributeLabel attributeEntry="${itemAttributes.invoiceItemDiscountAmount}" useShortLabel="true"/>
                                                 <kul:htmlControlAttribute
                                                         attributeEntry="${itemAttributes.invoiceItemDiscountAmount}"
                                                         property="document.invoiceRejectItems[${ctr}].invoiceItemDiscountAmount"
@@ -259,12 +230,11 @@
                             </logic:iterate>
                             <tr>
                                 <td colspan="${colCountBeforeTotal}"></td>
-                                <th align="center" colspan="2">Totals:</th>
+                                <th align="center" colspan="2"><h3>Totals</h3></th>
                             </tr>
                             <tr>
                                 <td colspan="${colCountBeforeTotal}"></td>
-                                <th align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${documentAttributes.totalAmount}"/></th>
+                                <th align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.totalAmount}"/></th>
                                 <td>
                                     <kul:htmlControlAttribute
                                             attributeEntry="${documentAttributes.totalAmount}"
@@ -274,8 +244,7 @@
                             </tr>
                             <tr>
                                 <td colspan="${colCountBeforeTotal}">&nbsp;</td>
-                                <th align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${documentAttributes.invoiceItemTaxAmount}"/></th>
+                                <th align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceItemTaxAmount}"/></th>
                                 <td>
                                     <kul:htmlControlAttribute
                                             attributeEntry="${documentAttributes.invoiceItemTaxAmount}"
@@ -285,8 +254,7 @@
                             </tr>
                             <tr>
                                 <td colspan="${colCountBeforeTotal}">&nbsp;</td>
-                                <th align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${documentAttributes.invoiceItemSpecialHandlingAmount}"/></th>
+                                <th align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceItemSpecialHandlingAmount}"/></th>
                                 <td>
                                     <kul:htmlControlAttribute
                                             attributeEntry="${documentAttributes.invoiceItemSpecialHandlingAmount}"
@@ -296,8 +264,7 @@
                             </tr>
                             <tr>
                                 <td colspan="${colCountBeforeTotal}">&nbsp;</td>
-                                <th align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${documentAttributes.invoiceItemShippingAmount}"/></th>
+                                <th align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceItemShippingAmount}"/></th>
                                 <td>
                                     <kul:htmlControlAttribute
                                             attributeEntry="${documentAttributes.invoiceItemShippingAmount}"
@@ -307,8 +274,7 @@
                             </tr>
                             <tr>
                                 <td colspan="${colCountBeforeTotal}">&nbsp;</td>
-                                <th align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${documentAttributes.invoiceItemDiscountAmount}"/></th>
+                                <th align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceItemDiscountAmount}"/></th>
                                 <td>
                                     <kul:htmlControlAttribute
                                             attributeEntry="${documentAttributes.invoiceItemDiscountAmount}"
@@ -318,8 +284,7 @@
                             </tr>
                             <tr>
                                 <td colspan="${colCountBeforeTotal}">&nbsp;</td>
-                                <th align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${documentAttributes.grandTotalAmount}"/></th>
+                                <th align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.grandTotalAmount}"/></th>
                                 <td>
                                     <kul:htmlControlAttribute
                                             attributeEntry="${documentAttributes.grandTotalAmount}"
@@ -332,7 +297,7 @@
                 </tr>
 
                 <tr>
-                    <td colspan="4" class="subhead">Purchase Order Data</td>
+                    <td colspan="4" class="subhead"><h3>Purchase Order Data</h3></td>
                 </tr>
 
                 <c:choose>
@@ -346,25 +311,19 @@
                     <c:otherwise>
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${vendorAttributes.vendorDunsNumber}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${vendorAttributes.vendorDunsNumber}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" colspan="3">
-                                <kul:htmlControlAttribute attributeEntry="${vendorAttributes.vendorDunsNumber}"
-                                                          property="document.vendorDetail.vendorDunsNumber"
-                                                          readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${vendorAttributes.vendorDunsNumber}" property="document.vendorDetail.vendorDunsNumber" readOnly="true"/>
                             </td>
                         </tr>
 
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${vendorAttributes.vendorName}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${vendorAttributes.vendorName}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell">
-                                <kul:htmlControlAttribute attributeEntry="${vendorAttributes.vendorName}"
-                                                          property="document.currentPurchaseOrderDocument.vendorName"
-                                                          readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${vendorAttributes.vendorName}" property="document.currentPurchaseOrderDocument.vendorName" readOnly="true"/>
                             </td>
                             <th align="right" valign="middle" class="bord-l-b">
                                 <div align="right">Description:</div>
@@ -379,24 +338,16 @@
 
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.purapDocumentIdentifier}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.purapDocumentIdentifier}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell">
-                                <kul:htmlControlAttribute
-                                        attributeEntry="${purchaseOrderAttributes.purapDocumentIdentifier}"
-                                        property="document.currentPurchaseOrderDocument.purapDocumentIdentifier"
-                                        readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.purapDocumentIdentifier}" property="document.currentPurchaseOrderDocument.purapDocumentIdentifier" readOnly="true"/>
                             </td>
                             <th align="right" valign="middle" class="bord-l-b">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.documentFundingSourceCode}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.documentFundingSourceCode}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell">
-                                <kul:htmlControlAttribute
-                                        attributeEntry="${purchaseOrderAttributes.documentFundingSourceCode}"
-                                        property="document.currentPurchaseOrderDocument.documentFundingSourceCode"
-                                        readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.documentFundingSourceCode}" property="document.currentPurchaseOrderDocument.documentFundingSourceCode" readOnly="true"/>
                             </td>
                         </tr>
 
@@ -404,31 +355,21 @@
                             <td colspan="4">
                                 <table cellpadding="0" cellspacing="0" class="datatable" summary="Items section">
                                     <tr>
-                                        <td colspan="9" class="subhead">Purchase Order Items:</td>
+                                <td colspan="9" class="subhead"><h4>Purchase Order Items</h4></td>
                                     </tr>
                                     <tr>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.itemLineNumber}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.outstandingQuantity}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.itemUnitOfMeasureCode}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.itemCatalogNumber}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.itemDescription}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.itemUnitPrice}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.extendedPrice}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.itemTaxAmount}"/>
-                                        <kul:htmlAttributeHeaderCell
-                                                attributeEntry="${purapItemAttributes.totalAmount}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.itemLineNumber}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.outstandingQuantity}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.itemUnitOfMeasureCode}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.itemCatalogNumber}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.itemDescription}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.itemUnitPrice}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.extendedPrice}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.itemTaxAmount}"/>
+                                        <kul:htmlAttributeHeaderCell attributeEntry="${purapItemAttributes.totalAmount}"/>
                                     </tr>
 
-                                    <logic:iterate indexId="ctr" name="KualiForm"
-                                                   property="document.currentPurchaseOrderDocument.items" id="itemLine">
+                                    <logic:iterate indexId="ctr" name="KualiForm" property="document.currentPurchaseOrderDocument.items" id="itemLine">
                                         <c:if test="${itemLine.itemType.lineItemIndicator == true}">
                                             <tr>
                                                 <td class="datacell">
@@ -489,8 +430,7 @@
                                         </c:if>
                                     </logic:iterate>
 
-                                    <logic:iterate indexId="ctr" name="KualiForm"
-                                                   property="document.currentPurchaseOrderDocument.items" id="itemLine">
+                                    <logic:iterate indexId="ctr" name="KualiForm" property="document.currentPurchaseOrderDocument.items" id="itemLine">
                                         <c:if test="${itemLine.itemType.lineItemIndicator != true}">
                                             <tr>
                                                 <td colspan="4">&nbsp;</td>
@@ -501,28 +441,16 @@
                                                             readOnly="${true}"/>
                                                 </th>
                                                 <td>
-                                                    <kul:htmlControlAttribute
-                                                            attributeEntry="${purapItemAttributes.itemUnitPrice}"
-                                                            property="document.currentPurchaseOrderDocument.item[${ctr}].itemUnitPrice"
-                                                            readOnly="${true}" styleClass="amount"/>
+                                                    <kul:htmlControlAttribute attributeEntry="${purapItemAttributes.itemUnitPrice}" property="document.currentPurchaseOrderDocument.item[${ctr}].itemUnitPrice" readOnly="${true}" styleClass="amount"/>
                                                 </td>
                                                 <td>
-                                                    <kul:htmlControlAttribute
-                                                            attributeEntry="${purapItemAttributes.extendedPrice}"
-                                                            property="document.currentPurchaseOrderDocument.item[${ctr}].extendedPrice"
-                                                            readOnly="${true}" styleClass="amount"/>
+                                                    <kul:htmlControlAttribute attributeEntry="${purapItemAttributes.extendedPrice}" property="document.currentPurchaseOrderDocument.item[${ctr}].extendedPrice" readOnly="${true}" styleClass="amount"/>
                                                 </td>
                                                 <td>
-                                                    <kul:htmlControlAttribute
-                                                            attributeEntry="${purapItemAttributes.itemTaxAmount}"
-                                                            property="document.currentPurchaseOrderDocument.item[${ctr}].itemTaxAmount"
-                                                            readOnly="${true}" styleClass="amount"/>
+                                                    <kul:htmlControlAttribute attributeEntry="${purapItemAttributes.itemTaxAmount}" property="document.currentPurchaseOrderDocument.item[${ctr}].itemTaxAmount" readOnly="${true}" styleClass="amount"/>
                                                 </td>
                                                 <td>
-                                                    <kul:htmlControlAttribute
-                                                            attributeEntry="${purapItemAttributes.totalAmount}"
-                                                            property="document.currentPurchaseOrderDocument.item[${ctr}].totalAmount"
-                                                            readOnly="${true}" styleClass="amount"/>
+                                                    <kul:htmlControlAttribute attributeEntry="${purapItemAttributes.totalAmount}" property="document.currentPurchaseOrderDocument.item[${ctr}].totalAmount" readOnly="${true}" styleClass="amount"/>
                                                 </td>
                                             </tr>
                                         </c:if>
@@ -531,12 +459,13 @@
                                         <td colspan="9">&nbsp;</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="9" class="subhead">Totals</td>
+                                        <th colspan="7"></th>
+                                        <td class="subhead" colspan="2"><h3>Totals</h3></td>
                                     </tr>
                                     <tr>
-                                        <th align="right" colspan="8">
-                                            <kul:htmlAttributeLabel
-                                                    attributeEntry="${DataDictionary.RequisitionDocument.attributes.totalPreTaxDollarAmount}"/>
+                                        <th colspan="7"></th>
+                                        <th align="right">
+                                            <kul:htmlAttributeLabel attributeEntry="${DataDictionary.RequisitionDocument.attributes.totalPreTaxDollarAmount}"/>
                                         </th>
                                         <td>
                                             <kul:htmlControlAttribute
@@ -546,9 +475,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th align="right" colspan="8">
-                                            <kul:htmlAttributeLabel
-                                                    attributeEntry="${DataDictionary.RequisitionDocument.attributes.totalTaxAmount}"/>
+                                        <th colspan="7"></th>
+                                        <th align="right">
+                                            <kul:htmlAttributeLabel attributeEntry="${DataDictionary.RequisitionDocument.attributes.totalTaxAmount}"/>
                                         </th>
                                         <td>
                                             <kul:htmlControlAttribute
@@ -558,9 +487,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th align="right" colspan="8">
-                                            <kul:htmlAttributeLabel
-                                                    attributeEntry="${DataDictionary.RequisitionDocument.attributes.totalDollarAmount}"/>
+                                        <th colspan="7"></th>
+                                        <th align="right">
+                                            <kul:htmlAttributeLabel attributeEntry="${DataDictionary.RequisitionDocument.attributes.totalDollarAmount}"/>
                                         </th>
                                         <td>
                                             <kul:htmlControlAttribute
@@ -582,9 +511,9 @@
 
     <kul:tab tabTitle="Addresses" defaultOpen="TRUE" tabErrorKey="">
         <div class="tab-container" align="center">
-            <table cellpadding="0" cellspacing="0" class="datatable" summary="Vendor Section">
+            <table cellpadding="0" cellspacing="0" class="datatable standard side-margins" summary="Vendor Section">
                 <tr>
-                    <td colspan="4" class="subhead">Electronic Invoice Data</td>
+                    <td colspan="4" class="subhead"><h3>Electronic Invoice Data</h3></td>
                 </tr>
                 <tr>
                     <th colspan="2">Ship To:</th>
@@ -592,147 +521,103 @@
                 </tr>
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceShipToAddressName}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressName}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressName}"
-                                                  property="document.invoiceShipToAddressName" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressName}" property="document.invoiceShipToAddressName" readOnly="true"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceBillToAddressName}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressName}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressName}"
-                                                  property="document.invoiceBillToAddressName" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressName}" property="document.invoiceBillToAddressName" readOnly="true"/>
                     </td>
                 </tr>
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceShipToAddressLine1}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressLine1}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressLine1}"
-                                                  property="document.invoiceShipToAddressLine1" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressLine1}" property="document.invoiceShipToAddressLine1" readOnly="true"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceBillToAddressLine1}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressLine1}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressLine1}"
-                                                  property="document.invoiceBillToAddressLine1" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressLine1}" property="document.invoiceBillToAddressLine1" readOnly="true"/>
                     </td>
                 </tr>
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceShipToAddressLine2}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressLine2}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressLine2}"
-                                                  property="document.invoiceShipToAddressLine2" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressLine2}" property="document.invoiceShipToAddressLine2" readOnly="true"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceBillToAddressLine2}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressLine2}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressLine2}"
-                                                  property="document.invoiceBillToAddressLine2" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressLine2}" property="document.invoiceBillToAddressLine2" readOnly="true"/>
                     </td>
                 </tr>
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceShipToAddressLine3}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressLine3}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressLine3}"
-                                                  property="document.invoiceShipToAddressLine3" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressLine3}" property="document.invoiceShipToAddressLine3" readOnly="true"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceBillToAddressLine3}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressLine3}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressLine3}"
-                                                  property="document.invoiceBillToAddressLine3" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressLine3}" property="document.invoiceBillToAddressLine3" readOnly="true"/>
                     </td>
                 </tr>
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
                         <div align="right">
-                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressCityName}"
-                                                    useShortLabel="true" noColon="true"/>,&nbsp;
-                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressStateCode}"
-                                                    useShortLabel="true" noColon="true"/>&nbsp;
-                            <kul:htmlAttributeLabel
-                                    attributeEntry="${documentAttributes.invoiceShipToAddressPostalCode}"
-                                    useShortLabel="true"/>
+                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressCityName}" useShortLabel="true" noColon="true"/>,&nbsp;
+                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressStateCode}" useShortLabel="true" noColon="true"/>&nbsp;
+                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressPostalCode}" useShortLabel="true"/>
                         </div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressCityName}"
-                                                  property="document.invoiceShipToAddressCityName" readOnly="true"/>,&nbsp;
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressStateCode}"
-                                                  property="document.invoiceShipToAddressStateCode" readOnly="true"/>&nbsp;
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressPostalCode}"
-                                                  property="document.invoiceShipToAddressPostalCode" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressCityName}" property="document.invoiceShipToAddressCityName" readOnly="true"/>,&nbsp;
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressStateCode}" property="document.invoiceShipToAddressStateCode" readOnly="true"/>&nbsp;
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressPostalCode}" property="document.invoiceShipToAddressPostalCode" readOnly="true"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
                         <div align="right">
-                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressCityName}"
-                                                    useShortLabel="true" noColon="true"/>,&nbsp;
-                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressStateCode}"
-                                                    useShortLabel="true" noColon="true"/>&nbsp;
-                            <kul:htmlAttributeLabel
-                                    attributeEntry="${documentAttributes.invoiceBillToAddressPostalCode}"
-                                    useShortLabel="true"/>
+                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressCityName}" useShortLabel="true" noColon="true"/>,&nbsp;
+                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressStateCode}" useShortLabel="true" noColon="true"/>&nbsp;
+                            <kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressPostalCode}" useShortLabel="true"/>
                         </div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressCityName}"
-                                                  property="document.invoiceBillToAddressCityName" readOnly="true"/>,&nbsp;
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressStateCode}"
-                                                  property="document.invoiceBillToAddressStateCode" readOnly="true"/>&nbsp;
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressPostalCode}"
-                                                  property="document.invoiceBillToAddressPostalCode" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressCityName}" property="document.invoiceBillToAddressCityName" readOnly="true"/>,&nbsp;
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressStateCode}" property="document.invoiceBillToAddressStateCode" readOnly="true"/>&nbsp;
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressPostalCode}" property="document.invoiceBillToAddressPostalCode" readOnly="true"/>
                     </td>
                 </tr>
                 <tr>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceShipToAddressCountryName}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceShipToAddressCountryName}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressCountryName}"
-                                                  property="document.invoiceShipToAddressCountryName" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceShipToAddressCountryName}" property="document.invoiceShipToAddressCountryName" readOnly="true"/>
                     </td>
                     <th align="right" valign="middle" class="bord-l-b" width="25%">
-                        <div align="right"><kul:htmlAttributeLabel
-                                attributeEntry="${documentAttributes.invoiceBillToAddressCountryName}"
-                                useShortLabel="true"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceBillToAddressCountryName}" useShortLabel="true"/></div>
                     </th>
                     <td align="left" valign="middle" class="datacell" width="25%">
-                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressCountryName}"
-                                                  property="document.invoiceBillToAddressCountryName" readOnly="true"/>
+                        <kul:htmlControlAttribute attributeEntry="${documentAttributes.invoiceBillToAddressCountryName}" property="document.invoiceBillToAddressCountryName" readOnly="true"/>
                     </td>
                 </tr>
 
                 <tr>
-                    <td colspan="4" class="subhead">Purchase Order Data</td>
+                    <td colspan="4" class="subhead"><h3>Purchase Order Data</h3></td>
                 </tr>
                 <c:choose>
                     <c:when test="${empty KualiForm.document.currentPurchaseOrderDocument}">
@@ -749,131 +634,84 @@
                         </tr>
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.deliveryToName}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.deliveryToName}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryToName}"
-                                                          property="document.currentPurchaseOrderDocument.deliveryToName"
-                                                          readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryToName}" property="document.currentPurchaseOrderDocument.deliveryToName" readOnly="true"/>
                             </td>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.billingName}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.billingName}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingName}"
-                                                          property="document.currentPurchaseOrderDocument.billingName"
-                                                          readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingName}" property="document.currentPurchaseOrderDocument.billingName" readOnly="true"/>
                             </td>
                         </tr>
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine1Address}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine1Address}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute
-                                        attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine1Address}"
-                                        property="document.currentPurchaseOrderDocument.deliveryBuildingLine1Address"
-                                        readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine1Address}" property="document.currentPurchaseOrderDocument.deliveryBuildingLine1Address" readOnly="true"/>
                             </td>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.billingLine1Address}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.billingLine1Address}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute
-                                        attributeEntry="${purchaseOrderAttributes.billingLine1Address}"
-                                        property="document.currentPurchaseOrderDocument.billingLine1Address"
-                                        readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingLine1Address}" property="document.currentPurchaseOrderDocument.billingLine1Address" readOnly="true"/>
                             </td>
                         </tr>
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine2Address}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine2Address}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute
-                                        attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine2Address}"
-                                        property="document.currentPurchaseOrderDocument.deliveryBuildingLine2Address"
-                                        readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryBuildingLine2Address}" property="document.currentPurchaseOrderDocument.deliveryBuildingLine2Address" readOnly="true"/>
                             </td>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.billingLine2Address}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.billingLine2Address}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute
-                                        attributeEntry="${purchaseOrderAttributes.billingLine2Address}"
-                                        property="document.currentPurchaseOrderDocument.billingLine2Address"
-                                        readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingLine2Address}" property="document.currentPurchaseOrderDocument.billingLine2Address" readOnly="true"/>
                             </td>
                         </tr>
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
                                 <div align="right">
-                                    <kul:htmlAttributeLabel
-                                            attributeEntry="${purchaseOrderAttributes.deliveryCityName}"/>,&nbsp;
-                                    <kul:htmlAttributeLabel
-                                            attributeEntry="${purchaseOrderAttributes.deliveryStateCode}"/>&nbsp;
-                                    <kul:htmlAttributeLabel
-                                            attributeEntry="${purchaseOrderAttributes.deliveryPostalCode}"/>
+                                    <kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.deliveryCityName}"/>,&nbsp;
+                                    <kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.deliveryStateCode}"/>&nbsp;
+                                    <kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.deliveryPostalCode}"/>
                                 </div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryCityName}"
-                                                          property="document.currentPurchaseOrderDocument.deliveryCityName"
-                                                          readOnly="true"/>,&nbsp;
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryStateCode}"
-                                                          property="document.currentPurchaseOrderDocument.deliveryStateCode"
-                                                          readOnly="true"/>&nbsp;
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryPostalCode}"
-                                                          property="document.currentPurchaseOrderDocument.deliveryPostalCode"
-                                                          readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryCityName}" property="document.currentPurchaseOrderDocument.deliveryCityName" readOnly="true"/>,&nbsp;
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryStateCode}" property="document.currentPurchaseOrderDocument.deliveryStateCode" readOnly="true"/>&nbsp;
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryPostalCode}" property="document.currentPurchaseOrderDocument.deliveryPostalCode" readOnly="true"/>
                             </td>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
                                 <div align="right">
-                                    <kul:htmlAttributeLabel
-                                            attributeEntry="${purchaseOrderAttributes.billingCityName}"/>,&nbsp;
-                                    <kul:htmlAttributeLabel
-                                            attributeEntry="${purchaseOrderAttributes.billingStateCode}"/>&nbsp;
-                                    <kul:htmlAttributeLabel
-                                            attributeEntry="${purchaseOrderAttributes.billingPostalCode}"/>
+                                    <kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.billingCityName}"/>,&nbsp;
+                                    <kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.billingStateCode}"/>&nbsp;
+                                    <kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.billingPostalCode}"/>
                                 </div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingCityName}"
-                                                          property="document.currentPurchaseOrderDocument.billingCityName"
-                                                          readOnly="true"/>,&nbsp;
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingStateCode}"
-                                                          property="document.currentPurchaseOrderDocument.billingStateCode"
-                                                          readOnly="true"/>&nbsp;
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingPostalCode}"
-                                                          property="document.currentPurchaseOrderDocument.billingPostalCode"
-                                                          readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingCityName}" property="document.currentPurchaseOrderDocument.billingCityName" readOnly="true"/>,&nbsp;
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingStateCode}" property="document.currentPurchaseOrderDocument.billingStateCode" readOnly="true"/>&nbsp;
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingPostalCode}" property="document.currentPurchaseOrderDocument.billingPostalCode" readOnly="true"/>
                             </td>
                         </tr>
                         <tr>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.deliveryCountryCode}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.deliveryCountryCode}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute
-                                        attributeEntry="${purchaseOrderAttributes.deliveryCountryCode}"
-                                        property="document.currentPurchaseOrderDocument.deliveryCountryCode"
-                                        readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.deliveryCountryCode}" property="document.currentPurchaseOrderDocument.deliveryCountryCode" readOnly="true"/>
                             </td>
                             <th align="right" valign="middle" class="bord-l-b" width="25%">
-                                <div align="right"><kul:htmlAttributeLabel
-                                        attributeEntry="${purchaseOrderAttributes.billingCountryCode}"/></div>
+                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.billingCountryCode}"/></div>
                             </th>
                             <td align="left" valign="middle" class="datacell" width="25%">
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingCountryCode}"
-                                                          property="document.currentPurchaseOrderDocument.billingCountryCode"
-                                                          readOnly="true"/>
+                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.billingCountryCode}" property="document.currentPurchaseOrderDocument.billingCountryCode" readOnly="true"/>
                             </td>
                         </tr>
                     </c:otherwise>

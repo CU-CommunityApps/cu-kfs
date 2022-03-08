@@ -40,8 +40,7 @@
     htmlFormAction="${formAction}"
     documentTypeName="ROLE"
     renderMultipart="${!inquiry}"
-    showTabButtons="true"
-    auditCount="0">
+    showTabButtons="true">
 
     <c:if test="${!inquiry}">
 	 	<kul:hiddenDocumentFields />
