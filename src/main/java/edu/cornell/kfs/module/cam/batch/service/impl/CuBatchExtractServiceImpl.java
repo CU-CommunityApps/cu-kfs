@@ -85,14 +85,17 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     @Override
     public void separatePOLines(List<Entry> fpLines, List<Entry> purapLines, Collection<Entry> elgibleGLEntries) {
         for (Entry entry : elgibleGLEntries) {
-            if (KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST.equals(entry.getFinancialDocumentTypeCode())) {
+            if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT
+                    .equals(entry.getFinancialDocumentTypeCode())) {
                 purapLines.add(entry);
-            } else if (!KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO.equals(entry.getFinancialDocumentTypeCode())) {
+            } else if (!PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT
+                    .equals(entry.getFinancialDocumentTypeCode())) {
                 fpLines.add(entry);
-            } else if (KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO.equals(entry.getFinancialDocumentTypeCode())) {
+            } else if (PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT
+                    .equals(entry.getFinancialDocumentTypeCode())) {
                 Map<String, String> fieldValues = new HashMap<>();
                 fieldValues.put(CamsPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, entry.getDocumentNumber());
-                Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO);
+                Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
                 // check if vendor credit memo, then include as FP line
                 Collection<? extends Document> matchingCreditMemos = businessObjectService.findMatching(docClass, fieldValues);
                 for (Document document : matchingCreditMemos) {
