@@ -39,7 +39,6 @@ public class CUKFSConstants {
         public static final String CREATE_TAX_REGION_FROM_LOOKUP_PARM = "createTaxRegionFromLookup";
     }
     public static final class FinancialDocumentTypeCodes {
-        public static final String PAYMENT_APPLICATION = "APP";
         public static final String ACCOUNT = "ACCT";
         public static final String ACCOUNT_GLOBAL = "GACC";
     }        
