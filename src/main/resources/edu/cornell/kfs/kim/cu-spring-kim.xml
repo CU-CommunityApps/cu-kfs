@@ -39,9 +39,9 @@
           p:responsibilityChangeQueue-ref="responsibilityChangeQueue"
           p:responsibilityService-ref="kimResponsibilityService"/>
 
-    <bean id="kfs.documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
+    <bean id="documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"
-          parent="kfs.documentTypePermissionTypeService"/>
+          parent="documentTypePermissionTypeService"/>
 
     <bean id="kimGroupService" class="edu.cornell.kfs.kim.impl.group.CuGroupServiceImpl"
           p:businessObjectService-ref="businessObjectService"
