@@ -117,8 +117,8 @@ import java.util.Set;
  * This class provides services of use to a payment request document
  */
 /**
- * CU customization: backport FINP-8270. This was backported to the 1/28/2021
- * version of this file. This change can be removed with the 3/2/2022 upgrade.
+ * CU customization: backport FINP-8270 and FINP-8283. These were backported to the 1/28/2021
+ * version of this file. These changes can be removed with the 3/9/2022 upgrade.
  */
 public class PaymentRequestServiceImpl implements PaymentRequestService {
 
@@ -549,6 +549,9 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         return msgs;
     }
 
+    /*
+     * CU Customization: Backport FINP-8283
+     */
     @Override
     public HashMap<String, String> checkForDuplicatePaymentRequests(Integer vendorHeaderGeneratedId,
             Integer vendorDetailAssignedId, String invoiceNumber, KualiDecimal invoiceAmount, Date invoiceDate,
@@ -562,9 +565,11 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
                                 PurapKeyConstants.MESSAGE_INVOICE_DATE_A_YEAR_OR_MORE_PAST));
             }
         }
-
-        messages.putAll(checkForDuplicatesByVendorNumberAndInvoiceNumber(vendorHeaderGeneratedId,
-                vendorDetailAssignedId, invoiceNumber, vendorToken, questionFormat));
+        if (vendorHeaderGeneratedId != null && vendorDetailAssignedId != null) {
+            messages.putAll(checkForDuplicatesByVendorNumberAndInvoiceNumber(vendorHeaderGeneratedId,
+                    vendorDetailAssignedId, invoiceNumber, vendorToken, questionFormat
+            ));
+        }
         messages.putAll(checkForDuplicatesByInvoiceNumberAndInvoiceDate(vendorHeaderGeneratedId,
                 vendorDetailAssignedId, invoiceAmount, invoiceDate, specifiedSourceToken, questionFormat));
 
