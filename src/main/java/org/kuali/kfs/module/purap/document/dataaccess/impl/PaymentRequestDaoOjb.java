@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
@@ -45,8 +46,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * CU customization: backport FINP-8270. This was backported to the 1/28/2021
- * version of this file. This change can be removed with the 3/2/2022 upgrade.
+ * CU customization: backport FINP-8270 and FINP-8283. These were backported to the 1/28/2021
+ * version of this file. These changes can be removed with the 3/9/2022 upgrade.
  */
 @Transactional
 public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements PaymentRequestDao {
@@ -305,6 +306,9 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
      * @param vendorDetailAssignedId  detail id of the vendor id
      * @return a list of payment requests (using view for performance) with the given vendor id and invoice number.
      */
+    /*
+     * CU Customization: Backport FINP-8270 and FINP-8283
+     */
     @Override
     public List<PaymentRequestView> getActivePaymentRequestsByVendorNumber(
             final Integer vendorHeaderGeneratedId,
@@ -318,6 +322,10 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
         final QueryByCriteria vendorQuery = new QueryByCriteria(VendorDetail.class, vendorCriteria);
         final VendorDetail vendorDetail = (VendorDetail) getPersistenceBrokerTemplate().getObjectByQuery(vendorQuery);
 
+        if (ObjectUtils.isNull(vendorDetail)) {
+            return List.of();
+        }
+ 
         final Criteria paymentRequestCriteria = new Criteria();
 
         paymentRequestCriteria.addEqualTo("UPPER(vendorName)", vendorDetail.getVendorName().toUpperCase(Locale.US));
