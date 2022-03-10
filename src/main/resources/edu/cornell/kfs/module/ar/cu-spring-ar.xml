@@ -71,9 +71,5 @@
     
     <bean id="arEmailService" parent="arEmailService-parentBean"
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
-          
-    <bean id="contractsGrantsBillingAwardVerificationService"
-          parent="contractsGrantsBillingAwardVerificationService-parentBean" 
-          class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsBillingAwardVerificationServiceImpl"/>
 
 </beans>

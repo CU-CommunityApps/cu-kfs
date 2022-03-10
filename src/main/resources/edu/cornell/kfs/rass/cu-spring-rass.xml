@@ -79,7 +79,7 @@
 			p:documentService-ref="documentService"
 			p:dataDictionaryService-ref="dataDictionaryService"
 			p:configurationService-ref="configurationService"
-			p:routeHeaderService-ref="enDocumentRouteHeaderService"
+			p:routeHeaderService-ref="documentRouteHeaderService"
 			p:documentProcessingQueue-ref="documentProcessingQueue"
 			p:documentStatusCheckDelayMillis="1000"
 			p:maxStatusCheckAttempts="60"/>

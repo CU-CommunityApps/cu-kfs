@@ -218,7 +218,7 @@
 	<bean id="batchInputFileService" class="edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl" parent="batchInputFileService-parentBean"/>
 
     <bean id="autoDisapproveService" class="edu.cornell.kfs.sys.batch.service.impl.CuAutoDisapproveDocumentsServiceImpl" parent="autoDisapproveService-parentBean">
-        <property name="routeHeaderService" ref="enDocumentRouteHeaderService" />
+        <property name="routeHeaderService" ref="documentRouteHeaderService" />
     </bean>
 
     <!-- KFSPTS-1891 -->

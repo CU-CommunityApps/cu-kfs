@@ -98,8 +98,8 @@
 
     <bean id="actionListEmailService"
           class="edu.cornell.kfs.kew.mail.service.impl.CuActionListEmailServiceImpl"
-          p:deploymentEnvironment="${environment}" p:emailContentGenerator-ref="emailContentService"
-          p:emailService-ref="emailService" p:scheduler-ref="scheduler"
+          p:emailContentGenerator-ref="emailContentService"
+          p:emailService-ref="emailService"
           p:parameterService-ref="parameterService"/>
 
 </beans>

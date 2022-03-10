@@ -65,6 +65,12 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     	super(null);
     }
     
+    public CuExtractPaymentServiceImpl(
+            final Iso20022FormatExtractor iso20022FormatExtractor
+    ) {
+    	super(null);
+    }
+    
     /**
     * MOD: Overridden to detect if the Bundle ACH Payments system parameter is on and if so, to 
     * call the new extraction bundler method
