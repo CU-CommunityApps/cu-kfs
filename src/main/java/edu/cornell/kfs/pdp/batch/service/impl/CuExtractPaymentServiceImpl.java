@@ -71,7 +71,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     */
     @Override
     public void extractAchPayments() {
-        LOG.debug("MOD - extractAchPayments() started");
+        LOG.debug("MOD - extractAchPayments() - Enter");
 
         Date processDate = dateTimeService.getCurrentDate();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
