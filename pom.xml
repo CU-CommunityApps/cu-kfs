@@ -39,7 +39,7 @@
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.7.0</junit.version>
         <!--Cornell Customization: backport redis-->
-        <lettuce.version>4.5.0.Final</lettuce.version>
+        <lettuce.version>6.1.5.RELEASE</lettuce.version>
         <ojdbc6.version>11.2.0.4</ojdbc6.version>
         <opencsv.version>4.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
@@ -1287,8 +1287,8 @@
         </dependency>
         
         <dependency>
-            <groupId>biz.paluch.redis</groupId>
-            <artifactId>lettuce</artifactId>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
             <version>${lettuce.version}</version>
             <exclusions>
             	<exclusion>

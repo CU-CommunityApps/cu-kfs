@@ -18,7 +18,13 @@
  */
 package org.kuali.kfs.sys.cache;
 
-import org.apache.commons.lang3.StringUtils;
+import static java.util.Map.entry;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -64,16 +70,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.core.io.Resource;
 
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Map.entry;
+import edu.cornell.kfs.sys.cache.CuRedisCacheManager;
+import edu.cornell.kfs.sys.cache.CuRedisConnectionFactory;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisURI;
+import net.sf.ehcache.config.ConfigurationFactory;
 
 /* Cornell Customization: backport redis*/
 @Configuration
@@ -143,38 +146,71 @@ public class CacheConfiguration {
     }
 
     @Bean
-    public RedisConnectionFactory connectionFactory(
+    public List<String> localCachesToClearOnListenerReset() {
+        return List.of(
+                Parameter.CACHE_NAME,
+                Permission.CACHE_NAME
+        );
+    }
+
+    @Bean
+    public RedisClient redisClient(
             @Value("${redis.auth.token.password}") String redisAuthTokenPassword,
             @Value("${redis.host}") String redisHost,
             @Value("${redis.port}") int redisPort,
             @Value("${redis.use.ssl}") boolean redisUseSsl
     ) {
-        final LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisHost, redisPort);
-        lettuceConnectionFactory.setUseSsl(redisUseSsl);
-        lettuceConnectionFactory.setPassword(redisAuthTokenPassword);
-        return lettuceConnectionFactory;
+        RedisURI redisURI = RedisURI.Builder.redis(redisHost, redisPort)
+                .withPassword(redisAuthTokenPassword.toCharArray())
+                .withSsl(redisUseSsl)
+                .build();
+        RedisClient redisClient = RedisClient.create(redisURI);
+        return redisClient;
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
-        final RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(connectionFactory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        return redisTemplate;
-    }
-
-    @Bean
-    public RedisCacheManager cacheManager(
-            @Value("${redis.default.ttl}") Long redisDefaultTtl,
-            RedisTemplate<String, String> redisTemplate,
-            List<String> cacheNames,
-            Map<String, Long> cacheExpires
+    public CuRedisConnectionFactory redisConnectionFactory(
+            RedisClient redisClient
     ) {
-        // Cornell customization: add fix to call cacheNames() method instead of using the cacheNames variable that is causing an exception
-        final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate, cacheNames(), true);
-        redisCacheManager.setDefaultExpiration(redisDefaultTtl);
-        redisCacheManager.setExpires(cacheExpires);
-
-        return redisCacheManager;
+        CuRedisConnectionFactory redisConnectionFactory = new CuRedisConnectionFactory();
+        redisConnectionFactory.setRedisClient(redisClient);
+        return redisConnectionFactory;
     }
+
+    @Bean
+    public GenericObjectPoolConfig redisPoolConfig(
+    ) {
+        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        poolConfig.setBlockWhenExhausted(true);
+        poolConfig.setMaxTotal(30);
+        poolConfig.setMinIdle(5);
+        poolConfig.setMaxIdle(30);
+        poolConfig.setMaxWaitMillis(5000L);
+        return poolConfig;
+    }
+
+    @Bean
+    public CuRedisCacheManager cacheManager(
+            @Value("${kfs.ehcache.config.location}") Resource configLocation,
+            CuRedisConnectionFactory redisConnectionFactory,
+            GenericObjectPoolConfig redisPoolConfig
+    ) throws Exception {
+        net.sf.ehcache.config.Configuration ehCacheConfiguration;
+        try (InputStream configLocationStream = configLocation.getInputStream()) {
+            ehCacheConfiguration = ConfigurationFactory.parseConfiguration(configLocationStream);
+        }
+        
+        net.sf.ehcache.CacheManager localCacheManager = net.sf.ehcache.CacheManager.create(ehCacheConfiguration);
+        
+        CuRedisCacheManager cacheManager = new CuRedisCacheManager();
+        cacheManager.setCacheNames(cacheNames());
+        cacheManager.setCacheExpirations(cacheExpires());
+        cacheManager.setDefaultExpiration(1800L);
+        cacheManager.setLocalCachesToClearOnListenerReset(localCachesToClearOnListenerReset());
+        cacheManager.setLocalCacheManager(localCacheManager);
+        cacheManager.setRedisConnectionFactory(redisConnectionFactory);
+        cacheManager.setPoolConfig(redisPoolConfig);
+        return cacheManager;
+    }
+
 }
