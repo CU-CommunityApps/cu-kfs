@@ -35,6 +35,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Cornell customization: backport FINP-8310
+ */
 public abstract class KimAttributeData extends PersistableBusinessObjectBase implements Identifiable {
 
     private static final Logger LOG = LogManager.getLogger();
