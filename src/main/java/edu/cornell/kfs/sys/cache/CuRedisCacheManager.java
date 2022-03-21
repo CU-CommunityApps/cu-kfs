@@ -163,8 +163,7 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
     }
 
     private void evictFromLocalCache(String key) {
-        String keyPrefix = StringUtils.substringBefore(key, VERTICAL_LINE);
-        keyPrefix = StringUtils.defaultString(keyPrefix);
+        String keyPrefix = StringUtils.substring(key, 0, StringUtils.indexOf(key, VERTICAL_LINE) + 1);
         CuRedisCache cache = cachesMappedByKeyPrefix.get(keyPrefix);
         if (cache != null) {
             String keyWithoutPrefix = StringUtils.substringAfter(key, VERTICAL_LINE);
