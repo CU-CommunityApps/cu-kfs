@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -73,7 +72,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import edu.cornell.kfs.sys.cache.CuRedisCacheManager;
-import edu.cornell.kfs.sys.cache.CuRedisConnectionFactory;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import net.sf.ehcache.config.ConfigurationFactory;
@@ -154,6 +152,13 @@ public class CacheConfiguration {
     }
 
     @Bean
+    public List<String> cachesIgnoringRedisEvents() {
+        return List.of(
+                BatchFile.CACHE_NAME
+        );
+    }
+
+    @Bean
     public RedisClient redisClient(
             @Value("${redis.auth.token.password}") String redisAuthTokenPassword,
             @Value("${redis.host}") String redisHost,
@@ -169,31 +174,10 @@ public class CacheConfiguration {
     }
 
     @Bean
-    public CuRedisConnectionFactory redisConnectionFactory(
-            RedisClient redisClient
-    ) {
-        CuRedisConnectionFactory redisConnectionFactory = new CuRedisConnectionFactory();
-        redisConnectionFactory.setRedisClient(redisClient);
-        return redisConnectionFactory;
-    }
-
-    @Bean
-    public GenericObjectPoolConfig redisPoolConfig(
-    ) {
-        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
-        poolConfig.setBlockWhenExhausted(true);
-        poolConfig.setMaxTotal(30);
-        poolConfig.setMinIdle(5);
-        poolConfig.setMaxIdle(30);
-        poolConfig.setMaxWaitMillis(5000L);
-        return poolConfig;
-    }
-
-    @Bean
     public CuRedisCacheManager cacheManager(
+            @Value("${redis.default.ttl}") Long redisDefaultTtl,
             @Value("${kfs.ehcache.config.location}") Resource configLocation,
-            CuRedisConnectionFactory redisConnectionFactory,
-            GenericObjectPoolConfig redisPoolConfig
+            RedisClient redisClient
     ) throws Exception {
         net.sf.ehcache.config.Configuration ehCacheConfiguration;
         try (InputStream configLocationStream = configLocation.getInputStream()) {
@@ -205,11 +189,11 @@ public class CacheConfiguration {
         CuRedisCacheManager cacheManager = new CuRedisCacheManager();
         cacheManager.setCacheNames(cacheNames());
         cacheManager.setCacheExpirations(cacheExpires());
-        cacheManager.setDefaultExpiration(1800L);
+        cacheManager.setDefaultExpiration(redisDefaultTtl);
         cacheManager.setLocalCachesToClearOnListenerReset(localCachesToClearOnListenerReset());
+        cacheManager.setCachesIgnoringRedisEvents(cachesIgnoringRedisEvents());
         cacheManager.setLocalCacheManager(localCacheManager);
-        cacheManager.setRedisConnectionFactory(redisConnectionFactory);
-        cacheManager.setPoolConfig(redisPoolConfig);
+        cacheManager.setRedisClient(redisClient);
         return cacheManager;
     }
 

@@ -2,56 +2,41 @@ package edu.cornell.kfs.sys.cache;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
-import io.lettuce.core.TrackingArgs;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.push.PushMessage;
-import io.lettuce.core.codec.StringCodec;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import io.lettuce.core.RedisClient;
 import net.sf.ehcache.Ehcache;
 
 public class CuRedisCacheManager implements CacheManager, InitializingBean, Closeable {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final String VERTICAL_LINE = "|";
-    private static final String MESSAGE_TYPE_INVALIDATE = "invalidate";
-
     private Set<String> cacheNames;
     private Map<String, Long> cacheExpirations;
     private Long defaultExpiration;
     private Set<String> localCachesToClearOnListenerReset;
+    private Set<String> cachesIgnoringRedisEvents;
     private net.sf.ehcache.CacheManager localCacheManager;
-    private CuRedisConnectionFactory redisConnectionFactory;
-    private GenericObjectPoolConfig poolConfig;
+    private RedisClient redisClient;
 
-    private Map<String, CuRedisCache> caches;
-    private Map<String, CuRedisCache> cachesMappedByKeyPrefix;
-    private StringCodec stringHandler;
-    private GenericObjectPool<StatefulRedisConnection<String, byte[]>> connectionPool;
-    private volatile StatefulRedisConnection<String, byte[]> trackedConnection;
-    private Object trackedConnectionLock;
-    private ScheduledExecutorService trackedConnectionValidationProcess;
+    private CuRedisConnectionManager connectionManager;
+    private Map<String, CuLocalCache> caches;
+    private Map<String, CuLocalCache> cachesMappedByKeyPrefix;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -59,156 +44,127 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
         Objects.requireNonNull(cacheExpirations, "cacheExpirations cannot be null");
         Objects.requireNonNull(defaultExpiration, "defaultExpiration cannot be null");
         Objects.requireNonNull(localCachesToClearOnListenerReset, "localCachesToClearOnListenerReset cannot be null");
+        Objects.requireNonNull(cachesIgnoringRedisEvents, "cachesIgnoringRedisEvents cannot be null");
         Objects.requireNonNull(localCacheManager, "localCacheManager cannot be null");
-        Objects.requireNonNull(redisConnectionFactory, "redisConnectionFactory cannot be null");
-        Objects.requireNonNull(poolConfig, "poolConfig cannot be null");
+        Objects.requireNonNull(redisClient, "redisClient cannot be null");
         
-        this.caches = buildRedisCaches();
+        this.connectionManager = new CuRedisConnectionManager(redisClient,
+                this::clearMarkedCachesOnSharedConnectionChange, this::handleInvalidatedRedisKeys);
+        this.caches = buildLocalCaches();
         this.cachesMappedByKeyPrefix = buildMappingsOfKeyPrefixesToCaches(caches.values());
-        this.stringHandler = new StringCodec(StandardCharsets.UTF_8);
-        this.connectionPool = new GenericObjectPool<>(redisConnectionFactory, poolConfig);
-        this.trackedConnection = null;
-        this.trackedConnectionLock = new Object();
-        this.trackedConnectionValidationProcess = Executors.newSingleThreadScheduledExecutor();
-        trackedConnectionValidationProcess.scheduleAtFixedRate(
-                this::refreshTrackedRedisConnectionIfNecessary, 0L, 5L, TimeUnit.SECONDS);
     }
 
-    private Map<String, CuRedisCache> buildRedisCaches() {
+    private Map<String, CuLocalCache> buildLocalCaches() {
         return cacheNames.stream()
                 .collect(Collectors.toUnmodifiableMap(
-                        cacheName -> cacheName, this::buildRedisCache));
+                        cacheName -> cacheName, this::buildLocalCache));
     }
 
-    private CuRedisCache buildRedisCache(String cacheName) {
+    private CuLocalCache buildLocalCache(String cacheName) {
         Ehcache localCache = localCacheManager.getCache(cacheName);
         if (localCache == null) {
             throw new IllegalStateException("Could not find local cache with name: " + cacheName);
         }
-        Long expirationMillis = cacheExpirations.getOrDefault(cacheName, defaultExpiration);
-        return new CuRedisCache(
-                cacheName, localCache, this::handleRedisActionWithPooledConnection, expirationMillis.intValue());
+        
+        if (cachesIgnoringRedisEvents.contains(cacheName)) {
+            return new CuDefaultLocalCache(cacheName, localCache);
+        } else {
+            Long expirationMillis = cacheExpirations.getOrDefault(cacheName, defaultExpiration);
+            return new CuRedisAwareLocalCache(cacheName, localCache, connectionManager, expirationMillis);
+        }
     }
 
-    private Map<String, CuRedisCache> buildMappingsOfKeyPrefixesToCaches(Collection<CuRedisCache> caches) {
+    private Map<String, CuLocalCache> buildMappingsOfKeyPrefixesToCaches(Collection<CuLocalCache> caches) {
         return caches.stream()
-                .collect(Collectors.toUnmodifiableMap(CuRedisCache::getKeyPrefix, cache -> cache));
+                .filter(cache -> !cachesIgnoringRedisEvents.contains(cache.getName()))
+                .collect(Collectors.toUnmodifiableMap(CuLocalCache::getKeyPrefix, cache -> cache));
     }
 
-    private <T> T handleRedisActionWithPooledConnection(
-            Function<StatefulRedisConnection<String, byte[]>, T> redisAction) {
-        StatefulRedisConnection<String, byte[]> redisConnection = null;
-        try {
-            redisConnection = connectionPool.borrowObject();
-            return redisAction.apply(redisConnection);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            connectionPool.returnObject(redisConnection);
+    private void clearMarkedCachesOnSharedConnectionChange() {
+        for (String cacheName : localCachesToClearOnListenerReset) {
+            caches.get(cacheName).clearLocalCacheOnly();
         }
     }
 
-    private void refreshTrackedRedisConnectionIfNecessary() {
-        synchronized (trackedConnectionLock) {
-            trackedConnection = replaceTrackedRedisConnectionIfNecessary(trackedConnection);
+    private void handleInvalidatedRedisKeys(List<String> invalidatedKeys) {
+        if (invalidatedKeys.size() == 1) {
+            evictFromLocalCache(invalidatedKeys.get(0));
+        } else {
+            evictFromLocalCache(invalidatedKeys);
         }
     }
 
-    private StatefulRedisConnection<String, byte[]> replaceTrackedRedisConnectionIfNecessary(
-            StatefulRedisConnection<String, byte[]> oldConnection) {
-        if (oldConnection != null) {
-            if (redisConnectionFactory.validateActualConnectionObject(oldConnection)) {
-                return oldConnection;
-            } else {
-                invalidateOrReturnConnectionToPool(oldConnection);
+    private void evictFromLocalCache(String redisKey) {
+        String keyPrefix = getPrefixForRedisKey(redisKey);
+        CuLocalCache cache = cachesMappedByKeyPrefix.get(keyPrefix);
+        if (cache != null) {
+            String keyWithoutPrefix = getKeyWithoutPrefix(redisKey);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("evictFromLocalCache, Evicting key '" + keyWithoutPrefix + "' with prefix: " + keyPrefix);
             }
+            cache.evictFromLocalCacheOnly(keyWithoutPrefix);
+        } else {
+            LOG.warn("evictFromLocalCache, Could not find Redis-aware cache for evicting key: " + redisKey);
+        }
+    }
+
+    private void evictFromLocalCache(List<String> redisKeys) {
+        Map<String, List<String>> partitionedAndConvertedKeys = redisKeys.stream()
+                .collect(Collectors.groupingBy(this::getPrefixForRedisKey,
+                        Collectors.mapping(this::getKeyWithoutPrefix, Collectors.toUnmodifiableList())));
+        partitionedAndConvertedKeys.forEach(this::evictFromLocalCache);
+    }
+
+    private void evictFromLocalCache(String keyPrefix, List<String> potentiallyConvertedKeys) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("evictFromLocalCache, Evicting cache for prefix '" + keyPrefix
+                    + "' and potentially-converted keys: " + potentiallyConvertedKeys);
+        }
+        if (StringUtils.isBlank(keyPrefix)) {
+            LOG.warn("evictFromLocalCache, Could not evict " + potentiallyConvertedKeys.size()
+                    + " keys that were missing an appropriate prefix");
+            return;
         }
         
-        StatefulRedisConnection<String, byte[]> newConnection = null;
-        try {
-            newConnection = connectionPool.borrowObject();
-            newConnection.addListener(this::handleMessageFromRedis);
-            TrackingArgs trackingArgs = TrackingArgs.Builder.enabled().bcast();
-            newConnection.sync().clientTracking(trackingArgs);
-            return newConnection;
-        } catch (Exception e) {
-            LOG.error("replaceTrackedRedisConnectionIfNecessary, Could not prepare new Redis connection", e);
-            if (newConnection != null) {
-                invalidateOrReturnConnectionToPool(newConnection);
-            }
-            return null;
-        } finally {
-            if (oldConnection != null) {
-                for (String cacheName : localCachesToClearOnListenerReset) {
-                    caches.get(cacheName).clearLocalCacheOnly();
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void handleMessageFromRedis(PushMessage pushMessage) {
-        if (StringUtils.equalsIgnoreCase(MESSAGE_TYPE_INVALIDATE, pushMessage.getType())) {
-            List<Object> content = pushMessage.getContent(stringHandler::decodeValue);
-            if (content.size() >= 2) {
-                List<String> invalidatedKeys = (List<String>) content.get(1);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("handleMessageFromRedis, Evicting the following keys: " + invalidatedKeys);
-                }
-                for (String invalidatedKey : invalidatedKeys) {
-                    evictFromLocalCache(invalidatedKey);
-                }
-            }
-        }
-    }
-
-    private void evictFromLocalCache(String key) {
-        String keyPrefix = StringUtils.substring(key, 0, StringUtils.indexOf(key, VERTICAL_LINE) + 1);
-        CuRedisCache cache = cachesMappedByKeyPrefix.get(keyPrefix);
+        CuLocalCache cache = cachesMappedByKeyPrefix.get(keyPrefix);
         if (cache != null) {
-            String keyWithoutPrefix = StringUtils.substringAfter(key, VERTICAL_LINE);
-            cache.evictFromLocalCacheOnly(keyWithoutPrefix);
+            cache.evictFromLocalCacheOnly(potentiallyConvertedKeys);
+        } else {
+            LOG.warn("evictFromLocalCache, Could not evict " + potentiallyConvertedKeys.size()
+                    + " keys that did not have a Redis-aware cache associated with prefix: " + keyPrefix);
         }
     }
 
-    private void invalidateOrReturnConnectionToPool(StatefulRedisConnection<String, byte[]> redisConnection) {
-        try {
-            connectionPool.invalidateObject(redisConnection);
-        } catch (Exception e) {
-            LOG.error("invalidateOrReturnConnectionToPool, Could not invalidate connection; "
-                    + "will perform a standard return of the connection to the pool instead", e);
-            connectionPool.returnObject(redisConnection);
+    private String getPrefixForRedisKey(String redisKey) {
+        int indexOfLastCharInPrefix = StringUtils.indexOf(redisKey, CUKFSConstants.VERTICAL_LINE);
+        if (indexOfLastCharInPrefix < 0) {
+            return KFSConstants.EMPTY_STRING;
         }
+        return StringUtils.substring(redisKey, 0, indexOfLastCharInPrefix + 1);
+    }
+
+    private String getKeyWithoutPrefix(String redisKey) {
+        String keyWithoutPrefix = StringUtils.substringAfter(redisKey, CUKFSConstants.VERTICAL_LINE);
+        return StringUtils.isNotBlank(keyWithoutPrefix) ? keyWithoutPrefix : StringUtils.defaultString(redisKey);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void close() throws IOException {
-        if (trackedConnectionValidationProcess != null && !trackedConnectionValidationProcess.isShutdown()) {
+        IOUtils.closeQuietly(connectionManager);
+        if (redisClient != null) {
             try {
-                trackedConnectionValidationProcess.awaitTermination(500L, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                LOG.error("close, Thread was interrupted during ExecutorService shutdown", e);
-            }
-            if (!trackedConnectionValidationProcess.isShutdown()) {
-                trackedConnectionValidationProcess.shutdownNow();
+                redisClient.shutdown();
+            } catch (Exception e) {
+                LOG.error("close, Unexpected exception occurred during Redis client shutdown", e);
             }
         }
-        
-        if (connectionPool != null && !connectionPool.isClosed()) {
-            if (trackedConnection != null && trackedConnectionLock != null) {
-                synchronized (trackedConnectionLock) {
-                    StatefulRedisConnection<String, byte[]> redisConnection = trackedConnection;
-                    if (redisConnection != null) {
-                        invalidateOrReturnConnectionToPool(redisConnection);
-                    }
-                }
+        if (localCacheManager != null) {
+            try {
+                localCacheManager.shutdown();
+            } catch (Exception e) {
+                LOG.error("close, Unexpected exception occurred during EhCache Manager shutdown", e);
             }
-            IOUtils.closeQuietly(connectionPool);
-        }
-        
-        if (redisConnectionFactory != null) {
-            IOUtils.closeQuietly(redisConnectionFactory);
         }
     }
 
@@ -241,16 +197,16 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
         this.localCachesToClearOnListenerReset = Set.copyOf(localCachesToClearOnListenerReset);
     }
 
+    public void setCachesIgnoringRedisEvents(Collection<String> cachesIgnoringRedisEvents) {
+        this.cachesIgnoringRedisEvents = Set.copyOf(cachesIgnoringRedisEvents);
+    }
+
     public void setLocalCacheManager(net.sf.ehcache.CacheManager localCacheManager) {
         this.localCacheManager = localCacheManager;
     }
 
-    public void setRedisConnectionFactory(CuRedisConnectionFactory redisConnectionFactory) {
-        this.redisConnectionFactory = redisConnectionFactory;
-    }
-
-    public void setPoolConfig(GenericObjectPoolConfig poolConfig) {
-        this.poolConfig = poolConfig;
+    public void setRedisClient(RedisClient redisClient) {
+        this.redisClient = redisClient;
     }
 
 }
