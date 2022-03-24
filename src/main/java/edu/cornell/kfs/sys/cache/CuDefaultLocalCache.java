@@ -1,23 +1,20 @@
 package edu.cornell.kfs.sys.cache;
 
-import java.text.MessageFormat;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.cache.ehcache.EhCacheCache;
 
 import net.sf.ehcache.Ehcache;
 
 public class CuDefaultLocalCache extends EhCacheCache implements CuLocalCache {
 
-    private static final String KEY_PREFIX_FORMAT = "'{'{0}'}|'";
-
     protected final String cacheName;
     protected final Ehcache localCache;
-    protected final String keyPrefix;
 
-    protected CuDefaultLocalCache(String cacheName, Ehcache localCache) {
+    public CuDefaultLocalCache(String cacheName, Ehcache localCache) {
         super(localCache);
         if (StringUtils.isBlank(cacheName)) {
             throw new IllegalArgumentException("cacheName cannot be blank");
@@ -26,12 +23,11 @@ public class CuDefaultLocalCache extends EhCacheCache implements CuLocalCache {
         }
         this.cacheName = cacheName;
         this.localCache = localCache;
-        this.keyPrefix = MessageFormat.format(KEY_PREFIX_FORMAT, cacheName);
     }
 
     @Override
-    public String getKeyPrefix() {
-        return keyPrefix;
+    public String getKeyPrefixForRemoteKeyStorage() {
+        return KFSConstants.EMPTY_STRING;
     }
 
     @Override
@@ -73,7 +69,7 @@ public class CuDefaultLocalCache extends EhCacheCache implements CuLocalCache {
     }
 
     @Override
-    public void evictFromLocalCacheOnly(List<?> keys) {
+    public void evictFromLocalCacheOnly(Collection<?> keys) {
         localCache.removeAll(keys);
     }
 

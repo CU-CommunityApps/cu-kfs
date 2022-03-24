@@ -18,11 +18,8 @@
  */
 package org.kuali.kfs.sys.cache;
 
-import static java.util.Map.entry;
-
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
@@ -76,7 +73,9 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import net.sf.ehcache.config.ConfigurationFactory;
 
-/* Cornell Customization: backport redis*/
+/*
+ * Cornell Customization: backport redis and customize as needed to improve performance
+ */
 @Configuration
 @EnableCaching
 public class CacheConfiguration {
@@ -129,21 +128,6 @@ public class CacheConfiguration {
     }
 
     @Bean
-    public Map<String, Long> cacheExpires() {
-        // These caches have a TTL value different from the default specified in the redis.default.ttl property
-        return Map.ofEntries(
-        		
-                entry(DocumentType.CACHE_NAME, 3600L),
-                entry(MenuService.MENU_LINKS_CACHE_NAME, 86760L),
-                entry(Namespace.CACHE_NAME, 3600L),
-                entry(Parameter.CACHE_NAME, 3600L),
-                entry(RoutePath.CACHE_NAME, 3600L),
-                entry(RuleAttribute.CACHE_NAME, 3600L)
-                
-        );
-    }
-
-    @Bean
     public List<String> localCachesToClearOnListenerReset() {
         return List.of(
                 Parameter.CACHE_NAME,
@@ -188,10 +172,9 @@ public class CacheConfiguration {
         
         CuRedisCacheManager cacheManager = new CuRedisCacheManager();
         cacheManager.setCacheNames(cacheNames());
-        cacheManager.setCacheExpirations(cacheExpires());
-        cacheManager.setDefaultExpiration(redisDefaultTtl);
         cacheManager.setLocalCachesToClearOnListenerReset(localCachesToClearOnListenerReset());
         cacheManager.setCachesIgnoringRedisEvents(cachesIgnoringRedisEvents());
+        cacheManager.setDefaultTimeToLiveInSeconds(redisDefaultTtl);
         cacheManager.setLocalCacheManager(localCacheManager);
         cacheManager.setRedisClient(redisClient);
         return cacheManager;

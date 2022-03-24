@@ -30,9 +30,6 @@ public class CuRedisConnectionManager implements Closeable {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final String DEFAULT_REDIS_PING_RESPONSE = "PONG";
-    private static final String MESSAGE_TYPE_INVALIDATE = "invalidate";
-
     private final RedisClient redisClient;
     private final Runnable connectionChangeListener;
     private final Consumer<List<String>> redisKeyInvalidationListener;
@@ -100,7 +97,6 @@ public class CuRedisConnectionManager implements Closeable {
         if (!managerActive[0]) {
             throw new IllegalStateException("Connection Manager has already been closed");
         } else if (!isConnectionValid(redisConnection)) {
-            CuResourceUtils.closeQuietly(redisConnection);
             return getOrCreateSharedConnection(redisConnection);
         }
         return redisConnection;
@@ -109,23 +105,26 @@ public class CuRedisConnectionManager implements Closeable {
     private StatefulRedisConnection<String, String> getOrCreateSharedConnection(
             StatefulRedisConnection<String, String> oldConnection) {
         synchronized (this) {
-            StatefulRedisConnection<String, String> redisConnection = null;
+            StatefulRedisConnection<String, String> currentConnection = null;
             boolean[] managerActive = new boolean[1];
             try {
-                redisConnection = sharedConnection.get(managerActive);
+                currentConnection = sharedConnection.get(managerActive);
                 if (!managerActive[0]) {
                     throw new IllegalStateException("Connection Manager has already been closed");
-                } else if (!isConnectionValid(redisConnection)) {
-                    redisConnection = getNewConnection();
-                    if (!sharedConnection.compareAndSet(oldConnection, redisConnection, true, true)) {
+                } else if (!isConnectionValid(currentConnection)) {
+                    CuResourceUtils.closeQuietly(oldConnection);
+                    CuResourceUtils.closeQuietly(currentConnection);
+                    currentConnection = getNewConnection();
+                    if (!sharedConnection.compareAndSet(oldConnection, currentConnection, true, true)) {
                         throw new IllegalStateException(
                                 "Could not update shared connection reference; this should NEVER happen!");
                     }
                     LOG.info("getOrCreateSharedConnection, Successfully created a new shared Redis connection");
                 }
-                return redisConnection;
+                return currentConnection;
             } catch (RuntimeException e) {
-                CuResourceUtils.closeQuietly(redisConnection);
+                CuResourceUtils.closeQuietly(oldConnection);
+                CuResourceUtils.closeQuietly(currentConnection);
                 LOG.error("getOrCreateSharedConnection, Unexpected exception occurred while preparing "
                         + "Redis connection; will forcibly close potentially-initialized connection if necessary", e);
                 if (!managerActive[0] && e instanceof IllegalStateException) {
@@ -163,7 +162,7 @@ public class CuRedisConnectionManager implements Closeable {
         }
         try {
             String pingResponse = redisConnection.sync().ping();
-            boolean result = StringUtils.equalsIgnoreCase(DEFAULT_REDIS_PING_RESPONSE, pingResponse);
+            boolean result = StringUtils.equalsIgnoreCase(CuCacheConstants.REDIS_DEFAULT_PING_RESPONSE, pingResponse);
             if (!result) {
                 LOG.error("isConnectionValid, Unexpected PING response was received from Redis: " + pingResponse);
             }
@@ -176,7 +175,7 @@ public class CuRedisConnectionManager implements Closeable {
 
     @SuppressWarnings("unchecked")
     private void handleMessageFromRedis(PushMessage pushMessage) {
-        if (StringUtils.equalsIgnoreCase(MESSAGE_TYPE_INVALIDATE, pushMessage.getType())) {
+        if (StringUtils.equalsIgnoreCase(CuCacheConstants.REDIS_MESSAGE_TYPE_INVALIDATE, pushMessage.getType())) {
             List<Object> content = pushMessage.getContent(stringCodec::decodeValue);
             if (CollectionUtils.size(content) >= 2) {
                 List<String> invalidatedKeys = (List<String>) content.get(1);

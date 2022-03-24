@@ -1,5 +1,6 @@
 package edu.cornell.kfs.sys.cache;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -25,18 +26,22 @@ public class CuRedisAwareLocalCache extends CuDefaultLocalCache {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final int KEY_DELETE_BATCH_SIZE = 50;
-    private static final long KEY_DELETE_AWAIT_SECONDS = 60L;
-
     private final CuRedisConnectionManager connectionManager;
-    private final long expirationSeconds;
+    private final long entryExpirationInSeconds;
+    private final String keyPrefix;
 
     public CuRedisAwareLocalCache(String cacheName, Ehcache localCache, CuRedisConnectionManager connectionManager,
-            long expirationSeconds) {
+            long entryExpirationInSeconds) {
         super(cacheName, localCache);
         Objects.requireNonNull(connectionManager, "connectionManager cannot be null");
         this.connectionManager = connectionManager;
-        this.expirationSeconds = expirationSeconds;
+        this.entryExpirationInSeconds = entryExpirationInSeconds;
+        this.keyPrefix = MessageFormat.format(CuCacheConstants.KEY_PREFIX_FORMAT, cacheName);
+    }
+
+    @Override
+    public String getKeyPrefixForRemoteKeyStorage() {
+        return keyPrefix;
     }
 
     @Override
@@ -51,7 +56,7 @@ public class CuRedisAwareLocalCache extends CuDefaultLocalCache {
     private void addExpirableKeyPlaceholderToRedisIfAbsent(
             StatefulRedisConnection<String, String> redisConnection, Object key) {
         String redisKey = convertToRedisKey(key);
-        SetArgs argsNotExistsAndExpireAfterDuration = SetArgs.Builder.nx().ex(expirationSeconds);
+        SetArgs argsNotExistsAndExpireAfterDuration = SetArgs.Builder.nx().ex(entryExpirationInSeconds);
         if (LOG.isDebugEnabled()) {
             LOG.debug("addExpirableKeyPlaceholderToRedisIfAbsent, Adding placeholder for key: " + redisKey);
         }
@@ -96,14 +101,17 @@ public class CuRedisAwareLocalCache extends CuDefaultLocalCache {
         
         RedisAsyncCommands<String, String> asyncCommands = redisConnection.async();
         Stream.Builder<RedisFuture<?>> asyncCalls = Stream.builder();
-        for (int startIndex = 0; startIndex < keysToDelete.length; startIndex += KEY_DELETE_BATCH_SIZE) {
-            int endIndex = Math.min(startIndex + KEY_DELETE_BATCH_SIZE, keysToDelete.length);
+        for (int startIndex = 0;
+                startIndex < keysToDelete.length; startIndex += CuCacheConstants.REDIS_KEY_DELETE_BATCH_SIZE) {
+            int endIndex = Math.min(startIndex + CuCacheConstants.REDIS_KEY_DELETE_BATCH_SIZE, keysToDelete.length);
             String[] keysSubArray = Arrays.copyOfRange(keysToDelete, startIndex, endIndex);
-            asyncCalls.add(asyncCommands.del(keysSubArray));
+            RedisFuture<?> asyncDeletionCall = asyncCommands.del(keysSubArray);
+            asyncCalls.add(asyncDeletionCall);
         }
         
         RedisFuture<?>[] triggeredCalls = asyncCalls.build().toArray(RedisFuture[]::new);
-        if (LettuceFutures.awaitAll(KEY_DELETE_AWAIT_SECONDS, TimeUnit.SECONDS, triggeredCalls)) {
+        if (LettuceFutures.awaitAll(
+                CuCacheConstants.REDIS_KEY_DELETE_AWAIT_SECONDS, TimeUnit.SECONDS, triggeredCalls)) {
             if (LOG.isDebugEnabled()) {
                 long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
                 LOG.debug("deleteKeyPlaceholdersInRedisForCurrentCache, Successfully deleted " + keysToDelete.length
@@ -111,7 +119,7 @@ public class CuRedisAwareLocalCache extends CuDefaultLocalCache {
             }
         } else {
             LOG.warn("deleteKeyPlaceholdersInRedisForCurrentCache, Operation for deleting " + keysToDelete.length
-                    + " keys took longer than " + KEY_DELETE_AWAIT_SECONDS
+                    + " keys took longer than " + CuCacheConstants.REDIS_KEY_DELETE_AWAIT_SECONDS
                     + " seconds; the bulk key deletion may still be in progress.");
         }
     }
@@ -120,7 +128,7 @@ public class CuRedisAwareLocalCache extends CuDefaultLocalCache {
         Stream.Builder<String> keysToDelete = Stream.builder();
         KeyScanArgs scanArgs = KeyScanArgs.Builder
                 .matches(keyPrefix + KFSConstants.WILDCARD_CHARACTER)
-                .limit(KEY_DELETE_BATCH_SIZE);
+                .limit(CuCacheConstants.REDIS_KEY_DELETE_BATCH_SIZE);
         KeyScanCursor<String> cursor = null;
         
         do {

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
-import edu.cornell.kfs.sys.CUKFSConstants;
 import io.lettuce.core.RedisClient;
 import net.sf.ehcache.Ehcache;
 
@@ -27,10 +26,9 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
     private static final Logger LOG = LogManager.getLogger();
 
     private Set<String> cacheNames;
-    private Map<String, Long> cacheExpirations;
-    private Long defaultExpiration;
     private Set<String> localCachesToClearOnListenerReset;
     private Set<String> cachesIgnoringRedisEvents;
+    private Long defaultTimeToLiveInSeconds;
     private net.sf.ehcache.CacheManager localCacheManager;
     private RedisClient redisClient;
 
@@ -41,12 +39,19 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
     @Override
     public void afterPropertiesSet() throws Exception {
         Objects.requireNonNull(cacheNames, "cacheNames cannot be null");
-        Objects.requireNonNull(cacheExpirations, "cacheExpirations cannot be null");
-        Objects.requireNonNull(defaultExpiration, "defaultExpiration cannot be null");
         Objects.requireNonNull(localCachesToClearOnListenerReset, "localCachesToClearOnListenerReset cannot be null");
         Objects.requireNonNull(cachesIgnoringRedisEvents, "cachesIgnoringRedisEvents cannot be null");
+        Objects.requireNonNull(defaultTimeToLiveInSeconds, "defaultTimeToLiveInSeconds cannot be null");
         Objects.requireNonNull(localCacheManager, "localCacheManager cannot be null");
         Objects.requireNonNull(redisClient, "redisClient cannot be null");
+        
+        if (!cacheNames.containsAll(localCachesToClearOnListenerReset)) {
+            throw new IllegalStateException(
+                    "localCachesToClearOnListenerReset contains entries that were not specified in cacheNames");
+        } else if (!cacheNames.containsAll(cachesIgnoringRedisEvents)) {
+            throw new IllegalStateException(
+                    "cachesIgnoringRedisEvents contains entries that were not specified in cacheNames");
+        }
         
         this.connectionManager = new CuRedisConnectionManager(redisClient,
                 this::clearMarkedCachesOnSharedConnectionChange, this::handleInvalidatedRedisKeys);
@@ -69,15 +74,18 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
         if (cachesIgnoringRedisEvents.contains(cacheName)) {
             return new CuDefaultLocalCache(cacheName, localCache);
         } else {
-            Long expirationMillis = cacheExpirations.getOrDefault(cacheName, defaultExpiration);
-            return new CuRedisAwareLocalCache(cacheName, localCache, connectionManager, expirationMillis);
+            long timeToLiveInSeconds = localCache.getCacheConfiguration().getTimeToLiveSeconds();
+            if (timeToLiveInSeconds <= 0L) {
+                timeToLiveInSeconds = defaultTimeToLiveInSeconds;
+            }
+            return new CuRedisAwareLocalCache(cacheName, localCache, connectionManager, timeToLiveInSeconds);
         }
     }
 
     private Map<String, CuLocalCache> buildMappingsOfKeyPrefixesToCaches(Collection<CuLocalCache> caches) {
         return caches.stream()
                 .filter(cache -> !cachesIgnoringRedisEvents.contains(cache.getName()))
-                .collect(Collectors.toUnmodifiableMap(CuLocalCache::getKeyPrefix, cache -> cache));
+                .collect(Collectors.toUnmodifiableMap(CuLocalCache::getKeyPrefixForRemoteKeyStorage, cache -> cache));
     }
 
     private void clearMarkedCachesOnSharedConnectionChange() {
@@ -136,15 +144,17 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
     }
 
     private String getPrefixForRedisKey(String redisKey) {
-        int indexOfLastCharInPrefix = StringUtils.indexOf(redisKey, CUKFSConstants.VERTICAL_LINE);
-        if (indexOfLastCharInPrefix < 0) {
+        int indexOfKeyPrefixEnd = StringUtils.indexOf(redisKey, CuCacheConstants.KEY_PREFIX_END_CHARS);
+        if (indexOfKeyPrefixEnd < 0) {
             return KFSConstants.EMPTY_STRING;
+        } else {
+            return StringUtils.substring(
+                    redisKey, 0, indexOfKeyPrefixEnd + CuCacheConstants.KEY_PREFIX_END_CHARS.length());
         }
-        return StringUtils.substring(redisKey, 0, indexOfLastCharInPrefix + 1);
     }
 
     private String getKeyWithoutPrefix(String redisKey) {
-        String keyWithoutPrefix = StringUtils.substringAfter(redisKey, CUKFSConstants.VERTICAL_LINE);
+        String keyWithoutPrefix = StringUtils.substringAfter(redisKey, CuCacheConstants.KEY_PREFIX_END_CHARS);
         return StringUtils.isNotBlank(keyWithoutPrefix) ? keyWithoutPrefix : StringUtils.defaultString(redisKey);
     }
 
@@ -163,7 +173,7 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
             try {
                 localCacheManager.shutdown();
             } catch (Exception e) {
-                LOG.error("close, Unexpected exception occurred during EhCache Manager shutdown", e);
+                LOG.error("close, Unexpected exception occurred during Ehcache Manager shutdown", e);
             }
         }
     }
@@ -185,12 +195,8 @@ public class CuRedisCacheManager implements CacheManager, InitializingBean, Clos
         this.cacheNames = Set.copyOf(cacheNames);
     }
 
-    public void setCacheExpirations(Map<String, Long> cacheExpirations) {
-        this.cacheExpirations = Map.copyOf(cacheExpirations);
-    }
-
-    public void setDefaultExpiration(Long defaultExpiration) {
-        this.defaultExpiration = defaultExpiration;
+    public void setDefaultTimeToLiveInSeconds(Long defaultTimeToLiveInSeconds) {
+        this.defaultTimeToLiveInSeconds = defaultTimeToLiveInSeconds;
     }
 
     public void setLocalCachesToClearOnListenerReset(Collection<String> localCachesToClearOnListenerReset) {
