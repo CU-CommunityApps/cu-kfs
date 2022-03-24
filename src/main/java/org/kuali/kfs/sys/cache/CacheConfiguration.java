@@ -131,7 +131,14 @@ public class CacheConfiguration {
     public List<String> localCachesToClearOnListenerReset() {
         return List.of(
                 Parameter.CACHE_NAME,
-                Permission.CACHE_NAME
+                Permission.CACHE_NAME,
+                PermissionTemplate.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                ResponsibilityTemplate.CACHE_NAME,
+                Role.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME
         );
     }
 

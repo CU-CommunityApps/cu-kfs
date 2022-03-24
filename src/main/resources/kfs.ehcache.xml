@@ -18,15 +18,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!--Cornell Customization: backport redis-->
+<!--Cornell Customization: backport redis and tweak performance-->
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
          updateCheck="false"
          name="cacheManager">
 
-    <diskStore path="java.io.tmpdir"/>
+    <!-- Cornell Customization: Disable diskStore to potentially improve performance -->
+    <!--<diskStore path="java.io.tmpdir"/>-->
 
-    <defaultCache maxElementsInMemory="10000" maxEntriesLocalHeap="10000" overflowToDisk="false"/>
+    <!-- Cornell Customization: Use newer-style configuration to turn off disk persistence -->
+    <defaultCache maxElementsInMemory="10000" maxEntriesLocalHeap="10000">
+        <persistence strategy="none"/>
+    </defaultCache>
 
     <!-- Cache with copyOnRead (replacement for @Cached) -->
     <cache name="Account" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
