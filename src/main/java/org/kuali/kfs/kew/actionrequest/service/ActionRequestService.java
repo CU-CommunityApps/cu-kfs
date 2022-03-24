@@ -112,6 +112,11 @@ public interface ActionRequestService {
 
     List findActivatedByGroup(String groupId);
 
+    /**
+     * Schedule requeue of documents, affected by responsibility changes.
+     *
+     * @param responsibilityIds used to find documents to requeue.
+     */
     void updateActionRequestsForResponsibilityChange(Set<String> responsibilityIds);
     
     /*
