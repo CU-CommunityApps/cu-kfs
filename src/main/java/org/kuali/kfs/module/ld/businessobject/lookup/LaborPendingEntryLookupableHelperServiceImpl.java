@@ -45,7 +45,7 @@ import java.util.Map;
  * Helper Service for looking up instances of {@link LaborLedgerPendingEntry}
  */
 /*
- * Cornell customization - backport FINP-8068. This can be removed when we updated to the 2/2/2022 version of financials.
+ * Cornell customization - backport FINP-8068. This can be removed when we upgrade to the 2/2/2022 version of financials.
  */
 public class LaborPendingEntryLookupableHelperServiceImpl extends AbstractLookupableHelperServiceImpl {
 
