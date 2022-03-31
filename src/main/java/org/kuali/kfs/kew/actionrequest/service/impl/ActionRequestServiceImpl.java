@@ -48,18 +48,11 @@ import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kew.util.FutureRequestDocumentStateManager;
 import org.kuali.kfs.kew.util.PerformanceLogger;
 import org.kuali.kfs.kew.util.ResponsibleParty;
-import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
-import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.group.Group;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.impl.role.Role;
-import org.kuali.kfs.kim.impl.role.RoleMember;
-import org.kuali.kfs.kim.impl.role.RoleResponsibility;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.springframework.cache.annotation.CacheEvict;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -664,21 +657,6 @@ public class ActionRequestServiceImpl implements ActionRequestService {
      * FINP-8322 changes from KualiCo patch release 2022-03-23 applied to
      * original KEW-to-KFS KualiCo patch release 2021-01-28 version of the file.
      */
-    /*
-     * FINP-8326 changes from KualiCo patch release 2022-03-23 applied to
-     * original KEW-to-KFS KualiCo patch release 2021-01-28 version of the file.
-     */
-    @CacheEvict(
-            allEntries = true,
-            value = {
-                Role.CACHE_NAME,
-                RoleMembership.CACHE_NAME,
-                RoleMember.CACHE_NAME,
-                DelegateMember.CACHE_NAME,
-                RoleResponsibility.CACHE_NAME,
-                DelegateType.CACHE_NAME
-            }
-    )
     @Override
     public void updateActionRequestsForResponsibilityChange(Set<String> responsibilityIds, String docIdToIgnore) {
         Collection documentsAffected = getRouteHeaderService().findPendingByResponsibilityIds(responsibilityIds);
