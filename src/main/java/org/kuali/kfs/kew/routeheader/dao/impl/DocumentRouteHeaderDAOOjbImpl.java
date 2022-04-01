@@ -217,10 +217,7 @@ public class DocumentRouteHeaderDAOOjbImpl extends PersistenceBrokerDaoSupport i
     protected DatabasePlatform getPlatform() {
         return (DatabasePlatform) GlobalResourceLoader.getService(KFSConstants.DB_PLATFORM);
     }
-    /*
-     * FINP-8322 changes from KualiCo patch release 2022-03-23 applied to
-     * original KEW-to-KFS KualiCo patch release 2021-01-28 version of the file.
-     */
+
     public Collection<String> findPendingByResponsibilityIds(Set<String> responsibilityIds) {
         Collection<String> documentIds = new ArrayList<>();
         if (responsibilityIds.isEmpty()) {
@@ -240,14 +237,12 @@ public class DocumentRouteHeaderDAOOjbImpl extends PersistenceBrokerDaoSupport i
                 index++;
             }
             respIds += "')";
-            String query = "SELECT DISTINCT(D.DOC_HDR_ID) FROM KREW_ACTN_RQST_T A " +
-                    "INNER JOIN KREW_DOC_HDR_T D ON A.DOC_HDR_ID = D.DOC_HDR_ID " +
-                    "AND D.DOC_HDR_STAT_CD IN ('I', 'S', 'R', 'E') " +
-                    "WHERE (A.STAT_CD='" +
+            String query = "SELECT DISTINCT(doc_hdr_id) FROM KREW_ACTN_RQST_T " +
+                    "WHERE (STAT_CD='" +
                     ActionRequestStatus.INITIALIZED.getCode() +
-                    "' OR A.STAT_CD='" +
+                    "' OR STAT_CD='" +
                     ActionRequestStatus.ACTIVATED.getCode() +
-                    "') AND A.RSP_ID IN " + respIds;
+                    "') AND RSP_ID IN " + respIds;
             LOG.debug("Query to find pending documents for requeue: " + query);
             statement = conn.createStatement();
             rs = statement.executeQuery(query);
