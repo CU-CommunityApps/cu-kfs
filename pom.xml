@@ -2437,6 +2437,12 @@
 			
 				<dependency>
 					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-jcl</artifactId>
+					<version>${log4j.version}</version>
+				</dependency>
+			
+				<dependency>
+					<groupId>org.apache.logging.log4j</groupId>
 					<artifactId>log4j-jul</artifactId>
 					<version>${log4j.version}</version>
 				</dependency>
@@ -2493,6 +2499,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
+            <exclusions>
+               <exclusion>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-jcl</artifactId>
+               </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
