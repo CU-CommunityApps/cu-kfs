@@ -19,17 +19,14 @@
 
 -->
 <!--
-    CU Customization: Backport FINP-7916 (aka FINP-7983?) changes into the 2021-01-21 version of this file.
+    CU Customization: Backport FINP-7916 (aka FINP-7983?) changes into the 2021-01-28 version of this file.
     This overlay should be removed when we upgrade to the 2021-11-17 financials patch or later.
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-                           http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <bean id="kfsKimModuleConfiguration" parent="kfsKimModuleConfiguration-parentBean"/>
     <bean id="kfsKimModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true"
@@ -43,12 +40,12 @@
                 <value>classpath:org/kuali/kfs/kim/document/datadictionary/*.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/common/attribute/*.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/common/delegate/*.xml</value>
-                <value>classpath:org/kuali/kfs/kim/impl/identity/affiliation/EntityAffiliationBo.xml</value>
-                <value>classpath:org/kuali/kfs/kim/impl/identity/address/EntityAddressBo.xml</value>
-                <value>classpath:org/kuali/kfs/kim/impl/identity/email/EntityEmailBo.xml</value>
-                <value>classpath:org/kuali/kfs/kim/impl/identity/employment/EntityEmploymentBo.xml</value>
-                <value>classpath:org/kuali/kfs/kim/impl/identity/name/EntityNameBo.xml</value>
-                <value>classpath:org/kuali/kfs/kim/impl/identity/phone/EntityPhoneBo.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/identity/affiliation/EntityAffiliation.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/identity/address/EntityAddress.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/identity/email/EntityEmail.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/identity/employment/EntityEmployment.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/identity/name/EntityName.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/identity/phone/EntityPhone.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/identity/PersonImpl.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/group/*.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/permission/*.xml</value>
@@ -60,7 +57,6 @@
         <property name="packagePrefixes">
             <list>
                 <value>org.kuali.kfs.kim</value>
-                <value>org.kuali.rice.kim</value>
             </list>
         </property>
         <property name="databaseRepositoryFilePaths">
@@ -70,7 +66,7 @@
         </property>
         <property name="externalizableBusinessObjectImplementations">
             <map>
-                <entry key="org.kuali.rice.kim.api.identity.Person"
+                <entry key="org.kuali.kfs.kim.api.identity.Person"
                        value="org.kuali.kfs.kim.impl.identity.PersonImpl"/>
             </map>
         </property>
@@ -81,49 +77,25 @@
           p:moduleConfiguration-ref="kfsKimModuleConfiguration"
           p:kualiModuleService-ref="kualiModuleService"/>
 
-    <bean id="businessObjectService"
-          class="org.kuali.kfs.krad.config.GlobalResourceLoaderServiceFactoryBean"
-          p:serviceName="cf.businessObjectService"/>
-
-    <bean id="kualiConfigurationService"
-          class="org.kuali.kfs.krad.config.GlobalResourceLoaderServiceFactoryBean"
-          p:serviceName="configurationService"/>
-
-    <bean id="criteriaLookupService"
-          class="org.kuali.kfs.krad.config.GlobalResourceLoaderServiceFactoryBean"
-          p:serviceName="cf.criteriaLookupService"/>
+    <bean id="kimDataIntegrityService" class="org.kuali.kfs.kim.impl.data.DataIntegrityServiceImpl"
+          p:dataSource-ref="dataSource"/>
 
     <!--
           Identity Service
     -->
 
-    <bean id="kimIdentityDelegateService" class="org.kuali.kfs.kim.impl.identity.IdentityServiceImpl"
+    <bean id="identityService" class="org.kuali.kfs.kim.impl.identity.IdentityServiceImpl"
           p:businessObjectService-ref="businessObjectService"
           p:criteriaLookupService-ref="criteriaLookupService"/>
-
-    <bean id="kimIdentityArchiveService" parent="kimIdentityArchiveService-parentBean"/>
-    <bean id="kimIdentityArchiveService-parentBean" class="org.kuali.kfs.kim.service.impl.IdentityArchiveServiceImpl"
-          abstract="true" p:businessObjectService-ref="businessObjectService"
-          p:kualiConfigurationService-ref="kualiConfigurationService"
-          p:transactionManager-ref="transactionManager"/>
-
-    <bean id="kimIdentityService" class="org.kuali.kfs.kim.impl.identity.IdentityCurrentAndArchivedServiceImpl">
-        <constructor-arg ref="kimIdentityArchiveService"/>
-        <constructor-arg ref="kimIdentityDelegateService"/>
-    </bean>
-
-    <alias name="kimIdentityService" alias="identityService"/>
 
     <!--
           Role Service
     -->
 
-    <bean id="kimRoleService" class="org.kuali.kfs.kim.impl.role.RoleServiceImpl"
+    <bean id="roleService" class="org.kuali.kfs.kim.impl.role.RoleServiceImpl"
           p:roleDao-ref="kimRoleDao"
           p:criteriaLookupService-ref="criteriaLookupService"
           p:cacheManager-ref="kfs.core.LocalCacheManager"/>
-
-    <alias name="kimRoleService" alias="roleService"/>
 
     <bean id="kimRoleInternalService" class="org.kuali.kfs.kim.impl.role.RoleInternalServiceImpl"
           p:roleDao-ref="kimRoleDao"/>
@@ -140,15 +112,13 @@
           Permission Service
     -->
 
-    <bean id="kimPermissionService" class="org.kuali.kfs.kim.impl.permission.PermissionServiceImpl"
+    <bean id="permissionService" class="org.kuali.kfs.kim.impl.permission.PermissionServiceImpl"
           p:businessObjectService-ref="businessObjectService"
           p:criteriaLookupService-ref="criteriaLookupService"
           p:kimTypeInfoService-ref="kimTypeInfoService"
-          p:roleService-ref="kimRoleService"
-          p:cacheManager-ref="kfs.core.LocalCacheManager"/>
-
-    <alias name="kimPermissionService" alias="permissionService"/>
-
+          p:roleService-ref="roleService"
+          p:cacheManager-ref="kfs.core.LocalCacheManager"
+          p:defaultPermissionTypeService-ref="kimPermissionTypeService"/>
 
     <!--
           Responsibility Service
@@ -159,160 +129,188 @@
           p:criteriaLookupService-ref="criteriaLookupService"
           p:defaultResponsibilityTypeService-ref="kfs.defaultResponsibilityTypeService"
           p:kimTypeInfoService-ref="kimTypeInfoService"
-          p:roleService-ref="kimRoleService"/>
+          p:roleService-ref="roleService"/>
 
     <bean id="kimTypeInfoService" class="org.kuali.kfs.kim.impl.type.KimTypeInfoServiceImpl">
         <property name="businessObjectService" ref="businessObjectService"/>
     </bean>
 
-    <bean id="kfs.activePrincipalRoleTypeService" class="org.kuali.kfs.kns.kim.role.PrincipalDerivedRoleTypeServiceImpl"/>
+    <bean id="kfs.activePrincipalRoleTypeService"
+          class="org.kuali.kfs.kns.kim.role.PrincipalDerivedRoleTypeServiceImpl" parent="kimNoMembersRoleTypeService"/>
 
     <bean id="groupInternalService" class="org.kuali.kfs.kim.impl.group.GroupInternalServiceImpl"/>
+
     <bean id="responsibilityInternalService"
-          class="org.kuali.kfs.kim.impl.responsibility.ResponsibilityInternalServiceImpl"/>
+          class="org.kuali.kfs.kim.impl.responsibility.ResponsibilityInternalServiceImpl"
+          p:businessObjectService-ref="businessObjectService"
+          p:responsibilityChangeQueue-ref="responsibilityChangeQueue"
+          p:responsibilityService-ref="kimResponsibilityService"/>
 
     <bean id="kfs.documentInitiatorRoleTypeService"
-          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl"
-          p:permissionTemplateNamespace="KR-SYS"
+          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl" parent="kimNoMembersRoleTypeService"
+          p:permissionTemplateNamespace="KFS-SYS"
           p:permissionTemplateName="Initiate Document"/>
 
     <bean id="kfs.documentEditorRoleTypeService"
-          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl"
-          p:permissionTemplateNamespace="KR-NS"
+          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl" parent="kimNoMembersRoleTypeService"
+          p:permissionTemplateNamespace="KFS-SYS"
           p:permissionTemplateName="Edit Document"/>
 
     <bean id="kfs.documentOpenerRoleTypeService"
-          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl"
-          p:permissionTemplateNamespace="KR-NS"
+          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl" parent="kimNoMembersRoleTypeService"
+          p:permissionTemplateNamespace="KFS-SYS"
           p:permissionTemplateName="Open Document"/>
 
     <bean id="kfs.documentRouterRoleTypeService"
-          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl"
-          p:permissionTemplateNamespace="KR-WKFLW"
+          class="org.kuali.kfs.krad.kim.PermissionDerivedRoleTypeServiceImpl" parent="kimNoMembersRoleTypeService"
+          p:permissionTemplateNamespace="KFS-WKFLW"
           p:permissionTemplateName="Route Document"/>
 
     <bean id="kfs.documentTypeAndNodeOrStatePermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypeAndNodeOrStatePermissionTypeServiceImpl"/>
-
-    <bean id="kfs.defaultPermissionTypeService" class="org.kuali.kfs.kns.kim.permission.PermissionTypeServiceBase"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypeAndNodeOrStatePermissionTypeServiceImpl"
+          parent="kfs.documentTypePermissionTypeService"/>
 
     <bean id="kfs.defaultResponsibilityTypeService"
-          class="org.kuali.kfs.kns.kim.responsibility.KimResponsibilityTypeServiceBase"/>
+          class="org.kuali.kfs.kns.kim.responsibility.KimResponsibilityTypeServiceBase" parent="kimTypeService"/>
 
     <bean id="kfs.permissionPermissionTypeService"
           class="org.kuali.kfs.krad.kim.NamespaceWildcardAllowedAndOrStringExactMatchPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="permissionName"
           p:namespaceRequiredOnStoredMap="true"/>
 
     <bean id="kfs.responsibilityPermissionTypeService"
           class="org.kuali.kfs.krad.kim.NamespaceWildcardAllowedAndOrStringExactMatchPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="responsibilityName"
           p:namespaceRequiredOnStoredMap="true"/>
 
     <bean id="kfs.rolePermissionTypeService"
           class="org.kuali.kfs.krad.kim.NamespaceWildcardAllowedAndOrStringExactMatchPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="roleName"
           p:namespaceRequiredOnStoredMap="true"/>
 
     <bean id="kfs.groupPermissionTypeService"
           class="org.kuali.kfs.krad.kim.PopulateGroupPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="groupName"
           p:namespaceRequiredOnStoredMap="true"/>
 
-    <!-- for person Doc UI  -->
-    <bean id="kimTypeService" class="org.kuali.kfs.kns.kim.type.DataDictionaryTypeServiceBase"/>
-    <bean id="kimPermissionTypeService" class="org.kuali.kfs.kns.kim.permission.PermissionTypeServiceBase"/>
-    <bean id="kimRoleTypeService" class="org.kuali.kfs.kns.kim.role.RoleTypeServiceBase"/>
-    <bean id="kimGroupTypeService" class="org.kuali.kfs.kns.kim.group.GroupTypeServiceBase"/>
-    <bean id="kimDelegationTypeService" class="org.kuali.kfs.kns.kim.role.RoleTypeServiceBase"/>
+    <bean id="kimTypeService" class="org.kuali.kfs.kns.kim.type.DataDictionaryTypeServiceBase"
+        p:businessObjectService-ref="businessObjectService"
+        p:dataDictionaryService-ref="dataDictionaryService"
+        p:dictionaryValidationService-ref="dictionaryValidationService"
+        p:documentTypeService-ref="documentTypeService"
+        p:typeInfoService-ref="kimTypeInfoService"/>
 
-    <bean id="kimNoMembersRoleTypeService" class="org.kuali.kfs.kns.kim.role.DerivedRoleTypeServiceBase"/>
+    <bean id="kimPermissionTypeService" class="org.kuali.kfs.kns.kim.permission.PermissionTypeServiceBase"
+          parent="kimTypeService"/>
+    <bean id="kimRoleTypeService" class="org.kuali.kfs.kns.kim.role.RoleTypeServiceBase" parent="kimTypeService"/>
+    <bean id="kimGroupTypeService" class="org.kuali.kfs.kns.kim.group.GroupTypeServiceBase" parent="kimTypeService"/>
+
+    <bean id="kimNoMembersRoleTypeService" class="org.kuali.kfs.kns.kim.role.DerivedRoleTypeServiceBase"
+          parent="kimRoleTypeService"/>
 
     <bean id="kfs.documentTypePermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypePermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypePermissionTypeServiceImpl" parent="kimPermissionTypeService"/>
 
     <bean id="kfs.documentTypeAndAttachmentTypePermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypeAndAttachmentTypePermissionTypeService"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypeAndAttachmentTypePermissionTypeService"
+          parent="kfs.documentTypePermissionTypeService"/>
 
     <bean id="kfs.documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"
+          parent="kfs.documentTypePermissionTypeService"/>
 
-    <bean id="kfs.namespacePermissionTypeService" class="org.kuali.kfs.krad.kim.NamespacePermissionTypeServiceImpl"/>
+    <bean id="kfs.namespacePermissionTypeService" class="org.kuali.kfs.krad.kim.NamespacePermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
     <bean id="kfs.documentTypeAndNodeAndRouteStatusPermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypeAndNodeAndRouteStatusPermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypeAndNodeAndRouteStatusPermissionTypeServiceImpl"
+          parent="kfs.documentTypePermissionTypeService"/>
 
     <bean id="kfs.namespaceOrComponentPermissionTypeService"
           class="org.kuali.kfs.krad.kim.NamespaceWildcardAllowedAndOrStringExactMatchPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="componentName" p:namespaceRequiredOnStoredMap="false"/>
 
     <bean id="kfs.parameterPermissionTypeService" class="org.kuali.kfs.krad.kim.ParameterPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="componentName" p:namespaceRequiredOnStoredMap="false"/>
 
     <bean id="kfs.batchFeedOrJobPermissionTypeService"
           class="org.kuali.kfs.krad.kim.NamespaceWildcardAllowedAndOrStringExactMatchPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="beanName" p:namespaceRequiredOnStoredMap="false"/>
 
     <bean id="kfs.actionRequestTypePermissionTypeService"
-          class="org.kuali.kfs.krad.kim.ActionRequestTypePermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.ActionRequestTypePermissionTypeServiceImpl" parent="kimPermissionTypeService"/>
 
     <bean id="kfs.namespaceOrActionPermissionTypeService"
           class="org.kuali.kfs.krad.kim.NamespaceWildcardAllowedAndOrStringExactMatchPermissionTypeServiceImpl"
+          parent="kfs.namespacePermissionTypeService"
           p:exactMatchStringAttributeName="actionClass" p:namespaceRequiredOnStoredMap="false"/>
 
     <bean id="kfs.documentTypeAndEditModePermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypeAndEditModePermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypeAndEditModePermissionTypeServiceImpl"
+          parent="kfs.documentTypePermissionTypeService"/>
 
     <bean id="kfs.documentTypeAndNodeAndFieldsPermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypeAndNodeAndFieldsPermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypeAndNodeAndFieldsPermissionTypeServiceImpl"
+          parent="kfs.documentTypePermissionTypeService"/>
 
     <bean id="kfs.documentTypeAndExistingRecordsOnlyPermissionTypeService"
-          class="org.kuali.kfs.krad.kim.DocumentTypeAndExistingRecordsOnlyPermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.DocumentTypeAndExistingRecordsOnlyPermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
-    <bean id="kfs.viewPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewPermissionTypeServiceImpl"/>
+    <bean id="kfs.viewPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewPermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
     <bean id="kfs.viewEditModePermissionTypeService"
-          class="org.kuali.kfs.krad.kim.ViewEditModePermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.ViewEditModePermissionTypeServiceImpl" parent="kimPermissionTypeService"/>
 
-    <bean id="kfs.viewFieldPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewFieldPermissionTypeServiceImpl"/>
+    <bean id="kfs.viewFieldPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewFieldPermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
-    <bean id="kfs.viewGroupPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewGroupPermissionTypeServiceImpl"/>
+    <bean id="kfs.viewGroupPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewGroupPermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
-    <bean id="kfs.viewWidgetPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewWidgetPermissionTypeServiceImpl"/>
+    <bean id="kfs.viewWidgetPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewWidgetPermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
-    <bean id="kfs.viewActionPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewActionPermissionTypeServiceImpl"/>
+    <bean id="kfs.viewActionPermissionTypeService" class="org.kuali.kfs.krad.kim.ViewActionPermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
     <bean id="kfs.viewLineFieldPermissionTypeService"
-          class="org.kuali.kfs.krad.kim.ViewLineFieldPermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.ViewLineFieldPermissionTypeServiceImpl" parent="kimPermissionTypeService"/>
 
     <bean id="kfs.viewLineActionPermissionTypeService"
-          class="org.kuali.kfs.krad.kim.ViewLineActionPermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.krad.kim.ViewLineActionPermissionTypeServiceImpl" parent="kimPermissionTypeService"/>
 
     <bean id="kfs.routeLogDerivedRoleTypeService"
-          class="org.kuali.rice.kew.role.service.impl.RouteLogDerivedRoleTypeServiceImpl"/>
+          class="org.kuali.kfs.kew.role.service.impl.RouteLogDerivedRoleTypeServiceImpl"
+          parent="kimNoMembersRoleTypeService"/>
 
     <bean id="kfs.actionRequestDerivedRoleTypeService"
-          class="org.kuali.rice.kew.role.service.impl.ActionRequestDerivedRoleTypeServiceImpl"/>
+          class="org.kuali.kfs.kew.role.service.impl.ActionRequestDerivedRoleTypeServiceImpl"
+          parent="kimNoMembersRoleTypeService"/>
 
     <bean id="kfs.adhocReviewPermissionTypeService"
-          class="org.kuali.rice.kew.service.impl.AdhocReviewPermissionTypeServiceImpl"/>
+          class="org.kuali.kfs.kew.service.impl.AdhocReviewPermissionTypeServiceImpl"
+          parent="kfs.documentTypePermissionTypeService"/>
 
     <bean id="kfs.backdoorRestrictionPermissionTypeService"
-          class="org.kuali.rice.kew.service.impl.BackdoorRestrictionPermissionTypeServiceImpl" />
+          class="org.kuali.kfs.kew.service.impl.BackdoorRestrictionPermissionTypeServiceImpl"
+          parent="kimPermissionTypeService"/>
 
     <bean id="kfs.documentTypeResponsibilityTypeService"
-          class="org.kuali.rice.kew.service.impl.DocumentTypeResponsibilityTypeServiceImpl"/>
+          class="org.kuali.kfs.kew.service.impl.DocumentTypeResponsibilityTypeServiceImpl"
+          parent="kfs.defaultResponsibilityTypeService"/>
 
     <bean id="kfs.reviewResponsibilityTypeService"
-          class="org.kuali.rice.kew.service.impl.ReviewResponsibilityTypeServiceImpl"/>
-
-    <bean id="dataDictionaryService"
-          class="org.kuali.kfs.krad.config.GlobalResourceLoaderServiceFactoryBean"
-          p:serviceName="cf.dataDictionaryService"/>
-
-    <bean id="persistenceServiceOjb"
-          class="org.kuali.kfs.krad.config.GlobalResourceLoaderServiceFactoryBean"
-          p:serviceName="cf.persistenceServiceOjb"/>
+          class="org.kuali.kfs.kew.service.impl.ReviewResponsibilityTypeServiceImpl"
+          parent="kfs.documentTypeResponsibilityTypeService"/>
 
     <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
         <property name="interceptorNames">
@@ -322,48 +320,21 @@
         </property>
         <property name="beanNames">
             <list>
-                <idref bean="kimIdentityDelegateService"/>
-                <idref bean="kimIdentityArchiveService"/>
-                <idref bean="kimIdentityService"/>
-                <idref bean="kimRoleService"/>
+                <idref bean="identityService"/>
+                <idref bean="roleService"/>
                 <idref bean="kimRoleInternalService"/>
                 <idref bean="kimGroupService"/>
-                <idref bean="kimPermissionService"/>
+                <idref bean="permissionService"/>
                 <idref bean="kimResponsibilityService"/>
             </list>
         </property>
     </bean>
 
-
-    <util:constant id="kim.serviceNamespace"
-                   static-field="org.kuali.rice.kim.api.KimApiConstants$Namespaces.KIM_NAMESPACE_2_0"/>
     <bean id="properties" class="org.kuali.kfs.sys.context.PropertyLoadingFactoryBean"/>
 
     <bean id="kim.propertyPlaceholderConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
           p:properties-ref="properties"/>
-
-    <bean id="serviceBus"
-          class="org.kuali.kfs.krad.config.GlobalResourceLoaderServiceFactoryBean"
-          p:serviceName="rice.ksb.serviceBus"/>
-
-    <bean id="kualiModuleService"
-          class="org.kuali.kfs.krad.config.GlobalResourceLoaderServiceFactoryBean"
-          p:serviceName="cf.kualiModuleService"/>
-
-    <bean id="kimServiceExporter"
-          class="org.kuali.rice.ksb.api.bus.support.PropertyConditionalServiceBusExporter"
-          abstract="true"
-          p:serviceBus-ref="serviceBus"/>
-
-    <bean id="kimService" class="org.kuali.rice.ksb.api.bus.support.SoapServiceDefinition" abstract="true"
-          p:serviceNameSpaceURI-ref="kim.serviceNamespace"
-          p:jaxWsService="true"
-          p:priority="3"
-          p:retryAttempts="0"
-          p:busSecurity="${kim.soapExposedService.jaxws.security}"
-          p:serviceVersion="${kfs.version}"
-          p:servicePath="#{ T(org.kuali.rice.kim.api.KimConstants).SERVICE_PATH_SOAP }"/>
 
     <bean id="personService" class="org.kuali.kfs.kim.impl.identity.PersonServiceImpl">
         <property name="personEntityTypeCodes">
@@ -376,66 +347,6 @@
 
     <bean id="kimAuthenticationService" class="org.kuali.kfs.kim.impl.identity.AuthenticationServiceImpl"/>
 
-    <bean id="kimTypeInfoService.exporter" parent="kimServiceExporter">
-        <property name="serviceDefinition">
-            <bean parent="kimService"
-                  p:service-ref="kimTypeInfoService"
-                  p:localServiceName="typeInfoService"
-                  p:serviceInterface="org.kuali.rice.kim.api.type.KimTypeInfoService"/>
-        </property>
-        <property name="exportIf" value="kimTypeInfoServiceSOAP.expose"/>
-    </bean>
-
-    <bean id="kimIdentityService.exporter" parent="kimServiceExporter">
-        <property name="serviceDefinition">
-            <bean parent="kimService"
-                  p:service-ref="kimIdentityService"
-                  p:localServiceName="kimIdentityService"
-                  p:serviceInterface="org.kuali.rice.kim.api.identity.IdentityService"/>
-        </property>
-        <property name="exportIf" value="kimIdentityServiceSOAP.expose"/>
-    </bean>
-
-    <bean id="kimRoleService.exporter" parent="kimServiceExporter">
-        <property name="serviceDefinition">
-            <bean parent="kimService"
-                  p:service-ref="kimRoleService"
-                  p:localServiceName="roleService"
-                  p:serviceInterface="org.kuali.rice.kim.api.role.RoleService"/>
-        </property>
-        <property name="exportIf" value="kimRoleServiceSOAP.expose"/>
-    </bean>
-
-    <bean id="kimGroupService.exporter" parent="kimServiceExporter">
-        <property name="serviceDefinition">
-            <bean parent="kimService"
-                  p:service-ref="kimGroupService"
-                  p:localServiceName="groupService"
-                  p:serviceInterface="org.kuali.rice.kim.api.group.GroupService"/>
-        </property>
-        <property name="exportIf" value="groupService.expose"/>
-    </bean>
-
-    <bean id="kimPermissionService.exporter" parent="kimServiceExporter">
-        <property name="serviceDefinition">
-            <bean parent="kimService"
-                  p:service-ref="kimPermissionService"
-                  p:localServiceName="permissionService"
-                  p:serviceInterface="org.kuali.rice.kim.api.permission.PermissionService"/>
-        </property>
-        <property name="exportIf" value="permissionService.expose"/>
-    </bean>
-
-    <bean id="kimResponsibilityService.exporter" parent="kimServiceExporter">
-        <property name="serviceDefinition">
-            <bean parent="kimService"
-                  p:service-ref="kimResponsibilityService"
-                  p:localServiceName="responsibilityService"
-                  p:serviceInterface="org.kuali.rice.kim.api.responsibility.ResponsibilityService"/>
-        </property>
-        <property name="exportIf" value="responsibilityService.expose"/>
-    </bean>
-
     <bean id="kimRoleDao" class="org.kuali.kfs.kim.impl.role.RoleDaoOjb" parent="platformAwareDao">
         <property name="dataSource" ref="dataSource"/>
     </bean>
@@ -444,61 +355,61 @@
     <bean id="kimUiDocumentService-parentBean" class="org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl"
           abstract="true"/>
 
-    <bean id="groupLookupable" class="org.kuali.kfs.kim.lookup.GroupLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
+    <bean id="groupLookupable" class="org.kuali.kfs.kim.lookup.GroupLookupableImpl" parent="kualiLookupable"
+          scope="prototype" p:configurationService-ref="configurationService">
         <property name="lookupableHelperService">
             <bean class="org.kuali.kfs.kim.lookup.GroupLookupableHelperServiceImpl"
-                  parent="cf.lookupableHelperService">
-            </bean>
+                  parent="lookupableHelperService"/>
         </property>
     </bean>
 
-    <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
+    <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
             <bean class="org.kuali.kfs.kim.lookup.RoleLookupableHelperServiceImpl"
-                  parent="cf.lookupableHelperService">
+                  parent="lookupableHelperService">
             </bean>
         </property>
     </bean>
 
-    <bean id="roleMemberImplLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
+    <bean id="roleMemberImplLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
             <bean class="org.kuali.kfs.kim.lookup.RoleMemberImplLookupableHelperServiceImpl"
-                  parent="cf.lookupableHelperService">
+                  parent="lookupableHelperService">
             </bean>
         </property>
     </bean>
 
-    <bean id="kimPersonLookupable" class="org.kuali.kfs.kim.lookup.PersonLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
+    <bean id="kimPersonLookupable" class="org.kuali.kfs.kim.lookup.PersonLookupableImpl" parent="kualiLookupable"
+          scope="prototype" p:configurationService-ref="configurationService">
         <property name="lookupableHelperService">
             <bean class="org.kuali.kfs.kim.lookup.PersonLookupableHelperServiceImpl"
-                  parent="cf.lookupableHelperService" p:personService-ref="personService">
+                  parent="lookupableHelperService" p:personService-ref="personService"/>
+        </property>
+    </bean>
+
+    <bean id="permissionLookupable" class="org.kuali.kfs.kim.lookup.PermissionLookupableImpl" parent="kualiLookupable" scope="prototype">
+        <property name="lookupableHelperService">
+            <bean class="org.kuali.kfs.kim.lookup.PermissionLookupableHelperServiceImpl" parent="lookupableHelperService">
             </bean>
         </property>
     </bean>
 
-    <bean id="permissionLookupable" class="org.kuali.kfs.kim.lookup.PermissionLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
+    <bean id="responsibilityLookupable" class="org.kuali.kfs.kim.impl.responsibility.ResponsibilityLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
-            <bean class="org.kuali.kfs.kim.lookup.PermissionLookupableHelperServiceImpl" parent="cf.lookupableHelperService">
+            <bean class="org.kuali.kfs.kim.impl.responsibility.ResponsibilityLookupableHelperServiceImpl" parent="lookupableHelperService"/>
+        </property>
+    </bean>
+
+    <bean id="kimTypeLookupableHelperServiceImpl" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" parent="kualiLookupable" scope="prototype">
+        <property name="lookupableHelperService">
+            <bean class="org.kuali.kfs.kim.impl.type.KimTypeLookupableHelperServiceImpl" parent="lookupableHelperService">
             </bean>
         </property>
     </bean>
 
-    <bean id="responsibilityLookupable" class="org.kuali.kfs.kim.impl.responsibility.ResponsibilityLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
+    <bean id="kimDocumentRoleMemberLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
-            <bean class="org.kuali.kfs.kim.impl.responsibility.ResponsibilityLookupableHelperServiceImpl" parent="cf.lookupableHelperService"/>
-        </property>
-    </bean>
-
-    <bean id="kimTypeLookupableHelperServiceImpl" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
-        <property name="lookupableHelperService">
-            <bean class="org.kuali.kfs.kim.impl.type.KimTypeLookupableHelperServiceImpl" parent="cf.lookupableHelperService">
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="kimDocumentRoleMemberLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" parent="cf.kualiLookupable" scope="prototype">
-        <property name="lookupableHelperService">
-            <bean class="org.kuali.kfs.kim.lookup.KimDocumentRoleMemberLookupableHelperServiceImpl" parent="cf.lookupableHelperService">
+            <bean class="org.kuali.kfs.kim.lookup.KimDocumentRoleMemberLookupableHelperServiceImpl" parent="lookupableHelperService">
             </bean>
         </property>
     </bean>

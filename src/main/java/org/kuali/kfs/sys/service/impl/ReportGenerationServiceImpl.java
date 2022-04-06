@@ -32,7 +32,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.kfs.sys.service.ReportGenerationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -53,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * To provide utilities that can generate reports with JasperReport
  */
 /*
- * CU Customization: Backport the FINP-7916 changes into the 2021-01-21 version of this file.
+ * CU Customization: Backport the FINP-7916 changes into the 2021-01-28 version of this file.
  * This overlay should be removed when we upgrade to the 2021-11-17 financials patch or later.
  */
 public class ReportGenerationServiceImpl implements ReportGenerationService {
