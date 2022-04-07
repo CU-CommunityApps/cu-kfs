@@ -29,6 +29,7 @@
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>8.37</checkstyle.version>
         <gson.version>2.8.2</gson.version>
+        <guava.version>30.1.1-jre</guava.version>
         <hibernate-validator-annotation-processor.version>5.4.1.Final</hibernate-validator-annotation-processor.version>
         <httpclient.version>4.5.13</httpclient.version>
         <jasperreports.version>2.0.4</jasperreports.version>
@@ -47,6 +48,9 @@
         <powermock.version>2.0.7</powermock.version>
         <!--Cornell Customization: backport redis-->
         <spring-data-redis.version>1.8.11.RELEASE</spring-data-redis.version>
+        <slf4j-api.version>1.7.32</slf4j-api.version>
+        <spring-data-commons.version>1.13.23.RELEASE</spring-data-commons.version>
+        <spring.version>5.3.18</spring.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
 
@@ -242,6 +246,21 @@
                             	<exclude>WEB-INF/lib/log4j-jul-2.13.*.jar</exclude>
                             	<exclude>WEB-INF/lib/log4j-slf4j-impl-2.13.*.jar</exclude>
                             	<exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
+                                <exclude>WEB-INF/lib/guava-*.jar</exclude>
+                                <exclude>WEB-INF/lib/slf4j-api-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-aop-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-beans-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-context-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-context-support-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-core-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-expression-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-jdbc-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-orm-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-test-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-tx-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-web-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-webmvc-*.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -393,6 +412,62 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -434,6 +509,58 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
               </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+              </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -475,6 +602,58 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -515,6 +694,58 @@
               <exclusion>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -557,6 +788,58 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -598,6 +881,58 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
               </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+              </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -639,6 +974,62 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -679,6 +1070,58 @@
               <exclusion>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -721,6 +1164,58 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -762,6 +1257,58 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
               </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+              </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -803,6 +1350,58 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -843,6 +1442,58 @@
               <exclusion>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -885,6 +1536,58 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -925,6 +1628,58 @@
               <exclusion>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -966,6 +1721,58 @@
             		<groupId>org.apache.logging.log4j</groupId>
             		<artifactId>log4j-jul</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1007,6 +1814,58 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
               </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+              </exclusion>
             </exclusions>
         </dependency>
 
@@ -1014,6 +1873,12 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>secretsmanager</artifactId>
             <version>${aws-java-sdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency> 
         <dependency>
             <groupId>backport-util-concurrent</groupId>
@@ -1262,6 +2127,12 @@
 					<groupId>org.apache.logging.log4j</groupId>
 					<artifactId>log4j-slf4j-impl</artifactId>
 					<version>${log4j.version}</version>
+					<exclusions>
+						<exclusion>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-api</artifactId>
+						</exclusion>
+					</exclusions>
 				</dependency>
 			
 				<dependency>
@@ -1282,6 +2153,62 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-oxm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.data</groupId>
+                    <artifactId>spring-data-commons</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1311,8 +2238,165 @@
             		<groupId>io.netty</groupId>
             		<artifactId>netty-codec</artifactId>
             	</exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+               <exclusion>
+                   <groupId>org.springframework</groupId>
+                   <artifactId>spring-jcl</artifactId>
+               </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>${spring-data-commons.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-oxm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>
