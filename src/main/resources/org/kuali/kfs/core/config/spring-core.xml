@@ -19,7 +19,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!--Cornell Customization: backport redis-->
+<!--
+    Cornell Customization: backport redis
+    Cornell Customization: Backport FINP-7916 upgrade to Spring 5.3.x
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
@@ -107,7 +110,7 @@
         </property>
         <property name="beanNames">
             <list>
-                <idref local="xmlDigesterService"/>
+                <idref bean="xmlDigesterService"/>
             </list>
         </property>
     </bean>
