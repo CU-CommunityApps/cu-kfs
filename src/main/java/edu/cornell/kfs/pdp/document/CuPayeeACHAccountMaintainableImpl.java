@@ -73,6 +73,10 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
     }
 
     protected boolean payeeACHAccountMaintenanceRequiresPdpApproval() {
+        if (StringUtils.equalsIgnoreCase(KFSConstants.MAINTENANCE_EDIT_ACTION, getMaintenanceAction())) {
+            return true;
+        }
+
         try {
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
             FinancialSystemMaintenanceDocument document = (FinancialSystemMaintenanceDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
@@ -82,12 +86,13 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
         } catch (Exception exception) {
             LOG.error("payeeACHAccountMaintenanceRequiresPdpApproval " + exception.getMessage(), exception);
         }
-        return StringUtils.equalsIgnoreCase(KFSConstants.MAINTENANCE_EDIT_ACTION, getMaintenanceAction());
+
+        return true;
     }
 
     protected boolean isDocumentInitiatorSystemUser(FinancialSystemMaintenanceDocument document) {
         Person documentInitiator = KimApiServiceLocator.getPersonService().getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
-        return documentInitiator != null && documentInitiator.getPrincipalName().equalsIgnoreCase(KFSConstants.SYSTEM_USER);
+        return documentInitiator != null && StringUtils.equalsIgnoreCase(documentInitiator.getPrincipalName(), KFSConstants.SYSTEM_USER);
     }
 
 }

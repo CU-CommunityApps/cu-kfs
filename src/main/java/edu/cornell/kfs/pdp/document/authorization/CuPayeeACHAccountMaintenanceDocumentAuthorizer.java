@@ -1,5 +1,6 @@
 package edu.cornell.kfs.pdp.document.authorization;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.api.identity.Person;
@@ -13,12 +14,13 @@ public class CuPayeeACHAccountMaintenanceDocumentAuthorizer extends PayeeACHAcco
     public boolean canApprove(Document document, Person user) {
 
         try {
-            String documentInitializerPrincipalId = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-            if (user.getPrincipalId().equals(documentInitializerPrincipalId)) {
+            String documentInitiatorPrincipalId = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+            if (StringUtils.equalsIgnoreCase(user.getPrincipalId(), documentInitiatorPrincipalId)) {
                 return false;
             }
         } catch (Exception ex) {
-            LOG.error("canApprove", ex.getMessage(), ex);
+            LOG.error("canApprove" + ex.getMessage(), ex);
+            return false;
         }
 
         return super.canApprove(document, user);
