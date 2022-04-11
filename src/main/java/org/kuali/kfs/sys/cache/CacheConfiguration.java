@@ -253,31 +253,4 @@ public class CacheConfiguration {
         return cacheManager;
     }
 
-    // Cornell Customization: add fix to get collections and maps via method calls instead
-    /*@Bean
-    public RedisCacheManager cacheManager(
-            @Value("${redis.default.ttl}") Long redisDefaultTtl,
-            //Set<String> cacheNames,
-            //Map<String, Long> cacheExpires,
-            RedisConnectionFactory connectionFactory
-    ) {
-        final Map<String, Long> cacheExpires = cacheExpires();
-        final RedisCacheConfiguration cacheDefaults = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(redisDefaultTtl))
-                .disableKeyPrefix();
-
-        final Map<String, RedisCacheConfiguration> cacheConfigurations = cacheExpires.keySet()
-                .stream()
-                .collect(Collectors.toMap(key -> key,
-                        key -> cacheDefaults.entryTtl(Duration.ofSeconds(cacheExpires.get(key))),
-                        (configuration, cacheConfiguration) -> cacheConfiguration));
-
-        final RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(cacheDefaults)
-                .initialCacheNames(cacheNames())
-                .withInitialCacheConfigurations(cacheConfigurations)
-                .build();
-
-        return redisCacheManager;
-    }*/
 }
