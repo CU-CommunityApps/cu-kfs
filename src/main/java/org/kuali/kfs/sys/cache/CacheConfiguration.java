@@ -18,7 +18,12 @@
  */
 package org.kuali.kfs.sys.cache;
 
-import org.apache.commons.lang3.StringUtils;
+import static java.util.Map.entry;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Set;
+
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -62,27 +67,33 @@ import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.sys.service.MenuService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.core.io.Resource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.util.List;
-import java.util.Map;
+import edu.cornell.kfs.sys.cache.ClientTrackingLettuceConnectionFactory;
+import edu.cornell.kfs.sys.cache.CuEhCacheCacheManager;
+import edu.cornell.kfs.sys.cache.EhcacheEventListenerForUpdatingRedis;
+import edu.cornell.kfs.sys.cache.RedisEventListenerLazyInitProxy;
 
-import static java.util.Map.entry;
-
-/* Cornell Customization: backport redis*/
+/*
+ * Cornell Customizations:
+ * -- Backported redis caching changes, including the version upgrades for Lettuce and Spring Data Redis.
+ * -- Updated caching to use an Ehcache-and-Redis hybrid setup.
+ */
 @Configuration
 @EnableCaching
 public class CacheConfiguration {
 
     @Bean
-    public List<String> cacheNames() {
-        return List.of(
+    public Set<String> cacheNames() {
+        return Set.of(
                 Account.CACHE_NAME ,
                 AccountingPeriod.CACHE_NAME,
                 AccountsReceivableCustomerInvoiceDetail.CACHE_NAME,
@@ -128,8 +139,37 @@ public class CacheConfiguration {
     }
 
     @Bean
+    public Set<String> cachesIgnoringRedisEvents() {
+        return Set.of(
+                BatchFile.CACHE_NAME
+        );
+    }
+
+    @Bean
+    public Set<String> cachesToClearOnRedisConnectionChange() {
+        return Set.of(
+                Parameter.CACHE_NAME,
+                Entity.CACHE_NAME,
+                EntityName.CACHE_NAME,
+                EntityPrivacyPreferences.CACHE_NAME,
+                Group.CACHE_NAME,
+                GroupMember.CACHE_NAME,
+                Principal.CACHE_NAME,
+                Permission.CACHE_NAME,
+                PermissionTemplate.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                ResponsibilityTemplate.CACHE_NAME,
+                Role.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME
+        );
+    }
+
+    @Bean
     public Map<String, Long> cacheExpires() {
         // These caches have a TTL value different from the default specified in the redis.default.ttl property
+        // Cornell Note: We are not actively using this Map in our customized caching setup.
         return Map.ofEntries(
         		
                 entry(DocumentType.CACHE_NAME, 3600L),
@@ -143,15 +183,33 @@ public class CacheConfiguration {
     }
 
     @Bean
+    public RedisEventListenerLazyInitProxy redisEventListener() {
+        return new RedisEventListenerLazyInitProxy();
+    }
+
+    @Bean
     public RedisConnectionFactory connectionFactory(
             @Value("${redis.auth.token.password}") String redisAuthTokenPassword,
             @Value("${redis.host}") String redisHost,
             @Value("${redis.port}") int redisPort,
-            @Value("${redis.use.ssl}") boolean redisUseSsl
+            @Value("${redis.use.ssl}") boolean redisUseSsl,
+            RedisEventListenerLazyInitProxy redisEventListener
     ) {
-        final LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisHost, redisPort);
-        lettuceConnectionFactory.setUseSsl(redisUseSsl);
-        lettuceConnectionFactory.setPassword(redisAuthTokenPassword);
+        final RedisStandaloneConfiguration redisStandaloneConfiguration =
+                new RedisStandaloneConfiguration(redisHost, redisPort);
+        redisStandaloneConfiguration.setPassword(redisAuthTokenPassword);
+
+        final LettuceClientConfiguration.LettuceClientConfigurationBuilder lettuceClientConfigurationBuilder =
+                LettuceClientConfiguration.builder();
+        if (redisUseSsl) {
+            lettuceClientConfigurationBuilder.useSsl();
+        }
+        final LettuceClientConfiguration lettuceClientConfiguration = lettuceClientConfigurationBuilder.build();
+
+        final ClientTrackingLettuceConnectionFactory lettuceConnectionFactory =
+                new ClientTrackingLettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfiguration,
+                        redisEventListener);
+
         return lettuceConnectionFactory;
     }
 
@@ -159,22 +217,40 @@ public class CacheConfiguration {
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
         final RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setKeySerializer(new StringRedisSerializer(StandardCharsets.UTF_8));
+        redisTemplate.setValueSerializer(new StringRedisSerializer(StandardCharsets.UTF_8));
         return redisTemplate;
     }
 
     @Bean
-    public RedisCacheManager cacheManager(
+    public EhcacheEventListenerForUpdatingRedis ehcacheEventListener(
             @Value("${redis.default.ttl}") Long redisDefaultTtl,
-            RedisTemplate<String, String> redisTemplate,
-            List<String> cacheNames,
-            Map<String, Long> cacheExpires
+            RedisTemplate<String, String> redisTemplate
     ) {
-        // Cornell customization: add fix to call cacheNames() method instead of using the cacheNames variable that is causing an exception
-        final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate, cacheNames(), true);
-        redisCacheManager.setDefaultExpiration(redisDefaultTtl);
-        redisCacheManager.setExpires(cacheExpires);
-
-        return redisCacheManager;
+        EhcacheEventListenerForUpdatingRedis ehcacheEventListener = new EhcacheEventListenerForUpdatingRedis(
+                redisTemplate, redisDefaultTtl);
+        return ehcacheEventListener;
     }
+
+    @Bean
+    public CuEhCacheCacheManager cacheManager(
+            @Value("${kfs.ehcache.config.location}") Resource ehcacheConfigLocation,
+            RedisEventListenerLazyInitProxy redisEventListener,
+            EhcacheEventListenerForUpdatingRedis ehcacheEventListener
+    ) {
+        EhCacheManagerFactoryBean ehcacheManagerFactory = new EhCacheManagerFactoryBean();
+        ehcacheManagerFactory.setConfigLocation(ehcacheConfigLocation);
+        ehcacheManagerFactory.afterPropertiesSet();
+        
+        CuEhCacheCacheManager cacheManager = new CuEhCacheCacheManager();
+        cacheManager.setCacheManager(ehcacheManagerFactory.getObject());
+        cacheManager.setRedisEventListenerProxy(redisEventListener);
+        cacheManager.setEhcacheEventListener(ehcacheEventListener);
+        cacheManager.setCacheNames(cacheNames());
+        cacheManager.setCachesIgnoringRedisEvents(cachesIgnoringRedisEvents());
+        cacheManager.setCachesToClearOnRedisConnectionChange(cachesToClearOnRedisConnectionChange());
+        
+        return cacheManager;
+    }
+
 }
