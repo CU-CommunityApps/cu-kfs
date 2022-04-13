@@ -91,7 +91,9 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
     }
 
     protected boolean isDocumentInitiatorSystemUser(FinancialSystemMaintenanceDocument document) {
-        Person documentInitiator = KimApiServiceLocator.getPersonService().getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId());
+        String initiatorPrincipalId = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        Person documentInitiator = KimApiServiceLocator.getPersonService().getPerson(initiatorPrincipalId);
+
         return documentInitiator != null && StringUtils.equalsIgnoreCase(documentInitiator.getPrincipalName(), KFSConstants.SYSTEM_USER);
     }
 
