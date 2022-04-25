@@ -17,6 +17,7 @@
 
   <bean id="PayeeACHAccountMaintenanceDocument" parent="PayeeACHAccountMaintenanceDocument-parentBean">
     <property name="maintainableClass" value="edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl"/>
+    <property name="documentAuthorizerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentAuthorizer"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
   </bean>
 

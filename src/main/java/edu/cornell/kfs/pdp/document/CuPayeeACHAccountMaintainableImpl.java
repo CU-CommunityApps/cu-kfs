@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
@@ -18,8 +21,10 @@ import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 
 public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainableImpl {
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
     public void refresh(String refreshCaller, Map fieldValues, MaintenanceDocument document) {
@@ -64,12 +69,32 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
         if (StringUtils.equalsIgnoreCase(CUPdpConstants.PAYEE_ACH_ACCOUNT_REQUIRES_PDP_APPROVAL_NODE, nodeName)) {
             return payeeACHAccountMaintenanceRequiresPdpApproval();
         }
-        
         return super.answerSplitNodeQuestion(nodeName);
     }
 
     protected boolean payeeACHAccountMaintenanceRequiresPdpApproval() {
-        return StringUtils.equalsIgnoreCase(KFSConstants.MAINTENANCE_EDIT_ACTION, getMaintenanceAction());
+        if (StringUtils.equalsIgnoreCase(KFSConstants.MAINTENANCE_EDIT_ACTION, getMaintenanceAction())) {
+            return true;
+        }
+
+        try {
+            DocumentService documentService = SpringContext.getBean(DocumentService.class);
+            FinancialSystemMaintenanceDocument document = (FinancialSystemMaintenanceDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
+            if (isDocumentInitiatorSystemUser(document)) {
+                return false;
+            }
+        } catch (Exception exception) {
+            LOG.error("payeeACHAccountMaintenanceRequiresPdpApproval " + exception.getMessage(), exception);
+        }
+
+        return true;
+    }
+
+    protected boolean isDocumentInitiatorSystemUser(FinancialSystemMaintenanceDocument document) {
+        String initiatorPrincipalId = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        Person documentInitiator = KimApiServiceLocator.getPersonService().getPerson(initiatorPrincipalId);
+
+        return documentInitiator != null && StringUtils.equalsIgnoreCase(documentInitiator.getPrincipalName(), KFSConstants.SYSTEM_USER);
     }
 
 }
