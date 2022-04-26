@@ -88,8 +88,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     protected static final String OBJECT_CODES_REQUIRING_TRAVEL_REVIEW = "OBJECT_CODES_REQUIRING_TRAVEL_REVIEW";
     
     protected static final String DISAPPROVE_ANNOTATION_REASON_STARTER = "Disapproval reason - ";
-    
-    protected CuDisbursementVoucherPayeeDetail dvPayeeDetail;
 
     // TRIP INFORMATION FIELDS
     protected String tripAssociationStatusCode;
@@ -617,13 +615,13 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     }
 
     @Override
-    public CuDisbursementVoucherPayeeDetail getDvPayeeDetail() {
+    public DisbursementVoucherPayeeDetail getDvPayeeDetail() {
         return dvPayeeDetail;
     }
 
     @Override
     public void populateDocumentForRouting() {
-        CuDisbursementVoucherPayeeDetail payeeDetail = this.getDvPayeeDetail();
+        CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) getDvPayeeDetail();
 
         if (payeeDetail.isVendor()) {
             payeeDetail.setDisbVchrPayeeEmployeeCode(
@@ -973,10 +971,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     @Override
     public void setDvPayeeDetail(DisbursementVoucherPayeeDetail dvPayeeDetail) {
         this.dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) dvPayeeDetail;
-    }
-
-    public void setDvPayeeDetail(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
-        this.dvPayeeDetail = dvPayeeDetail;
     }
 
     public String getTripAssociationStatusCode() {

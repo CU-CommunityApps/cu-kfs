@@ -105,11 +105,6 @@ import java.util.Set;
  * This overlay should be removed when we upgrade to the 2021-05-06 financials patch.
  */
 
-/*
- * CU Customization: Method isPayeePurchaseOrderVendorHasWithholding required the addition of null checks to prevent
- * null pointer exceptions when saved disbursement voucher documents did not have a payee selected resulting in buttons
- * not being presented for a super user.
- */
 public class DisbursementVoucherDocument extends AccountingDocumentBase implements Copyable, AmountTotaling,
         PaymentSource {
 
@@ -1474,13 +1469,6 @@ public class DisbursementVoucherDocument extends AccountingDocumentBase implemen
      * @return true if the payee is a vendor and has withholding dates therefore should receive tax review, false otherwise
      */
     protected boolean isPayeePurchaseOrderVendorHasWithholding() {
-        /* CU Customization: Null checks added to prevent NPE when payee is not selected on saved DV causing buttons to not present for a super user.
-         */
-        if (ObjectUtils.isNull(this.getDvPayeeDetail()) || 
-                ObjectUtils.isNull(this.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode())) {
-            return false;
-        }
-
         if (!this.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode().equals(KFSConstants.PaymentPayeeTypes.VENDOR)) {
             return false;
         }

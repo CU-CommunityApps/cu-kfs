@@ -8,6 +8,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
@@ -21,7 +22,8 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
      */
     public boolean isStudent() {
         CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument) this.getDocument();
-        return disbursementVoucherDocument.getDvPayeeDetail().isStudent();
+        CuDisbursementVoucherPayeeDetail dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) disbursementVoucherDocument.getDvPayeeDetail();
+        return dvPayeeDetail.isStudent();
     }
 
     /**
@@ -29,7 +31,8 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
      */
     public boolean isAlumni() {
         CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument) this.getDocument();
-        return disbursementVoucherDocument.getDvPayeeDetail().isAlumni();
+        CuDisbursementVoucherPayeeDetail dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) disbursementVoucherDocument.getDvPayeeDetail();
+        return dvPayeeDetail.isAlumni();
     }
     public boolean getCanViewTrip() {
         CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument)this.getDocument();
