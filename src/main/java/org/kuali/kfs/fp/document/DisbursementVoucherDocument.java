@@ -104,7 +104,6 @@ import java.util.Set;
  * CU Customization: Backported this file from the 2021-05-06 financials patch to bring in the FINP-7506 changes.
  * This overlay should be removed when we upgrade to the 2021-05-06 financials patch.
  */
-
 public class DisbursementVoucherDocument extends AccountingDocumentBase implements Copyable, AmountTotaling,
         PaymentSource {
 
