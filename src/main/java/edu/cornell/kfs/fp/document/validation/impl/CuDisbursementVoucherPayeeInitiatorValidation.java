@@ -30,7 +30,7 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
         boolean isValid = true;
         
         CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) accountingDocumentForValidation;
-        CuDisbursementVoucherPayeeDetail payeeDetail = document.getDvPayeeDetail();
+        CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) document.getDvPayeeDetail();
         
         MessageMap errors = GlobalVariables.getMessageMap();
         errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);

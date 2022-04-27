@@ -105,7 +105,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected void populatePaymentInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPaymentInformation())) {
             DisbursementVoucherPaymentInformationXml paymentInfo = dvDetail.getPaymentInformation();
-            CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
+            CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) dvDocument.getDvPayeeDetail();
             payeeDetail.setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
             validateAndPopulatePayeeTypeCodeAndPayeeNumberAndPayeeName(paymentInfo, payeeDetail);
             populateAddressFields(paymentInfo, dvDocument);
@@ -213,7 +213,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             VendorAddress vendorAddress = findVendorAddress(paymentInfo);
             dvDocument.templateVendor(vendorAddress.getVendorDetail(), vendorAddress);
         } else {
-            CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
+            CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) dvDocument.getDvPayeeDetail();
             LOG.info("populateAddressFields, no payee address ID provided, so using the address fields from the XML");
             payeeDetail.setDisbVchrPayeeLine1Addr(paymentInfo.getAddressLine1());
             payeeDetail.setDisbVchrPayeeLine2Addr(paymentInfo.getAddressLine2());
