@@ -14,6 +14,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.FPParameterConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
@@ -87,8 +88,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     protected static final String OBJECT_CODES_REQUIRING_TRAVEL_REVIEW = "OBJECT_CODES_REQUIRING_TRAVEL_REVIEW";
     
     protected static final String DISAPPROVE_ANNOTATION_REASON_STARTER = "Disapproval reason - ";
-    
-    protected CuDisbursementVoucherPayeeDetail dvPayeeDetail;
 
     // TRIP INFORMATION FIELDS
     protected String tripAssociationStatusCode;
@@ -154,6 +153,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         return disapprovalReason;
     }
 
+    @Override
     public void templateVendor(VendorDetail vendor, VendorAddress vendorAddress) {
         if (vendor == null) {
             return;
@@ -230,6 +230,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
                   }
     }
 
+    @Override
     public void templateEmployee(Person employee) {
         if (employee == null) {
             return;
@@ -613,13 +614,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         return documentHelperService;
     }
 
-    public CuDisbursementVoucherPayeeDetail getDvPayeeDetail() {
-        return dvPayeeDetail;
-    }
-
     @Override
     public void populateDocumentForRouting() {
-        CuDisbursementVoucherPayeeDetail payeeDetail =   getDvPayeeDetail();
+        CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) getDvPayeeDetail();
 
         if (payeeDetail.isVendor()) {
             payeeDetail.setDisbVchrPayeeEmployeeCode(
@@ -665,6 +662,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     /**
      * Clear fields that shouldn't be copied to to the new DV.
      */
+    @Override
     protected void clearFieldsThatShouldNotBeCopied() {
         super.clearFieldsThatShouldNotBeCopied();
         setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
@@ -693,6 +691,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
     }
 
+    @Override
     protected void clearPayee(String messageKey) {
         dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
         getDvPayeeDetail().setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
@@ -705,6 +704,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         ((CuDisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
     }
 
+    @Override
     public void initiateDocument() {
         PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         Person currentUser = GlobalVariables.getUserSession().getPerson();
@@ -825,6 +825,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
     }
 
+    @Override
     public boolean isTravelReviewRequired() {
         List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
 
@@ -962,9 +963,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     	return SpringContext.getBean(ParameterEvaluatorService.class);
     }
 
-
-    public void setDvPayeeDetail(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
-        this.dvPayeeDetail = dvPayeeDetail;
+    @Override
+    public void setDvPayeeDetail(DisbursementVoucherPayeeDetail dvPayeeDetail) {
+        this.dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) dvPayeeDetail;
     }
 
     public String getTripAssociationStatusCode() {

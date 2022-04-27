@@ -16,6 +16,7 @@ import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 
@@ -129,10 +130,10 @@ public class CuDisbursementVoucherPayeeServiceImplTest extends KualiIntegTestBas
 			 System.out.println("FDOC number  "+aFdoc);
 			 System.out.println("DV Payee detail "+dvA.getDvPayeeDetail());
 			 
-			 isAlumni = cuDisbursementVoucherPayeeService.isAlumni(dvA.getDvPayeeDetail());
+			 isAlumni = cuDisbursementVoucherPayeeService.isAlumni((CuDisbursementVoucherPayeeDetail)dvA.getDvPayeeDetail());
 			 
 			 CuDisbursementVoucherDocument dvS = businessObjectService.findBySinglePrimaryKey(CuDisbursementVoucherDocument.class, sFdoc);
-			 isStudent = cuDisbursementVoucherPayeeService.isStudent(dvS.getDvPayeeDetail());
+			 isStudent = cuDisbursementVoucherPayeeService.isStudent((CuDisbursementVoucherPayeeDetail)dvS.getDvPayeeDetail());
 			 
 			 CuDisbursementVoucherDocument dvE = businessObjectService.findBySinglePrimaryKey(CuDisbursementVoucherDocument.class, eFdoc);
 			 isEmployee = cuDisbursementVoucherPayeeService.isEmployee(dvE.getDvPayeeDetail());
