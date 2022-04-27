@@ -615,11 +615,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     }
 
     @Override
-    public DisbursementVoucherPayeeDetail getDvPayeeDetail() {
-        return dvPayeeDetail;
-    }
-
-    @Override
     public void populateDocumentForRouting() {
         CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) getDvPayeeDetail();
 
