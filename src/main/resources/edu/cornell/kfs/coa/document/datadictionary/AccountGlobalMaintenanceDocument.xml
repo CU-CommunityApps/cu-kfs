@@ -24,6 +24,7 @@
 
   <bean id="AccountGlobalMaintenanceDocument-cuParentBean" abstract="true" parent="AccountGlobalMaintenanceDocument-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountGlobal"/>
+    <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CuAccountGlobalMaintainableImpl"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountGlobalPreRules"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.CuAccountGlobalRule"/>
   	<property name="maintainableSections">

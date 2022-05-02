@@ -6,15 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.datadictionary.legacy.MaintenanceDocumentDictionaryService;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
+import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
+import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -24,12 +25,13 @@ import org.kuali.kfs.krad.service.DocumentHeaderService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
-import edu.cornell.kfs.coa.dataaccess.AccountReversionDao;
 import edu.cornell.kfs.coa.service.AccountReversionService;
 import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
+import edu.cornell.kfs.sys.CUKFSConstants.FinancialDocumentTypeCodes;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 @Transactional
@@ -44,6 +46,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
     protected ConfigurationService kualiConfigurationService;
     protected DocumentHeaderService documentHeaderService;
     protected UniversityDateService universityDateService;
+    protected DocumentTypeService documentTypeService;
     
     /**
      * Will generate Maintenance Locks for all (active or not) AccountReversions in the system related to the inactivated account using the AccountReversion
@@ -161,7 +164,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
                 }
             }
             
-            addNotesToDocument(documentNumber, inactivatedAccountReversions, alreadyLockedAccountReversions, errorPersistingAccountReversions);
+            addNotesToDocument(documentNumber, inactivatedAccount, inactivatedAccountReversions, alreadyLockedAccountReversions, errorPersistingAccountReversions);
         }
     }
 
@@ -169,23 +172,41 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
      * Adds notes about inactivated AccountReversions, any errors while persisting inactivated account reversions or account reversions that were loccked.
      * 
      * @param documentNumber
+     * @param inactivatedAccount
      * @param inactivatedAccountReversions
      * @param alreadyLockedAccountReversions
      * @param errorPersistingAccountReversions
      */
-    protected void addNotesToDocument(String documentNumber, List<AccountReversion> inactivatedAccountReversions, Map<AccountReversion, String> alreadyLockedAccountReversions, List<AccountReversion> errorPersistingAccountReversions) {
+    protected void addNotesToDocument(String documentNumber, Account inactivatedAccount, List<AccountReversion> inactivatedAccountReversions,
+            Map<AccountReversion, String> alreadyLockedAccountReversions, List<AccountReversion> errorPersistingAccountReversions) {
         if (inactivatedAccountReversions.isEmpty() && alreadyLockedAccountReversions.isEmpty() && errorPersistingAccountReversions.isEmpty()) {
             // if we didn't try to inactivate any AccountReversions, then don't bother
             return;
         }
-        DocumentHeader noteParent = documentHeaderService.getDocumentHeaderById(documentNumber);
+        PersistableBusinessObject noteParent = getNoteTargetForTrickleDownInactivations(inactivatedAccount, documentNumber);
         Note newNote = new Note();
         
         addNotes(documentNumber, inactivatedAccountReversions, CUKFSKeyConstants.ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION, noteParent, newNote);
         addNotes(documentNumber, errorPersistingAccountReversions, CUKFSKeyConstants.ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, noteParent, newNote);
         addMaintenanceLockedNotes(documentNumber, alreadyLockedAccountReversions, CUKFSKeyConstants.ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION_RECORD_ALREADY_MAINTENANCE_LOCKED, noteParent, newNote);
     }
-    
+
+    protected PersistableBusinessObject getNoteTargetForTrickleDownInactivations(
+            Account inactivatedAccount, String documentNumber) {
+        DocumentType documentType = documentTypeService.findByDocumentId(documentNumber);
+        if (ObjectUtils.isNull(documentType)) {
+            throw new IllegalStateException("Document type was null for document '" + documentNumber
+                    + "', this should NEVER happen!");
+        }
+        
+        if (StringUtils.equalsAnyIgnoreCase(documentType.getName(),
+                FinancialDocumentTypeCodes.ACCOUNT, FinancialDocumentTypeCodes.ACCOUNT_GLOBAL)) {
+            return inactivatedAccount;
+        } else {
+            return documentHeaderService.getDocumentHeaderById(documentNumber);
+        }
+    }
+
     /**
      * Adds notes about any maintence locks on Account Reversions.
      * 
@@ -370,5 +391,9 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
 	public void setAccountReversionService(AccountReversionService accountReversionService) {
 		this.accountReversionService = accountReversionService;
 	}
+
+    public void setDocumentTypeService(DocumentTypeService documentTypeService) {
+        this.documentTypeService = documentTypeService;
+    }
 
 }
