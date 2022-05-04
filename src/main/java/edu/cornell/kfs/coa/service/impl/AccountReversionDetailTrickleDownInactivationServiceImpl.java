@@ -301,7 +301,9 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
          * @return the funny, heart-breaking, and ultimately inspiring resultant description
          */
         protected String getAccountReversionDetailDescription(AccountReversionDetail accountReversionDetail) {
-            return accountReversionDetail.getChartOfAccountsCode() + " - " + accountReversionDetail.getAccountNumber() + " Category: " + accountReversionDetail.getAccountReversionCategoryCode();
+            return accountReversionDetail.getUniversityFiscalYear() + " - "
+                    + accountReversionDetail.getChartOfAccountsCode() + " - "
+                    + accountReversionDetail.getAccountNumber() + " Category: " + accountReversionDetail.getAccountReversionCategoryCode();
         }
         
         /**

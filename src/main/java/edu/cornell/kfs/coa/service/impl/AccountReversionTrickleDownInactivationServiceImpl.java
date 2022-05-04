@@ -16,7 +16,6 @@ import org.kuali.kfs.datadictionary.legacy.MaintenanceDocumentDictionaryService;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 import org.kuali.kfs.kns.maintenance.Maintainable;
-import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.dao.MaintenanceDocumentDao;
@@ -24,6 +23,7 @@ import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.service.DocumentHeaderService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +62,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
             accountReversionMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(AccountReversion.class.getName()).newInstance();
             accountReversionMaintainable.setDataObjectClass(AccountReversion.class);
             accountReversionMaintainable.setDocumentNumber(documentNumber);
+            accountReversionMaintainable.setMaintenanceAction(KRADConstants.MAINTENANCE_EDIT_ACTION);
         }
         catch (Exception e) {
             LOG.error("Unable to instantiate Account Reversion Maintainable" , e);
@@ -110,6 +111,7 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
             accountReversionMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(AccountReversion.class.getName()).newInstance();
             accountReversionMaintainable.setDataObjectClass(AccountReversion.class);
             accountReversionMaintainable.setDocumentNumber(documentNumber);
+            accountReversionMaintainable.setMaintenanceAction(KRADConstants.MAINTENANCE_EDIT_ACTION);
         }
         catch (Exception e) {
             LOG.error("Unable to instantiate accountReversionMaintainable Maintainable" , e);
@@ -135,6 +137,15 @@ public class AccountReversionTrickleDownInactivationServiceImpl implements Accou
         if(ObjectUtils.isNotNull(budgetAccountReversionRules) && budgetAccountReversionRules.size() > 0){
             accountReversionRules.addAll(budgetAccountReversionRules);
         }
+        
+        /*
+         * The code above retrieves Account Reversions from the database via OJB, causing OJB to cache them locally.
+         * The code below changes the active flag on each appropriate Account Reversion, but the subsequent code in
+         * AccountReversionMaintainableImpl needs to re-retrieve the Reversion from the DB *before* saving the update.
+         * The line below is needed to clear the OJB cache, so that the re-retrieval code does not accidentally
+         * return the unsaved locally-changed object from OJB's cache.
+         */
+        accountReversionService.forciblyClearCache();
         
         if (ObjectUtils.isNotNull(accountReversionRules) && !accountReversionRules.isEmpty()) {
             for (AccountReversion accountReversion : accountReversionRules ) {

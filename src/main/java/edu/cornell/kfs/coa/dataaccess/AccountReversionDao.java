@@ -72,4 +72,5 @@ public interface AccountReversionDao {
      */
     public List<ReversionCategory> getCategories();
     
+    public void forciblyClearCache();
 }
