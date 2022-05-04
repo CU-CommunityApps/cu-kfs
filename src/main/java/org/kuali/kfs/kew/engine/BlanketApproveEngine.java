@@ -49,6 +49,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * ====
+ * CU Customization (KFSPTS-324, KFSUPGRADE-504, KFSPTS-24745):
+ * Updated blanket approval engine to send FYI requests instead of ACK requests.
+ * ====
+ */
+
+/**
  * A WorkflowEngine implementation which orchestrates the document through the blanket approval process.
  */
 public class BlanketApproveEngine extends StandardWorkflowEngine {
@@ -106,8 +113,9 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
             context.setEngineState(new EngineState());
             NotificationContext notifyContext = null;
             if (config.isSendNotifications()) {
+                // ==== CU Customization (KFSPTS-324, KFSUPGRADE-504, KFSPTS-24745)): Updated the line below to send FYIs instead of ACKs. ====
                 notifyContext = new NotificationContext(
-                        KewApiConstants.ACTION_REQUEST_ACKNOWLEDGE_REQ, config.getCause().getPrincipal(),
+                        KewApiConstants.ACTION_REQUEST_FYI_REQ, config.getCause().getPrincipal(),
                         config.getCause().getActionTaken());
             }
             lockAdditionalDocuments(document);
