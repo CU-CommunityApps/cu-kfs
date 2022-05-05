@@ -3,7 +3,6 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
@@ -17,14 +16,7 @@ public class CreateAccountingDocumentServiceImplTestDI extends CreateAccountingD
                 buildAccountingXmlDocumentDownloadAttachmentService(), configurationService,
                 buildMockUniversityDateService(), dateTimeService);
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DI_DOCUMENT);
-        createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType(dateTimeService));
-        createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
-        createAccountingDocumentService.setFileStorageService(buildFileStorageService());
-        createAccountingDocumentService.setConfigurationService(configurationService);
-        createAccountingDocumentService.setDocumentService(buildMockDocumentService());
-        createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
-        createAccountingDocumentService.setParameterService(parameterService);
-        createAccountingDocumentService.setCreateAccountingDocumentValidationService(buildCreateAccountingDocumentValidationService(configurationService));
+        setupBasicCreateAccountingDocumentServices();
     }
 
     @After
