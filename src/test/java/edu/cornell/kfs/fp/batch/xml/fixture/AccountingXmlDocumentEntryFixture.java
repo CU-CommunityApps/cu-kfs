@@ -863,20 +863,6 @@ public enum AccountingXmlDocumentEntryFixture {
                 dvDoc.setInvoiceDate(new Date(dvDetails.invoiceDate.getMillis()));
             }
             dvDoc.setInvoiceNumber(dvDetails.invoiceNumber);
-            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerExpense) {
-                DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
-                expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
-                expense.setDisbVchrExpenseCompanyName(expenseFixture.companyName);
-                expense.setDisbVchrExpenseAmount(expenseFixture.amount);
-                dvDoc.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(expense);
-            }
-            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerPrepaidExpense) {
-                DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
-                expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
-                expense.setDisbVchrExpenseCompanyName(expenseFixture.companyName);
-                expense.setDisbVchrExpenseAmount(expenseFixture.amount);
-                dvDoc.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(expense);
-            }
         }
     }
 

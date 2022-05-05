@@ -655,55 +655,6 @@
             		<special_handling_zip>13068</special_handling_zip>
             		<special_handling_country>US</special_handling_country>
             	</payment_information>
-            	<non_employee_travel>
-            		<traveler_name>Jane Doe</traveler_name>
-            		<service_performed>did cool stuff</service_performed>
-            		<service_performed_location>Freeville</service_performed_location>
-            		<service_performed_employee_name>jdh34</service_performed_employee_name>
-            		<travel_from_city>Ithaca</travel_from_city>
-            		<travel_from_state>NY</travel_from_state>
-            		<travel_from_country>US</travel_from_country>
-            		<travel_to_city>Freeville</travel_to_city>
-            		<travel_to_state>NY</travel_to_state>
-            		<travel_to_country>US</travel_to_country>
-            		<perdiem_start_date>07/20/2018</perdiem_start_date>
-            		<perdiem_end_date>07/25/2018</perdiem_end_date>
-            		<perdiem_category>DOMESTIC</perdiem_category>
-            		<auto_from_city>Ithaca</auto_from_city>
-            		<auto_from_state>NY</auto_from_state>
-            		<auto_to_city>Freeville</auto_to_city>
-            		<auto_to_state>NY</auto_to_state>
-            		<perdiem_rate>50</perdiem_rate>
-            		<perdeim_actual_amount></perdeim_actual_amount>
-            		<round_trip_code>T</round_trip_code>
-            		<personal_car_mileage_amount>25</personal_car_mileage_amount>
-            		<perdiem_change_reason_text></perdiem_change_reason_text>
-            		<personal_car_amount></personal_car_amount>
-            		<traveler_expenses>
-            			<expense>
-            				<expense_type>A</expense_type>
-            				<company_name>DELTA</company_name>
-            				<amount>55.55</amount>
-            			</expense>
-            			<expense>
-            				<expense_type>L</expense_type>
-            				<company_name>Other - Lodging</company_name>
-            				<amount>1555.55</amount>
-            			</expense>
-            		</traveler_expenses>
-            		<prepaid_expenses>
-            			<expense>
-            				<expense_type>PR</expense_type>
-            				<company_name>AVIS</company_name>
-            				<amount>23.55</amount>
-            			</expense>
-            			<expense>
-            				<expense_type>PO</expense_type>
-            				<company_name>PREPAID OTHER</company_name>
-            				<amount>230.55</amount>
-            			</expense>
-            		</prepaid_expenses>
-            	</non_employee_travel>
             	<pre_paid_travel>
             		<location>Freeville</location>
             		<type>PR</type>

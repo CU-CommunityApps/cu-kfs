@@ -54,7 +54,6 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.impl.AccountingPeriodServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
@@ -689,30 +688,12 @@ public class CreateAccountingDocumentServiceImplTest {
                 actualDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         assertEquals("payee type code not correct", expectedDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode(), 
                 actualDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode());
-        assertEquals("non employee travel perdiem rate not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate(),
-                actualDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
         assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
                 actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
-        assertEquals("non employee traveler name not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName(), 
-                actualDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName());
-        assertEquals("non employee mileage not correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), 
-                actualDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount());
-        assertObjectListIsCorrect("non employee travel expenses aren't correct", expectedDvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses(), 
-                actualDvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses(), this::assertTravelExpenseCorrect);
-        assertObjectListIsCorrect("non employee prepaid travel expenses aren't correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), 
-                actualDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), this::assertTravelExpenseCorrect);
         assertEquals("Due Dates should match", dateFormat.format(expectedDvDocument.getDisbursementVoucherDueDate()), 
                 dateFormat.format(actualDvDocument.getDisbursementVoucherDueDate()) );
         assertEquals("Invoice Dates should match", expectedDvDocument.getInvoiceDate(), actualDvDocument.getInvoiceDate());
         assertEquals("Invoice numbers should match", expectedDvDocument.getInvoiceNumber(), actualDvDocument.getInvoiceNumber());
-    }
-    
-    private void assertTravelExpenseCorrect(DisbursementVoucherNonEmployeeExpense expectedExpense, DisbursementVoucherNonEmployeeExpense actualExpense) {
-        assertEquals("expense code not correct", expectedExpense.getDisbVchrExpenseCode(), actualExpense.getDisbVchrExpenseCode());
-        assertEquals("expense company name not correct", expectedExpense.getDisbVchrExpenseCompanyName(), actualExpense.getDisbVchrExpenseCompanyName());
-        assertEquals("expense amount not correct", expectedExpense.getDisbVchrExpenseAmount(), actualExpense.getDisbVchrExpenseAmount());
-        
-        
     }
 
     private void assertAdHocPersonIsCorrect(AdHocRoutePerson expectedAdHocPerson, AdHocRoutePerson actualAdHocPerson) {

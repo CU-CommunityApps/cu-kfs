@@ -46,8 +46,6 @@ public enum CuDisbursementVoucherDocumentFixture {
     public final DateTime invoiceDate;
     public final String invoiceNumber;
     public final Enum<?> payee;
-    public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerExpense;
-    public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerPrepaidExpense;
     
     private CuDisbursementVoucherDocumentFixture() {
         this.bankCode = StringUtils.EMPTY;
@@ -58,8 +56,6 @@ public enum CuDisbursementVoucherDocumentFixture {
         this.conferenceDestination = StringUtils.EMPTY;
         this.nonEmployeeTravelerName = StringUtils.EMPTY;
         this.nonEmployeeCarMileage = new Integer(0);
-        this.nonEmployeeTravelerExpense = new ArrayList<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture>();
-        this.nonEmployeeTravelerPrepaidExpense = new ArrayList<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture>();
         this.dueDate = calculateDefaultDueDate();
         this.invoiceDate = null;
         this.invoiceNumber = StringUtils.EMPTY;
@@ -80,8 +76,6 @@ public enum CuDisbursementVoucherDocumentFixture {
         this.nonEmployeeTravelerName = nonEmployeeTravelerName;
         this.nonEmployeeCarMileage = nonEmployeeCarMileage;
         this.payee = payee;
-        this.nonEmployeeTravelerExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerExpenseArray);
-        this.nonEmployeeTravelerPrepaidExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerPrepaidExpenseArray);
         if (StringUtils.isNotEmpty(dueDateString)) {
             this.dueDate = new DateTime(StringToJavaDateAdapter.parseToDateTime(dueDateString).getMillis());
         } else {
