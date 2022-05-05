@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,11 +16,6 @@ public class CreateAccountingDocumentServiceImplTestSB extends CreateAccountingD
                 buildMockUniversityDateService(), dateTimeService);
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.SB_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

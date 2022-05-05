@@ -1,10 +1,8 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImplTest.TestCreateAccountingDocumentServiceImpl;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
