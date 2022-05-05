@@ -127,8 +127,13 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             }
         }
         
-        status.saveSuccesfullyChangedNotes(documentNumber);
-        status.saveErrorNotes(documentNumber);
+        if (shouldAddNotesForTrickleDownDetailChanges(documentNumber)) {
+            status.saveSuccesfullyChangedNotes(documentNumber);
+            status.saveErrorNotes(documentNumber);
+        } else {
+            LOG.info("trickleDownInactivations, Skipping creation of notes for Detail changes "
+                    + "because the updates were triggered by an Account or Account Global document");
+        }
     }
     
     /**
@@ -156,8 +161,13 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             }
         }
         
-        status.saveSuccesfullyChangedNotes(documentNumber);
-        status.saveErrorNotes(documentNumber);
+        if (shouldAddNotesForTrickleDownDetailChanges(documentNumber)) {
+            status.saveSuccesfullyChangedNotes(documentNumber);
+            status.saveErrorNotes(documentNumber);
+        } else {
+            LOG.info("trickleDownActivations, Skipping creation of notes for Detail changes "
+                    + "because the updates were triggered by an Account or Account Global document");
+        }
     }
     
     /**
@@ -175,6 +185,16 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             result &= detail.getReversionCategory().isActive();
         }
         return result;
+    }
+
+    protected boolean shouldAddNotesForTrickleDownDetailChanges(String documentNumber) {
+        DocumentType documentType = documentTypeService.findByDocumentId(documentNumber);
+        if (ObjectUtils.isNull(documentType)) {
+            throw new IllegalStateException("Document type was null for document '" + documentNumber
+                    + "', this should NEVER happen!");
+        }
+        return !StringUtils.equalsAnyIgnoreCase(documentType.getName(),
+                FinancialDocumentTypeCodes.ACCOUNT, FinancialDocumentTypeCodes.ACCOUNT_GLOBAL);
     }
 
     /**
@@ -313,26 +333,9 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
          * @param documentNumber the document number to write to
          */
         protected void saveAllNotes(List<AccountReversionDetail> accountReversionDetails, String messageKey, String documentNumber) {
-            PersistableBusinessObject noteParent = getNoteTargetForChangedReversionDetails(
-                    accountReversionDetails, documentNumber);
+            DocumentHeader noteParent = documentHeaderService.getDocumentHeaderById(documentNumber);
             List<Note> notes = generateNotes(messageKey, noteParent, accountReversionDetails);
             noteService.saveNoteList(notes);
-        }
-        
-        protected PersistableBusinessObject getNoteTargetForChangedReversionDetails(
-                List<AccountReversionDetail> accountReversionDetails, String documentNumber) {
-            DocumentType documentType = documentTypeService.findByDocumentId(documentNumber);
-            if (ObjectUtils.isNull(documentType)) {
-                throw new IllegalStateException("Document type was null for document '" + documentNumber
-                        + "', this should NEVER happen!");
-            }
-            
-            if (!accountReversionDetails.isEmpty() && StringUtils.equalsAnyIgnoreCase(documentType.getName(),
-                    FinancialDocumentTypeCodes.ACCOUNT, FinancialDocumentTypeCodes.ACCOUNT_GLOBAL)) {
-                return accountReversionDetails.get(0).getAccount();
-            } else {
-                return documentHeaderService.getDocumentHeaderById(documentNumber);
-            }
         }
         
         /**
