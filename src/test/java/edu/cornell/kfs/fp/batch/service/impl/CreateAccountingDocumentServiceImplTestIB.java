@@ -3,14 +3,12 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 
-import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImplTest.TestCreateAccountingDocumentReportService;
-import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImplTest.TestCreateAccountingDocumentServiceImpl;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
 public class CreateAccountingDocumentServiceImplTestIB extends CreateAccountingDocumentServiceImplTest {
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -19,11 +17,6 @@ public class CreateAccountingDocumentServiceImplTestIB extends CreateAccountingD
                 buildMockUniversityDateService(), dateTimeService);
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.IB_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test
@@ -53,4 +46,6 @@ public class CreateAccountingDocumentServiceImplTestIB extends CreateAccountingD
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
     }
+    
+    
 }

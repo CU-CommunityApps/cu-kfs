@@ -107,6 +107,7 @@ import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
+import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImplTest.TestCreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.impl.fixture.DocGenVendorFixture;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentUnmarshalListener;
@@ -144,16 +145,20 @@ public class CreateAccountingDocumentServiceImplTest {
     private static final int DOCUMENT_NUMBER_START = 1000;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HH_mm_ss_S, Locale.US);
 
-    private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
+    protected TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
     private List<String> creationOrderedBaseFileNames;
     private SimpleDateFormat dateFormat;
+    protected ConfigurationService configurationService;
+    protected DateTimeService dateTimeService;
+    protected ParameterService parameterService;
 
-    @Before
+    //@Before
     public void setUp() throws Exception {
-        ConfigurationService configurationService = buildMockConfigurationService();
-        DateTimeService dateTimeService = buildMockDateTimeService();
-        ParameterService parameterService = buildParameterService();
+        configurationService = buildMockConfigurationService();
+        dateTimeService = buildMockDateTimeService();
+        parameterService = buildParameterService();
+        /*
         CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService = buildCuDisbursementVoucherDefaultDueDateService();
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
@@ -174,10 +179,22 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.setParameterService(parameterService);
         createAccountingDocumentService.setCreateAccountingDocumentValidationService(
                 buildCreateAccountingDocumentValidationService(configurationService));
+                */
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         createTargetTestDirectory();
         dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US);
+    }
+    
+    public void setupBasicCreateAccountingDocumentServices() throws Exception {
+        createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType(dateTimeService));
+        createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
+        createAccountingDocumentService.setFileStorageService(buildFileStorageService());
+        createAccountingDocumentService.setConfigurationService(configurationService);
+        createAccountingDocumentService.setDocumentService(buildMockDocumentService());
+        createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
+        createAccountingDocumentService.setParameterService(parameterService);
+        createAccountingDocumentService.setCreateAccountingDocumentValidationService(buildCreateAccountingDocumentValidationService(configurationService));
     }
 
     @After
@@ -185,303 +202,8 @@ public class CreateAccountingDocumentServiceImplTest {
         deleteTargetTestDirectory();
         dateFormat = null;
     }
-
-    @Test
-    public void testLoadSingleFileWithSingleDIDocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-di-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleDIDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-di-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithZeroDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("empty-document-list-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_LIST_TEST);
-    }
-
-    @Test
-    public void testLoadMultipleFilesWithDIDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-di-document-test", "multi-di-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_TEST,
-                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentWithInvalidDocType() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-di-plus-invalid-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentWithRulesFailure() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-rules-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_RULES_FIRST_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentsWithBadAttachments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-attachments-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_ATTACHMENTS_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileForDIDocumentWithBadAmount() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-di-bad-amount-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_AMOUNT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleIBDocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-ib-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleIBDocumentLackingItems() throws Exception {
-        copyTestFilesAndCreateDoneFiles("ib-without-items-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_NO_ITEMS_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleIBDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-ib-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleIBDocumentsPlusDocumentWithRulesFailure() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-ib-plus-bad-rules-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleDocumentTypes() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-doc-types-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithDIDocumentContainingIBItemsToIgnore() throws Exception {
-        copyTestFilesAndCreateDoneFiles("di-with-ib-items-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.DI_WITH_IB_ITEMS_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleBADocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-ba-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_DOCUMENT_TEST);
-    }
     
-    @Test
-    public void testLoadSingleFileWithSingleYEBADocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-yeba-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_YEBA_DOCUMENT_TEST);
-    }
-    
-    @Test
-    public void testLoadSingleFileWithMutliYEBADocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-yeba-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MUTLI_YEBA_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleBADocumentLackingBAAccountProperties() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-ba-no-base-or-months-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_NO_BASEAMOUNT_OR_MONTHS_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleBADocumentUsingNonZeroBaseAmounts() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-ba-nonzero-base-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_NONZERO_BASEAMOUNT_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleBADocumentUsingMultipleMonthAmounts() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-ba-multi-months-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_MULTI_MONTHS_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleBADocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-ba-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_BA_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleBADocumentsPlusDocumentsWithRulesFailures() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-ba-plus-bad-rules-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_BA_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleSBDocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-sb-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_SB_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleSBDocumentLackingItems() throws Exception {
-        copyTestFilesAndCreateDoneFiles("sb-without-items-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.SINGLE_SB_DOCUMENT_NO_ITEMS_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleSBDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-sb-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleSBDocumentsPlusDocumentWithRulesFailure() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-sb-plus-bad-rules-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleSBDocumentsPlusDocumentWithBadDateValues() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-sb-plus-bad-date-values-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_WITH_BAD_DATE_VALUES_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleYEDIDocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_YEDI_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleYEDIDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-yedi-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadMultipleFilesWithYEDIDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-yedi-document-test", "multi-yedi-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_YEDI_DOCUMENT_TEST,
-                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleYEDIDocumentsPlusDocumentWithInvalidDocType() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-yedi-plus-invalid-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
-    }
-    
-    @Test
-    public void testLoadSingleFileWithSingleYETFDocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-yetf-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_YETF_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithSingleAVDocument() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-av-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_AV_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleAVDocuments() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-av-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.MULTI_AV_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testLoadSingleFileWithMultipleAVDocumentsPlusDocumentsWithRulesFailures() throws Exception {
-        copyTestFilesAndCreateDoneFiles("multi-av-plus-bad-rules-doc-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_AV_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST);
-    }
-
-    @Test
-    public void testEmptyFile() throws Exception {
-        copyTestFilesAndCreateDoneFiles("empty-file-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST);
-    }
-    
-    @Test
-    public void testEmptyFileWithGoodFile() throws Exception {
-        copyTestFilesAndCreateDoneFiles("empty-file-test", "multi-yedi-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST,
-                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
-    }
-    
-    @Test
-    public void testBadXmlFile() throws Exception {
-        copyTestFilesAndCreateDoneFiles("bad-xml-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST);
-    }
-    
-    @Test
-    public void testBadXmlEmptyFileWithGoodFile() throws Exception {
-        copyTestFilesAndCreateDoneFiles("bad-xml-test", "empty-file-test", "multi-yedi-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST, 
-                AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST, AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
-    }
-    
-    @Test
-    public void testServiceError() throws Exception {
-        createAccountingDocumentService.setFailToCreateDocument(true);
-
-        copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
-        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
-        assertFalse("When there is a problem calling services, the job should fail", results);
-    }
-    
-    @Test
-    public void testLoadSingleFileWithSingleDIDocumentWithBadAttachmentUrl() throws Exception {
-        copyTestFilesAndCreateDoneFiles("single-di-bad-attach-document-test");
-        TestAccountingXmlDocumentDownloadAttachmentService attachService = (TestAccountingXmlDocumentDownloadAttachmentService) 
-                createAccountingDocumentService.downloadAttachmentService;
-        attachService.setForceUseOfRealClientToTestAttachmentUrls(true);
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST);
-    }
-    
-    @Test
-    public void testDvDocumentTest() throws Exception {
-        copyTestFilesAndCreateDoneFiles("dv-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
-    }
-
-    @Test
-    public void testDvDocumentWithVendorPayees() throws Exception {
-        copyTestFilesAndCreateDoneFiles("dv-document-vendor-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_VENDOR_TEST);
-    }
-
-    private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
+    protected void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
         boolean actualResults = createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertDocumentsWereCreatedAndRoutedCorrectly(actualResults, fixtures);
         assertDoneFilesWereDeleted();
@@ -714,7 +436,7 @@ public class CreateAccountingDocumentServiceImplTest {
         FileUtils.forceMkdir(accountingXmlDocumentTestDirectory);
     }
 
-    private void copyTestFilesAndCreateDoneFiles(String... baseFileNames) throws IOException {
+    protected void copyTestFilesAndCreateDoneFiles(String... baseFileNames) throws IOException {
         for (String baseFileName : baseFileNames) {
             File sourceFile = new File(
                     String.format(FULL_FILE_PATH_FORMAT, SOURCE_TEST_FILE_PATH, baseFileName, CuFPConstants.XML_FILE_EXTENSION));
@@ -815,7 +537,7 @@ public class CreateAccountingDocumentServiceImplTest {
         return messageKey + " {0}";
     }
 
-    private PersonService buildMockPersonService() throws Exception {
+    protected PersonService buildMockPersonService() throws Exception {
         PersonService personService = Mockito.mock(PersonService.class);
         Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
         Mockito.when(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER)).thenReturn(systemUser);
@@ -824,7 +546,7 @@ public class CreateAccountingDocumentServiceImplTest {
         return personService;
     }
 
-    private VendorService buildMockVendorService() throws Exception {
+    protected VendorService buildMockVendorService() throws Exception {
         VendorService vendorService = Mockito.mock(VendorService.class);
         DocGenVendorFixture[] vendorFixtures = { DocGenVendorFixture.XYZ_INDUSTRIES, DocGenVendorFixture.REE_PHUND };
         for (DocGenVendorFixture vendorFixture : vendorFixtures) {
@@ -864,7 +586,7 @@ public class CreateAccountingDocumentServiceImplTest {
         return parameterService;
     }
     
-    private CuDisbursementVoucherDefaultDueDateService buildCuDisbursementVoucherDefaultDueDateService() {
+    protected CuDisbursementVoucherDefaultDueDateService buildCuDisbursementVoucherDefaultDueDateService() {
         CuDisbursementVoucherDefaultDueDateService service = Mockito.mock(CuDisbursementVoucherDefaultDueDateService.class);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -872,7 +594,7 @@ public class CreateAccountingDocumentServiceImplTest {
         return service;
     }
 
-    private CuDisbursementVoucherPayeeService buildCuDisbursementVoucherPayeeService() {
+    protected CuDisbursementVoucherPayeeService buildCuDisbursementVoucherPayeeService() {
         return new CuDisbursementVoucherPayeeServiceImpl();
     }
 
@@ -897,7 +619,7 @@ public class CreateAccountingDocumentServiceImplTest {
         return !AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER.equals(fixture);
     }
 
-    private TestAccountingXmlDocumentDownloadAttachmentService buildAccountingXmlDocumentDownloadAttachmentService() throws Exception {
+    protected TestAccountingXmlDocumentDownloadAttachmentService buildAccountingXmlDocumentDownloadAttachmentService() throws Exception {
         TestAccountingXmlDocumentDownloadAttachmentService downloadAttachmentService = new TestAccountingXmlDocumentDownloadAttachmentService();
         downloadAttachmentService.setAttachmentService(buildMockAttachmentService());
         downloadAttachmentService.setWebServiceCredentialService(buildMockWebServiceCredentialService());
@@ -929,7 +651,7 @@ public class CreateAccountingDocumentServiceImplTest {
         return WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCode);
     }
 
-    private FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
+    protected FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
         List<FiscalYearFunctionControl> allowedBudgetAdjustmentYears = IntStream.of(CuFPTestConstants.FY_2016, CuFPTestConstants.FY_2018)
                 .mapToObj(this::buildFunctionControlAllowingBudgetAdjustment)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -949,19 +671,19 @@ public class CreateAccountingDocumentServiceImplTest {
         return functionControl;
     }
 
-    private DisbursementVoucherTravelService buildMockDisbursementVoucherTravelService() {
+    protected DisbursementVoucherTravelService buildMockDisbursementVoucherTravelService() {
         DisbursementVoucherTravelService travelService = Mockito.mock(DisbursementVoucherTravelService.class);
         Mockito.when(travelService.calculateMileageAmount(Mockito.anyInt(), Mockito.any())).thenReturn(new KualiDecimal(50));
         return travelService;
     }
     
-    private UniversityDateService buildMockUniversityDateService() {
+    protected UniversityDateService buildMockUniversityDateService() {
         UniversityDateService dateService = Mockito.mock(UniversityDateService.class);
         Mockito.when(dateService.getCurrentFiscalYear()).thenReturn(2019);
         return dateService;
     }
 
-    private AccountingPeriodService buildAccountingPeriodService() {
+    protected AccountingPeriodService buildAccountingPeriodService() {
         AccountingPeriodServiceImpl accountingPeriodService = Mockito.spy(new AccountingPeriodServiceImpl());
         accountingPeriodService.setBusinessObjectService(buildMockBusinessObjectService());
         Mockito.doReturn(buildListOfOpenAccountingPeriods())
@@ -1034,10 +756,10 @@ public class CreateAccountingDocumentServiceImplTest {
         return new ByteArrayInputStream(new byte[] {1});
     }
 
-    private static class TestCreateAccountingDocumentServiceImpl extends CreateAccountingDocumentServiceImpl {
+    protected static class TestCreateAccountingDocumentServiceImpl extends CreateAccountingDocumentServiceImpl {
         private Map<String, AccountingDocumentGenerator<?>> documentGeneratorsByBeanName;
         private PersonService personService;
-        private AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService;
+        protected AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService;
         private ConfigurationService configurationService;
         private DisbursementVoucherTravelService disbursementVoucherTravelService;
         private FiscalYearFunctionControlService fiscalYearFunctionControlService;
@@ -1051,6 +773,37 @@ public class CreateAccountingDocumentServiceImplTest {
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
         private boolean failToCreateDocument;
+        
+        public TestCreateAccountingDocumentServiceImpl(
+                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
+                ConfigurationService configurationService, UniversityDateService universityDateService,
+                DateTimeService dateTimeService) {
+            this.personService = personService;
+            this.downloadAttachmentService = downloadAttachmentService;
+            this.configurationService = configurationService;
+            this.universityDateService = universityDateService;
+            this.dateTimeService = dateTimeService;
+            this.nextDocumentNumber = DOCUMENT_NUMBER_START;
+            this.processingOrderedBaseFileNames = new ArrayList<>();
+            this.failToCreateDocument = false;
+        }
+        
+        public TestCreateAccountingDocumentServiceImpl(
+                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
+                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
+                UniversityDateService universityDateService, DateTimeService dateTimeService) {
+            this (personService, downloadAttachmentService, configurationService, universityDateService, dateTimeService);
+            
+            this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
+        }
+        
+        public TestCreateAccountingDocumentServiceImpl(
+                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
+                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
+                UniversityDateService universityDateService, AccountingPeriodService accountingPeriodService, 
+                DateTimeService dateTimeService) {
+            this (personService, downloadAttachmentService, configurationService, fiscalYearFunctionControlService, universityDateService, dateTimeService);
+            this.accountingPeriodService = accountingPeriodService;        }
 
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
@@ -1060,20 +813,15 @@ public class CreateAccountingDocumentServiceImplTest {
                 CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService,
                 CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService,
                 VendorService vendorService) {
-            this.personService = personService;
-            this.downloadAttachmentService = downloadAttachmentService;
+            this (personService, downloadAttachmentService, configurationService, fiscalYearFunctionControlService, universityDateService, 
+                    accountingPeriodService, dateTimeService);
+            
             this.disbursementVoucherTravelService = disbursementVoucherTravelService;
-            this.configurationService = configurationService;
-            this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
-            this.universityDateService = universityDateService;
-            this.accountingPeriodService = accountingPeriodService;
             this.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
             this.cuDisbursementVoucherPayeeService = cuDisbursementVoucherPayeeService;
             this.vendorService = vendorService;
-            this.dateTimeService = dateTimeService;
-            this.nextDocumentNumber = DOCUMENT_NUMBER_START;
-            this.processingOrderedBaseFileNames = new ArrayList<>();
-            this.failToCreateDocument = false;
+            
+            
         }
 
         public void setFailToCreateDocument(boolean failToCreateDocument) {
@@ -1201,7 +949,7 @@ public class CreateAccountingDocumentServiceImplTest {
         
     }
     
-    private static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {
+    protected static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {
         private Client mockClient;
         private boolean forceUseOfRealClientToTestAttachmentUrls;
 
@@ -1235,7 +983,7 @@ public class CreateAccountingDocumentServiceImplTest {
         
     }
     
-    private class TestCreateAccountingDocumentReportService implements CreateAccountingDocumentReportService {
+    protected class TestCreateAccountingDocumentReportService implements CreateAccountingDocumentReportService {
 
         @Override
         public void generateReport(CreateAccountingDocumentReportItem reportItem) {

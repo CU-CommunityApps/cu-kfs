@@ -16,13 +16,9 @@ public class CreateAccountingDocumentServiceImplTestBA extends CreateAccountingD
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(buildMockPersonService(),
                 buildAccountingXmlDocumentDownloadAttachmentService(), configurationService,
                 buildMockFiscalYearFunctionControlService(), buildMockUniversityDateService(), dateTimeService);
-        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.BA_DOCUMENT);
+        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.BA_DOCUMENT,
+                AccountingDocumentMapping.YEBA_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test
@@ -65,5 +61,19 @@ public class CreateAccountingDocumentServiceImplTestBA extends CreateAccountingD
         copyTestFilesAndCreateDoneFiles("multi-ba-plus-bad-rules-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_BA_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST);
+    }
+    
+    @Test
+    public void testLoadSingleFileWithSingleYEBADocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-yeba-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_YEBA_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testLoadSingleFileWithMutliYEBADocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-yeba-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MUTLI_YEBA_DOCUMENT_TEST);
     }
 }

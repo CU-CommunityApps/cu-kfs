@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import static org.junit.Assert.assertFalse;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,13 +17,9 @@ public class CreateAccountingDocumentServiceImplTestDI extends CreateAccountingD
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(buildMockPersonService(),
                 buildAccountingXmlDocumentDownloadAttachmentService(), configurationService,
                 buildMockUniversityDateService(), dateTimeService);
-        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DI_DOCUMENT);
+        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DI_DOCUMENT,
+                AccountingDocumentMapping.YEDI_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test
@@ -74,4 +72,42 @@ public class CreateAccountingDocumentServiceImplTestDI extends CreateAccountingD
                 AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_AMOUNT_TEST);
     }
 
+    @Test
+    public void testLoadSingleFileWithSingleDIDocumentWithBadAttachmentUrl() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-di-bad-attach-document-test");
+        TestAccountingXmlDocumentDownloadAttachmentService attachService = (TestAccountingXmlDocumentDownloadAttachmentService) createAccountingDocumentService.downloadAttachmentService;
+        attachService.setForceUseOfRealClientToTestAttachmentUrls(true);
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleYEDIDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_YEDI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleYEDIDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadMultipleFilesWithYEDIDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-yedi-document-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_YEDI_DOCUMENT_TEST,
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleYEDIDocumentsPlusDocumentWithInvalidDocType() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-yedi-plus-invalid-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
+    }
+    
 }
