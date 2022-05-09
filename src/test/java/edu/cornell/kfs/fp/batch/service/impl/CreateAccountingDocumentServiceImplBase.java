@@ -50,16 +50,20 @@ import org.junit.runner.RunWith;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.impl.AccountingPeriodServiceImpl;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.impl.parameter.ParameterEvaluatorServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
-import org.kuali.kfs.fp.businessobject.InternalBillingItem;
-import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
-import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -82,14 +86,6 @@ import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.core.impl.parameter.ParameterEvaluatorServiceImpl;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -113,7 +109,6 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingPeriodFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
-import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
@@ -145,7 +140,7 @@ public class CreateAccountingDocumentServiceImplBase {
     protected TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
     private List<String> creationOrderedBaseFileNames;
-    private SimpleDateFormat dateFormat;
+    
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
@@ -157,7 +152,6 @@ public class CreateAccountingDocumentServiceImplBase {
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         createTargetTestDirectory();
-        dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US);
     }
     
     public void setupBasicCreateAccountingDocumentServices() throws Exception {
@@ -174,7 +168,6 @@ public class CreateAccountingDocumentServiceImplBase {
     @After
     public void tearDown() throws Exception {
         deleteTargetTestDirectory();
-        dateFormat = null;
     }
     
     protected void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -270,21 +263,9 @@ public class CreateAccountingDocumentServiceImplBase {
                 expectedDocument.getNotes(), actualDocument.getNotes(), this::assertNoteIsCorrect);
         assertObjectListIsCorrect("ad hoc persons",
                 expectedDocument.getAdHocRoutePersons(), actualDocument.getAdHocRoutePersons(), this::assertAdHocPersonIsCorrect);
-        
-        if (InternalBillingDocument.class.isAssignableFrom(documentClass)) {
-            assertObjectListIsCorrect("items",
-                    ((InternalBillingDocument) expectedDocument).getItems(), ((InternalBillingDocument) actualDocument).getItems(),
-                    this::assertInternalBillingItemIsCorrect);
-        } else if (AuxiliaryVoucherDocument.class.isAssignableFrom(documentClass)) {
-            assertAuxiliaryVoucherDocumentIsCorrect((AuxiliaryVoucherDocument) expectedDocument, (AuxiliaryVoucherDocument) actualDocument);
-        }
-        
-        if (actualDocument instanceof CuDisbursementVoucherDocument) {
-            assertCuDisbursementVoucherDocumentsCorrect((CuDisbursementVoucherDocument) expectedDocument, (CuDisbursementVoucherDocument) actualDocument);
-        }
     }
 
-    private <T> void assertObjectListIsCorrect(String listLabel, List<? extends T> expectedObjects, List<? extends T> actualObjects,
+    protected <T> void assertObjectListIsCorrect(String listLabel, List<? extends T> expectedObjects, List<? extends T> actualObjects,
             BiConsumer<? super T, ? super T> objectValidator) {
         assertEquals("Wrong number of " + listLabel, expectedObjects.size(), actualObjects.size());
         for (int i = 0; i < expectedObjects.size(); i++) {
@@ -299,7 +280,7 @@ public class CreateAccountingDocumentServiceImplBase {
         assertEquals("Wrong org document number", expectedHeader.getOrganizationDocumentNumber(), actualHeader.getOrganizationDocumentNumber());
     }
 
-    private void assertAccountingLineIsCorrect(AccountingLine expectedLine, AccountingLine actualLine) {
+    protected void assertAccountingLineIsCorrect(AccountingLine expectedLine, AccountingLine actualLine) {
         assertEquals("Wrong accounting line implementation class", expectedLine.getClass(), actualLine.getClass());
         assertEquals("Wrong document number", expectedLine.getDocumentNumber(), actualLine.getDocumentNumber());
         assertEquals("Wrong chart code", expectedLine.getChartOfAccountsCode(), actualLine.getChartOfAccountsCode());
@@ -316,52 +297,6 @@ public class CreateAccountingDocumentServiceImplBase {
         } else {
             assertTrue("Line should not have a debit/credit code set up", StringUtils.isBlank(actualLine.getDebitCreditCode()));
         }
-        
-        if (expectedLine instanceof BudgetAdjustmentAccountingLine) {
-            assertBudgetAdjustmentAccountingLinePropertiesAreCorrect(
-                    (BudgetAdjustmentAccountingLine) expectedLine, (BudgetAdjustmentAccountingLine) actualLine);
-        }
-    }
-
-    private void assertBudgetAdjustmentAccountingLinePropertiesAreCorrect(
-            BudgetAdjustmentAccountingLine expectedLine, BudgetAdjustmentAccountingLine actualLine) {
-        assertEquals("Wrong base amount", expectedLine.getBaseBudgetAdjustmentAmount(), actualLine.getBaseBudgetAdjustmentAmount());
-        assertEquals("Wrong current amount", expectedLine.getCurrentBudgetAdjustmentAmount(), actualLine.getCurrentBudgetAdjustmentAmount());
-        assertEquals("Wrong month 01 amount",
-                expectedLine.getFinancialDocumentMonth1LineAmount(), actualLine.getFinancialDocumentMonth1LineAmount());
-        assertEquals("Wrong month 02 amount",
-                expectedLine.getFinancialDocumentMonth2LineAmount(), actualLine.getFinancialDocumentMonth2LineAmount());
-        assertEquals("Wrong month 03 amount",
-                expectedLine.getFinancialDocumentMonth3LineAmount(), actualLine.getFinancialDocumentMonth3LineAmount());
-        assertEquals("Wrong month 04 amount",
-                expectedLine.getFinancialDocumentMonth4LineAmount(), actualLine.getFinancialDocumentMonth4LineAmount());
-        assertEquals("Wrong month 05 amount",
-                expectedLine.getFinancialDocumentMonth5LineAmount(), actualLine.getFinancialDocumentMonth5LineAmount());
-        assertEquals("Wrong month 06 amount",
-                expectedLine.getFinancialDocumentMonth6LineAmount(), actualLine.getFinancialDocumentMonth6LineAmount());
-        assertEquals("Wrong month 07 amount",
-                expectedLine.getFinancialDocumentMonth7LineAmount(), actualLine.getFinancialDocumentMonth7LineAmount());
-        assertEquals("Wrong month 08 amount",
-                expectedLine.getFinancialDocumentMonth8LineAmount(), actualLine.getFinancialDocumentMonth8LineAmount());
-        assertEquals("Wrong month 09 amount",
-                expectedLine.getFinancialDocumentMonth9LineAmount(), actualLine.getFinancialDocumentMonth9LineAmount());
-        assertEquals("Wrong month 10 amount",
-                expectedLine.getFinancialDocumentMonth10LineAmount(), actualLine.getFinancialDocumentMonth10LineAmount());
-        assertEquals("Wrong month 11 amount",
-                expectedLine.getFinancialDocumentMonth11LineAmount(), actualLine.getFinancialDocumentMonth11LineAmount());
-        assertEquals("Wrong month 12 amount",
-                expectedLine.getFinancialDocumentMonth12LineAmount(), actualLine.getFinancialDocumentMonth12LineAmount());
-    }
-
-    private void assertInternalBillingItemIsCorrect(InternalBillingItem expectedItem, InternalBillingItem actualItem) {
-        assertEquals("Wrong document number", expectedItem.getDocumentNumber(), actualItem.getDocumentNumber());
-        assertEquals("Wrong item sequence number", expectedItem.getItemSequenceId(), actualItem.getItemSequenceId());
-        assertEquals("Wrong service date", expectedItem.getItemServiceDate(), actualItem.getItemServiceDate());
-        assertEquals("Wrong stock number", expectedItem.getItemStockNumber(), actualItem.getItemStockNumber());
-        assertEquals("Wrong item description", expectedItem.getItemStockDescription(), actualItem.getItemStockDescription());
-        assertEquals("Wrong item quantity", expectedItem.getItemQuantity(), actualItem.getItemQuantity());
-        assertEquals("Wrong unit of measure", expectedItem.getUnitOfMeasureCode(), actualItem.getUnitOfMeasureCode());
-        assertEquals("Wrong item cost", expectedItem.getItemUnitAmount(), actualItem.getItemUnitAmount());
     }
 
     private void assertNoteIsCorrect(Note expectedNote, Note actualNote) {
@@ -376,33 +311,11 @@ public class CreateAccountingDocumentServiceImplBase {
             assertEquals("Wrong attachment file name", expectedAttachment.getAttachmentFileName(), actualAttachment.getAttachmentFileName());
         }
     }
-    
-    private void assertCuDisbursementVoucherDocumentsCorrect(CuDisbursementVoucherDocument expectedDvDocument, CuDisbursementVoucherDocument actualDvDocument) {
-        assertEquals("Wrong bank code", expectedDvDocument.getDisbVchrBankCode(), actualDvDocument.getDisbVchrBankCode());
-        assertEquals("Wrong contact name", expectedDvDocument.getDisbVchrContactPersonName(), actualDvDocument.getDisbVchrContactPersonName());
-        assertEquals("payment reason code not correct", expectedDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode(), 
-                actualDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
-        assertEquals("payee type code not correct", expectedDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode(), 
-                actualDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode());
-        assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
-                actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
-        assertEquals("Due Dates should match", dateFormat.format(expectedDvDocument.getDisbursementVoucherDueDate()), 
-                dateFormat.format(actualDvDocument.getDisbursementVoucherDueDate()) );
-        assertEquals("Invoice Dates should match", expectedDvDocument.getInvoiceDate(), actualDvDocument.getInvoiceDate());
-        assertEquals("Invoice numbers should match", expectedDvDocument.getInvoiceNumber(), actualDvDocument.getInvoiceNumber());
-    }
 
     private void assertAdHocPersonIsCorrect(AdHocRoutePerson expectedAdHocPerson, AdHocRoutePerson actualAdHocPerson) {
         assertEquals("Wrong document number", expectedAdHocPerson.getdocumentNumber(), actualAdHocPerson.getdocumentNumber());
         assertEquals("Wrong recipient netID", expectedAdHocPerson.getId(), actualAdHocPerson.getId());
         assertEquals("Wrong action requested", expectedAdHocPerson.getActionRequested(), actualAdHocPerson.getActionRequested());
-    }
-
-    private void assertAuxiliaryVoucherDocumentIsCorrect(AuxiliaryVoucherDocument expectedDocument, AuxiliaryVoucherDocument actualDocument) {
-        assertEquals("Wrong accounting period code", expectedDocument.getPostingPeriodCode(), actualDocument.getPostingPeriodCode());
-        assertEquals("Wrong accounting period fiscal year", expectedDocument.getPostingYear(), actualDocument.getPostingYear());
-        assertEquals("Wrong AV document type", expectedDocument.getTypeCode(), actualDocument.getTypeCode());
-        assertEquals("Wrong reversal date", expectedDocument.getReversalDate(), actualDocument.getReversalDate());
     }
 
     private void createTargetTestDirectory() throws IOException {
@@ -485,14 +398,12 @@ public class CreateAccountingDocumentServiceImplBase {
         return fileStorageService;
     }
 
-    private ConfigurationService buildMockConfigurationService() throws Exception {
+    protected ConfigurationService buildMockConfigurationService() throws Exception {
         ConfigurationService configurationService = Mockito.mock(ConfigurationService.class);
         Mockito.when(configurationService.getPropertyValueAsString(CuFPTestConstants.TEST_VALIDATION_ERROR_KEY))
             .thenReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
         Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD))
             .thenReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
-        Mockito.when(configurationService.getPropertyValueAsString(Mockito.startsWith(CuFPTestConstants.AV_VALIDATION_MESSAGE_KEY_PREFIX)))
-            .then(this::buildAuxiliaryVoucherErrorMessage);
         Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR))
                 .thenReturn(CuFPTestConstants.GENERIC_ERROR_MESSAGE);
         Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR))
@@ -504,11 +415,6 @@ public class CreateAccountingDocumentServiceImplBase {
         Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_NAME_NOT_SAME_AS_VENDOR))
         .thenReturn(CuFPTestConstants.TEST_CREATE_ACCOUNT_DOCUMENT_PAYEE_MISMATCH);
         return configurationService;
-    }
-
-    private String buildAuxiliaryVoucherErrorMessage(InvocationOnMock invocation) {
-        String messageKey = invocation.getArgument(0);
-        return messageKey + " {0}";
     }
 
     protected PersonService buildMockPersonService() throws Exception {
@@ -735,14 +641,14 @@ public class CreateAccountingDocumentServiceImplBase {
         private PersonService personService;
         protected AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService;
         private ConfigurationService configurationService;
-        private DisbursementVoucherTravelService disbursementVoucherTravelService;
-        private FiscalYearFunctionControlService fiscalYearFunctionControlService;
-        private UniversityDateService universityDateService;
-        private AccountingPeriodService accountingPeriodService;
-        private DateTimeService dateTimeService;
-        private CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
-        private CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService;
-        private VendorService vendorService;
+        protected DisbursementVoucherTravelService disbursementVoucherTravelService;
+        protected FiscalYearFunctionControlService fiscalYearFunctionControlService;
+        protected UniversityDateService universityDateService;
+        protected AccountingPeriodService accountingPeriodService;
+        protected DateTimeService dateTimeService;
+        protected CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
+        protected CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService;
+        protected VendorService vendorService;
         
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
@@ -817,24 +723,6 @@ public class CreateAccountingDocumentServiceImplBase {
             accountingDocumentGenerator.setPersonService(personService);
             accountingDocumentGenerator.setAccountingXmlDocumentDownloadAttachmentService(downloadAttachmentService);
             accountingDocumentGenerator.setConfigurationService(configurationService);
-            if (accountingDocumentGenerator instanceof CuBudgetAdjustmentDocumentGenerator) {
-                CuBudgetAdjustmentDocumentGenerator baGenerator = (CuBudgetAdjustmentDocumentGenerator) accountingDocumentGenerator;
-                baGenerator.setFiscalYearFunctionControlService(fiscalYearFunctionControlService);
-            } else if (accountingDocumentGenerator instanceof CuYearEndBudgetAdjustmentDocumentGenerator) {
-                CuYearEndBudgetAdjustmentDocumentGenerator yebaGenerator = (CuYearEndBudgetAdjustmentDocumentGenerator) accountingDocumentGenerator;
-                yebaGenerator.setFiscalYearFunctionControlService(fiscalYearFunctionControlService);
-            } else  if (accountingDocumentGenerator instanceof CuDisbursementVoucherDocumentGenerator) {
-                CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) accountingDocumentGenerator;
-                dvGenerator.setUniversityDateService(universityDateService);
-                dvGenerator.setDisbursementVoucherTravelService(disbursementVoucherTravelService);
-                dvGenerator.setCuDisbursementVoucherDefaultDueDateService(cuDisbursementVoucherDefaultDueDateService);
-                dvGenerator.setCuDisbursementVoucherPayeeService(cuDisbursementVoucherPayeeService);
-                dvGenerator.setVendorService(vendorService);
-            } else if (accountingDocumentGenerator instanceof AuxiliaryVoucherDocumentGenerator) {
-                AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) accountingDocumentGenerator;
-                avGenerator.setAccountingPeriodService(accountingPeriodService);
-                avGenerator.setDateTimeService(dateTimeService);
-            }
             return accountingDocumentGenerator;
         }
 
