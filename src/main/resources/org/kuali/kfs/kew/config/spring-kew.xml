@@ -18,10 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!--
-    CU Customization: Backport FINP-7916 (aka FINP-7983?) changes into the 2021-01-28 version of this file.
-    This overlay should be removed when we upgrade to the 2021-11-17 financials patch or later.
--->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans"
        xmlns:c="http://www.springframework.org/schema/c"
@@ -48,81 +44,98 @@
     </bean>
 
     <bean id="documentTypeService" class="org.kuali.kfs.kew.doctype.service.impl.DocumentTypeServiceImpl"
-          p:documentTypeDAO-ref="enDocumentTypeDAO"
+          p:documentTypeDAO-ref="documentTypeDAO"
     />
 
-    <bean id="enRoutingReportService" class="org.kuali.kfs.kew.routemodule.service.impl.RoutingReportServiceImpl"
-          lazy-init="true"/>
+    <bean id="routingReportService"
+          class="org.kuali.kfs.kew.routemodule.service.impl.RoutingReportServiceImpl"
+          lazy-init="true"
+          p:simulationEngine-ref="simulationEngine"
+    />
 
-    <bean id="enDocumentRouteHeaderService" class="org.kuali.kfs.kew.routeheader.service.impl.RouteHeaderServiceImpl"
-          lazy-init="true" p:routeHeaderDAO-ref="enDocumentRouteHeaderDAO"
-          p:searchableAttributeDAO-ref="enSearchableAttributeDAO"/>
+    <bean id="documentRouteHeaderService" class="org.kuali.kfs.kew.routeheader.service.impl.RouteHeaderServiceImpl"
+          lazy-init="true" p:routeHeaderDAO-ref="documentRouteHeaderDAO"
+          p:searchableAttributeDAO-ref="searchableAttributeDAO"/>
 
-    <bean id="enRouteNodeService" class="org.kuali.kfs.kew.engine.node.service.impl.RouteNodeServiceImpl"
-          lazy-init="true" p:routeNodeDAO-ref="enRouteNodeDAO"/>
+    <bean id="routeNodeService" class="org.kuali.kfs.kew.engine.node.service.impl.RouteNodeServiceImpl"
+          lazy-init="true" p:routeNodeDAO-ref="routeNodeDAO"/>
 
     <bean id="workflowEngineFactory" class="org.kuali.kfs.kew.engine.WorkflowEngineFactoryImpl"
-          p:routeHeaderService-ref="enDocumentRouteHeaderService" p:routeNodeService-ref="enRouteNodeService"/>
+          p:routeHeaderService-ref="documentRouteHeaderService" p:routeNodeService-ref="routeNodeService"/>
 
-    <bean id="enDocumentSearchService" class="org.kuali.kfs.kew.docsearch.service.impl.DocumentSearchServiceImpl"
-          p:documentSearchDAO-ref="enDocumentSearchDAO" p:userOptionsService-ref="enUserOptionsService"
+    <bean id="documentSearchService" class="org.kuali.kfs.kew.docsearch.service.impl.DocumentSearchServiceImpl"
+          p:documentSearchDAO-ref="documentSearchDAO" p:userOptionsService-ref="userOptionsService"
           p:documentSearchCustomizationMediator-ref="documentSearchCustomizationMediator"/>
 
-    <bean id="enDocumentSearchDAO" class="org.kuali.kfs.kew.docsearch.dao.impl.DocumentSearchDAOJdbcImpl"
+    <bean id="documentSearchDAO" class="org.kuali.kfs.kew.docsearch.dao.impl.DocumentSearchDAOJdbcImpl"
           lazy-init="true" p:dataSource-ref="kewDataSource" p:parameterService-ref="parameterService"/>
 
     <bean id="documentSearchCustomizationMediator"
           class="org.kuali.kfs.kew.docsearch.DocumentSearchCustomizationMediatorImpl"/>
 
-    <bean id="enRouteModuleService" class="org.kuali.kfs.kew.routemodule.service.impl.RouteModuleServiceImpl"
+    <bean id="routeModuleService" class="org.kuali.kfs.kew.routemodule.service.impl.RouteModuleServiceImpl"
           lazy-init="true"/>
 
     <!-- 2.1 Workflow Engine -->
     <bean id="workflowEngine" class="org.kuali.kfs.kew.engine.StandardWorkflowEngine" lazy-init="true"
-          p:routeHeaderService-ref="enDocumentRouteHeaderService" p:routeNodeService-ref="enRouteNodeService"
+          p:routeHeaderService-ref="documentRouteHeaderService" p:routeNodeService-ref="routeNodeService"
           p:parameterService-ref="parameterService"/>
 
     <bean id="simulationEngine" class="org.kuali.kfs.kew.engine.simulation.SimulationEngine" lazy-init="true"
-          scope="prototype" p:routeHeaderService-ref="enDocumentRouteHeaderService"
-          p:routeNodeService-ref="enRouteNodeService" p:parameterService-ref="parameterService"/>
+          scope="prototype" p:routeHeaderService-ref="documentRouteHeaderService"
+          p:routeNodeService-ref="routeNodeService" p:parameterService-ref="parameterService"/>
 
-    <bean id="enBranchService" class="org.kuali.kfs.kew.engine.node.service.impl.BranchServiceImpl" lazy-init="true"
-          p:branchDAO-ref="enBranchDAO"/>
+    <bean id="branchService" class="org.kuali.kfs.kew.engine.node.service.impl.BranchServiceImpl" lazy-init="true"
+          p:branchDAO-ref="branchDAO"/>
 
-    <bean id="enActionRequestService" class="org.kuali.kfs.kew.actionrequest.service.impl.ActionRequestServiceImpl"
-          lazy-init="true" p:actionRequestDAO-ref="enActionRequestDAO"/>
+    <bean id="actionRequestService" class="org.kuali.kfs.kew.actionrequest.service.impl.ActionRequestServiceImpl"
+          lazy-init="true" p:actionRequestDAO-ref="actionRequestDAO"/>
 
-    <bean id="enActionListService" class="org.kuali.kfs.kew.actionlist.service.impl.ActionListServiceImpl"
-          lazy-init="true" p:actionListDAO-ref="enActionListDAO" p:actionItemDAO-ref="enActionItemDAO"/>
+    <bean id="actionListService" class="org.kuali.kfs.kew.actionlist.service.impl.ActionListServiceImpl"
+          lazy-init="true" p:actionListDAO-ref="actionListDAO" p:actionItemDAO-ref="actionItemDAO"/>
 
-    <bean id="enUserOptionsService" class="org.kuali.kfs.kew.useroptions.UserOptionsServiceImpl" lazy-init="true"
-          p:userOptionsDAO-ref="enUserOptionsDAO"/>
+    <bean id="userOptionsService" class="org.kuali.kfs.kew.useroptions.UserOptionsServiceImpl" lazy-init="true"
+          p:userOptionsDAO-ref="userOptionsDAO"/>
 
-    <bean id="enActionTakenService" class="org.kuali.kfs.kew.actiontaken.service.impl.ActionTakenServiceImpl"
-          lazy-init="true" p:actionTakenDAO-ref="enActionTakenDAO"/>
+    <bean id="actionTakenService" class="org.kuali.kfs.kew.actiontaken.service.impl.ActionTakenServiceImpl"
+          lazy-init="true" p:actionTakenDAO-ref="actionTakenDAO"/>
 
-    <bean id="workflowDocumentActionsService" class="org.kuali.kfs.kew.impl.action.WorkflowDocumentActionsServiceImpl"
-          p:documentTypeService-ref="documentTypeService"/>
+    <bean id="workflowDocumentActionsService"
+          class="org.kuali.kfs.kew.impl.action.WorkflowDocumentActionsServiceImpl"
+          p:actionRegistry-ref="actionRegistry"
+          p:actionRequestService-ref="actionRequestService"
+          p:actionTakenService-ref="actionTakenService"
+          p:documentAttributeIndexingQueue-ref="documentAttributeIndexingQueue"
+          p:documentTypePermissionService-ref="documentTypePermissionService"
+          p:documentTypeService-ref="documentTypeService"
+          p:groupService-ref="kimGroupService"
+          p:identityHelperService-ref="kewIdentityHelperService"
+          p:routeHeaderService-ref="documentRouteHeaderService"
+          p:routeNodeService-ref="routeNodeService"
+          p:routingReportService-ref="routingReportService"
+          p:simulationEngine-ref="simulationEngine"
+          p:workflowEngineFactory-ref="workflowEngineFactory"
+    />
 
     <bean id="workflowDocumentService" class="org.kuali.kfs.kew.impl.document.WorkflowDocumentServiceImpl"/>
 
-    <bean id="enDocumentTypePermissionService"
+    <bean id="documentTypePermissionService"
           class="org.kuali.kfs.kew.doctype.service.impl.DocumentTypePermissionServiceAuthorizerImpl"/>
 
-    <bean id="enDocumentSecurityService" class="org.kuali.kfs.kew.doctype.service.impl.DocumentSecurityServiceImpl"
-          p:ruleAttributeService-ref="enRuleAttributeService"/>
+    <bean id="documentSecurityService" class="org.kuali.kfs.kew.doctype.service.impl.DocumentSecurityServiceImpl"
+          p:ruleAttributeService-ref="ruleAttributeService"/>
 
-    <bean id="enExceptionRoutingService"
+    <bean id="exceptionRoutingService"
           class="org.kuali.kfs.kew.messaging.exceptionhandling.ExceptionRoutingServiceImpl" lazy-init="true"/>
 
-    <bean id="enNotificationService" class="org.kuali.kfs.kew.notification.service.impl.DefaultNotificationService"
+    <bean id="notificationService" class="org.kuali.kfs.kew.notification.service.impl.DefaultNotificationService"
           lazy-init="true"/>
 
-    <bean id="enActionRegistry" class="org.kuali.kfs.kew.actions.ActionRegistryImpl" lazy-init="true"/>
+    <bean id="actionRegistry" class="org.kuali.kfs.kew.actions.ActionRegistryImpl" lazy-init="true"/>
 
     <bean id="kewIdentityHelperService" class="org.kuali.kfs.kew.identity.service.impl.IdentityHelperServiceImpl"/>
 
-    <bean id="responsibilityChangeQueue" class="org.kuali.kfs.kew.impl.Responsibility.ResponsibilityChangeQueueImpl"/>
+    <bean id="responsibilityChangeQueue" class="org.kuali.kfs.kew.impl.responsibility.ResponsibilityChangeQueueImpl"/>
 
     <bean id="actionListCustomizationMediator"
           class="org.kuali.kfs.kew.impl.actionlist.ActionListCustomizationMediatorImpl"
@@ -134,20 +147,16 @@
 
     <bean id="documentSearchCustomizationHandlerService"
           class="org.kuali.kfs.kew.docsearch.DocumentSearchCustomizationHandlerServiceImpl"
-          p:ruleAttributeService-ref="enRuleAttributeService"/>
+          p:ruleAttributeService-ref="ruleAttributeService"/>
 
     <bean id="documentSecurityHandlerService"
           class="org.kuali.kfs.kew.impl.document.security.DocumentSecurityHandlerServiceImpl"
-          p:ruleAttributeService-ref="enRuleAttributeService"/>
+          p:ruleAttributeService-ref="ruleAttributeService"/>
 
-    <bean id="enRuleAttributeService" class="org.kuali.kfs.kew.rule.service.impl.RuleAttributeServiceImpl"
-          lazy-init="true" p:ruleAttributeDAO-ref="enRuleAttributeDAO"/>
+    <bean id="ruleAttributeService" class="org.kuali.kfs.kew.rule.service.impl.RuleAttributeServiceImpl"
+          lazy-init="true" p:ruleAttributeDAO-ref="ruleAttributeDAO"/>
 
     <bean id="preferencesService" class="org.kuali.kfs.kew.preferences.service.impl.PreferencesServiceImpl"/>
-
-    <bean id="enResponsibilityIdService"
-          class="org.kuali.kfs.kew.responsibility.service.impl.ResponsibilityIdServiceImpl" lazy-init="true"
-          p:responsibilityIdDAO-ref="enResponsibilityIdDAO"/>
 
     <bean id="documentOrchestrationQueue" class="org.kuali.kfs.kew.impl.action.DocumentOrchestrationQueueImpl"/>
 
@@ -162,18 +171,20 @@
           p:workflowEngineFactory-ref="workflowEngineFactory"
           p:documentAttributeIndexingQueue-ref="documentAttributeIndexingQueue"/>
 
-    <bean id="kewModule" class="org.kuali.kfs.krad.service.impl.ModuleServiceBase"
+    <bean id="kewModule" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl"
           p:moduleConfiguration-ref="kewModuleConfiguration"
-          p:kualiModuleService-ref="kualiModuleService"/>
+    />
 
-    <bean id="kewModuleConfiguration" class="org.kuali.kfs.krad.bo.ModuleConfiguration" p:namespaceCode="KFS-WKFLW"
-          p:dataSourceName="kewDataSource" p:initializeDataDictionary="true"
+    <bean id="kewModuleConfiguration" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration"
+          p:namespaceCode="KFS-WKFLW"
+          p:dataSourceName="kewDataSource"
+          p:initializeDataDictionary="true"
           p:dataDictionaryService-ref="dataDictionaryService"
-          p:persistenceService-ref="persistenceServiceOjb">
+          p:persistenceService-ref="persistenceServiceOjb"
+    >
         <property name="dataDictionaryPackages">
             <list>
                 <value>classpath:org/kuali/kfs/kew/bo/datadictionary/RuleAttribute.xml</value>
-                <value>classpath:org/kuali/kfs/kew/bo/datadictionary/RuleTemplate.xml</value>
                 <value>classpath:org/kuali/kfs/kew/bo/datadictionary/DocumentType.xml</value>
                 <value>classpath:org/kuali/kfs/kew/bo/datadictionary/DocumentRouteHeaderValue.xml</value>
                 <value>classpath:org/kuali/kfs/kew/document/datadictionary/DocumentTypeMaintenanceDocument.xml</value>
@@ -195,6 +206,23 @@
                 <value>org/kuali/kfs/kew/impl/config/OJB-repository-kew-classes.xml</value>
             </list>
         </property>
+        <property name="triggerNames">
+            <list>
+                <value>stuckDocumentAutofixTrigger</value>
+                <value>stuckDocumentNotificationTrigger</value>
+            </list>
+        </property>
+        <property name="jobNames">
+            <list>
+                <value>stuckDocumentAutofixJob</value>
+                <value>stuckDocumentNotificationJob</value>
+            </list>
+        </property>
+        <property name="batchFileDirectories">
+            <list>
+                <value>${reports.directory}/wkflw</value>
+            </list>
+        </property>
     </bean>
 
     <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
@@ -205,33 +233,32 @@
         </property>
         <property name="beanNames">
             <list>
-                <idref bean="enDocumentRouteHeaderService"/>
-                <idref bean="enActionListService"/>
-                <idref bean="enDocumentSearchService"/>
-                <idref bean="enDocumentTypePermissionService"/>
-                <idref bean="enActionTakenService"/>
-                <idref bean="enActionRequestService"/>
-                <idref bean="documentTypeService"/>
-                <idref bean="enRoutingReportService"/>
-                <idref bean="enNotificationService"/>
-                <idref bean="enRouteModuleService"/>
-                <idref bean="workflowEngine"/>
-                <idref bean="enRouteNodeService"/>
-                <idref bean="enBranchService"/>
-                <idref bean="enExceptionRoutingService"/>
-                <idref bean="preferencesService"/>
-                <idref bean="enResponsibilityIdService"/>
-                <idref bean="documentProcessingQueue"/>
-                <idref bean="documentOrchestrationQueue"/>
-                <idref bean="documentAttributeIndexingQueue"/>
-                <idref bean="responsibilityChangeQueue"/>
-                <idref bean="documentRefreshQueue"/>
-                <idref bean="workflowDocumentActionsService"/>
-                <idref bean="workflowDocumentService"/>
-                <idref bean="actionListCustomizationHandlerService"/>
-                <idref bean="documentSearchCustomizationHandlerService"/>
-                <idref bean="documentSecurityHandlerService"/>
-                <idref bean="actionInvocationQueue"/>
+                <idref local="documentRouteHeaderService"/>
+                <idref local="actionListService"/>
+                <idref local="documentSearchService"/>
+                <idref local="documentTypePermissionService"/>
+                <idref local="actionTakenService"/>
+                <idref local="actionRequestService"/>
+                <idref local="documentTypeService"/>
+                <idref local="routingReportService"/>
+                <idref local="notificationService"/>
+                <idref local="routeModuleService"/>
+                <idref local="workflowEngine"/>
+                <idref local="routeNodeService"/>
+                <idref local="branchService"/>
+                <idref local="exceptionRoutingService"/>
+                <idref local="preferencesService"/>
+                <idref local="documentProcessingQueue"/>
+                <idref local="documentOrchestrationQueue"/>
+                <idref local="documentAttributeIndexingQueue"/>
+                <idref local="responsibilityChangeQueue"/>
+                <idref local="documentRefreshQueue"/>
+                <idref local="workflowDocumentActionsService"/>
+                <idref local="workflowDocumentService"/>
+                <idref local="actionListCustomizationHandlerService"/>
+                <idref local="documentSearchCustomizationHandlerService"/>
+                <idref local="documentSecurityHandlerService"/>
+                <idref local="actionInvocationQueue"/>
             </list>
         </property>
     </bean>
@@ -240,91 +267,78 @@
           p:metadataLocation="classpath:org/kuali/kfs/kew/impl/config/OJB-repository-kew-connection.xml"
           p:jcdAliases="kewDataSource"/>
 
-    <bean id="enDocumentTypeDAO" class="org.kuali.kfs.kew.doctype.dao.impl.DocumentTypeDAOOjbImpl" lazy-init="true"
+    <bean id="documentTypeDAO" class="org.kuali.kfs.kew.doctype.dao.impl.DocumentTypeDAOOjbImpl" lazy-init="true"
           p:jcdAlias="kewDataSource"/>
 
-    <bean id="enActionListDAO" class="org.kuali.kfs.kew.actionlist.dao.impl.ActionListDAOOjbImpl" lazy-init="true"
+    <bean id="actionListDAO" class="org.kuali.kfs.kew.actionlist.dao.impl.ActionListDAOOjbImpl" lazy-init="true"
           p:jcdAlias="kewDataSource"/>
 
-    <bean id="enActionItemDAO" class="org.kuali.kfs.kew.actionitem.dao.impl.ActionItemDAOOjbImpl" lazy-init="true"
+    <bean id="actionItemDAO" class="org.kuali.kfs.kew.actionitem.dao.impl.ActionItemDAOOjbImpl" lazy-init="true"
           p:jcdAlias="kewDataSource"/>
 
-    <bean id="enActionTakenDAO" class="org.kuali.kfs.kew.actiontaken.dao.impl.ActionTakenDAOOjbImpl" lazy-init="true"
+    <bean id="actionTakenDAO" class="org.kuali.kfs.kew.actiontaken.dao.impl.ActionTakenDAOOjbImpl" lazy-init="true"
           p:jcdAlias="kewDataSource"/>
 
-    <bean id="enActionRequestDAO" class="org.kuali.kfs.kew.actionrequest.dao.impl.ActionRequestDAOOjbImpl"
+    <bean id="actionRequestDAO" class="org.kuali.kfs.kew.actionrequest.dao.impl.ActionRequestDAOOjbImpl"
           lazy-init="true" p:jcdAlias="kewDataSource"/>
 
-    <bean id="enRuleAttributeDAO" class="org.kuali.kfs.kew.rule.dao.impl.RuleAttributeDAOOjbImpl" lazy-init="true"
+    <bean id="ruleAttributeDAO" class="org.kuali.kfs.kew.rule.dao.impl.RuleAttributeDAOOjbImpl" lazy-init="true"
           p:jcdAlias="kewDataSource"/>
 
-    <bean id="enRuleTemplateDAO" class="org.kuali.kfs.kew.rule.dao.impl.RuleTemplateDAOOjbImpl" lazy-init="true"
+    <bean id="branchDAO" class="org.kuali.kfs.kew.engine.node.dao.impl.BranchDAOOjbImpl" lazy-init="true"
           p:jcdAlias="kewDataSource"/>
 
-    <bean id="enBranchDAO" class="org.kuali.kfs.kew.engine.node.dao.impl.BranchDAOOjbImpl" lazy-init="true"
-          p:jcdAlias="kewDataSource"/>
-
-    <bean id="enRouteNodeDAO" class="org.kuali.kfs.kew.engine.node.dao.impl.RouteNodeDAOOjbImpl"
+    <bean id="routeNodeDAO" class="org.kuali.kfs.kew.engine.node.dao.impl.RouteNodeDAOOjbImpl"
           p:jcdAlias="kewDataSource" lazy-init="true" p:dataSource-ref="kewDataSource"/>
 
-    <bean id="enDocumentRouteHeaderDAO" class="org.kuali.kfs.kew.routeheader.dao.impl.DocumentRouteHeaderDAOOjbImpl"
+    <bean id="documentRouteHeaderDAO" class="org.kuali.kfs.kew.routeheader.dao.impl.DocumentRouteHeaderDAOOjbImpl"
           lazy-init="true" p:jcdAlias="kewDataSource"/>
 
-    <bean id="enSearchableAttributeDAO" class="org.kuali.kfs.kew.docsearch.dao.impl.SearchableAttributeDAOOjbImpl"
+    <bean id="searchableAttributeDAO" class="org.kuali.kfs.kew.docsearch.dao.impl.SearchableAttributeDAOOjbImpl"
           lazy-init="true" p:jcdAlias="kewDataSource"/>
 
-    <bean id="enUserOptionsDAO" class="org.kuali.kfs.kew.useroptions.dao.impl.UserOptionsDAOOjbImpl" lazy-init="true"
+    <bean id="userOptionsDAO" class="org.kuali.kfs.kew.useroptions.dao.impl.UserOptionsDAOOjbImpl" lazy-init="true"
           p:jcdAlias="kewDataSource"/>
-
-    <bean id="enResponsibilityIdDAO" class="org.kuali.kfs.kew.responsibility.dao.impl.ResponsibilityIdDAOOjbImpl"
-          lazy-init="true" p:jcdAlias="kewDataSource"/>
 
     <bean id="stuckDocumentDao" parent="platformAwareDaoJdbc"
           class="org.kuali.kfs.kew.impl.stuck.StuckDocumentDaoJdbc"/>
 
-    <bean id="enEmailContentService" class="org.kuali.kfs.kew.mail.service.impl.EmailContentServiceImpl"
+    <bean id="emailContentService" class="org.kuali.kfs.kew.mail.service.impl.EmailContentServiceImpl"
           lazy-init="true"
           p:emailService-ref="emailService"
-          p:routeHeaderService-ref="enDocumentRouteHeaderService"
+          p:routeHeaderService-ref="documentRouteHeaderService"
           p:deploymentEnvironment=""/>
 
-    <bean id="enActionListEmailService"
-          class="org.kuali.kfs.kew.mail.service.impl.CustomizableActionListEmailServiceImpl"
-          p:deploymentEnvironment="${environment}" p:emailContentGenerator-ref="enEmailContentService"
-          p:emailService-ref="emailService" p:scheduler-ref="scheduler"/>
+    <bean class="org.kuali.kfs.kew.mail.service.impl.CustomizableActionListEmailServiceImpl"
+          id="actionListEmailService"
+          p:emailContentGenerator-ref="emailContentService"
+          p:emailService-ref="emailService"/>
 
     <bean id="groupMembershipChangeQueue" class="org.kuali.kfs.kew.impl.group.GroupMembershipChangeQueueImpl"/>
 
     <bean id="immediateEmailReminderQueue" class="org.kuali.kfs.kew.impl.mail.ImmediateEmailReminderQueueImpl"/>
 
-    <bean id="enGroupXmlService" class="org.kuali.kfs.kew.xml.GroupXmlServiceImpl"/>
-    <bean id="enUserXmlService" class="org.kuali.kfs.kew.xml.UserXmlServiceImpl"/>
+    <bean id="groupXmlService" class="org.kuali.kfs.kew.xml.GroupXmlServiceImpl"/>
+    <bean id="userXmlService" class="org.kuali.kfs.kew.xml.UserXmlServiceImpl"/>
 
     <bean id="kewImpexRegistrations" class="org.kuali.kfs.core.framework.impex.xml.XmlImpexRegistrationBean"
           p:xmlImpexRegistry-ref="xmlImpexRegistry">
         <property name="xmlLoadersToRegister">
             <list>
-                <ref bean="enUserXmlService"/>
-                <ref bean="enRuleAttributeService"/>
-                <ref bean="enGroupXmlService"/>
-                <ref bean="documentTypeService"/>
+                <ref local="userXmlService"/>
+                <ref local="ruleAttributeService"/>
+                <ref local="groupXmlService"/>
+                <ref local="documentTypeService"/>
             </list>
         </property>
         <property name="xmlExportersToRegister">
             <list>
-                <ref bean="enRuleAttributeService"/>
-                <ref bean="enGroupXmlService"/>
-                <ref bean="documentTypeService"/>
+                <ref local="ruleAttributeService"/>
+                <ref local="groupXmlService"/>
+                <ref local="documentTypeService"/>
             </list>
         </property>
     </bean>
-
-    <bean id="enXmlPollerService" class="org.kuali.kfs.kew.batch.XmlPollerServiceImpl"
-          p:xmlPendingLocation="${data.xml.pending.location}"
-          p:xmlCompletedLocation="${data.xml.loaded.location}"
-          p:xmlProblemLocation="${data.xml.problem.location}"
-          p:pollIntervalSecs="${data.xml.pollIntervalSecs}"
-          p:initialDelaySecs="${initialDelaySecs}"/>
 
     <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
         <property name="interceptorNames">
@@ -334,124 +348,67 @@
         </property>
         <property name="beanNames">
             <list>
-                <idref bean="groupMembershipChangeQueue"/>
-                <idref bean="enActionListEmailService"/>
-                <idref bean="stuckDocumentService"/>
+                <idref local="groupMembershipChangeQueue"/>
+                <idref local="actionListEmailService"/>
+                <idref local="stuckDocumentService"/>
             </list>
         </property>
     </bean>
 
     <!-- Stuck document configuration -->
-    <bean id="stuckDocumentsAutofixEnabledParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_AUTOFIX_ENABLED_IND"
-          c:defaultValue="false"
-          c:parameterService-ref="parameterService"/>
+    <bean id="stuckDocumentAutofixJob" parent="stuckDocumentAutofixJob-parentBean"/>
+    <bean id="stuckDocumentAutofixJob-parentBean" parent="scheduledJobDescriptor" abstract="true">
+        <property name="steps">
+            <list>
+                <ref bean="stuckDocumentAutofixStep"/>
+            </list>
+        </property>
+    </bean>
 
-    <!-- Default, every 15 minutes -->
-    <bean id="stuckDocumentsAutofixCronExpressionParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_AUTOFIX_CRON_EXPRESSION"
-          c:defaultValue="0 0/15 * 1/1 * ? *"
-          c:parameterService-ref="parameterService"/>
+    <bean id="stuckDocumentAutofixStep" parent="stuckDocumentAutofixStep-parentBean"/>
+    <bean id="stuckDocumentAutofixStep-parentBean" parent="step"
+          class="org.kuali.kfs.kew.impl.stuck.StuckDocumentAutofixStep" abstract="true"
+          p:stuckDocumentService-ref="stuckDocumentService"
+    />
 
-    <bean id="stuckDocumentsAutofixQuietPeriodParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_AUTOFIX_QUIET_PERIOD"
-          c:defaultValue="300"
-          c:parameterService-ref="parameterService"/>
+    <bean id="stuckDocumentAutofixTrigger" parent="stuckDocumentAutofixTrigger-parentBean"/>
+    <bean id="stuckDocumentAutofixTrigger-parentBean" parent="cronTrigger" abstract="true"
+          p:jobName="stuckDocumentAutofixJob"
+          p:cronExpression="${stuck.document.autofix.cron.expression}"/>
 
-    <bean id="stuckDocumentsAutofixMaxAttemptsParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_AUTOFIX_MAX_ATTEMPTS"
-          c:defaultValue="2"
-          c:parameterService-ref="parameterService"/>
+    <bean id="stuckDocumentNotificationJob" parent="stuckDocumentNotificationJob-parentBean"/>
+    <bean id="stuckDocumentNotificationJob-parentBean" parent="scheduledJobDescriptor" abstract="true">
+        <property name="steps">
+            <list>
+                <ref bean="stuckDocumentNotificationStep"/>
+            </list>
+        </property>
+    </bean>
 
-    <bean id="stuckDocumentsAutofixNotificationEnabledParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_AUTOFIX_NOTIFICATION_ENABLED"
-          c:defaultValue="true"
-          c:parameterService-ref="parameterService"/>
+    <bean id="stuckDocumentNotificationStep" parent="stuckDocumentNotificationStep-parentBean"/>
+    <bean id="stuckDocumentNotificationStep-parentBean" parent="step"
+          class="org.kuali.kfs.kew.impl.stuck.StuckDocumentNotificationStep" abstract="true"
+          p:notifier-ref="stuckDocumentNotifier"
+          p:stuckDocumentService-ref="stuckDocumentService"
+    />
 
-    <bean id="stuckDocumentsAutofixNotificationSubjectParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_AUTOFIX_NOTIFICATION_SUBJECT"
-          c:defaultValue="Failed to autofix document #{ '$' + '{documentId}'}"
-          c:parameterService-ref="parameterService"/>
-
-    <bean id="stuckDocumentsNotificationEnabledParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_NOTIFICATION_ENABLED_IND"
-          c:defaultValue="false"
-          c:parameterService-ref="parameterService"/>
-
-    <!-- Default, every 1 hour -->
-    <bean id="stuckDocumentsNotificationCronExpressionParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_NOTIFICATION_CRON_EXPRESSION"
-          c:defaultValue="0 0 0/1 1/1 * ? *"
-          c:parameterService-ref="parameterService"/>
-
-    <bean id="stuckDocumentsNotificationFromParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_NOTIFICATION_FROM"
-          c:parameterService-ref="parameterService"/>
-
-    <bean id="stuckDocumentsNotificationToParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_NOTIFICATION_TO"
-          c:parameterService-ref="parameterService"/>
-
-    <bean id="stuckDocumentsNotificationSubjectParam"
-          class="org.kuali.kfs.coreservice.framework.parameter.ParameterRuntimeConfig"
-          c:namespaceCode="KFS-WKFLW"
-          c:componentCode="All"
-          c:name="STUCK_DOCUMENTS_NOTIFICATION_SUBJECT"
-          c:defaultValue="Stuck Documents Found"
-          c:parameterService-ref="parameterService"/>
-
-    <bean id="stuckDocumentScheduler" class="org.kuali.kfs.kew.impl.stuck.StuckDocumentScheduler"
-          p:scheduler-ref="scheduler"
-          p:notificationEnabled-ref="stuckDocumentsNotificationEnabledParam"
-          p:notificationCronExpression-ref="stuckDocumentsNotificationCronExpressionParam"
-          p:autofixEnabled-ref="stuckDocumentsAutofixEnabledParam"
-          p:autofixCronExpression-ref="stuckDocumentsAutofixCronExpressionParam"
-          p:autofixQuietPeriod-ref="stuckDocumentsAutofixQuietPeriodParam"
-          p:autofixMaxAttempts-ref="stuckDocumentsAutofixMaxAttemptsParam"/>
+    <bean id="stuckDocumentNotificationTrigger" parent="stuckDocumentNotificationTrigger-parentBean"/>
+    <bean id="stuckDocumentNotificationTrigger-parentBean" parent="cronTrigger" abstract="true"
+          p:jobName="stuckDocumentNotificationJob"
+          p:cronExpression="${stuck.document.notification.cron.expression}"/>
 
     <bean id="stuckDocumentService" class="org.kuali.kfs.kew.impl.stuck.StuckDocumentServiceImpl"
           p:stuckDocumentDao-ref="stuckDocumentDao"
           p:notifier-ref="stuckDocumentNotifier"
-          p:failureNotificationEnabled-ref="stuckDocumentsAutofixNotificationEnabledParam"
-          p:businessObjectService-ref="businessObjectService"/>
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"
+    />
 
     <bean id="stuckDocumentNotifier"
           class="org.kuali.kfs.kew.impl.stuck.StuckDocumentNotifierImpl"
-          p:from-ref="stuckDocumentsNotificationFromParam"
-          p:to-ref="stuckDocumentsNotificationToParam"
-          p:subject-ref="stuckDocumentsNotificationSubjectParam"
           p:emailService-ref="emailService"
-          p:autofixSubject-ref="stuckDocumentsAutofixNotificationSubjectParam"/>
+          p:parameterService-ref="parameterService"
+    />
 
     <bean id="kewApiConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap"
           p:constantClass="org.kuali.kfs.kew.api.KewApiConstants"/>
@@ -481,7 +438,7 @@
           scope="prototype"
           p:documentSearchCriteriaProcessor-ref="documentSearchCriteriaProcessor"
           p:documentSearchCriteriaTranslator-ref="documentSearchCriteriaTranslator"
-          p:documentSearchService-ref="enDocumentSearchService"/>
+          p:documentSearchService-ref="documentSearchService"/>
 
     <bean id="documentSearchCriteriaBoLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
           scope="prototype" p:lookupableHelperService-ref="documentSearchCriteriaBoLookupableHelperService"
