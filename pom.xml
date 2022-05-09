@@ -1297,8 +1297,8 @@
 		</dependency>
         
         <dependency>
-            <groupId>biz.paluch.redis</groupId>
-            <artifactId>lettuce</artifactId>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
             <version>${lettuce.version}</version>
             <exclusions>
             	<exclusion>
