@@ -3,11 +3,16 @@ package edu.cornell.kfs.module.purap.document;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.framework.postprocessor.ActionTakenEvent;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
@@ -18,6 +23,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
@@ -30,9 +36,6 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.framework.postprocessor.ActionTakenEvent;
-import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 
 import edu.cornell.kfs.fp.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
@@ -271,6 +274,19 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
                 }
             }
         }
+
+    @Override
+    public List<String> getWorkflowEngineDocumentIdsToLock() {
+        Stream<String> otherDocIdsToLock = Stream.of(super.getWorkflowEngineDocumentIdsToLock())
+                .flatMap(idList -> (idList != null) ? idList.stream() : Stream.empty());
+        
+        Stream<String> poDocIdsToLock = getRelatedViews().getRelatedPurchaseOrderViews().stream()
+                .filter(PurchaseOrderView::isPurchaseOrderCurrentIndicator)
+                .map(PurchaseOrderView::getDocumentNumber);
+        
+        return Stream.concat(otherDocIdsToLock, poDocIdsToLock)
+                .collect(Collectors.toUnmodifiableList());
+    }
 
 	public String getPaymentMethodCode() {
 		return paymentMethodCode;
