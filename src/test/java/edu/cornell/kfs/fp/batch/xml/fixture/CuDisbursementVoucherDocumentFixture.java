@@ -16,23 +16,13 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 public enum CuDisbursementVoucherDocumentFixture {
     EMPTY(),
     JANE_DOE_DV_DETAIL("DISB", "Doe, Jane", "X", "E", 50, "Freeville", "Jane Doe", 25, "7/24/2018", StringUtils.EMPTY, null,
-            TestUserFixture.TEST_USER,
-            buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
-                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING),
-            buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
-                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER)),
+            TestUserFixture.TEST_USER),
     JOHN_DOE_DV_DETAIL("DISB", "Doe, John", "X", "E", 50, "Freeville", "John Doe", 25, StringUtils.EMPTY, "04/15/2020", "12321",
-            TestUserFixture.TEST_USER,
-            buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.DELTA,
-                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.OTHER_LODGING), 
-            buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_AVIS,
-                    CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture.PREPAID_OTHER)),
+            TestUserFixture.TEST_USER),
     XYZ_INDUSTRIES_DV_DETAIL("DISB", "Wyzee, Eks", "R", "V", -1, null, null, null, "12/28/2020", null, null,
-            DocGenVendorFixture.XYZ_INDUSTRIES,
-            buildExpenseFixtureArray(), buildExpenseFixtureArray()),
+            DocGenVendorFixture.XYZ_INDUSTRIES),
     REE_PHUND_DV_DETAIL("DISB", "Smith, Jack", "F", "V", -1, null, null, null, "12/29/2020", "12/22/2020", "123123",
-            DocGenVendorFixture.REE_PHUND,
-            buildExpenseFixtureArray(), buildExpenseFixtureArray());
+            DocGenVendorFixture.REE_PHUND);
     
     public final String bankCode;
     public final String contactName;
@@ -64,9 +54,7 @@ public enum CuDisbursementVoucherDocumentFixture {
     
     private CuDisbursementVoucherDocumentFixture(String bankCode, String contactName, String paymentReasonCode, String payeeTypeCode, double perdiemRate, 
             String conferenceDestination,  String nonEmployeeTravelerName, Integer nonEmployeeCarMileage, String dueDateString, String invoiceDateString, 
-            String invoiceNumber, Enum<?> payee, 
-            CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTravelerExpenseArray,
-            CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTravelerPrepaidExpenseArray) {
+            String invoiceNumber, Enum<?> payee) {
         this.bankCode = bankCode;
         this.contactName = contactName;
         this.paymentReasonCode = paymentReasonCode;
@@ -104,9 +92,5 @@ public enum CuDisbursementVoucherDocumentFixture {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 1);
         return new DateTime(cal.getTimeInMillis());
-    }
-    
-    private static CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture... fixtures) {
-        return fixtures;
     }
 }

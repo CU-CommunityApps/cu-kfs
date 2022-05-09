@@ -24,7 +24,6 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
-import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImplBase.TestCreateAccountingDocumentServiceImpl;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
