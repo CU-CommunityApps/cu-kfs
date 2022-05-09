@@ -594,7 +594,25 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks(),
             CuDisbursementVoucherDocumentFixture.JOHN_DOE_DV_DETAIL),
-    
+    DV_DOC_TEST_WITH_NON_EMPLOUEE_TAG(1, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            "Test DV Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(),
+            items(),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
+            CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
     DV_DOC_VENDOR_TEST1(1, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
             "Test Vendor", "This is only a test document!", "ABYZ1290",
             sourceAccountingLines(

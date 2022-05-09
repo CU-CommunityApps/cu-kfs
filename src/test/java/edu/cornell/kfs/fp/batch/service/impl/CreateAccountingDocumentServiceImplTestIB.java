@@ -6,7 +6,7 @@ import org.junit.Test;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
-public class CreateAccountingDocumentServiceImplTestIB extends CreateAccountingDocumentServiceImplTest {
+public class CreateAccountingDocumentServiceImplTestIB extends CreateAccountingDocumentServiceImplBase {
 
     @Before
     public void setUp() throws Exception {

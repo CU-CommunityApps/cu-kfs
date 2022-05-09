@@ -7,7 +7,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 
-public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingDocumentServiceImplTest {
+public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingDocumentServiceImplBase {
     
     @Before
     public void setUp() throws Exception {
@@ -28,13 +28,15 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
     }
+    
     /*
     @Test
     public void testDvDocumentWithNonEmployeeTagsTest() throws Exception {
         copyTestFilesAndCreateDoneFiles("dv-document-with-non-employee-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
-    }*/
+                AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST_WITH_NON_EMPLOUEE_TAG);
+    }
+    */
 
     @Test
     public void testDvDocumentWithVendorPayees() throws Exception {

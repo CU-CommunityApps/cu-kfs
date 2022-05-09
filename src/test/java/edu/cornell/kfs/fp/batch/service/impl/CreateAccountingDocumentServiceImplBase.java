@@ -133,8 +133,8 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuDistributionOfIncomeAndExpenseDocument.class, TestAdHocRoutePerson.class, TestNote.class})
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*"})
-public class CreateAccountingDocumentServiceImplTest {
+@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "javax.management.*"})
+public class CreateAccountingDocumentServiceImplBase {
 
     private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml";
     private static final String TARGET_TEST_FILE_PATH = "test/fp/accountingXmlDocument";
@@ -255,7 +255,7 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void assertAccountingDocumentIsCorrect(
+    protected void assertAccountingDocumentIsCorrect(
             Class<? extends AccountingDocument> documentClass, AccountingDocument expectedDocument, AccountingDocument actualDocument) {
         assertTrue("Document was not of the expected type of " + documentClass.getName(), documentClass.isAssignableFrom(actualDocument.getClass()));
         assertEquals("Wrong document number", expectedDocument.getDocumentNumber(), actualDocument.getDocumentNumber());

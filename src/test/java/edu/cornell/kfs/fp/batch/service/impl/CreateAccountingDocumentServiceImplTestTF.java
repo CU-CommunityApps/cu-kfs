@@ -6,7 +6,7 @@ import org.junit.Test;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
-public class CreateAccountingDocumentServiceImplTestTF extends CreateAccountingDocumentServiceImplTest {
+public class CreateAccountingDocumentServiceImplTestTF extends CreateAccountingDocumentServiceImplBase {
     
     @Before
     public void setUp() throws Exception {
@@ -39,5 +39,6 @@ public class CreateAccountingDocumentServiceImplTestTF extends CreateAccountingD
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.SINGLE_YETF_DOCUMENT_TEST);
     }
+    
 
 }

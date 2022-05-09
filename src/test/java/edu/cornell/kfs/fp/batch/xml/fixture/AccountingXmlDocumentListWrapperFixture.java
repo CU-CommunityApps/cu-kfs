@@ -204,6 +204,10 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.DV_DOC_TEST1,
                     AccountingXmlDocumentEntryFixture.DV_DOC_TEST2)),
+    DV_DOCUMENT_TEST_WITH_NON_EMPLOUEE_TAG(
+            "03/30/2020", "xyz789@cornell.edu", "Example DV XML file",
+            documents(
+                    AccountingXmlDocumentEntryFixture.DV_DOC_TEST_WITH_NON_EMPLOUEE_TAG)),
     DV_DOCUMENT_VENDOR_TEST(
             "12/22/2020", "xyz789@cornell.edu", "Example DV XML file with vendors",
             documents(
