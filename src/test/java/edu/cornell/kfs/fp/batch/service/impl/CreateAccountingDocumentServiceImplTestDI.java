@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import static org.junit.Assert.assertFalse;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -105,6 +107,47 @@ public class CreateAccountingDocumentServiceImplTestDI extends CreateAccountingD
         copyTestFilesAndCreateDoneFiles("multi-yedi-plus-invalid-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testServiceError() throws Exception {
+        createAccountingDocumentService.setFailToCreateDocument(true);
+
+        copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
+        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        assertFalse("When there is a problem calling services, the job should fail", results);
+    }
+    
+    @Test
+    public void testBadXmlEmptyFileWithGoodFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("bad-xml-test", "empty-file-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST, 
+                AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST, AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testLoadSingleFileWithZeroDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-document-list-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_LIST_TEST);
+    }
+    
+    @Test
+    public void testEmptyFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-file-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testEmptyFileWithGoodFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-file-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST,
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testBadXmlFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("bad-xml-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST);
     }
     
 }

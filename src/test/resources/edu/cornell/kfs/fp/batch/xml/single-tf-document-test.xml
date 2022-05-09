@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DocumentWrapper>
+    <CreateDate>05/05/2022</CreateDate>
+    <ReportEmail>xyz789@cornell.edu</ReportEmail>
+    <Overview>Example TF XML file</Overview>
+    <DocumentList>
+      <Document>
+            <Index>1</Index>
+            <DocumentType>TF</DocumentType>
+            <Description>Test TF Document</Description>
+            <Explanation>This is only a test document!</Explanation>
+            <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>S524000</account_nbr>
+                    <sub_account_nbr>24100</sub_account_nbr>
+                    <object_cd>8070</object_cd>
+                    <sub_object_cd>900</sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>From Line</line_description>
+                    <amount>100.00</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>S343717</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>7070</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>To Line</line_description>
+                    <amount>100.00</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+            <NoteList>
+                <Note>
+                    <Description>A fun testing note</Description>
+                </Note>
+                <Note>
+                    <Description>Another note</Description>
+                </Note>
+            </NoteList>
+            <AdhocRecipientList>
+                <Recipient>
+                    <Netid>jdh34</Netid>
+                    <ActionRequested>Approve</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>se12</Netid>
+                    <ActionRequested>FYI</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>ccs1</Netid>
+                    <ActionRequested>Complete</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>nkk4</Netid>
+                    <ActionRequested>Acknowledge</ActionRequested>
+                </Recipient>
+            </AdhocRecipientList>
+            <BackupDocumentLinks>
+                <BackupLink>
+                    <Link>http://www.cornell.edu/index.html</Link>
+                    <Description>Cornell index page</Description>
+                    <FileName>index.html</FileName>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
+                </BackupLink>
+            </BackupDocumentLinks>
+        </Document>
+    </DocumentList>
+</DocumentWrapper>

@@ -46,8 +46,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.joda.time.DateTime;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
@@ -107,7 +105,6 @@ import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
-import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImplTest.TestCreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.impl.fixture.DocGenVendorFixture;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentUnmarshalListener;
@@ -153,33 +150,10 @@ public class CreateAccountingDocumentServiceImplTest {
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
 
-    //@Before
     public void setUp() throws Exception {
         configurationService = buildMockConfigurationService();
         dateTimeService = buildMockDateTimeService();
         parameterService = buildParameterService();
-        /*
-        CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService = buildCuDisbursementVoucherDefaultDueDateService();
-        createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
-                buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
-                configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService(),
-                buildAccountingPeriodService(), dateTimeService, cuDisbursementVoucherDefaultDueDateService,
-                buildCuDisbursementVoucherPayeeService(), buildMockVendorService());
-        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
-                AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
-                AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT,
-                AccountingDocumentMapping.DV_DOCUMENT, AccountingDocumentMapping.YEBA_DOCUMENT, AccountingDocumentMapping.YETF_DOCUMENT,
-                AccountingDocumentMapping.AV_DOCUMENT);
-        createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType(dateTimeService));
-        createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
-        createAccountingDocumentService.setFileStorageService(buildFileStorageService());
-        createAccountingDocumentService.setConfigurationService(configurationService);
-        createAccountingDocumentService.setDocumentService(buildMockDocumentService());
-        createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
-        createAccountingDocumentService.setParameterService(parameterService);
-        createAccountingDocumentService.setCreateAccountingDocumentValidationService(
-                buildCreateAccountingDocumentValidationService(configurationService));
-                */
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         createTargetTestDirectory();

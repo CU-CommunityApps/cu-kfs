@@ -18,8 +18,7 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
                 configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService(),
                 buildAccountingPeriodService(), dateTimeService, cuDisbursementVoucherDefaultDueDateService,
                 buildCuDisbursementVoucherPayeeService(), buildMockVendorService());
-        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DV_DOCUMENT,
-                AccountingDocumentMapping.YEDI_DOCUMENT);
+        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DV_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
     }
     
@@ -29,6 +28,13 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
     }
+    /*
+    @Test
+    public void testDvDocumentWithNonEmployeeTagsTest() throws Exception {
+        copyTestFilesAndCreateDoneFiles("dv-document-with-non-employee-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
+    }*/
 
     @Test
     public void testDvDocumentWithVendorPayees() throws Exception {

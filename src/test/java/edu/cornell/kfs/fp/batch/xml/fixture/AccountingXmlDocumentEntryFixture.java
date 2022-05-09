@@ -412,7 +412,7 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
-    MULTI_DOC_TYPE_TEST_TF2(4, KFSConstants.TRANSFER_FUNDS,
+    MULTI_DOC_TYPE_TEST_TF2(2, KFSConstants.TRANSFER_FUNDS,
             "Test TF Document2", "This is only a test document2!", "ABCD1234",
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_1000_FROM),
@@ -625,7 +625,22 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks(),
             CuDisbursementVoucherDocumentFixture.REE_PHUND_DV_DETAIL),
-    
+    SINGLE_DOC_TYPE_TEST_TF1(1, KFSConstants.TRANSFER_FUNDS,
+            "Test TF Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_100_FROM),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S343717_OBJ_7070_AMT_100_TO),
+            notes(
+                    "A fun testing note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
     SINGLE_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
