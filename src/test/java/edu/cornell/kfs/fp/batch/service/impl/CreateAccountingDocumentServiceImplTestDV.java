@@ -32,36 +32,35 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingDocumentServiceImplBase {
-    
+
     private SimpleDateFormat dateFormat;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US);
         CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService = buildCuDisbursementVoucherDefaultDueDateService();
-        createAccountingDocumentService = new DvTestCreateAccountingDocumentServiceImpl(
-                buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
-                configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService(),
-                buildAccountingPeriodService(), dateTimeService, cuDisbursementVoucherDefaultDueDateService,
-                buildCuDisbursementVoucherPayeeService(), buildMockVendorService());
+        createAccountingDocumentService = new DvTestCreateAccountingDocumentServiceImpl(buildMockPersonService(),
+                buildAccountingXmlDocumentDownloadAttachmentService(), configurationService,
+                buildMockUniversityDateService(), dateTimeService,
+                cuDisbursementVoucherDefaultDueDateService, buildCuDisbursementVoucherPayeeService(),
+                buildMockVendorService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DV_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
     }
-    
+
     @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         dateFormat = null;
     }
-    
+
     @Test
     public void testDvDocumentTest() throws Exception {
         copyTestFilesAndCreateDoneFiles("dv-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_TEST);
     }
 
     @Test
@@ -70,49 +69,59 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_VENDOR_TEST);
     }
-    
+
     @SuppressWarnings("unchecked")
-    protected void assertAccountingDocumentIsCorrect(
-            Class<? extends AccountingDocument> documentClass, AccountingDocument expectedDocument, AccountingDocument actualDocument) {
+    protected void assertAccountingDocumentIsCorrect(Class<? extends AccountingDocument> documentClass,
+            AccountingDocument expectedDocument, AccountingDocument actualDocument) {
         super.assertAccountingDocumentIsCorrect(documentClass, expectedDocument, actualDocument);
-        
-        assertCuDisbursementVoucherDocumentsCorrect((CuDisbursementVoucherDocument) expectedDocument, (CuDisbursementVoucherDocument) actualDocument);
+
+        assertCuDisbursementVoucherDocumentsCorrect((CuDisbursementVoucherDocument) expectedDocument,
+                (CuDisbursementVoucherDocument) actualDocument);
     }
-    
-    private void assertCuDisbursementVoucherDocumentsCorrect(CuDisbursementVoucherDocument expectedDvDocument, CuDisbursementVoucherDocument actualDvDocument) {
-        assertEquals("Wrong bank code", expectedDvDocument.getDisbVchrBankCode(), actualDvDocument.getDisbVchrBankCode());
-        assertEquals("Wrong contact name", expectedDvDocument.getDisbVchrContactPersonName(), actualDvDocument.getDisbVchrContactPersonName());
-        assertEquals("payment reason code not correct", expectedDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode(), 
+
+    private void assertCuDisbursementVoucherDocumentsCorrect(CuDisbursementVoucherDocument expectedDvDocument,
+            CuDisbursementVoucherDocument actualDvDocument) {
+        assertEquals("Wrong bank code", expectedDvDocument.getDisbVchrBankCode(),
+                actualDvDocument.getDisbVchrBankCode());
+        assertEquals("Wrong contact name", expectedDvDocument.getDisbVchrContactPersonName(),
+                actualDvDocument.getDisbVchrContactPersonName());
+        assertEquals("payment reason code not correct",
+                expectedDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode(),
                 actualDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
-        assertEquals("payee type code not correct", expectedDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode(), 
+        assertEquals("payee type code not correct",
+                expectedDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode(),
                 actualDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode());
-        assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
+        assertEquals("conference destination not correct",
+                expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
                 actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
-        assertEquals("Due Dates should match", dateFormat.format(expectedDvDocument.getDisbursementVoucherDueDate()), 
-                dateFormat.format(actualDvDocument.getDisbursementVoucherDueDate()) );
-        assertEquals("Invoice Dates should match", expectedDvDocument.getInvoiceDate(), actualDvDocument.getInvoiceDate());
-        assertEquals("Invoice numbers should match", expectedDvDocument.getInvoiceNumber(), actualDvDocument.getInvoiceNumber());
+        assertEquals("Due Dates should match", dateFormat.format(expectedDvDocument.getDisbursementVoucherDueDate()),
+                dateFormat.format(actualDvDocument.getDisbursementVoucherDueDate()));
+        assertEquals("Invoice Dates should match", expectedDvDocument.getInvoiceDate(),
+                actualDvDocument.getInvoiceDate());
+        assertEquals("Invoice numbers should match", expectedDvDocument.getInvoiceNumber(),
+                actualDvDocument.getInvoiceNumber());
     }
-    
-protected static class DvTestCreateAccountingDocumentServiceImpl extends TestCreateAccountingDocumentServiceImpl {
-        
-    public DvTestCreateAccountingDocumentServiceImpl(
-            PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
-            ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
-            DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService,
-            AccountingPeriodService accountingPeriodService, DateTimeService dateTimeService,
-            CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService,
-            CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService,
-            VendorService vendorService) {
-            super(personService, downloadAttachmentService, configurationService, fiscalYearFunctionControlService, 
-                    disbursementVoucherTravelService, universityDateService, accountingPeriodService, dateTimeService, 
-                    cuDisbursementVoucherDefaultDueDateService, cuDisbursementVoucherPayeeService, vendorService);
+
+    protected static class DvTestCreateAccountingDocumentServiceImpl extends TestCreateAccountingDocumentServiceImpl {
+
+        public DvTestCreateAccountingDocumentServiceImpl(PersonService personService,
+                AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
+                ConfigurationService configurationService, UniversityDateService universityDateService,
+                DateTimeService dateTimeService,
+                CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService,
+                CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService, VendorService vendorService) {
+            super(personService, downloadAttachmentService, configurationService, universityDateService,
+                    dateTimeService);
+            this.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
+            this.cuDisbursementVoucherPayeeService = cuDisbursementVoucherPayeeService;
+            this.vendorService = vendorService;
         }
-        
+
         @Override
         protected AccountingDocumentGenerator<?> buildAccountingDocumentGenerator(
                 BiFunction<Supplier<Note>, Supplier<AdHocRoutePerson>, AccountingDocumentGeneratorBase<?>> generatorConstructor) {
-            CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) super.buildAccountingDocumentGenerator(generatorConstructor);
+            CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) super.buildAccountingDocumentGenerator(
+                    generatorConstructor);
             dvGenerator.setUniversityDateService(universityDateService);
             dvGenerator.setDisbursementVoucherTravelService(disbursementVoucherTravelService);
             dvGenerator.setCuDisbursementVoucherDefaultDueDateService(cuDisbursementVoucherDefaultDueDateService);

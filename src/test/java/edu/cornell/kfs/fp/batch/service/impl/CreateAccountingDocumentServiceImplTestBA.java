@@ -34,7 +34,7 @@ public class CreateAccountingDocumentServiceImplTestBA extends CreateAccountingD
         super.setUp();
         createAccountingDocumentService = new BaTestCreateAccountingDocumentServiceImpl(buildMockPersonService(),
                 buildAccountingXmlDocumentDownloadAttachmentService(), configurationService,
-                buildMockFiscalYearFunctionControlService(), buildMockUniversityDateService(), dateTimeService);
+                buildMockUniversityDateService(), dateTimeService, buildMockFiscalYearFunctionControlService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.BA_DOCUMENT,
                 AccountingDocumentMapping.YEBA_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
@@ -137,9 +137,10 @@ public class CreateAccountingDocumentServiceImplTestBA extends CreateAccountingD
 
         public BaTestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
-                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
-                UniversityDateService universityDateService, DateTimeService dateTimeService) {
-            super(personService, downloadAttachmentService, configurationService, fiscalYearFunctionControlService, universityDateService, dateTimeService);
+                ConfigurationService configurationService, UniversityDateService universityDateService, 
+                DateTimeService dateTimeService, FiscalYearFunctionControlService fiscalYearFunctionControlService) {
+            super(personService, downloadAttachmentService, configurationService, universityDateService, dateTimeService);
+            this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
         }
         
         @Override 

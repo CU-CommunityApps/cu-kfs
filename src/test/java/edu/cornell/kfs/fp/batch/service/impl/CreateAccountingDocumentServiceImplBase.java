@@ -667,42 +667,6 @@ public class CreateAccountingDocumentServiceImplBase {
             this.processingOrderedBaseFileNames = new ArrayList<>();
             this.failToCreateDocument = false;
         }
-        
-        public TestCreateAccountingDocumentServiceImpl(
-                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
-                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
-                UniversityDateService universityDateService, DateTimeService dateTimeService) {
-            this (personService, downloadAttachmentService, configurationService, universityDateService, dateTimeService);
-            
-            this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
-        }
-        
-        public TestCreateAccountingDocumentServiceImpl(
-                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
-                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
-                UniversityDateService universityDateService, AccountingPeriodService accountingPeriodService, 
-                DateTimeService dateTimeService) {
-            this (personService, downloadAttachmentService, configurationService, fiscalYearFunctionControlService, universityDateService, dateTimeService);
-            this.accountingPeriodService = accountingPeriodService;        }
-
-        public TestCreateAccountingDocumentServiceImpl(
-                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
-                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
-                DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService,
-                AccountingPeriodService accountingPeriodService, DateTimeService dateTimeService,
-                CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService,
-                CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService,
-                VendorService vendorService) {
-            this (personService, downloadAttachmentService, configurationService, fiscalYearFunctionControlService, universityDateService, 
-                    accountingPeriodService, dateTimeService);
-            
-            this.disbursementVoucherTravelService = disbursementVoucherTravelService;
-            this.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
-            this.cuDisbursementVoucherPayeeService = cuDisbursementVoucherPayeeService;
-            this.vendorService = vendorService;
-            
-            
-        }
 
         public void setFailToCreateDocument(boolean failToCreateDocument) {
             this.failToCreateDocument = failToCreateDocument;
