@@ -3,6 +3,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import static org.junit.Assert.assertEquals;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -10,25 +11,25 @@ import java.util.function.Supplier;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
-import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.mockito.Mockito;
 
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
+import edu.cornell.kfs.fp.batch.service.impl.fixture.DocGenVendorFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
+import edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingDocumentServiceImplBase {
@@ -43,9 +44,8 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
         CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService = buildCuDisbursementVoucherDefaultDueDateService();
         createAccountingDocumentService = new DvTestCreateAccountingDocumentServiceImpl(buildMockPersonService(),
                 buildAccountingXmlDocumentDownloadAttachmentService(), configurationService,
-                buildMockUniversityDateService(), dateTimeService,
-                cuDisbursementVoucherDefaultDueDateService, buildCuDisbursementVoucherPayeeService(),
-                buildMockVendorService());
+                buildMockUniversityDateService(), dateTimeService, cuDisbursementVoucherDefaultDueDateService,
+                buildCuDisbursementVoucherPayeeService(), buildMockVendorService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DV_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
     }
@@ -100,6 +100,29 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
                 actualDvDocument.getInvoiceDate());
         assertEquals("Invoice numbers should match", expectedDvDocument.getInvoiceNumber(),
                 actualDvDocument.getInvoiceNumber());
+    }
+
+    private VendorService buildMockVendorService() throws Exception {
+        VendorService vendorService = Mockito.mock(VendorService.class);
+        DocGenVendorFixture[] vendorFixtures = { DocGenVendorFixture.XYZ_INDUSTRIES, DocGenVendorFixture.REE_PHUND };
+        for (DocGenVendorFixture vendorFixture : vendorFixtures) {
+            Mockito.when(vendorService.getByVendorNumber(vendorFixture.getVendorNumber()))
+                    .thenReturn(vendorFixture.createVendorDetail());
+        }
+        return vendorService;
+    }
+
+    private CuDisbursementVoucherDefaultDueDateService buildCuDisbursementVoucherDefaultDueDateService() {
+        CuDisbursementVoucherDefaultDueDateService service = Mockito
+                .mock(CuDisbursementVoucherDefaultDueDateService.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        Mockito.when(service.findDefaultDueDate()).thenReturn(new java.sql.Date(calendar.getTimeInMillis()));
+        return service;
+    }
+
+    private CuDisbursementVoucherPayeeService buildCuDisbursementVoucherPayeeService() {
+        return new CuDisbursementVoucherPayeeServiceImpl();
     }
 
     protected static class DvTestCreateAccountingDocumentServiceImpl extends TestCreateAccountingDocumentServiceImpl {

@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -18,21 +16,18 @@ import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.ws.rs.client.Client;
@@ -47,20 +42,15 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.runner.RunWith;
-import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
-import org.kuali.kfs.coa.service.impl.AccountingPeriodServiceImpl;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.impl.parameter.ParameterEvaluatorServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
-import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
@@ -71,12 +61,10 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -101,18 +89,15 @@ import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
-import edu.cornell.kfs.fp.batch.service.impl.fixture.DocGenVendorFixture;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentUnmarshalListener;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
-import edu.cornell.kfs.fp.batch.xml.fixture.AccountingPeriodFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
-import edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
@@ -426,16 +411,6 @@ public class CreateAccountingDocumentServiceImplBase {
         return personService;
     }
 
-    protected VendorService buildMockVendorService() throws Exception {
-        VendorService vendorService = Mockito.mock(VendorService.class);
-        DocGenVendorFixture[] vendorFixtures = { DocGenVendorFixture.XYZ_INDUSTRIES, DocGenVendorFixture.REE_PHUND };
-        for (DocGenVendorFixture vendorFixture : vendorFixtures) {
-            Mockito.when(vendorService.getByVendorNumber(vendorFixture.getVendorNumber()))
-                    .thenReturn(vendorFixture.createVendorDetail());
-        }
-        return vendorService;
-    }
-
     private DocumentService buildMockDocumentService() throws Exception {
         DocumentService documentService = Mockito.mock(DocumentService.class);
         Mockito.when(documentService.routeDocument(Mockito.any(), Mockito.any(), Mockito.any())).then(this::recordAndReturnDocumentIfValid);
@@ -464,18 +439,6 @@ public class CreateAccountingDocumentServiceImplBase {
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
         return parameterService;
-    }
-    
-    protected CuDisbursementVoucherDefaultDueDateService buildCuDisbursementVoucherDefaultDueDateService() {
-        CuDisbursementVoucherDefaultDueDateService service = Mockito.mock(CuDisbursementVoucherDefaultDueDateService.class);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        Mockito.when(service.findDefaultDueDate()).thenReturn(new java.sql.Date(calendar.getTimeInMillis()));
-        return service;
-    }
-
-    protected CuDisbursementVoucherPayeeService buildCuDisbursementVoucherPayeeService() {
-        return new CuDisbursementVoucherPayeeServiceImpl();
     }
 
     private CreateAccountingDocumentValidationService buildCreateAccountingDocumentValidationService(
@@ -530,74 +493,11 @@ public class CreateAccountingDocumentServiceImplBase {
         String groupCode = invocation.getArgument(0);
         return WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCode);
     }
-
-    protected FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
-        List<FiscalYearFunctionControl> allowedBudgetAdjustmentYears = IntStream.of(CuFPTestConstants.FY_2016, CuFPTestConstants.FY_2018)
-                .mapToObj(this::buildFunctionControlAllowingBudgetAdjustment)
-                .collect(Collectors.toCollection(ArrayList::new));
-        
-        FiscalYearFunctionControlService fyService = mock(FiscalYearFunctionControlService.class);
-        when(fyService.getBudgetAdjustmentAllowedYears())
-                .thenReturn(allowedBudgetAdjustmentYears);
-        
-        return fyService;
-    }
-
-    private FiscalYearFunctionControl buildFunctionControlAllowingBudgetAdjustment(int fiscalYear) {
-        FiscalYearFunctionControl functionControl = new FiscalYearFunctionControl();
-        functionControl.setUniversityFiscalYear(Integer.valueOf(fiscalYear));
-        functionControl.setFinancialSystemFunctionControlCode(FiscalYearFunctionControlServiceImpl.FY_FUNCTION_CONTROL_BA_ALLOWED);
-        functionControl.setActive(true);
-        return functionControl;
-    }
-
-    protected DisbursementVoucherTravelService buildMockDisbursementVoucherTravelService() {
-        DisbursementVoucherTravelService travelService = Mockito.mock(DisbursementVoucherTravelService.class);
-        Mockito.when(travelService.calculateMileageAmount(Mockito.anyInt(), Mockito.any())).thenReturn(new KualiDecimal(50));
-        return travelService;
-    }
     
     protected UniversityDateService buildMockUniversityDateService() {
         UniversityDateService dateService = Mockito.mock(UniversityDateService.class);
         Mockito.when(dateService.getCurrentFiscalYear()).thenReturn(2019);
         return dateService;
-    }
-
-    protected AccountingPeriodService buildAccountingPeriodService() {
-        AccountingPeriodServiceImpl accountingPeriodService = Mockito.spy(new AccountingPeriodServiceImpl());
-        accountingPeriodService.setBusinessObjectService(buildMockBusinessObjectService());
-        Mockito.doReturn(buildListOfOpenAccountingPeriods())
-                .when(accountingPeriodService).getOpenAccountingPeriods();
-        return accountingPeriodService;
-    }
-
-    private List<AccountingPeriod> buildListOfOpenAccountingPeriods() {
-        return AccountingPeriodFixture.findOpenAccountingPeriodsAsStream()
-                .map(AccountingPeriodFixture::toAccountingPeriod)
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private BusinessObjectService buildMockBusinessObjectService() {
-        BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
-        Mockito.when(businessObjectService.findByPrimaryKey(Mockito.eq(AccountingPeriod.class), Mockito.anyMap()))
-                .then(this::findAccountingPeriod);
-        return businessObjectService;
-    }
-
-    private AccountingPeriod findAccountingPeriod(InvocationOnMock invocation) {
-        Map<?, ?> primaryKeys = invocation.getArgument(1);
-        String periodCode = (String) primaryKeys.get(KFSPropertyConstants.UNIVERSITY_FISCAL_PERIOD_CODE);
-        Integer fiscalYear = (Integer) primaryKeys.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR);
-        return findAccountingPeriod(fiscalYear, periodCode);
-    }
-
-    private AccountingPeriod findAccountingPeriod(Integer fiscalYear, String periodCode) {
-        Optional<AccountingPeriodFixture> result = AccountingPeriodFixture.findAccountingPeriod(fiscalYear, periodCode);
-        if (result.isPresent()) {
-            return result.get().toAccountingPeriod();
-        } else {
-            return null;
-        }
     }
 
     private Client buildMockClient() {
@@ -809,7 +709,7 @@ public class CreateAccountingDocumentServiceImplBase {
         
     }
     
-    protected class TestCreateAccountingDocumentReportService implements CreateAccountingDocumentReportService {
+    private class TestCreateAccountingDocumentReportService implements CreateAccountingDocumentReportService {
 
         @Override
         public void generateReport(CreateAccountingDocumentReportItem reportItem) {

@@ -7,7 +7,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
 public class CreateAccountingDocumentServiceImplTestTF extends CreateAccountingDocumentServiceImplBase {
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -18,27 +18,24 @@ public class CreateAccountingDocumentServiceImplTestTF extends CreateAccountingD
                 AccountingDocumentMapping.YETF_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
     }
-    
+
     @Test
     public void testLoadSingleTFDocument() throws Exception {
         copyTestFilesAndCreateDoneFiles("single-tf-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.TF_DOCUMENT_TEST);
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.TF_DOCUMENT_TEST);
     }
-    
+
     @Test
     public void testLoadMultipleTFDocument() throws Exception {
         copyTestFilesAndCreateDoneFiles("multiple-tf-document-test");
-        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.TF_DOCUMENT_TEST2);
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.TF_DOCUMENT_TEST2);
     }
-    
+
     @Test
     public void testLoadSingleYETFDocument() throws Exception {
         copyTestFilesAndCreateDoneFiles("single-yetf-document-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.SINGLE_YETF_DOCUMENT_TEST);
     }
-    
 
 }
