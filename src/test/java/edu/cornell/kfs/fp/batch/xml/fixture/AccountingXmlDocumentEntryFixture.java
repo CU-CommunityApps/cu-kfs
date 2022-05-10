@@ -412,7 +412,7 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
-    MULTI_DOC_TYPE_TEST_TF2(2, KFSConstants.TRANSFER_FUNDS,
+    MULTI_DOC_TYPE_TEST_TF2(4, KFSConstants.TRANSFER_FUNDS,
             "Test TF Document2", "This is only a test document2!", "ABCD1234",
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_1000_FROM),
