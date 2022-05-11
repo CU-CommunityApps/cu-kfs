@@ -23,11 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
+import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -41,6 +42,7 @@ import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.AccountReversionDetail;
 import edu.cornell.kfs.coa.businessobject.ReversionCategory;
 import edu.cornell.kfs.coa.service.AccountReversionDetailTrickleDownInactivationService;
+import edu.cornell.kfs.sys.CUKFSConstants.FinancialDocumentTypeCodes;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
@@ -52,6 +54,7 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
     protected ConfigurationService kualiConfigurationService;
     protected BusinessObjectService businessObjectService;
     protected DocumentHeaderService documentHeaderService;
+    protected DocumentTypeService documentTypeService;
     
     /**
      * @see org.kuali.kfs.coa.service.AcciybtReversionDetailTrickleDownInactivationService#trickleDownInactiveAccountReversionDetails(org.kuali.kfs.coa.businessobject.AccountReversion, java.lang.String)
@@ -124,8 +127,14 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             }
         }
         
-        status.saveSuccesfullyChangedNotes(documentNumber);
-        status.saveErrorNotes(documentNumber);
+        if (shouldAddNotesForTrickleDownDetailChanges(documentNumber)) {
+            status.saveSuccesfullyChangedNotes(documentNumber);
+            status.saveErrorNotes(documentNumber);
+        } else {
+            LOG.info("trickleDownInactivations, Skipping creation of notes for Detail changes resulting from document "
+                    + documentNumber
+                    + " because the updates were triggered by an Account or Account Global document.");
+        }
     }
     
     /**
@@ -153,8 +162,14 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             }
         }
         
-        status.saveSuccesfullyChangedNotes(documentNumber);
-        status.saveErrorNotes(documentNumber);
+        if (shouldAddNotesForTrickleDownDetailChanges(documentNumber)) {
+            status.saveSuccesfullyChangedNotes(documentNumber);
+            status.saveErrorNotes(documentNumber);
+        } else {
+            LOG.info("trickleDownActivations, Skipping creation of notes for Detail changes resulting from document "
+                    + documentNumber
+                    + " because the updates were triggered by an Account or Account Global document");
+        }
     }
     
     /**
@@ -172,6 +187,16 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             result &= detail.getReversionCategory().isActive();
         }
         return result;
+    }
+
+    protected boolean shouldAddNotesForTrickleDownDetailChanges(String documentNumber) {
+        DocumentType documentType = documentTypeService.findByDocumentId(documentNumber);
+        if (ObjectUtils.isNull(documentType)) {
+            throw new IllegalStateException("Document type was null for document '" + documentNumber
+                    + "', this should NEVER happen!");
+        }
+        return !StringUtils.equalsAnyIgnoreCase(documentType.getName(),
+                FinancialDocumentTypeCodes.ACCOUNT, FinancialDocumentTypeCodes.ACCOUNT_GLOBAL);
     }
 
     /**
@@ -298,7 +323,9 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
          * @return the funny, heart-breaking, and ultimately inspiring resultant description
          */
         protected String getAccountReversionDetailDescription(AccountReversionDetail accountReversionDetail) {
-            return accountReversionDetail.getChartOfAccountsCode() + " - " + accountReversionDetail.getAccountNumber() + " Category: " + accountReversionDetail.getAccountReversionCategoryCode();
+            return accountReversionDetail.getUniversityFiscalYear() + " - "
+                    + accountReversionDetail.getChartOfAccountsCode() + " - "
+                    + accountReversionDetail.getAccountNumber() + " Category: " + accountReversionDetail.getAccountReversionCategoryCode();
         }
         
         /**
@@ -409,5 +436,8 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
     public void setDocumentHeaderService(DocumentHeaderService documentHeaderService) {
         this.documentHeaderService = documentHeaderService;
     }
-}
 
+    public void setDocumentTypeService(DocumentTypeService documentTypeService) {
+        this.documentTypeService = documentTypeService;
+    }
+}

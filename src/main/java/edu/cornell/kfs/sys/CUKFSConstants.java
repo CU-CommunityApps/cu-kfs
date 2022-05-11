@@ -40,7 +40,8 @@ public class CUKFSConstants {
     }
     public static final class FinancialDocumentTypeCodes {
         public static final String PAYMENT_APPLICATION = "APP";
-        
+        public static final String ACCOUNT = "ACCT";
+        public static final String ACCOUNT_GLOBAL = "GACC";
     }        
     public static class ParameterNamespaces {
         public static final String ENDOWMENT = "KFS-ENDOW";

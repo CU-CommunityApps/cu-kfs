@@ -93,4 +93,6 @@ public interface AccountReversionService {
      * @return a list of account Reversions with the given chart and account number
      */
     public List<AccountReversion> getAccountReversionsByChartAndAccount(String chartOfAccountsCode, String accountNumber);
+
+    public void forciblyClearCache();
 }
