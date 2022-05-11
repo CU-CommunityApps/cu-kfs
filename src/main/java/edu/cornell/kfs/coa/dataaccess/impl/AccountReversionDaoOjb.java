@@ -115,5 +115,9 @@ public class AccountReversionDaoOjb extends PlatformAwareDaoBaseOjb implements A
         return (List) getPersistenceBrokerTemplate().getCollectionByQuery(q);
     }
     
-    
+    @Override
+    public void forciblyClearCache() {
+        getPersistenceBrokerTemplate().clearCache();
+    }
+
 }

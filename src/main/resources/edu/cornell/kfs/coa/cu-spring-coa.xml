@@ -123,6 +123,9 @@
     	<property name="kualiConfigurationService">
     		<ref bean="configurationService"/>
     	</property>
+    	<property name="documentTypeService">
+    		<ref bean="documentTypeService"/>
+    	</property>
     </bean>
     
     <bean id="accountReversionFiscalYearMaker" parent="FiscalYearMaker">
@@ -163,7 +166,9 @@
 		<property name="universityDateService">
 			<ref bean="universityDateService" />
 		</property>
-		
+		<property name="documentTypeService">
+			<ref bean="documentTypeService"/>
+		</property>
     </bean>
     
     <bean id="subAccountTrickleDownInactivationService" parent="subAccountTrickleDownInactivationService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuSubAccountTrickleDownInactivationServiceImpl"/>

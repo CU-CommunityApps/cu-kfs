@@ -146,6 +146,11 @@ public class AccountReversionServiceImpl implements AccountReversionService {
 		return accountReversionDao.getAccountReversionsByChartAndAccount(chartOfAccountsCode, accountNumber);
 	}
 
+	@Override
+	public void forciblyClearCache() {
+		accountReversionDao.forciblyClearCache();
+	}
+
     /**
      * 
      * This method injects the OrganizationReversionDao
