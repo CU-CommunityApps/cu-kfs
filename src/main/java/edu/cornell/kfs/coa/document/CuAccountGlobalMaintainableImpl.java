@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
@@ -82,22 +83,18 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
 
         // delete any indicated BOs
         List<PersistableBusinessObject> bosToDeactivate = gbo.generateDeactivationsToPersist();
-        if (bosToDeactivate != null) {
-            if (!bosToDeactivate.isEmpty()) {
-                boService.save(bosToDeactivate);
-            }
+        if (CollectionUtils.isNotEmpty(bosToDeactivate)) {
+            boService.save(bosToDeactivate);
         }
 
         // persist any indicated BOs
         List<PersistableBusinessObject> bosToPersist = gbo.generateGlobalChangesToPersist();
-        if (bosToPersist != null) {
-            if (!bosToPersist.isEmpty()) {
-                for (PersistableBusinessObject boToPersist : bosToPersist) {
-                    Account account = (Account) boToPersist;
-                    boService.save(account);
-                    if (isClosingAccount(account, oldAccountClosedStatuses)) {
-                        trickleDownInactivateBusinessObjectsForClosedAccount(account);
-                    }
+        if (CollectionUtils.isNotEmpty(bosToPersist)) {
+            for (PersistableBusinessObject boToPersist : bosToPersist) {
+                Account account = (Account) boToPersist;
+                boService.save(account);
+                if (isClosingAccount(account, oldAccountClosedStatuses)) {
+                    trickleDownInactivateBusinessObjectsForClosedAccount(account);
                 }
             }
         }

@@ -131,8 +131,9 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             status.saveSuccesfullyChangedNotes(documentNumber);
             status.saveErrorNotes(documentNumber);
         } else {
-            LOG.info("trickleDownInactivations, Skipping creation of notes for Detail changes "
-                    + "because the updates were triggered by an Account or Account Global document");
+            LOG.info("trickleDownInactivations, Skipping creation of notes for Detail changes resulting from document "
+                    + documentNumber
+                    + " because the updates were triggered by an Account or Account Global document.");
         }
     }
     
@@ -165,8 +166,9 @@ public class AccountReversionDetailTrickleDownInactivationServiceImpl implements
             status.saveSuccesfullyChangedNotes(documentNumber);
             status.saveErrorNotes(documentNumber);
         } else {
-            LOG.info("trickleDownActivations, Skipping creation of notes for Detail changes "
-                    + "because the updates were triggered by an Account or Account Global document");
+            LOG.info("trickleDownActivations, Skipping creation of notes for Detail changes resulting from document "
+                    + documentNumber
+                    + " because the updates were triggered by an Account or Account Global document");
         }
     }
     
