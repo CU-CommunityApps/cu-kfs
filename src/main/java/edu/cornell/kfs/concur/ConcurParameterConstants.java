@@ -53,9 +53,7 @@ public class ConcurParameterConstants {
     public static final String EXPENSE_V3_ALLOCATION_ENDPOINT = "EXPENSE_V3_ALLOCATION_ENDPOINT";
     public static final String REQUEST_V4_REQUESTS_ENDPOINT = "REQUEST_V4_REQUESTS_ENDPOINT";
     public static final String REQUEST_V4_QUERY_PAGE_SIZE = "REQUEST_V4_QUERY_PAGE_SIZE";
-    public static final String REQUEST_V4_QUERY_FROM_DATE = "REQUEST_V4_QUERY_FROM_DATE";
-    public static final String REQUEST_V4_QUERY_TO_DATE = "REQUEST_V4_QUERY_TO_DATE";
-    public static final String REQUEST_V4_QUERY_LAST_PROCESSED_DATE = "REQUEST_V4_QUERY_LAST_PROCESSED_DATE";
+    public static final String REQUEST_V4_NUMBER_OF_DAYS_OLD = "REQUEST_V4_NUMBER_OF_DAYS_OLD";
     public static final String REQUEST_V4_TEST_USERS = "REQUEST_V4_TEST_USERS";
 
 }

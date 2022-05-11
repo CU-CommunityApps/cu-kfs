@@ -1,7 +1,9 @@
 package edu.cornell.kfs.concur.batch.service;
 
 import java.sql.Date;
+import java.util.function.Consumer;
 
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.exception.FileStorageException;
 
@@ -88,6 +90,16 @@ public interface ConcurBatchUtilityService {
      * @param newValue The value to assign to the parameter; a blank value will be converted to an empty string
      */
     void updateConcurParameterValue(String parameterName, String newValue);
+    
+    /**
+     * Use the KFS ParameterService to "watch" for changes to the KFS system parameter specified
+     * in the KFS Concur namespace by parameterName. If the parameter's value is altered,
+     * then the given Consumer will be invoked.
+     * 
+     * @param parameterName KFS Concur namespace parameter to watch
+     * @param consumer The Consumer to invoke whenever the parameter's value changes.
+     */
+    void watchConcurParameter(String parameterName, Consumer<Parameter> consumer);
     
     /**
      * Parses a physical file on the file system specified by fullyQualifiedFileName

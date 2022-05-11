@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.xml.bind.JAXBException;
 
@@ -62,6 +64,16 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         }
         parameter.setValue(cleanedValue);
         getParameterService().updateParameter(parameter);
+    }
+    
+    @Override
+    public void watchConcurParameter(String parameterName, Consumer<Parameter> consumer) {
+        if (StringUtils.isBlank(parameterName)) {
+            throw new IllegalArgumentException("parameterName cannot be blank");
+        }
+        Objects.requireNonNull(consumer, "consumer cannot be null");
+        getParameterService().watchParameter(CUKFSConstants.ParameterNamespaces.CONCUR,
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName, consumer);
     }
     
     @Override

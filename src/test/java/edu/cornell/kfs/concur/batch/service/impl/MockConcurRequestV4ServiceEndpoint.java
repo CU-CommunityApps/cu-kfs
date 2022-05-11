@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -14,7 +13,6 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -41,7 +39,7 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
-public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase implements Closeable {
+public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase {
 
     private static final String REQUESTS_ENDPOINT_HANDLER_PATTERN = "/travelrequest/v4/*";
 
@@ -64,7 +62,7 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
     private static final String INTERNAL_SERVER_ERROR_MESSAGE = "Internal Server Error";
 
     private ObjectMapper objectMapper;
-    private MockConcurRequestV4Server mockBackendServer;
+    private MockConcurRequestV4Backend mockBackendServer;
     private String expectedAccessToken;
     private RequestV4DetailFixture[] initialRequestDetails;
     private String baseRequestV4Url;
@@ -91,17 +89,6 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         this.forceServerError = forceServerError;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void close() throws IOException {
-        IOUtils.closeQuietly(mockBackendServer);
-        objectMapper = null;
-        mockBackendServer = null;
-        expectedAccessToken = null;
-        initialRequestDetails = null;
-        baseRequestV4Url = null;
-    }
-
     @Override
     public String getRelativeUrlPatternForHandlerRegistration() {
         return REQUESTS_ENDPOINT_HANDLER_PATTERN;
@@ -111,10 +98,10 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
     protected void onServerInitialized(String baseUrl) {
         super.onServerInitialized(baseUrl);
         baseRequestV4Url = baseUrl + ParameterTestValues.REQUEST_V4_RELATIVE_ENDPOINT;
-        mockBackendServer = new MockConcurRequestV4Server(baseRequestV4Url, initialRequestDetails);
+        mockBackendServer = new MockConcurRequestV4Backend(baseRequestV4Url, initialRequestDetails);
     }
 
-    public MockConcurRequestV4Server getMockBackendServer() {
+    public MockConcurRequestV4Backend getMockBackendServer() {
         if (ObjectUtils.isNull(mockBackendServer)) {
             throw new IllegalStateException("Mock back-end server was null; this endpoint may not "
                     + "have been initialized yet by the HTTP server, or this endpoint may have already been closed");

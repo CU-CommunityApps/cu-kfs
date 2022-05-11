@@ -12,26 +12,26 @@ import edu.cornell.kfs.concur.ConcurTestConstants.RequestV4Dates;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 
 public enum RequestV4ListingFixture {
-    SEARCH_2022_01_02_TO_2022_01_03(2, RequestV4Dates.DATE_2022_01_02, RequestV4Dates.DATE_2022_01_03,
+    SEARCH_2022_01_03_DAYS_OLD_1(2, 1, RequestV4Dates.DATE_2022_01_03,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_TEST,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_JOHN_DOE),
 
-    SEARCH_2022_01_02_TO_2022_01_03_PAGE_SIZE_5(SEARCH_2022_01_02_TO_2022_01_03, 5),
+    SEARCH_2022_01_03_DAYS_OLD_1_PAGE_SIZE_5(SEARCH_2022_01_03_DAYS_OLD_1, 5),
 
-    SEARCH_2022_01_01_TO_2022_01_02(2, RequestV4Dates.DATE_2022_01_01, RequestV4Dates.DATE_2022_01_02),
+    SEARCH_2022_01_02_DAYS_OLD_1(2, 1, RequestV4Dates.DATE_2022_01_02),
 
-    SEARCH_2022_01_01_TO_2022_01_02_PAGE_SIZE_5(SEARCH_2022_01_01_TO_2022_01_02, 5),
+    SEARCH_2022_01_02_DAYS_OLD_1_PAGE_SIZE_5(SEARCH_2022_01_02_DAYS_OLD_1, 5),
 
-    SEARCH_2022_04_05_TO_2022_04_06(2, RequestV4Dates.DATE_2022_04_05, RequestV4Dates.DATE_2022_04_06,
+    SEARCH_2022_04_06_DAYS_OLD_1(2, 1, RequestV4Dates.DATE_2022_04_06,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH),
 
-    SEARCH_2022_04_05_TO_2022_04_07(2, RequestV4Dates.DATE_2022_04_05, RequestV4Dates.DATE_2022_04_07,
+    SEARCH_2022_04_07_DAYS_OLD_2(2, 2, RequestV4Dates.DATE_2022_04_07,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_BOB_SMITH),
 
-    SEARCH_2022_01_01_TO_2022_04_30(2, RequestV4Dates.DATE_2022_01_01, RequestV4Dates.DATE_2022_04_30,
+    SEARCH_2022_04_30_DAYS_OLD_119(2, 119, RequestV4Dates.DATE_2022_04_30,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_TEST,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_JOHN_DOE,
             RequestV4DetailFixture.APPROVED_TEST_REQUEST_JANE_DOE,
@@ -40,31 +40,31 @@ public enum RequestV4ListingFixture {
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_BOB_SMITH),
 
-    SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_5(SEARCH_2022_01_01_TO_2022_04_30, 5),
+    SEARCH_2022_04_30_DAYS_OLD_119_PAGE_SIZE_5(SEARCH_2022_04_30_DAYS_OLD_119, 5),
 
-    SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_20(SEARCH_2022_01_01_TO_2022_04_30, 20);
+    SEARCH_2022_04_30_DAYS_OLD_119_PAGE_SIZE_20(SEARCH_2022_04_30_DAYS_OLD_119, 20);
 
     public final int pageSize;
     public final int totalResultRowCount;
     public final int totalPageCount;
-    public final String modifiedFromDate;
-    public final String modifiedToDate;
+    public final int daysOld;
+    public final String currentDate;
     public final Map<String, RequestV4DetailFixture> searchResults;
 
     private RequestV4ListingFixture(RequestV4ListingFixture existingFixture, int newPageSize) {
-        this(newPageSize, existingFixture.modifiedFromDate, existingFixture.modifiedToDate,
+        this(newPageSize, existingFixture.daysOld, existingFixture.currentDate,
                 existingFixture.searchResults.values().toArray(RequestV4DetailFixture[]::new));
     }
 
-    private RequestV4ListingFixture(int pageSize, String modifiedFromDate, String modifiedToDate,
+    private RequestV4ListingFixture(int pageSize, int daysOld, String currentDate,
             RequestV4DetailFixture... searchResults) {
         this.pageSize = pageSize;
         this.totalResultRowCount = searchResults.length;
         this.totalPageCount = (totalResultRowCount > 0)
                 ? (totalResultRowCount / pageSize) + Math.min(totalResultRowCount % pageSize, 1)
                 : 1;
-        this.modifiedFromDate = modifiedFromDate;
-        this.modifiedToDate = modifiedToDate;
+        this.daysOld = daysOld;
+        this.currentDate = currentDate;
         this.searchResults = Arrays.stream(searchResults)
                 .collect(Collectors.toUnmodifiableMap(resultItem -> resultItem.id, resultItem -> resultItem));
     }

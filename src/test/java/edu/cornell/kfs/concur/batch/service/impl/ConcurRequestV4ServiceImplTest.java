@@ -41,7 +41,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -53,7 +52,6 @@ import edu.cornell.kfs.concur.ConcurTestConstants.RequestV4Dates;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
-import edu.cornell.kfs.concur.batch.service.impl.ConcurRequestV4ServiceImpl.RequestV4QuerySettings;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4ListingFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
@@ -84,7 +82,7 @@ public class ConcurRequestV4ServiceImplTest {
     private static final String VALIDATION_ERROR_INVALID_ACCOUNT = "Invalid Account Number";
 
     private String mockAccessToken;
-    private MockConcurRequestV4Server mockConcurBackendServer;
+    private MockConcurRequestV4Backend mockConcurBackendServer;
     private MockConcurRequestV4ServiceEndpoint mockConcurEndpoint;
     private MockRemoteServerExtension mockHttpServer;
     private String baseRequestV4Url;
@@ -127,6 +125,7 @@ public class ConcurRequestV4ServiceImplTest {
         
         requestV4Service = new TestConcurRequestV4ServiceImpl();
         requestV4Service.setSimulateProductionMode(false);
+        requestV4Service.setSkipRequestListItemProcessing(false);
         requestV4Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
         requestV4Service.setConcurEventNotificationV2WebserviceService(
                 buildConcurEventNotificationV2WebserviceService(mockConcurBatchUtilityService));
@@ -138,9 +137,7 @@ public class ConcurRequestV4ServiceImplTest {
     @SuppressWarnings("deprecation")
     @AfterEach
     void tearDown() throws Exception {
-        IOUtils.closeQuietly(mockConcurEndpoint);
         IOUtils.closeQuietly(mockHttpServer);
-        IOUtils.closeQuietly(mockConcurBackendServer);
         mockAccessToken = null;
         concurParameters = null;
         concurProperties = null;
@@ -166,12 +163,8 @@ public class ConcurRequestV4ServiceImplTest {
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE,
                 ParameterTestValues.REQUEST_V4_PAGE_SIZE_2);
         parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_USERS, buildTestUsersParameterValue());
-        parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE,
-                ConcurConstants.REQUEST_QUERY_LAST_DATE_INDICATOR);
-        parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE,
-                ConcurConstants.REQUEST_QUERY_CURRENT_DATE_INDICATOR);
-        parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE,
-                ParameterTestValues.REQUEST_V4_DEFAULT_LAST_PROCESSED_DATE_2022_01_02);
+        parameters.put(ConcurParameterConstants.REQUEST_V4_NUMBER_OF_DAYS_OLD,
+                ParameterTestValues.REQUEST_V4_DAYS_OLD_1);
         return parameters;
     }
 
@@ -182,16 +175,8 @@ public class ConcurRequestV4ServiceImplTest {
                 .collect(Collectors.joining(CUKFSConstants.SEMICOLON));
     }
 
-    private void overrideQueryFromDate(String newDate) {
-        overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_FROM_DATE, newDate);
-    }
-
-    private void overrideQueryToDate(String newDate) {
-        overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_TO_DATE, newDate);
-    }
-
-    private void overrideQueryLastProcessedDate(String newDate) {
-        overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE, newDate);
+    private void overrideQueryNumberOfDaysOld(int newDaysOldValue) {
+        overrideParameter(ConcurParameterConstants.REQUEST_V4_NUMBER_OF_DAYS_OLD, String.valueOf(newDaysOldValue));
     }
 
     private void overrideQueryPageSize(int newPageSize) {
@@ -287,7 +272,7 @@ public class ConcurRequestV4ServiceImplTest {
         return new Date(dateTime.getMillis());
     }
 
-    private void overrideCurrentTime(String newDate) throws ParseException {
+    private void overrideCurrentDate(String newDate) throws ParseException {
         mockCurrentTimeMillis = getTimeInMilliseconds(newDate);
     }
 
@@ -345,14 +330,14 @@ public class ConcurRequestV4ServiceImplTest {
     @ParameterizedTest
     @MethodSource("travelRequests")
     void testFindSingleTravelRequest(RequestV4DetailFixture fixture) throws Exception {
-        ConcurRequestV4ReportDTO requestDetail = requestV4Service.findTravelRequest(mockAccessToken, fixture.id);
+        ConcurRequestV4ReportDTO requestDetail = requestV4Service.getTravelRequest(mockAccessToken, fixture.id);
         assertExpectedTravelRequestWasRetrieved(fixture, requestDetail);
     }
 
     @Test
     void testSearchForSingleNonexistentTravelRequest() throws Exception {
         assertThrows(RuntimeException.class,
-                () -> requestV4Service.findTravelRequest(mockAccessToken, NONEXISTENT_REQUEST_ID),
+                () -> requestV4Service.getTravelRequest(mockAccessToken, NONEXISTENT_REQUEST_ID),
                 "The search should have encountered an error when the Travel Request does not exist");
     }
 
@@ -360,83 +345,56 @@ public class ConcurRequestV4ServiceImplTest {
     @MethodSource("travelRequests")
     void testSearchForSingleTravelRequestOnBrokenServer(RequestV4DetailFixture fixture) throws Exception {
         mockConcurEndpoint.setForceServerError(true);
-        assertThrows(RuntimeException.class, () -> requestV4Service.findTravelRequest(mockAccessToken, fixture.id),
+        assertThrows(RuntimeException.class, () -> requestV4Service.getTravelRequest(mockAccessToken, fixture.id),
                 "The search should have encountered and error when the service endpoint is in a bad state");
     }
 
     @Test
     void testFindTravelRequestListingForDefaultSettings() throws Exception {
         assertSearchForRequestListingReturnsExpectedResults(
-                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03);
+                RequestV4ListingFixture.SEARCH_2022_01_03_DAYS_OLD_1);
     }
 
     @Test
     void testSearchForTravelRequestListingForDefaultSettingsOnBrokenServer() throws Exception {
         mockConcurEndpoint.setForceServerError(true);
-        assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03);
+        assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture.SEARCH_2022_01_03_DAYS_OLD_1);
     }
 
     static Stream<Arguments> travelRequestListingQueries() {
         return Stream.of(
-                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02,
-                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_06,
-                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_07,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30
+                RequestV4ListingFixture.SEARCH_2022_01_03_DAYS_OLD_1,
+                RequestV4ListingFixture.SEARCH_2022_01_02_DAYS_OLD_1,
+                RequestV4ListingFixture.SEARCH_2022_04_06_DAYS_OLD_1,
+                RequestV4ListingFixture.SEARCH_2022_04_07_DAYS_OLD_2,
+                RequestV4ListingFixture.SEARCH_2022_04_30_DAYS_OLD_119
         ).map(Arguments::of);
     }
 
     static Stream<Arguments> travelRequestListingQueriesWithPageSizeOverrides() {
         return Stream.of(
-                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
+                RequestV4ListingFixture.SEARCH_2022_01_03_DAYS_OLD_1_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_01_02_DAYS_OLD_1_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_04_30_DAYS_OLD_119_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_04_30_DAYS_OLD_119_PAGE_SIZE_20
         ).map(Arguments::of);
     }
 
     @ParameterizedTest
     @MethodSource("travelRequestListingQueries")
-    void testFindTravelRequestListingAfterOverridingLastProcessedDateAndCurrentDate(
+    void testFindTravelRequestListingAfterOverridingNumDaysOldAndCurrentDate(
             RequestV4ListingFixture expectedResults) throws Exception {
-        overrideQueryLastProcessedDate(expectedResults.modifiedFromDate);
-        overrideCurrentTime(expectedResults.modifiedToDate);
-        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
-    }
-
-    @ParameterizedTest
-    @MethodSource("travelRequestListingQueries")
-    void testFindTravelRequestListingAfterOverridingQueryFromDateAndCurrentDate(
-            RequestV4ListingFixture expectedResults) throws Exception {
-        overrideQueryFromDate(expectedResults.modifiedFromDate);
-        overrideCurrentTime(expectedResults.modifiedToDate);
-        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
-    }
-
-    @ParameterizedTest
-    @MethodSource("travelRequestListingQueries")
-    void testFindTravelRequestListingAfterOverridingLastProcessedDateAndQueryToDate(
-            RequestV4ListingFixture expectedResults) throws Exception {
-        overrideQueryLastProcessedDate(expectedResults.modifiedFromDate);
-        overrideQueryToDate(expectedResults.modifiedToDate);
-        assertSearchForRequestListingReturnsExpectedResults(expectedResults);
-    }
-
-    @ParameterizedTest
-    @MethodSource("travelRequestListingQueries")
-    void testFindTravelRequestListingAfterOverridingQueryFromDateAndQueryToDate(
-            RequestV4ListingFixture expectedResults) throws Exception {
-        overrideQueryFromDate(expectedResults.modifiedFromDate);
-        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryNumberOfDaysOld(expectedResults.daysOld);
+        overrideCurrentDate(expectedResults.currentDate);
         assertSearchForRequestListingReturnsExpectedResults(expectedResults);
     }
 
     @ParameterizedTest
     @MethodSource("travelRequestListingQueriesWithPageSizeOverrides")
-    void testFindTravelRequestListingAfterOverridingQueryDatesAndPageSize(
+    void testFindTravelRequestListingAfterOverridingDateSettingsAndPageSize(
             RequestV4ListingFixture expectedResults) throws Exception {
-        overrideQueryFromDate(expectedResults.modifiedFromDate);
-        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryNumberOfDaysOld(expectedResults.daysOld);
+        overrideCurrentDate(expectedResults.currentDate);
         overrideQueryPageSize(expectedResults.pageSize);
         assertSearchForRequestListingReturnsExpectedResults(expectedResults);
     }
@@ -445,8 +403,8 @@ public class ConcurRequestV4ServiceImplTest {
     @MethodSource("travelRequestListingQueries")
     void testSearchForTravelRequestListingOnBrokenServer(RequestV4ListingFixture expectedResults) throws Exception {
         mockConcurEndpoint.setForceServerError(true);
-        overrideQueryFromDate(expectedResults.modifiedFromDate);
-        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryNumberOfDaysOld(expectedResults.daysOld);
+        overrideCurrentDate(expectedResults.currentDate);
         assertSearchForRequestListingEncountersAnError(expectedResults);
     }
 
@@ -455,8 +413,7 @@ public class ConcurRequestV4ServiceImplTest {
     void testValidateTravelRequestsForDefaultSettings(boolean productionMode) throws Exception {
         requestV4Service.setSimulateProductionMode(productionMode);
         assertProcessingOfRequestListingHasExpectedResults(
-                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03, productionMode);
-        assertLastProcessedDateInStorageHasCorrectValue(mockCurrentTimeMillis);
+                RequestV4ListingFixture.SEARCH_2022_01_03_DAYS_OLD_1, productionMode);
     }
 
     @ParameterizedTest
@@ -465,20 +422,19 @@ public class ConcurRequestV4ServiceImplTest {
         requestV4Service.setSimulateProductionMode(productionMode);
         mockConcurEndpoint.setForceServerError(true);
         assertProcessingOfRequestListingEncountersAnError();
-        assertLastProcessedDateInStorageMatchesDefaultValue();
     }
 
     static Stream<Arguments> travelRequestListingsForValidation() {
         return Stream.of(
-                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03,
-                RequestV4ListingFixture.SEARCH_2022_01_02_TO_2022_01_03_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_01_02_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_06,
-                RequestV4ListingFixture.SEARCH_2022_04_05_TO_2022_04_07,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_5,
-                RequestV4ListingFixture.SEARCH_2022_01_01_TO_2022_04_30_PAGE_SIZE_20
+                RequestV4ListingFixture.SEARCH_2022_01_03_DAYS_OLD_1,
+                RequestV4ListingFixture.SEARCH_2022_01_03_DAYS_OLD_1_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_01_02_DAYS_OLD_1,
+                RequestV4ListingFixture.SEARCH_2022_01_02_DAYS_OLD_1_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_04_06_DAYS_OLD_1,
+                RequestV4ListingFixture.SEARCH_2022_04_07_DAYS_OLD_2,
+                RequestV4ListingFixture.SEARCH_2022_04_30_DAYS_OLD_119,
+                RequestV4ListingFixture.SEARCH_2022_04_30_DAYS_OLD_119_PAGE_SIZE_5,
+                RequestV4ListingFixture.SEARCH_2022_04_30_DAYS_OLD_119_PAGE_SIZE_20
         ).flatMap(ConcurRequestV4ServiceImplTest::flatMapToFixturesPairedWithTrueFalseProductionModeFlags)
                 .map(Arguments::of);
     }
@@ -489,14 +445,13 @@ public class ConcurRequestV4ServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("travelRequestListingsForValidation")
-    void testValidateTravelRequestsAfterOverridingQueryDatesAndPageSize(
+    void testValidateTravelRequestsAfterOverridingDateSettingsAndPageSize(
             RequestV4ListingFixture expectedResults, boolean productionMode) throws Exception {
         requestV4Service.setSimulateProductionMode(productionMode);
-        overrideQueryFromDate(expectedResults.modifiedFromDate);
-        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryNumberOfDaysOld(expectedResults.daysOld);
+        overrideCurrentDate(expectedResults.currentDate);
         overrideQueryPageSize(expectedResults.pageSize);
         assertProcessingOfRequestListingHasExpectedResults(expectedResults, productionMode);
-        assertLastProcessedDateInStorageMatchesDefaultValue();
     }
 
     @ParameterizedTest
@@ -505,11 +460,10 @@ public class ConcurRequestV4ServiceImplTest {
             RequestV4ListingFixture expectedResults, boolean productionMode) throws Exception {
         mockConcurEndpoint.setForceServerError(true);
         requestV4Service.setSimulateProductionMode(productionMode);
-        overrideQueryFromDate(expectedResults.modifiedFromDate);
-        overrideQueryToDate(expectedResults.modifiedToDate);
+        overrideQueryNumberOfDaysOld(expectedResults.daysOld);
+        overrideCurrentDate(expectedResults.currentDate);
         overrideQueryPageSize(expectedResults.pageSize);
         assertProcessingOfRequestListingEncountersAnError();
-        assertLastProcessedDateInStorageMatchesDefaultValue();
     }
 
     private void assertProcessingOfRequestListingEncountersAnError() {
@@ -559,19 +513,20 @@ public class ConcurRequestV4ServiceImplTest {
     }
 
     private void assertSearchForRequestListingEncountersAnError(RequestV4ListingFixture expectedResults) {
-        RequestV4QuerySettings querySettings = new RequestV4QuerySettings(
-                mockAccessToken, mockCurrentTimeMillis, userId -> true);
-        assertThrows(RuntimeException.class, () -> requestV4Service.findAndProcessPendingTravelRequests(
-                querySettings, (accessToken, requestListing) -> Stream.of(requestListing)));
+        requestV4Service.setSkipRequestListItemProcessing(true);
+        assertThrows(RuntimeException.class,
+                () -> requestV4Service.processTravelRequests(mockAccessToken));
     }
 
     private void assertSearchForRequestListingReturnsExpectedResults(RequestV4ListingFixture expectedResults) {
-        RequestV4QuerySettings querySettings = new RequestV4QuerySettings(
-                mockAccessToken, mockCurrentTimeMillis, userId -> true);
-        String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl(querySettings);
-        List<ConcurRequestV4ListingDTO> actualResults = requestV4Service.findAndProcessPendingTravelRequests(
-                querySettings, (accessToken, requestListing) -> Stream.of(requestListing));
-        assertSearchReturnedExpectedResultListings(initialQueryUrl, expectedResults, actualResults);
+        requestV4Service.setSkipRequestListItemProcessing(true);
+        String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl();
+        List<ConcurEventNotificationProcessingResultsDTO> processingResults = requestV4Service.processTravelRequests(
+                mockAccessToken);
+        assertEquals(0, processingResults.size(),
+                "No processing results should have been returned when running in skip-list-item mode");
+        List<ConcurRequestV4ListingDTO> actualListings = requestV4Service.getEncounteredRequestListings();
+        assertSearchReturnedExpectedResultListings(initialQueryUrl, expectedResults, actualListings);
     }
 
     private void assertSearchReturnedExpectedResultListings(String queryUrl,
@@ -727,29 +682,21 @@ public class ConcurRequestV4ServiceImplTest {
         }
     }
 
-    private void assertLastProcessedDateInStorageHasCorrectValue(long expectedMillisecondValue) throws ParseException {
-        String actualLastProcessedDateString = concurParameters.get(
-                ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE);
-        assertTrue(StringUtils.isNotBlank(actualLastProcessedDateString),
-                "The last-processed-date parameter should not have been blank");
-        long actualMillisecondValue = getTimeInMilliseconds(actualLastProcessedDateString);
-        DateTime expectedDate = new DateTime(expectedMillisecondValue, DateTimeZone.UTC);
-        DateTime actualDate = new DateTime(actualMillisecondValue, DateTimeZone.UTC);
-        assertEquals(expectedDate, actualDate, "Wrong value stored in last-processed-date parameter");
-    }
-
-    private void assertLastProcessedDateInStorageMatchesDefaultValue() {
-        String actualLastProcessedDateString = concurParameters.get(
-                ConcurParameterConstants.REQUEST_V4_QUERY_LAST_PROCESSED_DATE);
-        assertTrue(StringUtils.isNotBlank(actualLastProcessedDateString),
-                "The last-processed-date parameter should not have been blank");
-        assertEquals(
-                ParameterTestValues.REQUEST_V4_DEFAULT_LAST_PROCESSED_DATE_2022_01_02, actualLastProcessedDateString,
-                "The last-processed-date parameter should not have been changed from its default value");
-    }
-
     private static class TestConcurRequestV4ServiceImpl extends ConcurRequestV4ServiceImpl {
         private boolean simulateProductionMode;
+        private List<ConcurRequestV4ListingDTO> encounteredRequestListings = new ArrayList<>();
+        private boolean skipRequestListItemProcessing;
+        
+        @Override
+        protected Stream<ConcurEventNotificationProcessingResultsDTO> processTravelRequestsSubset(
+                String accessToken, ConcurRequestV4ListingDTO requestListing) {
+            encounteredRequestListings.add(requestListing);
+            if (skipRequestListItemProcessing) {
+                return Stream.empty();
+            } else {
+                return super.processTravelRequestsSubset(accessToken, requestListing);
+            }
+        }
         
         @Override
         protected boolean isProduction() {
@@ -758,6 +705,14 @@ public class ConcurRequestV4ServiceImplTest {
         
         public void setSimulateProductionMode(boolean simulateProductionMode) {
             this.simulateProductionMode = simulateProductionMode;
+        }
+        
+        public List<ConcurRequestV4ListingDTO> getEncounteredRequestListings() {
+            return encounteredRequestListings;
+        }
+        
+        public void setSkipRequestListItemProcessing(boolean skipRequestListItemProcessing) {
+            this.skipRequestListItemProcessing = skipRequestListItemProcessing;
         }
     }
 

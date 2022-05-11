@@ -99,7 +99,7 @@ public class ConcurTestConstants {
         public static final String DEFAULT_OBJECT_CODE_5500 = "5500";
         public static final String REQUEST_V4_RELATIVE_ENDPOINT = "/travelrequest/v4/requests";
         public static final String REQUEST_V4_PAGE_SIZE_2 = "2";
-        public static final String REQUEST_V4_DEFAULT_LAST_PROCESSED_DATE_2022_01_02 = RequestV4Dates.DATE_2022_01_02;
+        public static final String REQUEST_V4_DAYS_OLD_1 = "1";
         public static final String MAX_RETRIES_1 = "1";
     }
     

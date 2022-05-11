@@ -1,7 +1,5 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +29,7 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
 
-public class MockConcurRequestV4Server implements Closeable {
+public class MockConcurRequestV4Backend {
 
     private static final int MAX_RESULT_LIMIT = 100;
 
@@ -43,16 +41,10 @@ public class MockConcurRequestV4Server implements Closeable {
     private ConcurrentMap<String, RequestEntry> travelRequests;
     private String baseRequestV4Url;
 
-    public MockConcurRequestV4Server(String baseRequestV4Url, RequestV4DetailFixture... requestsToAdd) {
+    public MockConcurRequestV4Backend(String baseRequestV4Url, RequestV4DetailFixture... requestsToAdd) {
         this.travelRequests = new ConcurrentHashMap<>();
         this.baseRequestV4Url = baseRequestV4Url;
         addTravelRequests(requestsToAdd);
-    }
-
-    @Override
-    public void close() throws IOException {
-        travelRequests = null;
-        baseRequestV4Url = null;
     }
 
     public void addTravelRequests(RequestV4DetailFixture... requestsToAdd) {
