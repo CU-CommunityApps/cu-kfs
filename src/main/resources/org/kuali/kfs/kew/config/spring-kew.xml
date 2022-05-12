@@ -233,32 +233,32 @@
         </property>
         <property name="beanNames">
             <list>
-                <idref local="documentRouteHeaderService"/>
-                <idref local="actionListService"/>
-                <idref local="documentSearchService"/>
-                <idref local="documentTypePermissionService"/>
-                <idref local="actionTakenService"/>
-                <idref local="actionRequestService"/>
-                <idref local="documentTypeService"/>
-                <idref local="routingReportService"/>
-                <idref local="notificationService"/>
-                <idref local="routeModuleService"/>
-                <idref local="workflowEngine"/>
-                <idref local="routeNodeService"/>
-                <idref local="branchService"/>
-                <idref local="exceptionRoutingService"/>
-                <idref local="preferencesService"/>
-                <idref local="documentProcessingQueue"/>
-                <idref local="documentOrchestrationQueue"/>
-                <idref local="documentAttributeIndexingQueue"/>
-                <idref local="responsibilityChangeQueue"/>
-                <idref local="documentRefreshQueue"/>
-                <idref local="workflowDocumentActionsService"/>
-                <idref local="workflowDocumentService"/>
-                <idref local="actionListCustomizationHandlerService"/>
-                <idref local="documentSearchCustomizationHandlerService"/>
-                <idref local="documentSecurityHandlerService"/>
-                <idref local="actionInvocationQueue"/>
+                <idref bean="documentRouteHeaderService"/>
+                <idref bean="actionListService"/>
+                <idref bean="documentSearchService"/>
+                <idref bean="documentTypePermissionService"/>
+                <idref bean="actionTakenService"/>
+                <idref bean="actionRequestService"/>
+                <idref bean="documentTypeService"/>
+                <idref bean="routingReportService"/>
+                <idref bean="notificationService"/>
+                <idref bean="routeModuleService"/>
+                <idref bean="workflowEngine"/>
+                <idref bean="routeNodeService"/>
+                <idref bean="branchService"/>
+                <idref bean="exceptionRoutingService"/>
+                <idref bean="preferencesService"/>
+                <idref bean="documentProcessingQueue"/>
+                <idref bean="documentOrchestrationQueue"/>
+                <idref bean="documentAttributeIndexingQueue"/>
+                <idref bean="responsibilityChangeQueue"/>
+                <idref bean="documentRefreshQueue"/>
+                <idref bean="workflowDocumentActionsService"/>
+                <idref bean="workflowDocumentService"/>
+                <idref bean="actionListCustomizationHandlerService"/>
+                <idref bean="documentSearchCustomizationHandlerService"/>
+                <idref bean="documentSecurityHandlerService"/>
+                <idref bean="actionInvocationQueue"/>
             </list>
         </property>
     </bean>
@@ -325,17 +325,17 @@
           p:xmlImpexRegistry-ref="xmlImpexRegistry">
         <property name="xmlLoadersToRegister">
             <list>
-                <ref local="userXmlService"/>
-                <ref local="ruleAttributeService"/>
-                <ref local="groupXmlService"/>
-                <ref local="documentTypeService"/>
+                <ref bean="userXmlService"/>
+                <ref bean="ruleAttributeService"/>
+                <ref bean="groupXmlService"/>
+                <ref bean="documentTypeService"/>
             </list>
         </property>
         <property name="xmlExportersToRegister">
             <list>
-                <ref local="ruleAttributeService"/>
-                <ref local="groupXmlService"/>
-                <ref local="documentTypeService"/>
+                <ref bean="ruleAttributeService"/>
+                <ref bean="groupXmlService"/>
+                <ref bean="documentTypeService"/>
             </list>
         </property>
     </bean>
@@ -348,9 +348,9 @@
         </property>
         <property name="beanNames">
             <list>
-                <idref local="groupMembershipChangeQueue"/>
-                <idref local="actionListEmailService"/>
-                <idref local="stuckDocumentService"/>
+                <idref bean="groupMembershipChangeQueue"/>
+                <idref bean="actionListEmailService"/>
+                <idref bean="stuckDocumentService"/>
             </list>
         </property>
     </bean>
