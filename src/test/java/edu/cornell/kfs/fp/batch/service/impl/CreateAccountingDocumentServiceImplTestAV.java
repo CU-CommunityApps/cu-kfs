@@ -68,7 +68,6 @@ public class CreateAccountingDocumentServiceImplTestAV extends CreateAccountingD
                 AccountingXmlDocumentListWrapperFixture.MULTI_AV_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST);
     }
 
-    @SuppressWarnings("unchecked")
     protected void assertAccountingDocumentIsCorrect(Class<? extends AccountingDocument> documentClass,
             AccountingDocument expectedDocument, AccountingDocument actualDocument) {
         super.assertAccountingDocumentIsCorrect(documentClass, expectedDocument, actualDocument);
@@ -125,11 +124,7 @@ public class CreateAccountingDocumentServiceImplTestAV extends CreateAccountingD
 
     private AccountingPeriod findAccountingPeriod(Integer fiscalYear, String periodCode) {
         Optional<AccountingPeriodFixture> result = AccountingPeriodFixture.findAccountingPeriod(fiscalYear, periodCode);
-        if (result.isPresent()) {
-            return result.get().toAccountingPeriod();
-        } else {
-            return null;
-        }
+        return result.isPresent() ? result.get().toAccountingPeriod() : null;
     }
 
     private List<AccountingPeriod> buildListOfOpenAccountingPeriods() {

@@ -70,7 +70,6 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
                 AccountingXmlDocumentListWrapperFixture.DV_DOCUMENT_VENDOR_TEST);
     }
 
-    @SuppressWarnings("unchecked")
     protected void assertAccountingDocumentIsCorrect(Class<? extends AccountingDocument> documentClass,
             AccountingDocument expectedDocument, AccountingDocument actualDocument) {
         super.assertAccountingDocumentIsCorrect(documentClass, expectedDocument, actualDocument);
@@ -102,7 +101,7 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
                 actualDvDocument.getInvoiceNumber());
     }
 
-    private VendorService buildMockVendorService() throws Exception {
+    private VendorService buildMockVendorService() {
         VendorService vendorService = Mockito.mock(VendorService.class);
         DocGenVendorFixture[] vendorFixtures = { DocGenVendorFixture.XYZ_INDUSTRIES, DocGenVendorFixture.REE_PHUND };
         for (DocGenVendorFixture vendorFixture : vendorFixtures) {

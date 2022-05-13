@@ -45,9 +45,7 @@ import org.junit.runner.RunWith;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
-import org.kuali.kfs.core.impl.parameter.ParameterEvaluatorServiceImpl;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
@@ -425,12 +423,6 @@ public class CreateAccountingDocumentServiceImplBase {
         }
         routedAccountingDocuments.add((AccountingDocument) document);
         return document;
-    }
-
-    private ParameterEvaluatorService buildParameterEvaluatorService(ParameterService parameterService) {
-        ParameterEvaluatorServiceImpl evaluatorService = new ParameterEvaluatorServiceImpl();
-        evaluatorService.setParameterService(parameterService);
-        return evaluatorService;
     }
 
     private ParameterService buildParameterService() {
