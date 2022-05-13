@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 import javax.xml.bind.JAXBException;
 
@@ -14,9 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
@@ -49,31 +45,6 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     public String getConcurParameterValue(String parameterName) {
         String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
         return parameterValue;
-    }
-    
-    @Override
-    public void updateConcurParameterValue(String parameterName, String newValue) {
-        if (StringUtils.isBlank(parameterName)) {
-            throw new IllegalArgumentException("parameterName cannot be blank");
-        }
-        String cleanedValue = StringUtils.defaultIfBlank(newValue, KFSConstants.EMPTY_STRING);
-        Parameter parameter = getParameterService().getParameter(
-                CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
-        if (ObjectUtils.isNull(parameter)) {
-            throw new IllegalStateException("Concur parameter does not exist: " + parameterName);
-        }
-        parameter.setValue(cleanedValue);
-        getParameterService().updateParameter(parameter);
-    }
-    
-    @Override
-    public void watchConcurParameter(String parameterName, Consumer<Parameter> consumer) {
-        if (StringUtils.isBlank(parameterName)) {
-            throw new IllegalArgumentException("parameterName cannot be blank");
-        }
-        Objects.requireNonNull(consumer, "consumer cannot be null");
-        getParameterService().watchParameter(CUKFSConstants.ParameterNamespaces.CONCUR,
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName, consumer);
     }
     
     @Override

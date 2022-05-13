@@ -7,11 +7,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,11 +19,9 @@ import org.joda.time.MutableDateTime;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
-import org.springframework.beans.factory.InitializingBean;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
@@ -51,7 +49,7 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service, InitializingBean {
+public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -63,21 +61,16 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service, Initi
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
 
-    protected final AtomicReference<Map<String, String>> testUserIdMappings = new AtomicReference<>();
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        String testUserIdMappingsAsString = concurBatchUtilityService.getConcurParameterValue(
-                ConcurParameterConstants.REQUEST_V4_TEST_USERS);
-        refreshRequestV4TestUserMappingsFromParameterValue(testUserIdMappingsAsString);
-        concurBatchUtilityService.watchConcurParameter(
-                ConcurParameterConstants.REQUEST_V4_TEST_USERS, this::refreshRequestV4TestUserMappingsFromParameter);
-    }
-
     @Override
     public List<ConcurEventNotificationProcessingResultsDTO> processTravelRequests(String accessToken) {
         LOG.info("processTravelRequests, Starting processing of "
                 + (isProduction() ? "Production" : "Non-Production") + " travel requests");
+        
+        Map<String, String> testUserIdMappings = getRequestV4TestUserMappingsFromParameter();
+        if (MapUtils.isEmpty(testUserIdMappings)) {
+            throw new IllegalStateException("The parameter that lists the various Concur test users "
+                    + "has either a blank/nonexistent value or a malformed value");
+        }
         
         Stream.Builder<Stream<ConcurEventNotificationProcessingResultsDTO>> subResults = Stream.builder();
         Stream<ConcurEventNotificationProcessingResultsDTO> subResult;
@@ -88,7 +81,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service, Initi
         
         do {
             requestListing = getPendingTravelRequests(accessToken, page, currentQueryUrl);
-            subResult = processTravelRequestsSubset(accessToken, requestListing);
+            subResult = processTravelRequestsSubset(accessToken, testUserIdMappings, requestListing);
             subResults.add(subResult);
             page++;
             currentQueryUrl = getQueryUrlForNextResultsPageIfPresent(requestListing);
@@ -130,7 +123,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service, Initi
     }
 
     protected Stream<ConcurEventNotificationProcessingResultsDTO> processTravelRequestsSubset(
-            String accessToken, ConcurRequestV4ListingDTO requestListing) {
+            String accessToken, Map<String, String> testUserIdMappings, ConcurRequestV4ListingDTO requestListing) {
         if (CollectionUtils.isEmpty(requestListing.getListItems())) {
             return Stream.empty();
         }
@@ -141,7 +134,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service, Initi
                 throw new IllegalStateException("Found a request item with a blank ID; this should NEVER happen");
             }
             if (isRequestPendingExternalValidation(requestAsListItem)
-                    && requestHasAppropriateOwner(requestAsListItem)) {
+                    && requestHasAppropriateOwner(requestAsListItem, testUserIdMappings)) {
                 ConcurEventNotificationProcessingResultsDTO processingResultForRequest = processTravelRequest(
                         accessToken, requestAsListItem);
                 subResults.add(processingResultForRequest);
@@ -157,12 +150,13 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service, Initi
                 RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, approvalStatus.getName());
     }
 
-    protected boolean requestHasAppropriateOwner(ConcurRequestV4ListItemDTO requestAsListItem) {
+    protected boolean requestHasAppropriateOwner(ConcurRequestV4ListItemDTO requestAsListItem,
+            Map<String, String> testUserIdMappings) {
         ConcurRequestV4PersonDTO owner = requestAsListItem.getOwner();
         if (ObjectUtils.isNull(owner) || StringUtils.isBlank(owner.getId())) {
             return false;
         }
-        boolean isTestUser = testUserIdMappings.get().containsKey(owner.getId());
+        boolean isTestUser = testUserIdMappings.containsKey(owner.getId());
         return isProduction() != isTestUser;
     }
 
@@ -265,34 +259,29 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service, Initi
         return getConcurParameterValueAsPositiveInteger(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE);
     }
 
-    protected void refreshRequestV4TestUserMappingsFromParameter(Parameter parameter) {
-        LOG.info("refreshRequestV4TestUserMappingsFromParameter, The value of the parameter "
-                + parameter.getName() + " has been updated");
-        refreshRequestV4TestUserMappingsFromParameterValue(parameter.getValue());
-    }
-
-    protected void refreshRequestV4TestUserMappingsFromParameterValue(String parameterValue) {
-        Map<String, String> newMappings = getRequestV4TestUserMappingsFromParameterValue(parameterValue);
-        testUserIdMappings.set(newMappings);
-    }
-
-    protected Map<String, String> getRequestV4TestUserMappingsFromParameterValue(String parameterValue) {
-        if (StringUtils.isBlank(parameterValue)) {
-            return Map.of();
-        }
-        String testUsersString = getNonBlankConcurParameterValue(ConcurParameterConstants.REQUEST_V4_TEST_USERS);
-        String[] testUserEntries = StringUtils.split(testUsersString, CUKFSConstants.SEMICOLON);
+    protected Map<String, String> getRequestV4TestUserMappingsFromParameter() {
+        String testUserIdMappingsAsString = getNonBlankConcurParameterValue(
+                ConcurParameterConstants.REQUEST_V4_TEST_USERS);
+        String[] testUserEntries = StringUtils.split(testUserIdMappingsAsString, CUKFSConstants.SEMICOLON);
         return Arrays.stream(testUserEntries)
                 .collect(Collectors.toUnmodifiableMap(
                         this::getTestUserUuidFromEntry, this::getTestUserNameFromEntry));
     }
 
     protected String getTestUserNameFromEntry(String keyValuePair) {
-        return StringUtils.substringBefore(keyValuePair, CUKFSConstants.EQUALS_SIGN);
+        String userName = StringUtils.substringBefore(keyValuePair, CUKFSConstants.EQUALS_SIGN);
+        if (StringUtils.isBlank(userName)) {
+            throw new IllegalStateException("Test users parameter had a malformed key-value pair: " + keyValuePair);
+        }
+        return userName;
     }
 
     protected String getTestUserUuidFromEntry(String keyValuePair) {
-        return StringUtils.substringAfter(keyValuePair, CUKFSConstants.EQUALS_SIGN);
+        String userUuid = StringUtils.substringAfter(keyValuePair, CUKFSConstants.EQUALS_SIGN);
+        if (StringUtils.isBlank(userUuid)) {
+            throw new IllegalStateException("Test users parameter had a malformed key-value pair: " + keyValuePair);
+        }
+        return userUuid;
     }
 
     protected String calculateLastModifiedFromDateInUTCFormat(Date currentDate) {

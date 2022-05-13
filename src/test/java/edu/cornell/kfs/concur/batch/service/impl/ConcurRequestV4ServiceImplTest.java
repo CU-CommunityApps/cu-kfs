@@ -39,7 +39,6 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
@@ -82,7 +81,6 @@ public class ConcurRequestV4ServiceImplTest {
     private static final String VALIDATION_ERROR_INVALID_ACCOUNT = "Invalid Account Number";
 
     private String mockAccessToken;
-    private MockConcurRequestV4Backend mockConcurBackendServer;
     private MockConcurRequestV4ServiceEndpoint mockConcurEndpoint;
     private MockRemoteServerExtension mockHttpServer;
     private String baseRequestV4Url;
@@ -112,7 +110,6 @@ public class ConcurRequestV4ServiceImplTest {
         
         mockHttpServer = new MockRemoteServerExtension();
         mockHttpServer.initialize(mockConcurEndpoint);
-        mockConcurBackendServer = mockConcurEndpoint.getMockBackendServer();
         baseRequestV4Url = mockConcurEndpoint.getBaseRequestV4Url();
         
         concurParameters = buildTestParameters(baseRequestV4Url);
@@ -141,7 +138,6 @@ public class ConcurRequestV4ServiceImplTest {
         mockAccessToken = null;
         concurParameters = null;
         concurProperties = null;
-        mockConcurBackendServer = null;
         mockConcurEndpoint = null;
         mockHttpServer = null;
         baseRequestV4Url = null;
@@ -162,15 +158,19 @@ public class ConcurRequestV4ServiceImplTest {
         parameters.put(ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT, requestV4Endpoint);
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE,
                 ParameterTestValues.REQUEST_V4_PAGE_SIZE_2);
-        parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_USERS, buildTestUsersParameterValue());
+        parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_USERS, buildDefaultTestUsersParameterValue());
         parameters.put(ConcurParameterConstants.REQUEST_V4_NUMBER_OF_DAYS_OLD,
                 ParameterTestValues.REQUEST_V4_DAYS_OLD_1);
         return parameters;
     }
 
-    private String buildTestUsersParameterValue() {
-        return Stream.of(RequestV4PersonFixture.JOHN_TEST, RequestV4PersonFixture.JANE_DOE,
-                        RequestV4PersonFixture.TEST_MANAGER, RequestV4PersonFixture.TEST_APPROVER)
+    private String buildDefaultTestUsersParameterValue() {
+        return buildTestUsersParameterValue(RequestV4PersonFixture.JOHN_TEST, RequestV4PersonFixture.JANE_DOE,
+                RequestV4PersonFixture.TEST_MANAGER, RequestV4PersonFixture.TEST_APPROVER);
+    }
+
+    private String buildTestUsersParameterValue(RequestV4PersonFixture... users) {
+        return Stream.of(users)
                 .map(RequestV4PersonFixture::toKeyValuePairForParameterEntry)
                 .collect(Collectors.joining(CUKFSConstants.SEMICOLON));
     }
@@ -183,11 +183,6 @@ public class ConcurRequestV4ServiceImplTest {
         overrideParameter(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE, String.valueOf(newPageSize));
     }
 
-    private Object overrideParameter(InvocationOnMock invocation) {
-        overrideParameter(invocation.getArgument(0), invocation.getArgument(1));
-        return null;
-    }
-
     private void overrideParameter(String parameterName, String parameterValue) {
         concurParameters.put(parameterName, parameterValue);
     }
@@ -196,8 +191,6 @@ public class ConcurRequestV4ServiceImplTest {
         ConcurBatchUtilityService concurBatchUtilityService = Mockito.mock(ConcurBatchUtilityService.class);
         Mockito.when(concurBatchUtilityService.getConcurParameterValue(Mockito.anyString()))
                 .then(invocation -> concurParameters.get(invocation.getArgument(0)));
-        Mockito.doAnswer(this::overrideParameter)
-                .when(concurBatchUtilityService).updateConcurParameterValue(Mockito.anyString(), Mockito.anyString());
         return concurBatchUtilityService;
     }
 
@@ -325,6 +318,48 @@ public class ConcurRequestV4ServiceImplTest {
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_BOB_SMITH,
                 RequestV4DetailFixture.NOT_SUBMITTED_REGULAR_REQUEST_BOB_SMITH
         ).map(Arguments::of);
+    }
+
+    @Test
+    void testParsingOfTestUsersParameter() throws Exception {
+        Map<String, String> expectedMappings = buildExpectedUserIdMappings(
+                RequestV4PersonFixture.JOHN_TEST, RequestV4PersonFixture.JANE_DOE,
+                RequestV4PersonFixture.TEST_MANAGER, RequestV4PersonFixture.TEST_APPROVER);
+        assertParameterDerivedTestUserMapContainsExpectedEntries(expectedMappings);
+        
+        String newTestUsersParameterValue = buildTestUsersParameterValue(
+                RequestV4PersonFixture.BOB_SMITH, RequestV4PersonFixture.TEST_MANAGER);
+        overrideParameter(ConcurParameterConstants.REQUEST_V4_TEST_USERS, newTestUsersParameterValue);
+        
+        expectedMappings = buildExpectedUserIdMappings(
+                RequestV4PersonFixture.BOB_SMITH, RequestV4PersonFixture.TEST_MANAGER);
+        assertParameterDerivedTestUserMapContainsExpectedEntries(expectedMappings);
+    }
+
+    private Map<String, String> buildExpectedUserIdMappings(RequestV4PersonFixture... users) {
+        return Stream.of(users).collect(Collectors.toUnmodifiableMap(
+                userFixture -> userFixture.id, RequestV4PersonFixture::getNameForParameterEntry));
+    }
+
+    private void assertParameterDerivedTestUserMapContainsExpectedEntries(Map<String, String> expectedMappings) {
+        Map<String, String> actualMappings = requestV4Service.getRequestV4TestUserMappingsFromParameter();
+        assertNotNull(actualMappings, "The test users map should not have been null");
+        assertEquals(expectedMappings, actualMappings, "Wrong test user entries in map");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            KFSConstants.EMPTY_STRING,
+            KFSConstants.BLANK_SPACE,
+            "Name1=",
+            "=Value1",
+            "Name1=Value1;Name2=;Name3=Value3",
+            "Name1=Value1;Name2=Value2;=Value3"
+    })
+    void testParsingFailureForInvalidTestUserParameterValue(String invalidValue) {
+        overrideParameter(ConcurParameterConstants.REQUEST_V4_TEST_USERS, invalidValue);
+        assertThrows(RuntimeException.class, () -> requestV4Service.getRequestV4TestUserMappingsFromParameter(),
+                "The parsing of the test users parameter should have failed when its value is blank or malformed");
     }
 
     @ParameterizedTest
@@ -689,12 +724,12 @@ public class ConcurRequestV4ServiceImplTest {
         
         @Override
         protected Stream<ConcurEventNotificationProcessingResultsDTO> processTravelRequestsSubset(
-                String accessToken, ConcurRequestV4ListingDTO requestListing) {
+                String accessToken, Map<String, String> testUserIdMappings, ConcurRequestV4ListingDTO requestListing) {
             encounteredRequestListings.add(requestListing);
             if (skipRequestListItemProcessing) {
                 return Stream.empty();
             } else {
-                return super.processTravelRequestsSubset(accessToken, requestListing);
+                return super.processTravelRequestsSubset(accessToken, testUserIdMappings, requestListing);
             }
         }
         

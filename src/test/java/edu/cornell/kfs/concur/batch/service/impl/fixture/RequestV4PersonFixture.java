@@ -42,9 +42,12 @@ public enum RequestV4PersonFixture {
     }
 
     public String toKeyValuePairForParameterEntry() {
-        String name = StringUtils.startsWithIgnoreCase(firstName, ConcurTestConstants.TEST_NAME_PREFIX)
+        return getNameForParameterEntry() + CUKFSConstants.EQUALS_SIGN + id;
+    }
+
+    public String getNameForParameterEntry() {
+        return StringUtils.startsWithIgnoreCase(firstName, ConcurTestConstants.TEST_NAME_PREFIX)
                 ? firstName : firstName + lastName;
-        return name + CUKFSConstants.EQUALS_SIGN + id;
     }
 
 }

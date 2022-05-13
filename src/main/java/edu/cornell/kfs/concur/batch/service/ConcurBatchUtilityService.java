@@ -83,25 +83,6 @@ public interface ConcurBatchUtilityService {
     String getConcurParameterValue(String parameterName);
     
     /**
-     * Use the KFS ParameterService to update the KFS system parameter specified
-     * in the KFS Concur name space by parameterName.
-     *
-     * @param parameterName KFS Concur name space parameter to update
-     * @param newValue The value to assign to the parameter; a blank value will be converted to an empty string
-     */
-    void updateConcurParameterValue(String parameterName, String newValue);
-    
-    /**
-     * Use the KFS ParameterService to "watch" for changes to the KFS system parameter specified
-     * in the KFS Concur namespace by parameterName. If the parameter's value is altered,
-     * then the given Consumer will be invoked.
-     * 
-     * @param parameterName KFS Concur namespace parameter to watch
-     * @param consumer The Consumer to invoke whenever the parameter's value changes.
-     */
-    void watchConcurParameter(String parameterName, Consumer<Parameter> consumer);
-    
-    /**
      * Parses a physical file on the file system specified by fullyQualifiedFileName
      * into the Java object associated to the batchInputFileType by the flatFileSpecification.
      * This configuration needs to be setup in Spring for the business object

@@ -63,7 +63,7 @@ public class MockConcurRequestV4Backend {
         Set<String> unsupportedParameters = searchForUnsupportedRequestListQueryParameters(queryParameters);
         if (!unsupportedParameters.isEmpty()) {
             throw new IllegalArgumentException("Query contains unsupported parameters "
-                    + "(and this mock server might not support all the parameters from the real Concur web service): "
+                    + "(and this mock backend might not support all the parameters from the real Concur web service): "
                     + unsupportedParameters.toString());
         }
         
@@ -80,7 +80,7 @@ public class MockConcurRequestV4Backend {
         
         if (!StringUtils.equalsIgnoreCase(RequestV4Views.APPROVED, view)) {
             throw new IllegalArgumentException(
-                    "This mock server only supports the APPROVED view; actual requested view: " + view);
+                    "This mock backend only supports the APPROVED view; actual requested view: " + view);
         } else if (startIndex < 0) {
             throw new IllegalArgumentException("start index cannot be negative");
         } else if (limit < 1 || limit > MAX_RESULT_LIMIT) {
@@ -89,10 +89,10 @@ public class MockConcurRequestV4Backend {
             throw new IllegalArgumentException("modifiedAfter date cannot be later than modifiedBefore date");
         } else if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_START_DATE_FIELD, sortField)) {
             throw new IllegalArgumentException(
-                    "This mock server only supports sorting by start date; actual sort field: " + sortField);
+                    "This mock backend only supports sorting by start date; actual sort field: " + sortField);
         } else if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_SORT_ORDER_DESC, sortOrder)) {
             throw new IllegalArgumentException(
-                    "This mock server only supports descending sort order; actual sort order: " + sortOrder);
+                    "This mock backend only supports descending sort order; actual sort order: " + sortOrder);
         }
         
         List<ConcurRequestV4ListItemDTO> unboundedResults = travelRequests.values().stream()
