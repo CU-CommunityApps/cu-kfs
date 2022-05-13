@@ -27,41 +27,38 @@ public class CuReceivingServiceImpl extends ReceivingServiceImpl {
             //if a new item has been added spawn a purchase order amendment
             if( hasNewUnorderedItem((LineItemReceivingDocument)receivingDocument) ){
                 String newSessionUserId = KFSConstants.SYSTEM_USER;
-                try {
 
-                    LogicContainer logicToRun = new LogicContainer() {
-                        @Override
-                        public Object runLogic(Object[] objects) {
-                            LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)objects[0];
-                            String poDocNumber = (String)objects[1];
 
-                            //create a PO amendment
-                            PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
+                LogicContainer logicToRun = new LogicContainer() {
+                    @Override
+                    public Object runLogic(Object[] objects) {
+                        LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)objects[0];
+                        String poDocNumber = (String)objects[1];
 
-                            // KFSPTS-1769, KFSUPGRADE-339
-                            ((CuPurchaseOrderAmendmentDocument)amendmentPo).setSpawnPoa(true);
-                            //add new lines to amendement
-                            addUnorderedItemsToAmendment(amendmentPo, rlDoc);
+                        //create a PO amendment
+                        PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
 
-                            //route amendment
-                            documentService.routeDocument(amendmentPo, null, null);
+                        // KFSPTS-1769, KFSUPGRADE-339
+                        ((CuPurchaseOrderAmendmentDocument)amendmentPo).setSpawnPoa(true);
+                        //add new lines to amendement
+                        addUnorderedItemsToAmendment(amendmentPo, rlDoc);
 
-                            //add note to amendment po document
-                            String note = "Purchase Order Amendment " + amendmentPo.getPurapDocumentIdentifier() + " (document id " + amendmentPo.getDocumentNumber() + ") created for new unordered line items due to Receiving (document id " + rlDoc.getDocumentNumber() + ")";
+                        //route amendment
+                        documentService.routeDocument(amendmentPo, null, null);
 
-                            Note noteObj = documentService.createNoteFromDocument(amendmentPo, note);
-                            amendmentPo.addNote(noteObj);
-                            noteService.save(noteObj);
+                        //add note to amendment po document
+                        String note = "Purchase Order Amendment " + amendmentPo.getPurapDocumentIdentifier() + " (document id " + amendmentPo.getDocumentNumber() + ") created for new unordered line items due to Receiving (document id " + rlDoc.getDocumentNumber() + ")";
 
-                            return null;
-                        }
-                    };
+                        Note noteObj = documentService.createNoteFromDocument(amendmentPo, note);
+                        amendmentPo.addNote(noteObj);
+                        noteService.save(noteObj);
 
-                    purapService.performLogicWithFakedUserSession(newSessionUserId, logicToRun, new Object[] { rlDoc, po.getDocumentNumber() });
-                }
-                catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                        return null;
+                    }
+                };
+
+                purapService.performLogicWithFakedUserSession(newSessionUserId, logicToRun, new Object[] { rlDoc, po.getDocumentNumber() });
+
             }
         }
     }

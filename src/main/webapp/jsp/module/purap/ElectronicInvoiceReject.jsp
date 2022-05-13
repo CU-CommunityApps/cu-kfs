@@ -156,9 +156,7 @@
                                                 attributeEntry="${itemAttributes.unitOfMeasureAcceptIndicator}"
                                                 property="document.invoiceRejectItems[${ctr}].unitOfMeasureAcceptIndicator"
                                                 readOnly="${not fullEntryMode}"/>
-                                        <kul:htmlAttributeLabel
-                                                attributeEntry="${itemAttributes.unitOfMeasureAcceptIndicator}"
-                                                noColon="true"/>
+                                        <kul:htmlAttributeLabel attributeEntry="${itemAttributes.unitOfMeasureAcceptIndicator}" noColon="true"/>
                                     </td>
                                     <td class="datacell" nowrap>
                                         <kul:htmlControlAttribute

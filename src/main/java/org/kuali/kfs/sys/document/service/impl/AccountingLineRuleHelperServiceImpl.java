@@ -441,7 +441,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
 
         // sub account is not required
         if (StringUtils.isNotBlank(accountingLine.getSubAccountNumber())
-                && !accountingLine.getSubAccountNumber().equals(KFSConstants.getDashSubAccountNumber())) {
+                && !accountingLine.getSubAccountNumber().equals(getDashSubAccountNumber())) {
             SubAccount subAccount = accountingLine.getSubAccount();
 
             validationErrors.addAll(

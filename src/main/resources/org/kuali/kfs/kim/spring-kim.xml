@@ -50,7 +50,18 @@
                 <value>classpath:org/kuali/kfs/kim/impl/group/*.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/permission/*.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/responsibility/*.xml</value>
-                <value>classpath:org/kuali/kfs/kim/impl/role/*.xml</value>
+                <!--
+                     When these impl/role paths were wildcarded, the integ tests failed on spring startup. It looked like
+                     there was some confusion around loading these DD xml files vs. loading classes in the same path
+                     (This happened after a new integ test was added in org.kuali.kfs.kim.impl.role). I didn't dig into
+                     the issue enough to find the root cause, but making these explicit fixed the issue.
+                -->
+                <value>classpath:org/kuali/kfs/kim/impl/role/Role.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/role/RoleMember.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/role/RoleMemberAttributeData.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/role/RolePermission.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/role/RoleResponsibility.xml</value>
+                <value>classpath:org/kuali/kfs/kim/impl/role/RoleResponsibilityAction.xml</value>
                 <value>classpath:org/kuali/kfs/kim/impl/type/KimType.xml</value>
             </list>
         </property>

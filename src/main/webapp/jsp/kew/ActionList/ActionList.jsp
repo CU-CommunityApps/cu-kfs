@@ -180,9 +180,9 @@
                     <html-el:submit property="methodToCall.helpDeskActionListLogin" styleClass="btn btn-default">Help Desk</html-el:submit>
                 <c:if test="${userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME] != null}">
                     <a href="
-                    <c:url value="ActionList.do">
-                        <c:param name="methodToCall" value="clearHelpDeskActionListUser" />
-                    </c:url>">Clear <c:out value="${userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME].name}"/>'s List</a>
+					<c:url value="ActionList.do">
+						<c:param name="methodToCall" value="clearHelpDeskActionListUser" />
+					</c:url>">Clear <c:out value="${userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME].name}"/>'s List</a>
                 </c:if>
             </c:if>
 
