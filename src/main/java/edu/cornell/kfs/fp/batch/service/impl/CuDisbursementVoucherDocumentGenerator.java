@@ -1,7 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -31,7 +29,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.springframework.util.AutoPopulatingList;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -39,7 +36,6 @@ import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetailXml;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeExpenseXml;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInformationXml;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrantXml;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverviewXml;
@@ -251,10 +247,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         return address;
     }
     
-    protected DisbursementVoucherNonEmployeeExpense buildNonEmployeeExpense() {
-        return new DisbursementVoucherNonEmployeeExpense();
-    }
-    
     protected void populatePreConferenceDetail(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPrePaidTravelOverview())) {
             DisbursementVoucherPrePaidTravelOverviewXml overView = dvDetail.getPrePaidTravelOverview();
@@ -285,14 +277,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     private Date buildSqlDateFromUtilDate(java.util.Date utilDate) {
         if (ObjectUtils.isNotNull(utilDate)) {
             return new Date(utilDate.getTime());
-        } else {
-            return null;
-        }
-    }
-    
-    private Timestamp buildTimestampFromUtilDate(java.util.Date utilDate) {
-        if (ObjectUtils.isNotNull(utilDate)) {
-            return new Timestamp(utilDate.getTime());
         } else {
             return null;
         }
