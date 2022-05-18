@@ -52,9 +52,6 @@ public class CuFPConstants {
     public static final String CURRENCY_US_DOLLAR_TO_FOREIGN = "Amount is stated in U.S. dollars; convert to foreign currency";
     public static final String CURRENCY_FOREIGN = "Amount is stated in foreign currency";
 
-    public static final String PAYMENT_REASON = "payment reason";
-    public static final String NON_EMPLOYEE_TRAVEL = "Non-Employee Travel";
-
     public static final String ACH_INCOME_FILE_DATE_FORMAT = "yyMMddHHmm";
     public static final String ADVANCE_DEPOSIT_DEFAULT_CAMPUS_CODE = "IT";
     public static final String ADVANCE_DEPOSIT_NOTE_FILE_PREFIX = "advancedeposit_note_";

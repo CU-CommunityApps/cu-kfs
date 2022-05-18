@@ -1,7 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,8 +12,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
-import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
@@ -31,7 +28,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.springframework.util.AutoPopulatingList;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -39,8 +35,6 @@ import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetailXml;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeExpenseXml;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravelXml;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInformationXml;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrantXml;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverviewXml;
@@ -54,7 +48,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDocumentGenerator.class);
     
     protected UniversityDateService universityDateService;
-    protected DisbursementVoucherTravelService disbursementVoucherTravelService;
     protected VendorService vendorService;
     protected BusinessObjectService businessObjectService;
     protected CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
@@ -87,7 +80,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         if (ObjectUtils.isNotNull(documentEntry.getDisbursementVoucherDetail())) {
             populateDisbursementVouchersGenericSections(dvDocument, documentEntry.getDisbursementVoucherDetail());
             populatePaymentInformation(dvDocument, documentEntry.getDisbursementVoucherDetail());
-            populateNonEmployeeTravelExpense(dvDocument, documentEntry.getDisbursementVoucherDetail());
             populatePreConferenceDetail(dvDocument, documentEntry.getDisbursementVoucherDetail());
         } else {
             LOG.error("populateCustomAccountingDocumentData, did not find Disbursement Voucher Details");
@@ -253,93 +245,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         return address;
     }
     
-    private void populateNonEmployeeTravelExpense(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
-        if (ObjectUtils.isNotNull(dvDetail.getNonEmployeeTravel())) {
-            DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel = dvDetail.getNonEmployeeTravel();
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(nonEmployeeTravel.getTravelerName());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrServicePerformedDesc(nonEmployeeTravel.getServicePerformed());
-            dvDocument.getDvNonEmployeeTravel().setDvServicePerformedLocName(nonEmployeeTravel.getServicePerformedLocationName());
-            dvDocument.getDvNonEmployeeTravel().setDvServiceRegularEmprName(nonEmployeeTravel.getServicePerformedRegularEmployeeName());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrTravelToCityName(nonEmployeeTravel.getTravelToCity());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrTravelToStateCode(nonEmployeeTravel.getTravelToState());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrTravelToCountryCode(nonEmployeeTravel.getTravelToCountry());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrTravelFromCityName(nonEmployeeTravel.getTravelFromCity());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrTravelFromStateCode(nonEmployeeTravel.getTravelFromState());
-            dvDocument.getDvNonEmployeeTravel().setDvTravelFromCountryCode(nonEmployeeTravel.getTravelFromCountry());
-            dvDocument.getDvNonEmployeeTravel().setDvPerdiemStartDttmStamp(buildTimestampFromUtilDate(nonEmployeeTravel.getPerdiemStartDate()));
-            dvDocument.getDvNonEmployeeTravel().setDvPerdiemEndDttmStamp(buildTimestampFromUtilDate(nonEmployeeTravel.getPerdiemEndDate()));
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemCategoryName(nonEmployeeTravel.getPerdiemCategory());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoFromCityName(nonEmployeeTravel.getAutoFromCity());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoFromStateCode(nonEmployeeTravel.getAutoFromState());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoToCityName(nonEmployeeTravel.getAutoToCity());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoToStateCode(nonEmployeeTravel.getAutoToState());
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemRate(nonEmployeeTravel.getPerdiemRate());
-            populatePerdiem(dvDocument, nonEmployeeTravel);
-            populateMileage(dvDocument, nonEmployeeTravel);
-            populateNonEmployeeTravelExpenses(dvDocument, nonEmployeeTravel);
-            populateNonEmployeeTravelPrePaidExpenses(dvDocument, nonEmployeeTravel);
-        } else {
-            LOG.info("populateNonEmployeeTravelExpense, no non employee travel information in XML");
-        }
-    }
-    
-    protected void populatePerdiem(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
-        KualiDecimal calculatedPerDiemAmount = disbursementVoucherTravelService.calculatePerDiemAmount(dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp(), 
-                dvDocument.getDvNonEmployeeTravel().getDvPerdiemEndDttmStamp(), dvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
-        dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemCalculatedAmt(calculatedPerDiemAmount);
-        if (ObjectUtils.isNotNull(nonEmployeeTravel.getPerdiemActualAmount())) {
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemActualAmount(nonEmployeeTravel.getPerdiemActualAmount());
-        } else {
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemActualAmount(calculatedPerDiemAmount  );
-        }
-        dvDocument.getDvNonEmployeeTravel().setDvPerdiemChangeReasonText(nonEmployeeTravel.getPerdiemChangeReasonText());
-    }
-    
-    protected void populateMileage(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
-        dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoRoundTripCode(convertStringToBoolean(nonEmployeeTravel.getRoundTripCode()));
-        dvDocument.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(nonEmployeeTravel.getPersonalCarMileageAmount().intValue());
-        KualiDecimal calculatedMileageAmount = disbursementVoucherTravelService.calculateMileageAmount(dvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), 
-                dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp());
-        dvDocument.getDvNonEmployeeTravel().setDisbVchrMileageCalculatedAmt(calculatedMileageAmount);
-        if (ObjectUtils.isNotNull(nonEmployeeTravel.getPersonalCarAmount())) {
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrPersonalCarAmount(nonEmployeeTravel.getPersonalCarAmount());
-        } else {
-            dvDocument.getDvNonEmployeeTravel().setDisbVchrPersonalCarAmount(calculatedMileageAmount);
-        }
-    }
-    
-    protected void populateNonEmployeeTravelExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
-        if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getTravelerExpenses())) {
-            for (DisbursementVoucherNonEmployeeExpenseXml expenseXml : nonEmployeeTravel.getTravelerExpenses()) {
-                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = buildNonEmployeeExpense();
-                dvExpense.setDisbVchrExpenseCode(expenseXml.getExpenseType());
-                dvExpense.setDisbVchrExpenseCompanyName(expenseXml.getCompanyName());
-                dvExpense.setDisbVchrExpenseAmount(expenseXml.getAmount());
-                dvExpense.setDocumentNumber(dvDocument.getDocumentNumber());
-                dvExpense.setNewCollectionRecord(true);
-                dvDocument.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(dvExpense);
-            }
-        }
-    }
-
-    protected void populateNonEmployeeTravelPrePaidExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
-        if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getPrepaidExpenses())) {
-            for (DisbursementVoucherNonEmployeeExpenseXml expenseXml : nonEmployeeTravel.getPrepaidExpenses()) {
-                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = buildNonEmployeeExpense();
-                dvExpense.setDisbVchrPrePaidExpenseCode(expenseXml.getExpenseType());
-                dvExpense.setDisbVchrPrePaidExpenseCompanyName(expenseXml.getCompanyName());
-                dvExpense.setDisbVchrExpenseAmount(expenseXml.getAmount());
-                dvExpense.setDocumentNumber(dvDocument.getDocumentNumber());
-                dvExpense.setNewCollectionRecord(true);
-                dvDocument.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(dvExpense);
-            }
-        }
-    }
-    
-    protected DisbursementVoucherNonEmployeeExpense buildNonEmployeeExpense() {
-        return new DisbursementVoucherNonEmployeeExpense();
-    }
-    
     protected void populatePreConferenceDetail(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPrePaidTravelOverview())) {
             DisbursementVoucherPrePaidTravelOverviewXml overView = dvDetail.getPrePaidTravelOverview();
@@ -375,14 +280,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
     
-    private Timestamp buildTimestampFromUtilDate(java.util.Date utilDate) {
-        if (ObjectUtils.isNotNull(utilDate)) {
-            return new Timestamp(utilDate.getTime());
-        } else {
-            return null;
-        }
-    }
-    
     @Override
     public void handleDocumentWarningMessage(CreateAccountingDocumentReportItemDetail reportDetail) {
         if (!GlobalVariables.getMessageMap().getWarningMessages().isEmpty()) {
@@ -401,10 +298,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     
     public void setUniversityDateService(UniversityDateService universityDateService) {
         this.universityDateService = universityDateService;
-    }
-
-    public void setDisbursementVoucherTravelService(DisbursementVoucherTravelService disbursementVoucherTravelService) {
-        this.disbursementVoucherTravelService = disbursementVoucherTravelService;
     }
 
     public void setVendorService(VendorService vendorService) {
