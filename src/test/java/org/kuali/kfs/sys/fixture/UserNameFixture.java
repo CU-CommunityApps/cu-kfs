@@ -43,7 +43,7 @@ hnmayer,
 // Fund Managers
 wklykins, wcorbitt,
 ccs1,
-ls35,
+amg49,
 // favorite account manager
 mgw3,
 kan2,
