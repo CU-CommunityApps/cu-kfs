@@ -875,7 +875,6 @@
         <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
         <property name="configurationService" ref="configurationService"/>
         <property name="universityDateService" ref="universityDateService"/>
-        <property name="disbursementVoucherTravelService" ref="disbursementVoucherTravelService"/>
         <property name="vendorService" ref="vendorService"/>
         <property name="businessObjectService" ref="businessObjectService"/>
         <property name="cuDisbursementVoucherDefaultDueDateService" ref="cuDisbursementVoucherDefaultDueDateService"/>

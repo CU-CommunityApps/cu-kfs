@@ -145,7 +145,6 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
             CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) super.buildAccountingDocumentGenerator(
                     generatorConstructor);
             dvGenerator.setUniversityDateService(universityDateService);
-            dvGenerator.setDisbursementVoucherTravelService(disbursementVoucherTravelService);
             dvGenerator.setCuDisbursementVoucherDefaultDueDateService(cuDisbursementVoucherDefaultDueDateService);
             dvGenerator.setCuDisbursementVoucherPayeeService(cuDisbursementVoucherPayeeService);
             dvGenerator.setVendorService(vendorService);

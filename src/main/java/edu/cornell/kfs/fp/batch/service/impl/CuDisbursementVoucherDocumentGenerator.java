@@ -12,7 +12,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
@@ -49,7 +48,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDocumentGenerator.class);
     
     protected UniversityDateService universityDateService;
-    protected DisbursementVoucherTravelService disbursementVoucherTravelService;
     protected VendorService vendorService;
     protected BusinessObjectService businessObjectService;
     protected CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
@@ -300,10 +298,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     
     public void setUniversityDateService(UniversityDateService universityDateService) {
         this.universityDateService = universityDateService;
-    }
-
-    public void setDisbursementVoucherTravelService(DisbursementVoucherTravelService disbursementVoucherTravelService) {
-        this.disbursementVoucherTravelService = disbursementVoucherTravelService;
     }
 
     public void setVendorService(VendorService vendorService) {

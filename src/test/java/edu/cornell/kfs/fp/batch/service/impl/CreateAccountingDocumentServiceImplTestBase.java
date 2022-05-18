@@ -47,7 +47,6 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.kim.api.identity.Person;
@@ -533,7 +532,6 @@ public class CreateAccountingDocumentServiceImplTestBase {
         private PersonService personService;
         protected AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService;
         private ConfigurationService configurationService;
-        protected DisbursementVoucherTravelService disbursementVoucherTravelService;
         protected FiscalYearFunctionControlService fiscalYearFunctionControlService;
         protected UniversityDateService universityDateService;
         protected AccountingPeriodService accountingPeriodService;
