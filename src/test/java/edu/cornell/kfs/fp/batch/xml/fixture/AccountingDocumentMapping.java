@@ -24,13 +24,13 @@ import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
 import edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.impl.CuDisbursementVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuYearEndBudgetAdjustmentDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuYearEndDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuYearEndTransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator;
-import edu.cornell.kfs.fp.batch.service.impl.TestableCuDisbursementVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.TransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentTargetAccountingLine;
@@ -59,7 +59,7 @@ public enum AccountingDocumentMapping {
             ServiceBillingDocumentGenerator::new),
     DV_DOCUMENT(CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
             CuDisbursementVoucherDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
-            TestableCuDisbursementVoucherDocumentGenerator::new),
+            CuDisbursementVoucherDocumentGenerator::new),
     YEDI_DOCUMENT(KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             YearEndDistributionOfIncomeAndExpenseDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
             CuYearEndDistributionOfIncomeAndExpenseDocumentGenerator::new),
