@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
-public class CreateAccountingDocumentServiceImplTestIB extends CreateAccountingDocumentServiceImplBase {
+public class CreateAccountingDocumentServiceImplTestIB extends CreateAccountingDocumentServiceImplTestBase {
 
     @Before
     public void setUp() throws Exception {

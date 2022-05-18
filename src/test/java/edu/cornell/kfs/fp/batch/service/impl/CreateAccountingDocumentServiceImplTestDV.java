@@ -32,7 +32,7 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingDocumentServiceImplBase {
+public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingDocumentServiceImplTestBase {
 
     private SimpleDateFormat dateFormat;
 

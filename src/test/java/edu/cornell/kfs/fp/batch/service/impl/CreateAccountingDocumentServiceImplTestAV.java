@@ -35,7 +35,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingPeriodFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
-public class CreateAccountingDocumentServiceImplTestAV extends CreateAccountingDocumentServiceImplBase {
+public class CreateAccountingDocumentServiceImplTestAV extends CreateAccountingDocumentServiceImplTestBase {
 
     @Before
     public void setUp() throws Exception {

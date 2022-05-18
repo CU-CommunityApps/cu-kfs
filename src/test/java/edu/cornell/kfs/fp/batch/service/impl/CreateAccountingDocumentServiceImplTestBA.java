@@ -31,7 +31,7 @@ import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentS
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 
-public class CreateAccountingDocumentServiceImplTestBA extends CreateAccountingDocumentServiceImplBase {
+public class CreateAccountingDocumentServiceImplTestBA extends CreateAccountingDocumentServiceImplTestBase {
 
     @Before
     public void setUp() throws Exception {
