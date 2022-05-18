@@ -36,9 +36,6 @@ public class DisbursementVoucherDetailXml {
     @XmlElement(name = "payment_information", namespace = StringUtils.EMPTY, required = false)
     protected DisbursementVoucherPaymentInformationXml paymentInformation;
     
-    @XmlElement(name = "non_employee_travel", namespace = StringUtils.EMPTY, required = false)
-    protected DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel;
-    
     @XmlElement(name = "pre_paid_travel", namespace = StringUtils.EMPTY, required = false)
     protected DisbursementVoucherPrePaidTravelOverviewXml prePaidTravelOverview;
     
@@ -88,14 +85,6 @@ public class DisbursementVoucherDetailXml {
 
     public void setBankCode(String bankCode) {
         this.bankCode = bankCode;
-    }
-
-    public DisbursementVoucherNonEmployeeTravelXml getNonEmployeeTravel() {
-        return nonEmployeeTravel;
-    }
-
-    public void setNonEmployeeTravel(DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
-        this.nonEmployeeTravel = nonEmployeeTravel;
     }
 
     public DisbursementVoucherPrePaidTravelOverviewXml getPrePaidTravelOverview() {

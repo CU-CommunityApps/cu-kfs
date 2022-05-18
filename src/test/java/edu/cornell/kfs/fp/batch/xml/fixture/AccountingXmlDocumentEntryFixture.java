@@ -594,7 +594,6 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks(),
             CuDisbursementVoucherDocumentFixture.JOHN_DOE_DV_DETAIL),
-    
     DV_DOC_VENDOR_TEST1(1, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
             "Test Vendor", "This is only a test document!", "ABYZ1290",
             sourceAccountingLines(
@@ -625,7 +624,22 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks(),
             CuDisbursementVoucherDocumentFixture.REE_PHUND_DV_DETAIL),
-    
+    SINGLE_DOC_TYPE_TEST_TF1(1, KFSConstants.TRANSFER_FUNDS,
+            "Test TF Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_100_FROM),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S343717_OBJ_7070_AMT_100_TO),
+            notes(
+                    "A fun testing note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
     SINGLE_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
@@ -863,20 +877,6 @@ public enum AccountingXmlDocumentEntryFixture {
                 dvDoc.setInvoiceDate(new Date(dvDetails.invoiceDate.getMillis()));
             }
             dvDoc.setInvoiceNumber(dvDetails.invoiceNumber);
-            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerExpense) {
-                DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
-                expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
-                expense.setDisbVchrExpenseCompanyName(expenseFixture.companyName);
-                expense.setDisbVchrExpenseAmount(expenseFixture.amount);
-                dvDoc.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(expense);
-            }
-            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerPrepaidExpense) {
-                DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
-                expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
-                expense.setDisbVchrExpenseCompanyName(expenseFixture.companyName);
-                expense.setDisbVchrExpenseAmount(expenseFixture.amount);
-                dvDoc.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(expense);
-            }
         }
     }
 

@@ -192,6 +192,13 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEBA,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YETF,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_AV)),
+    TF_DOCUMENT_TEST("02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_DOC_TYPE_TEST_TF1)),
+    TF_DOCUMENT_TEST2("02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_DOC_TYPE_TEST_TF1,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF2)),
     DV_DOCUMENT_TEST(
             "03/30/2020", "xyz789@cornell.edu", "Example DV XML file",
             documents(
