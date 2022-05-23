@@ -2,10 +2,12 @@ package edu.cornell.kfs.sys.batch.service.impl;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.batch.SchedulerDummy;
 import org.quartz.Calendar;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -19,24 +21,29 @@ public final class CuJobExecutionContext implements JobExecutionContext {
 
     private static final Logger LOG = LogManager.getLogger();
 
+    private final SchedulerDummy schedulerDummy;
     private final JobDetail jobDetail;
     private final Job jobInstance;
-    private final long currentTimeInMilliseconds;
+    private final long scheduledStartTimeInMilliseconds;
+    private final AtomicLong actualStartTimeInMilliseconds;
     private final JobDataMap jobDataMap;
 
-    private CuJobExecutionContext(JobDetail jobDetail, Job jobInstance, long currentTimeInMilliseconds) {
+    private CuJobExecutionContext(SchedulerDummy schedulerDummy, JobDetail jobDetail, Job jobInstance,
+            long scheduledStartTimeInMilliseconds) {
+        this.schedulerDummy = schedulerDummy;
         this.jobDetail = jobDetail;
         this.jobInstance = jobInstance;
-        this.currentTimeInMilliseconds = currentTimeInMilliseconds;
+        this.scheduledStartTimeInMilliseconds = scheduledStartTimeInMilliseconds;
+        this.actualStartTimeInMilliseconds = new AtomicLong();
         this.jobDataMap = jobDetail.getJobDataMap();
     }
 
-    public static CuJobExecutionContext forJobAndSettings(
-            JobDetail jobDetail, Map<String, String> extraSettings, Date currentDate) {
+    public static CuJobExecutionContext forJobAndSettings(SchedulerDummy schedulerDummy,
+            JobDetail jobDetail, Map<String, String> extraSettings, Date scheduledStartTime) {
         JobDetail jobDetailCopy = (JobDetail) jobDetail.clone();
         Job jobInstance = createNewJobInstance(jobDetailCopy);
         jobDetailCopy.getJobDataMap().putAll(extraSettings);
-        return new CuJobExecutionContext(jobDetailCopy, jobInstance, currentDate.getTime());
+        return new CuJobExecutionContext(schedulerDummy, jobDetailCopy, jobInstance, scheduledStartTime.getTime());
     }
 
     private static Job createNewJobInstance(JobDetail jobDetail) {
@@ -68,7 +75,8 @@ public final class CuJobExecutionContext implements JobExecutionContext {
 
     @Override
     public Date getFireTime() {
-        return new Date(currentTimeInMilliseconds);
+        long actualStartTime = actualStartTimeInMilliseconds.get();
+        return (actualStartTime > 0) ? new Date(actualStartTime) : null;
     }
 
     @Override
@@ -123,13 +131,12 @@ public final class CuJobExecutionContext implements JobExecutionContext {
 
     @Override
     public Date getScheduledFireTime() {
-        return getFireTime();
+        return new Date(scheduledStartTimeInMilliseconds);
     }
 
     @Override
     public Scheduler getScheduler() {
-        LOG.warn("getScheduler, This implementation does not have a scheduler");
-        return null;
+        return schedulerDummy;
     }
 
     @Override
@@ -151,6 +158,13 @@ public final class CuJobExecutionContext implements JobExecutionContext {
     @Override
     public void setResult(Object result) {
         LOG.warn("setResult, This implementation does not store the result");
+    }
+
+    public void setActualStartTime(Date actualStartTime) {
+        if (!actualStartTimeInMilliseconds.compareAndSet(0L, actualStartTime.getTime())) {
+            LOG.error("setActualStartTime, Actual start time was already initialized; "
+                    + "will use the existing value instead");
+        }
     }
 
 }
