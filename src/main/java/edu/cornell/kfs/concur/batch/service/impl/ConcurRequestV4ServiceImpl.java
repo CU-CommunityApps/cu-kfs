@@ -131,6 +131,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         
         for (ConcurRequestV4ListItemDTO requestAsListItem : requestListing.getListItems()) {
             if (StringUtils.isBlank(requestAsListItem.getId())) {
+                LOG.error("processTravelRequestsSubset, Found a list item DTO with a blank ID: " + requestAsListItem);
                 throw new IllegalStateException("Found a request item with a blank ID; this should NEVER happen");
             }
             if (isRequestPendingExternalValidation(requestAsListItem)
@@ -157,15 +158,12 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             return false;
         }
         boolean isTestUser = testUserIdMappings.containsKey(owner.getId());
-        return isProduction() != isTestUser;
+        return isProduction() ? !isTestUser : isTestUser;
     }
 
     protected ConcurEventNotificationProcessingResultsDTO processTravelRequest(String accessToken,
             ConcurRequestV4ListItemDTO requestAsListItem) {
         String requestUuid = requestAsListItem.getId();
-        if (!StringUtils.isAlphanumeric(requestUuid)) {
-            throw new RuntimeException("Found a request with an unexpected non-alphanumeric ID: " + requestUuid);
-        }
         ConcurEventNotificationVersion2ProcessingResults processingResult;
         List<String> validationMessages = new ArrayList<>();
         boolean requestValid;

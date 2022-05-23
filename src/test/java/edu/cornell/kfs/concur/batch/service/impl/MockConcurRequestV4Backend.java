@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.UrlFactory;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -31,6 +33,8 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
 
 public class MockConcurRequestV4Backend {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     private static final int MAX_RESULT_LIMIT = 100;
 
     private static final Set<String> ALLOWED_REQUEST_LIST_QUERY_PARAMETERS = Set.of(
@@ -38,25 +42,29 @@ public class MockConcurRequestV4Backend {
             ConcurApiParameters.MODIFIED_AFTER, ConcurApiParameters.MODIFIED_BEFORE,
             ConcurApiParameters.SORT_FIELD, ConcurApiParameters.SORT_ORDER);
 
-    private ConcurrentMap<String, RequestEntry> travelRequests;
+    private ConcurrentMap<String, RequestV4DetailFixture> travelRequests;
+    private ConcurrentMap<RequestV4DetailFixture, ConcurRequestV4ListItemDTO> requestsAsListItems;
+    private ConcurrentMap<RequestV4DetailFixture, ConcurRequestV4ReportDTO> requestsAsDetails;
     private String baseRequestV4Url;
 
     public MockConcurRequestV4Backend(String baseRequestV4Url, RequestV4DetailFixture... requestsToAdd) {
         this.travelRequests = new ConcurrentHashMap<>();
+        this.requestsAsListItems = new ConcurrentHashMap<>();
+        this.requestsAsDetails = new ConcurrentHashMap<>();
         this.baseRequestV4Url = baseRequestV4Url;
         addTravelRequests(requestsToAdd);
     }
 
     public void addTravelRequests(RequestV4DetailFixture... requestsToAdd) {
         for (RequestV4DetailFixture travelRequest : requestsToAdd) {
-            travelRequests.put(travelRequest.id, new RequestEntry(travelRequest, baseRequestV4Url));
+            travelRequests.put(travelRequest.id, travelRequest);
         }
     }
 
     public Optional<ConcurRequestV4ReportDTO> findRequest(String id) {
-        RequestEntry matchingEntry = travelRequests.get(id);
-        return Optional.ofNullable(matchingEntry)
-                .map(entry -> entry.requestDetail);
+        RequestV4DetailFixture matchingFixture = travelRequests.get(id);
+        return Optional.ofNullable(matchingFixture)
+                .map(this::getRequestAsDetail);
     }
 
     public ConcurRequestV4ListingDTO findRequests(Map<String, String> queryParameters) {
@@ -79,27 +87,27 @@ public class MockConcurRequestV4Backend {
                 ConcurRequestV4ListItemDTO::getStartDate, Comparator.reverseOrder());
         
         if (!StringUtils.equalsIgnoreCase(RequestV4Views.APPROVED, view)) {
-            throw new IllegalArgumentException(
-                    "This mock backend only supports the APPROVED view; actual requested view: " + view);
-        } else if (startIndex < 0) {
+            LOG.warn("findRequests, Unexpected query view was specified: " + view);
+        }
+        if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_START_DATE_FIELD, sortField)) {
+            LOG.warn("findRequests, Unexpected sort field was specified: " + sortField);
+        }
+        if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_SORT_ORDER_DESC, sortOrder)) {
+            LOG.warn("findRequests, Unexpected sort order was specified: " + sortOrder);
+        }
+        
+        if (startIndex < 0) {
             throw new IllegalArgumentException("start index cannot be negative");
         } else if (limit < 1 || limit > MAX_RESULT_LIMIT) {
             throw new IllegalArgumentException("limit cannot be non-positive and cannot be greater than 100");
         } else if (modifiedAfter.compareTo(modifiedBefore) > 0) {
             throw new IllegalArgumentException("modifiedAfter date cannot be later than modifiedBefore date");
-        } else if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_START_DATE_FIELD, sortField)) {
-            throw new IllegalArgumentException(
-                    "This mock backend only supports sorting by start date; actual sort field: " + sortField);
-        } else if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_SORT_ORDER_DESC, sortOrder)) {
-            throw new IllegalArgumentException(
-                    "This mock backend only supports descending sort order; actual sort order: " + sortOrder);
         }
         
         List<ConcurRequestV4ListItemDTO> unboundedResults = travelRequests.values().stream()
-                .filter(requestEntry -> requestWasLastModifiedWithinDateRange(
-                        requestEntry, modifiedAfter, modifiedBefore))
-                .filter(requestEntry -> requestHasAppropriateStatus(requestEntry))
-                .map(requestEntry -> requestEntry.requestAsListItem)
+                .filter(fixture -> requestWasLastModifiedWithinDateRange(fixture, modifiedAfter, modifiedBefore))
+                .filter(fixture -> requestHasAppropriateStatus(fixture))
+                .map(this::getRequestAsListItem)
                 .sorted(requestSorter)
                 .collect(Collectors.toUnmodifiableList());
         
@@ -112,14 +120,17 @@ public class MockConcurRequestV4Backend {
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    private boolean requestWasLastModifiedWithinDateRange(RequestEntry requestEntry, Date rangeStart, Date rangeEnd) {
-        Date lastModifiedDate = requestEntry.requestDetail.getLastModifiedDate();
+    private boolean requestWasLastModifiedWithinDateRange(
+            RequestV4DetailFixture requestFixture, Date rangeStart, Date rangeEnd) {
+        ConcurRequestV4ReportDTO requestDetail = getRequestAsDetail(requestFixture);
+        Date lastModifiedDate = requestDetail.getLastModifiedDate();
         return lastModifiedDate != null && lastModifiedDate.compareTo(rangeStart) >= 0
                 && lastModifiedDate.compareTo(rangeEnd) < 0;
     }
 
-    private boolean requestHasAppropriateStatus(RequestEntry requestEntry) {
-        ConcurRequestV4StatusDTO latestStatus = requestEntry.requestDetail.getApprovalStatus();
+    private boolean requestHasAppropriateStatus(RequestV4DetailFixture requestFixture) {
+        ConcurRequestV4ReportDTO requestDetail = getRequestAsDetail(requestFixture);
+        ConcurRequestV4StatusDTO latestStatus = requestDetail.getApprovalStatus();
         return StringUtils.equalsAnyIgnoreCase(latestStatus.getName(),
                 RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, RequestV4Status.APPROVED.name);
     }
@@ -189,16 +200,14 @@ public class MockConcurRequestV4Backend {
         return value;
     }
 
-    private static final class RequestEntry {
-        private final RequestV4DetailFixture requestFixture;
-        private final ConcurRequestV4ListItemDTO requestAsListItem;
-        private final ConcurRequestV4ReportDTO requestDetail;
-        
-        public RequestEntry(RequestV4DetailFixture requestFixture, String baseRequestUrl) {
-            this.requestFixture = requestFixture;
-            this.requestAsListItem = requestFixture.toConcurRequestV4ListItemDTO(baseRequestUrl);
-            this.requestDetail = requestFixture.toConcurRequestV4ReportDTO(baseRequestUrl);
-        }
+    private ConcurRequestV4ListItemDTO getRequestAsListItem(RequestV4DetailFixture requestFixture) {
+        return requestsAsListItems.computeIfAbsent(requestFixture,
+                fixture -> fixture.toConcurRequestV4ListItemDTO(baseRequestV4Url));
+    }
+
+    private ConcurRequestV4ReportDTO getRequestAsDetail(RequestV4DetailFixture requestFixture) {
+        return requestsAsDetails.computeIfAbsent(requestFixture,
+                fixture -> fixture.toConcurRequestV4ReportDTO(baseRequestV4Url));
     }
 
 }

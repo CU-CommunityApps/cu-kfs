@@ -10,9 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpHost;
 import org.apache.http.localserver.LocalServerTestBase;
 
-import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
-
-// TODO: Convert this into a true JUnit 5 test extension class.
 public class MockRemoteServerExtension implements Closeable {
 
     private LocalServer localServer;

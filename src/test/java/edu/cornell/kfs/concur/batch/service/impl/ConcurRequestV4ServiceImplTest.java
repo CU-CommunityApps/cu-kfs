@@ -28,8 +28,6 @@ import org.joda.time.MutableDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -69,7 +67,6 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.web.mock.MockRemoteServerExtension;
 
-@Execution(ExecutionMode.SAME_THREAD)
 public class ConcurRequestV4ServiceImplTest {
 
     private static final String US_EASTERN_TIME_ZONE = "US/Eastern";
@@ -359,7 +356,8 @@ public class ConcurRequestV4ServiceImplTest {
     void testParsingFailureForInvalidTestUserParameterValue(String invalidValue) {
         overrideParameter(ConcurParameterConstants.REQUEST_V4_TEST_USERS, invalidValue);
         assertThrows(RuntimeException.class, () -> requestV4Service.getRequestV4TestUserMappingsFromParameter(),
-                "The parsing of the test users parameter should have failed when its value is blank or malformed");
+                "The parsing of the test users parameter should have failed due to blank or malformed value: '"
+                        + invalidValue + "'");
     }
 
     @ParameterizedTest

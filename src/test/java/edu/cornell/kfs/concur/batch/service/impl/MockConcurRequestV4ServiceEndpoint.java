@@ -21,7 +21,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.http.HttpMethod;
 
@@ -101,14 +100,6 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         mockBackendServer = new MockConcurRequestV4Backend(baseRequestV4Url, initialRequestDetails);
     }
 
-    public MockConcurRequestV4Backend getMockBackendServer() {
-        if (ObjectUtils.isNull(mockBackendServer)) {
-            throw new IllegalStateException("Mock back-end server was null; this endpoint may not "
-                    + "have been initialized yet by the HTTP server, or this endpoint may have already been closed");
-        }
-        return mockBackendServer;
-    }
-
     public String getBaseRequestV4Url() {
         if (StringUtils.isBlank(baseRequestV4Url)) {
             throw new IllegalStateException("Base URL for the Request V4 endpoint was null; this endpoint may not "
@@ -139,7 +130,7 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         } else if (urlRepresentsSearchForSingleRequest(endpointMatcher)) {
             handleSearchForSingleRequest(request, response, endpointMatcher);
         } else {
-            fail("The URL did not match one of the expected operations");
+            fail("The URL did not match one of the expected operations. Attempted endpoint: " + url);
         }
     }
 
