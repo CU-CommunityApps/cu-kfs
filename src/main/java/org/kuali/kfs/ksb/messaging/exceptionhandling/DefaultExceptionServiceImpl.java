@@ -27,16 +27,21 @@ import org.kuali.kfs.ksb.messaging.PersistedMessage;
 import org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJob;
 import org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJobListener;
 import org.kuali.kfs.ksb.service.KSBServiceLocator;
+import org.kuali.kfs.sys.batch.service.SchedulerService;
 import org.quartz.JobDataMap;
 import org.quartz.Scheduler;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 
+import edu.cornell.kfs.sys.batch.service.CuSchedulerService;
+
 /**
  * ====
  * CU Customization:
  * Overlayed this class to include an intermediate portion of the FINP-7647 changes from the 2021-09-30 release.
- * This overlay should be removed once we upgrade to the 2021-09-30 release or later.
+ * This overlay should be adjusted once we upgrade to the 2021-09-30 release or later.
+ * 
+ * Also updated this class to allow for processing exception messages without using Quartz.
  * ====
  * 
  * Default implementation of {@link ExceptionRoutingService}.  Just saves the message in the queue as is, which
@@ -46,6 +51,9 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
 
     private static final Logger LOG = LogManager.getLogger();
     private Scheduler scheduler;
+    // CU Customization: Added properties for customization of exception message processing.
+    private SchedulerService schedulerService;
+    private boolean useQuartzScheduling;
 
     public void placeInExceptionRouting(Throwable throwable, PersistedMessage message, Object service) throws
             Exception {
@@ -79,10 +87,16 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
         exceptionHandler.handleExceptionLastDitchEffort(throwable, message, service);
     }
 
+    // CU Customization: Allow for processing exception messages without using Quartz.
     public void scheduleExecution(Throwable throwable, PersistedMessage message, String description) throws
             Exception {
         KSBServiceLocator.getMessageQueueService().delete(message);
         PersistedMessage messageCopy = message.copy();
+        if (!useQuartzScheduling) {
+            getCuSchedulerService().scheduleExceptionMessageJob(messageCopy, description);
+            return;
+        }
+        
         JobDataMap jobData = new JobDataMap();
         jobData.put(MessageServiceExecutorJob.MESSAGE_KEY, messageCopy);
         JobDetailImpl jobDetail = new JobDetailImpl("Exception_Message_Job " + Math.random(), "Exception Messaging",
@@ -103,7 +117,25 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
         scheduler.scheduleJob(jobDetail, trigger);
     }
 
+    // CU Customization: Added scheduler service getter.
+    private CuSchedulerService getCuSchedulerService() {
+        if (!(schedulerService instanceof CuSchedulerService)) {
+            throw new IllegalStateException("Scheduler service should have been a CuSchedulerService instance "
+                    + "if Quartz is disabled");
+        }
+        return (CuSchedulerService) schedulerService;
+    }
+
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
+    }
+    
+    // CU Customization: Added setters for custom properties.
+    public void setSchedulerService(SchedulerService schedulerService) {
+        this.schedulerService = schedulerService;
+    }
+    
+    public void setUseQuartzScheduling(boolean useQuartzScheduling) {
+        this.useQuartzScheduling = useQuartzScheduling;
     }
 }
