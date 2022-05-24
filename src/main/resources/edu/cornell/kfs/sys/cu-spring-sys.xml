@@ -380,4 +380,37 @@
           p:reportsService-ref="reportsService"/>
     <!-- end changes for redis -->
 
+    <!--
+        Complete overhaul of SchedulerService to allow it to be used without Quartz.
+        It does not inherit from the parent bean, due to how our implementation has been configured.
+     -->
+    <bean id="schedulerService" class="edu.cornell.kfs.sys.batch.SchedulerServiceFactoryBean"
+          p:scheduler-ref="scheduler"
+          p:jobListener-ref="jobListener"
+          p:messageServiceExecutorJobListener-ref="messageServiceExecutorJobListener"
+          p:kualiModuleService-ref="kualiModuleService"
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService"
+          p:emailService-ref="emailService"
+          p:scheduledThreadPool-ref="rice.ksb.scheduledThreadPool"
+          p:exceptionMessageJob-ref="exceptionMessageJob"
+          p:useQuartzScheduling="${use.quartz.scheduling}"/>
+
+    <bean id="messageServiceExecutorJobListener"
+          class="org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJobListener"/>
+
+    <!--
+        This bean is only meant for KSB-message-related processing, so we exclude it
+        from the KFS-SYS module's "jobNames" property.
+     -->
+    <bean id="exceptionMessageJob" parent="unscheduledJobDescriptor"
+          p:namespaceCode="KFS-SYS"
+          p:group="Exception Messaging"/>
+
+    <bean id="rice.ksb.exceptionMessagingService"
+          class="org.kuali.kfs.ksb.messaging.exceptionhandling.DefaultExceptionServiceImpl" lazy-init="true"
+          p:scheduler-ref="scheduler"
+          p:schedulerService-ref="schedulerService"
+          p:useQuartzScheduling="${use.quartz.scheduling}"/>
+
 </beans>
