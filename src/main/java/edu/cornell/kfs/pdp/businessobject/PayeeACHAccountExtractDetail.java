@@ -4,7 +4,11 @@ import java.math.BigInteger;
 import java.sql.Date;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 /**
  * Transient BO representing the a parsed line from a Payee ACH Account Extract .csv file.
@@ -12,6 +16,7 @@ import org.kuali.kfs.core.api.util.type.KualiInteger;
 public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase {
     private static final long serialVersionUID = -2028073232803324343L;
     private static final String DATA_DELIMITER = ";";
+    private static final String OUTPUT_RESTRICTED_DATA_PRESENT = "RestrictedDataPresent";
 
     private KualiInteger id;
     private Date createDate;
@@ -169,4 +174,23 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
         return id.bigIntegerValue();
     }
 
+    @Override
+    public String toString() {
+            ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
+            
+            builder.setExcludeFieldNames(KFSPropertyConstants.BANK_ACCOUNT_NUMBER);
+            
+            builder.append(KFSPropertyConstants.BANK_ACCOUNT_NUMBER, buildRestrictedFieldPrintableValue(bankAccountNumber));
+            
+            return builder.build();
+    }
+    
+    private String buildRestrictedFieldPrintableValue(String fieldValue) {
+        if (StringUtils.isNotEmpty(fieldValue)) {
+            return OUTPUT_RESTRICTED_DATA_PRESENT;
+        } else {
+            return StringUtils.EMPTY;
+        }
+    }
+    
 }
