@@ -10,14 +10,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 /**
  * Transient BO representing the a parsed line from a Payee ACH Account Extract .csv file.
  */
 public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase {
     private static final long serialVersionUID = -2028073232803324343L;
-    private static final String DATA_DELIMITER = ";";
-    private static final String OUTPUT_RESTRICTED_DATA_PRESENT = "RestrictedDataPresent";
-
+    
     private KualiInteger id;
     private Date createDate;
     private String status;
@@ -128,8 +128,8 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
 
     public String getLogData() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getNetID()).append(DATA_DELIMITER)
-        .append(getFirstName()).append(DATA_DELIMITER)
+        sb.append(getNetID()).append(CUKFSConstants.SEMICOLON)
+        .append(getFirstName()).append(CUKFSConstants.SEMICOLON)
         .append(getLastName());
         return sb.toString();
     }
@@ -187,7 +187,7 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
     
     private String buildRestrictedFieldPrintableValue(String fieldValue) {
         if (StringUtils.isNotEmpty(fieldValue)) {
-            return OUTPUT_RESTRICTED_DATA_PRESENT;
+            return CUKFSConstants.RESTRICTED_DATA_PLACEHOLDER;
         } else {
             return StringUtils.EMPTY;
         }
