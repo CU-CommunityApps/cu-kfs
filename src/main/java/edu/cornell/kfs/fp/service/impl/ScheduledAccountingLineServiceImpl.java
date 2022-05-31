@@ -68,10 +68,8 @@ public class ScheduledAccountingLineServiceImpl implements ScheduledAccountingLi
                 + "  iterationCount: " + iterationCount);
         }
         if (isAccountingLineTotalMoreThanRecurranceTotal(scheduledAccountingLine)) {
-            LOG.debug("determineAccountingLineErrors, sum less than transaction");
             GlobalVariables.getMessageMap().putError(errorField, CUKFSKeyConstants.ERROR_RCDV_RECURRENCE_SUM_LESS_THAN_TANSACTION);
         } else if (Integer.parseInt(scheduledAccountingLine.getPartialTransactionCount()) > iterationCount) {
-            LOG.debug("determineAccountingLineErrors, sum less than transaction");
             GlobalVariables.getMessageMap().putError(errorField, CUKFSKeyConstants.ERROR_RCDV_TOO_MANY_RECURRENCES);
         }
     }
