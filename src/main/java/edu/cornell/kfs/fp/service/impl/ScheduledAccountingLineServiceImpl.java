@@ -64,12 +64,14 @@ public class ScheduledAccountingLineServiceImpl implements ScheduledAccountingLi
     private void determineAccountingLineErrors(ScheduledSourceAccountingLine scheduledAccountingLine, int rowId, int iterationCount) {
         String errorField = DOCUMENT_ERROR_PREFIX + "sourceAccountingLine[" + rowId + "].partialTransactionCount";
         if (LOG.isDebugEnabled()) {
-            LOG.debug("scheduledAccountingLine.getPartialTransactionCount() : " + scheduledAccountingLine.getPartialTransactionCount()
+            LOG.debug("determineAccountingLineErrors, scheduledAccountingLine.getPartialTransactionCount() : " + scheduledAccountingLine.getPartialTransactionCount()
                 + "  iterationCount: " + iterationCount);
         }
         if (isAccountingLineTotalMoreThanRecurranceTotal(scheduledAccountingLine)) {
+            LOG.debug("determineAccountingLineErrors, sum less than transaction");
             GlobalVariables.getMessageMap().putError(errorField, CUKFSKeyConstants.ERROR_RCDV_RECURRENCE_SUM_LESS_THAN_TANSACTION);
         } else if (Integer.parseInt(scheduledAccountingLine.getPartialTransactionCount()) > iterationCount) {
+            LOG.debug("determineAccountingLineErrors, sum less than transaction");
             GlobalVariables.getMessageMap().putError(errorField, CUKFSKeyConstants.ERROR_RCDV_TOO_MANY_RECURRENCES);
         }
     }
@@ -77,9 +79,11 @@ public class ScheduledAccountingLineServiceImpl implements ScheduledAccountingLi
     private boolean isAccountingLineTotalMoreThanRecurranceTotal(ScheduledSourceAccountingLine scheduledAccountingLine) {
         KualiDecimal totalAmount = calculateTotalAmount(scheduledAccountingLine.getAmount());
         double recurranceTotal = scheduledAccountingLine.getPartialAmount().doubleValue() * Integer.parseInt(scheduledAccountingLine.getPartialTransactionCount());
-        boolean isAccountingLineTotalMoreThanRecurranceTotal = totalAmount.doubleValue() > recurranceTotal;
+        KualiDecimal kualiRecurranceTotal = new KualiDecimal(recurranceTotal);
+        
+        boolean isAccountingLineTotalMoreThanRecurranceTotal = totalAmount.isGreaterThan(kualiRecurranceTotal);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("totalAmount = " + totalAmount + "  recurranceTotal: " + recurranceTotal
+            LOG.debug("isAccountingLineTotalMoreThanRecurranceTotal, totalAmount = " + totalAmount + "  recurranceTotal: " + recurranceTotal
                 + "  scheduledAccountingLine.getPartialTransactionCount(): " + scheduledAccountingLine.getPartialTransactionCount()
                 + "  isAccountingLineTotalMoreThanRecurranceTotal: " + (isAccountingLineTotalMoreThanRecurranceTotal));
         }
