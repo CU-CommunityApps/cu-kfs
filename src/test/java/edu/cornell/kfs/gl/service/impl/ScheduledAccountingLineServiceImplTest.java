@@ -57,15 +57,15 @@ public class ScheduledAccountingLineServiceImplTest {
 
     private void doTest(int expectedCalendarType, int expectedAmount,
             CuFPConstants.ScheduledSourceAccountingLineConstants.ScheduleTypes resultType, String resultAmount) {
-        Calendar expectedCal = getExpectedCalendar(expectedCalendarType, expectedAmount);
+        Calendar expectedDate = getExpectedCalendar(expectedCalendarType, expectedAmount);
         
-        Calendar resultsCal = Calendar.getInstance();
-        resultsCal.setTime(getDateResult(resultType, resultAmount));
+        Calendar resultsDate = Calendar.getInstance();
+        resultsDate.setTime(getDateResult(resultType, resultAmount));
 
-        assertEquals("Day is not what we expected.", expectedCal.get(Calendar.DAY_OF_WEEK), resultsCal.get(Calendar.DAY_OF_WEEK));
-        assertEquals("Date is not what we expected.", expectedCal.get(Calendar.DAY_OF_MONTH), resultsCal.get(Calendar.DAY_OF_MONTH));
-        assertEquals("Month is not what we expected.", expectedCal.get(Calendar.MONTH), resultsCal.get(Calendar.MONTH));
-        assertEquals("Year is not what we expected.", expectedCal.get(Calendar.YEAR), resultsCal.get(Calendar.YEAR));
+        assertEquals("Day is not what we expected.", expectedDate.get(Calendar.DAY_OF_WEEK), resultsDate.get(Calendar.DAY_OF_WEEK));
+        assertEquals("Date is not what we expected.", expectedDate.get(Calendar.DAY_OF_MONTH), resultsDate.get(Calendar.DAY_OF_MONTH));
+        assertEquals("Month is not what we expected.", expectedDate.get(Calendar.MONTH), resultsDate.get(Calendar.MONTH));
+        assertEquals("Year is not what we expected.", expectedDate.get(Calendar.YEAR), resultsDate.get(Calendar.YEAR));
     }
     
     private Calendar getExpectedCalendar(int dateAddElement, int addAmount) {
