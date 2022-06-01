@@ -25,7 +25,6 @@ import edu.cornell.kfs.gl.service.impl.fixture.ScheduledAccountingLineServiceImp
 public class ScheduledAccountingLineServiceImplTest {
 
     ScheduledAccountingLineServiceImpl scheduledAccountingLineService;
-    Date startingPointDate;
     Calendar startingPointCal;
     ScheduledSourceAccountingLine accountingLine;
 
@@ -34,7 +33,7 @@ public class ScheduledAccountingLineServiceImplTest {
         Configurator.setLevel(ScheduledAccountingLineServiceImpl.class.getName(), Level.DEBUG);
         scheduledAccountingLineService = new ScheduledAccountingLineServiceImpl();
 
-        startingPointDate = new Date(Calendar.getInstance().getTimeInMillis());
+        Date startingPointDate = new Date(Calendar.getInstance().getTimeInMillis());
         startingPointCal = Calendar.getInstance();
         startingPointCal.setTimeInMillis(startingPointDate.getTime());
 
@@ -45,7 +44,6 @@ public class ScheduledAccountingLineServiceImplTest {
     @AfterEach
     void tearDown() throws Exception {
         scheduledAccountingLineService = null;
-        startingPointDate = null;
         startingPointCal = null;
         accountingLine = null;
         GlobalVariables.getMessageMap().clearErrorMessages();
@@ -59,20 +57,20 @@ public class ScheduledAccountingLineServiceImplTest {
 
     private void doTest(int expectedCalendarType, int expectedAmount,
             CuFPConstants.ScheduledSourceAccountingLineConstants.ScheduleTypes resultType, String resultAmount) {
-        Date expectedDate = getExpectedDate(expectedCalendarType, expectedAmount);
-        Date results = getDateResult(resultType, resultAmount);
+        Calendar expectedCal = getExpectedCalendar(expectedCalendarType, expectedAmount);
+        
+        Calendar resultsCal = Calendar.getInstance();
+        resultsCal.setTime(getDateResult(resultType, resultAmount));
 
-        assertEquals("Day is not what we expected.", expectedDate.getDay(), results.getDay());
-        assertEquals("Date is not what we expected.", expectedDate.getDate(), results.getDate());
-        assertEquals("Month is not what we expected.", expectedDate.getMonth(), results.getMonth());
-        assertEquals("Year is not what we expected.", expectedDate.getYear(), results.getYear());
+        assertEquals("Day is not what we expected.", expectedCal.get(Calendar.DAY_OF_WEEK), resultsCal.get(Calendar.DAY_OF_WEEK));
+        assertEquals("Date is not what we expected.", expectedCal.get(Calendar.DAY_OF_MONTH), resultsCal.get(Calendar.DAY_OF_MONTH));
+        assertEquals("Month is not what we expected.", expectedCal.get(Calendar.MONTH), resultsCal.get(Calendar.MONTH));
+        assertEquals("Year is not what we expected.", expectedCal.get(Calendar.YEAR), resultsCal.get(Calendar.YEAR));
     }
-
-    private Date getExpectedDate(int dateAddElement, int addAmount) {
-        Calendar calcCal = startingPointCal.getInstance();
-        calcCal.add(dateAddElement, addAmount);
-        Date expectedDate = new Date(calcCal.getTimeInMillis());
-        return expectedDate;
+    
+    private Calendar getExpectedCalendar(int dateAddElement, int addAmount) {
+        startingPointCal.add(dateAddElement, addAmount);
+        return startingPointCal;
     }
 
     private Date getDateResult(ScheduleTypes scheduleType, String count) {
