@@ -16,6 +16,9 @@
         <td width="50%">
           <kul:htmlControlAttribute property="document.securityRequestRoles[${securityRequestRoleIndex}].active"
                 attributeEntry="${genericAttributes.activeIndicator}" readOnly="${readOnly}"/> 
+          <c:if test="${securityRequestRole.currentActive != securityRequestRole.active}">
+              <kul:fieldShowChangedIcon />
+          </c:if>
           <br/>
           <span class="current_qual">
             <c:if test="${securityRequestRole.currentActive}">
@@ -23,7 +26,7 @@
             </c:if>
             <c:if test="${!securityRequestRole.currentActive}">
               Currently Inactive
-            </c:if>            
+            </c:if>
           </span>      
        </td>
     </tr>
