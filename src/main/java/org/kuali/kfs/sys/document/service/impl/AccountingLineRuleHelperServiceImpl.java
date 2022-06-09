@@ -31,8 +31,10 @@ import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.service.AccountService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -45,8 +47,6 @@ import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.document.service.AccountingLineRuleHelperService;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentTypeService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.kew.doctype.bo.DocumentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -263,7 +263,6 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         String label = getChartLabel();
 
         // Check exists & active
-        // CORNELL FIX : boolean isActive = chart != null && chart.isActive();
         boolean isActive = ObjectUtils.isNotNull(chart) && chart.isActive();
         return getExistsActiveValidationErrors(chart, isActive, useShortMessages, errorPropertyName, errorPropertyIdentifyingName, label);
     }
@@ -285,8 +284,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         String label = getObjectCodeLabel();
 
         // Check exists & active
-        // CORNELL FIX: boolean isActive = objectCode != null && objectCode.getCode() != null && objectCode.isFinancialObjectActiveCode();
-        boolean isActive = ObjectUtils.isNotNull(objectCode) && ObjectUtils.isNotNull(objectCode.getCode()) && objectCode.isFinancialObjectActiveCode();
+        boolean isActive = ObjectUtils.isNotNull(objectCode) && StringUtils.isNotBlank(objectCode.getCode()) && objectCode.isFinancialObjectActiveCode();
         return getExistsActiveValidationErrors(objectCode, isActive, useShortMessages, errorPropertyName, errorPropertyIdentifyingName, label);
     }
 
@@ -308,7 +306,6 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         String label = getObjectTypeCodeLabel();
 
         // Check exists & active
-        // CORNELL FIX: boolean isActive = objectTypeCode != null && objectTypeCode.isActive();
         boolean isActive = ObjectUtils.isNotNull(objectTypeCode) && objectTypeCode.isActive();
         return getExistsActiveValidationErrors(objectTypeCode, isActive, useShortMessages, errorPropertyName, errorPropertyIdentifyingName, label);
     }
@@ -331,7 +328,6 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         String label = getProjectCodeLabel();
 
         // Check exists & active
-        // CORNELL FIX: boolean isActive = projectCode != null && projectCode.isActive();
         boolean isActive = ObjectUtils.isNotNull(projectCode) && projectCode.isActive();
         return getExistsActiveValidationErrors(projectCode, isActive, useShortMessages, errorPropertyName, errorPropertyIdentifyingName, label);
     }
@@ -353,7 +349,6 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         String label = getSubAccountLabel();
 
         // Check exists & active
-        // CORNELL FIX: boolean isActive = subAccount != null && subAccount.isActive();
         boolean isActive = ObjectUtils.isNotNull(subAccount) && subAccount.isActive();
         return getExistsActiveValidationErrors(subAccount, isActive, useShortMessages, errorPropertyName, errorPropertyIdentifyingName, label);
     }
@@ -375,7 +370,6 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         String label = getSubObjectCodeLabel();
 
         // Check exists & active
-        // CORNELL FIX: boolean isActive = subObjectCode != null && subObjectCode.isActive();
         boolean isActive = ObjectUtils.isNotNull(subObjectCode) && subObjectCode.isActive();
         return getExistsActiveValidationErrors(subObjectCode, isActive, useShortMessages, errorPropertyName, errorPropertyIdentifyingName, label);
     }
@@ -399,7 +393,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
         accountingLine.refreshReferenceObject("account");
         accountingLine.refreshReferenceObject("objectCode");
         if (StringUtils.isNotBlank(accountingLine.getSubAccountNumber())
-                && !accountingLine.getSubAccountNumber().equals(KFSConstants.getDashSubAccountNumber())) {
+                && !accountingLine.getSubAccountNumber().equals(getDashSubAccountNumber())) {
             accountingLine.refreshReferenceObject("subAccount");
         }
         if (StringUtils.isNotBlank(accountingLine.getFinancialSubObjectCode())) {
@@ -447,7 +441,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
 
         // sub account is not required
         if (StringUtils.isNotBlank(accountingLine.getSubAccountNumber())
-                && !accountingLine.getSubAccountNumber().equals(KFSConstants.getDashSubAccountNumber())) {
+                && !accountingLine.getSubAccountNumber().equals(getDashSubAccountNumber())) {
             SubAccount subAccount = accountingLine.getSubAccount();
 
             validationErrors.addAll(
@@ -587,5 +581,10 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    // This exists so tests can avoid static mocking
+    String getDashSubAccountNumber() {
+        return KFSConstants.getDashSubAccountNumber();
     }
 }

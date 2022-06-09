@@ -165,7 +165,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             reportDetail.setDocumentNumber(document.getDocumentNumber());
             reportItem.getDocumentsSuccessfullyRouted().add(reportDetail);
             documentGenerator.handleDocumentWarningMessage(reportDetail);
-        } catch (RuntimeException | WorkflowException e) {
+        } catch (RuntimeException e) {
             reportDetail.setSuccessfullyRouted(false);
             if (e instanceof ValidationException) {
                 String errorMessage = buildValidationErrorMessage((ValidationException) e);
@@ -189,11 +189,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
 
     protected Document getNewDocument(Class<? extends Document> documentClass) {
-        try {
-            return documentService.getNewDocument(documentClass);
-        } catch (WorkflowException e) {
-            throw new RuntimeException(e);
-        }
+        return documentService.getNewDocument(documentClass);
     }
 
     protected List<AdHocRouteRecipient> getAllAdHocRecipients(Document document) {

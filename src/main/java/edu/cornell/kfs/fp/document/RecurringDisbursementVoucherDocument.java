@@ -10,8 +10,8 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -82,7 +82,7 @@ public class RecurringDisbursementVoucherDocument extends CuDisbursementVoucherD
 	}
 	
 	@Override
-    public void toCopy() throws WorkflowException {
+    public void toCopy() {
 		setRecurringDisbursementVoucherDetails(new ArrayList<RecurringDisbursementVoucherDetail>());
 		super.toCopy();
 	}

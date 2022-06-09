@@ -33,7 +33,7 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
                     LOG.info("autoCloseFullyDisencumberedOrders() PO ID " + poAutoClose.getPurapDocumentIdentifier() + " with total " + poAutoClose.getTotalAmount().doubleValue() + " will be closed");
                     String newStatus = PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;
                     String annotation = "This PO was automatically closed in batch.";
-                    String documentType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_CLOSE_DOCUMENT;
+                    String documentType = PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_CLOSE_DOCUMENT;
                     PurchaseOrderDocument document = purchaseOrderService.getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
                     this.createNoteForAutoCloseOrders(document, annotation);
                     purchaseOrderService.createAndRoutePotentialChangeDocument(poAutoClose.getDocumentNumber(), documentType, annotation, null, newStatus);

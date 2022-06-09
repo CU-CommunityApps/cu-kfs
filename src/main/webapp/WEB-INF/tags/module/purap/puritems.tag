@@ -659,7 +659,7 @@
         </table>
     </div>
 
-	<c:if test="${!lockB2BEntry}">
+	<c:if test="${!lockB2BEntry && fn:length(KualiForm.document.belowTheLineTypes) > 0}">
 		<purap:miscitems
 				itemAttributes="${itemAttributes}"
 				accountingLineAttributes="${accountingLineAttributes}" 

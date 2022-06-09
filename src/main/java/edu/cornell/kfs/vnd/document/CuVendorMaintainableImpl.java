@@ -16,7 +16,6 @@ import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.FieldRestriction;
 import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentRestrictions;
@@ -66,13 +65,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
 
     @Override
     protected boolean answerSplitNodeQuestion(String nodeName) {
-        Document document = null;
-
-        try {
-            document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
-        } catch (WorkflowException e) {
-            LOG.debug("Vendor doc could not find doc to answerSplitNodeQuestion " + e.getMessage());
-        }
+        Document document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
          
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
             return true;

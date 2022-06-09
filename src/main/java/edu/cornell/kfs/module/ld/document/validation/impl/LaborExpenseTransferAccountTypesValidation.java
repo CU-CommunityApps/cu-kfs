@@ -14,11 +14,11 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
 import edu.cornell.kfs.module.ld.CuLaborConstants;
 import edu.cornell.kfs.module.ld.CuLaborKeyConstants;
@@ -43,7 +43,7 @@ public class LaborExpenseTransferAccountTypesValidation extends GenericValidatio
 	public boolean validate(AttributedDocumentEvent event) {
         boolean isValid = true;
            
-        if (getParameterService().getParameterValueAsBoolean(LaborConstants.LABOR_MODULE_CODE, ParameterConstants.DOCUMENT_COMPONENT, LdParameterConstants.VALIDATE_TRANSFER_ACCOUNT_TYPES_IND)
+        if (getParameterService().getParameterValueAsBoolean(LaborConstants.LABOR_MODULE_CODE, KfsParameterConstants.DOCUMENT_COMPONENT, LdParameterConstants.VALIDATE_TRANSFER_ACCOUNT_TYPES_IND)
         		&& !hasExceptionPermission()) {
 			Document documentForValidation = getDocumentForValidation();
 
@@ -73,7 +73,7 @@ public class LaborExpenseTransferAccountTypesValidation extends GenericValidatio
 		invalidTransferTargetAccountTypesInParam = new HashSet<String>();
 		
 		for (String sourceTargetAccounttypes : getParameterService().getParameterValuesAsString(LaborConstants.LABOR_MODULE_CODE,
-				ParameterConstants.DOCUMENT_COMPONENT,LdParameterConstants.INVALID_TO_ACCOUNT_BY_FROM_ACCOUNT)) {
+				KfsParameterConstants.DOCUMENT_COMPONENT,LdParameterConstants.INVALID_TO_ACCOUNT_BY_FROM_ACCOUNT)) {
 			String[] acctTypePair = sourceTargetAccounttypes.split("=");
 			if (!invalidTransferAccountTypesMap.containsKey(acctTypePair[0])) {
 				invalidTransferAccountTypesMap.put(acctTypePair[0], new HashSet<String>());

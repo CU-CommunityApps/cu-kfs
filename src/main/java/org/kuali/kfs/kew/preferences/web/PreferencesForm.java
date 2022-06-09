@@ -49,8 +49,6 @@ public class PreferencesForm extends KualiForm {
     private boolean showOutbox = true;
     private String documentTypePreferenceName;
     private String documentTypePreferenceValue;
-    private String documentTargetSpec;
-    private String routeLogTargetSpec;
 
     // KULRICE-3137: Added a backLocation parameter similar to the one from lookups.
     private String backLocation;
@@ -131,22 +129,6 @@ public class PreferencesForm extends KualiForm {
 
     public void setDocumentTypeNotificationPreference(String documentType, String preferenceValue) {
         preferences.addDocumentTypeNotificationPreference(documentType, preferenceValue);
-    }
-
-    public String getDocumentTargetSpec() {
-        return documentTargetSpec;
-    }
-
-    public void setDocumentTargetSpec(String documentTargetSpec) {
-        this.documentTargetSpec = documentTargetSpec;
-    }
-
-    public String getRouteLogTargetSpec() {
-        return routeLogTargetSpec;
-    }
-
-    public void setRouteLogTargetSpec(String routeLogTargetSpec) {
-        this.routeLogTargetSpec = routeLogTargetSpec;
     }
 
     /**

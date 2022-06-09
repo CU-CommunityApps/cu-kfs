@@ -23,8 +23,9 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
 /**
  * Bank Business Object
@@ -40,6 +41,9 @@ public class Bank extends PersistableBusinessObjectBase implements MutableInacti
     protected String bankRoutingNumber;
     protected String bankAccountNumber;
     protected String bankAccountDescription;
+    protected String bankIdentificationCode;
+    protected String achInstitutionId;
+    protected String achInstitutionSchemeName;
     protected String cashOffsetFinancialChartOfAccountCode;
     protected String cashOffsetAccountNumber;
     protected String cashOffsetSubAccountNumber;
@@ -109,6 +113,30 @@ public class Bank extends PersistableBusinessObjectBase implements MutableInacti
 
     public void setBankAccountDescription(String bankAccountDescription) {
         this.bankAccountDescription = bankAccountDescription;
+    }
+    
+    public String getBankIdentificationCode() {
+        return bankIdentificationCode;
+    }
+
+    public void setBankIdentificationCode(final String bankIdentificationCode) {
+        this.bankIdentificationCode = bankIdentificationCode;
+    }
+
+    public String getAchInstitutionId() {
+        return achInstitutionId;
+    }
+
+    public void setAchInstitutionId(final String achInstitutionId) {
+        this.achInstitutionId = achInstitutionId;
+    }
+
+    public String getAchInstitutionSchemeName() {
+        return achInstitutionSchemeName;
+    }
+
+    public void setAchInstitutionSchemeName(final String achInstitutionSchemeName) {
+        this.achInstitutionSchemeName = achInstitutionSchemeName;
     }
 
     public String getCashOffsetFinancialChartOfAccountCode() {

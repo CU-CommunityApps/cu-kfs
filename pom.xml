@@ -23,7 +23,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2021-01-28</kfs.version>
+        <kfs.version>2021-06-17</kfs.version>
 
         <aws-java-sdk.version>2.14.7</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
@@ -49,7 +49,9 @@
         <!--Cornell Customization: backport redis-->
         <spring-data-redis.version>2.6.0</spring-data-redis.version>
         <slf4j-api.version>1.7.32</slf4j-api.version>
+        <squiggly-filter-jackson.version>1.3.16</squiggly-filter-jackson.version>
         <spring.version>5.3.20</spring.version>
+        <spring-security.version>5.6.5</spring-security.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
 
@@ -155,6 +157,7 @@
                 <version>${maven.compiler.version}</version>
                 <configuration>
                     <release>11</release>
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
                 </configuration>
             </plugin>
             <plugin>
@@ -2209,6 +2212,12 @@
         </dependency>
         
         <dependency>
+        	<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-core</artifactId>
+    		<version>${spring-security.version}</version>
+		</dependency>
+        
+        <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
             <version>${lettuce.version}</version>
@@ -2240,11 +2249,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -2322,6 +2326,18 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.bohnman</groupId>
+            <artifactId>squiggly-filter-jackson</artifactId>
+            <version>${squiggly-filter-jackson.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>com.google.guava</groupId>
+            		<artifactId>guava</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

@@ -75,8 +75,8 @@
 
     <c:if test="${canModifyAssignees}">
       <table class="standard side-margins">
-            <tr>
-                <td colspan="100%" class="tab-subhead">Add Member:</td>
+    		<tr>
+          		<td colspan="100%" class="tab-subhead">Add Member:</td>
         </tr>
             <tr>
               <kul:htmlAttributeHeaderCell attributeEntry="${roleMemberAttributes.memberTypeCode}" horizontal="false" />
@@ -500,12 +500,12 @@
             <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.identity.PersonImpl" />
             <c:set var="keyValue" value="principalId" />
             <c:if test='${member.memberTypeCode == "G"}'>
-                <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.Group" />
-                <c:set var="keyValue" value="id" />
+            	<c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.group.Group" />
+            	<c:set var="keyValue" value="id" />
             </c:if>
             <c:if test='${member.memberTypeCode == "R"}'>
-                <c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.Role" />
-                <c:set var="keyValue" value="id" />
+            	<c:set var="inquiryClass" value="org.kuali.kfs.kim.impl.role.Role" />
+            	<c:set var="keyValue" value="id" />
             </c:if>
 
               <tr>
@@ -522,23 +522,23 @@
                 </td>
                 <td align="left" valign="middle">
                     <div align="left">
-                        <kul:htmlControlAttribute property="document.members[${statusMember.index}].memberNamespaceCode"  attributeEntry="${roleMemberAttributes.memberNamespaceCode}" readOnly="true"  />  
+                    	<kul:htmlControlAttribute property="document.members[${statusMember.index}].memberNamespaceCode"  attributeEntry="${roleMemberAttributes.memberNamespaceCode}" readOnly="true"  /> 	
                     </div>
                 </td>
-                <td align="left" valign="middle">               
-                    <div align="left">
-                        <kul:inquiry boClassName="${inquiryClass}" keyValues="${keyValue}=${member.memberId}" render="true">
-                            <kul:htmlControlAttribute property="document.members[${statusMember.index}].memberName"  attributeEntry="${roleMemberAttributes.memberName}" readOnly="true"  />
-                        </kul:inquiry>  
+                <td align="left" valign="middle">				
+                	<div align="left">
+                    	<kul:inquiry boClassName="${inquiryClass}" keyValues="${keyValue}=${member.memberId}" render="true">
+                        	<kul:htmlControlAttribute property="document.members[${statusMember.index}].memberName"  attributeEntry="${roleMemberAttributes.memberName}" readOnly="true"  />
+	                    </kul:inquiry>  
                     </div>
                 </td>
                 <td align="left" valign="middle">
-                    <div align="left">
-                        <kul:inquiry boClassName="${inquiryClass}" keyValues="${keyValue}=${member.memberId}" render="true">
-<%--                                <a href="javascript:document.forms[0].sortMethodToCallPlaceholder=methodToCall.sort.memberFullName${roleMemberAttributes.memberFullName[fieldName]}"></a> --%>
-                                <kul:htmlControlAttribute property="document.members[${statusMember.index}].memberFullName"  attributeEntry="${roleMemberAttributes.memberFullName}" readOnly="true"  />
-                        </kul:inquiry>
-                    </div>                   
+                	<div align="left">
+                    	<kul:inquiry boClassName="${inquiryClass}" keyValues="${keyValue}=${member.memberId}" render="true">
+<%--                         		<a href="javascript:document.forms[0].sortMethodToCallPlaceholder=methodToCall.sort.memberFullName${roleMemberAttributes.memberFullName[fieldName]}"></a> --%>
+                        		<kul:htmlControlAttribute property="document.members[${statusMember.index}].memberFullName"  attributeEntry="${roleMemberAttributes.memberFullName}" readOnly="true"  />
+                    	</kul:inquiry>
+					</div>                   
                 </td>
                 <td align="left" valign="middle">
                     <div align="left">

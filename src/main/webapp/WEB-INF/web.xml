@@ -171,12 +171,12 @@
         <url-pattern>/ec/api/*</url-pattern>
         <url-pattern>/fp/api/*</url-pattern>
         <url-pattern>/gl/api/*</url-pattern>
-        <url-pattern>/kc/api/*</url-pattern>
         <url-pattern>/ld/api/*</url-pattern>
         <url-pattern>/pdp/api/*</url-pattern>
         <url-pattern>/purap/api/*</url-pattern>
         <url-pattern>/vnd/api/*</url-pattern>
         <url-pattern>/app/sys/*</url-pattern>
+        <url-pattern>/tenant/api/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

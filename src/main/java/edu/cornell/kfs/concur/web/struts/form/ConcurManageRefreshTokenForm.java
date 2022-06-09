@@ -1,7 +1,7 @@
 package edu.cornell.kfs.concur.web.struts.form;
 
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 import org.kuali.kfs.kns.web.struts.form.KualiForm;
 
 import edu.cornell.kfs.sys.CUKFSConstants;

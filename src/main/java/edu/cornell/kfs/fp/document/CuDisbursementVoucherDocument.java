@@ -8,8 +8,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.FPParameterConstants;
@@ -651,7 +651,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     }
 
     @Override
-    public void toCopy() throws WorkflowException {
+    public void toCopy() {
         String payeeidNumber = getDvPayeeDetail().getDisbVchrPayeeIdNumber();
 
         super.toCopy();

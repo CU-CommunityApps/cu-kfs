@@ -46,7 +46,6 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kns.util.KNSConstants;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
