@@ -299,8 +299,6 @@
   </div><!-- End tab-container -->
   <div id="globalbuttons" class="globalbuttons">
     <html-el:hidden property="backLocation" />
-    <html-el:hidden property="documentTargetSpec" />
-    <html-el:hidden property="routeLogTargetSpec" />
     <html-el:submit styleClass="btn btn-default btn-small" property="methodToCall.save">Save</html-el:submit>
     <a href="javascript:document.forms[0].reset()" class="btn btn-default btn-small">
       Reset

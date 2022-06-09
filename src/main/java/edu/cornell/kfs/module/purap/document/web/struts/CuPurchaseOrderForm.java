@@ -192,7 +192,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
         // check user authorization
         if (can) {
             DocumentAuthorizer documentAuthorizer = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(getPurchaseOrderDocument());
-            can = documentAuthorizer.canInitiate(KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER_VOID, GlobalVariables.getUserSession().getPerson());
+            can = documentAuthorizer.canInitiate(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_VOID_DOCUMENT, GlobalVariables.getUserSession().getPerson());
         }
 
         return can;

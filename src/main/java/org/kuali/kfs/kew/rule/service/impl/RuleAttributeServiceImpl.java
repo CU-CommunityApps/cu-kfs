@@ -22,8 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 import org.kuali.kfs.core.api.impex.ExportDataSet;
-import org.kuali.kfs.core.api.reflect.ObjectDefinition;
-import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.kew.exception.WorkflowServiceError;
 import org.kuali.kfs.kew.exception.WorkflowServiceErrorException;
 import org.kuali.kfs.kew.exception.WorkflowServiceErrorImpl;
@@ -35,7 +33,6 @@ import org.kuali.kfs.kew.xml.export.RuleAttributeXmlExporter;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
-import javax.xml.namespace.QName;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -60,22 +57,9 @@ public class RuleAttributeServiceImpl implements RuleAttributeService {
         getRuleAttributeDAO().save(ruleAttribute);
     }
 
-    @CacheEvict(value = RuleAttribute.CACHE_NAME, allEntries = true)
-    public void delete(String ruleAttributeId) {
-        getRuleAttributeDAO().delete(ruleAttributeId);
-    }
-
-    public List<RuleAttribute> findByRuleAttribute(RuleAttribute ruleAttribute) {
-        return getRuleAttributeDAO().findByRuleAttribute(ruleAttribute);
-    }
-
     @Cacheable(cacheNames = RuleAttribute.CACHE_NAME, key = "'{" + RuleAttribute.CACHE_NAME + "}|id=' + #p0")
     public RuleAttribute findByRuleAttributeId(String ruleAttributeId) {
         return getRuleAttributeDAO().findByRuleAttributeId(ruleAttributeId);
-    }
-
-    public List<RuleAttribute> findAll() {
-        return getRuleAttributeDAO().getAllRuleAttributes();
     }
 
     @Cacheable(cacheNames = RuleAttribute.CACHE_NAME, key = "'{" + RuleAttribute.CACHE_NAME + "}|name=' + #p0")
@@ -124,20 +108,6 @@ public class RuleAttributeServiceImpl implements RuleAttributeService {
         }
     }
 
-    @Override
-    public Object loadRuleAttributeService(RuleAttribute attribute) {
-        // first check if the class name is a valid and available java class
-        String attributeName = attribute.getResourceDescriptor();
-        ObjectDefinition attributeObjectDefinition;
-        attributeObjectDefinition = new ObjectDefinition(attribute.getResourceDescriptor());
-        Object attributeService = GlobalResourceLoader.getObject(attributeObjectDefinition);
-        if (attributeService == null) {
-            // if we can't find a class, try a service
-            attributeService = GlobalResourceLoader.getService(QName.valueOf(attributeName));
-        }
-        return attributeService;
-    }
-
     public void loadXml(InputStream inputStream, String principalId) {
         RuleAttributeXmlParser parser = new RuleAttributeXmlParser();
         try {
@@ -162,7 +132,4 @@ public class RuleAttributeServiceImpl implements RuleAttributeService {
         return true;
     }
 
-    public List<RuleAttribute> findByClassName(String className) {
-        return this.ruleAttributeDAO.findByClassName(className);
-    }
 }

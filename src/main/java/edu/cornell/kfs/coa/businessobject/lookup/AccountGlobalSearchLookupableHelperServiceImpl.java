@@ -26,7 +26,6 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.core.web.format.BooleanFormatter;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kns.util.KNSConstants;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.GlobalVariables;

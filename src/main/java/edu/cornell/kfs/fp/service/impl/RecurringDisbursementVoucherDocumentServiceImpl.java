@@ -265,16 +265,11 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     private void saveDisbursementVouchers(List<DisbursementVoucherDocument> dvs, RecurringDisbursementVoucherDocument recurringDV){
         for (DisbursementVoucherDocument dv : dvs) {
-            try {
-                dv.getDocumentHeader().setDocumentDescription(recurringDV.getDocumentHeader().getDocumentDescription());
-                dv.getDocumentHeader().setExplanation(buildDVExplanation(recurringDV));
-                getDocumentService().saveDocument(dv);
-                getBusinessObjectService().save(recurringDV.getRecurringDisbursementVoucherDetails());
-                updateGLPEDatesAndAddRecurringDocumentLinks(dv, recurringDV.getDocumentNumber());
-            } catch (WorkflowException e) {;
-                LOG.error("saveDisbursementVouchers: There was an error trying to save our route the created Disbursement Voucher documents: ", e);
-                throw new RuntimeException(e);
-            }
+            dv.getDocumentHeader().setDocumentDescription(recurringDV.getDocumentHeader().getDocumentDescription());
+            dv.getDocumentHeader().setExplanation(buildDVExplanation(recurringDV));
+            getDocumentService().saveDocument(dv);
+            getBusinessObjectService().save(recurringDV.getRecurringDisbursementVoucherDetails());
+            updateGLPEDatesAndAddRecurringDocumentLinks(dv, recurringDV.getDocumentNumber());
         }
     }
     
@@ -322,12 +317,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         for (RecurringDisbursementVoucherDetail detail : recurringDV.getRecurringDisbursementVoucherDetails()) {
             if (StringUtils.isNotEmpty(detail.getDvDocumentNumber())){
                 DisbursementVoucherDocument disbursementVoucherDocument;
-                try {
-                    disbursementVoucherDocument = (DisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
-                } catch (WorkflowException e) {
-                    LOG.error("findPdpStatuses: There was a problem getting DV from the recurring DV detail: " + e);
-                    throw new RuntimeException(e);
-                }
+                disbursementVoucherDocument = (DisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
                 pdpStatuses.add(buildRecurringDisbursementVoucherPDPStatus(disbursementVoucherDocument));
             }
         }
@@ -404,11 +394,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             Note note = buildNoteBase();
             note.setNoteText(noteText + StringUtils.join(setOfStrings, ", "));;
             recurringDV.addNote(note);
-            try {
-                getDocumentService().saveDocument(recurringDV);
-            } catch (WorkflowException e) {
-                throw new RuntimeException("noteChangeOnRecurringDV() Unable to save note.", e);
-            }
+            getDocumentService().saveDocument(recurringDV);
         }
     }
 
@@ -477,12 +463,8 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     private CuDisbursementVoucherDocument getDisbursementVoucher(String dvDocId) throws WorkflowException {
         CuDisbursementVoucherDocument dvFound = null;
-        try{
-            dvFound = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(dvDocId);
-        } catch (WorkflowException e) {
-            LOG.error("getDisbursementVoucher: Could NOT find DV for Document ID::" + dvDocId + "the exception was: ", e);
-            throw e;
-        }
+        dvFound = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(dvDocId);
+
         return dvFound;
     }
 
@@ -506,21 +488,11 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         Note note = buildNoteBase();
         note.setNoteText(noteText);
         dv.addNote(note);
-        try {
-            getDocumentService().saveDocument(dv);
-        } catch (WorkflowException e) {
-            LOG.error("addNoteToAutoApproveDv: Unable to save note for DV Document ID::" + dv.getDocumentNumber() + "the exception was: ", e);
-            throw e;
-        }
+        getDocumentService().saveDocument(dv);
     }
 
     private void blanketApproveDisbursementVoucherDocument(CuDisbursementVoucherDocument dv) throws WorkflowException {
-        try {
-            getDocumentService().blanketApproveDocument(dv, "Auto blanket approve from Batch Job", null);
-        } catch (WorkflowException e) {
-            LOG.error("blanketApproveDisbursementVoucherDocument: Unable to blanket approve DV Document ID::" + dv.getDocumentNumber() + "the exception was: ", e);
-            throw e;
-        }
+        getDocumentService().blanketApproveDocument(dv, "Auto blanket approve from Batch Job", null);
     }
 
     private Date getCurrentFiscalPeriodEndDate() {
@@ -587,24 +559,19 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             String dvDocumentNumber = detail.getDvDocumentNumber();
             if (!isDVCancelable(dvDocumentNumber)) {
                 CuDisbursementVoucherDocument dv;
-                try {
-                    dv = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
-                    if (isDvCancelableFromApprovedNotExtracted(dv)) {
+                dv = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
+                if (isDvCancelableFromApprovedNotExtracted(dv)) {
 
-                        Date cancelDate =  new Date (Calendar.getInstance().getTimeInMillis());
-                        dv.setCancelDate(cancelDate);
+                    Date cancelDate =  new Date (Calendar.getInstance().getTimeInMillis());
+                    dv.setCancelDate(cancelDate);
 
-                        CuDisbursementVoucherDocument cancledDV = (CuDisbursementVoucherDocument) getDocumentService().saveDocument(dv);
+                    CuDisbursementVoucherDocument cancledDV = (CuDisbursementVoucherDocument) getDocumentService().saveDocument(dv);
 
-                        getCuDisbursementVoucherExtractionHelperService().getPaymentSourceHelperService().handleEntryCancellation(
-                                cancledDV, getCuDisbursementVoucherExtractionHelperService());
+                    getCuDisbursementVoucherExtractionHelperService().getPaymentSourceHelperService().handleEntryCancellation(
+                            cancledDV, getCuDisbursementVoucherExtractionHelperService());
 
-                        canceledDVs.add(cancledDV.getDocumentNumber());
-                    }
-                } catch (WorkflowException e) {
-                    throw new RuntimeException(e);
+                    canceledDVs.add(cancledDV.getDocumentNumber());
                 }
-
             }
         }
         noteChangeOnRecurringDV(recurringDisbursementVoucherDocument, "The following disbursement vouchers were canceled after it was approved but before payments were created: ", canceledDVs);

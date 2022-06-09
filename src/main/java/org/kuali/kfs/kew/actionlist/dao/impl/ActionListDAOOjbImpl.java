@@ -43,7 +43,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -452,56 +451,6 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         });
     }
 
-    /**
-     * Gets the max action item id and count doe a given user.
-     *
-     * @return A List with the first value being the maxActionItemId and the second value being the count
-     */
-    public List<Object> getMaxActionItemDateAssignedAndCountForUser(final String principalId) {
-        return (List<Object>) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
-            public Object doInPersistenceBroker(PersistenceBroker broker) {
-                PreparedStatement statement = null;
-                ResultSet resultSet = null;
-                List<Object> result = new ArrayList<Object>();
-                try {
-                    Connection connection = broker.serviceConnectionManager().getConnection();
-                    statement = connection
-                            .prepareStatement(MAX_ACTION_ITEM_DATE_ASSIGNED_AND_ACTION_LIST_COUNT_AND_QUERY);
-                    statement.setString(1, principalId);
-                    resultSet = statement.executeQuery();
-                    if (!resultSet.next()) {
-                        throw new WorkflowRuntimeException(
-                                "Error determining Action List Count and Max Action Item Id.");
-                    } else {
-                        result.add(resultSet.getTimestamp(1));
-                        result.add(resultSet.getInt(2));
-                    }
-                    return result;
-                } catch (SQLException e) {
-                    throw new WorkflowRuntimeException("Error determining Action List Count and Max Action Item Id.",
-                            e);
-                } catch (LookupException e) {
-                    throw new WorkflowRuntimeException("Error determining Action List Count and Max Action Item Id.",
-                            e);
-                } finally {
-                    if (statement != null) {
-                        try {
-                            statement.close();
-                        } catch (SQLException e) {
-                            // should we be logging something?
-                        }
-                    }
-                    if (resultSet != null) {
-                        try {
-                            resultSet.close();
-                        } catch (SQLException e) {
-                            // should we be logging something?
-                        }
-                    }
-                }
-            }
-        });
-    }
 
     /**
      * Creates an Action List from the given collection of Action Items.  The Action List should contain only one
@@ -546,7 +495,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
     private <T extends ActionItemActionListExtension> Collection<T> getActionItemsInActionList(
             Class<T> objectsToRetrieve, String principalId, ActionListFilter filter) {
         LOG.debug("getting action list for user " + principalId);
-        Criteria crit = null;
+        Criteria crit;
         if (filter == null) {
             crit = new Criteria();
             crit.addEqualTo("principalId", principalId);
@@ -578,16 +527,6 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
      */
     public void saveOutboxItem(OutboxItemActionListExtension outboxItem) {
         this.getPersistenceBrokerTemplate().store(outboxItem);
-    }
-
-    /**
-     * @return the outbox item associated with the document id
-     */
-    public OutboxItemActionListExtension getOutboxByDocumentId(String documentId) {
-        Criteria criteria = new Criteria();
-        criteria.addEqualTo("documentId", documentId);
-        return (OutboxItemActionListExtension) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(
-                OutboxItemActionListExtension.class, criteria));
     }
 
     public OutboxItemActionListExtension getOutboxByDocumentIdUserId(String documentId, String userId) {

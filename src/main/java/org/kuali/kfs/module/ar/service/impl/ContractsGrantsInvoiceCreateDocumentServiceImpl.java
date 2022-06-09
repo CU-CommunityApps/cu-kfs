@@ -18,11 +18,6 @@
  */
 package org.kuali.kfs.module.ar.service.impl;
 
-/**
- * 2021-01-21 version of this file with FINP-5295 changes applied for backport.
- * File will need to be adjusted until file is removed when 2021-04-29 KualiCo patch is applied.
- */
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +26,9 @@ import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.ObjectType;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.gl.businessobject.Balance;
@@ -41,6 +39,8 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleBillingService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsOrganization;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -94,11 +94,6 @@ import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -282,9 +277,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                             awd.getProposalNumber());
                     errorMessages.add(errorMessage);
                 }
-                /**
-                 * FINP-5295 changes.
-                 */
                 generateAndSaveContractsAndGrantsInvoiceDocument(awd,
                         getValidAwardAccounts(awd.getActiveAwardAccounts(), awd, creationProcessType), errorMessages,
                         creationProcessType, accountDetails, locCreationType);
@@ -356,9 +348,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                                 controlAccount.getAccountNumber(), awd.getProposalNumber());
                         errorMessages.add(errorMessage);
                     }
-                    /**
-                     * FINP-5295 changes.
-                     */
                     generateAndSaveContractsAndGrantsInvoiceDocument(awd, getValidAwardAccounts(tmpAcctList, awd, creationProcessType),
                             errorMessages, creationProcessType, accountDetails, locCreationType);
                 }
@@ -395,9 +384,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 if (validAwardAccounts.containsAll(tmpAcctList)
                         && contractsGrantsBillingAwardVerificationService.isAwardAccountValidToInvoiceBasedOnSchedule(
                         awardAccount)) {
-                    /**
-                     * FINP-5295 changes.
-                     */
                     generateAndSaveContractsAndGrantsInvoiceDocument(award, validAwardAccounts, errorMessages,
                             creationProcessType, accountDetails, locCreationType);
                 } else {
@@ -412,8 +398,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     }
 
     /**
-     * FINP-5295 This method was modified for the backport.
-     * 
      * Generates and then saves a Contracts & Grants Invoice Document
      *
      * @param awd                the award for the document
@@ -442,12 +426,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     || getContractsGrantsInvoiceDocumentService().getBillAmountTotal(cgInvoiceDocument).isPositive()
                     || (ArConstants.BillingFrequencyValues.isTimeBased(awd)
                             && ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.equals(creationProcessType))) {
-                try {
-                    documentService.saveDocument(cgInvoiceDocument, DocumentSystemSaveEvent.class);
-                } catch (WorkflowException ex) {
-                    LOG.error("Error creating cgin documents: " + ex.getMessage(), ex);
-                    throw new RuntimeException("Error creating cgin documents: " + ex.getMessage(), ex);
-                }
+                documentService.saveDocument(cgInvoiceDocument, DocumentSystemSaveEvent.class);
             } else {
                 ErrorMessage errorMessage;
                 List<InvoiceAccountDetail> invoiceAccounts = cgInvoiceDocument.getAccountDetails();
@@ -478,55 +457,50 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         ContractsGrantsInvoiceDocument cgInvoiceDocument = null;
         if (ObjectUtils.isNotNull(accounts) && !accounts.isEmpty()) {
             if (chartOfAccountsCode != null && organizationCode != null) {
-                try {
-                    cgInvoiceDocument = (ContractsGrantsInvoiceDocument) documentService.getNewDocument(
-                            ContractsGrantsInvoiceDocument.class);
-                    // Set description to the document created.
-                    cgInvoiceDocument.getDocumentHeader().setDocumentDescription(buildDocumentDescription(awd,
-                            accounts));
-                    // setup several Default Values for CGInvoice document which extends from Customer Invoice Document
+                cgInvoiceDocument = (ContractsGrantsInvoiceDocument) documentService.getNewDocument(
+                        ContractsGrantsInvoiceDocument.class);
+                // Set description to the document created.
+                cgInvoiceDocument.getDocumentHeader().setDocumentDescription(buildDocumentDescription(awd,
+                        accounts));
+                // setup several Default Values for CGInvoice document which extends from Customer Invoice Document
 
-                    // a) set billing org and chart code
-                    cgInvoiceDocument.setBillByChartOfAccountCode(chartOfAccountsCode);
-                    cgInvoiceDocument.setBilledByOrganizationCode(organizationCode);
+                // a) set billing org and chart code
+                cgInvoiceDocument.setBillByChartOfAccountCode(chartOfAccountsCode);
+                cgInvoiceDocument.setBilledByOrganizationCode(organizationCode);
 
-                    // b) set processing org and chart code
-                    List<String> procCodes = getContractsGrantsInvoiceDocumentService()
-                            .getProcessingFromBillingCodes(chartOfAccountsCode, organizationCode);
+                // b) set processing org and chart code
+                List<String> procCodes = getContractsGrantsInvoiceDocumentService()
+                        .getProcessingFromBillingCodes(chartOfAccountsCode, organizationCode);
 
-                    AccountsReceivableDocumentHeader accountsReceivableDocumentHeader =
-                            new AccountsReceivableDocumentHeader();
-                    accountsReceivableDocumentHeader.setDocumentNumber(cgInvoiceDocument.getDocumentNumber());
+                AccountsReceivableDocumentHeader accountsReceivableDocumentHeader =
+                        new AccountsReceivableDocumentHeader();
+                accountsReceivableDocumentHeader.setDocumentNumber(cgInvoiceDocument.getDocumentNumber());
 
-                    // Set processing chart and org codes
-                    if (procCodes != null) {
-                        int procCodesSize = procCodes.size();
+                // Set processing chart and org codes
+                if (procCodes != null) {
+                    int procCodesSize = procCodes.size();
 
-                        // Set processing chart
-                        if (procCodesSize > 0) {
-                            accountsReceivableDocumentHeader.setProcessingChartOfAccountCode(procCodes.get(0));
-                        }
-
-                        // Set processing org code
-                        if (procCodesSize > 1) {
-                            accountsReceivableDocumentHeader.setProcessingOrganizationCode(procCodes.get(1));
-                        }
+                    // Set processing chart
+                    if (procCodesSize > 0) {
+                        accountsReceivableDocumentHeader.setProcessingChartOfAccountCode(procCodes.get(0));
                     }
 
-                    cgInvoiceDocument.setAccountsReceivableDocumentHeader(accountsReceivableDocumentHeader);
-
-                    populateInvoiceFromAward(awd, accounts, cgInvoiceDocument, accountDetails, locCreationType, creationProcessType);
-                    contractsGrantsInvoiceDocumentService.createSourceAccountingLines(cgInvoiceDocument, accounts);
-
-                    if (ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail().getAward())) {
-                        contractsGrantsInvoiceDocumentService.updateSuspensionCategoriesOnDocument(cgInvoiceDocument);
+                    // Set processing org code
+                    if (procCodesSize > 1) {
+                        accountsReceivableDocumentHeader.setProcessingOrganizationCode(procCodes.get(1));
                     }
-
-                    LOG.info("Created Contracts & Grants Invoice Document " + cgInvoiceDocument.getDocumentNumber());
-                } catch (WorkflowException ex) {
-                    LOG.error("Error creating cgin documents: " + ex.getMessage(), ex);
-                    throw new RuntimeException("Error creating cgin documents: " + ex.getMessage(), ex);
                 }
+
+                cgInvoiceDocument.setAccountsReceivableDocumentHeader(accountsReceivableDocumentHeader);
+
+                populateInvoiceFromAward(awd, accounts, cgInvoiceDocument, accountDetails, locCreationType, creationProcessType);
+                contractsGrantsInvoiceDocumentService.createSourceAccountingLines(cgInvoiceDocument, accounts);
+
+                if (ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail().getAward())) {
+                    contractsGrantsInvoiceDocumentService.updateSuspensionCategoriesOnDocument(cgInvoiceDocument);
+                }
+
+                LOG.info("Created Contracts & Grants Invoice Document " + cgInvoiceDocument.getDocumentNumber());
             } else {
                 // if chart of account code or organization code is not available, output the error
                 final ErrorMessage errorMessage = new ErrorMessage(
@@ -1553,8 +1527,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     }
 
     /**
-     * FINP-5295 This method was modified for the backport.
-     * 
      * This method helps in setting up basic values for Contracts & Grants Invoice Document
      */
     protected void populateContractsGrantsInvoiceDocument(ContractsAndGrantsBillingAward award,
@@ -1588,10 +1560,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         }
 
         KualiDecimal totalAmountBilledToDate;
-        if (document.getInvoiceMilestones().size() > 0) {
+        if (ArConstants.BillingFrequencyValues.isMilestone(award)) {
             totalAmountBilledToDate = getContractsGrantsInvoiceDocumentService().getInvoiceMilestoneTotal(document)
                     .add(document.getInvoiceGeneralDetail().getTotalPreviouslyBilled());
-        } else if (document.getInvoiceBills().size() > 0) {
+        } else if (ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             totalAmountBilledToDate = getContractsGrantsInvoiceDocumentService().getBillAmountTotal(document)
                     .add(document.getInvoiceGeneralDetail().getTotalPreviouslyBilled());
         } else {
@@ -1842,7 +1814,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         // Get the list of awards associated with each account
         Map<String, List<ContractsAndGrantsBillingAward>> accountMap = awards.stream()
                 .flatMap(award -> award.getActiveAwardAccounts().stream()
-                        .map(awardAccount -> new SimpleEntry<>(awardAccount.getAccountNumber(), award)))
+                        .map(awardAccount -> new SimpleEntry<>(awardAccount.getChartOfAccountsCode() + awardAccount.getAccountNumber(), award)))
                 .collect(Collectors.groupingBy(Entry::getKey,
                         Collectors.mapping(Entry::getValue, Collectors.toList())));
 
@@ -1906,14 +1878,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         if (!CollectionUtils.isEmpty(errorString) && errorString.size() > 1) {
             errorList.add(configurationService.getPropertyValueAsString(errorString.get(0))
                     .replace("{0}", errorString.get(1)));
-        }
-
-        // Account auto-creation defaults not defined
-        if (award.getPrimaryAwardOrganization() == null
-                && configurationService.getPropertyValueAsBoolean(KFSConstants.MODULE_EXTERNAL_KUALI_COEUS_ENABLED)) {
-            errorList.add(configurationService.getPropertyValueAsString(
-                    ArKeyConstants.CGINVOICE_CREATION_ACCOUNT_AUTO_CREATION_DEFAULTS_NOT_SETUP));
-            return;
         }
 
         if (!getContractsGrantsBillingAwardVerificationService().isChartAndOrgSetupForInvoicing(award)) {
@@ -2054,21 +2018,16 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         }
 
         for (String cgInvoiceDocId : documentIdList) {
-            try {
-                ContractsGrantsInvoiceDocument cgInvoiceDoc =
-                        (ContractsGrantsInvoiceDocument) documentService.getByDocumentHeaderId(cgInvoiceDocId);
-                // To route documents only if the user in the session is same as the initiator.
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Routing Contracts & Grants Invoice document # " + cgInvoiceDocId + ".");
-                }
-                documentService.prepareWorkflowDocument(cgInvoiceDoc);
-
-                // calling workflow service to bypass business rule checks
-                workflowDocumentService.route(cgInvoiceDoc.getDocumentHeader().getWorkflowDocument(), "", null);
-            } catch (WorkflowException e) {
-                LOG.error("Error routing document # " + cgInvoiceDocId + " " + e.getMessage());
-                throw new RuntimeException(e.getMessage(), e);
+            ContractsGrantsInvoiceDocument cgInvoiceDoc =
+                    (ContractsGrantsInvoiceDocument) documentService.getByDocumentHeaderId(cgInvoiceDocId);
+            // To route documents only if the user in the session is same as the initiator.
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Routing Contracts & Grants Invoice document # " + cgInvoiceDocId + ".");
             }
+            documentService.prepareWorkflowDocument(cgInvoiceDoc);
+
+            // calling workflow service to bypass business rule checks
+            workflowDocumentService.route(cgInvoiceDoc.getDocumentHeader().getWorkflowDocument(), "", null);
         }
     }
 

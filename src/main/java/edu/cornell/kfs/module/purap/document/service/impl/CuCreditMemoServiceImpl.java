@@ -19,7 +19,6 @@ import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
@@ -127,12 +126,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
         }
 
         if (StringUtils.isNotBlank(cancelledStatusCode)) {
-            try {
-                cmDoc.updateAndSaveAppDocStatus(cancelledStatusCode);
-            }
-            catch (WorkflowException we) {
-                throw new RuntimeException("Unable to save the workflow document with document id: " + cmDoc.getDocumentNumber());
-            }
+            cmDoc.updateAndSaveAppDocStatus(cancelledStatusCode);
             purapService.saveDocumentNoValidation(cmDoc);
             //force reindexing
             reIndexDocument(cmDoc);

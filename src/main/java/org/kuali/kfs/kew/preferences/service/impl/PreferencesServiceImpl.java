@@ -53,7 +53,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static Map<String, String> USER_OPTION_KEY_DEFAULT_MAP;
+    private static final Map<String, String> USER_OPTION_KEY_DEFAULT_MAP;
 
     static {
         USER_OPTION_KEY_DEFAULT_MAP = new HashMap<>();
@@ -243,26 +243,9 @@ public class PreferencesServiceImpl implements PreferencesService {
     }
 
     public UserOptionsService getUserOptionService() {
-        return (UserOptionsService) KEWServiceLocator.getService(KEWServiceLocator.USER_OPTIONS_SRV);
+    	return KEWServiceLocator.getService(KEWServiceLocator.USER_OPTIONS_SRV);
     }
 
-    private final class UserOptionsWrapper {
-        private final UserOptions userOptions;
-        private final boolean isSaveRequired;
-
-        UserOptionsWrapper(UserOptions userOptions, boolean isSaveRequired) {
-            this.userOptions = userOptions;
-            this.isSaveRequired = isSaveRequired;
-        }
-
-        public UserOptions getUserOptions() {
-            return userOptions;
-        }
-
-        public boolean isSaveRequired() {
-            return isSaveRequired;
-        }
-    }
 }
 
 

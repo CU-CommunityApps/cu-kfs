@@ -46,7 +46,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) kualiDocumentFormBase;
 
         if (documentForm.getSecurityGroupId() == null) {
@@ -63,7 +63,7 @@ public class SecurityRequestDocumentAction extends FinancialSystemTransactionalD
     }
 
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
         SecurityRequestDocumentForm documentForm = (SecurityRequestDocumentForm) kualiDocumentFormBase;
         SecurityRequestDocument document = (SecurityRequestDocument) kualiDocumentFormBase.getDocument();

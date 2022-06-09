@@ -159,10 +159,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 		headerBuilder.append(TAB);
 		headerBuilder.append(max.getActionTakenLabel());
 		headerBuilder.append(TAB);
-
-//    	} catch (WorkflowException e) {
-//    		e.printStackTrace();
-//    	}
     	
     	String headerString = headerBuilder.toString(); 
     	StringBuilder builder = new StringBuilder();
@@ -367,23 +363,14 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
             Collection<FinancialSystemDocumentHeader> documentList, DocumentStatus status) {
         final int SCALED_SET_SIZE = (int) (documentList.size() * 1.4);
         Set<String> documentIds = new HashSet<String>(SCALED_SET_SIZE);
-        Collection<DocumentRouteHeaderValue> routeHeaders;
         Collection<FinancialSystemDocumentHeader> finalList = new ArrayList<FinancialSystemDocumentHeader>(documentList.size());
         
         // Assemble document IDs, then search for workflow headers.
         for (FinancialSystemDocumentHeader docHeader : documentList) {
-            documentIds.add(docHeader.getDocumentNumber());
-        }
-        routeHeaders = routeHeaderService.getRouteHeaders(documentIds);
-        
-        // Track which headers have the expected document status.
-        documentIds = new HashSet<String>(SCALED_SET_SIZE);
-        if (routeHeaders != null) {
-            for (DocumentRouteHeaderValue routeHeader : routeHeaders) {
-                if (status.equals(routeHeader.getStatus())) {
-                    documentIds.add(routeHeader.getDocumentId());
-                }
-            }
+        	DocumentRouteHeaderValue routeHeader = routeHeaderService.getRouteHeader(docHeader.getDocumentNumber());
+        	if (status.equals(routeHeader.getStatus())) {
+                documentIds.add(routeHeader.getDocumentId());
+        	}
         }
         
         // Update final-headers collection with any doc headers that actually have the given workflow status in KEW.
@@ -407,8 +394,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
         try {
             document = getDocumentService().getByDocumentHeaderId(documentHeaderId);
-        } catch (WorkflowException ex) {
-            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
         } catch (UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
             LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);

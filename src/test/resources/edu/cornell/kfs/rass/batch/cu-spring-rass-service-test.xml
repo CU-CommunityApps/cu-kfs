@@ -39,7 +39,7 @@
 
     <bean id="dataDictionaryService" factory-bean="testServiceFactory" factory-method="buildMockDataDictionaryService"/>
 
-    <bean id="enDocumentRouteHeaderService" factory-bean="testServiceFactory" factory-method="buildMockRouteHeaderService"/>
+    <bean id="documentRouteHeaderService" factory-bean="testServiceFactory" factory-method="buildMockRouteHeaderService"/>
 
     <bean id="agencyService" factory-bean="testServiceFactory" factory-method="buildMockAgencyService"/>
 
@@ -108,7 +108,7 @@
                 <idref bean="documentService"/>
                 <idref bean="businessObjectService"/>
                 <idref bean="dataDictionaryService"/>
-                <idref bean="enDocumentRouteHeaderService"/>
+                <idref bean="documentRouteHeaderService"/>
                 <idref bean="agencyService"/>
                 <idref bean="dateTimeService"/>
                 <idref bean="parameterService"/>

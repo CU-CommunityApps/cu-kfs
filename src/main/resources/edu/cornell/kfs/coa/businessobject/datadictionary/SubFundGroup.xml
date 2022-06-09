@@ -173,7 +173,7 @@
     <bean abstract="true"
           id="SubFundGroup-inquiryDefinition-parentBean"
           parent="InquiryDefinition"
-          p:title="Sub-Fund Group Inquiry"
+          p:title="Sub-Fund Group"
     >
         <property name="sections">
             <list>

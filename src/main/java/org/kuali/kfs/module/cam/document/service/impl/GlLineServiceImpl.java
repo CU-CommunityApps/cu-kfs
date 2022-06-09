@@ -25,6 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.service.ObjectTypeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.CapitalAccountingLines;
 import org.kuali.kfs.fp.businessobject.CapitalAssetAccountsGroupDetails;
@@ -55,14 +58,11 @@ import org.kuali.kfs.module.cam.document.AssetPaymentDocument;
 import org.kuali.kfs.module.cam.document.service.AssetGlobalService;
 import org.kuali.kfs.module.cam.document.service.GlLineService;
 import org.kuali.kfs.module.cam.util.ObjectValueUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -85,8 +85,7 @@ public class GlLineServiceImpl implements GlLineService {
     protected CapitalAssetInformationDao capitalAssetInformationDao;
 
     @Override
-    public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber)
-            throws WorkflowException {
+    public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) {
         MaintenanceDocument document = (MaintenanceDocument) documentService.getNewDocument(
                 DocumentTypeName.ASSET_ADD_GLOBAL);
 
@@ -543,8 +542,7 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber)
-            throws WorkflowException {
+    public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber) {
         // Find out the GL Entry
         // initiate a new document
         AssetPaymentDocument document = (AssetPaymentDocument) documentService.getNewDocument(DocumentTypeName.ASSET_PAYMENT);
@@ -657,8 +655,8 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     protected String fetchReferenceFinancialDocumentNumberIfPreqOrCmDocument(GeneralLedgerEntry entry) {
-        if (KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST.equals(entry.getFinancialDocumentTypeCode()) ||
-            KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO.equals(entry.getFinancialDocumentTypeCode())) {
+        if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(entry.getFinancialDocumentTypeCode())
+                || PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(entry.getFinancialDocumentTypeCode())) {
             return entry.getReferenceFinancialDocumentNumber();
         }
 

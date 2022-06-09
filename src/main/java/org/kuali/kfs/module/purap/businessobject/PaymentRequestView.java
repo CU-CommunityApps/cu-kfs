@@ -19,12 +19,12 @@
 package org.kuali.kfs.module.purap.businessobject;
 
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.web.format.CurrencyFormatter;
 import org.kuali.kfs.core.web.format.DateFormatter;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -125,7 +125,7 @@ public class PaymentRequestView extends AbstractRelatedView {
      * @return workflow document type for the PaymentRequestDocument
      */
     public String getDocumentType() {
-        return KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST;
+        return PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT;
     }
 
     /**
@@ -170,7 +170,7 @@ public class PaymentRequestView extends AbstractRelatedView {
 
     @Override
     public String getDocumentTypeName() {
-        return KFSConstants.FinancialDocumentTypeCodes.PAYMENT_REQUEST;
+        return PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT;
     }
 
 }

@@ -264,8 +264,6 @@
         </div><!-- end div tabcontainer -->
         <div id="globalbuttons" class="globalbuttons">
             <html-el:hidden property="backLocation" />
-            <html-el:hidden property="documentTargetSpec" />
-            <html-el:hidden property="routeLogTargetSpec" />
             <html-el:submit property="methodToCall.filter" styleClass="btn btn-default">Filter</html-el:submit>
             <html-el:submit property="methodToCall.clear" styleClass="btn btn-default">Clear</html-el:submit>
             <a href="${KualiForm.backLocation}" class="btn btn-default">

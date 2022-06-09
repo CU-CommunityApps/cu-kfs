@@ -33,7 +33,6 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.core.api.util.KeyValue;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.datadictionary.legacy.DocumentDictionaryService;
@@ -46,7 +45,6 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.WorkflowRuntimeException;
 import org.kuali.kfs.kew.api.action.WorkflowDocumentActionsService;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.engine.simulation.SimulationCriteria;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
@@ -111,6 +109,7 @@ import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.springmodules.orm.ojb.OjbOperationException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -337,8 +336,6 @@ public class KualiDocumentActionBase extends KualiAction {
                 }
             }
             request.setAttribute("routeHeader", routeHeader);
-
-            formBase.setEnableLogAction(false);
         }
 
         return returnForward;
@@ -399,9 +396,8 @@ public class KualiDocumentActionBase extends KualiAction {
      * be overridden in children if the need arises.
      *
      * @param kualiDocumentFormBase
-     * @throws WorkflowException
      */
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         String docId = kualiDocumentFormBase.getDocId();
         Document doc;
         doc = getDocumentService().getByDocumentHeaderId(docId);
@@ -433,9 +429,8 @@ public class KualiDocumentActionBase extends KualiAction {
      * has been abstracted out so that it can be overridden in children if the need arises.
      *
      * @param kualiDocumentFormBase
-     * @throws WorkflowException
      */
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         Document doc = getDocumentService().getNewDocument(kualiDocumentFormBase.getDocTypeName());
         UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(),
             doc.getDocumentHeader().getWorkflowDocument());
@@ -653,7 +648,7 @@ public class KualiDocumentActionBase extends KualiAction {
 
         // check if warning is configured in which case we will prompt, or if not business rules will thrown an error
         boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
-            KFSConstants.CoreModuleNamespaces.KFS, ParameterConstants.ALL_COMPONENT,
+            KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.ALL_COMPONENT,
             KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_PATTERNS_WARNING_IND);
 
         // determine if the question has been asked yet
@@ -1203,11 +1198,9 @@ public class KualiDocumentActionBase extends KualiAction {
      *
      * @param request
      * @param kualiForm
-     * @throws WorkflowException
      */
     @SuppressWarnings("unchecked")
-    protected void refreshAdHocRoutingWorkgroupLookups(HttpServletRequest request, KualiDocumentFormBase kualiForm)
-            throws WorkflowException {
+    protected void refreshAdHocRoutingWorkgroupLookups(HttpServletRequest request, KualiDocumentFormBase kualiForm) {
         for (Enumeration<String> i = request.getParameterNames(); i.hasMoreElements(); ) {
             String parameterName = i.nextElement();
             if ("newAdHocRouteWorkgroup.recipientName".equals(parameterName)
@@ -2444,7 +2437,7 @@ public class KualiDocumentActionBase extends KualiAction {
 
             // check for sensitive data in note
             boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
-                    KFSConstants.CoreModuleNamespaces.KFS, ParameterConstants.ALL_COMPONENT,
+                    KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.ALL_COMPONENT,
                     KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_PATTERNS_WARNING_IND);
             if (warnForSensitiveData) {
                 String context = KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME + "=" + reason;
@@ -2511,4 +2504,3 @@ public class KualiDocumentActionBase extends KualiAction {
         }
     }
 }
-

@@ -63,7 +63,6 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.entity.Entity;
@@ -95,7 +94,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
      */
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
 
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) kualiDocumentFormBase;
@@ -191,7 +190,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * Do initialization for a new disbursement voucher
      */
     @Override
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.createDocument(kualiDocumentFormBase);
         ((DisbursementVoucherDocument) kualiDocumentFormBase.getDocument()).initiateDocument();
 

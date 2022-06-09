@@ -21,10 +21,12 @@ package org.kuali.kfs.module.ld.util;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ld.LaborConstants;
+import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
@@ -36,11 +38,11 @@ import org.kuali.kfs.module.ld.document.LaborLedgerPostingDocument;
 import org.kuali.kfs.module.ld.document.service.LaborPendingEntryConverterService;
 import org.kuali.kfs.module.ld.service.LaborBenefitsCalculationService;
 import org.kuali.kfs.module.ld.service.LaborPositionObjectBenefitService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,21 +74,25 @@ public final class LaborPendingEntryGenerator {
     public static List<LaborLedgerPendingEntry> generateExpensePendingEntries(LaborLedgerPostingDocument document,
             ExpenseTransferAccountingLine accountingLine, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         List<LaborLedgerPendingEntry> expensePendingEntries = new ArrayList<>();
-        LaborLedgerPendingEntry expensePendingEntry = SpringContext.getBean(LaborPendingEntryConverterService.class)
+        final LaborPendingEntryConverterService laborPendingEntryConverterService =
+                SpringContext.getBean(LaborPendingEntryConverterService.class);
+        LaborLedgerPendingEntry expensePendingEntry = laborPendingEntryConverterService
                 .getExpensePendingEntry(document, accountingLine, sequenceHelper);
         expensePendingEntries.add(expensePendingEntry);
 
-        // KFSMI-6863: always create A2 entries regardless of fiscal period
-        LaborLedgerPendingEntry expenseA21PendingEntry = SpringContext.getBean(LaborPendingEntryConverterService.class)
-                .getExpenseA21PendingEntry(document, accountingLine, sequenceHelper);
-        expensePendingEntries.add(expenseA21PendingEntry);
+        final boolean generateA2Entries = SpringContext.getBean(ParameterService.class)
+                .getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION,
+                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.GENERATE_A2_ENTRIES);
+        if (generateA2Entries) {
+            LaborLedgerPendingEntry expenseA21PendingEntry = laborPendingEntryConverterService
+                    .getExpenseA21PendingEntry(document, accountingLine, sequenceHelper);
+            expensePendingEntries.add(expenseA21PendingEntry);
 
-        LaborLedgerPendingEntry expenseA21ReversalPendingEntry =
-                SpringContext.getBean(LaborPendingEntryConverterService.class).getExpenseA21ReversalPendingEntry(
-                        document, accountingLine, sequenceHelper);
-        expensePendingEntries.add(expenseA21ReversalPendingEntry);
+            LaborLedgerPendingEntry expenseA21ReversalPendingEntry = laborPendingEntryConverterService
+                    .getExpenseA21ReversalPendingEntry(document, accountingLine, sequenceHelper);
+            expensePendingEntries.add(expenseA21ReversalPendingEntry);
+        }
 
-        //refresh nonupdateable references for financial object...
         refreshObjectCodeNonUpdateableReferences(expensePendingEntries);
 
         return expensePendingEntries;
@@ -186,23 +192,28 @@ public final class LaborPendingEntryGenerator {
             ExpenseTransferAccountingLine accountingLine, GeneralLedgerPendingEntrySequenceHelper sequenceHelper,
             KualiDecimal benefitAmount, String fringeBenefitObjectCode) {
         List<LaborLedgerPendingEntry> benefitPendingEntries = new ArrayList<>();
-        LaborLedgerPendingEntry benefitPendingEntry = SpringContext.getBean(LaborPendingEntryConverterService.class)
+        final LaborPendingEntryConverterService laborPendingEntryConverterService =
+                SpringContext.getBean(LaborPendingEntryConverterService.class);
+        LaborLedgerPendingEntry benefitPendingEntry = laborPendingEntryConverterService
                 .getBenefitPendingEntry(document, accountingLine, sequenceHelper, benefitAmount,
                         fringeBenefitObjectCode);
         benefitPendingEntries.add(benefitPendingEntry);
 
-        // KFSMI-6863: always create A2 entries regardless of fiscal period
-        LaborLedgerPendingEntry benefitA21PendingEntry = SpringContext.getBean(LaborPendingEntryConverterService.class)
-                .getBenefitA21PendingEntry(document, accountingLine, sequenceHelper, benefitAmount,
-                        fringeBenefitObjectCode);
-        benefitPendingEntries.add(benefitA21PendingEntry);
+        final boolean generateA2Entries = SpringContext.getBean(ParameterService.class)
+                .getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION,
+                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.GENERATE_A2_ENTRIES);
+        if (generateA2Entries) {
+            LaborLedgerPendingEntry benefitA21PendingEntry = laborPendingEntryConverterService
+                    .getBenefitA21PendingEntry(document, accountingLine, sequenceHelper, benefitAmount,
+                            fringeBenefitObjectCode);
+            benefitPendingEntries.add(benefitA21PendingEntry);
 
-        LaborLedgerPendingEntry benefitA21ReversalPendingEntry =
-                SpringContext.getBean(LaborPendingEntryConverterService.class).getBenefitA21ReversalPendingEntry(
-                        document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
-        benefitPendingEntries.add(benefitA21ReversalPendingEntry);
+            LaborLedgerPendingEntry benefitA21ReversalPendingEntry =
+                    laborPendingEntryConverterService.getBenefitA21ReversalPendingEntry(document, accountingLine,
+                            sequenceHelper, benefitAmount, fringeBenefitObjectCode);
+            benefitPendingEntries.add(benefitA21ReversalPendingEntry);
+        }
 
-        //refresh nonupdateable references for financial object...
         refreshObjectCodeNonUpdateableReferences(benefitPendingEntries);
 
         return benefitPendingEntries;
@@ -306,7 +317,7 @@ public final class LaborPendingEntryGenerator {
     /**
      * refreshes labor ledger pending entry's object codes.
      *
-     * @param llpes
+     * @param llpes list of LaborLedgerPendingEntries to refresh object codes for
      */
     public static void refreshObjectCodeNonUpdateableReferences(List<LaborLedgerPendingEntry> llpes) {
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);

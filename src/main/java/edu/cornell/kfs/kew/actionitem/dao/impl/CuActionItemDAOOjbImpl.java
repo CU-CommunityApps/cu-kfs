@@ -8,25 +8,12 @@ import org.kuali.kfs.kew.actionitem.ActionItem;
 import org.kuali.kfs.kew.actionitem.dao.impl.ActionItemDAOOjbImpl;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.kew.CuKewPropertyConstants;
 import edu.cornell.kfs.kew.actionitem.ActionItemExtension;
 import edu.cornell.kfs.kew.actionitem.dao.CuActionItemDAO;
 
 public class CuActionItemDAOOjbImpl extends ActionItemDAOOjbImpl implements CuActionItemDAO {
-
-    @Override
-    public void deleteActionItems(Long actionRequestId) {
-        deleteActionItemExtensionsByActionRequestId(actionRequestId);
-        super.deleteActionItems(actionRequestId);
-    }
-
-    private void deleteActionItemExtensionsByActionRequestId(Long actionRequestId) {
-        Criteria criteria = new Criteria();
-        criteria.addEqualTo(CuKewPropertyConstants.ACTION_REQUEST_ID, actionRequestId);
-        deleteActionItemExtensionsForMatchingActionItems(criteria);
-    }
 
     @Override
     public void deleteActionItem(ActionItem actionItem) {
@@ -42,19 +29,6 @@ public class CuActionItemDAOOjbImpl extends ActionItemDAOOjbImpl implements CuAc
         if (ObjectUtils.isNotNull(extension)) {
             getPersistenceBrokerTemplate().delete(extension);
         }
-    }
-
-    @Override
-    public void deleteByDocumentIdWorkflowUserId(String documentId, String workflowUserId) {
-        deleteActionItemExtensionsByDocumentIdWorkflowUserId(documentId, workflowUserId);
-        super.deleteByDocumentIdWorkflowUserId(documentId, workflowUserId);
-    }
-
-    private void deleteActionItemExtensionsByDocumentIdWorkflowUserId(String documentId, String workflowUserId) {
-        Criteria criteria = new Criteria();
-        criteria.addEqualTo(CuKewPropertyConstants.DOCUMENT_ID, documentId);
-        criteria.addEqualTo(KFSPropertyConstants.PRINCIPAL_ID, workflowUserId);
-        deleteActionItemExtensionsForMatchingActionItems(criteria);
     }
 
     @Override
