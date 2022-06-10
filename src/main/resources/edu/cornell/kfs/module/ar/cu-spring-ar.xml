@@ -47,7 +47,6 @@
         <property name="suspensionCategories">
             <list merge="true">
                 <ref bean="firstInvoiceForAwardSuspensionCategory"/>
-                <ref bean="autoApproveDisabledSuspensionCategory"/>
             </list>
         </property>
     </bean>
@@ -59,13 +58,9 @@
     <bean id="firstInvoiceForAwardSuspensionCategory" parent="firstInvoiceForAwardSuspensionCategory-parentBean"/>
     <bean id="firstInvoiceForAwardSuspensionCategory-parentBean"
           class="edu.cornell.kfs.module.ar.document.validation.impl.FirstInvoiceForAwardSuspensionCategory" abstract="true"
-          p:code="14"
+          p:code="99"
           p:financialSystemDocumentService-ref="financialSystemDocumentService"
           p:contractsGrantsInvoiceDocumentDao-ref="contractsGrantsInvoiceDocumentDao"/>
-
-	<bean id="autoApproveDisabledSuspensionCategory" parent="autoApproveDisabledSuspensionCategory-parentBean" />
-	<bean id="autoApproveDisabledSuspensionCategory-parentBean" class="edu.cornell.kfs.module.ar.document.validation.impl.AutoApproveDisabledSuspensionCategory" 
-		abstract="true" p:code="15" />
 
     <bean id="invoicePaidAppliedDao" parent="platformAwareDao" class="org.kuali.kfs.module.ar.dataaccess.impl.InvoicePaidAppliedDaoOjb"/>
     
