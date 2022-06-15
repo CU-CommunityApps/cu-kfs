@@ -2248,7 +2248,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -2336,6 +2341,14 @@
             	<exclusion>
             		<groupId>com.google.guava</groupId>
             		<artifactId>guava</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>commons-beanutils</groupId>
+            		<artifactId>commons-beanutils</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>com.fasterxml.jackson.core</groupId>
+            		<artifactId>jackson-databind</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>

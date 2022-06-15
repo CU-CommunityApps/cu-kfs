@@ -18,6 +18,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!--
+    CU Customizations:
+    * Added settings for the "path" and "reloadable" attributes, as well as a DOCTYPE declaration.
+    * Added "CookieProcessor" settings to fix some Shibboleth integration issues.
+ -->
 <!DOCTYPE doc>
 <Context path="/kfs" reloadable="true">
   <CookieProcessor sameSiteCookies="none" />
