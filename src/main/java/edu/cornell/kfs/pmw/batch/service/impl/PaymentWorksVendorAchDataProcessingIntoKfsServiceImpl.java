@@ -52,7 +52,7 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
         MaintenanceDocument paatMaintenceDoc = createKfsPayeeAchMaintenaceDocument(pmwVendor, reportData);
         if (ObjectUtils.isNotNull(paatMaintenceDoc)
             && kfsPayeeAchMaintenanceDocumentValidated(paatMaintenceDoc, reportData, pmwVendor)) {
-        	kfsPayeeAchMaintenceDocumentRouted(paatMaintenceDoc, reportData, pmwVendor);
+        	routePayeeAchMaintenceDocument(paatMaintenceDoc, reportData, pmwVendor);
             pmwVendor.setKfsAchDocumentNumber(paatMaintenceDoc.getDocumentNumber());
             processingSuccessful = true;
         }
@@ -102,11 +102,11 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
         return documentValidated;
     }
 
-    private void kfsPayeeAchMaintenceDocumentRouted(MaintenanceDocument paatMaintenceDoc, PaymentWorksNewVendorPayeeAchBatchReportData reportData, PaymentWorksVendor pmwVendor) {
+    private void routePayeeAchMaintenceDocument(MaintenanceDocument paatMaintenceDoc, PaymentWorksNewVendorPayeeAchBatchReportData reportData, PaymentWorksVendor pmwVendor) {
         String annotationMessage = PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_ACH_CREATE_ROUTE_ANNOTATION + 
                 pmwVendor.getPmwVendorRequestId();
         getDocumentService().routeDocument(paatMaintenceDoc, annotationMessage, null);
-        LOG.info("kfsPayeeAchMaintenceDocumentRouted: paatMaintenceDoc routed.");
+        LOG.info("routePayeeAchMaintenceDocument: paatMaintenceDoc routed.");
         GlobalVariables.getMessageMap().clearErrorMessages();
     }
     
