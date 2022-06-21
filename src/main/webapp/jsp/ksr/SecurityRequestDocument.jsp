@@ -23,7 +23,9 @@
     <kul:notes />
     <kul:adHocRecipients />
     <kul:routeLog />
+    <kul:superUserActions />
     <kul:panelFooter />
-    <kul:documentControls transactionalDocument="false" />
+    <kul:documentControls transactionalDocument="true" />
+    <kul:modernLookupSupport />
 
 </kul:documentPage>    
