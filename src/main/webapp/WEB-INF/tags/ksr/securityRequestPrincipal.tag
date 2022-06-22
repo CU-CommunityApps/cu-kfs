@@ -1,4 +1,7 @@
- <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
+
+<%@ attribute name="readOnly" required="false"
+              description="Whether the Security Request Principal data should be read-only" %>
 
 <c:set var="securityRequestAttributes" value="${DataDictionary.SecurityRequestDocument.attributes}" />
  
