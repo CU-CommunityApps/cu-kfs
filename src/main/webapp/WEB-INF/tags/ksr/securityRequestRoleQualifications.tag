@@ -2,6 +2,8 @@
 
 <%@ attribute name="securityRequestRoleIndex" required="true"
               description="Index of the security request role instance in the document collection to render qualifications for." %>
+<%@ attribute name="readOnly" required="false"
+              description="Whether the Security Request Role Qualification data should be read-only" %>
 
 <c:set var="securityRequestRole" value="${KualiForm.document.securityRequestRoles[securityRequestRoleIndex]}" />
 
