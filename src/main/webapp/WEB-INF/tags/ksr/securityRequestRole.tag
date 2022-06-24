@@ -1,7 +1,9 @@
-  <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <%@ attribute name="securityRequestRoleIndex" required="true"
               description="Index of the security request role instance in the document collection to render." %>
+<%@ attribute name="readOnly" required="false"
+              description="Whether the Security Request Role data should be read-only" %>
 
 <c:set var="genericAttributes" value="${DataDictionary.AttributeReferenceDummy.attributes}" />
 
@@ -37,7 +39,8 @@
           <kul:htmlAttributeHeaderCell literalLabel="Qualifications:" align="right" horizontal="true" addClass="right"/>
           <td style="padding: 5px;">
              <c:if test="${!empty securityRequestRole.requestRoleQualifications || !readOnly}">
-               <ksr:securityRequestRoleQualifications securityRequestRoleIndex="${securityRequestRoleIndex}" />
+               <ksr:securityRequestRoleQualifications securityRequestRoleIndex="${securityRequestRoleIndex}"
+                      readOnly="${readOnly}" />
              </c:if>
              
              <c:if test="${!empty securityRequestRole.currentQualifications}">

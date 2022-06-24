@@ -1,6 +1,6 @@
-  <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
-<c:set var="readOnly" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" scope="request" />
+<c:set var="readOnly" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" />
 
 <kul:documentPage
     showDocumentInfo="true"
@@ -14,16 +14,18 @@
 
     <kul:documentOverview editingMode="${KualiForm.editingMode}" />
        
-    <ksr:securityRequestPrincipal />
+    <ksr:securityRequestPrincipal readOnly="${readOnly}" />
     
     <c:if test="${!empty KualiForm.document.principalId}">
-      <ksr:securityRequestTabs />
+      <ksr:securityRequestTabs readOnly="${readOnly}" />
     </c:if>
     
     <kul:notes />
     <kul:adHocRecipients />
     <kul:routeLog />
+    <kul:superUserActions />
     <kul:panelFooter />
-    <kul:documentControls transactionalDocument="false" />
+    <kul:documentControls transactionalDocument="true" />
+    <kul:modernLookupSupport />
 
 </kul:documentPage>    
