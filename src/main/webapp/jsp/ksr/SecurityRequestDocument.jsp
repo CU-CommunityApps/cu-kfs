@@ -7,8 +7,7 @@
     htmlFormAction="securityRequestDocument"
     documentTypeName="SecurityRequestDocument"
     renderMultipart="true"
-    showTabButtons="true"
-    auditCount="0">
+    showTabButtons="true">
 
     <kul:hiddenDocumentFields />
 
