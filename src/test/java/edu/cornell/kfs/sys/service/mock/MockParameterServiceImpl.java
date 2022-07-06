@@ -24,13 +24,7 @@ public class MockParameterServiceImpl implements ParameterService {
 
     public MockParameterServiceImpl() {
         parameters = new HashMap<>();
-        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.CHART, "IT");
-        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.OBJECT_CODE, "2240");
-        parameters.put(CuFPParameterConstants.AdvanceDepositDocument.ACCOUNT, "G621060");
         parameters.put(VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS, "10");
-        parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_FROM_EMAIL_ADDRESS, "achIncomeTest@cornell.edu");
-        parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_EMAIL_SUBJECT, "Advance Deposit Service Test Summary Email");
-        parameters.put(CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_TO_EMAIL_ADDRESSES, "achIncomeTest@cornell.edu");
         parameters.put(CUPdpParameterConstants.ACH_PERSONAL_CHECKING_TRANSACTION_CODE, "22PPD");
         parameters.put(CUPdpParameterConstants.ACH_PERSONAL_SAVINGS_TRANSACTION_CODE, "32PPD");
         parameters.put(CUPdpParameterConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE, "PRAP");
