@@ -338,6 +338,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             if (!StringUtils.isNumeric(detail.getBankAccountNumber())) {
                 LOG.error(logMessageStarter + " is not numeric after cleaning");
             }
+
+            detail.setBankName(detail.getBankName().substring(0, 39));
         }
     }
 
