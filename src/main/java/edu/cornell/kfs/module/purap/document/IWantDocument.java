@@ -783,7 +783,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
 
     @Override
-    public void toCopy() throws WorkflowException, IllegalStateException {
+    public void toCopy() throws IllegalStateException {
         super.toCopy();
 
         copyItemsAndAccounts();

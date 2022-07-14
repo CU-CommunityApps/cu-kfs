@@ -36,7 +36,6 @@ import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
 import org.kuali.kfs.kim.impl.identity.entity.Entity;
@@ -62,7 +61,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
      * @see org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
      */
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
 
         super.loadDocument(kualiDocumentFormBase);
         IWantDocumentForm iWantForm = (IWantDocumentForm) kualiDocumentFormBase;

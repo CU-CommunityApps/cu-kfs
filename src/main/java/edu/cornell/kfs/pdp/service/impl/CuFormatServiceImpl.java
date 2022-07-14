@@ -115,7 +115,11 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
     }
 
     @Override
-    protected boolean processPaymentGroup(PaymentGroup paymentGroup, PaymentProcess paymentProcess) {
+    protected boolean processPaymentGroup(
+            final PaymentGroup paymentGroup,
+            final PaymentProcess paymentProcess,
+            final boolean shouldUseIso20022Format
+    ) {
         paymentGroup.setSortValue(paymentGroupService.getSortGroupId(paymentGroup));
         paymentGroup.setPhysCampusProcessCd(paymentProcess.getCampusCode());
         paymentGroup.setProcess(paymentProcess);
@@ -132,7 +136,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
             paymentGroup.setPaymentStatus(paymentStatus);
         }
         
-        return validateAndUpdatePaymentGroupBankCode(paymentGroup, paymentGroup.getDisbursementType(), paymentGroup.getBatch().getCustomerProfile());
+        return validateAndUpdatePaymentGroupBankCode(paymentGroup, paymentGroup.getDisbursementType(), paymentGroup.getBatch().getCustomerProfile(), shouldUseIso20022Format);
     }
     
     /**

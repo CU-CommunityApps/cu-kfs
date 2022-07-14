@@ -25,7 +25,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -206,7 +205,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected void doApplicationOfFunds(PaymentApplicationForm paymentApplicationForm) throws WorkflowException {
+    protected void doApplicationOfFunds(PaymentApplicationForm paymentApplicationForm) {
         PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
 
         List<InvoicePaidApplied> invoicePaidApplieds = new ArrayList<>();
@@ -479,7 +478,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return invoicePaidApplieds;
     }
 
-    protected NonInvoiced applyNonInvoiced(PaymentApplicationForm payAppForm) throws WorkflowException {
+    protected NonInvoiced applyNonInvoiced(PaymentApplicationForm payAppForm) {
         PaymentApplicationDocument applicationDocument = (PaymentApplicationDocument) payAppForm.getDocument();
 
         NonInvoiced nonInvoiced = payAppForm.getNonInvoicedAddLine();
@@ -521,7 +520,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return nonInvoiced;
     }
 
-    protected NonAppliedHolding applyUnapplied(PaymentApplicationForm payAppForm) throws WorkflowException {
+    protected NonAppliedHolding applyUnapplied(PaymentApplicationForm payAppForm) {
         PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
         KualiDecimal amount = payAppForm.getNonAppliedHoldingAmount();
 
@@ -677,15 +676,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     }
                     // only try to retrieve docs if we have any to retrieve
                     if (!controlDocNumbers.isEmpty()) {
-                        try {
-                            List<Document> docs = getDocumentService().getDocumentsByListOfDocumentHeaderIds(
-                                    PaymentApplicationDocument.class, controlDocNumbers);
-                            for (Document doc : docs) {
-                                nonAppliedControlDocs.add((PaymentApplicationDocument) doc);
-                            }
-                        } catch (WorkflowException e) {
-                            throw new RuntimeException("A runtimeException was thrown when trying to retrieve a list " +
-                                    "of documents.", e);
+                        List<Document> docs = getDocumentService().getDocumentsByListOfDocumentHeaderIds(
+                                PaymentApplicationDocument.class, controlDocNumbers);
+                        for (Document doc : docs) {
+                            nonAppliedControlDocs.add((PaymentApplicationDocument) doc);
                         }
                     }
                 }
@@ -868,7 +862,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     @Override
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.createDocument(kualiDocumentFormBase);
         PaymentApplicationForm form = (PaymentApplicationForm) kualiDocumentFormBase;
         PaymentApplicationDocument document = form.getPaymentApplicationDocument();
@@ -883,7 +877,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
         PaymentApplicationForm pform = (PaymentApplicationForm) kualiDocumentFormBase;
         loadInvoices(pform, pform.getEnteredInvoiceDocumentNumber());

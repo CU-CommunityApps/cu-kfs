@@ -62,8 +62,6 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
             buildExcludeCancelledPdpPayments(paymentDisbursementNumberCriteriaValue));
         criteria.addAndCriteria(buildMaxSequenceNumberIfPdpReissuedCriteria(
             PdpPropertyConstants.PaymentDetail.PAYMENT_DISBURSEMENT_CUST_PAYMENT_DOC_NBR));
-        criteria.addAndCriteria(buildMaxSequenceNumberIfPdpReissuedCriteria(
-                paymentDisbursementNumberCriteriaValue));
 
         criteria.addAndCriteria(buildPdpPaymentFileReissuedExtraCriteria());
 

@@ -30,7 +30,7 @@ public final class RassTestConstants {
     public static final String RASS_REPORT_SERVICE_BEAN_NAME = "rassReportService";
     public static final String AGENCY_SERVICE_BEAN_NAME = "agencyService";
     public static final String BUSINESS_OBJECT_SERVICE_BEAN_NAME = "businessObjectService";
-    public static final String ROUTE_HEADER_SERVICE_BEAN_NAME = "enDocumentRouteHeaderService";
+    public static final String ROUTE_HEADER_SERVICE_BEAN_NAME = "documentRouteHeaderService";
 
     public static final class ResourcePropertyValues {
         

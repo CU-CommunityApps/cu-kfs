@@ -78,7 +78,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     private JaggaerRoleService jaggaerRoleService;
 
     @Override
-    public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) throws WorkflowException {
+    public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) {
         LOG.debug("createRequisitionsFromCxml() started");
         // for returning requisitions
         ArrayList requisitions = new ArrayList();
@@ -94,7 +94,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             VendorDetail vendor = (VendorDetail) iter.next();
 
             // create requisition
-            RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.REQUISITION_DOCUMENT_TYPE);
+            RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE);
             String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
             String businessPurpose = ((CuB2BShoppingCart)message).getBusinessPurpose();
 

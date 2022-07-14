@@ -218,7 +218,7 @@
 	<bean id="batchInputFileService" class="edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl" parent="batchInputFileService-parentBean"/>
 
     <bean id="autoDisapproveService" class="edu.cornell.kfs.sys.batch.service.impl.CuAutoDisapproveDocumentsServiceImpl" parent="autoDisapproveService-parentBean">
-        <property name="routeHeaderService" ref="enDocumentRouteHeaderService" />
+        <property name="routeHeaderService" ref="documentRouteHeaderService" />
     </bean>
 
     <!-- KFSPTS-1891 -->
@@ -356,21 +356,6 @@
           abstract="true" class="edu.cornell.kfs.sys.service.impl.CuGeneralLedgerPendingEntryServiceImpl"/>
 
 	<bean id="cuApiJsonWebRequestReader" class="edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl" />
-
-    <!--
-        Override of daily and weekly email reminder batch steps to backport FINP-7413 changes from the 2021-04-01 patch.
-        These two bean overrides should be removed when we upgrade to the 2021-04-01 patch or later.
-        
-        NOTE: For compatibility with the 2021-01-28 financials patch, the beans below have to reference
-        the actionListEmailService via the bean name "enActionListEmailService" instead.
-     -->
-    <bean id="dailyEmailStep" class="org.kuali.kfs.sys.batch.DailyEmailStep" parent="step"
-          p:actionListEmailService-ref="enActionListEmailService"
-    />
-
-    <bean id="weeklyEmailStep" class="org.kuali.kfs.sys.batch.WeeklyEmailStep" parent="step"
-          p:actionListEmailService-ref="enActionListEmailService"
-    />
     
     <!-- backport changes for redis -->
     <bean id="menuService-parentBean" class="org.kuali.kfs.sys.service.MenuService" abstract="true" p:dao-ref="menuDao"

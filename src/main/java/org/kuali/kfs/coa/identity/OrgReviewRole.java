@@ -36,7 +36,7 @@ import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.action.ActionType;
+import org.kuali.kfs.kew.api.action.WorkflowAction;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 import org.kuali.kfs.kim.api.KimConstants;
@@ -530,8 +530,8 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
     }
 
     public String getActionTypeCodeDescription() {
-        ActionType at = ActionType.fromCode(getActionTypeCodeToDisplay(), true);
-        return (at == null) ? "" : at.getLabel();
+        WorkflowAction workflowAction = WorkflowAction.fromCode(getActionTypeCodeToDisplay(), true);
+        return (workflowAction == null) ? "" : workflowAction.getLabel();
     }
 
     public void setActionTypeCode(String actionTypeCode) {

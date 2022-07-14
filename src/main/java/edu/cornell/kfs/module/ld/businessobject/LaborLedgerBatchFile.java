@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.ld.businessobject;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
 

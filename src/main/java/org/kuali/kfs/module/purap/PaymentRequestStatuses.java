@@ -46,6 +46,7 @@ public final class PaymentRequestStatuses {
     public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval";
 
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
+    public static final String NODE_AWAITING_RECEIVING = "Receiving";
     public static final String NODE_AWAITING_RECEIVING_REVIEW = "PurchaseWasReceived";
     public static final String NODE_SUB_ACCOUNT_REVIEW = "SubAccount";
     public static final String NODE_ACCOUNT_REVIEW = "Account";
@@ -190,6 +191,7 @@ public final class PaymentRequestStatuses {
         STATUSES_PREROUTE.add(APPDOC_IN_PROCESS);
         STATUSES_PREROUTE.add(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
 
+        STATUSES_ENROUTE.add(APPDOC_AWAITING_RECEIVING_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_FISCAL_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_ORG_REVIEW);
@@ -207,6 +209,7 @@ public final class PaymentRequestStatuses {
         appDocStatusMap.put(NODE_ADHOC_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS);
         appDocStatusMap.put(PurapConstants.AccountsPayableStatuses.NODE_ACCOUNT_PAYABLE_REVIEW,
                 PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS);
+        appDocStatusMap.put(NODE_AWAITING_RECEIVING, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_AWAITING_RECEIVING_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_SUB_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);

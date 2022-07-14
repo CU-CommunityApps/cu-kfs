@@ -20,24 +20,13 @@
 -->
 <!--
     CU Customizations:
-
     * Added settings for the "path" and "reloadable" attributes, as well as a DOCTYPE declaration.
     * Added "CookieProcessor" settings to fix some Shibboleth integration issues.
-    * Backported FINP-7556 resource cache fix from the 2021-05-13 patch.
-    * Backported FINP-7585 context.xml bundling fix from the 2021-05-27 patch (which moved this file
-          to a new location and required adjusting the POM's maven-war-plugin configuration).
  -->
 <!DOCTYPE doc>
 <Context path="/kfs" reloadable="true">
   <CookieProcessor sameSiteCookies="none" />
 
-  <!-- CU Customization: backport FINP-7556 changes from the 2021-05-13 patch.
-        
-     The default value is 10240 kbytes, even when not added to context.xml.
-     We are increasing it to avoid issues with Tomcat not being able to cache web resources and logging a bunch of
-     warning messages. 
-  -->
   <Resources cacheMaxSize="51200" />
-  <!-- end of CU Customization: backport FINP-7556 -->
   
 </Context>

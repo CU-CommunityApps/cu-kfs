@@ -5,7 +5,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
-import org.kuali.kfs.kns.util.KNSConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;

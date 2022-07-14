@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomerInvoiceDetail;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -34,8 +35,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -469,11 +468,7 @@ public class CustomerInvoiceDetail extends SourceAccountingLine implements Appli
 
     public CustomerInvoiceDocument getCustomerInvoiceDocument() {
         if (customerInvoiceDocument == null) {
-            try {
-                customerInvoiceDocument = (CustomerInvoiceDocument) getDocumentService().getByDocumentHeaderId(getDocumentNumber());
-            } catch (WorkflowException e) {
-                throw new RuntimeException("A WorkflowException was thrown when trying to open the details parent document.  This should never happen.", e);
-            }
+           customerInvoiceDocument = (CustomerInvoiceDocument) getDocumentService().getByDocumentHeaderId(getDocumentNumber());
         }
         return customerInvoiceDocument;
     }

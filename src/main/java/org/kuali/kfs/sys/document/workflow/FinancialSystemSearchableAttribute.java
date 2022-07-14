@@ -18,12 +18,6 @@
  */
 package org.kuali.kfs.sys.document.workflow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +37,6 @@ import org.kuali.kfs.kew.api.document.attribute.DocumentAttribute;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeDecimal;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeString;
 import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.rule.bo.RuleAttribute;
 import org.kuali.kfs.kns.datadictionary.DocumentEntry;
@@ -70,6 +63,12 @@ import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.document.GeneralLedgerPostingDocument;
 import org.kuali.kfs.sys.document.datadictionary.AccountingLineGroupDefinition;
 import org.kuali.kfs.sys.document.datadictionary.FinancialSystemTransactionalDocumentEntry;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -176,8 +175,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                         KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, true);
                 searchField.setFieldDataType(CoreConstants.DATA_TYPE_STRING);
                 LookupUtils.setFieldQuickfinder(new GeneralLedgerPendingEntry(),
-                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, searchField,
-                        
+                        KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, searchField,                        
                         Collections.singletonList(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE));
                 docSearchRows.add(new Row(Collections.singletonList(searchField)));
                 displayedLedgerPostingDoc = true;
@@ -219,12 +217,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
 
         String docId = document.getDocumentId();
         DocumentService docService = SpringContext.getBean(DocumentService.class);
-        Document doc = null;
-        try {
-            doc = docService.getByDocumentHeaderId(docId);
-        } catch (WorkflowException we) {
-            // ignore
-        }
+        Document doc = docService.getByDocumentHeaderId(docId);
+
         if (doc != null) {
             if (doc instanceof AmountTotaling && ((AmountTotaling) doc).getTotalDollarAmount() != null) {
                 DocumentAttributeDecimal searchableAttributeValue =
@@ -426,5 +420,4 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         searchField.setDefaultValue(DOCUMENT_DISPLAY_TYPE_VALUE);
         return new Row(Collections.singletonList(searchField));
     }
-
 }

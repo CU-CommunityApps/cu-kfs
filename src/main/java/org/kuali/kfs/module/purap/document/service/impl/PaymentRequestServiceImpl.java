@@ -22,10 +22,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherValidationService;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.InfrastructureException;
@@ -37,9 +41,9 @@ import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
-import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants.NonresidentTaxParameters;
@@ -90,11 +94,6 @@ import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kim.api.identity.Person;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -254,37 +253,31 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     @Override
     public boolean autoApprovePaymentRequest(String docNumber, KualiDecimal defaultMinimumLimit) {
         PaymentRequestDocument paymentRequestDocument;
-        try {
-            paymentRequestDocument = (PaymentRequestDocument) documentService.getByDocumentHeaderId(docNumber);
-            if (paymentRequestDocument.isHoldIndicator() || paymentRequestDocument.isPaymentRequestedCancelIndicator()
-                    || !Arrays.asList(PaymentRequestStatuses.PREQ_STATUSES_FOR_AUTO_APPROVE)
-                        .contains(paymentRequestDocument.getApplicationDocumentStatus())) {
-                // this condition is based on the conditions that
-                // PaymentRequestDaoOjb.getEligibleDocumentNumbersForAutoApproval() uses to query the database.
-                // Rechecking these conditions to ensure that the document is eligible for auto-approval, because
-                // we're not running things within the same transaction anymore and changes could have occurred since
-                // we called that method that make this document not auto-approvable
+        paymentRequestDocument = (PaymentRequestDocument) documentService.getByDocumentHeaderId(docNumber);
+        if (paymentRequestDocument.isHoldIndicator() || paymentRequestDocument.isPaymentRequestedCancelIndicator()
+                || !Arrays.asList(PaymentRequestStatuses.PREQ_STATUSES_FOR_AUTO_APPROVE)
+                    .contains(paymentRequestDocument.getApplicationDocumentStatus())) {
+            // this condition is based on the conditions that
+            // PaymentRequestDaoOjb.getEligibleDocumentNumbersForAutoApproval() uses to query the database.
+            // Rechecking these conditions to ensure that the document is eligible for auto-approval, because
+            // we're not running things within the same transaction anymore and changes could have occurred since
+            // we called that method that make this document not auto-approvable
 
-                // note that this block does not catch all race conditions however, this error condition is not enough
-                // to make us return an error code, so just skip the document
-                LOG.warn("Payment Request Document " + paymentRequestDocument.getDocumentNumber() +
-                        " could not be auto-approved because it has either been placed on hold, " +
-                        " requested cancel, or does not have one of the PREQ statuses for auto-approve.");
-                return true;
+            // note that this block does not catch all race conditions however, this error condition is not enough
+            // to make us return an error code, so just skip the document
+            LOG.warn("Payment Request Document " + paymentRequestDocument.getDocumentNumber() +
+                    " could not be auto-approved because it has either been placed on hold, " +
+                    " requested cancel, or does not have one of the PREQ statuses for auto-approve.");
+            return true;
+        }
+        if (autoApprovePaymentRequest(paymentRequestDocument, defaultMinimumLimit)) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Auto-approval for payment request successful.  Doc number: " + docNumber);
             }
-            if (autoApprovePaymentRequest(paymentRequestDocument, defaultMinimumLimit)) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Auto-approval for payment request successful.  Doc number: " + docNumber);
-                }
-                return true;
-            } else {
-                LOG.error("Payment Request Document " + docNumber + " could not be auto-approved.");
-                return false;
-            }
-        } catch (WorkflowException we) {
-            LOG.error("Exception encountered when retrieving document number " + docNumber + ".", we);
-            // throw a runtime exception up so that we can force a rollback
-            throw new RuntimeException("Exception encountered when retrieving document number " + docNumber + ".", we);
+            return true;
+        } else {
+            LOG.error("Payment Request Document " + docNumber + " could not be auto-approved.");
+            return false;
         }
     }
 
@@ -296,36 +289,29 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     @Transactional
     public boolean autoApprovePaymentRequest(PaymentRequestDocument doc, KualiDecimal defaultMinimumLimit) {
         if (isEligibleForAutoApproval(doc, defaultMinimumLimit)) {
+            // Much of the framework assumes that document instances that are saved via
+            // DocumentService.saveDocument are those that were dynamically created by PojoFormBase (i.e., the
+            // Document instance wasn't created from OJB). We need to make a deep copy and materialize
+            // collections to fulfill that assumption so that collection elements will delete properly
+
+            // TODO: maybe rewriting PurapService.calculateItemTax could be rewritten so that the a deep copy
+            // doesn't need to be made by taking advantage of OJB's managed array lists
             try {
-                // Much of the framework assumes that document instances that are saved via
-                // DocumentService.saveDocument are those that were dynamically created by PojoFormBase (i.e., the
-                // Document instance wasn't created from OJB). We need to make a deep copy and materialize
-                // collections to fulfill that assumption so that collection elements will delete properly
-
-                // TODO: maybe rewriting PurapService.calculateItemTax could be rewritten so that the a deep copy
-                // doesn't need to be made by taking advantage of OJB's managed array lists
-                try {
-                    ObjectUtils.materializeUpdateableCollections(doc);
-                    for (PaymentRequestItem item : (List<PaymentRequestItem>) doc.getItems()) {
-                        ObjectUtils.materializeUpdateableCollections(item);
-                    }
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                ObjectUtils.materializeUpdateableCollections(doc);
+                for (PaymentRequestItem item : (List<PaymentRequestItem>) doc.getItems()) {
+                    ObjectUtils.materializeUpdateableCollections(item);
                 }
-                doc = (PaymentRequestDocument) ObjectUtils.deepCopy(doc);
-
-                // set the auto approved indicator to true so that doRouteStatus method can use to change the app doc
-                // status.
-                doc.setAutoApprovedIndicator(true);
-                LOG.info("About to blanketApproveDocument, doc.getDocumentNumber()=" + doc.getDocumentNumber());
-                // su approve rather than blanket approve, so no ACK notifications would be generated
-                documentService.superUserApproveDocument(doc, "auto-approving: Total is below threshold.");
-            } catch (WorkflowException we) {
-                LOG.error("Exception encountered when approving document number " + doc.getDocumentNumber() + ".", we);
-                // throw a runtime exception up so that we can force a rollback
-                throw new RuntimeException("Exception encountered when approving document number " +
-                        doc.getDocumentNumber() + ".", we);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
+            doc = (PaymentRequestDocument) ObjectUtils.deepCopy(doc);
+
+            // set the auto approved indicator to true so that doRouteStatus method can use to change the app doc
+            // status.
+            doc.setAutoApprovedIndicator(true);
+            LOG.info("About to blanketApproveDocument, doc.getDocumentNumber()=" + doc.getDocumentNumber());
+            // su approve rather than blanket approve, so no ACK notifications would be generated
+            documentService.superUserApproveDocument(doc, "auto-approving: Total is below threshold.");
         }
         return true;
     }
@@ -578,10 +564,6 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
 	/*
 	 * CU customization: backport FINP-8270
-	 * 
-	 * A small adjustment was needed to the backport changes as the
-	 * documentService.getByDocumentHeaderId method is still throwing a
-	 * WorkflowException in this version of financials.
 	 */
     private Map<String, String> checkForDuplicatesByVendorNumberAndInvoiceNumber(
             final Integer vendorHeaderGeneratedId,
@@ -598,18 +580,9 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         for (final PaymentRequestView possibleDuplicatePaymentRequest: possibleDuplicatePaymentRequests) {
             if (buildInvoiceNumberForComparison(possibleDuplicatePaymentRequest.getInvoiceNumber()).equals(
                     invoiceNumberForComparison)) {
-				String documentNumber = possibleDuplicatePaymentRequest.getDocumentNumber();
-				try {
-	                final PaymentRequestDocument possibleDuplicate = (PaymentRequestDocument) documentService
-	                        .getByDocumentHeaderId(documentNumber);
+                final PaymentRequestDocument possibleDuplicate = (PaymentRequestDocument) documentService
+                        .getByDocumentHeaderId(possibleDuplicatePaymentRequest.getDocumentNumber());
                     duplicatePaymentRequests.add(possibleDuplicate);
-				} catch (WorkflowException e) {
-					LOG.error(
-							"checkForDuplicatesByVendorNumberAndInvoiceNumber() Unable to retrieve Payment Request document: "
-									+ documentNumber,
-							e);
-					throw new RuntimeException("Unable to retrieve Payment Request document: " + documentNumber, e);
-				}
             }
         }
 
@@ -691,13 +664,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         LOG.debug("getPaymentRequestByDocumentNumber() started");
 
         if (ObjectUtils.isNotNull(documentNumber)) {
-            try {
-                return (PaymentRequestDocument) documentService.getByDocumentHeaderId(documentNumber);
-            } catch (WorkflowException e) {
-                String errorMessage = "Error getting payment request document from document service";
-                LOG.error("getPaymentRequestByDocumentNumber() " + errorMessage, e);
-                throw new RuntimeException(errorMessage, e);
-            }
+            return (PaymentRequestDocument) documentService.getByDocumentHeaderId(documentNumber);
         }
         return null;
     }
@@ -1485,19 +1452,12 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     }
 
     @Override
-    public void populateAndSavePaymentRequest(PaymentRequestDocument preq) throws WorkflowException {
+    public void populateAndSavePaymentRequest(PaymentRequestDocument preq) {
         try {
             preq.updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_IN_PROCESS);
             documentService.saveDocument(preq, AttributedContinuePurapEvent.class);
         } catch (ValidationException ve) {
             preq.updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_INITIATE);
-        } catch (WorkflowException we) {
-            preq.updateAndSaveAppDocStatus(PaymentRequestStatuses.APPDOC_INITIATE);
-
-            String errorMsg = "Error saving document # " + preq.getDocumentHeader().getDocumentNumber() + " " +
-                    we.getMessage();
-            LOG.error(errorMsg, we);
-            throw new RuntimeException(errorMsg, we);
         }
     }
 
@@ -1534,7 +1494,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     public void takePurchaseOrderCancelAction(AccountsPayableDocument apDoc) {
         PaymentRequestDocument preqDocument = (PaymentRequestDocument) apDoc;
         if (preqDocument.isReopenPurchaseOrderIndicator()) {
-            String docType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_REOPEN_DOCUMENT;
+            String docType = PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_REOPEN_DOCUMENT;
             purchaseOrderService.createAndRoutePotentialChangeDocument(
                     preqDocument.getPurchaseOrderDocument().getDocumentNumber(), docType,
                     "reopened by Credit Memo " + apDoc.getPurapDocumentIdentifier() + "cancel",
@@ -1570,12 +1530,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         }
 
         if (StringUtils.isNotBlank(cancelledStatus)) {
-            try {
-                preqDoc.updateAndSaveAppDocStatus(cancelledStatus);
-            } catch (WorkflowException we) {
-                throw new RuntimeException("Unable to save the route status data for document: " +
-                        preqDoc.getDocumentNumber(), we);
-            }
+            preqDoc.updateAndSaveAppDocStatus(cancelledStatus);
             purapService.saveDocumentNoValidation(preqDoc);
         } else {
             logAndThrowRuntimeException("No status found to set for document being disapproved in node '" +
@@ -1837,14 +1792,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
         for (PaymentRequestDocument preqDoc : preqs) {
             if (ObjectUtils.isNotNull(preqDoc) && preqDoc.isReceivingRequirementMet()) {
-                try {
-                    documentService.approveDocument(preqDoc, "Approved by Receiving Required PREQ job",
-                            null);
-                } catch (WorkflowException e) {
-                    LOG.error("processPaymentRequestInReceivingStatus() Error approving payment request document " +
-                            "from awaiting receiving", e);
-                    throw new RuntimeException("Error approving payment request document from awaiting receiving", e);
-                }
+                documentService.approveDocument(preqDoc, "Approved by Receiving Required PREQ job", null);
             }
         }
     }

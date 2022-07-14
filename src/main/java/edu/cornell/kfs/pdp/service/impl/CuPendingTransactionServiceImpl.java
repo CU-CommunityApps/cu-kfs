@@ -69,7 +69,6 @@ import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
@@ -301,82 +300,77 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
         // Need to reverse the payment document's GL entries if the check is stopped or cancelled
         if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || CUPdpConstants.PdpDocumentTypes.DISBURSEMENT_VOUCHER.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || CUPdpConstants.PdpDocumentTypes.CREDIT_MEMO.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode())) {
+            String sourceDocumentNumber = paymentDetail.getCustPaymentDocNbr();
             try {
-                String sourceDocumentNumber = paymentDetail.getCustPaymentDocNbr();
-                try {
-                    Long.valueOf(sourceDocumentNumber);
-                } catch (NumberFormatException nfe) {
-                    sourceDocumentNumber = null;
-                }
+                Long.valueOf(sourceDocumentNumber);
+            } catch (NumberFormatException nfe) {
+                sourceDocumentNumber = null;
+            }
 
-                if (sourceDocumentNumber != null && StringUtils.isNotBlank(sourceDocumentNumber)) {
+            if (sourceDocumentNumber != null && StringUtils.isNotBlank(sourceDocumentNumber)) {
 
-                    Document doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
+                Document doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
 
-                    if (ObjectUtils.isNotNull(doc)) {
-                        if (doc instanceof DisbursementVoucherDocument) {
-                        	//KFSUPGRADE-775
-                            DisbursementVoucherDocument dv = (DisbursementVoucherDocument) doc;
-                            generateDisbursementVoucherReversalEntries(dv, sequenceHelper);
-                            //end KFSUPGRADE-775
+                if (ObjectUtils.isNotNull(doc)) {
+                    if (doc instanceof DisbursementVoucherDocument) {
+                    	//KFSUPGRADE-775
+                        DisbursementVoucherDocument dv = (DisbursementVoucherDocument) doc;
+                        generateDisbursementVoucherReversalEntries(dv, sequenceHelper);
+                        //end KFSUPGRADE-775
 
-                        } else if (doc instanceof VendorCreditMemoDocument) {
-                            // KFSPTS-2719
-                            String crCmCancelNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class, CUPurapParameterConstants.PURAP_CR_CM_CANCEL_NOTE);
-                            VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) doc;
-                            String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
-                            crCmCancelNote = crCmCancelNote + crCancelMaintDocNbr;
+                    } else if (doc instanceof VendorCreditMemoDocument) {
+                        // KFSPTS-2719
+                        String crCmCancelNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class, CUPurapParameterConstants.PURAP_CR_CM_CANCEL_NOTE);
+                        VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) doc;
+                        String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
+                        crCmCancelNote = crCmCancelNote + crCancelMaintDocNbr;
 
-                            try {
-                                Note noteObj = documentService.createNoteFromDocument(cmDocument, crCmCancelNote);
-                                cmDocument.addNote(noteObj);
-                                noteService.save(noteObj);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e.getMessage());
-                            }
-                            
-                            //KFSUPGRADE-775
-                            VendorCreditMemoDocument cm = (VendorCreditMemoDocument) doc;
-                            AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = cm.getDocumentSpecificService();
-                            accountsPayableDocumentSpecificService.updateStatusByNode("", cm);
-                            //end KFSUPGRADE-775
-
-                            generateCreditMemoReversalEntries((VendorCreditMemoDocument) doc);
-
-                        } else if (doc instanceof PaymentRequestDocument) {
-                            // KFSPTS-2719
-                            String crPreqCancelNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class, CUPurapParameterConstants.PURAP_CR_PREQ_CANCEL_NOTE);
-                            PaymentRequestDocument paymentRequest = (PaymentRequestDocument) doc;
-                            String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
-
-                            crPreqCancelNote = crPreqCancelNote + crCancelMaintDocNbr;
-
-                            try {
-
-                                Note cancelNote = documentService.createNoteFromDocument(paymentRequest, crPreqCancelNote);
-                                paymentRequest.addNote(cancelNote);
-                                noteService.save(cancelNote);
-                            } catch (Exception e) {
-                                throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
-                            }
-
-                            // cancel extracted should not reopen PO
-                            paymentRequest.setReopenPurchaseOrderIndicator(false);
-                            
-                            //KFSUPGRADE-775
-                            AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = paymentRequest.getDocumentSpecificService();
-                            accountsPayableDocumentSpecificService.updateStatusByNode("", paymentRequest);
-
-                            //end KFSUPGRADE-775
-
-                            generatePaymentRequestReversalEntries(paymentRequest);
-
+                        try {
+                            Note noteObj = documentService.createNoteFromDocument(cmDocument, crCmCancelNote);
+                            cmDocument.addNote(noteObj);
+                            noteService.save(noteObj);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e.getMessage());
                         }
+                        
+                        //KFSUPGRADE-775
+                        VendorCreditMemoDocument cm = (VendorCreditMemoDocument) doc;
+                        AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = cm.getDocumentSpecificService();
+                        accountsPayableDocumentSpecificService.updateStatusByNode("", cm);
+                        //end KFSUPGRADE-775
+
+                        generateCreditMemoReversalEntries((VendorCreditMemoDocument) doc);
+
+                    } else if (doc instanceof PaymentRequestDocument) {
+                        // KFSPTS-2719
+                        String crPreqCancelNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class, CUPurapParameterConstants.PURAP_CR_PREQ_CANCEL_NOTE);
+                        PaymentRequestDocument paymentRequest = (PaymentRequestDocument) doc;
+                        String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
+
+                        crPreqCancelNote = crPreqCancelNote + crCancelMaintDocNbr;
+
+                        try {
+
+                            Note cancelNote = documentService.createNoteFromDocument(paymentRequest, crPreqCancelNote);
+                            paymentRequest.addNote(cancelNote);
+                            noteService.save(cancelNote);
+                        } catch (Exception e) {
+                            throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
+                        }
+
+                        // cancel extracted should not reopen PO
+                        paymentRequest.setReopenPurchaseOrderIndicator(false);
+                        
+                        //KFSUPGRADE-775
+                        AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = paymentRequest.getDocumentSpecificService();
+                        accountsPayableDocumentSpecificService.updateStatusByNode("", paymentRequest);
+
+                        //end KFSUPGRADE-775
+
+                        generatePaymentRequestReversalEntries(paymentRequest);
+
                     }
                 }
-
-            } catch (WorkflowException we) {
-                System.out.println("Exception retrieving document " + paymentDetail.getCustPaymentDocNbr());
             }
         }
 

@@ -324,7 +324,7 @@
 		<property name="recurringDisbursementVoucherSearchDao" ref="recurringDisbursementVoucherSearchDao"/>
 		<property name="personService" ref="personService"/>
 		<property name="recurringDisbursementVoucherPaymentMaintenanceService" ref="recurringDisbursementVoucherPaymentMaintenanceService"/>
-		<property name="routeHeaderService" ref="enDocumentRouteHeaderService"/>
+		<property name="routeHeaderService" ref="documentRouteHeaderService"/>
 		<property name="cuDisbursementVoucherExtractionHelperService" ref="disbursementVoucherExtractionHelperService"/>
 		<property name="noteService" ref="noteService" />
 	</bean>

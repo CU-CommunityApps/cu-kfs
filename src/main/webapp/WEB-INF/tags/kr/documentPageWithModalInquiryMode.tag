@@ -16,7 +16,6 @@
 <%@ attribute name="extraTopButtons" required="false" type="java.util.List" %>
 <%@ attribute name="headerDispatch" required="false" description="A List of org.kuali.kfs.kns.web.ui.ExtraButton objects to display at the top of the page." %>
 <%@ attribute name="headerTabActive" required="false" description="The name of the active header tab, if header navigation is used." %>
-<%@ attribute name="auditCount" required="false" description="The number of audit errors displayed on this page." %>
 <%@ attribute name="docTitle" required="false" %>
 <%@ attribute name="alternativeHelp" required="false"%>
 
@@ -50,7 +49,6 @@
                 extraTopButtons="${extraTopButtons}"
                 headerDispatch="${headerDispatch}"
                 headerTabActive="${headerTabActive}"
-                auditCount="${auditCount}"
                 docTitle="${currentDocumentTitle}"
                 alternativeHelp="${alternativeHelp}">
             <jsp:doBody/>

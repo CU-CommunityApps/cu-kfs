@@ -22,7 +22,6 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetAccountsGroupDetails;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.module.cam.businessobject.GeneralLedgerEntry;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,19 +30,19 @@ public interface GlLineService {
 
     Collection<GeneralLedgerEntry> findAllGeneralLedgerEntry(String documentNumber);
 
-    Collection<GeneralLedgerEntry> findMatchingGeneralLedgerEntries( Collection<GeneralLedgerEntry> allGLEntries, CapitalAssetAccountsGroupDetails accountingDetails );
+    Collection<GeneralLedgerEntry> findMatchingGeneralLedgerEntries(Collection<GeneralLedgerEntry> allGLEntries, CapitalAssetAccountsGroupDetails accountingDetails);
 
     List<CapitalAssetInformation> findAllCapitalAssetInformation(String documentNumber);
 
     List<CapitalAssetInformation> findCapitalAssetInformationForGLLine(GeneralLedgerEntry entry);
 
-    long findUnprocessedCapitalAssetInformation( String documentNumber );
+    long findUnprocessedCapitalAssetInformation(String documentNumber);
 
     CapitalAssetInformation findCapitalAssetInformation(String documentNumber, Integer capitalAssetLineNumber);
 
-    Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) throws WorkflowException;
+    Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber);
 
-    Document createAssetPaymentDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) throws WorkflowException;
+    Document createAssetPaymentDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber);
 
     void setupCapitalAssetInformation(GeneralLedgerEntry entry);
     

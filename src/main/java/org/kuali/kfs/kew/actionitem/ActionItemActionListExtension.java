@@ -47,7 +47,7 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
 
     private Timestamp lastApprovedDate;
     private Timestamp lastModifiedDate;
-    private Map<String, String> customActions = new HashMap<String, String>();
+    private Map<String, String> customActions = new HashMap<>();
     private String rowStyleClass;
     private Integer actionListIndex;
 
@@ -61,45 +61,8 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
     private boolean delegatorNameInitialized = false;
     private boolean groupNameInitialized = false;
 
-    //KRAD ActionList Stuff TODO
-    private String routeHeaderRouteStatus;
-    private Timestamp routeHeaderCreateDate;
-    private String routeHeaderInitiatorName;
-    private Timestamp routeHeaderApprovedDate;
-    private String routeHeaderCurrentRouteLevelName;
-    private String routeHeaderInitiatorWorkflowId;
-    private String actionSelected;
-
-    public String getActionSelected() {
-        return "NONE";
-    }
-
-    public void setActionSelected(String actionSelected) {
-        this.actionSelected = actionSelected;
-    }
-
     public String getRouteHeaderRouteStatus() {
         return routeHeader.getDocRouteStatus();
-    }
-
-    public Timestamp getRouteHeaderCreateDate() {
-        return routeHeader.getCreateDate();
-    }
-
-    public String getRouteHeaderInitiatorName() {
-        return routeHeader.getInitiatorName();
-    }
-
-    public Timestamp getRouteHeaderApprovedDate() {
-        return routeHeader.getApprovedDate();
-    }
-
-    public String getRouteHeaderCurrentRouteLevelName() {
-        return routeHeader.getCurrentRouteLevelName();
-    }
-
-    public String getRouteHeaderInitiatorWorkflowId() {
-        return routeHeader.getInitiatorWorkflowId();
     }
 
     public Integer getActionListIndex() {

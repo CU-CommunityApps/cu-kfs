@@ -22,8 +22,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
@@ -151,14 +151,9 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
         if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
-            try {
-                String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-                String disapprovalStatus = PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
-                updateAndSaveAppDocStatus(disapprovalStatus);
-
-            } catch (WorkflowException e) {
-                logAndThrowRuntimeException("Error saving routing data while saving App Doc Status " + getDocumentNumber(), e);
-            }
+            String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
+            String disapprovalStatus = PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
+            updateAndSaveAppDocStatus(disapprovalStatus);
         }
     }
 

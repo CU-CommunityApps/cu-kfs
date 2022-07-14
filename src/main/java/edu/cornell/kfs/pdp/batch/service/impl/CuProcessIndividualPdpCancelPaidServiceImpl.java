@@ -10,7 +10,6 @@ import org.kuali.kfs.pdp.batch.service.impl.ProcessIndividualPdpCancelPaidServic
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.batch.service.PaymentSourceToExtractService;
 import org.kuali.kfs.sys.document.PaymentSource;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,19 +42,15 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
         } else {
             PaymentSourceToExtractService<PaymentSource> extractService = getPaymentSourceToExtractService(paymentDetail);
             if (extractService != null) {
-                try {
-                    PaymentSource dv = (PaymentSource) documentService.getByDocumentHeaderId(documentNumber);
-                    if (dv != null) {
-                        if (disbursedPayment || primaryCancel || crCancel) {
-                            if (!crCancel) {
-                                extractService.cancelPayment(dv, processDate);
-                            }
-                        } else {
-                            extractService.resetFromExtraction(dv);
+                PaymentSource dv = (PaymentSource) documentService.getByDocumentHeaderId(documentNumber);
+                if (dv != null) {
+                    if (disbursedPayment || primaryCancel || crCancel) {
+                        if (!crCancel) {
+                            extractService.cancelPayment(dv, processDate);
                         }
+                    } else {
+                        extractService.resetFromExtraction(dv);
                     }
-                } catch (WorkflowException we) {
-                    throw new RuntimeException("Could not retrieve document #" + documentNumber, we);
                 }
             } else {
                 LOG.warn("processPdpCancel() Unknown document type (" + documentTypeCode + ") for document ID: " +

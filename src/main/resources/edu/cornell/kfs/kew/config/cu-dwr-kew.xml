@@ -6,7 +6,7 @@
   <allow>
     <!-- Modified version of CONTRIB-73 by MSU - Add a Note to Your Action List Item -->
     <create creator="kewCreator" javascript="ActionListService">
-      <param name="beanName" value="enActionListService"/>
+      <param name="beanName" value="actionListService"/>
       <include method="saveActionItemNoteForActionItemId"/>
     </create>
   </allow>

@@ -105,7 +105,7 @@ if (attributeEntry == null) {
 <c:set var="accessibleTitle" value="${accessibleTitle} ${accessibilityHint}"/>
 </c:if>
 
-<kul:checkErrors keyMatch="${property}" auditMatch="${property}"/>
+<kul:checkErrors keyMatch="${property}" />
 
 <c:set var="disableField" value="false" />
 <c:if test="${disabled}">

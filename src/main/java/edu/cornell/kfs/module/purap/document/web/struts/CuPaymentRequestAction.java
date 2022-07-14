@@ -30,7 +30,6 @@ import org.kuali.kfs.module.purap.document.web.struts.PaymentRequestForm;
 import org.kuali.kfs.module.purap.service.PurapAccountRevisionService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 
@@ -72,7 +71,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
     }
 	
 	@Override
-	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
         // set wire charge message in form
         ((CuPaymentRequestForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());

@@ -27,7 +27,6 @@ import org.joda.time.DateTime;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
@@ -123,7 +122,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
      * @return the document label according to the label specified in the data dictionary.
      * @throws WorkflowException
      */
-    public String getDocumentLabel() throws WorkflowException{
+    public String getDocumentLabel() {
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName(getDocumentTypeName());
     }
     
@@ -159,7 +158,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        } catch (WorkflowException | UnknownDocumentTypeException ex) {
+        } catch (UnknownDocumentTypeException ex) {
             LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
         }
 
