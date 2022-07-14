@@ -22,6 +22,7 @@ import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.ObjectUtil;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
@@ -339,8 +340,17 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 LOG.error(logMessageStarter + " is not numeric after cleaning");
             }
 
-            detail.setBankName(detail.getBankName().substring(0, 39));
+            detail.setBankName(extractBankName(detail));
         }
+    }
+
+    private String extractBankName(PayeeACHAccountExtractDetail detail) {
+        String bankName = ObjectUtils.isNull(detail) ? StringUtils.EMPTY : detail.getBankName();
+        if (StringUtils.length(bankName) > 40) {
+            LOG.info("cleanPayeeACHAccountExtractDetail truncating bank name to 40 characters");
+            bankName = bankName.substring(0, 39);
+        }
+        return bankName;
     }
 
     /**
