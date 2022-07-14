@@ -106,10 +106,7 @@ public class ActionListFilterAction extends KualiAction {
         if (GlobalVariables.getMessageMap().hasNoErrors()) {
             request.getSession().setAttribute(KewApiConstants.REQUERY_ACTION_LIST_KEY, "true");
             ActionForward forward = mapping.findForward("viewActionList");
-            // make sure we pass the targetSpecs back to the ActionList
             ActionRedirect redirect = new ActionRedirect(forward);
-            redirect.addParameter("documentTargetSpec", filterForm.getDocumentTargetSpec());
-            redirect.addParameter("routeLogTargetSpec", filterForm.getRouteLogTargetSpec());
             return redirect;
         }
         return mapping.findForward("viewFilter");
@@ -149,17 +146,10 @@ public class ActionListFilterAction extends KualiAction {
         if (!filterForm.getMethodToCall().equalsIgnoreCase("clear")) {
             filterForm.validateDates();
         }
-        // make sure the back location includes the targetSpec for the Action List
         if (StringUtils.isNotBlank(filterForm.getBackLocation())) {
             String actionListUrl = SpringContext.getBean(ConfigurationService.class)
                     .getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/ActionList.do";
             URIBuilder uri = new URIBuilder(actionListUrl);
-            if (StringUtils.isNotBlank(filterForm.getDocumentTargetSpec())) {
-                uri.addParameter("documentTargetSpec", filterForm.getDocumentTargetSpec()).build();
-            }
-            if (StringUtils.isNotBlank(filterForm.getRouteLogTargetSpec())) {
-                uri.addParameter("routeLogTargetSpec", filterForm.getRouteLogTargetSpec()).build();
-            }
             filterForm.setBackLocation(uri.build().toString());
         }
     }
@@ -169,10 +159,10 @@ public class ActionListFilterAction extends KualiAction {
                 KimApiServiceLocator.getGroupService().getGroupIdsByPrincipalId(principalId);
 
         //note that userWorkgroups is unmodifiable so we need to create a new list that we can sort
-        List<String> userGroupsToSort = new ArrayList<String>(userWorkgroups);
+        List<String> userGroupsToSort = new ArrayList<>(userWorkgroups);
 
-        List<KeyValue> sortedUserWorkgroups = new ArrayList<KeyValue>();
-        KeyValue keyValue = null;
+        List<KeyValue> sortedUserWorkgroups = new ArrayList<>();
+        KeyValue keyValue;
         keyValue = new ConcreteKeyValue(KewApiConstants.NO_FILTERING, KewApiConstants.NO_FILTERING);
         sortedUserWorkgroups.add(keyValue);
         if (userGroupsToSort != null && userGroupsToSort.size() > 0) {

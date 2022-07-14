@@ -350,10 +350,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 documentService.prepareWorkflowDocument(cbcpDocument);
                 documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
                 successfulDocuments.add(cbcpDocument.getDocumentNumber());
-            } catch (WorkflowException we) {
-                documentErrors.put(cbcpDocument.getDocumentNumber(), "Workflow error: " + we.getMessage());
-                GlobalVariables.getMessageMap().clearErrorMessages();
-                LOG.error("routeProcurementCardDocuments, workflow error routing document # " + cbcpDocument.getDocumentNumber() + " " + we.getMessage(), we);
             } catch (ValidationException ve) {
                 documentErrors.put(cbcpDocument.getDocumentNumber(), corporateBilledCorporatePaidRouteStepReportService.buildValidationErrorMessage(ve));
                 GlobalVariables.getMessageMap().clearErrorMessages();
@@ -365,12 +361,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     }
 
     protected Collection<CorporateBilledCorporatePaidDocument> retrieveCorporateBilledCorporatePaidDocuments(String statusCode) {
-        try {
-            return financialSystemDocumentService.findByWorkflowStatusCode(CorporateBilledCorporatePaidDocument.class, DocumentStatus.fromCode(statusCode));
-        } catch (WorkflowException e) {
-            LOG.error("retrieveCorporateBilledCorporatePaidDocuments, Error searching for enroute procurement card documents " + e.getMessage());
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return financialSystemDocumentService.findByWorkflowStatusCode(CorporateBilledCorporatePaidDocument.class, DocumentStatus.fromCode(statusCode));
     }
     
     protected void createAndEmailReport(Collection<CorporateBilledCorporatePaidDocument> cbcpDocumentList,

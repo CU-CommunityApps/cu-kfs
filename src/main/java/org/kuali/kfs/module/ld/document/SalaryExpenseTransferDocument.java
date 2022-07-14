@@ -18,23 +18,29 @@
  */
 package org.kuali.kfs.module.ld.document;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ld.LaborParameterConstants;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.businessobject.LateAdjustment;
 import org.kuali.kfs.module.ld.util.LaborPendingEntryGenerator;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
@@ -49,7 +55,7 @@ import java.util.Map;
 public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentBase implements LateAdjustable {
 
     private static final Logger LOG = LogManager.getLogger();
-    
+
     private transient BusinessObjectDictionaryService businessObjectDictionaryService;
     protected Map<String, KualiDecimal> approvalObjectCodeBalances;
     protected LateAdjustment lateAdjustment;
@@ -194,7 +200,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     public List getLaborLedgerPendingEntriesForSearching() {
         return super.getLaborLedgerPendingEntries();
     }
-    
+
     public BusinessObjectDictionaryService getBusinessObjectDictionaryService() {
         if (businessObjectDictionaryService == null) {
             businessObjectDictionaryService = KNSServiceLocator.getBusinessObjectDictionaryService();
@@ -202,4 +208,14 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         return businessObjectDictionaryService;
     }
 
+    public boolean isAnyLateAdjustmentFieldPopulated() {
+        if (ObjectUtils.isNull(lateAdjustment)) {
+            return false;
+        }
+        return StringUtils.isNotBlank(lateAdjustment.getExpenditureDescription())
+                || StringUtils.isNotBlank(lateAdjustment.getExpenditureProjectBenefit())
+                || StringUtils.isNotBlank(lateAdjustment.getLateAdjustmentDescription())
+                || StringUtils.isNotBlank(lateAdjustment.getLateAdjustmentReason())
+                || StringUtils.isNotBlank(lateAdjustment.getLateAdjustmentActionDescription());
+    }
 }

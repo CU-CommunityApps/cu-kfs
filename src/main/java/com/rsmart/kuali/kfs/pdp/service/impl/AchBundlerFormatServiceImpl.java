@@ -112,7 +112,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
             LOG.debug("performFormat() Step 1 Payment Group ID " + paymentGroup.getId());
 
             // process payment group data
-            boolean groupProcessed = processPaymentGroup(paymentGroup, paymentProcess);
+            boolean groupProcessed = processPaymentGroup(paymentGroup, paymentProcess, false);
             if (!groupProcessed) {
                 throw new FormatException("Error encountered during format");
             }

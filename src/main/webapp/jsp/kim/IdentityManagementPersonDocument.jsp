@@ -36,27 +36,26 @@
     htmlFormAction="${formAction}"
     documentTypeName="PERS"
     renderMultipart="${inquiry}"
-    showTabButtons="true"
-    auditCount="0">
+    showTabButtons="true">
 
     <c:if test="${!inquiry}">
-        <kul:hiddenDocumentFields />
-        <kul:documentOverview editingMode="${KualiForm.editingMode}" />
-    </c:if>
+ 	    <kul:hiddenDocumentFields />
+	    <kul:documentOverview editingMode="${KualiForm.editingMode}" />
+	</c:if>
     <c:if test="${inquiry}">
         <%-- CU Customization: Add an extra empty line. --%>
         <br/>
         <div id="workarea">
     </c:if>
-    <kim:personOverview />
-    <kim:personContact />
-    <kim:personPrivacy />
-    <kim:personMembership />
+	<kim:personOverview />
+	<kim:personContact />
+	<kim:personPrivacy />
+	<kim:personMembership />
 
-    <c:if test="${!inquiry}">           
-        <kul:adHocRecipients />
-        <kul:routeLog />
-    </c:if>
+    <c:if test="${!inquiry}">    		
+		<kul:adHocRecipients />
+		<kul:routeLog />
+	</c:if>
     <%-- CU Customization: Do not display the superuser actions when in inquiry mode. --%>
     <c:if test="${!inquiry}">
         <kul:superUserActions />

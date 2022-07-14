@@ -113,9 +113,6 @@
                                     value="Clear Vendor"/>
                         </c:if>
                     </c:if>
-                    <c:if test="${lockB2BEntry or (displayRequisitionFields or displayPurchaseOrderFields) and KualiForm.document.hasB2BVendor}">
-                        <sys:backdoorAwareLink displayTitle="true" title="Shop Catalogs" url="b2b.do?methodToCall=shopCatalogs" />
-                    </c:if>
                 </td>
                 <th class="right" width="25%">
                     <kul:htmlAttributeLabel attributeEntry="${documentAttributes.vendorCityName}" />

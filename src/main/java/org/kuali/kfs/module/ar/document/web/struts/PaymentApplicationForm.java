@@ -22,7 +22,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
@@ -46,10 +49,6 @@ import org.kuali.kfs.module.ar.document.service.CustomerInvoiceDocumentService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kim.api.identity.Person;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -199,7 +198,7 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         final DocumentAuthorizer documentAuthorizer =
                 SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(document);
         final Person person = GlobalVariables.getUserSession().getPerson();
-        return documentAuthorizer.canInitiate(ArConstants.PAYMENT_APPLICATION_ADJUSTMENT_DOCUMENT_TYPE_CODE, person);
+        return documentAuthorizer.canInitiate(ArConstants.ArDocumentTypeCodes.PAYMENT_APPLICATION_ADJUSTMENT_DOCUMENT_TYPE_CODE, person);
     }
 
     @Override
@@ -241,7 +240,7 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
 
     @Override
     protected String getDefaultDocumentTypeName() {
-        return ArConstants.PAYMENT_APPLICATION_DOCUMENT_TYPE_CODE;
+        return ArConstants.ArDocumentTypeCodes.PAYMENT_APPLICATION_DOCUMENT_TYPE_CODE;
     }
 
     @Override
@@ -282,12 +281,7 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
             // customer number.
             docId = request.getParameter(KFSConstants.PARAMETER_DOC_ID).trim();
             DocumentService documentService = SpringContext.getBean(DocumentService.class);
-            Document d;
-            try {
-                d = documentService.getByDocumentHeaderId(docId);
-            } catch (WorkflowException e) {
-                throw new RuntimeException("WorkflowException thrown when trying to load docId [" + docId + "]", e);
-            }
+            Document d = documentService.getByDocumentHeaderId(docId);
             PaymentApplicationDocument pDocument = (PaymentApplicationDocument) d;
             AccountsReceivableDocumentHeader arHeader = pDocument.getAccountsReceivableDocumentHeader();
             if (ObjectUtils.isNotNull(arHeader)) {

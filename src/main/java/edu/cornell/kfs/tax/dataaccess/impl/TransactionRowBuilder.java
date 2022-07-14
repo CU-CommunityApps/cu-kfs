@@ -357,7 +357,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
                         // Get and sort the documents.
                         DocumentSearchCriteria.Builder criteria = DocumentSearchCriteria.Builder.create();
                         criteria.setDocumentId(docIdCriteria.toString());
-                        DocumentSearchResults results = documentSearchService.lookupDocuments(null, criteria.build());
+                        DocumentSearchResults results = documentSearchService.lookupDocuments(null, criteria.build(), false);
                         documentsForBatch = new ArrayList<DocumentRouteHeaderValue>(results.getSearchResults().size());
                         for (DocumentSearchResult result : results.getSearchResults()) {
                             documentsForBatch.add(result.getDocument());

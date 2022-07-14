@@ -107,16 +107,12 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
                     LOG.info("Retrieving document : " + docId.trim());
                     Document document = documentService.getByDocumentHeaderId(docId.trim());
 
-                    try {
-                        if (!ObjectUtils.isNull(document)) {
-                            LOG.info("Document Number to cancel : " + document.getDocumentNumber());
-                            canceledDocumentCount++;
-                            documentService.prepareWorkflowDocument(document);
-                            workflowDocumentService.superUserCancel(document.getDocumentHeader().getWorkflowDocument(), "AutoCancelBatchStep: Older Than " + daysToAutoCancel + " Days");
-                            sessionDocumentService.addDocumentToUserSession(GlobalVariables.getUserSession(), document.getDocumentHeader().getWorkflowDocument());
-                        }
-                    } catch (WorkflowException e) {
-                        LOG.error("AutoCancelBatchStep Encountered WorkflowException " + document.getDocumentNumber(), e);
+                    if (!ObjectUtils.isNull(document)) {
+                        LOG.info("Document Number to cancel : " + document.getDocumentNumber());
+                        canceledDocumentCount++;
+                        documentService.prepareWorkflowDocument(document);
+                        workflowDocumentService.superUserCancel(document.getDocumentHeader().getWorkflowDocument(), "AutoCancelBatchStep: Older Than " + daysToAutoCancel + " Days");
+                        sessionDocumentService.addDocumentToUserSession(GlobalVariables.getUserSession(), document.getDocumentHeader().getWorkflowDocument());
                     }
                 }
             }

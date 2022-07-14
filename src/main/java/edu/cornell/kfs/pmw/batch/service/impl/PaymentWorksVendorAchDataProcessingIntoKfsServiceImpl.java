@@ -51,8 +51,8 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
         boolean processingSuccessful = false;
         MaintenanceDocument paatMaintenceDoc = createKfsPayeeAchMaintenaceDocument(pmwVendor, reportData);
         if (ObjectUtils.isNotNull(paatMaintenceDoc)
-            && kfsPayeeAchMaintenanceDocumentValidated(paatMaintenceDoc, reportData, pmwVendor)
-            && kfsPayeeAchMaintenceDocumentRouted(paatMaintenceDoc, reportData, pmwVendor)) {
+            && kfsPayeeAchMaintenanceDocumentValidated(paatMaintenceDoc, reportData, pmwVendor)) {
+        	routePayeeAchMaintenanceDocument(paatMaintenceDoc, reportData, pmwVendor);
             pmwVendor.setKfsAchDocumentNumber(paatMaintenceDoc.getDocumentNumber());
             processingSuccessful = true;
         }
@@ -102,23 +102,12 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
         return documentValidated;
     }
 
-    private boolean kfsPayeeAchMaintenceDocumentRouted(MaintenanceDocument paatMaintenceDoc, PaymentWorksNewVendorPayeeAchBatchReportData reportData, PaymentWorksVendor pmwVendor) {
-        boolean documentRouted = false;
-        try {
-            String annotationMessage = PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_ACH_CREATE_ROUTE_ANNOTATION + 
-                    pmwVendor.getPmwVendorRequestId();
-            getDocumentService().routeDocument(paatMaintenceDoc, annotationMessage, null);
-            LOG.info("kfsPayeeAchMaintenceDocumentRouted: paatMaintenceDoc routed.");
-            documentRouted = true;
-        } catch (WorkflowException we) {
-            List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
-            captureKfsPayeeAchProcessingErrorsForVendor(pmwVendor, reportData, edocCreateErrors);
-            LOG.error("kfsPayeeAchMaintenceDocumentRouted: eDoc routing error(s): " + edocCreateErrors.toString());
-            LOG.error("kfsPayeeAchMaintenceDocumentRouted: eDoc routing exception caught: " + we.getMessage());
-        } finally {
-            GlobalVariables.getMessageMap().clearErrorMessages();
-        }
-        return documentRouted;
+    private void routePayeeAchMaintenanceDocument(MaintenanceDocument paatMaintenanceDoc, PaymentWorksNewVendorPayeeAchBatchReportData reportData, PaymentWorksVendor pmwVendor) {
+        String annotationMessage = PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_ACH_CREATE_ROUTE_ANNOTATION + 
+                pmwVendor.getPmwVendorRequestId();
+        getDocumentService().routeDocument(paatMaintenanceDoc, annotationMessage, null);
+        LOG.info("routePayeeAchMaintenanceDocument: paatMaintenanceDoc routed.");
+        GlobalVariables.getMessageMap().clearErrorMessages();
     }
     
     private void captureKfsPayeeAchProcessingErrorsForVendor(PaymentWorksVendor pmwVendorWithFailure, PaymentWorksNewVendorPayeeAchBatchReportData reportData, List<String> validationErrors) {

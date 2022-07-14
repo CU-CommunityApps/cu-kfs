@@ -679,25 +679,20 @@
           parent="financialSystemDocumentTypePermissionTypeService-parentBean"/>
     <bean id="financialSystemDocumentTypePermissionTypeService-parentBean"
           class="org.kuali.kfs.sys.identity.FinancialSystemDocumentTypePermissionTypeServiceImpl" abstract="true"
-          parent="kfs.documentTypePermissionTypeService"/>
+          parent="documentTypePermissionTypeService"/>
 
     <bean id="financialSystemDocumentTypeAndExistingRecordsOnlyPermissionTypeService"
           parent="financialSystemDocumentTypeAndExistingRecordsOnlyPermissionTypeService-parentBean"/>
     <bean id="financialSystemDocumentTypeAndExistingRecordsOnlyPermissionTypeService-parentBean"
           class="org.kuali.kfs.sys.identity.FinancialSystemDocumentTypeAndExistingRecordsOnlyPermissionTypeServiceImpl"
-          abstract="true" parent="kfs.documentTypePermissionTypeService"/>
-
-    <bean id="reportPermissionTypeService" parent="reportPermissionTypeService-parentBean"/>
-    <bean id="reportPermissionTypeService-parentBean"
-          class="org.kuali.kfs.sys.identity.ViewReportPermissionTypeServiceImpl" abstract="true"
-          parent="kimPermissionTypeService"/>
+          abstract="true" parent="documentTypePermissionTypeService"/>
 
     <bean id="financialSystemUserRoleTypeService" parent="financialSystemUserRoleTypeService-parentBean"/>
     <bean id="financialSystemUserRoleTypeService-parentBean"
           class="org.kuali.kfs.coa.identity.FinancialSystemUserRoleTypeServiceImpl" abstract="true"
           parent="kimRoleTypeService"/>
 
-    <bean id="kfs.campusRoleService" class="org.kuali.kfs.sys.identity.CampusRoleTypeServiceImpl"
+    <bean id="campusRoleService" class="org.kuali.kfs.sys.identity.CampusRoleTypeServiceImpl"
           parent="kimRoleTypeService"/>
 
 
@@ -758,7 +753,9 @@
         </property>
     </bean>
 
-    <bean id="dailyEmailStep" class="org.kuali.kfs.sys.batch.DailyEmailStep" parent="step"/>
+    <bean id="dailyEmailStep" class="org.kuali.kfs.sys.batch.DailyEmailStep" parent="step"
+          p:actionListEmailService-ref="actionListEmailService"
+    />
 
     <!-- Create an unscheduled Weekly Mail job -->
     <bean id="weeklyEmailJob" parent="unscheduledJobDescriptor">
@@ -769,8 +766,9 @@
         </property>
     </bean>
 
-    <bean id="weeklyEmailStep" class="org.kuali.kfs.sys.batch.WeeklyEmailStep" parent="step"/>
-
+    <bean id="weeklyEmailStep" class="org.kuali.kfs.sys.batch.WeeklyEmailStep" parent="step"
+          p:actionListEmailService-ref="actionListEmailService"
+    />
     <bean id="modulesLockJob" parent="modulesLockJob-parentBean"/>
     <bean id="modulesLockJob-parentBean" parent="unscheduledJobDescriptor" abstract="true">
         <property name="steps">
@@ -893,7 +891,7 @@
     <bean id="namespaceOrFilePathPermissionTypeService" parent="namespaceOrFilePathPermissionTypeService-parentBean"/>
     <bean id="namespaceOrFilePathPermissionTypeService-parentBean" abstract="true"
           class="org.kuali.kfs.sys.identity.NamespaceWildcardAllowedAndOrStringWildcardAllowedPermissionTypeServiceImpl"
-          parent="kfs.namespacePermissionTypeService"
+          parent="namespacePermissionTypeService"
           p:wildcardMatchStringAttributeName="filePath" p:namespaceRequiredOnStoredAttributeSet="false"/>
 
     <bean id="excludeSingleActorSeparationOfDutiesRoleTypeService"
@@ -984,13 +982,6 @@
     <bean id="filteredTable" abstract="true" class="org.kuali.kfs.sys.batch.DataDictionaryFilteredTable"/>
     <bean id="filteredField" abstract="true" class="org.kuali.kfs.sys.batch.DataDictionaryFilteredField"/>
     <bean id="moduleRemap" abstract="true" class="org.kuali.kfs.sys.batch.DataDictionaryModuleRemapping"/>
-
-    <bean id="ojbConfigurationService" parent="ojbConfigurationService-parentBean"/>
-    <bean id="ojbConfigurationService-parentBean" abstract="true"
-          class="org.kuali.kfs.sys.service.impl.OjbConfigurationServiceImpl"
-          p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
-          p:documentDictionaryService-ref="documentDictionaryService"
-          p:persistenceStructureService-ref="persistenceStructureService"/>
 
     <bean name="userFavoritesService" parent="userFavoritesService-parentBean"/>
     <bean name="userFavoritesService-parentBean" abstract="true"

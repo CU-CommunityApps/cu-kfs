@@ -557,8 +557,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         if (roleIds.isEmpty()) {
             return Collections.emptyList();
         }
-
-        List<RoleMember> roleMemberList = getStoredRoleMembersForRoleIds(roleIds, null, null);
+        List<RoleMember> roleMemberList = new ArrayList<>();
+        for (String roleId: roleIds) {
+            roleMemberList.addAll(getStoredRoleMembersForRoleId(roleId, null, null));
+        }
         List<RoleMembership> roleMemberships = new ArrayList<>();
         for (RoleMember roleMember : roleMemberList) {
             RoleMembership roleMembeship = RoleMembership.Builder.create(
@@ -654,13 +656,13 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 List<String> attributesForExactMatch = roleTypeService.getQualifiersForExactMatch();
                 if (CollectionUtils.isNotEmpty(attributesForExactMatch)) {
                     copyRoleIds.remove(roleId);
-                    rms.addAll(getStoredRoleMembersForRoleIds(Collections.singletonList(roleId), null,
+                    rms.addAll(getStoredRoleMembersForRoleId(roleId, null,
                             populateQualifiersForExactMatch(qualification, attributesForExactMatch)));
                 }
             }
         }
-        if (CollectionUtils.isNotEmpty(copyRoleIds)) {
-            rms.addAll(getStoredRoleMembersForRoleIds(copyRoleIds, null, null));
+        for (String copyRoleId: copyRoleIds) {
+            rms.addAll(getStoredRoleMembersForRoleId(copyRoleId, null, null));
         }
 
         // build a map of role ID to membership information
@@ -1041,8 +1043,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 }
                 if (qualificationForExactMatch != null) {
                     rolesCheckedForExactMatch.add(role.getId());
-                    List<RoleMember> matchingRoleMembers = getStoredRolePrincipalsForPrincipalIdAndRoleIds(
-                            Collections.singletonList(role.getId()), principalId, qualificationForExactMatch);
+                    List<RoleMember> matchingRoleMembers = getStoredRolePrincipalsForPrincipalIdAndRoleId(
+                            role.getId(), principalId, qualificationForExactMatch);
                     // if a role member matched our principal, we're good to go
                     if (CollectionUtils.isNotEmpty(matchingRoleMembers)) {
                         return putPrincipalHasRoleInCache(true, principalId, role.getId(), qualification,
@@ -1097,8 +1099,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
             for (RoleLite role : roles) {
                 roleIndex.put(role.getId(), role);
             }
-            List<RoleMember> roleMembers = getStoredRoleMembersForRoleIds(new ArrayList<>(roleIndex.keySet()),
-                    MemberType.ROLE.getCode(), null);
+            List<RoleMember> roleMembers = new ArrayList<>();
+            for (String roleIndexId: roleIndex.keySet()) {
+                roleMembers.addAll(getStoredRoleMembersForRoleId(roleIndexId, MemberType.ROLE.getCode(), null));
+            }
             for (RoleMember roleMember : roleMembers) {
                 RoleLite role = roleIndex.get(roleMember.getRoleId());
                 RoleTypeService roleTypeService = context.getRoleTypeService(role.getKimTypeId());
@@ -1535,8 +1539,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                     List<String> attributesForExactMatch = roleTypeService.getQualifiersForExactMatch();
                     if (CollectionUtils.isNotEmpty(attributesForExactMatch)) {
                         copyRoleIds.remove(roleId);
-                        roleMemberList.addAll(getStoredRoleMembersForRoleIdsWithFilters(
-                                Collections.singletonList(roleId), principalId, groupIds,
+                        roleMemberList.addAll(getStoredRoleMembersForRoleIdWithFilters(roleId, principalId, groupIds,
                                 populateQualifiersForExactMatch(qualification, attributesForExactMatch)));
                     }
                 } catch (Exception e) {
@@ -1544,8 +1547,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 }
             }
         }
-        if (CollectionUtils.isNotEmpty(copyRoleIds)) {
-            roleMemberList.addAll(getStoredRoleMembersForRoleIdsWithFilters(copyRoleIds, principalId, groupIds, null));
+        for (String copyRoleId: copyRoleIds) {
+            roleMemberList.addAll(getStoredRoleMembersForRoleIdWithFilters(copyRoleId, principalId, groupIds, null));
         }
         return roleMemberList;
     }
@@ -1571,8 +1574,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                     List<String> attributesForExactMatch = roleTypeService.getQualifiersForExactMatch();
                     if (CollectionUtils.isNotEmpty(attributesForExactMatch)) {
                         copyRoleIds.remove(roleId);
-                        roleMembers.addAll(getStoredRoleGroupsForGroupIdsAndRoleIds(
-                                Collections.singletonList(roleId), groupIds,
+                        roleMembers.addAll(getStoredRoleGroupsForGroupIdsAndRoleId(roleId, groupIds,
                                 populateQualifiersForExactMatch(qualification, attributesForExactMatch)));
                     }
                 } catch (Exception e) {
@@ -1580,8 +1582,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 }
             }
         }
-        if (CollectionUtils.isNotEmpty(copyRoleIds)) {
-            roleMembers.addAll(getStoredRoleGroupsForGroupIdsAndRoleIds(copyRoleIds, groupIds, null));
+        for (String copyRoleId: copyRoleIds) {
+            roleMembers.addAll(getStoredRoleGroupsForGroupIdsAndRoleId(copyRoleId, groupIds, null));
         }
         return roleMembers;
     }
@@ -1959,11 +1961,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
     }
 
-    // CU Customization: Updated this method to prepare and use an attributeName-to-attributeId map.
     private List<RoleMember> getRoleMembersByDefaultStrategy(String roleId, String memberId, String memberTypeCode,
                                                              Map<String, String> qualifier) {
-        Map<String, String> validAttributeIds = getAttributeNameToAttributeIdMappings(Collections.singleton(roleId), qualifier);
-        Map<String, String> convertedQualifier = convertQualifierKeys(qualifier, validAttributeIds);
+        Map<String, String> convertedQualifier = convertQualifierKeys(qualifier, roleId);
         List<RoleMember> rms = new ArrayList<>();
         List<RoleMember> roleMem = getRoleDao().getRoleMembershipsForMemberId(memberTypeCode, memberId,
                 convertedQualifier);

@@ -67,7 +67,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
@@ -538,17 +537,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			Date oldExpDate = null;
 
 			if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
-				try {
-					MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
-                            .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
-					AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
-					if (ObjectUtils.isNotNull(oldAccountGlobal)) {
-						oldExpDate = oldAccountGlobal.getAccountExpirationDate();
-					}
-				}
-				catch (WorkflowException ex) {
-					LOG.warn("Error retrieving maintenance doc for doc #" + maintenanceDocument.getDocumentNumber() +
-                            ". This shouldn't happen.", ex);
+				MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+                        .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
+				AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
+				if (ObjectUtils.isNotNull(oldAccountGlobal)) {
+					oldExpDate = oldAccountGlobal.getAccountExpirationDate();
 				}
 			}
 
@@ -588,16 +581,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		// get previous expiration date for possible check later
 		if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
-			try {
-				MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
-                        .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
-				AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
-				if (ObjectUtils.isNotNull(oldAccountGlobal)) {
-					prevExpDate = oldAccountGlobal.getAccountExpirationDate();
-				}
-			}
-			catch (WorkflowException ex) {
-				LOG.warn( "Error retrieving maintenance doc for doc #" + maintenanceDocument.getDocumentNumber()+ ". This shouldn't happen.", ex );
+			MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+                    .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
+			AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
+			if (ObjectUtils.isNotNull(oldAccountGlobal)) {
+				prevExpDate = oldAccountGlobal.getAccountExpirationDate();
 			}
 		}
 

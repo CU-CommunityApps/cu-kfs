@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
-import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderDocTypes;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.document.LineItemReceivingDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
@@ -9,11 +8,11 @@ import org.kuali.kfs.module.purap.document.ReceivingDocument;
 import org.kuali.kfs.module.purap.document.service.LogicContainer;
 import org.kuali.kfs.module.purap.document.service.impl.ReceivingServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.module.purap.PurapConstants;
 
 import edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument;
 
@@ -28,45 +27,38 @@ public class CuReceivingServiceImpl extends ReceivingServiceImpl {
             //if a new item has been added spawn a purchase order amendment
             if( hasNewUnorderedItem((LineItemReceivingDocument)receivingDocument) ){
                 String newSessionUserId = KFSConstants.SYSTEM_USER;
-                try {
 
-                    LogicContainer logicToRun = new LogicContainer() {
-                        @Override
-                        public Object runLogic(Object[] objects) throws Exception {
-                            LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)objects[0];
-                            String poDocNumber = (String)objects[1];
 
-                            //create a PO amendment
-                            PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
+                LogicContainer logicToRun = new LogicContainer() {
+                    @Override
+                    public Object runLogic(Object[] objects) {
+                        LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)objects[0];
+                        String poDocNumber = (String)objects[1];
 
-                            // KFSPTS-1769, KFSUPGRADE-339
-                            ((CuPurchaseOrderAmendmentDocument)amendmentPo).setSpawnPoa(true);
-                            //add new lines to amendement
-                            addUnorderedItemsToAmendment(amendmentPo, rlDoc);
+                        //create a PO amendment
+                        PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
 
-                            //route amendment
-                            documentService.routeDocument(amendmentPo, null, null);
+                        // KFSPTS-1769, KFSUPGRADE-339
+                        ((CuPurchaseOrderAmendmentDocument)amendmentPo).setSpawnPoa(true);
+                        //add new lines to amendement
+                        addUnorderedItemsToAmendment(amendmentPo, rlDoc);
 
-                            //add note to amendment po document
-                            String note = "Purchase Order Amendment " + amendmentPo.getPurapDocumentIdentifier() + " (document id " + amendmentPo.getDocumentNumber() + ") created for new unordered line items due to Receiving (document id " + rlDoc.getDocumentNumber() + ")";
+                        //route amendment
+                        documentService.routeDocument(amendmentPo, null, null);
 
-                            Note noteObj = documentService.createNoteFromDocument(amendmentPo, note);
-                            amendmentPo.addNote(noteObj);
-                            noteService.save(noteObj);
+                        //add note to amendment po document
+                        String note = "Purchase Order Amendment " + amendmentPo.getPurapDocumentIdentifier() + " (document id " + amendmentPo.getDocumentNumber() + ") created for new unordered line items due to Receiving (document id " + rlDoc.getDocumentNumber() + ")";
 
-                            return null;
-                        }
-                    };
+                        Note noteObj = documentService.createNoteFromDocument(amendmentPo, note);
+                        amendmentPo.addNote(noteObj);
+                        noteService.save(noteObj);
 
-                    purapService.performLogicWithFakedUserSession(newSessionUserId, logicToRun, new Object[] { rlDoc, po.getDocumentNumber() });
-                }
-                catch (WorkflowException e) {
-                    String errorMsg = "Workflow Exception caught: " + e.getLocalizedMessage();
-                    throw new RuntimeException(errorMsg, e);
-                }
-                catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                        return null;
+                    }
+                };
+
+                purapService.performLogicWithFakedUserSession(newSessionUserId, logicToRun, new Object[] { rlDoc, po.getDocumentNumber() });
+
             }
         }
     }

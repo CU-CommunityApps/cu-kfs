@@ -203,7 +203,7 @@
 
     <bean id="ObjectCode-inquiryDefinition" parent="ObjectCode-inquiryDefinition-parentBean"/>
     <bean id="ObjectCode-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
-          p:title="Object Code Inquiry">
+          p:title="Object Code">
         <property name="inquirySections">
             <list>
                 <ref bean="ObjectCode-inquirySectionDefinition"/>

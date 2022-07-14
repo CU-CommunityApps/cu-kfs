@@ -19,7 +19,7 @@
 package org.kuali.kfs.kew.actiontaken.dao;
 
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
-import org.kuali.kfs.kew.api.action.ActionType;
+import org.kuali.kfs.kew.api.action.WorkflowAction;
 
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -36,8 +36,6 @@ import java.util.List;
  */
 public interface ActionTakenDAO {
 
-    ActionTaken load(String id);
-
     void saveActionTaken(ActionTaken actionTaken);
 
     void deleteActionTaken(ActionTaken actionTaken);
@@ -46,17 +44,14 @@ public interface ActionTakenDAO {
 
     Collection<ActionTaken> findByDocumentId(String documentId);
 
-    Collection<ActionTaken> findByDocIdAndAction(String docId, String action);
-
     List<ActionTaken> findByDocumentIdWorkflowId(String documentId, String workflowId);
 
     List findByDocumentIdIgnoreCurrentInd(String documentId);
 
-    void deleteByDocumentId(String documentId);
 
     boolean hasUserTakenAction(String workflowId, String documentId);
 
-    Timestamp getLastActionTakenDate(String documentId, ActionType actionType);
+    Timestamp getLastActionTakenDate(String documentId, WorkflowAction workflowAction);
     
     Timestamp getLastModifiedDate(String documentId);
 }

@@ -55,7 +55,8 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 
     @Cacheable(cacheNames = DocumentType.CACHE_NAME,
             key = "'{BO}' + 'documentTypeId=' + #p0.getId() + '|' + 'name=' + #p0.getName() + '|' + 'label=' + " +
-                    "#p0.getLabel() + '|' +'docGroupName=' + #p1 + '|' + 'climbHierarchy=' + #p2")
+                    "#p0.getLabel() + '|' +'active=' + #p0.getActive() + '|' +'docGroupName=' + #p1 + '|' +" +
+                    " 'climbHierarchy=' + #p2")
     public Collection<DocumentType> find(DocumentType documentType, String docTypeParentName, boolean climbHierarchy) {
         DocumentType docTypeParent = this.findByName(docTypeParentName);
         return getDocumentTypeDAO().find(documentType, docTypeParent, climbHierarchy);
@@ -199,16 +200,6 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
             key = "'{BO}{previousInstances}' + 'documentTypeName=' + #p0")
     public List<DocumentType> findPreviousInstances(String documentTypeName) {
         return getDocumentTypeDAO().findPreviousInstances(documentTypeName);
-    }
-
-    @Cacheable(value = DocumentType.CACHE_NAME,
-            key = "'{BO}{root}' + 'documentTypeId=' + #p0.getId()")
-    public DocumentType findRootDocumentType(DocumentType docType) {
-        if (docType.getParentDocType() != null) {
-            return findRootDocumentType(docType.getParentDocType());
-        } else {
-            return docType;
-        }
     }
 
     public void loadXml(InputStream inputStream, String principalId) {
@@ -404,8 +395,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         }
     }
 
-    @Override
-    public boolean hasRouteNodeForDocumentTypeId(String routeNodeName, String documentTypeId)
+    private boolean hasRouteNodeForDocumentTypeId(String routeNodeName, String documentTypeId)
             throws IllegalArgumentException {
         if (StringUtils.isBlank(routeNodeName)) {
             throw new IllegalArgumentException("routeNodeName was null or blank");

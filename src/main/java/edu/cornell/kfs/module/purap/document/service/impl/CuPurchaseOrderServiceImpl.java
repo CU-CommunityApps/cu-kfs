@@ -26,7 +26,6 @@ import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -124,16 +123,11 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("setupDocumentForPendingFirstTransmission() Purchase Order Transmission Type is '" + po.getPurchaseOrderTransmissionMethodCode() + "' setting status to '" + newStatusCode + "'");
             }
-            try {
-                po.updateAndSaveAppDocStatus(newStatusCode);
-            }
-            catch (WorkflowException e) {
-                throw new RuntimeException("Error saving routing data while saving document with id " + po.getDocumentNumber(), e);
-            }
+          po.updateAndSaveAppDocStatus(newStatusCode);
         }
     }
 
-    protected PurchaseOrderDocument generatePurchaseOrderFromRequisition(RequisitionDocument reqDocument) throws WorkflowException {
+    protected PurchaseOrderDocument generatePurchaseOrderFromRequisition(RequisitionDocument reqDocument) {
         PurchaseOrderDocument poDocument = super.generatePurchaseOrderFromRequisition(reqDocument);
         return copyNotesAndAttachmentsToPO(reqDocument, poDocument); 
     }
@@ -204,7 +198,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 
     @Override
     protected PurchaseOrderDocument createPurchaseOrderDocumentFromSourceDocument(
-            PurchaseOrderDocument sourceDocument, String docType) throws WorkflowException {
+            PurchaseOrderDocument sourceDocument, String docType) {
         PurchaseOrderDocument newDocument = super.createPurchaseOrderDocumentFromSourceDocument(sourceDocument, docType);
         resetOverrideCodesOnItemAccountingLines(newDocument);
         return newDocument;

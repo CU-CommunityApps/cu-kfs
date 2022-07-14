@@ -240,7 +240,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         //KFSPTS-1458  -- These same checks/changes needed to be added to the <DistributionMethod> tag section further on in the file because of how the cxml needs to be created.
         //KFSPTS-1458  -- Based true/false value for both <DistributeRevision> tag and <DistributionMethod> tag on MOPOT value being "US Mail" (MANUAL=MANL) or "Do Not Send" (CONVERSION=CNVS)       
         // void = VOPE      ammend = CGIN ?   ammend should =
-        if (StringUtils.equals(workFlowDocument.getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_PENDING_VOID) || documentType.equalsIgnoreCase(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_VOID_DOCUMENT)) {
+        if (StringUtils.equals(workFlowDocument.getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_PENDING_VOID) || documentType.equalsIgnoreCase(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_VOID_DOCUMENT)) {
             cxml.append("    <POHeader type=\"cancel\">\n");            
             //KFSPTS-1458 -- When MOPOT is "Do Not Send" = code of conversion,  distribute revision tag needs to be false;
             //KFSPTS-1458 -- otherwise distribute revision tag needs to be true (for "Fax", "Email", and "US Mail"=manual mopot).
@@ -250,7 +250,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             else { //FAX, EMAIL, MANUAL=US Mail
             	cxml.append("    <DistributeRevision>true</DistributeRevision>\n");
             }
-        } else if (documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
+        } else if (documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
             cxml.append("    <POHeader type=\"update\">\n");
             //KFSPTS-1458 -- When MOPOT is "Do Not Send" = code of conversion,  distribute revision tag needs to be false;
             //KFSPTS-1458 -- otherwise distribute revision tag needs to be true (for "Fax", "Email", and "US Mail"=manual mopot).

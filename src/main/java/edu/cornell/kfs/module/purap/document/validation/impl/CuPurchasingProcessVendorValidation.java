@@ -133,7 +133,7 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
      //   List<String>  currentRouteLevels = Arrays.asList(Strings.split(purDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames(), ","));
         Set<String> currentRouteLevels = workflowDoc.getCurrentNodeNames();
         
-        if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.ACCOUNT_NODE) && workflowDoc.isApprovalRequested() && !workflowDoc.getDocumentTypeName().equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
+        if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.ACCOUNT_NODE) && workflowDoc.isApprovalRequested() && !workflowDoc.getDocumentTypeName().equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
         	//added document not being a POA to conditional check due to FO being able to change data during account node approval on the POA and needed validation being bypassed 
         	return_value = true;
         }

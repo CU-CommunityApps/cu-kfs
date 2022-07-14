@@ -127,12 +127,7 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
         // Create document with description provided
 		CuDisbursementVoucherDocument dvDoc = null;
 		
-        try {
-            dvDoc = (CuDisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
-        }
-        catch (WorkflowException e) {
-            throw new RuntimeException("Error creating new disbursement voucher document: " + e.getMessage(), e);
-        }
+        dvDoc = (CuDisbursementVoucherDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DisbursementVoucherDocument.class);
 	  
         if(dvDoc != null) {
 			dvDoc.getDocumentHeader().setDocumentDescription(dvDescription);
@@ -206,12 +201,7 @@ public class SubmitTripWebServiceImpl implements SubmitTripWebService {
         // Create document with description provided
 		CuDistributionOfIncomeAndExpenseDocument diDoc = null;
 		
-        try {
-            diDoc = (CuDistributionOfIncomeAndExpenseDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DistributionOfIncomeAndExpenseDocument.class);
-        }
-        catch (WorkflowException e) {
-            throw new RuntimeException("Error creating new disbursement voucher document: " + e.getMessage(), e);
-        }
+        diDoc = (CuDistributionOfIncomeAndExpenseDocument) SpringContext.getBean(DocumentService.class).getNewDocument(DistributionOfIncomeAndExpenseDocument.class);
 	  
         if(diDoc != null) {
         	diDoc.getDocumentHeader().setDocumentDescription(diDescription);

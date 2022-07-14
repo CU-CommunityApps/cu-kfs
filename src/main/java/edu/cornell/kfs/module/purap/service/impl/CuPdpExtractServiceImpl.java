@@ -17,7 +17,6 @@ import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -27,18 +26,13 @@ public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
     
     @Override
     protected void updatePaymentRequest(PaymentRequestDocument paymentRequestDocument, Person puser, Date processRunDate) {
-        try {
-            PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
-            doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
-            getPurapService().saveDocumentNoValidation(doc);
-            
-            DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());
-            DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
-            queue.indexDocument(doc.getDocumentNumber());
-
-        } catch (WorkflowException e) {
-            throw new IllegalArgumentException("Unable to retrieve payment request: " + paymentRequestDocument.getDocumentNumber());
-        }
+        PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
+        doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
+        getPurapService().saveDocumentNoValidation(doc);
+        
+        DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());
+        DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
+        queue.indexDocument(doc.getDocumentNumber());
     }
     
     @Override

@@ -17,7 +17,6 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.document.DocumentAuthorizer;
@@ -29,7 +28,7 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 public class CuVendorCreditMemoAction extends VendorCreditMemoAction {
 	
 	@Override
-	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) throws WorkflowException {
+	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
         // set wire charge message in form
         ((CuVendorCreditMemoForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());

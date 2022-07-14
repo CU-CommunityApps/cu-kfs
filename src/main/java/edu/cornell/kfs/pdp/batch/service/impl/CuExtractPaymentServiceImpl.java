@@ -35,6 +35,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
+import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -60,13 +61,23 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected AchBundlerHelperService achBundlerHelperService;
     protected CuPayeeAddressService cuPayeeAddressService;
     
+    public CuExtractPaymentServiceImpl() {
+    	super(null);
+    }
+
+    public CuExtractPaymentServiceImpl(
+            final Iso20022FormatExtractor iso20022FormatExtractor
+    ) {
+    	super(null);
+    }
+    
     /**
     * MOD: Overridden to detect if the Bundle ACH Payments system parameter is on and if so, to 
     * call the new extraction bundler method
     */
     @Override
     public void extractAchPayments() {
-        LOG.debug("MOD - extractAchPayments() started");
+        LOG.debug("MOD - extractAchPayments() - Enter");
 
         Date processDate = dateTimeService.getCurrentDate();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);

@@ -95,7 +95,7 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
                 LOG.warn("Document not routable so returning with doing no action");
                 return;
             }
-            List<RouteNodeInstance> activeNodeInstances = new ArrayList<RouteNodeInstance>();
+            List<RouteNodeInstance> activeNodeInstances = new ArrayList<>();
             if (nodeInstanceId == null) {
                 activeNodeInstances.addAll(getRouteNodeService().getActiveNodeInstances(documentId));
             } else {
@@ -120,9 +120,9 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
             }
             lockAdditionalDocuments(document);
             try {
-                List<ProcessEntry> processingQueue = new LinkedList<ProcessEntry>();
+                List<ProcessEntry> processingQueue = new LinkedList<>();
                 for (RouteNodeInstance nodeInstancesToProcesses : nodeInstancesToProcess) {
-                    processingQueue.add(new ProcessEntry((RouteNodeInstance) nodeInstancesToProcesses));
+                    processingQueue.add(new ProcessEntry(nodeInstancesToProcesses));
                 }
                 Set<String> nodesCompleted = new HashSet<>();
                 // check the processingQueue for cases where there are no dest. nodes otherwise check if we've reached
@@ -204,9 +204,9 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
         if (nodeNames.isEmpty()) {
             return activeNodeInstances;
         }
-        List<RouteNodeInstance> nodeInstancesToProcess = new ArrayList<RouteNodeInstance>();
+        List<RouteNodeInstance> nodeInstancesToProcess = new ArrayList<>();
         for (Iterator<RouteNodeInstance> iterator = activeNodeInstances.iterator(); iterator.hasNext(); ) {
-            RouteNodeInstance nodeInstance = (RouteNodeInstance) iterator.next();
+            RouteNodeInstance nodeInstance = iterator.next();
             if (isNodeNameInPath(nodeNames, nodeInstance)) {
                 nodeInstancesToProcess.add(nodeInstance);
             }
@@ -225,13 +225,13 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
         for (Object nodeName1 : nodeNames) {
             String nodeName = (String) nodeName1;
             for (RouteNode nextNode : nodeInstance.getRouteNode().getNextNodes()) {
-                isInPath = isInPath || isNodeNameInPath(nodeName, nextNode, new HashSet<String>());
+                isInPath = isInPath || isNodeNameInPath(nodeName, nextNode, new HashSet<>());
             }
         }
         return isInPath;
     }
 
-    private boolean isNodeNameInPath(String nodeName, RouteNode node, Set<String> inspected) throws Exception {
+    private boolean isNodeNameInPath(String nodeName, RouteNode node, Set<String> inspected) {
         boolean isInPath = !inspected.contains(node.getRouteNodeId()) && node.getRouteNodeName().equals(nodeName);
         inspected.add(node.getRouteNodeId());
         if (helper.isSubProcessNode(node)) {
@@ -303,7 +303,7 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
         return KEWServiceLocator.getActionRequestService();
     }
 
-    private class ProcessEntry {
+    private static class ProcessEntry {
 
         private RouteNodeInstance nodeInstance;
         private int timesProcessed = 0;
