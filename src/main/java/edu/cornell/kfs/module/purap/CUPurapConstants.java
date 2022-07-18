@@ -268,4 +268,10 @@ public class CUPurapConstants {
         public static final String ROOM_NUMBER_PREFIX = "Room ";
         public static final String VENDORS = "vendors";
     }
+    
+    public enum JaggaerRoleSet {
+        ESHOP,
+        CONTRACTS_PLUS,
+        ADMINISTRATOR
+    }
 }

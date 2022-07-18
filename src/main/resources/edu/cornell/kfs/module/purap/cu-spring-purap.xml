@@ -277,4 +277,12 @@
 
 	<bean id="eInvoiceDao" parent="platformAwareDao"
 		  class="edu.cornell.kfs.module.purap.dataaccess.impl.CuEinvoiceDaoOjb"/>
+
+	<bean id="jaggaerKimTypeService"class="edu.cornell.kfs.module.purap.identity.JaggaerKimTypeService" />
+
+	<bean id="jaggaerRoleLinkMappingService" parent="jaggaerRoleLinkMappingService-parentBean" />
+	<bean id="jaggaerRoleLinkMappingService-parentBean" abstract="true" class="edu.cornell.kfs.module.purap.service.impl.JaggaerRoleLinkMappingServiceImpl">
+		<property name="businessObjectService" ref="businessObjectService" />
+	</bean>
+		
 </beans>
