@@ -3495,12 +3495,12 @@
     <field-descriptor name="cmForeignCurrencyTypeCode" column="CM_FCRNCY_TYP_CD" jdbc-type="VARCHAR" />
 </class-descriptor>
 
-	<class-descriptor class="edu.cornell.kfs.module.purap.businessobject" table="CU_JAGGAER_ROLE_LINK_T">
+	<class-descriptor class="edu.cornell.kfs.module.purap.businessobject.JaggaerRoleLinkMapping" table="CU_JAGGAER_ROLE_LINK_T">
 		<field-descriptor name="jaggaerRoleName" column="JAGGAER_ROLE_NM" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="eShopLink" column="ESHOP_LNK" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="contractPlusLink" column="CONTRACT_PLUS_LNK" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-		<field-descriptor name="jaggaerAdminLink" column="VARCHAR2" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+		<field-descriptor name="jaggaerAdminLink" column="ADMIN_LNK" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	</class-descriptor>
 

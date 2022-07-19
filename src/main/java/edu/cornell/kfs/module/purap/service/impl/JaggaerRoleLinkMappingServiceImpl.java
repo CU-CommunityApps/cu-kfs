@@ -8,7 +8,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
 import edu.cornell.kfs.module.purap.businessobject.JaggaerRoleLinkMapping;
 import edu.cornell.kfs.module.purap.service.JaggaerRoleLinkMappingService;
@@ -33,15 +35,17 @@ public class JaggaerRoleLinkMappingServiceImpl implements JaggaerRoleLinkMapping
     }
     
     protected Collection<JaggaerRoleLinkMapping> getJaggaerLinkRoles(JaggaerRoleSet roleSet) {
-        Map<String, Boolean> fieldValues = new HashMap<String, Boolean>();
-        /*
-         * @todo move these to constants
-         */
-        fieldValues.put("ACTV_IND", true);
-        fieldValues.put("ESHOP_LNK", roleSet == JaggaerRoleSet.ESHOP);
-        fieldValues.put("CONTRACT_PLUS_LNK", roleSet == JaggaerRoleSet.CONTRACTS_PLUS);
-        fieldValues.put("ADMIN_LNK", roleSet == JaggaerRoleSet.ADMINISTRATOR);
-        
+        Map<String, String> fieldValues = new HashMap<>();
+        fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.ACTIVE, KFSConstants.ACTIVE_INDICATOR);
+        if (roleSet == JaggaerRoleSet.ESHOP) {
+            fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.ESHOP_LINK, KFSConstants.ACTIVE_INDICATOR);
+        } else if (roleSet == JaggaerRoleSet.CONTRACTS_PLUS) {
+            fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.CONTACTS_PLUS_LINK, KFSConstants.ACTIVE_INDICATOR);
+        } else if (roleSet == JaggaerRoleSet.ADMINISTRATOR) {
+            fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.JAGGAER_ADMIN_LINK, KFSConstants.ACTIVE_INDICATOR);
+        } else {
+            throw new IllegalStateException("Found an unexpected role: " + roleSet);
+        }
         
         Collection<JaggaerRoleLinkMapping> linkMapping = businessObjectService.findMatching(JaggaerRoleLinkMapping.class, fieldValues);
         if (LOG.isDebugEnabled()) {
