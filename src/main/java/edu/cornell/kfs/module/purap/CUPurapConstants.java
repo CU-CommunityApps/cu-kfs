@@ -278,8 +278,14 @@ public class CUPurapConstants {
     }
     
     public enum JaggaerRoleSet {
-        ESHOP,
-        CONTRACTS_PLUS,
-        ADMINISTRATOR
+        ESHOP (JaggaerLinkMappingFieldNames.ESHOP_LINK),
+        CONTRACTS_PLUS (JaggaerLinkMappingFieldNames.CONTACTS_PLUS_LINK),
+        ADMINISTRATOR (JaggaerLinkMappingFieldNames.JAGGAER_ADMIN_LINK);
+        
+        public final String linkMappingFieldName;
+        
+        private JaggaerRoleSet(String linkMappingFieldName) {
+            this.linkMappingFieldName = linkMappingFieldName;
+        }
     }
 }

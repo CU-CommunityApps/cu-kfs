@@ -34,18 +34,11 @@ public class JaggaerRoleLinkMappingServiceImpl implements JaggaerRoleLinkMapping
         return getJaggaerLinkRoles(JaggaerRoleSet.ADMINISTRATOR);
     }
     
-    protected Collection<JaggaerRoleLinkMapping> getJaggaerLinkRoles(JaggaerRoleSet roleSet) {
+    @Override
+    public Collection<JaggaerRoleLinkMapping> getJaggaerLinkRoles(JaggaerRoleSet roleSet) {
         Map<String, String> fieldValues = new HashMap<>();
         fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.ACTIVE, KFSConstants.ACTIVE_INDICATOR);
-        if (roleSet == JaggaerRoleSet.ESHOP) {
-            fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.ESHOP_LINK, KFSConstants.ACTIVE_INDICATOR);
-        } else if (roleSet == JaggaerRoleSet.CONTRACTS_PLUS) {
-            fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.CONTACTS_PLUS_LINK, KFSConstants.ACTIVE_INDICATOR);
-        } else if (roleSet == JaggaerRoleSet.ADMINISTRATOR) {
-            fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.JAGGAER_ADMIN_LINK, KFSConstants.ACTIVE_INDICATOR);
-        } else {
-            throw new IllegalStateException("Found an unexpected role: " + roleSet);
-        }
+        fieldValues.put(roleSet.linkMappingFieldName, KFSConstants.ACTIVE_INDICATOR);
         
         Collection<JaggaerRoleLinkMapping> linkMapping = businessObjectService.findMatching(JaggaerRoleLinkMapping.class, fieldValues);
         if (LOG.isDebugEnabled()) {
