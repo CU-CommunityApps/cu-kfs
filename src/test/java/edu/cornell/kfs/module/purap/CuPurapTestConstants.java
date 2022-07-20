@@ -24,4 +24,16 @@ public final class CuPurapTestConstants {
     public static final String XMLNS_XSI_ATTRIBUTE = "xmlns:xsi";
     public static final String EINVOICE_NAMESPACE_URL = "http://www.kuali.org/kfs/purap/electronicInvoice";
     public static final String XSI_NAMESPACE_URL = "http://www.w3.org/2001/XMLSchema-instance";
+
+    public static final String TEST_INTERNAL_SUPPLIER_ID = "2468";
+
+    public static final class TestB2BInformation {
+        public static final String PUNCHOUT_URL = "https://mocktest.sciquest.com/apps/Router/ExternalAuth/cXML/Mock";
+        public static final String PUNCHBACK_URL = "http://localhost:8080/kfs/b2b.do?methodToCall=returnFromShopping";
+        public static final String ENVIRONMENT = "test";
+        public static final String USER_AGENT = "MockTest";
+        public static final String SHOPPING_IDENTITY = "shopper1";
+        public static final String SHOPPING_PASSWORD = "z9y8x7w6";
+    }
+
 }
