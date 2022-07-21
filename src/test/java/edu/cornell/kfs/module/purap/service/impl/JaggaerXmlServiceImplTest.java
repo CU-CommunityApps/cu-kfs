@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +16,8 @@ import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,17 +27,18 @@ import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.opentest4j.AssertionFailedError;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
 import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.CuPurapTestConstants.TestB2BInformation;
 import edu.cornell.kfs.module.purap.service.JaggaerRoleService;
-import edu.cornell.kfs.module.purap.service.JaggaerXmlService;
 import edu.cornell.kfs.module.purap.service.impl.fixture.JaggaerPersonFixture;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.xmladapters.DateTimeUTCOffsetStringToJavaDateAdapter;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerXmlServiceImplTest {
 
     private static final String BASE_CXML_FILE_PATH = "classpath:edu/cornell/kfs/module/purap/service/impl/";
@@ -62,9 +66,22 @@ public class JaggaerXmlServiceImplTest {
                 Map.entry(JaggaerPersonFixture.JOHN_DOE.principalName, Map.ofEntries(
                         Map.entry(JaggaerRoleSet.ESHOP, List.of(CUPurapConstants.SCIQUEST_ROLE_SHOPPER)),
                         Map.entry(JaggaerRoleSet.CONTRACTS_PLUS, List.of(
-                                CUPurapConstants.SCIQUEST_ROLE_OFFICE, CUPurapConstants.SCIQUEST_ROLE_LAB)),
-                        Map.entry(JaggaerRoleSet.ADMINISTRATOR, List.of())
-                ))
+                                CUPurapConstants.SCIQUEST_ROLE_OFFICE, CUPurapConstants.SCIQUEST_ROLE_LAB))
+                )),
+                Map.entry(JaggaerPersonFixture.JANE_JILL.principalName, Map.ofEntries(
+                        Map.entry(JaggaerRoleSet.ESHOP, List.of(CUPurapConstants.SCIQUEST_ROLE_BUYER)),
+                        Map.entry(JaggaerRoleSet.CONTRACTS_PLUS, List.of(CUPurapConstants.SCIQUEST_ROLE_FACILITIES)),
+                        Map.entry(JaggaerRoleSet.ADMINISTRATOR, List.of(CUPurapConstants.SCIQUEST_ROLE_UNRESTRICTED))
+                )),
+                Map.entry(JaggaerPersonFixture.BOB_SMITH.principalName, Map.ofEntries(
+                        Map.entry(JaggaerRoleSet.ESHOP, List.of(CUPurapConstants.SCIQUEST_ROLE_SHOPPER)),
+                        Map.entry(JaggaerRoleSet.ADMINISTRATOR, List.of(
+                                CUPurapConstants.SCIQUEST_ROLE_FACILITIES, CUPurapConstants.SCIQUEST_ROLE_OFFICE))
+                )),
+                Map.entry(JaggaerPersonFixture.MARY_SMITH.principalName, Map.ofEntries(
+                        Map.entry(JaggaerRoleSet.ESHOP, List.of(CUPurapConstants.SCIQUEST_ROLE_SHOPPER))
+                )),
+                Map.entry(JaggaerPersonFixture.JACK_PAUL.principalName, Map.of())
         );
     }
 
@@ -112,33 +129,59 @@ public class JaggaerXmlServiceImplTest {
         b2bInformation = null;
     }
 
-    static Stream<Arguments> cxmlTestCases() {
+    static Stream<Arguments> cxmlSuccessTestCases() {
         return Stream.of(
-                Arguments.of("cxml_john_doe_eshop.xml", JaggaerPersonFixture.JOHN_DOE,
-                        serviceMethod(JaggaerXmlService::getJaggaerLoginXmlForEShop))
+                Arguments.of("cxml_john_doe_eshop.xml", JaggaerPersonFixture.JOHN_DOE, JaggaerRoleSet.ESHOP),
+                Arguments.of("cxml_john_doe_contracts_plus.xml", JaggaerPersonFixture.JOHN_DOE,
+                        JaggaerRoleSet.CONTRACTS_PLUS),
+                Arguments.of("cxml_jane_jill_eshop.xml", JaggaerPersonFixture.JANE_JILL, JaggaerRoleSet.ESHOP),
+                Arguments.of("cxml_jane_jill_contracts_plus.xml", JaggaerPersonFixture.JANE_JILL,
+                        JaggaerRoleSet.CONTRACTS_PLUS),
+                Arguments.of("cxml_jane_jill_administrator.xml", JaggaerPersonFixture.JANE_JILL,
+                        JaggaerRoleSet.ADMINISTRATOR),
+                Arguments.of("cxml_bob_smith_eshop.xml", JaggaerPersonFixture.BOB_SMITH, JaggaerRoleSet.ESHOP),
+                Arguments.of("cxml_bob_smith_administrator.xml", JaggaerPersonFixture.BOB_SMITH,
+                        JaggaerRoleSet.ADMINISTRATOR),
+                Arguments.of("cxml_mary_smith_eshop.xml", JaggaerPersonFixture.MARY_SMITH, JaggaerRoleSet.ESHOP)
         );
     } 
 
-    private static <T, U, R> JaggaerXmlServiceFunction<T, U, R> serviceMethod(
-            JaggaerXmlServiceFunction<T, U, R> value) {
-        return value;
-    }
-
     @ParameterizedTest
-    @MethodSource("cxmlTestCases")
+    @MethodSource("cxmlSuccessTestCases")
     void testGenerateSuccessfulCxml(String expectedCxmlFileLocalName, JaggaerPersonFixture userFixture,
-            JaggaerXmlServiceFunction<Person, B2BInformation, String> jaggaerXmlServiceMethod) throws Exception {
+            JaggaerRoleSet roleSet) throws Exception {
         String expectedCxml = readExpectedCxmlFromFile(expectedCxmlFileLocalName);
         Person user = userFixture.toKimPerson();
-        assertServiceGeneratesCorrectCxml(expectedCxml, user, jaggaerXmlServiceMethod);
+        assertServiceGeneratesCorrectCxml(expectedCxml, user, roleSet);
     }
 
-    private void assertServiceGeneratesCorrectCxml(String expectedCxml, Person user,
-            JaggaerXmlServiceFunction<Person, B2BInformation, String> jaggaerXmlServiceMethod) throws Exception {
-        String actualCxml = jaggaerXmlServiceMethod.apply(jaggaerXmlService, user, b2bInformation);
+    private void assertServiceGeneratesCorrectCxml(String expectedCxml, Person user, JaggaerRoleSet roleSet)
+            throws Exception {
+        String actualCxml = getJaggaerLoginXmlForRoleSet(user, roleSet);
         String expectedNormalizedCxml = StringUtils.normalizeSpace(expectedCxml);
         String actualNormalizedCxml = StringUtils.normalizeSpace(actualCxml);
         assertEquals(expectedNormalizedCxml, actualNormalizedCxml, "Wrong CXML content was generated");
+    }
+
+    static Stream<Arguments> cxmlEmptyRolesErrorTestCases() {
+        return Stream.of(
+                Arguments.of(JaggaerPersonFixture.JOHN_DOE, JaggaerRoleSet.ADMINISTRATOR),
+                Arguments.of(JaggaerPersonFixture.BOB_SMITH, JaggaerRoleSet.CONTRACTS_PLUS),
+                Arguments.of(JaggaerPersonFixture.MARY_SMITH, JaggaerRoleSet.CONTRACTS_PLUS),
+                Arguments.of(JaggaerPersonFixture.MARY_SMITH, JaggaerRoleSet.ADMINISTRATOR),
+                Arguments.of(JaggaerPersonFixture.JACK_PAUL, JaggaerRoleSet.ESHOP),
+                Arguments.of(JaggaerPersonFixture.JACK_PAUL, JaggaerRoleSet.CONTRACTS_PLUS),
+                Arguments.of(JaggaerPersonFixture.JACK_PAUL, JaggaerRoleSet.ADMINISTRATOR)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("cxmlEmptyRolesErrorTestCases")
+    void assertCxmlGenerationFailsWhenNoRolesAreFound(JaggaerPersonFixture userFixture, JaggaerRoleSet roleSet)
+            throws Exception {
+        Person user = userFixture.toKimPerson();
+        assertThrows(RuntimeException.class, () -> getJaggaerLoginXmlForRoleSet(user, roleSet),
+                "The service should have encountered an exception when the user has no roles for the given role set");
     }
 
     private String readExpectedCxmlFromFile(String fileLocalName) throws Exception {
@@ -152,10 +195,20 @@ public class JaggaerXmlServiceImplTest {
         }
     }
 
-    // TODO: Replace this with Commons Lang3 TriFunction usage when we upgrade to Commons Lang3 3.12.0 or higher.
-    @FunctionalInterface
-    private static interface JaggaerXmlServiceFunction<T, U, R> {
-        R apply(JaggaerXmlService jaggaerXmlService, T arg1, U arg2);
+    private String getJaggaerLoginXmlForRoleSet(Person user, JaggaerRoleSet roleSet) {
+        switch (roleSet) {
+            case ESHOP:
+                return jaggaerXmlService.getJaggaerLoginXmlForEShop(user, b2bInformation);
+
+            case CONTRACTS_PLUS:
+                return jaggaerXmlService.getJaggaerLoginXmlForContractsPlus(user, b2bInformation);
+
+            case ADMINISTRATOR:
+                return jaggaerXmlService.getJaggaerLoginXmlForJaggaerAdmin(user, b2bInformation);
+
+            default:
+                throw new AssertionFailedError("Unexpected role set: " + roleSet);
+        }
     }
 
 }

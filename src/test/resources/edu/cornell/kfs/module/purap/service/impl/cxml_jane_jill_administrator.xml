@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE cXML SYSTEM "https://xml.cXML.org/schemas/cXML/1.2.019/cXML.dtd">
+<cXML version="1.2.019" payloadID="irrelevant" timestamp="2022-07-15T15:30:55.000+00:00" xml:lang="en-US">
+    <Header>
+        <From>
+            <Credential domain="NetworkId">
+                <Identity>shopper1</Identity>
+            </Credential>
+        </From>
+        <To>
+            <Credential domain="DUNS">
+                <Identity>shopper1</Identity>
+            </Credential>
+            <Credential domain="internalsupplierid">
+                <Identity>2468</Identity>
+            </Credential>
+        </To>
+        <Sender>
+            <Credential domain="TOPSNetworkUserId">
+                <Identity>JJ123</Identity>
+                <SharedSecret>z9y8x7w6</SharedSecret>
+            </Credential>
+            <UserAgent>MockTest</UserAgent>
+        </Sender>
+    </Header>
+    <Request deploymentMode="test">
+        <PunchOutSetupRequest operation="create">
+            <BuyerCookie>JJ123</BuyerCookie>
+            <Extrinsic name="UserEmail">jj123@llenroc.edu</Extrinsic>
+            <Extrinsic name="UniqueName">JJ123</Extrinsic>
+            <Extrinsic name="PhoneNumber">(555) 666-7777</Extrinsic>
+            <Extrinsic name="Department">IT4444</Extrinsic>
+            <Extrinsic name="Campus">IT</Extrinsic>
+            <Extrinsic name="FirstName">Jane</Extrinsic>
+            <Extrinsic name="LastName">Jill</Extrinsic>
+            <Extrinsic name="Role">Unrestricted</Extrinsic>
+            <BrowserFormPost>
+                <URL>http://localhost:8080/kfs/b2b.do?methodToCall=returnFromShopping</URL>
+            </BrowserFormPost>
+            <Contact role="endUser">
+                <Name xml:lang="en">Jill, Jane</Name>
+            </Contact>
+            <SupplierSetup>
+                <URL>https://mocktest.sciquest.com/apps/Router/ExternalAuth/cXML/Mock</URL>
+            </SupplierSetup>
+        </PunchOutSetupRequest>
+    </Request>
+</cXML>

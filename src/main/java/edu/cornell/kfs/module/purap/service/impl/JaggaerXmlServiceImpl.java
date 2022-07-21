@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,6 +66,10 @@ public class JaggaerXmlServiceImpl implements JaggaerXmlService {
     protected String getJaggaerLoginXmlForRoleSet(Person user, B2BInformation b2bInformation, JaggaerRoleSet roleSet) {
         try {
             List<String> roles = jaggaerRoleService.getJaggaerRoles(user, roleSet);
+            if (CollectionUtils.isEmpty(roles)) {
+                throw new IllegalStateException("User " + user.getPrincipalName()
+                        + " has no valid Jaggaer roles for role set " + roleSet);
+            }
             CxmlDTO cxmlDTO = createCxmlDTO(user, b2bInformation, roles);
             String cxml = cuMarshalService.marshalObjectToXmlStringWithSystemDocType(
                     cxmlDTO, CxmlConstants.DOCTYPE_URL);
@@ -117,7 +122,7 @@ public class JaggaerXmlServiceImpl implements JaggaerXmlService {
                     extrinsic(ExtrinsicFields.CAMPUS, user.getCampusCode()),
                     extrinsic(ExtrinsicFields.FIRST_NAME, user.getFirstName()),
                     extrinsic(ExtrinsicFields.LAST_NAME, user.getLastName()),
-                    extrinsicsForRoles(roles),
+                    inlineExtrinsicsList(ExtrinsicFields.ROLE, roles),
                     browserFormPost(
                         url(b2bInformation.getPunchbackURL())
                     ),
@@ -250,9 +255,9 @@ public class JaggaerXmlServiceImpl implements JaggaerXmlService {
         return extrinsic;
     }
 
-    private List<ExtrinsicDTO> extrinsicsForRoles(List<String> roles) {
-        return roles.stream()
-                .map(role -> extrinsic(ExtrinsicFields.ROLE, role))
+    private List<ExtrinsicDTO> inlineExtrinsicsList(String name, List<String> values) {
+        return values.stream()
+                .map(value -> extrinsic(name, value))
                 .collect(Collectors.toUnmodifiableList());
     }
 

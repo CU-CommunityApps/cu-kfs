@@ -247,7 +247,19 @@
             <!-- KFSPTS-1891 -->
         <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
     </bean>
-    
+
+    <bean id="jaggaerXmlService" parent="jaggaerXmlService-parentBean"/>
+    <bean id="jaggaerXmlService-parentBean" abstract="true"
+          class="edu.cornell.kfs.module.purap.service.impl.JaggaerXmlServiceImpl"
+          p:jaggaerRoleService-ref="jaggaerRoleService"
+          p:cuMarshalService-ref="cuMarshalService"
+          p:dateTimeService-ref="dateTimeService"
+          p:internalSupplierId="${b2b.cxml.internal.supplier.id}"/>
+
+    <bean id="jaggaerRoleService" parent="jaggaerRoleService-parentBean"/>
+    <bean id="jaggaerRoleService-parentBean" abstract="true"
+          class="edu.cornell.kfs.module.purap.service.impl.JaggaerRoleServiceImpl"/>
+
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
     <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
 

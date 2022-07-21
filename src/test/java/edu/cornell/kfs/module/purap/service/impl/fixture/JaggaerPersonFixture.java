@@ -6,7 +6,11 @@ import org.mockito.Mockito;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public enum JaggaerPersonFixture {
-    JOHN_DOE("jd555", "John", "Doe", "IT", "7676", "jd555@llenroc.edu", "(123) 456-7890");
+    JOHN_DOE("jd555", "John", "Doe", "IT", "7676", "jd555@llenroc.edu", "(123) 456-7890"),
+    JANE_JILL("jj123", "Jane", "Jill", "IT", "4444", "jj123@llenroc.edu", "(555) 666-7777"),
+    BOB_SMITH("bqs88", "Bob", "Smith", "IT", "1909", "bqs88@llenroc.edu", "(432) 432-4322"),
+    MARY_SMITH("ms4", "Mary", "Smith", "IT", "1357", "ms4@llenroc.edu", "(444) 333-2222"),
+    JACK_PAUL("jp95", "Jack", "Paul", "IT", "5577", "jp95@llenroc.edu", "(987) 654-3210");
 
     public final String principalName;
     public final String firstName;
