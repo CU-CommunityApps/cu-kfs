@@ -348,9 +348,9 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         String bankName = ObjectUtils.isNull(detail) ? StringUtils.EMPTY : detail.getBankName();
         if (StringUtils.length(bankName) > 40) {
             LOG.info("cleanPayeeACHAccountExtractDetail truncating bank name to 40 characters");
-            bankName = bankName.substring(0, 39);
+            bankName = bankName.substring(0, 40);
         }
-        return bankName;
+        return bankName.trim();
     }
 
     /**
