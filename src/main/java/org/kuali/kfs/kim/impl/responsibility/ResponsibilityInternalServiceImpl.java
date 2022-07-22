@@ -81,7 +81,8 @@ public class ResponsibilityInternalServiceImpl implements ResponsibilityInternal
     }
 
     @Override
-    public void updateActionRequestsForResponsibilityChange(Set<String> responsibilityIds) {
+    /* Cornell customization: backport FINP-8341 */
+    public void updateActionRequestsForResponsibilityChange(final Set<String> responsibilityIds) {
         responsibilityChangeQueue.responsibilitiesChanged(responsibilityIds);
     }
 

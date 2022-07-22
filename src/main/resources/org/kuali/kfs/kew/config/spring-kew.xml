@@ -295,8 +295,11 @@
     <bean id="routeNodeDAO" class="org.kuali.kfs.kew.engine.node.dao.impl.RouteNodeDAOOjbImpl"
           p:jcdAlias="kewDataSource" lazy-init="true" p:dataSource-ref="kewDataSource"/>
 
-    <bean id="documentRouteHeaderDAO" class="org.kuali.kfs.kew.routeheader.dao.impl.DocumentRouteHeaderDAOOjbImpl"
-          lazy-init="true" p:jcdAlias="kewDataSource"/>
+    <bean class="org.kuali.kfs.kew.routeheader.dao.impl.DocumentRouteHeaderDAOOjbImpl"
+          id="documentRouteHeaderDAO"
+          lazy-init="true"
+          p:documentTypeService-ref="documentTypeService"
+          p:jcdAlias="kewDataSource"/>
 
     <bean id="searchableAttributeDAO" class="org.kuali.kfs.kew.docsearch.dao.impl.SearchableAttributeDAOOjbImpl"
           lazy-init="true" p:jcdAlias="kewDataSource"/>

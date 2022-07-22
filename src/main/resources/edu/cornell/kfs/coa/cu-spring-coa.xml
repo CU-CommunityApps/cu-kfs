@@ -98,9 +98,7 @@
 	    
     <bean id="organizationRoutingModelLookupableHelperService" class="edu.cornell.kfs.coa.businessobject.lookup.CuOrganizationRoutingModelNameLookupableHelperServiceImpl"
           parent="organizationRoutingModelLookupableHelperService-parentBean" scope="prototype"/>	
-
-    <bean id="accountDelegateService"  class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl" parent="accountDelegateService-parentBean"/>
-    
+  
     <bean id="accountReversionDao" parent="platformAwareDao"
 		class="edu.cornell.kfs.coa.dataaccess.impl.AccountReversionDaoOjb" />
 		
