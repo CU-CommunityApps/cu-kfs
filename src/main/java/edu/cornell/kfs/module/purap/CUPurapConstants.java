@@ -272,15 +272,15 @@ public class CUPurapConstants {
     public static final class JaggaerLinkMappingFieldNames {
         public static final String JAGGAER_ROLE_NAME = "jaggaerRoleName";
         public static final String ESHOP_LINK = "eShopLink";
-        public static final String CONTACTS_PLUS_LINK = "contractPlusLink";
+        public static final String CONTRACTS_PLUS_LINK = "contractsPlusLink";
         public static final String JAGGAER_ADMIN_LINK = "jaggaerAdminLink";
         public static final String ACTIVE = "active";
     }
     
     public enum JaggaerRoleSet {
-        ESHOP (JaggaerLinkMappingFieldNames.ESHOP_LINK),
-        CONTRACTS_PLUS (JaggaerLinkMappingFieldNames.CONTACTS_PLUS_LINK),
-        ADMINISTRATOR (JaggaerLinkMappingFieldNames.JAGGAER_ADMIN_LINK);
+        ESHOP(JaggaerLinkMappingFieldNames.ESHOP_LINK),
+        CONTRACTS_PLUS(JaggaerLinkMappingFieldNames.CONTRACTS_PLUS_LINK),
+        ADMINISTRATOR(JaggaerLinkMappingFieldNames.JAGGAER_ADMIN_LINK);
         
         public final String linkMappingFieldName;
         

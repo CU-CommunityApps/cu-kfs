@@ -8,7 +8,7 @@ public class JaggaerRoleLinkMapping extends PersistableBusinessObjectBase {
     
     private String jaggaerRoleName;
     private boolean eShopLink;
-    private boolean contractPlusLink;
+    private boolean contractsPlusLink;
     private boolean jaggaerAdminLink;
     private boolean active;
     
@@ -29,12 +29,12 @@ public class JaggaerRoleLinkMapping extends PersistableBusinessObjectBase {
         this.eShopLink = eShopLink;
     }
 
-    public boolean isContractPlusLink() {
-        return contractPlusLink;
+    public boolean isContractsPlusLink() {
+        return contractsPlusLink;
     }
 
-    public void setContractPlusLink(boolean contractPlusLink) {
-        this.contractPlusLink = contractPlusLink;
+    public void setContractsPlusLink(boolean contractsPlusLink) {
+        this.contractsPlusLink = contractsPlusLink;
     }
 
     public boolean isJaggaerAdminLink() {
