@@ -24,20 +24,24 @@ public enum RequestV4ListingFixture {
 
     SEARCH_2022_04_06_DAYS_OLD_1(2, 1, RequestV4Dates.DATE_2022_04_06,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
+            RequestV4DetailFixture.PENDING_COST_APPROVAL_REGULAR_REQUEST_BOB_SMITH,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH),
 
     SEARCH_2022_04_07_DAYS_OLD_2(2, 2, RequestV4Dates.DATE_2022_04_07,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH,
+            RequestV4DetailFixture.PENDING_COST_APPROVAL_REGULAR_REQUEST_BOB_SMITH,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_BOB_SMITH),
 
     SEARCH_2022_04_30_DAYS_OLD_119(2, 119, RequestV4Dates.DATE_2022_04_30,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_TEST,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_JOHN_DOE,
             RequestV4DetailFixture.APPROVED_TEST_REQUEST_JANE_DOE,
+            RequestV4DetailFixture.PENDING_APPROVAL_TEST_REQUEST_JOHN_TEST,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JANE_DOE,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH,
+            RequestV4DetailFixture.PENDING_COST_APPROVAL_REGULAR_REQUEST_BOB_SMITH,
             RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_BOB_SMITH),
 
     SEARCH_2022_04_30_DAYS_OLD_119_PAGE_SIZE_5(SEARCH_2022_04_30_DAYS_OLD_119, 5),
@@ -72,7 +76,7 @@ public enum RequestV4ListingFixture {
     public Map<String, RequestV4DetailFixture> getExpectedProcessedRequestsKeyedByRequestId(boolean productionMode) {
         return searchResults.values().stream()
                 .filter(result -> result.approvalStatus == RequestV4Status.PENDING_EXTERNAL_VALIDATION)
-                .filter(result -> productionMode != result.isOwnedByTestUser())
+                .filter(result -> productionMode ? !result.isOwnedByTestUser() : result.isOwnedByTestUser())
                 .collect(Collectors.toUnmodifiableMap(result -> result.requestId, result -> result));
     }
 

@@ -20,7 +20,7 @@ import org.kuali.kfs.krad.util.UrlFactory;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
-import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
+import edu.cornell.kfs.concur.ConcurConstants.RequestV4StatusCodes;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
@@ -86,7 +86,7 @@ public class MockConcurRequestV4Backend {
         Comparator<ConcurRequestV4ListItemDTO> requestSorter = Comparator.comparing(
                 ConcurRequestV4ListItemDTO::getStartDate, Comparator.reverseOrder());
         
-        if (!StringUtils.equalsIgnoreCase(RequestV4Views.APPROVED, view)) {
+        if (!StringUtils.equalsIgnoreCase(RequestV4Views.SUBMITTED, view)) {
             LOG.warn("findRequests, Unexpected query view was specified: " + view);
         }
         if (!StringUtils.equalsIgnoreCase(ConcurConstants.REQUEST_QUERY_START_DATE_FIELD, sortField)) {
@@ -131,8 +131,8 @@ public class MockConcurRequestV4Backend {
     private boolean requestHasAppropriateStatus(RequestV4DetailFixture requestFixture) {
         ConcurRequestV4ReportDTO requestDetail = getRequestAsDetail(requestFixture);
         ConcurRequestV4StatusDTO latestStatus = requestDetail.getApprovalStatus();
-        return StringUtils.equalsAnyIgnoreCase(latestStatus.getName(),
-                RequestV4Status.PENDING_EXTERNAL_VALIDATION.name, RequestV4Status.APPROVED.name);
+        return StringUtils.equalsAnyIgnoreCase(latestStatus.getCode(),
+                RequestV4StatusCodes.SUBMITTED, RequestV4StatusCodes.APPROVED);
     }
 
     private ConcurRequestV4ListingDTO buildRequestListing(List<ConcurRequestV4ListItemDTO> unboundedResults,

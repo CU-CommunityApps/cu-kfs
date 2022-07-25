@@ -223,7 +223,7 @@ public class ConcurConstants {
     }
 
     public static final class RequestV4Views {
-        public static final String APPROVED = "APPROVED";
+        public static final String SUBMITTED = "SUBMITTED";
     }
 
     public static final class RequestV4StatusCodes {

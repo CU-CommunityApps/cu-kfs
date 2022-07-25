@@ -239,7 +239,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         String baseUrl = getRequestV4Endpoint();
         int pageSize = getRequestV4QueryPageSize();
         Map<String, String> urlParameters = new HashMap<>();
-        urlParameters.put(ConcurApiParameters.VIEW, RequestV4Views.APPROVED);
+        urlParameters.put(ConcurApiParameters.VIEW, RequestV4Views.SUBMITTED);
         urlParameters.put(ConcurApiParameters.START, Integer.toString(0));
         urlParameters.put(ConcurApiParameters.LIMIT, Integer.toString(pageSize));
         urlParameters.put(ConcurApiParameters.MODIFIED_AFTER, calculateLastModifiedFromDateInUTCFormat(currentDate));
