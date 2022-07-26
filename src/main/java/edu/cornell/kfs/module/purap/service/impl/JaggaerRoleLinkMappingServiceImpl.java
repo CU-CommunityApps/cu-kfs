@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
+import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import edu.cornell.kfs.module.purap.businessobject.JaggaerRoleLinkMapping;
 import edu.cornell.kfs.module.purap.service.JaggaerRoleLinkMappingService;
 
@@ -37,7 +37,7 @@ public class JaggaerRoleLinkMappingServiceImpl implements JaggaerRoleLinkMapping
     @Override
     public Collection<JaggaerRoleLinkMapping> getJaggaerLinkRoles(JaggaerRoleSet roleSet) {
         Map<String, String> fieldValues = new HashMap<>();
-        fieldValues.put(CUPurapConstants.JaggaerLinkMappingFieldNames.ACTIVE, KFSConstants.ACTIVE_INDICATOR);
+        fieldValues.put(CUPurapPropertyConstants.ACTIVE, KFSConstants.ACTIVE_INDICATOR);
         fieldValues.put(roleSet.linkMappingFieldName, KFSConstants.ACTIVE_INDICATOR);
         
         Collection<JaggaerRoleLinkMapping> linkMapping = businessObjectService.findMatching(JaggaerRoleLinkMapping.class, fieldValues);
