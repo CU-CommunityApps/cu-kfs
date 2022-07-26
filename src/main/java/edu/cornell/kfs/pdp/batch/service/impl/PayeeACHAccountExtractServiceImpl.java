@@ -22,7 +22,6 @@ import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.ObjectUtil;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
@@ -339,18 +338,20 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             if (!StringUtils.isNumeric(detail.getBankAccountNumber())) {
                 LOG.error(logMessageStarter + " is not numeric after cleaning");
             }
-
-            detail.setBankName(extractBankName(detail));
         }
+
+        detail.setBankName(extractBankName(detail));
     }
 
     private String extractBankName(PayeeACHAccountExtractDetail detail) {
-        String bankName = ObjectUtils.isNull(detail) ? StringUtils.EMPTY : detail.getBankName();
-        if (StringUtils.length(bankName) > 40) {
-            LOG.info("cleanPayeeACHAccountExtractDetail truncating bank name to 40 characters");
-            bankName = bankName.substring(0, 40);
+        String bankName = ObjectUtils.isNull(detail) ? StringUtils.EMPTY : StringUtils.trim(detail.getBankName());
+
+        if (StringUtils.length(bankName) > CUPdpConstants.PAYEE_ACH_ACCOUNT_MAX_BANK_NAME_LENGTH) {
+            LOG.info("extractBankName truncating bank name to " + CUPdpConstants.PAYEE_ACH_ACCOUNT_MAX_BANK_NAME_LENGTH + " characters");
+            bankName = bankName.substring(0, CUPdpConstants.PAYEE_ACH_ACCOUNT_MAX_BANK_NAME_LENGTH);
         }
-        return bankName.trim();
+        
+        return bankName;
     }
 
     /**

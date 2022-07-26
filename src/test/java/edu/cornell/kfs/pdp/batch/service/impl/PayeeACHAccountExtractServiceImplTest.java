@@ -816,12 +816,13 @@ public class PayeeACHAccountExtractServiceImplTest {
         
         assertEquals(expectedCleanedBankAccountNumber, detail.getBankAccountNumber());
     }
+
     private void validateCleanPayeeACHAccountExtractDetailBankName(String bankName, String expectedCleanedBankName) {
         PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
         detail.setBankName(bankName);
         payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
 
-        assertEquals(detail.getBankName(), expectedCleanedBankName);
+        assertEquals(expectedCleanedBankName, detail.getBankName());
     }
 
 }
