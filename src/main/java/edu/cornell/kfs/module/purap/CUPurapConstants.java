@@ -268,4 +268,16 @@ public class CUPurapConstants {
         public static final String ROOM_NUMBER_PREFIX = "Room ";
         public static final String VENDORS = "vendors";
     }
+    
+    public enum JaggaerRoleSet {
+        ESHOP(CUPurapPropertyConstants.ESHOP_LINK),
+        CONTRACTS_PLUS(CUPurapPropertyConstants.CONTRACTS_PLUS_LINK),
+        ADMINISTRATOR(CUPurapPropertyConstants.JAGGAER_ADMIN_LINK);
+        
+        public final String linkMappingFieldName;
+        
+        private JaggaerRoleSet(String linkMappingFieldName) {
+            this.linkMappingFieldName = linkMappingFieldName;
+        }
+    }
 }
