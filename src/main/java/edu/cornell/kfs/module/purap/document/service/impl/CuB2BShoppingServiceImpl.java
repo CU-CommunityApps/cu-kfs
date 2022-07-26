@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.PersistenceService;
@@ -27,13 +29,16 @@ import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
+import org.kuali.kfs.module.purap.dataaccess.B2BDao;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.impl.B2BShoppingServiceImpl;
 import org.kuali.kfs.module.purap.exception.B2BShoppingException;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
+import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
+import org.kuali.kfs.module.purap.util.cxml.PunchOutSetupResponse;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -44,19 +49,21 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
+import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingService;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
+import edu.cornell.kfs.module.purap.service.JaggaerRoleService;
 import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
-public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
+public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements CuB2BShoppingService {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final String TRUE = "true";
+    private B2BDao b2bDao;
     private BusinessObjectService businessObjectService;
     private DocumentService documentService;
     private ParameterService parameterService;
@@ -65,8 +72,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     private PurchasingService purchasingService;
     private CuPurapService purapService;
     private VendorService vendorService;
-    // KFSPTS-985
-    UserFavoriteAccountService userFavoriteAccountService;
+
+    private UserFavoriteAccountService userFavoriteAccountService;
+    private JaggaerRoleService jaggaerRoleService;
 
     @Override
     public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) {
@@ -217,47 +225,83 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 		this.userFavoriteAccountService = userFavoriteAccountService;
 	}
 
+    public void setJaggaerRoleService(JaggaerRoleService jaggaerRoleService) {
+        this.jaggaerRoleService = jaggaerRoleService;
+    }
+
+    @Override
+    public void setB2bDao(B2BDao b2bDao) {
+        super.setB2bDao(b2bDao);
+        this.b2bDao = b2bDao;
+    }
+
+    @Override
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         super.setBusinessObjectService(businessObjectService);
         this.businessObjectService = businessObjectService;
     }
 
+    @Override
     public void setDocumentService(DocumentService documentService) {
         super.setDocumentService(documentService);
         this.documentService = documentService;
     }
 
+    @Override
     public void setParameterService(ParameterService parameterService) {
         super.setParameterService(parameterService);
         this.parameterService = parameterService;
     }
 
+    @Override
     public void setPersistenceService(PersistenceService persistenceService) {
         super.setPersistenceService(persistenceService);
         this.persistenceService = persistenceService;
     }
 
+    @Override
     public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
         super.setPhoneNumberService(phoneNumberService);
         this.phoneNumberService = phoneNumberService;
     }
 
+    @Override
     public void setPurchasingService(PurchasingService purchasingService) {
         super.setPurchasingService(purchasingService);
         this.purchasingService = purchasingService;
     }
 
+    @Override
     public void setPurapService(PurapService purapService) {
         super.setPurapService(purapService);
         this.purapService = (CuPurapService) purapService;
     }
 
+    @Override
     public void setVendorService(VendorService vendorService) {
         super.setVendorService(vendorService);
         this.vendorService = vendorService;
     }
 
+    @Override
+    public String getPunchOutUrl(Person user, JaggaerRoleSet roleSet) {
+        List<String> roles = jaggaerRoleService.getJaggaerRoles(user, roleSet);
+        B2BInformation b2b = getB2bShoppingConfigurationInformation();
+        String cxml = getPunchOutSetupRequestMessage(user, b2b, roles);
+        String response = b2bDao.sendPunchOutRequest(cxml, b2b.getPunchoutURL());
+        PunchOutSetupResponse posr = B2BParserHelper.getInstance().parsePunchOutSetupResponse(response);
+        return posr.getPunchOutUrl();
+    }
+
+    @Override
     public String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation) {
+        String preAuthRole = getPreAuthValue(user.getPrincipalId());
+        String viewRole = getViewValue(user.getPrincipalId());
+        List<String> roles = List.of(preAuthRole, viewRole);
+        return getPunchOutSetupRequestMessage(user, b2bInformation, roles);
+    }
+
+    protected String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation, List<String> roles) {
         StringBuffer cxml = new StringBuffer();
         Date currentDate = getDateTimeService().getCurrentDate();
         SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
@@ -312,8 +356,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         // KFSPTS-1720
         cxml.append("      <Extrinsic name=\"FirstName\">").append(user.getFirstName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"LastName\">").append(user.getLastName()).append("</Extrinsic>\n");
-        cxml.append("      <Extrinsic name=\"Role\">").append(getPreAuthValue(user.getPrincipalId())).append("</Extrinsic>\n");
-        cxml.append("      <Extrinsic name=\"Role\">").append(getViewValue(user.getPrincipalId())).append("</Extrinsic>\n");
+        for (String role : roles) {
+            cxml.append("      <Extrinsic name=\"Role\">").append(role).append("</Extrinsic>\n");
+        }
 
         cxml.append("      <BrowserFormPost>\n");
         cxml.append("        <URL>").append(b2bInformation.getPunchbackURL()).append("</URL>\n");
