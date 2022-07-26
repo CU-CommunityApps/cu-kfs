@@ -1,9 +1,10 @@
 package edu.cornell.kfs.module.purap.businessobject;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-public class JaggaerRoleLinkMapping extends PersistableBusinessObjectBase {
+public class JaggaerRoleLinkMapping extends PersistableBusinessObjectBase implements MutableInactivatable {
     private static final long serialVersionUID = -7713390264764633449L;
     
     private String jaggaerRoleName;
