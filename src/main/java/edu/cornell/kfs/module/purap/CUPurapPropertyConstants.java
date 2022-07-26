@@ -34,4 +34,10 @@ public class CUPurapPropertyConstants {
     public static final String PREQ_PAYEE_ACCT_NUMBER = "preqPayeeAccountNumber";
     public static final String PREQ_PAYEE_ACCT_NAME = "preqPayeeAccountName";
     public static final String DOCUMENT_PAYMENT_METHOD_CODE = "document.paymentMethodCode";
+    
+    public static final String JAGGAER_ROLE_NAME = "jaggaerRoleName";
+    public static final String ESHOP_LINK = "eShopLink";
+    public static final String CONTRACTS_PLUS_LINK = "contractsPlusLink";
+    public static final String JAGGAER_ADMIN_LINK = "jaggaerAdminLink";
+    public static final String ACTIVE = "active";
 }
