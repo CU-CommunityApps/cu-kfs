@@ -30,12 +30,6 @@
     <bean id="kimAuthenticationService" class="edu.cornell.kfs.kim.impl.identity.CUWebAuthAuthenticationService"
           p:useHttpHeaders="${cu.cuwal.useHttpHeaders}"/>
 
-    <bean id="responsibilityInternalService"
-          class="edu.cornell.kfs.kim.impl.responsibility.CuResponsibilityInternalServiceImpl"
-          p:businessObjectService-ref="businessObjectService"
-          p:responsibilityChangeQueue-ref="responsibilityChangeQueue"
-          p:responsibilityService-ref="kimResponsibilityService"/>
-
     <bean id="documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           parent="documentTypePermissionTypeService"/>
