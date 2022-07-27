@@ -2,19 +2,31 @@ package edu.cornell.kfs.concur;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurUtils {
-	private static final Logger LOG = LogManager.getLogger(ConcurUtils.class);
-    
+    private static final Logger LOG = LogManager.getLogger(ConcurUtils.class);
+
+    private static final DateTimeFormatter UTC_DATE_FORMATTER = DateTimeFormat
+            .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US).withZoneUTC();
+
+    private static final Pattern URL_PARAMS_PATTERN = Pattern.compile(
+            "^[\\w%\\-\\.:]+=[\\w%\\-\\.:]*(\\&[\\w%\\-\\.:]+=[\\w%\\-\\.:]+)*$");
+
     private static final String CODE_PATTERN = "\\((.*?)\\)";
     private static final String CODE_AND_DESCRIPTION_PATTERN = CODE_PATTERN + "(.*?)";
 
@@ -77,6 +89,45 @@ public class ConcurUtils {
         byte[] encodedValueAsBytes = Base64.getEncoder().encode(valueAsBytes);
         String encodedValue = new String(encodedValueAsBytes, StandardCharsets.UTF_8);
         return encodedValue;
+    }
+
+    public static String formatAsUTCDate(Date value) {
+        Objects.requireNonNull(value, "value cannot be null");
+        return UTC_DATE_FORMATTER.print(value.getTime());
+    }
+
+    public static DateTime parseUTCDateToDateTime(String value) {
+        long millisecondValue = parseUTCDateToMilliseconds(value);
+        return new DateTime(millisecondValue);
+    }
+
+    public static long parseUTCDateToMilliseconds(String value) {
+        if (StringUtils.isBlank(value)) {
+            throw new IllegalArgumentException("value cannot be blank");
+        }
+        return UTC_DATE_FORMATTER.parseMillis(value);
+    }
+
+    public static boolean validateFormatAndPrefixOfParameterizedUrl(String url, String expectedUrlPrefix) {
+        if (StringUtils.isBlank(url)) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL was blank");
+            return false;
+        } else if (!StringUtils.contains(url, KFSConstants.QUESTION_MARK)) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL was not parameterized");
+            return false;
+        }
+        String actualUrlPrefix = StringUtils.substringBefore(url, KFSConstants.QUESTION_MARK);
+        if (!StringUtils.equalsIgnoreCase(expectedUrlPrefix, actualUrlPrefix)) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL had the wrong prefix; expected: "
+                    + expectedUrlPrefix + " , actual: " + actualUrlPrefix);
+            return false;
+        }
+        String urlParameters = StringUtils.substringAfter(url, KFSConstants.QUESTION_MARK);
+        if (!URL_PARAMS_PATTERN.matcher(urlParameters).matches()) {
+            LOG.error("validateFormatAndPrefixOfParameterizedUrl, URL had malformed parameters");
+            return false;
+        }
+        return true;
     }
 
 }

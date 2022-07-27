@@ -5,6 +5,7 @@ public class ConcurConstants {
     public static final String CONSUMER_KEY_PROPERTY = "X-ConsumerKey";
     public static final String BASIC_AUTHENTICATION_SCHEME = "Basic";
     public static final String OAUTH_AUTHENTICATION_SCHEME = "OAuth";
+    public static final String BEARER_AUTHENTICATION_SCHEME = "Bearer";
 
     public static final int VALIDATION_RESULT_MESSAGE_MAX_LENGTH = 2000;
 
@@ -92,6 +93,11 @@ public class ConcurConstants {
     public static final String CONCUR_FAILED_EVENT_QUEUE_READONLY = "R";
     
     public static final String QUESTION_MARK_USER_EQUALS = "?user=";
+
+    public static final String REQUEST_QUERY_CURRENT_DATE_INDICATOR = "CURRENT";
+    public static final String REQUEST_QUERY_LAST_DATE_INDICATOR = "PREVIOUS";
+    public static final String REQUEST_QUERY_START_DATE_FIELD = "startDate";
+    public static final String REQUEST_QUERY_SORT_ORDER_DESC = "DESC";
 
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";
@@ -196,6 +202,53 @@ public class ConcurConstants {
         private ConcurEventNotificationVersion2ProcessingResults(String status, boolean valid) {
             this.status = status;
             this.valid = valid;
+        }
+    }
+
+    public static final class ConcurApiParameters {
+        public static final String VIEW = "view";
+        public static final String START = "start";
+        public static final String LIMIT = "limit";
+        public static final String MODIFIED_AFTER = "modifiedAfter";
+        public static final String MODIFIED_BEFORE = "modifiedBefore";
+        public static final String SORT_FIELD = "sortField";
+        public static final String SORT_ORDER = "sortOrder";
+    }
+
+    public static final class ConcurApiOperations {
+        public static final String FIRST = "first";
+        public static final String PREV = "prev";
+        public static final String NEXT = "next";
+        public static final String LAST = "last";
+    }
+
+    public static final class RequestV4Views {
+        public static final String SUBMITTED = "SUBMITTED";
+    }
+
+    public static final class RequestV4StatusCodes {
+        public static final String NOT_SUBMITTED = "NOT_SUBMITTED";
+        public static final String SUBMITTED = "SUBMITTED";
+        public static final String APPROVED = "APPROVED";
+        public static final String CANCELED = "CANCELED";
+        public static final String SENTBACK = "SENTBACK";
+    }
+
+    public enum RequestV4Status {
+        NOT_SUBMITTED(RequestV4StatusCodes.NOT_SUBMITTED, "Not Submitted"),
+        SUBMITTED_AND_PENDING_APPROVAL(RequestV4StatusCodes.SUBMITTED, "Submitted & Pending Approval"),
+        PENDING_COST_OBJECT_APPROVAL(RequestV4StatusCodes.SUBMITTED, "Pending Cost Object Approval"),
+        PENDING_EXTERNAL_VALIDATION(RequestV4StatusCodes.SUBMITTED, "Pending External Validation"),
+        APPROVED(RequestV4StatusCodes.APPROVED, "Approved"),
+        CANCELED(RequestV4StatusCodes.CANCELED, "Canceled"),
+        SENTBACK(RequestV4StatusCodes.SENTBACK, "Sent Back");
+        
+        public final String code;
+        public final String name;
+        
+        private RequestV4Status(String code, String name) {
+            this.code = code;
+            this.name = name;
         }
     }
 
