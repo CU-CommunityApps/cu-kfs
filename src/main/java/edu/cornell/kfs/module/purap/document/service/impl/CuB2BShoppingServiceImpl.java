@@ -284,10 +284,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     }
 
     @Override
-    public String getPunchOutUrl(Person user, JaggaerRoleSet roleSet) {
-        List<String> roles = jaggaerRoleService.getJaggaerRoles(user, roleSet);
+    public String getPunchOutUrlForRoleSet(Person user, JaggaerRoleSet roleSet) {
         B2BInformation b2b = getB2bShoppingConfigurationInformation();
-        String cxml = getPunchOutSetupRequestMessage(user, b2b, roles);
+        String cxml = getPunchOutSetupRequestMessage(user, b2b, roleSet);
         String response = b2bDao.sendPunchOutRequest(cxml, b2b.getPunchoutURL());
         PunchOutSetupResponse posr = B2BParserHelper.getInstance().parsePunchOutSetupResponse(response);
         return posr.getPunchOutUrl();
@@ -295,13 +294,11 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
 
     @Override
     public String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation) {
-        String preAuthRole = getPreAuthValue(user.getPrincipalId());
-        String viewRole = getViewValue(user.getPrincipalId());
-        List<String> roles = List.of(preAuthRole, viewRole);
-        return getPunchOutSetupRequestMessage(user, b2bInformation, roles);
+        return getPunchOutSetupRequestMessage(user, b2bInformation, JaggaerRoleSet.ESHOP);
     }
 
-    protected String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation, List<String> roles) {
+    protected String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation,
+            JaggaerRoleSet roleSet) {
         StringBuffer cxml = new StringBuffer();
         Date currentDate = getDateTimeService().getCurrentDate();
         SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
@@ -356,8 +353,14 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
         // KFSPTS-1720
         cxml.append("      <Extrinsic name=\"FirstName\">").append(user.getFirstName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"LastName\">").append(user.getLastName()).append("</Extrinsic>\n");
-        for (String role : roles) {
-            cxml.append("      <Extrinsic name=\"Role\">").append(role).append("</Extrinsic>\n");
+        if (JaggaerRoleSet.ESHOP.equals(roleSet)) {
+            cxml.append("      <Extrinsic name=\"Role\">").append(getPreAuthValue(user.getPrincipalId())).append("</Extrinsic>\n");
+            cxml.append("      <Extrinsic name=\"Role\">").append(getViewValue(user.getPrincipalId())).append("</Extrinsic>\n");
+        } else {
+            List<String> roles = jaggaerRoleService.getJaggaerRoles(user, roleSet);
+            for (String role : roles) {
+                cxml.append("      <Extrinsic name=\"Role\">").append(role).append("</Extrinsic>\n");
+            }
         }
 
         cxml.append("      <BrowserFormPost>\n");

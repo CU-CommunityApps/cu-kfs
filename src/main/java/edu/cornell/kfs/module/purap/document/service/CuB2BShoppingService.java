@@ -7,6 +7,6 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
 
 public interface CuB2BShoppingService extends B2BShoppingService {
 
-    String getPunchOutUrl(Person user, JaggaerRoleSet roleSet);
+    String getPunchOutUrlForRoleSet(Person user, JaggaerRoleSet roleSet);
 
 }
