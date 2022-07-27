@@ -58,4 +58,7 @@ public class ConcurKeyConstants {
     public static final String MESSAGE_CONCUR_EXPENSEV3_EXPENSE_REPORT = "message.concur.expensev3.expense.report";
     public static final String MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING = "message.concur.expensev3.expense.allocation.listing";
     public static final String MESSAGE_CONCUR_EXPENSEV3_EXPENSE_ALLOCATION_LISTING_NEXT_PAGE = "message.concur.expensev3.expense.allocation.listing.next.page";
+
+    public static final String MESSAGE_CONCUR_REQUESTV4_LISTING = "message.concur.requestv4.listing";
+    public static final String MESSAGE_CONCUR_REQUESTV4_REQUEST = "message.concur.requestv4.request";
 }

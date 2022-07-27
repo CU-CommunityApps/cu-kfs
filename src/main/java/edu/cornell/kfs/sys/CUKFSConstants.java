@@ -27,6 +27,8 @@ public class CUKFSConstants {
     public static final String DATE_FORMAT_yyyyMMdd_HHmmssSSS = "yyyyMMdd_HHmmssSSS";
     public static final String DATE_FORMAT_MMddyyyy_hhmmss = "MMddyyyy_hhmmss";
     public static final String DATE_FORMAT_yyyyMMdd_HH_mm_ss_S = "yyyyMMdd-HH-mm-ss-S";
+    public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String TIME_ZONE_UTC = "UTC";
     
     public static final String DECIMAL_FORMAT_0N_NN = "#0.00";
     

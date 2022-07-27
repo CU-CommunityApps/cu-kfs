@@ -10,6 +10,7 @@ public class ConcurTestConstants {
     public static final String REPORT_ID_2 = "JJJJJKKKKK5555566666";
     public static final String REPORT_ID_3 = "ZZYYXXVVWW7766554433";
     public static final String REPORT_ID_SHORT = "GGGG5555";
+    public static final String CHART_IT = "IT";
     public static final String CHART_QQ = "QQ";
     public static final String OBJ_6200 = "6200";
     public static final String OBJ_7777 = "7777";
@@ -18,6 +19,7 @@ public class ConcurTestConstants {
     public static final String SUB_OBJ_864 = "864";
     public static final String ACCT_1234321 = "1234321";
     public static final String ACCT_4455667 = "4455667";
+    public static final String ACCT_XXXXXXX = "XXXXXXX";
     public static final String SUB_ACCT_55655 = "55655";
     public static final String SUB_ACCT_88888 = "88888";
     public static final String SUB_ACCT_13579 = "13579";
@@ -50,9 +52,27 @@ public class ConcurTestConstants {
     public static final String DASH_SUB_OBJECT_CODE = "---";
     public static final String DASH_PROJECT_CODE = "----------";
 
+    public static final String TEST_NAME_PREFIX = "Test";
+    public static final String CURRENCY_USD = "USD";
+    public static final String REQUEST_TRAVEL_TYPE_CODE = "TRAVEL";
+    public static final String REQUEST_TRAVEL_TYPE_LABEL = "Travel";
+    public static final String REQUEST_EXCEPTION_LEVEL_NONE = "NONE";
+
     public static class PropertyTestValues {
         public static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance with key {0} had no matching Request Extract entry.";
         public static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE = "Line not processed due to orphaned Cash Advance with same Report ID.";
+        public static final String REQUESTV4_REQUEST_LIST_SEARCH_MESSAGE = "Travel Request Listing (page {0})";
+        public static final String REQUESTV4_SINGLE_REQUEST_SEARCH_MESSAGE = "Travel Request {0}";
+    }
+
+    public static final class RequestV4Dates {
+        public static final String DATE_2022_01_01 = "01/01/2022 11:22 AM";
+        public static final String DATE_2022_01_02 = "01/02/2022 11:22 AM";
+        public static final String DATE_2022_01_03 = "01/03/2022 11:22 AM";
+        public static final String DATE_2022_04_05 = "04/05/2022 11:22 AM";
+        public static final String DATE_2022_04_06 = "04/06/2022 11:22 AM";
+        public static final String DATE_2022_04_07 = "04/07/2022 11:22 AM";
+        public static final String DATE_2022_04_30 = "04/30/2022 11:22 AM";
     }
 
     public static class ParameterTestValues {
@@ -76,6 +96,11 @@ public class ConcurTestConstants {
         public static final String COLLECTOR_ATM_FEE_DEBIT_ACCOUNT_NUMBER = "G333555";
         public static final String COLLECTOR_ATM_FEE_DEBIT_OBJECT_CODE = "6699";
         public static final String COLLECTOR_UNUSED_ATM_OFFSET_OBJECT_CODE = "1488";
+        public static final String DEFAULT_OBJECT_CODE_5500 = "5500";
+        public static final String REQUEST_V4_RELATIVE_ENDPOINT = "/travelrequest/v4/requests";
+        public static final String REQUEST_V4_PAGE_SIZE_2 = "2";
+        public static final String REQUEST_V4_DAYS_OLD_1 = "1";
+        public static final String MAX_RETRIES_1 = "1";
     }
     
     public static final String PDP_LINE_FIXTURE_CASH_ADVANCE_KEY = "ABC123";
