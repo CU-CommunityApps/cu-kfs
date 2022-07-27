@@ -182,6 +182,7 @@
     <bean id="electronicInvoiceInputFileType" class="edu.cornell.kfs.module.purap.batch.CuElectronicInvoiceInputFileType" parent="electronicInvoiceInputFileType-parentBean"/>
     <bean id="b2BShoppingService" parent="b2BShoppingService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BShoppingServiceImpl">
         <property name="userFavoriteAccountService" ref="userFavoriteAccountService"/>
+        <property name="jaggaerRoleService" ref="jaggaerRoleService"/>
     </bean>
    
    <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl"/>
@@ -286,5 +287,9 @@
 	<bean id="jaggaerRoleLinkMappingService-parentBean" abstract="true" class="edu.cornell.kfs.module.purap.service.impl.JaggaerRoleLinkMappingServiceImpl">
 		<property name="businessObjectService" ref="businessObjectService" />
 	</bean>
-		
+
+    <bean id="jaggaerRoleService" parent="jaggaerRoleService-parentBean"/>
+    <bean id="jaggaerRoleService-parentBean" abstract="true"
+          class="edu.cornell.kfs.module.purap.service.impl.JaggaerRoleServiceImpl"/>
+
 </beans>
