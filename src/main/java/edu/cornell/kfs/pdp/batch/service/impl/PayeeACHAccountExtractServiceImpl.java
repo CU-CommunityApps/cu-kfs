@@ -351,7 +351,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             bankName = bankName.substring(0, CUPdpConstants.PAYEE_ACH_ACCOUNT_MAX_BANK_NAME_LENGTH);
         }
         
-        return bankName;
+        return StringUtils.trim(bankName);
     }
 
     /**
