@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +37,6 @@ import org.kuali.kfs.kns.datadictionary.control.SelectControlDefinition;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
@@ -50,7 +48,6 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
-import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
@@ -744,65 +741,88 @@ public class PayeeACHAccountExtractServiceImplTest {
     @Test
     public void testCleanPayeeACHAccountExtractDetailNoClean() {
         String bankAccountNumber = "12345";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, bankAccountNumber);
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(bankAccountNumber, bankAccountNumber);
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailCleanDashes() {
         String bankAccountNumber = "1-2---3-4-5----6-";
         String expectedBankAccount = "123456";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, expectedBankAccount);
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(bankAccountNumber, expectedBankAccount);
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailCleanDashesWithLetters() {
         String bankAccountNumber = "A1-2---3-4-5---6-";
         String expectedBankAccount = "A123456";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, expectedBankAccount);
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(bankAccountNumber, expectedBankAccount);
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailWithLetters() {
         String bankAccountNumber = "A12345";
-        validateCleanPayeeACHAccountExtractDetail(bankAccountNumber, bankAccountNumber);
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(bankAccountNumber, bankAccountNumber);
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailWithNull() {
-        validateCleanPayeeACHAccountExtractDetail(null, null);
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(null, null);
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailWithEmptyString() {
-        validateCleanPayeeACHAccountExtractDetail(StringUtils.EMPTY, StringUtils.EMPTY);
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(StringUtils.EMPTY, StringUtils.EMPTY);
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailWithSpaces() {
-        validateCleanPayeeACHAccountExtractDetail(" 1 23  4 5 6 ", "123456");
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(" 1 23  4 5 6 ", "123456");
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailWithSpacesAndDashes() {
-        validateCleanPayeeACHAccountExtractDetail(" 1 2----3  4 - 5 6-7 ", "1234567");
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber(" 1 2----3  4 - 5 6-7 ", "1234567");
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailWithSpacesAndDashesAndLetters() {
-        validateCleanPayeeACHAccountExtractDetail("A 1 2----3  4 - 5 6-7 B ", "A1234567B");
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber("A 1 2----3  4 - 5 6-7 B ", "A1234567B");
     }
     
     @Test
     public void testCleanPayeeACHAccountExtractDetailWithJustSpaces() {
-        validateCleanPayeeACHAccountExtractDetail("   ", StringUtils.EMPTY);
+        validateCleanPayeeACHAccountExtractDetailBankAccountNumber("   ", StringUtils.EMPTY);
     }
-    
-    private void validateCleanPayeeACHAccountExtractDetail(String bankAccountNumber, String expectedCleanedBankAccountNumber) {
+
+    @Test
+    public void testBlankBankName() {
+        validateCleanPayeeACHAccountExtractDetailBankName("   ", StringUtils.EMPTY);
+    }
+
+    @Test
+    public void testStandardBankName() {
+        validateCleanPayeeACHAccountExtractDetailBankName("Example Bank", "Example Bank");
+    }
+
+    @Test
+    public void testLongBankName() {
+        validateCleanPayeeACHAccountExtractDetailBankName("Tompkins Community Bank and Sons forty characters test", "Tompkins Community Bank and Sons forty c");
+    }
+
+    private void validateCleanPayeeACHAccountExtractDetailBankAccountNumber(String bankAccountNumber, String expectedCleanedBankAccountNumber) {
         PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
         detail.setBankAccountNumber(bankAccountNumber);
         payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
         
         assertEquals(expectedCleanedBankAccountNumber, detail.getBankAccountNumber());
+    }
+
+    private void validateCleanPayeeACHAccountExtractDetailBankName(String bankName, String expectedCleanedBankName) {
+        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
+        detail.setBankName(bankName);
+        payeeACHAccountExtractService.cleanPayeeACHAccountExtractDetail(detail);
+
+        assertEquals(expectedCleanedBankName, detail.getBankName());
     }
 
 }

@@ -339,6 +339,19 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 LOG.error(logMessageStarter + " is not numeric after cleaning");
             }
         }
+
+        detail.setBankName(extractBankName(detail));
+    }
+
+    private String extractBankName(PayeeACHAccountExtractDetail detail) {
+        String bankName = ObjectUtils.isNull(detail) ? StringUtils.EMPTY : StringUtils.trim(detail.getBankName());
+
+        if (StringUtils.length(bankName) > CUPdpConstants.PAYEE_ACH_ACCOUNT_MAX_BANK_NAME_LENGTH) {
+            LOG.info("extractBankName truncating bank name to " + CUPdpConstants.PAYEE_ACH_ACCOUNT_MAX_BANK_NAME_LENGTH + " characters");
+            bankName = bankName.substring(0, CUPdpConstants.PAYEE_ACH_ACCOUNT_MAX_BANK_NAME_LENGTH);
+        }
+        
+        return StringUtils.trim(bankName);
     }
 
     /**
