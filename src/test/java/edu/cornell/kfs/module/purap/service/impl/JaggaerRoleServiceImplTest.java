@@ -45,11 +45,25 @@ class JaggaerRoleServiceImplTest {
         return service;
     }
     
-    private PermissionService buildMockPermissionService(boolean isBuyer) {
+    private PermissionService buildMockPermissionService(boolean isBuyer, boolean isOffice, boolean isLab, boolean isFacilities) {
         PermissionService permissionService = Mockito.mock(PermissionService.class);
+        
         Mockito.when(permissionService.hasPermission(user.getPrincipalId(),
                     KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
                     CUPurapConstants.B2B_SUBMIT_ESHOP_CART_PERMISSION)).thenReturn(isBuyer);
+        
+        Mockito.when(permissionService.hasPermission(user.getPrincipalId(),
+                KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
+                CUPurapConstants.B2B_SHOPPER_OFFICE_PERMISSION)).thenReturn(isOffice);
+        
+        Mockito.when(permissionService.hasPermission(user.getPrincipalId(),
+                KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
+                CUPurapConstants.B2B_SHOPPER_LAB_PERMISSION)).thenReturn(isLab);
+        
+        Mockito.when(permissionService.hasPermission(user.getPrincipalId(),
+                KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
+                CUPurapConstants.B2B_SHOPPER_FACILITIES_PERMISSION)).thenReturn(isFacilities);
+        
         return permissionService;
     }
 
@@ -114,16 +128,33 @@ class JaggaerRoleServiceImplTest {
     
     @ParameterizedTest
     @MethodSource("provideRolesForGetEshopPreAuthValueTest")
-    void testGetEshopPreAuthValue(boolean isBuyer, String expectedRole) {
-        jaggaerRoleService.setPermissionService(buildMockPermissionService(isBuyer));
+    void testGetEshopPreAuthValue(boolean isBuyer, boolean isOffice, boolean isLab, boolean isFacilities, String expectedRole) {
+        jaggaerRoleService.setPermissionService(buildMockPermissionService(isBuyer, isOffice, isLab, isFacilities));
         String actual = jaggaerRoleService.getEshopPreAuthValue(user.getPrincipalId());
         assertEquals(expectedRole, actual);
     }
     
     private static Stream<Arguments> provideRolesForGetEshopPreAuthValueTest() {
         return Stream.of(
-          Arguments.of(true, CUPurapConstants.SCIQUEST_ROLE_BUYER),
-          Arguments.of(false, CUPurapConstants.SCIQUEST_ROLE_SHOPPER)
+          Arguments.of(true, false, false, false, CUPurapConstants.SCIQUEST_ROLE_BUYER),
+          Arguments.of(false, false, false, false, CUPurapConstants.SCIQUEST_ROLE_SHOPPER)
+        );
+    }
+    
+    @ParameterizedTest
+    @MethodSource("provideRolesForGetEshopViewValueTest")
+    void testGetEshopViewValue(boolean isBuyer, boolean isOffice, boolean isLab, boolean isFacilities, String expectedRole) {
+        jaggaerRoleService.setPermissionService(buildMockPermissionService(isBuyer, isOffice, isLab, isFacilities));
+        String actual = jaggaerRoleService.getEshopViewValue(user.getPrincipalId());
+        assertEquals(expectedRole, actual);
+    }
+    
+    private static Stream<Arguments> provideRolesForGetEshopViewValueTest() {
+        return Stream.of(
+          Arguments.of(true, true, false, false, CUPurapConstants.SCIQUEST_ROLE_OFFICE),
+          Arguments.of(false, false, true, false, CUPurapConstants.SCIQUEST_ROLE_LAB),
+          Arguments.of(false, false, false, true, CUPurapConstants.SCIQUEST_ROLE_FACILITIES),
+          Arguments.of(false, false, false, false, CUPurapConstants.SCIQUEST_ROLE_UNRESTRICTED)
         );
     }
 
