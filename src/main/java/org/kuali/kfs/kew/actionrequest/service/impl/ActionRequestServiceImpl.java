@@ -615,7 +615,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
 
             if (documentType.getRegenerateActionRequestsOnChange().getPolicyValue()) {
                 DocumentRefreshQueue documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(
-                        documentId, cacheWait);
+                        documentId, 0L);
                 documentRequeuer.refreshDocument(documentId);
             }
         }
