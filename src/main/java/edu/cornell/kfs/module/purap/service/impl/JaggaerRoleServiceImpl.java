@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -90,11 +89,11 @@ public class JaggaerRoleServiceImpl implements JaggaerRoleService {
                     KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
                     CUPurapConstants.B2B_SHOPPER_OFFICE_PERMISSION)) {
                 return CUPurapConstants.SCIQUEST_ROLE_OFFICE;
-            } else if (KimApiServiceLocator.getPermissionService().hasPermission(principalId,
+            } else if (permissionService.hasPermission(principalId,
                     KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
                     CUPurapConstants.B2B_SHOPPER_LAB_PERMISSION)) {
                 return CUPurapConstants.SCIQUEST_ROLE_LAB;
-            } else if (KimApiServiceLocator.getPermissionService().hasPermission(principalId,
+            } else if (permissionService.hasPermission(principalId,
                     KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
                     CUPurapConstants.B2B_SHOPPER_FACILITIES_PERMISSION)) {
                 return CUPurapConstants.SCIQUEST_ROLE_FACILITIES;
