@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+>
+
+    <bean id="ISOFIPSCountryMap" parent="ISOFIPSCountryMap-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-parentBean"
+          parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:businessObjectClass="edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap"
+          p:inquiryDefinition-ref="ISOFIPSCountryMap-inquiryDefinition"
+          p:lookupDefinition-ref="ISOFIPSCountryMap-lookupDefinition"
+          p:name="ISOFIPSCountryMap"
+          p:objectLabel="ISOFIPSCountryMap"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="ISOFIPSCountryMap"
+    >
+        <property name="keyAttributes">
+            <list>
+                <ref bean="ISOFIPSCountryMap-isoCountryCode"/>
+                <ref bean="ISOFIPSCountryMap-fipsCountryCode"/>
+            </list>
+        </property>
+
+        <property name="attributes">
+            <list>
+                <ref bean="ISOFIPSCountryMap-isoCountryCode"/>
+                <ref bean="ISOFIPSCountryMap-fipsCountryCode"/>
+                <ref bean="ISOFIPSCountryMap-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="ISOFIPSCountryMap-isoCountryCode" parent="ISOFIPSCountryMap-isoCountryCode-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-isoCountryCode-parentBean"
+          parent="AttributeDefinition"
+          p:description="The ISO code uniquely identifying the country."
+          p:forceUppercase="true"
+          p:label="ISO Country Code"
+          p:maxLength="2"
+          p:name="isoCountryCode"
+          p:required="true"
+          p:shortLabel="ISO Country Code"
+          p:summary="ISO Postal Country Code"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="2"/>
+        </property>
+        <property name="validationPattern">
+            <bean parent="AlphaNumericValidationPattern"/>
+        </property>
+    </bean>
+    
+    <bean id="ISOFIPSCountryMap-fipsCountryCode" parent="ISOFIPSCountryMap-fipsCountryCode-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-fipsCountryCode-parentBean"
+          parent="AttributeDefinition"
+          p:description="The FIPS code uniquely identifying the country."
+          p:forceUppercase="true"
+          p:label="FIPS Country Code"
+          p:maxLength="2"
+          p:name="fipsCountryCode"
+          p:required="true"
+          p:shortLabel="FIPS Country Code"
+          p:summary="FIPS Postal Country Code"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="2"/>
+        </property>
+        <property name="validationPattern">
+            <bean parent="AlphaNumericValidationPattern"/>
+        </property>
+    </bean>
+
+    <bean id="ISOFIPSCountryMap-active" parent="ISOFIPSCountryMap-active-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-active-parentBean"
+          parent="GenericAttributes-activeIndicator"
+          p:name="active"
+    />
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="ISOFIPSCountryMap-inquiryDefinition" parent="ISOFIPSCountryMap-inquiryDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-inquiryDefinition-parentBean"
+          parent="InquiryDefinition"
+          p:title="ISO FIPS Country Map"
+    >
+        <property name="sections">
+            <list>
+                <ref bean="ISOFIPSCountryMap-sectionDefinition"/>
+            </list>
+        </property>
+
+        <property name="inquirySections">
+            <list>
+                <ref bean="ISOFIPSCountryMap-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ISOFIPSCountryMap-sectionDefinition" parent="ISOFIPSCountryMap-sectionDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-sectionDefinition-parentBean"
+          parent="sectionDefinition"
+    >
+        <property name="fields">
+            <list>
+                <ref bean="ISOFIPSCountryMap-isoCountryCode"/>
+                <ref bean="ISOFIPSCountryMap-fipsCountryCode"/>
+                <ref bean="ISOFIPSCountryMap-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ISOFIPSCountryMap-inquirySectionDefinition" parent="ISOFIPSCountryMap-inquirySectionDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-inquirySectionDefinition-parentBean"
+          parent="InquirySectionDefinition"
+          p:numberOfColumns="1"
+          p:title=""
+    >
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="isoCountryCode"/>
+                <bean parent="FieldDefinition" p:attributeName="fipsCountryCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="ISOFIPSCountryMap-lookupDefinition" parent="ISOFIPSCountryMap-lookupDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-lookupDefinition-parentBean"
+          parent="LookupDefinition"
+          p:title="ISO FIPS Country Map Lookup"
+    >
+         <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>isoCountryCode</value>
+                        <value>fipsCountryCode</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="ISOFIPSCountryMap-isoCountryCode"/>
+                <ref bean="ISOFIPSCountryMap-fipsCountryCode"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <bean parent="ISOFIPSCountryMap-isoCountryCode" p:disableInquiry="true"/>
+                <bean parent="ISOFIPSCountryMap-fipsCountryCode" p:disableInquiry="true"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="isoCountryCode"/>
+                <bean parent="FieldDefinition" p:attributeName="fipsCountryCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="isoCountryCode"/>
+                <bean parent="FieldDefinition" p:attributeName="fipsCountryCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+</beans>

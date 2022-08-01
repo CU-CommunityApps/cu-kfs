@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="ISOCountryMaintenanceDocument" parent="ISOCountryMaintenanceDocument-parentBean"/>
+    <bean id="ISOCountryMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.sys.businessobject.ISOCountry"
+          p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"
+          p:documentTypeName="ICRY"
+          p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
+          p:workflowAttributes-ref="CountryMaintenanceDocument-workflowAttributes">
+        <property name="maintainableSections">
+            <list>
+                <ref bean="ISOCountryMaintenanceDocument-EditCountry"/>
+            </list>
+        </property>
+        <property name="lockingKeys">
+            <list>
+                <value>code</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Maintenance Section Definitions -->
+
+    <bean id="ISOCountryMaintenanceDocument-EditCountry" parent="ISOCountryMaintenanceDocument-EditCountry-parentBean"/>
+    <bean id="ISOCountryMaintenanceDocument-EditCountry-parentBean" abstract="true" parent="MaintainableSectionDefinition"
+          p:id="Edit ISO Country" p:title="Edit ISO Country">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="code" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="name" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="alternateCode"/>
+                <bean parent="MaintainableFieldDefinition" p:defaultValue="true" p:name="active"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Exported Workflow Properties -->
+
+    <bean id="ISOCountryMaintenanceDocument-workflowAttributes"
+          parent="ISOCountryMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="ISOCountryMaintenanceDocument-workflowAttributes-parentBean"
+          class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+
+</beans>

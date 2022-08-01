@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+>
+
+    <bean id="ISOCountry" parent="ISOCountry-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-parentBean"
+          parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:businessObjectClass="edu.cornell.kfs.sys.businessobject.ISOCountry"
+          p:inquiryDefinition-ref="ISOCountry-inquiryDefinition"
+          p:lookupDefinition-ref="ISOCountry-lookupDefinition"
+          p:name="ISOCountry"
+          p:objectLabel="ISO Country"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="code"
+    >
+        <property name="keyAttributes">
+            <list>
+                <ref bean="ISOCountry-code"/>
+            </list>
+        </property>
+
+        <property name="attributes">
+            <list>
+                <ref bean="ISOCountry-code"/>
+                <ref bean="ISOCountry-name"/>
+                <ref bean="ISOCountry-alternateCode"/>
+                <ref bean="ISOCountry-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="ISOCountry-code" parent="ISOCountry-code-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-code-parentBean"
+          parent="AttributeDefinition"
+          p:description="The ISO code uniquely identifying the country."
+          p:forceUppercase="true"
+          p:label="ISO Country Code"
+          p:maxLength="2"
+          p:name="code"
+          p:required="true"
+          p:shortLabel="ISO Country Code"
+          p:summary="ISO Postal Country Code"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="2"/>
+        </property>
+        <property name="validationPattern">
+            <bean parent="AlphaNumericValidationPattern"/>
+        </property>
+    </bean>
+
+    <bean id="ISOCountry-alternateCode" parent="ISOCountry-alternateCode-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-alternateCode-parentBean"
+          parent="AttributeDefinition"
+          p:description="The alternate ISO code uniquely identifying a country."
+          p:forceUppercase="true"
+          p:label="Alternate ISO Country Code"
+          p:maxLength="3"
+          p:name="alternateCode"
+          p:shortLabel="Alt ISO Country Code"
+          p:summary="Alternate ISO Postal Country Code"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="3"/>
+        </property>
+        <property name="validationPattern">
+            <bean parent="AlphaNumericValidationPattern"/>
+        </property>
+    </bean>
+
+    <bean id="ISOCountry-name" parent="ISOCountry-name-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-name-parentBean"
+          parent="AttributeDefinition"
+          p:description="ISO Postal Country Name..."
+          p:label="ISO Country Name"
+          p:maxLength="255"
+          p:name="name"
+          p:required="true"
+          p:shortLabel="ISO Country Name"
+          p:summary="ISO Postal Country Name"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50"/>
+        </property>
+    </bean>
+
+    <bean id="ISOCountry-active" parent="ISOCountry-active-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-active-parentBean"
+          parent="GenericAttributes-activeIndicator"
+          p:name="active"
+    />
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="ISOCountry-inquiryDefinition" parent="ISOCountry-inquiryDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-inquiryDefinition-parentBean"
+          parent="InquiryDefinition"
+          p:title="ISO Country"
+    >
+        <property name="sections">
+            <list>
+                <ref bean="ISOCountry-sectionDefinition"/>
+            </list>
+        </property>
+
+        <property name="inquirySections">
+            <list>
+                <ref bean="ISOCountry-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ISOCountry-sectionDefinition" parent="ISOCountry-sectionDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-sectionDefinition-parentBean"
+          parent="sectionDefinition"
+    >
+        <property name="fields">
+            <list>
+                <ref bean="ISOCountry-code"/>
+                <ref bean="ISOCountry-name"/>
+                <ref bean="ISOCountry-alternateCode"/>
+                <ref bean="ISOCountry-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ISOCountry-inquirySectionDefinition" parent="ISOCountry-inquirySectionDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-inquirySectionDefinition-parentBean"
+          parent="InquirySectionDefinition"
+          p:numberOfColumns="1"
+          p:title=""
+    >
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="ISOCountry-lookupDefinition" parent="ISOCountry-lookupDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-lookupDefinition-parentBean"
+          parent="LookupDefinition"
+          p:title="ISO Country Lookup"
+    >
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>code</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="ISOCountry-code"/>
+                <ref bean="ISOCountry-name"/>
+                <ref bean="ISOCountry-alternateCode"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <bean parent="ISOCountry-code" p:disableInquiry="true"/>
+                <ref bean="ISOCountry-name"/>
+                <ref bean="ISOCountry-alternateCode"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+</beans>
