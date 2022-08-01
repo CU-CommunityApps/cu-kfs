@@ -364,7 +364,7 @@
         <repository>
             <id>foundation.nexus</id>
             <name>Kuali Foundation Nexus Group</name>
-            <url>http://nexus.kuali.org/content/groups/public</url>
+            <url>https://nexus.kuali.co/content/groups/public</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
