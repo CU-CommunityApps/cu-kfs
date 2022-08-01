@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="JaggaerRoleLinkMappingMaintenanceDocument"
+          parent="JaggaerRoleLinkMappingMaintenanceDocument-parentBean"/>
+    <bean id="JaggaerRoleLinkMappingMaintenanceDocument-parentBean"
+          abstract="true"
+          parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.module.purap.businessobject.JaggaerRoleLinkMapping"
+          p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"
+          p:documentTypeName="JRLM"
+          p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
+          p:workflowAttributes-ref="JaggaerRoleLinkMappingMaintenanceDocument-workflowAttributes">
+        <property name="maintainableSections">
+            <list>
+                <ref bean="JaggaerRoleLinkMappingMaintenanceDocument-EditJaggaerRoleLinkMapping"/>
+            </list>
+        </property>
+        <property name="lockingKeys">
+            <list>
+                <value>jaggaerRoleName</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="JaggaerRoleLinkMappingMaintenanceDocument-EditJaggaerRoleLinkMapping"
+          parent="JaggaerRoleLinkMappingMaintenanceDocument-EditJaggaerRoleLinkMapping-parentBean"/>
+    <bean id="JaggaerRoleLinkMappingMaintenanceDocument-EditJaggaerRoleLinkMapping-parentBean"
+          abstract="true"
+          parent="MaintainableSectionDefinition"
+          p:id="Edit Jaggaer Role Link Mapping"
+          p:title="Edit Jaggaer Role Link Mapping">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="jaggaerRoleName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="eShopLink"/>
+                <bean parent="MaintainableFieldDefinition" p:name="contractsPlusLink"/>
+                <bean parent="MaintainableFieldDefinition" p:name="jaggaerAdminLink"/>
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="JaggaerRoleLinkMappingMaintenanceDocument-workflowAttributes"
+          parent="JaggaerRoleLinkMappingMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="JaggaerRoleLinkMappingMaintenanceDocument-workflowAttributes-parentBean"
+          abstract="true"
+          parent="WorkflowAttributes"/>
+
+</beans>

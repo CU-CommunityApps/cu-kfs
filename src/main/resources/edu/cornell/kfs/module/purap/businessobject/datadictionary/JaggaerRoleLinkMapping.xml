@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="JaggaerRoleLinkMapping" parent="JaggaerRoleLinkMapping-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-parentBean"
+          abstract="true"
+          parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:businessObjectClass="edu.cornell.kfs.module.purap.businessobject.JaggaerRoleLinkMapping"
+          p:inquiryDefinition-ref="JaggaerRoleLinkMapping-inquiryDefinition"
+          p:lookupDefinition-ref="JaggaerRoleLinkMapping-lookupDefinition"
+          p:name="JaggaerRoleLinkMapping"
+          p:objectLabel="Jaggaer Role Link Mapping"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="jaggaerRoleName">
+        <property name="keyAttributes">
+            <list>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerRoleName"/>
+            </list>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerRoleName"/>
+                <ref bean="JaggaerRoleLinkMapping-eShopLink"/>
+                <ref bean="JaggaerRoleLinkMapping-contractsPlusLink"/>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerAdminLink"/>
+                <ref bean="JaggaerRoleLinkMapping-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="JaggaerRoleLinkMapping-jaggaerRoleName" parent="JaggaerRoleLinkMapping-jaggaerRoleName-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-jaggaerRoleName-parentBean"
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="jaggaerRoleName"
+          p:forceUppercase="false"
+          p:label="Jaggaer Role Name"
+          p:shortLabel="Jaggaer Role"
+          p:maxLength="50"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="52"/>
+        </property>
+    </bean>
+
+    <bean id="JaggaerRoleLinkMapping-eShopLink" parent="JaggaerRoleLinkMapping-eShopLink-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-eShopLink-parentBean"
+          abstract="true"
+          parent="GenericAttributes-activeIndicator"
+          p:name="eShopLink"
+          p:label="Assignable on eShop Login Link"
+          p:shortLabel="On eShop Link"/>
+
+    <bean id="JaggaerRoleLinkMapping-contractsPlusLink" parent="JaggaerRoleLinkMapping-contractsPlusLink-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-contractsPlusLink-parentBean"
+          abstract="true"
+          parent="GenericAttributes-activeIndicator"
+          p:name="contractsPlusLink"
+          p:label="Assignable on Contracts+ Login Link"
+          p:shortLabel="On Contracts+ Link"/>
+
+    <bean id="JaggaerRoleLinkMapping-jaggaerAdminLink" parent="JaggaerRoleLinkMapping-jaggaerAdminLink-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-jaggaerAdminLink-parentBean"
+          abstract="true"
+          parent="GenericAttributes-activeIndicator"
+          p:name="jaggaerAdminLink"
+          p:label="Assignable on Jaggaer Admin Login Link"
+          p:shortLabel="On Admin Link"/>
+
+    <bean id="JaggaerRoleLinkMapping-active" parent="JaggaerRoleLinkMapping-active-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-active-parentBean"
+          abstract="true"
+          parent="GenericAttributes-activeIndicator"
+          p:name="active"/>
+
+    <bean id="JaggaerRoleLinkMapping-inquiryDefinition" parent="JaggaerRoleLinkMapping-inquiryDefinition-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-inquiryDefinition-parentBean"
+          abstract="true"
+          parent="InquiryDefinition"
+          p:title="Jaggaer Role Link Mapping">
+        <property name="sections">
+            <list>
+                <ref bean="JaggaerRoleLinkMapping-sectionDefinition"/>
+            </list>
+        </property>
+        <property name="inquirySections">
+            <list>
+                <ref bean="JaggaerRoleLinkMapping-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="JaggaerRoleLinkMapping-sectionDefinition" parent="JaggaerRoleLinkMapping-sectionDefinition-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-sectionDefinition-parentBean"
+          abstract="true"
+          parent="sectionDefinition">
+        <property name="fields">
+            <list>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerRoleName"/>
+                <ref bean="JaggaerRoleLinkMapping-eShopLink"/>
+                <ref bean="JaggaerRoleLinkMapping-contractsPlusLink"/>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerAdminLink"/>
+                <ref bean="JaggaerRoleLinkMapping-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="JaggaerRoleLinkMapping-inquirySectionDefinition"
+          parent="JaggaerRoleLinkMapping-inquirySectionDefinition-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-inquirySectionDefinition-parentBean"
+          abstract="true"
+          parent="InquirySectionDefinition"
+          p:title="Jaggaer Role Link Mapping">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="jaggaerRoleName"/>
+                <bean parent="FieldDefinition" p:attributeName="eShopLink"/>
+                <bean parent="FieldDefinition" p:attributeName="contractsPlusLink"/>
+                <bean parent="FieldDefinition" p:attributeName="jaggaerAdminLink"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="JaggaerRoleLinkMapping-lookupDefinition" parent="JaggaerRoleLinkMapping-lookupDefinition-parentBean"/>
+    <bean id="JaggaerRoleLinkMapping-lookupDefinition-parentBean"
+          abstract="true"
+          parent="LookupDefinition"
+          p:title="Jaggaer Role Link Mapping Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>jaggaerRoleName</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerRoleName"/>
+                <bean parent="JaggaerRoleLinkMapping-eShopLink"
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
+                      p:defaultValue=""/>
+                <bean parent="JaggaerRoleLinkMapping-contractsPlusLink"
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
+                      p:defaultValue=""/>
+                <bean parent="JaggaerRoleLinkMapping-jaggaerAdminLink"
+                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
+                      p:defaultValue=""/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerRoleName"/>
+                <ref bean="JaggaerRoleLinkMapping-eShopLink"/>
+                <ref bean="JaggaerRoleLinkMapping-contractsPlusLink"/>
+                <ref bean="JaggaerRoleLinkMapping-jaggaerAdminLink"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
