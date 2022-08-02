@@ -4,7 +4,7 @@
         <documentType>
             <name>JRLM</name>
             <parent>FSSM</parent>
-            <label>JaggaerRoleLinkMapping</label>
+            <label>Jaggaer Role Link Mapping</label>
             <active>true</active>
             <routingVersion>2</routingVersion>
         </documentType>
