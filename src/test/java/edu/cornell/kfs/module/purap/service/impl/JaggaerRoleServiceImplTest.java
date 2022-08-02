@@ -35,7 +35,7 @@ class JaggaerRoleServiceImplTest {
     private Person user;
     
     private static final String JAGGAER_ROLE_HAS = "jaggaer role has";
-    private static final String JAGGAER_ROLE_DOES_NOT_HAVE = "jaggear role does not have";
+    private static final String JAGGAER_ROLE_DOES_NOT_HAVE = "jaggaer role does not have";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -128,7 +128,7 @@ class JaggaerRoleServiceImplTest {
     
     @ParameterizedTest
     @MethodSource("provideRolesForIsDefaultJaggaerRoleTest")
-    void testisDefaultJaggaerRole(String role, boolean expected) {
+    void testIsDefaultJaggaerRole(String role, boolean expected) {
         boolean actual = jaggaerRoleService.isDefaultJaggaerRole(role);
         assertEquals(expected, actual);
     }
