@@ -28,7 +28,8 @@ public class SchedulerServiceFactoryBean implements FactoryBean<SchedulerService
     private EmailService emailService;
     private KSBScheduledPool scheduledThreadPool;
     private JobDescriptor exceptionMessageJob;
-    private boolean useQuartzScheduling;
+    private JobDescriptor messageJob;
+	private boolean useQuartzScheduling;
 
     private volatile SchedulerService schedulerServiceInstance;
 
@@ -67,6 +68,7 @@ public class SchedulerServiceFactoryBean implements FactoryBean<SchedulerService
         schedulerService.setParameterService(parameterService);
         schedulerService.setDateTimeService(dateTimeService);
         schedulerService.setExceptionMessageJob(exceptionMessageJob);
+        schedulerService.setMessageJob(messageJob);
         schedulerService.setJobListeners(List.of(jobListener, messageServiceExecutorJobListener));
         return schedulerService;
     }
@@ -161,5 +163,13 @@ public class SchedulerServiceFactoryBean implements FactoryBean<SchedulerService
     public void setUseQuartzScheduling(boolean useQuartzScheduling) {
         this.useQuartzScheduling = useQuartzScheduling;
     }
+    
+    public JobDescriptor getMessageJob() {
+		return messageJob;
+	}
+
+	public void setMessageJob(JobDescriptor messageJob) {
+		this.messageJob = messageJob;
+	}
 
 }

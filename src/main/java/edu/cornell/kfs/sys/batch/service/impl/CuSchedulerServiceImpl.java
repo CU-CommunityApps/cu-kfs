@@ -60,7 +60,8 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
     private JobDescriptor exceptionMessageJob;
-    private List<JobListener> jobListeners;
+    private JobDescriptor messageJob;
+	private List<JobListener> jobListeners;
 
     private ConcurrentMap<JobKey, CuJobEntry> jobs;
     private AtomicInteger nextExceptionMessageJobIndex;
@@ -340,6 +341,49 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
             }
         }
     }
+    
+    @Override
+    public void scheduleMessageJob(PersistedMessage message, String description) {
+        JobDetail jobDetail = createMessageJobDetail(message, description);
+        CuJobEntry jobEntry = new CuJobEntry(messageJob, jobDetail);
+        JobKey jobKey = jobDetail.getKey();
+        boolean jobWasScheduled = false;
+        
+        if (jobs.putIfAbsent(jobKey, jobEntry) != null) {
+            throw new IllegalStateException("Job with name '" + jobKey.getName()
+                    + "' was already running; this should NEVER happen");
+        }
+        
+        try {
+            Date queueDate = new Date(message.getQueueDate().getTime());
+            runJob(jobEntry, Map.of(), queueDate);
+            jobWasScheduled = true;
+        } catch (RuntimeException e) {
+            jobWasScheduled = false;
+            LOG.error("scheduleMessageJob, Could not successfully schedule job", e);
+            throw e;
+        } finally {
+            if (!jobWasScheduled) {
+                jobs.remove(jobKey);
+            }
+        }
+    }
+    
+    private JobDetail createMessageJobDetail(PersistedMessage message, String description) {
+        String jobName = "Delayed_Asynchronous_Call-" + Math.random();
+        
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put(MessageServiceExecutorJob.MESSAGE_KEY, message);
+        
+        JobBuilder jobBuilder = JobBuilder.newJob();
+        if (StringUtils.isNotBlank(description)) {
+            jobBuilder = jobBuilder.withDescription(description);
+        }
+        return jobBuilder.withIdentity(jobName, "Delayed_Asynchronous_Call")
+                .ofType(MessageServiceExecutorJob.class)
+                .setJobData(jobDataMap)
+                .build();
+    }
 
     private JobDetail createExceptionMessageJobDetail(PersistedMessage message, String description) {
         int nextIndex = nextExceptionMessageJobIndex.updateAndGet(
@@ -493,5 +537,13 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     public void setJobListeners(List<JobListener> jobListeners) {
         this.jobListeners = List.copyOf(jobListeners);
     }
+    
+    public JobDescriptor getMessageJob() {
+		return messageJob;
+	}
+
+	public void setMessageJob(JobDescriptor messageJob) {
+		this.messageJob = messageJob;
+	}
 
 }

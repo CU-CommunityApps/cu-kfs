@@ -385,6 +385,7 @@
           p:emailService-ref="emailService"
           p:scheduledThreadPool-ref="rice.ksb.scheduledThreadPool"
           p:exceptionMessageJob-ref="exceptionMessageJob"
+          p:messageJob-ref="messageJob"
           p:useQuartzScheduling="${use.quartz.scheduling}"/>
 
     <bean id="messageServiceExecutorJobListener"
@@ -394,6 +395,9 @@
         This bean is only meant for KSB-message-related processing, so we exclude it
         from the KFS-SYS module's "jobNames" property.
      -->
+    <bean id="messageJob" parent="unscheduledJobDescriptor"
+          p:namespaceCode="KFS-SYS"
+          p:group="Delayed Asynconous Messaging"/>
     <bean id="exceptionMessageJob" parent="unscheduledJobDescriptor"
           p:namespaceCode="KFS-SYS"
           p:group="Exception Messaging"/>

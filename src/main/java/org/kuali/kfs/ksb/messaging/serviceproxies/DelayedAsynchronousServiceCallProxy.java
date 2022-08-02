@@ -31,6 +31,7 @@ import org.kuali.kfs.ksb.messaging.PersistedMessage;
 import org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJob;
 import org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJobListener;
 import org.kuali.kfs.ksb.service.KSBServiceLocator;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.service.SchedulerService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.quartz.JobDataMap;
@@ -107,11 +108,11 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
     private void scheduleMessage(PersistedMessage message) throws SchedulerException {
         LOG.debug("Scheduling execution of a delayed asynchronous message.");
         
-        String description = "";
-        boolean useQuartzScheduling = Boolean.valueOf(ConfigContext.getCurrentContextConfig().getProperty("use.quartz.scheduling"));
+        String description = "Delayed_Asynchronous_Call";
+        boolean useQuartzScheduling = Boolean.valueOf(ConfigContext.getCurrentContextConfig().getProperty(KFSPropertyConstants.USE_QUARTZ_SCHEDULING_KEY));
         
         if (!useQuartzScheduling) {
-            getCuSchedulerService().scheduleExceptionMessageJob(message, description);
+            getCuSchedulerService().scheduleMessageJob(message, description);
             return;
         }
         
