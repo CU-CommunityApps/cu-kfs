@@ -34,8 +34,8 @@ class JaggaerRoleServiceImplTest {
     private JaggaerRoleServiceImpl jaggaerRoleService;
     private Person user;
     
-    private static final String JAGGAER_ROLE_HAS = "jaggar role has";
-    private static final String JAGGAER_ROLE_DOES_NOT_HAVE = "jaggar role does not have";
+    private static final String JAGGAER_ROLE_HAS = "jaggaer role has";
+    private static final String JAGGAER_ROLE_DOES_NOT_HAVE = "jaggear role does not have";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -176,7 +176,7 @@ class JaggaerRoleServiceImplTest {
     
     
     @ParameterizedTest
-    @MethodSource("provideforTestGetJaggaerRoles")
+    @MethodSource("provideForTestGetJaggaerRoles")
     void testGetJaggaerRoles(boolean isBuyer, boolean isOffice, boolean isLab, boolean isFacilities, List<String> expectedRoles) {
         jaggaerRoleService.setJaggaerRoleLinkMappingService(buildMockJaggaerRoleLinkMappingService());
         jaggaerRoleService.setPermissionService(buildMockPermissionService(isBuyer, isOffice, isLab, isFacilities));
@@ -187,7 +187,7 @@ class JaggaerRoleServiceImplTest {
         }
     }
     
-    private static Stream<Arguments> provideforTestGetJaggaerRoles() {
+    private static Stream<Arguments> provideForTestGetJaggaerRoles() {
         return Stream.of(
           Arguments.of(true, true, false, false, List.of(JAGGAER_ROLE_HAS, 
                   JaggaerConstants.JAGGAER_ROLE_NAME_VIEW_ONLY, CUPurapConstants.SCIQUEST_ROLE_BUYER,

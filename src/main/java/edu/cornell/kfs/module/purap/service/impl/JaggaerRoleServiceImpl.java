@@ -71,7 +71,7 @@ public class JaggaerRoleServiceImpl implements JaggaerRoleService {
             }
 
         } catch (Exception e) {
-            LOG.info("getEshopPreAuthValue, unable to check permssions for " + principalId, e);
+            LOG.info("getEshopPreAuthValue, unable to check permissions for " + principalId, e);
             return CUPurapConstants.SCIQUEST_ROLE_SHOPPER;
         }
     }
@@ -102,7 +102,7 @@ public class JaggaerRoleServiceImpl implements JaggaerRoleService {
             }
 
         } catch (Exception e) {
-            LOG.info("getEshopViewValue, unable to check permssions for " + principalId, e);
+            LOG.info("getEshopViewValue, unable to check permissions for " + principalId, e);
             return CUPurapConstants.SCIQUEST_ROLE_UNRESTRICTED;
         }
     }

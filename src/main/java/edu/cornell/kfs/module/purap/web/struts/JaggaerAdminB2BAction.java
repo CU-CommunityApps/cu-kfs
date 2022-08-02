@@ -19,7 +19,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
 import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingService;
 
-public class JadgaerAdminB2BAction extends KualiAction {
+public class JaggaerAdminB2BAction extends KualiAction {
 
     private static final Logger LOG = LogManager.getLogger();
     
