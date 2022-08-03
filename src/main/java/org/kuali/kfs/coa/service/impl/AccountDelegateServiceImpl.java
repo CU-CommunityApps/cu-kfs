@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+/* Cornell customization: backport FINP-8341 */
 public class AccountDelegateServiceImpl implements AccountDelegateService {
 
     private AccountDelegateDao accountDelegateDao;

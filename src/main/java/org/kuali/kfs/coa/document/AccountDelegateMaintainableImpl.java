@@ -45,6 +45,7 @@ import java.util.Set;
  * This class is a special implementation of Maintainable specifically for Account Delegates. It was created to
  * correctly update the default Start Date on edits and copies, ala JIRA #KULRNE-62.
  */
+/* Cornell customization: backport FINP-8341 */
 public class AccountDelegateMaintainableImpl extends FinancialSystemMaintainable {
 
     private static final Logger LOG = LogManager.getLogger();

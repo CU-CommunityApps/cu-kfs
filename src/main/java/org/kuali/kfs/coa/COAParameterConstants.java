@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.coa;
 
+/* Cornell customization: backport FINP-8341 */
 public final class COAParameterConstants {
 
     public static final String ACCOUNT_DELEGATES_LIMIT = "ACCOUNT_DELEGATES_LIMIT";

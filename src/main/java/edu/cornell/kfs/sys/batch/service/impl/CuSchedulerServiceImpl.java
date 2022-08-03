@@ -60,8 +60,8 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
     private JobDescriptor exceptionMessageJob;
-    private JobDescriptor messageJob;
-	private List<JobListener> jobListeners;
+    private JobDescriptor delayedAsyncCallJob;
+    private List<JobListener> jobListeners;
 
     private ConcurrentMap<JobKey, CuJobEntry> jobs;
     private AtomicInteger nextExceptionMessageJobIndex;
@@ -343,9 +343,9 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     }
     
     @Override
-    public void scheduleMessageJob(PersistedMessage message, String description) {
-        JobDetail jobDetail = createMessageJobDetail(message, description);
-        CuJobEntry jobEntry = new CuJobEntry(messageJob, jobDetail);
+    public void scheduleDelayedAsyncCallJob(PersistedMessage message, String description) {
+        JobDetail jobDetail = createDelayedAsyncCallJobDetail(message, description);
+        CuJobEntry jobEntry = new CuJobEntry(delayedAsyncCallJob, jobDetail);
         JobKey jobKey = jobDetail.getKey();
         boolean jobWasScheduled = false;
         
@@ -360,7 +360,7 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
             jobWasScheduled = true;
         } catch (RuntimeException e) {
             jobWasScheduled = false;
-            LOG.error("scheduleMessageJob, Could not successfully schedule job", e);
+            LOG.error("scheduleDelayedAsyncCallJob, Could not successfully schedule job", e);
             throw e;
         } finally {
             if (!jobWasScheduled) {
@@ -369,7 +369,7 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
         }
     }
     
-    private JobDetail createMessageJobDetail(PersistedMessage message, String description) {
+    private JobDetail createDelayedAsyncCallJobDetail(PersistedMessage message, String description) {
         String jobName = "Delayed_Asynchronous_Call-" + Math.random();
         
         JobDataMap jobDataMap = new JobDataMap();
@@ -538,12 +538,12 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
         this.jobListeners = List.copyOf(jobListeners);
     }
     
-    public JobDescriptor getMessageJob() {
-		return messageJob;
+    public JobDescriptor getDelayedAsyncCallJob() {
+		return delayedAsyncCallJob;
 	}
 
-	public void setMessageJob(JobDescriptor messageJob) {
-		this.messageJob = messageJob;
+	public void setDelayedAsyncCallJob(JobDescriptor delayedAsyncCallJob) {
+		this.delayedAsyncCallJob = delayedAsyncCallJob;
 	}
 
 }

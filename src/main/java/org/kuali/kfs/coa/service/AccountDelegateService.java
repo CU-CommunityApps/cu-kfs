@@ -31,6 +31,7 @@ import java.util.Set;
 /**
  * An interface of services to support account delegate logic
  */
+/* Cornell customization: backport FINP-8341 */
 public interface AccountDelegateService {
 
     /**

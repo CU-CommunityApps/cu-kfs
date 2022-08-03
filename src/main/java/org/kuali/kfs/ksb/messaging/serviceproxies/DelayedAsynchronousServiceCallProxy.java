@@ -112,7 +112,7 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
         boolean useQuartzScheduling = Boolean.valueOf(ConfigContext.getCurrentContextConfig().getProperty(KFSPropertyConstants.USE_QUARTZ_SCHEDULING_KEY));
         
         if (!useQuartzScheduling) {
-            getCuSchedulerService().scheduleMessageJob(message, description);
+            getCuSchedulerService().scheduleDelayedAsyncCallJob(message, description);
             return;
         }
         

@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.coa;
 
+/* Cornell customization: backport FINP-8341 */
 public final class COAKeyConstants {
     public static final String ERROR_DOCUMENT_ACCTDELEGATEMAINT_FROM_AMOUNT_NONNEGATIVE = "error.document.accountDelegateMaintenance.fromAmountMustBeNonNegative";
     public static final String ERROR_DOCUMENT_ACCTDELEGATEMAINT_INVALID_CHART_CODE = "error.document.accountDelegateMaintenance.invalidChartCode";

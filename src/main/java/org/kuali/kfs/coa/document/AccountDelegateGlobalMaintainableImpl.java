@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.coa.document;
 
+/* Cornell customization: backport FINP-8341 */
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.COAKeyConstants;

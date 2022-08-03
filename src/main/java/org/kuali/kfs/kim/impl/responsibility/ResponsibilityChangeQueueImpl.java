@@ -27,6 +27,7 @@ import java.util.Set;
 /**
  * Reference implementation of the {@code ResponsibilityChangeQueue}.
  */
+/* Cornell customization: backport FINP-8341 */
 public class ResponsibilityChangeQueueImpl implements ResponsibilityChangeQueue {
 
     @Override
