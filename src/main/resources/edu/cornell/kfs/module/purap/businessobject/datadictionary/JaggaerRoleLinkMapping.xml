@@ -54,7 +54,7 @@
           abstract="true"
           parent="GenericAttributes-activeIndicator"
           p:name="eShopLink"
-          p:label="Assignable on eShop Login Link"
+          p:label="Available on eShop Login Link"
           p:shortLabel="On eShop Link"/>
 
     <bean id="JaggaerRoleLinkMapping-contractsPlusLink" parent="JaggaerRoleLinkMapping-contractsPlusLink-parentBean"/>
@@ -62,7 +62,7 @@
           abstract="true"
           parent="GenericAttributes-activeIndicator"
           p:name="contractsPlusLink"
-          p:label="Assignable on Contracts+ Login Link"
+          p:label="Available on Contracts+ Login Link"
           p:shortLabel="On Contracts+ Link"/>
 
     <bean id="JaggaerRoleLinkMapping-jaggaerAdminLink" parent="JaggaerRoleLinkMapping-jaggaerAdminLink-parentBean"/>
@@ -70,7 +70,7 @@
           abstract="true"
           parent="GenericAttributes-activeIndicator"
           p:name="jaggaerAdminLink"
-          p:label="Assignable on Jaggaer Admin Login Link"
+          p:label="Available on Jaggaer Admin Login Link"
           p:shortLabel="On Admin Link"/>
 
     <bean id="JaggaerRoleLinkMapping-active" parent="JaggaerRoleLinkMapping-active-parentBean"/>
@@ -89,11 +89,6 @@
                 <ref bean="JaggaerRoleLinkMapping-sectionDefinition"/>
             </list>
         </property>
-        <property name="inquirySections">
-            <list>
-                <ref bean="JaggaerRoleLinkMapping-inquirySectionDefinition"/>
-            </list>
-        </property>
     </bean>
 
     <bean id="JaggaerRoleLinkMapping-sectionDefinition" parent="JaggaerRoleLinkMapping-sectionDefinition-parentBean"/>
@@ -107,23 +102,6 @@
                 <ref bean="JaggaerRoleLinkMapping-contractsPlusLink"/>
                 <ref bean="JaggaerRoleLinkMapping-jaggaerAdminLink"/>
                 <ref bean="JaggaerRoleLinkMapping-active"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="JaggaerRoleLinkMapping-inquirySectionDefinition"
-          parent="JaggaerRoleLinkMapping-inquirySectionDefinition-parentBean"/>
-    <bean id="JaggaerRoleLinkMapping-inquirySectionDefinition-parentBean"
-          abstract="true"
-          parent="InquirySectionDefinition"
-          p:title="Jaggaer Role Link Mapping">
-        <property name="inquiryFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="jaggaerRoleName"/>
-                <bean parent="FieldDefinition" p:attributeName="eShopLink"/>
-                <bean parent="FieldDefinition" p:attributeName="contractsPlusLink"/>
-                <bean parent="FieldDefinition" p:attributeName="jaggaerAdminLink"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
     </bean>
