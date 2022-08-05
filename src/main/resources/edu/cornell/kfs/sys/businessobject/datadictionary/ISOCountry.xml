@@ -84,7 +84,7 @@
     <bean abstract="true"
           id="ISOCountry-name-parentBean"
           parent="AttributeDefinition"
-          p:description="ISO Postal Country Name..."
+          p:description="ISO Postal Country Name"
           p:label="ISO Country Name"
           p:maxLength="255"
           p:name="name"
@@ -105,26 +105,6 @@
     />
 
     <!-- Business Object Inquiry Definition -->
-
-    <bean id="ISOCountry-inquiryDefinition" parent="ISOCountry-inquiryDefinition-parentBean"/>
-    <bean abstract="true"
-          id="ISOCountry-inquiryDefinition-parentBean"
-          parent="InquiryDefinition"
-          p:title="ISO Country"
-    >
-        <property name="sections">
-            <list>
-                <ref bean="ISOCountry-sectionDefinition"/>
-            </list>
-        </property>
-
-        <property name="inquirySections">
-            <list>
-                <ref bean="ISOCountry-inquirySectionDefinition"/>
-            </list>
-        </property>
-    </bean>
-
     <bean id="ISOCountry-sectionDefinition" parent="ISOCountry-sectionDefinition-parentBean"/>
     <bean abstract="true"
           id="ISOCountry-sectionDefinition-parentBean"
@@ -174,7 +154,6 @@
                 </property>
             </bean>
         </property>
-
         <property name="formAttributeDefinitions">
             <list>
                 <ref bean="ISOCountry-code"/>
@@ -189,23 +168,6 @@
                 <ref bean="ISOCountry-name"/>
                 <ref bean="ISOCountry-alternateCode"/>
                 <ref bean="activeIndicatorAttributeDefinition"/>
-            </list>
-        </property>
-
-        <property name="lookupFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="code"/>
-                <bean parent="FieldDefinition" p:attributeName="name"/>
-                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
-        <property name="resultFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="code"/>
-                <bean parent="FieldDefinition" p:attributeName="name"/>
-                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
     </bean>

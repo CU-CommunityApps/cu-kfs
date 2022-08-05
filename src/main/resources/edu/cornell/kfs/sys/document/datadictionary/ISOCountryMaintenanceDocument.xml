@@ -12,7 +12,7 @@
           p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"
           p:documentTypeName="ICRY"
           p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
-          p:workflowAttributes-ref="CountryMaintenanceDocument-workflowAttributes">
+          p:workflowAttributes-ref="ISOCountryMaintenanceDocument-workflowAttributes">
         <property name="maintainableSections">
             <list>
                 <ref bean="ISOCountryMaintenanceDocument-EditCountry"/>

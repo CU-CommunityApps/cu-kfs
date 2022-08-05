@@ -93,4 +93,9 @@ public class CUKFSPropertyConstants {
 
     public static final String DOCUMENT_ID = "documentId";
     public static final String FINALIZED_DATE = "finalizedDate";
+
+    public static class ISOFIPSCountryMap {
+        public static final String ISO_COUNTRY_CODE = "isoCountryCode";
+        public static final String FIPS_COUNTRY_CODE = "fipsCountryCode";
+    }
 }

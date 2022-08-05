@@ -279,7 +279,7 @@
         <field-descriptor name="fipsCountryCode" column="FIPS_POSTAL_CNTRY_CD" jdbc-type="VARCHAR" primarykey="true" indexed="true" />
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-        <field-descriptor name="active" column="actv_ind" jdbc-type="varchar"
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="varchar"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
         <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
     </class-descriptor>

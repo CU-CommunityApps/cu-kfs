@@ -17,7 +17,7 @@
           p:inquiryDefinition-ref="ISOFIPSCountryMap-inquiryDefinition"
           p:lookupDefinition-ref="ISOFIPSCountryMap-lookupDefinition"
           p:name="ISOFIPSCountryMap"
-          p:objectLabel="ISOFIPSCountryMap"
+          p:objectLabel="ISO FIPS Country Map"
           p:searchService-ref="defaultSearchService"
           p:titleAttribute="ISOFIPSCountryMap"
     >
@@ -89,26 +89,6 @@
     />
 
     <!-- Business Object Inquiry Definition -->
-
-    <bean id="ISOFIPSCountryMap-inquiryDefinition" parent="ISOFIPSCountryMap-inquiryDefinition-parentBean"/>
-    <bean abstract="true"
-          id="ISOFIPSCountryMap-inquiryDefinition-parentBean"
-          parent="InquiryDefinition"
-          p:title="ISO FIPS Country Map"
-    >
-        <property name="sections">
-            <list>
-                <ref bean="ISOFIPSCountryMap-sectionDefinition"/>
-            </list>
-        </property>
-
-        <property name="inquirySections">
-            <list>
-                <ref bean="ISOFIPSCountryMap-inquirySectionDefinition"/>
-            </list>
-        </property>
-    </bean>
-
     <bean id="ISOFIPSCountryMap-sectionDefinition" parent="ISOFIPSCountryMap-sectionDefinition-parentBean"/>
     <bean abstract="true"
           id="ISOFIPSCountryMap-sectionDefinition-parentBean"
@@ -157,7 +137,6 @@
                 </property>
             </bean>
         </property>
-
         <property name="formAttributeDefinitions">
             <list>
                 <ref bean="ISOFIPSCountryMap-isoCountryCode"/>
@@ -173,19 +152,5 @@
             </list>
         </property>
 
-        <property name="lookupFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="isoCountryCode"/>
-                <bean parent="FieldDefinition" p:attributeName="fipsCountryCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
-        <property name="resultFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="isoCountryCode"/>
-                <bean parent="FieldDefinition" p:attributeName="fipsCountryCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
     </bean>
 </beans>
