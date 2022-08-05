@@ -138,6 +138,24 @@
     </bean>
 
     <!-- Business Object Lookup Definition -->
+    <bean id="ISOCountry-inquiryDefinition" parent="ISOCountry-inquiryDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOCountry-inquiryDefinition-parentBean"
+          parent="InquiryDefinition"
+          p:title="ISO Country"
+    >
+        <property name="sections">
+            <list>
+                <ref bean="ISOCountry-sectionDefinition"/>
+            </list>
+        </property>
+
+        <property name="inquirySections">
+            <list>
+                <ref bean="ISOCountry-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="ISOCountry-lookupDefinition" parent="ISOCountry-lookupDefinition-parentBean"/>
     <bean abstract="true"

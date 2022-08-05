@@ -89,6 +89,25 @@
     />
 
     <!-- Business Object Inquiry Definition -->
+    <bean id="ISOFIPSCountryMap-inquiryDefinition" parent="ISOFIPSCountryMap-inquiryDefinition-parentBean"/>
+    <bean abstract="true"
+          id="ISOFIPSCountryMap-inquiryDefinition-parentBean"
+          parent="InquiryDefinition"
+          p:title="ISO FIPS Country Map"
+    >
+        <property name="sections">
+            <list>
+                <ref bean="ISOFIPSCountryMap-sectionDefinition"/>
+            </list>
+        </property>
+
+        <property name="inquirySections">
+            <list>
+                <ref bean="ISOFIPSCountryMap-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+    
     <bean id="ISOFIPSCountryMap-sectionDefinition" parent="ISOFIPSCountryMap-sectionDefinition-parentBean"/>
     <bean abstract="true"
           id="ISOFIPSCountryMap-sectionDefinition-parentBean"
