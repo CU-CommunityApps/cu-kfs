@@ -54,7 +54,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /* Cornell Customization: backport redis */
-public class GroupServiceImpl extends GroupServiceBase implements GroupService {
+public class GroupServiceImpl implements GroupService {
 
     private static final Logger LOG = LogManager.getLogger();
 

@@ -29,7 +29,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.role.RoleService;
@@ -140,7 +140,7 @@ public class ChartServiceImpl implements ChartService {
         Person chartManager = null;
 
         Map<String, String> qualification = new HashMap<>();
-        qualification.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
+        qualification.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
 
         Collection<String> chartManagerList = roleService.getRoleMemberPrincipalIds(
                 KFSConstants.CoreModuleNamespaces.KFS, KFSConstants.SysKimApiConstants.CHART_MANAGER_KIM_ROLE_NAME,

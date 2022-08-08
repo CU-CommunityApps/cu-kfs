@@ -8,7 +8,7 @@ import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
@@ -21,16 +21,16 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     protected void addPermissionDetails(Object dataObject, Map<String, String> attributes) {
         super.addPermissionDetails(dataObject, attributes);
         IWantDocument iWantDocument = (IWantDocument) dataObject;
-        attributes.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
-        attributes.put(KfsKimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
+        attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
+        attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
     }
 
     @Override
     protected void addRoleQualification(Object dataObject, Map<String, String> attributes) {
         super.addRoleQualification(dataObject, attributes);
         IWantDocument iWantDocument = (IWantDocument) dataObject;
-        attributes.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
-        attributes.put(KfsKimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
+        attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
+        attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
     }
 
     /*

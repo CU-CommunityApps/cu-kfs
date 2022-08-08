@@ -31,7 +31,6 @@ import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.core.api.membership.MemberType;
-import org.kuali.kfs.core.api.mo.ModelObjectUtils;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.api.role.RoleService;
@@ -788,7 +787,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 List<RoleMembership.Builder> membershipsWithDelegations =
                         applyDelegationsToRoleMembers(results, delegationIdToDelegationMap.values(), qualification);
                 resolveDelegationMemberRoles(membershipsWithDelegations, qualification, foundRoleTypeMembers);
-                results = ModelObjectUtils.buildImmutableCopy(membershipsWithDelegations);
+                List<RoleMembership> roleMemberships = membershipsWithDelegations.stream()
+                        .map(RoleMembership.Builder::build)
+                        .collect(Collectors.toList());
+                results = List.copyOf(roleMemberships);
             }
         }
 

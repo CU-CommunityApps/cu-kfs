@@ -24,8 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.kuali.kfs.coa.COAConstants;
 import org.kuali.kfs.coa.COAKeyConstants;
-import org.kuali.kfs.coa.identity.KfsKimDocDelegateMember;
-import org.kuali.kfs.coa.identity.KfsKimDocumentAttributeData;
+import org.kuali.kfs.kim.impl.role.RoleMemberAttributeData;
 import org.kuali.kfs.coa.identity.OrgReviewRole;
 import org.kuali.kfs.coa.service.OrgReviewRoleService;
 import org.kuali.kfs.core.api.criteria.GenericQueryResults;
@@ -52,7 +51,7 @@ import org.kuali.kfs.kim.util.KimCommonUtils;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.Timestamp;
@@ -239,7 +238,7 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
         }
     }
 
-    protected void updateDelegateMemberFromDocDelegateMember(DelegateMember member, KfsKimDocDelegateMember dm) {
+    protected void updateDelegateMemberFromDocDelegateMember(DelegateMember member, DelegateMember dm) {
         member.setMemberId(dm.getMemberId());
         member.setType(dm.getType());
         member.setRoleMemberId(dm.getRoleMemberId());
@@ -258,9 +257,9 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
         }
         RoleService roleService = KimApiServiceLocator.getRoleService();
         // Save delegation(s)
-        List<KfsKimDocDelegateMember> delegationMembers = getDelegationMembersToSave(orr);
+        List<DelegateMember> delegationMembers = getDelegationMembersToSave(orr);
 
-        for (KfsKimDocDelegateMember dm : delegationMembers) {
+        for (DelegateMember dm : delegationMembers) {
             // retrieve the delegate type so it can be updated
             DelegationType delegationType = dm.getDelegationType();
             DelegateType delegateType = roleService.getDelegateTypeByRoleIdAndDelegateTypeCode(orr.getRoleId(),
@@ -389,15 +388,15 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
         return role;
     }
 
-    protected List<KfsKimDocDelegateMember> getDelegationMembersToSave(OrgReviewRole orr) {
-        KfsKimDocDelegateMember delegationMember = null;
+    protected List<DelegateMember> getDelegationMembersToSave(OrgReviewRole orr) {
+    	DelegateMember delegationMember = null;
         if (orr.isEdit() && StringUtils.isNotBlank(orr.getDelegationMemberId())) {
-            delegationMember = new KfsKimDocDelegateMember(
+            delegationMember = new DelegateMember(
                     KimApiServiceLocator.getRoleService().getDelegationMemberById(orr.getDelegationMemberId()));
         }
 
         if (delegationMember == null) {
-            delegationMember = new KfsKimDocDelegateMember();
+            delegationMember = new DelegateMember();
             if (StringUtils.isNotEmpty(orr.getRoleMemberRoleNamespaceCode()) && StringUtils.isNotEmpty(
                     orr.getRoleMemberRoleName())) {
                 String roleId = KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(
@@ -504,7 +503,7 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
             attributeDataList.add(attributeData);
         }
 
-        attributeData = getAttribute(kimTypeId, KfsKimAttributes.ORGANIZATION_CODE, orr.getOrganizationCode());
+        attributeData = getAttribute(kimTypeId, KimAttributes.ORGANIZATION_CODE, orr.getOrganizationCode());
         if (attributeData != null) {
             attributeDataList.add(attributeData);
         }
@@ -515,17 +514,17 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
             attributeDataList.add(attributeData);
         }
 
-        attributeData = getAttribute(kimTypeId, KfsKimAttributes.ACCOUNTING_LINE_OVERRIDE_CODE, orr.getOverrideCode());
+        attributeData = getAttribute(kimTypeId, KimAttributes.ACCOUNTING_LINE_OVERRIDE_CODE, orr.getOverrideCode());
         if (attributeData != null) {
             attributeDataList.add(attributeData);
         }
 
-        attributeData = getAttribute(kimTypeId, KfsKimAttributes.FROM_AMOUNT, orr.getFromAmountStr());
+        attributeData = getAttribute(kimTypeId, KimAttributes.FROM_AMOUNT, orr.getFromAmountStr());
         if (attributeData != null) {
             attributeDataList.add(attributeData);
         }
 
-        attributeData = getAttribute(kimTypeId, KfsKimAttributes.TO_AMOUNT, orr.getToAmountStr());
+        attributeData = getAttribute(kimTypeId, KimAttributes.TO_AMOUNT, orr.getToAmountStr());
         if (attributeData != null) {
             attributeDataList.add(attributeData);
         }
@@ -566,11 +565,11 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
         return roleResponsibilityActions;
     }
 
-    protected KfsKimDocumentAttributeData getAttribute(String kimTypeId, String attributeName, String attributeValue) {
+    protected RoleMemberAttributeData getAttribute(String kimTypeId, String attributeName, String attributeValue) {
         if (StringUtils.isNotBlank(attributeValue)) {
             KimAttribute attribute = getAttributeDefinition(kimTypeId, attributeName);
             if (attribute != null) {
-                KfsKimDocumentAttributeData attributeData = new KfsKimDocumentAttributeData();
+            	RoleMemberAttributeData attributeData = new RoleMemberAttributeData();
                 attributeData.setKimTypId(kimTypeId);
                 attributeData.setAttrVal(attributeValue);
                 attributeData.setKimAttrDefnId(attribute.getId());
