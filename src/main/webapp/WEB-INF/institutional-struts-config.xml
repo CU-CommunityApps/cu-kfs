@@ -268,6 +268,14 @@
             <forward name="invalid" path="/requisition/shopFail.jsp"/>
         </action>
         
+        <action path="/contractsPlus" name="B2BForm" scope="request" attribute="KualiForm"
+                parameter="methodToCall" type="edu.cornell.kfs.module.purap.web.struts.ContractsPlusB2BAction">
+            <forward name="basic" path="/jsp/module/purap/ShopCatalogs.jsp"/>
+            <forward name="removeframe" path="/jsp/module/purap/ShopRemoveFrame.jsp"/>
+            <forward name="failure" path="/requisition/requisitionFailure.jsp"/>
+            <forward name="invalid" path="/requisition/shopFail.jsp"/>
+        </action>
+        
     </action-mappings>
     
 </struts-config>
