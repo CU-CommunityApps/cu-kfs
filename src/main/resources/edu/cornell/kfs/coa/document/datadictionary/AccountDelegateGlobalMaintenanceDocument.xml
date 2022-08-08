@@ -14,12 +14,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-      
-
-  <bean id="AccountDelegateGlobalMaintenanceDocument" parent="AccountDelegateGlobalMaintenanceDocument-parentBean">
-  <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.AccountDelegateGlobal"/>
-    <property name="maintainableClass" value="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"/>   
-  </bean>
 
 <!-- Maintenance Section Definitions -->
 <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts" parent="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>

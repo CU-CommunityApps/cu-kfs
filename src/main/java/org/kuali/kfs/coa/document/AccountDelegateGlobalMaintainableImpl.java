@@ -69,10 +69,10 @@ public class AccountDelegateGlobalMaintainableImpl extends FinancialSystemGlobal
      */
     protected void displayMaxAccountDelegatesInfoMessage() {
         String maxAccountDelegatesString = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
-                AccountDelegateGlobal.class, COAParameterConstants.ACCOUNT_DELEGATES_LIMIT);
+                AccountDelegateGlobal.class, COAParameterConstants.MAXIMUM_ACCOUNT_DELEGATES);
         if (maxAccountDelegatesString != null && !maxAccountDelegatesString.isEmpty()) {
             GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_ERRORS,
-                    COAKeyConstants.INFO_DOCUMENT_DELEGATE_ACCOUNT_DELEGATES_LIMIT, maxAccountDelegatesString);
+                    COAKeyConstants.INFO_DOCUMENT_DELEGATE_MAXIMUM_ACCOUNT_DELEGATES, maxAccountDelegatesString);
         }
     }
 

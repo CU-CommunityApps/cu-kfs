@@ -105,6 +105,7 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
         return null;
     }
 
+    // Cornell Customization to fix issue where quartz is being called to schedule doc routing when quartz is not available
     private void scheduleMessage(PersistedMessage message) throws SchedulerException {
         LOG.debug("Scheduling execution of a delayed asynchronous message.");
         

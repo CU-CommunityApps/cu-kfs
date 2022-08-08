@@ -392,12 +392,12 @@
           class="org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJobListener"/>
 
     <!--
-        This bean is only meant for KSB-message-related processing, so we exclude it
+        These beans are only meant for KSB-message-related processing, so we exclude it
         from the KFS-SYS module's "jobNames" property.
      -->
     <bean id="delayedAsyncCallJob" parent="unscheduledJobDescriptor"
           p:namespaceCode="KFS-SYS"
-          p:group="Delayed Asynconous Messaging"/>
+          p:group="Delayed Asynchronous Call"/>
     <bean id="exceptionMessageJob" parent="unscheduledJobDescriptor"
           p:namespaceCode="KFS-SYS"
           p:group="Exception Messaging"/>
