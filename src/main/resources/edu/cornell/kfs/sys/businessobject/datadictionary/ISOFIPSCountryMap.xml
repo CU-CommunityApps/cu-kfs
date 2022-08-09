@@ -100,12 +100,6 @@
                 <ref bean="ISOFIPSCountryMap-sectionDefinition"/>
             </list>
         </property>
-
-        <property name="inquirySections">
-            <list>
-                <ref bean="ISOFIPSCountryMap-inquirySectionDefinition"/>
-            </list>
-        </property>
     </bean>
     
     <bean id="ISOFIPSCountryMap-sectionDefinition" parent="ISOFIPSCountryMap-sectionDefinition-parentBean"/>
@@ -118,22 +112,6 @@
                 <ref bean="ISOFIPSCountryMap-isoCountryCode"/>
                 <ref bean="ISOFIPSCountryMap-fipsCountryCode"/>
                 <ref bean="ISOFIPSCountryMap-active"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="ISOFIPSCountryMap-inquirySectionDefinition" parent="ISOFIPSCountryMap-inquirySectionDefinition-parentBean"/>
-    <bean abstract="true"
-          id="ISOFIPSCountryMap-inquirySectionDefinition-parentBean"
-          parent="InquirySectionDefinition"
-          p:numberOfColumns="1"
-          p:title=""
-    >
-        <property name="inquiryFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="isoCountryCode"/>
-                <bean parent="FieldDefinition" p:attributeName="fipsCountryCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
     </bean>

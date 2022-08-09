@@ -4,11 +4,10 @@ import java.util.List;
 
 import edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap;
 
-
 public interface ISOFIPSCountryMapDao {
-    
-    List<ISOFIPSCountryMap> findFipsCountries(String isoCountryCode);
-    
-    List<ISOFIPSCountryMap> findIsoCountries(String fipsCountryCode);
-    
+
+    public List<ISOFIPSCountryMap> findActiveFipsCountryCodes(String isoCountryCode);
+
+    public List<ISOFIPSCountryMap> findActiveIsoCountryCodes(String fipsCountryCode);
+
 }

@@ -120,23 +120,6 @@
         </property>
     </bean>
 
-    <bean id="ISOCountry-inquirySectionDefinition" parent="ISOCountry-inquirySectionDefinition-parentBean"/>
-    <bean abstract="true"
-          id="ISOCountry-inquirySectionDefinition-parentBean"
-          parent="InquirySectionDefinition"
-          p:numberOfColumns="1"
-          p:title=""
-    >
-        <property name="inquiryFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="code"/>
-                <bean parent="FieldDefinition" p:attributeName="name"/>
-                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
-    </bean>
-
     <!-- Business Object Lookup Definition -->
     <bean id="ISOCountry-inquiryDefinition" parent="ISOCountry-inquiryDefinition-parentBean"/>
     <bean abstract="true"
@@ -147,12 +130,6 @@
         <property name="sections">
             <list>
                 <ref bean="ISOCountry-sectionDefinition"/>
-            </list>
-        </property>
-
-        <property name="inquirySections">
-            <list>
-                <ref bean="ISOCountry-inquirySectionDefinition"/>
             </list>
         </property>
     </bean>

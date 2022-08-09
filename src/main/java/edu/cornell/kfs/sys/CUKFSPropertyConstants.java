@@ -97,5 +97,6 @@ public class CUKFSPropertyConstants {
     public static class ISOFIPSCountryMap {
         public static final String ISO_COUNTRY_CODE = "isoCountryCode";
         public static final String FIPS_COUNTRY_CODE = "fipsCountryCode";
+        public static final String ACTIVE = "active";
     }
 }

@@ -1,15 +1,17 @@
 package edu.cornell.kfs.sys.service;
 
+import java.util.List;
+
+import edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap;
+
 public interface ISOFIPSConversionService {
 
-    /*
-     * ISO-to-FIPS mappings are many-ISO-to-one-FIPS.
-     */
-	public String convertISOCountryCodeToFIPSCountryCode(String isoCountryCode);
+    public String convertISOCountryCodeToActiveFIPSCountryCode(String isoCountryCode);
 
-	/*
-	 * FIPS-to-ISO mappings are one-FIPS-to-many-ISO
-	 */
-	public String convertFIPSCountryCodeToISOCountryCode(String fipsCountryCode);
+    public String convertFIPSCountryCodeToActiveISOCountryCode(String fipsCountryCode);
+
+    public List<ISOFIPSCountryMap> findManyActiveISOCountryCodesForFIPSCode(String fipsCountryCode);
+
+    public List<ISOFIPSCountryMap> findManyActiveFIPSCountryCodesForISOCode(String isoCountryCode);
 
 }
