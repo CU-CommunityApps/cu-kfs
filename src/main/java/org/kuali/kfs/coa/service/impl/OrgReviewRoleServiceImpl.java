@@ -261,7 +261,7 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
 
         for (DelegateMember dm : delegationMembers) {
             // retrieve the delegate type so it can be updated
-            DelegationType delegationType = dm.getDelegationType();
+            DelegationType delegationType = DelegationType.fromCode(dm.getDelegationType());
             DelegateType delegateType = roleService.getDelegateTypeByRoleIdAndDelegateTypeCode(orr.getRoleId(),
                     delegationType);
             if (shouldCreateNewDelegateType(delegateType)) {
@@ -391,8 +391,8 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
     protected List<DelegateMember> getDelegationMembersToSave(OrgReviewRole orr) {
     	DelegateMember delegationMember = null;
         if (orr.isEdit() && StringUtils.isNotBlank(orr.getDelegationMemberId())) {
-            delegationMember = new DelegateMember(
-                    KimApiServiceLocator.getRoleService().getDelegationMemberById(orr.getDelegationMemberId()));
+            delegationMember = KimApiServiceLocator.getRoleService()
+                    .getDelegationMemberById(orr.getDelegationMemberId());
         }
 
         if (delegationMember == null) {
@@ -416,13 +416,13 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
                 delegationMember.setType(MemberType.PRINCIPAL);
             }
         }
-        delegationMember.setDelegationType(DelegationType.fromCode(orr.getDelegationTypeCode()));
+        delegationMember.setDelegationType(orr.getDelegationTypeCode());
         delegationMember.setAttributes(getAttributes(orr, orr.getKimTypeId()));
         if (orr.getActiveFromDate() != null) {
-            delegationMember.setActiveFromDate(new DateTime(orr.getActiveFromDate()));
+            delegationMember.setActiveFromDateValue(new Timestamp(orr.getActiveFromDate().getTime()));
         }
         if (orr.getActiveToDate() != null) {
-            delegationMember.setActiveToDate(new DateTime(orr.getActiveToDate()));
+            delegationMember.setActiveToDateValue(new Timestamp(orr.getActiveToDate().getTime()));
         }
         delegationMember.setRoleMemberId(orr.getRoleMemberId());
         return Collections.singletonList(delegationMember);
@@ -496,40 +496,38 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
             return Collections.emptyMap();
         }
 
-        List<KfsKimDocumentAttributeData> attributeDataList = new ArrayList<>();
-        KfsKimDocumentAttributeData attributeData = getAttribute(kimTypeId, KfsKimAttributes.CHART_OF_ACCOUNTS_CODE,
-                orr.getChartOfAccountsCode());
-        if (attributeData != null) {
-            attributeDataList.add(attributeData);
+        Map<String, String> attributes = new HashMap<>();
+        KimAttribute kimAttribute = getAttributeDefinition(kimTypeId, KimAttributes.CHART_OF_ACCOUNTS_CODE);
+        if (kimAttribute != null) {
+            attributes.put(kimAttribute.getAttributeName(), orr.getChartOfAccountsCode());
         }
 
-        attributeData = getAttribute(kimTypeId, KimAttributes.ORGANIZATION_CODE, orr.getOrganizationCode());
-        if (attributeData != null) {
-            attributeDataList.add(attributeData);
+        kimAttribute = getAttributeDefinition(kimTypeId, KimAttributes.ORGANIZATION_CODE);
+        if (kimAttribute != null) {
+            attributes.put(kimAttribute.getAttributeName(), orr.getOrganizationCode());
         }
 
-        attributeData = getAttribute(kimTypeId, KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME,
-                orr.getFinancialSystemDocumentTypeCode());
-        if (attributeData != null) {
-            attributeDataList.add(attributeData);
+        kimAttribute = getAttributeDefinition(kimTypeId, KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME);
+        if (kimAttribute != null) {
+            attributes.put(kimAttribute.getAttributeName(), orr.getFinancialSystemDocumentTypeCode());
         }
 
-        attributeData = getAttribute(kimTypeId, KimAttributes.ACCOUNTING_LINE_OVERRIDE_CODE, orr.getOverrideCode());
-        if (attributeData != null) {
-            attributeDataList.add(attributeData);
+        kimAttribute = getAttributeDefinition(kimTypeId, KimAttributes.ACCOUNTING_LINE_OVERRIDE_CODE);
+        if (kimAttribute != null) {
+            attributes.put(kimAttribute.getAttributeName(), orr.getOverrideCode());
         }
 
-        attributeData = getAttribute(kimTypeId, KimAttributes.FROM_AMOUNT, orr.getFromAmountStr());
-        if (attributeData != null) {
-            attributeDataList.add(attributeData);
+        kimAttribute = getAttributeDefinition(kimTypeId, KimAttributes.FROM_AMOUNT);
+        if (kimAttribute != null) {
+            attributes.put(kimAttribute.getAttributeName(), orr.getFromAmountStr());
         }
 
-        attributeData = getAttribute(kimTypeId, KimAttributes.TO_AMOUNT, orr.getToAmountStr());
-        if (attributeData != null) {
-            attributeDataList.add(attributeData);
+        kimAttribute = getAttributeDefinition(kimTypeId, KimAttributes.TO_AMOUNT);
+        if (kimAttribute != null) {
+            attributes.put(kimAttribute.getAttributeName(), orr.getToAmountStr());
         }
 
-        return orr.getQualifierAsAttributeSet(attributeDataList);
+        return attributes;
     }
 
     protected List<RoleResponsibilityAction> getRoleResponsibilityActions(OrgReviewRole orr,
@@ -570,9 +568,9 @@ public class OrgReviewRoleServiceImpl implements OrgReviewRoleService {
             KimAttribute attribute = getAttributeDefinition(kimTypeId, attributeName);
             if (attribute != null) {
             	RoleMemberAttributeData attributeData = new RoleMemberAttributeData();
-                attributeData.setKimTypId(kimTypeId);
-                attributeData.setAttrVal(attributeValue);
-                attributeData.setKimAttrDefnId(attribute.getId());
+                attributeData.setKimTypeId(kimTypeId);
+                attributeData.setAttributeValue(attributeValue);
+                attributeData.setKimAttributeId(attribute.getId());
                 attributeData.setKimAttribute(attribute);
                 return attributeData;
             }

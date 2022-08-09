@@ -27,7 +27,6 @@ import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.group.GroupService;
-import org.kuali.kfs.kim.api.identity.IdentityService;
 import org.kuali.kfs.kim.api.role.RoleContract;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.api.type.KimTypeInfoService;
@@ -43,8 +42,6 @@ import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
-import org.kuali.kfs.krad.service.LookupService;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -65,8 +62,6 @@ abstract class RoleServiceBase {
 
     private static final Logger LOG = LogManager.getLogger();
     private BusinessObjectService businessObjectService;
-    private LookupService lookupService;
-    private IdentityService identityService;
     private GroupService groupService;
     private ResponsibilityInternalService responsibilityInternalService;
     private RoleDao roleDao;
@@ -276,50 +271,8 @@ abstract class RoleServiceBase {
         return roleDao.getDelegationBosForRoleId(roleId);
     }
 
-    /**
-     * Retrieves a List of delegation members from the KimRoleDao as appropriate.
-     *
-     * @param daoActionToTake An indicator for which KimRoleDao method to use for retrieving results.
-     * @param delegationIds   The IDs of the delegations that the members belong to.
-     * @param principalId     The principal ID of the principal delegation members; may get ignored depending on the
-     *                        RoleDaoAction value.
-     * @param groupIds        The group IDs of the group delegation members; may get ignored depending on the
-     *                        RoleDaoAction value.
-     * @return A List of DelegateMember objects based on the provided parameters.
-     * @throws IllegalArgumentException if daoActionToTake does not represent a delegation-member-list-related
-     * enumeration value.
-     */
-    protected List<DelegateMember> getDelegationMemberList(RoleDaoAction daoActionToTake,
-                                                           Collection<String> delegationIds, String principalId, List<String> groupIds) {
-        if (delegationIds == null || delegationIds.isEmpty()) {
-            delegationIds = Collections.emptyList();
-        }
-        if (groupIds == null || groupIds.isEmpty()) {
-            groupIds = Collections.emptyList();
-        }
-
-        switch (daoActionToTake) {
-            case DELEGATION_PRINCIPALS_FOR_PRINCIPAL_ID_AND_DELEGATION_IDS:
-                // Search for principal delegation members.
-                return roleDao.getDelegationPrincipalsForPrincipalIdAndDelegationIds(delegationIds, principalId);
-            case DELEGATION_GROUPS_FOR_GROUP_IDS_AND_DELEGATION_IDS:
-                // Search for group delegation members.
-                return roleDao.getDelegationGroupsForGroupIdsAndDelegationIds(delegationIds, groupIds);
-            default:
-                // This should never happen since the previous switch block should handle this case appropriately.
-                throw new IllegalArgumentException("The 'daoActionToTake' parameter cannot refer to a " +
-                        "non-delegation-member-list-related value!");
-        }
-    }
-
-    /**
-     * Calls the KimRoleDao's "getDelegationPrincipalsForPrincipalIdAndDelegationIds" method and/or retrieves any
-     * corresponding members from the cache.
-     */
-    protected List<DelegateMember> getStoredDelegationPrincipalsForPrincipalIdAndDelegationIds(
-            Collection<String> delegationIds, String principalId) {
-        return getDelegationMemberList(RoleDaoAction.DELEGATION_PRINCIPALS_FOR_PRINCIPAL_ID_AND_DELEGATION_IDS,
-                delegationIds, principalId, null);
+    protected List<DelegateMember> getStoredDelegationPrincipalsForPrincipalId(String principalId) {
+        return roleDao.getDelegationPrincipalsForPrincipalId(principalId);
     }
 
     /**
@@ -334,49 +287,6 @@ abstract class RoleServiceBase {
 
         return getBusinessObjectService().findByPrimaryKey(DelegateMember.class,
                 Collections.singletonMap(KimConstants.PrimaryKeyConstants.DELEGATION_MEMBER_ID, delegationMemberId));
-    }
-
-    /**
-     * @return a DelegateMember List by (principal/group/role) member ID and delegation ID. If the List already
-     *         exists in the cache, this method will return the cached one; otherwise, it will retrieve the uncached
-     *         version from the database and then cache it before returning it.
-     */
-    protected List<DelegateMember> getDelegationMemberListByMemberAndDelegationId(String memberId,
-                                                                                  String delegationId) {
-        Map<String, String> searchCriteria = new HashMap<>();
-        searchCriteria.put(KimConstants.PrimaryKeyConstants.MEMBER_ID, memberId);
-        searchCriteria.put(KimConstants.PrimaryKeyConstants.DELEGATION_ID, delegationId);
-        return new ArrayList<>(getBusinessObjectService().findMatching(DelegateMember.class, searchCriteria));
-    }
-
-    protected Object getMember(String memberTypeCode, String memberId) {
-        if (StringUtils.isBlank(memberId)) {
-            return null;
-        }
-        if (MemberType.PRINCIPAL.getCode().equals(memberTypeCode)) {
-            return getIdentityService().getPrincipal(memberId);
-        } else if (MemberType.GROUP.getCode().equals(memberTypeCode)) {
-            return getGroupService().getGroup(memberId);
-        } else if (MemberType.ROLE.getCode().equals(memberTypeCode)) {
-            return getRole(memberId);
-        }
-        return null;
-    }
-
-    protected String getMemberName(Object member) {
-        if (member == null) {
-            return "";
-        }
-        if (member instanceof Principal) {
-            return ((Principal) member).getPrincipalName();
-        }
-        if (member instanceof Group) {
-            return ((Group) member).getName();
-        }
-        if (member instanceof RoleContract) {
-            return ((RoleContract) member).getName();
-        }
-        return member.toString();
     }
 
     protected Role getRole(String roleId) {
@@ -434,16 +344,6 @@ abstract class RoleServiceBase {
             primaryDelegate.setKimTypeId(roleLite.getKimTypeId());
         }
         return primaryDelegate;
-    }
-
-    protected RoleMember matchingMemberRecord(List<RoleMember> roleMembers, String memberId,
-                                              String memberTypeCode, Map<String, String> qualifier) {
-        for (RoleMember rm : roleMembers) {
-            if (doesMemberMatch(rm, memberId, memberTypeCode, qualifier)) {
-                return rm;
-            }
-        }
-        return null;
     }
 
     protected boolean isDelegationPrimary(DelegationType delegationType) {
@@ -671,26 +571,6 @@ abstract class RoleServiceBase {
         return businessObjectService;
     }
 
-    // For testability.
-    void setBusinessObjectService(BusinessObjectService bos) {
-        businessObjectService = bos;
-    }
-
-    protected LookupService getLookupService() {
-        if (lookupService == null) {
-            lookupService = KRADServiceLocatorWeb.getLookupService();
-        }
-        return lookupService;
-    }
-
-    protected IdentityService getIdentityService() {
-        if (identityService == null) {
-            identityService = KimApiServiceLocator.getIdentityService();
-        }
-
-        return identityService;
-    }
-
     protected GroupService getGroupService() {
         if (groupService == null) {
             groupService = KimApiServiceLocator.getGroupService();
@@ -743,9 +623,6 @@ abstract class RoleServiceBase {
         ROLE_GROUPS_FOR_GROUP_IDS_AND_ROLE_IDS,
         ROLE_MEMBERS_FOR_ROLE_IDS,
         ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS,
-        ROLE_MEMBERS_FOR_ROLE_IDS_WITH_FILTERS,
-        DELEGATION_PRINCIPALS_FOR_PRINCIPAL_ID_AND_DELEGATION_IDS,
-        DELEGATION_GROUPS_FOR_GROUP_IDS_AND_DELEGATION_IDS,
-        DELEGATION_MEMBERS_FOR_DELEGATION_IDS
+        ROLE_MEMBERS_FOR_ROLE_IDS_WITH_FILTERS
     }
 }

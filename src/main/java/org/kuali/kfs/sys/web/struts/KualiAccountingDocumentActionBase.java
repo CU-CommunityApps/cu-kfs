@@ -844,7 +844,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
                 String compare = account + ":" + objCd;
                 ParameterEvaluator salesTaxApplicableAcctAndObjectEvaluator =
                         parameterEvaluatorService.getParameterEvaluator(KfsParameterConstants.FINANCIAL_PROCESSING_DOCUMENT.class,
-                                FPParameterConstants.SALES_TAX_APPLICABLE_ACCOUNTS_AND_OBJECT_CODES, compare);
+                                FPParameterConstants.SALES_TAX_ACCOUNTS, compare);
                 if (!salesTaxApplicableAcctAndObjectEvaluator.evaluationSucceeds()) {
                     required = false;
                 }

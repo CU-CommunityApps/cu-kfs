@@ -217,33 +217,25 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     }
 
     @Override
-    public boolean autoApprovePaymentRequests() {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Starting autoApprovePaymentRequests.");
-        }
-        boolean hadErrorAtLeastOneError = true;
+    public void autoApprovePaymentRequests() {
+        LOG.info("Starting autoApprovePaymentRequests.");
         // should objects from existing user session be copied over
 
         Date todayAtMidnight = dateTimeService.getCurrentSqlDateMidnight();
         List<String> docNumbers = paymentRequestDao.getEligibleForAutoApproval(todayAtMidnight);
-        if (LOG.isInfoEnabled()) {
-            LOG.info(" -- Initial filtering complete, returned " + Integer.toString(docNumbers.size()) + " docs.");
-        }
+        LOG.info(" -- Initial filtering complete, returned {}  docs.", docNumbers.size());
 
         String samt = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
                 PurapParameterConstants.PURAP_DEFAULT_NEGATIVE_PAYMENT_REQUEST_APPROVAL_LIMIT);
         KualiDecimal defaultMinimumLimit = new KualiDecimal(samt);
-        if (LOG.isInfoEnabled()) {
-            LOG.info(" -- Using default limit value of " + defaultMinimumLimit.toString() + ".");
-        }
+        LOG.info(" -- Using default limit value of {}.", defaultMinimumLimit);
 
         for (String docNumber : docNumbers) {
             PaymentRequestDocument paymentRequestDocument = getPaymentRequestByDocumentNumber(docNumber);
             if (ObjectUtils.isNotNull(paymentRequestDocument)) {
-                hadErrorAtLeastOneError |= !autoApprovePaymentRequest(paymentRequestDocument, defaultMinimumLimit);
+                autoApprovePaymentRequest(paymentRequestDocument, defaultMinimumLimit);
             }
         }
-        return hadErrorAtLeastOneError;
     }
 
     /**
@@ -265,18 +257,16 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
             // note that this block does not catch all race conditions however, this error condition is not enough
             // to make us return an error code, so just skip the document
-            LOG.warn("Payment Request Document " + paymentRequestDocument.getDocumentNumber() +
-                    " could not be auto-approved because it has either been placed on hold, " +
-                    " requested cancel, or does not have one of the PREQ statuses for auto-approve.");
+            LOG.warn("Payment Request Document {} could not be auto-approved because it has either been placed on" +
+                    " hold, requested cancel, or does not have one of the PREQ statuses for auto-approve.",
+                    paymentRequestDocument.getDocumentNumber());
             return true;
         }
         if (autoApprovePaymentRequest(paymentRequestDocument, defaultMinimumLimit)) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Auto-approval for payment request successful.  Doc number: " + docNumber);
-            }
+            LOG.info("Auto-approval for payment request successful.  Doc number: {}", docNumber);
             return true;
         } else {
-            LOG.error("Payment Request Document " + docNumber + " could not be auto-approved.");
+            LOG.error("Payment Request Document {} could not be auto-approved.", docNumber);
             return false;
         }
     }
@@ -309,7 +299,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             // set the auto approved indicator to true so that doRouteStatus method can use to change the app doc
             // status.
             doc.setAutoApprovedIndicator(true);
-            LOG.info("About to blanketApproveDocument, doc.getDocumentNumber()=" + doc.getDocumentNumber());
+            LOG.info("About to blanketApproveDocument, doc.getDocumentNumber()={}", doc.getDocumentNumber());
             // su approve rather than blanket approve, so no ACK notifications would be generated
             documentService.superUserApproveDocument(doc, "auto-approving: Total is below threshold.");
         }
@@ -331,27 +321,21 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {
         // Check if vendor is foreign.
         if (document.getVendorDetail().getVendorHeader().getVendorForeignIndicator()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info(" -- PayReq [" + document.getDocumentNumber() + "] skipped due to a Foreign Vendor.");
-            }
+            LOG.info(" -- PayReq [{}] skipped due to a Foreign Vendor.", document.getDocumentNumber());
             return false;
         }
 
         // check to make sure the payment request isn't scheduled to stop in tax review.
         if (purapWorkflowIntegrationService.willDocumentStopAtGivenFutureRouteNode(document,
                 PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW)) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info(" -- PayReq [" + document.getDocumentNumber() + "] skipped due to requiring Tax Review.");
-            }
+            LOG.info(" -- PayReq [{}] skipped due to requiring Tax Review.", document.getDocumentNumber());
             return false;
         }
 
         // Change to not auto approve if positive approval required indicator set to Yes
         if (document.isPaymentRequestPositiveApprovalIndicator()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info(" -- PayReq [" + document.getDocumentNumber() +
-                        "] skipped due to a Positive Approval Required Indicator set to Yes.");
-            }
+            LOG.info(" -- PayReq [{}] skipped due to a Positive Approval Required Indicator set to Yes.",
+                    document.getDocumentNumber());
             return false;
         }
 
@@ -371,12 +355,12 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             AutoApproveExclude autoApproveExclude = businessObjectService.findByPrimaryKey(AutoApproveExclude.class,
                     autoApproveMap);
             if (autoApproveExclude != null) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info(" -- PayReq [" + document.getDocumentNumber() + "] skipped due to source accounting " +
-                            "line " + line.getSequenceNumber() + " using Chart/Account [" +
-                            line.getChartOfAccountsCode() + "-" + line.getAccountNumber() + "], which is excluded " +
-                            "in the Auto Approve Exclusions table.");
-                }
+                LOG.info(" -- PayReq [{}}] skipped due to source accounting line {} using Chart/Account [{}-{}], which" +
+                        " is excluded in the Auto Approve Exclusions table.",
+                        document.getDocumentNumber(),
+                        line.getSequenceNumber(),
+                        line.getChartOfAccountsCode(),
+                        line.getAccountNumber());
                 return false;
             }
 
@@ -390,10 +374,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
         // If Receiving required is set, it's not needed to check the negative payment request approval limit
         if (document.isReceivingDocumentRequiredIndicator()) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info(" -- PayReq [" + document.getDocumentNumber() + "] auto-approved (ignored dollar limit)" +
-                        " due to Receiving Document Required Indicator set to Yes.");
-            }
+            LOG.info(" -- PayReq [{}] auto-approved (ignored dollar limit) due to Receiving Document Required" +
+                    " Indicator set to Yes.", document.getDocumentNumber());
             return true;
         }
 
@@ -403,24 +385,21 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         }
 
         // The document is eligible for auto-approval if the document total is below the limit.
+        final String autoApprovalLimitLabel = minimumAmount.equals(defaultMinimumLimit) ? "Default" : "Configured";
         if (document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(minimumAmount)) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info(" -- PayReq [" + document.getDocumentNumber() + "] auto-approved due to document Total [" +
-                        document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount() +
-                        "] being less than " + (minimumAmount == defaultMinimumLimit ? "Default Auto-Approval Limit " :
-                        "Configured Auto-Approval Limit ") + "of " + (minimumAmount == null ? "null" :
-                        minimumAmount.toString()) + ".");
-            }
+            LOG.info(" -- PayReq [{}] auto-approved due to document Total [{}] being less than {} Auto-Approval Limit" +
+                            " of {}.",
+                    document.getDocumentNumber(),
+                    document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount(),
+                    autoApprovalLimitLabel,
+                    minimumAmount);
             return true;
         }
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info(" -- PayReq [" + document.getDocumentNumber() + "] skipped due to document Total [" +
-                    document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount() +
-                    "] being greater than " + (minimumAmount == defaultMinimumLimit ? "Default Auto-Approval Limit " :
-                    "Configured Auto-Approval Limit ") + "of " + (minimumAmount == null ? "null" :
-                    minimumAmount.toString()) + ".");
-        }
+        LOG.info(" -- PayReq [{}] skipped due to document Total [{}] being greater than {} Auto-Approval Limit of {}.",
+                document.getDocumentNumber(),
+                document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount(),
+                autoApprovalLimitLabel,
+                minimumAmount);
 
         return false;
     }
@@ -765,7 +744,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         // of it's use.
         String payDateVariance = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
                 PurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
-        Integer payDateVarianceInt = Integer.valueOf(payDateVariance);
+        int payDateVarianceInt = Integer.parseInt(payDateVariance);
 
         Integer discountDueNumber = terms.getVendorDiscountDueNumber();
         Integer netDueNumber = terms.getVendorNetDueNumber();
@@ -885,9 +864,9 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             KualiDecimal fullOrderTaxAmount = KualiDecimal.ZERO;
 
             if (fullOrderItem != null) {
-                fullOrderAmount = (ObjectUtils.isNotNull(fullOrderItem.getExtendedPrice())) ?
+                fullOrderAmount = ObjectUtils.isNotNull(fullOrderItem.getExtendedPrice()) ?
                         fullOrderItem.getExtendedPrice() : KualiDecimal.ZERO;
-                fullOrderTaxAmount = (ObjectUtils.isNotNull(fullOrderItem.getItemTaxAmount())) ?
+                fullOrderTaxAmount = ObjectUtils.isNotNull(fullOrderItem.getItemTaxAmount()) ?
                         fullOrderItem.getItemTaxAmount() : KualiDecimal.ZERO;
             }
             KualiDecimal totalCost = paymentRequestDocument.getTotalPreTaxDollarAmountAboveLineItems()
@@ -1019,10 +998,10 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         PurApItem taxItem;
 
         try {
-            taxItem = (PurApItem) preq.getItemClass().newInstance();
+            taxItem = (PurApItem) preq.getItemClass().getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException e) {
             throw new InfrastructureException("Unable to access itemClass", e);
-        } catch (InstantiationException e) {
+        } catch (ReflectiveOperationException e) {
             throw new InfrastructureException("Unable to instantiate itemClass", e);
         }
 
@@ -1057,10 +1036,10 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         PurApAccountingLine taxLine;
 
         try {
-            taxLine = (PurApAccountingLine) taxItem.getAccountingLineClass().newInstance();
+            taxLine = (PurApAccountingLine) taxItem.getAccountingLineClass().getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException e) {
             throw new InfrastructureException("Unable to access sourceAccountingLineClass", e);
-        } catch (InstantiationException e) {
+        } catch (ReflectiveOperationException e) {
             throw new InfrastructureException("Unable to instantiate sourceAccountingLineClass", e);
         }
 
@@ -1194,8 +1173,6 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
     /**
      * Distributes accounts for a payment request document.
-     *
-     * @param paymentRequestDocument
      */
     protected void distributeAccounting(PaymentRequestDocument paymentRequestDocument) {
         // update the account amounts before doing any distribution
@@ -1367,11 +1344,9 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         // Performs save, so no explicit save is necessary
         accountsPayableService.cancelAccountsPayableDocument(paymentRequest, "");
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("cancelExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() +
-                    " Cancelled Without Workflow");
-            LOG.debug("cancelExtractedPaymentRequest() ended");
-        }
+        LOG.debug("cancelExtractedPaymentRequest() PREQ {} Cancelled Without Workflow",
+                paymentRequest.getPurapDocumentIdentifier());
+        LOG.debug("cancelExtractedPaymentRequest() ended");
     }
 
     @Override
@@ -1392,10 +1367,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
         }
         purapService.saveDocumentNoValidation(paymentRequest);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("resetExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() +
-                    " Reset from Extracted status");
-        }
+        LOG.debug("resetExtractedPaymentRequest() PREQ {} Reset from Extracted status",
+                paymentRequest.getPurapDocumentIdentifier());
     }
 
     @Override
@@ -1447,7 +1420,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         if (noteTextMaxLength >= descr.length()) {
             return descr.toString();
         } else {
-            return descr.toString().substring(0, noteTextMaxLength);
+            return descr.substring(0, noteTextMaxLength);
         }
     }
 
@@ -1615,8 +1588,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
                 preq.getOriginalVendorDetailAssignedIdentifier());
 
         if (primaryVendor == null) {
-            LOG.error("useAlternateVendor() primaryVendorDetail from database for header id " + headerId +
-                    " and detail id " + detailId + "is null");
+            LOG.error("useAlternateVendor() primaryVendorDetail from database for header id {} and detail id {} is null",
+                    headerId, detailId);
             throw new PurError("AlternateVendor: VendorDetail from database for header id " + headerId +
                     " and detail id " + detailId + "is null");
         }
@@ -1624,8 +1597,8 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         // set vendor detail
         VendorDetail vd = vendorService.getVendorDetail(headerId, detailId);
         if (vd == null) {
-            LOG.error("changeVendor() VendorDetail from database for header id " + headerId + " and detail id " +
-                    detailId + "is null");
+            LOG.error("changeVendor() VendorDetail from database for header id {} and detail id {} is null",
+                    headerId, detailId);
             throw new PurError("changeVendor: VendorDetail from database for header id " + headerId +
                     " and detail id " + detailId + "is null");
         }
@@ -1649,18 +1622,13 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
                     VendorConstants.AddressTypes.PURCHASE_ORDER, deliveryCampus);
         }
         if (va == null) {
-            LOG.error("changeVendor() VendorAddress from database for header id " + headerId + " and detail id " +
-                    detailId + "is null");
+            LOG.error("changeVendor() VendorAddress from database for header id {} and detail id {} is null",
+                    headerId, detailId);
             throw new PurError("changeVendor  VendorAddress from database for header id " + headerId +
                     " and detail id " + detailId + "is null");
         }
 
-        if (preq != null) {
-            setVendorAddress(va, preq);
-        } else {
-            LOG.error("changeVendor(): Null link back to the Purchase Order.");
-            throw new PurError("Null link back to the Purchase Order.");
-        }
+        setVendorAddress(va, preq);
 
         // change document description
         preq.getDocumentHeader().setDocumentDescription(createPreqDocumentDescription(
@@ -1726,10 +1694,6 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
     /**
      * Filter the results by application doc status
-     *
-     * @param paymentRequestResults
-     * @param lookupDocNumbers
-     * @param applicationDocumentStatus
      */
     protected void filterPaymentRequestByAppDocStatus(Map<String, String> paymentRequestResults,
             List<String> lookupDocNumbers, String... applicationDocumentStatus) {
@@ -1763,23 +1727,17 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
      * This class first extract the payment request document numbers from the Payment Request Collections,
      * then perform the filterPaymentRequestByAppDocStatus function.  Base on the filtered payment request
      * doc number, reconstruct the filtered Payment Request Collection
-     *
-     * @param paymentRequestDocuments
-     * @param appDocStatus
-     * @return
      */
     protected Collection<PaymentRequestDocument> filterPaymentRequestByAppDocStatus(
             Collection<PaymentRequestDocument> paymentRequestDocuments, String... appDocStatus) {
         Collection<PaymentRequestDocument> filteredPaymentRequestDocuments = new ArrayList<>();
-        List status = Arrays.asList(appDocStatus);
+        List<String> status = Arrays.asList(appDocStatus);
         for (PaymentRequestDocument paymentRequest : paymentRequestDocuments) {
             long start = System.currentTimeMillis();
             if (status.contains(paymentRequest.getApplicationDocumentStatus())) {
                 filteredPaymentRequestDocuments.add(paymentRequest);
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(System.currentTimeMillis() - start + "ms to check app doc status");
-            }
+            LOG.debug("{} ms to check app doc status", System.currentTimeMillis() - start);
         }
 
         return filteredPaymentRequestDocuments;
@@ -1864,7 +1822,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             if (poi.getItemType().isLineItemIndicator() && poi.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
                 KualiDecimal encumberedQuantity = poi.getItemOutstandingEncumberedQuantity() == null ?
                         KualiDecimal.ZERO : poi.getItemOutstandingEncumberedQuantity();
-                if (encumberedQuantity.compareTo(KualiDecimal.ZERO) == 1) {
+                if (encumberedQuantity.compareTo(KualiDecimal.ZERO) > 0) {
                     zeroDollar = false;
                     break;
                 }
@@ -1873,7 +1831,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
                 // Service Items or Below-the-line Items
                 KualiDecimal encumberedAmount = poi.getItemOutstandingEncumberedAmount() == null ? KualiDecimal.ZERO :
                         poi.getItemOutstandingEncumberedAmount();
-                if (encumberedAmount.compareTo(KualiDecimal.ZERO) == 1) {
+                if (encumberedAmount.compareTo(KualiDecimal.ZERO) > 0) {
                     zeroDollar = false;
                     break;
                 }

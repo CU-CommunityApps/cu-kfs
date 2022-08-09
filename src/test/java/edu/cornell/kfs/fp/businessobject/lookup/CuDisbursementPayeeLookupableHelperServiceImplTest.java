@@ -65,7 +65,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImplTest extends KualiInt
 		Person alumni = people.get(0);
 
 		Map<String, String> fieldValues = new LinkedHashMap();
-		fieldValues.put(KIMPropertyConstants.Person.PRINCIPAL_NAME, alumni.getPrincipalName());
+		fieldValues.put(KIMPropertyConstants.Principal.PRINCIPAL_NAME, alumni.getPrincipalName());
 
 		validateSearch("Alumni", fieldValues);
 	}

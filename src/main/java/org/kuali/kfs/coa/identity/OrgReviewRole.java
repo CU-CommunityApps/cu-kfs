@@ -41,12 +41,14 @@ import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.group.Group;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kim.impl.role.RoleMember;
+import org.kuali.kfs.kim.impl.role.RoleMemberAttributeData;
 import org.kuali.kfs.kim.impl.role.RoleResponsibilityAction;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
@@ -56,8 +58,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.kim.bo.impl.KimAttributes;
-import org.kuali.kfs.kim.impl.role.RoleMemberAttributeData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -456,8 +456,8 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
     }
 
     public String getAttributeValue(String attributeName) {
-    	RoleMemberAttributeData attributeData = getAttribute(attributeName);
-        return attributeData == null ? "" : attributeData.getAttrVal();
+        RoleMemberAttributeData attributeData = getAttribute(attributeName);
+        return attributeData == null ? "" : attributeData.getAttributeValue();
     }
 
     protected RoleMemberAttributeData getAttribute(String attributeName) {
@@ -532,7 +532,7 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
 
     public String getActionTypeCodeDescription() {
         WorkflowAction workflowAction = WorkflowAction.fromCode(getActionTypeCodeToDisplay(), true);
-        return (workflowAction == null) ? "" : workflowAction.getLabel();
+        return workflowAction == null ? "" : workflowAction.getLabel();
     }
 
     public void setActionTypeCode(String actionTypeCode) {
@@ -991,8 +991,8 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
     }
 
     public boolean isCreateDelegation() {
-        return NEW_DELEGATION_ID_KEY_VALUE.equals(getODelMId()) || (isEditDelegation()
-                && StringUtils.isBlank(getDelegationMemberId()));
+        return NEW_DELEGATION_ID_KEY_VALUE.equals(getODelMId()) || isEditDelegation()
+                                                                   && StringUtils.isBlank(getDelegationMemberId());
     }
 
     public boolean isCreateRoleMember() {
@@ -1036,14 +1036,6 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
         this.kimTypeId = kimTypeId;
     }
 
-    public Map<String, String> getQualifierAsAttributeSet(List<RoleMemberAttributeData> qualifiers) {
-        Map<String, String> m = new HashMap<>();
-        for (RoleMemberAttributeData data : qualifiers) {
-            m.put(data.getKimAttribute().getAttributeName(), data.getAttrVal());
-        }
-        return m;
-    }
-
     public List<RoleMemberAttributeData> getAttributeSetAsQualifierList(Map<String, String> qualifiers) {
         KimType kimTypeInfo = KimApiServiceLocator.getKimTypeInfoService().getKimType(kimTypeId);
         List<RoleMemberAttributeData> attributesList = new ArrayList<>();
@@ -1058,10 +1050,9 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
             }
             attribData = new RoleMemberAttributeData();
             attribData.setKimAttribute(attribInfo.getKimAttribute());
-            attribData.setKimTypId(kimTypeInfo.getId());
-            attribData.setKimAttrDefnId(attribInfo.getId());
-            //attribData.setAttrDataId(attrDataId) - Not Available
-            attribData.setAttrVal(qualifiers.get(key));
+            attribData.setKimTypeId(kimTypeInfo.getId());
+            attribData.setKimAttributeId(attribInfo.getId());
+            attribData.setAttributeValue(qualifiers.get(key));
             attributesList.add(attribData);
         }
         return attributesList;

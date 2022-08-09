@@ -119,7 +119,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
     @Override
     public Map<String, String> getFieldConversionBetweenPayeeAndPerson() {
         Map<String, String> fieldConversionMap = super.getFieldConversionBetweenPayeeAndPerson();
-        fieldConversionMap.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, KIMPropertyConstants.Person.PRINCIPAL_NAME);
+        fieldConversionMap.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, KIMPropertyConstants.Principal.PRINCIPAL_NAME);
         return fieldConversionMap;
     }
     

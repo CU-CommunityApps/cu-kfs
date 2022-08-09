@@ -11,6 +11,8 @@ import org.kuali.kfs.kim.document.IdentityManagementRoleDocument;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.KRADServiceLocator;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
 
@@ -43,6 +45,10 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
 
         identityManagementRoleDocument.setMembers(loadRoleMembers(identityManagementRoleDocument, members));
         loadMemberRoleRspActions(identityManagementRoleDocument);
+    }
+    
+    public BusinessObjectService getBusinessObjectService() {
+        return KRADServiceLocator.getBusinessObjectService();
     }
 
 }

@@ -48,7 +48,7 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
         // add entity
         personFieldValues.put(KIMPropertyConstants.Person.ENTITY_ID, fieldValues.get(KIMPropertyConstants.Person.ENTITY_ID));
         // add principal name
-        personFieldValues.put(KIMPropertyConstants.Person.PRINCIPAL_NAME, fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME));
+        personFieldValues.put(KIMPropertyConstants.Principal.PRINCIPAL_NAME, fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME));
 
         return personFieldValues;
     }
@@ -80,7 +80,7 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
             searchResults.addAll(this.getVendorsAsPayees(fieldValues));
         } else if (StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID))
                 || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.ENTITY_ID))
-                || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME))
+                || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME))
                 || (StringUtils.isNotBlank(payeeTypeCode)
                         && (PdpConstants.PayeeIdTypeCodes.EMPLOYEE.equals(payeeTypeCode)
                                 || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(payeeTypeCode)))) {
