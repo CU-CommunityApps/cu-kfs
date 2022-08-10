@@ -56,10 +56,10 @@
                 <ref bean="SubFundGroup-fundGroupCode"/>
                 <ref bean="SubFundGroup-subFundGroupTypeCode"/>
                 <ref bean="SubFundGroup-subFundGroupDescription"/>
+                <ref bean="SubFundGroup-extension-subFundGroupDetailedDescr"/>
                 <ref bean="SubFundGroup-accountRestrictedStatusCode"/>
                 <ref bean="SubFundGroup-financialReportingSortCode"/>
                 <ref bean="SubFundGroup-fundGroupBudgetAdjustmentRestrictionLevelCode"/>
-                <ref bean="SubFundGroup-extension-subFundGroupDetailedDescr"/>
             </list>
         </property>
         <property name="inactivationBlockingDefinitions">
