@@ -2,25 +2,31 @@ package edu.cornell.kfs.concur.batch;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationProcessingService;
-import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
-import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
+import edu.cornell.kfs.concur.service.ConcurReportsService;
 
 public class ConcurEventNotificationProcessingStep extends AbstractStep {
-    
+
+    private static final Logger LOG = LogManager.getLogger();
+
     protected ConcurEventNotificationProcessingService concurEventNotificationProcessingService;
-    protected ConcurAccessTokenService concurAccessTokenService;
+    protected ConcurReportsService concurReportsService;
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        concurAccessTokenService.refreshAccessToken();
-        concurEventNotificationProcessingService.processConcurEventNotifications();
-       
+        try {
+            concurReportsService.initializeTemporaryAccessToken();
+            concurEventNotificationProcessingService.processConcurEventNotifications();
+        } catch (RuntimeException e) {
+            LOG.error("execute, An unexpected error occurred during event notification processing", e);
+            throw e;
+        } finally {
+            concurReportsService.clearTemporaryAccessToken();
+        }
         return true;
     }
 
@@ -31,13 +37,13 @@ public class ConcurEventNotificationProcessingStep extends AbstractStep {
     public ConcurEventNotificationProcessingService getConcurEventNotificationProcessingService() {
         return concurEventNotificationProcessingService;
     }
-    
-    public ConcurAccessTokenService getConcurAccessTokenService() {
-        return concurAccessTokenService;
+
+    public ConcurReportsService getConcurReportsService() {
+        return concurReportsService;
     }
 
-    public void setConcurAccessTokenService(ConcurAccessTokenService concurAccessTokenService) {
-        this.concurAccessTokenService = concurAccessTokenService;
+    public void setConcurReportsService(ConcurReportsService concurReportsService) {
+        this.concurReportsService = concurReportsService;
     }
 
 }

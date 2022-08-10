@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.client.Entity;
@@ -11,17 +12,18 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.beans.factory.DisposableBean;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
+import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurReport;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
@@ -31,7 +33,6 @@ import edu.cornell.kfs.concur.rest.xmlObjects.AllocationsDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseEntryDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseReportDetailsDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ItemizationEntryDTO;
-import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
@@ -39,14 +40,53 @@ import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase implements ConcurReportsService, DisposableBean {
-    
-	private static final Logger LOG = LogManager.getLogger(ConcurReportsServiceImpl.class);
-    protected ConcurAccessTokenService concurAccessTokenService;
+
+    private static final Logger LOG = LogManager.getLogger(ConcurReportsServiceImpl.class);
+
+    private static final String BEARER_AUTHENTICATION_SCHEME = "Bearer";
+
+    protected ConcurAccessTokenV2Service concurAccessTokenV2Service;
     protected ParameterService parameterService;
     private String concurExpenseWorkflowUpdateNamespace;
     private String concurRequestWorkflowUpdateNamespace;
     private String concurFailedRequestQueueEndpoint;
     private String concurFailedRequestDeleteNotificationEndpoint;
+    private AtomicReference<String> temporaryAccessToken;
+
+    public ConcurReportsServiceImpl() {
+        this.temporaryAccessToken = new AtomicReference<>(KFSConstants.EMPTY_STRING);
+    }
+
+    @Override
+    public void initializeTemporaryAccessToken() {
+        String accessToken = concurAccessTokenV2Service.retrieveNewAccessBearerToken();
+        if (StringUtils.isBlank(accessToken)) {
+            throw new IllegalStateException("Unexpected blank token was returned from Concur");
+        }
+        String oldToken = temporaryAccessToken.getAndSet(accessToken);
+        if (StringUtils.isNotBlank(oldToken)) {
+            LOG.warn("initializeTemporaryAccessToken, An existing non-blank token was detected; "
+                    + "an error may have prevented the previous token from being cleared out properly. "
+                    + "A new access token will be used instead.");
+        }
+    }
+
+    @Override
+    public void clearTemporaryAccessToken() {
+        String oldToken = temporaryAccessToken.getAndSet(KFSConstants.EMPTY_STRING);
+        if (StringUtils.isBlank(oldToken)) {
+            LOG.warn("clearTemporaryAccessToken, The previous token was blank; "
+                    + "an error may have occurred during token initialization.");
+        }
+    }
+
+    protected String getTemporaryAccessToken() {
+        String accessToken = temporaryAccessToken.get();
+        if (StringUtils.isBlank(accessToken)) {
+            throw new IllegalStateException("The temporary access token has not been initialized");
+        }
+        return accessToken;
+    }
 
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
@@ -116,6 +156,7 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
     }
 
     protected Invocation buildReportDetailsClientRequest(String reportURI, String httpMethod) {
+        String accessToken = getTemporaryAccessToken();
         URI uri;
         try {
             uri = new URI(reportURI);
@@ -127,7 +168,7 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
                 .request()
                 .accept(MediaType.APPLICATION_XML)
                 .header(ConcurConstants.AUTHORIZATION_PROPERTY,
-                        ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken())
+                        BEARER_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + accessToken)
                 .build(httpMethod);
     }
 
@@ -231,12 +272,13 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
         Response response = null;
 
         try {
+            String accessToken = getTemporaryAccessToken();
             String workflowUpdateXml = buildWorkflowUpdateXML(workflowURI, action, comment);
             response = getClient().target(workflowURI)
                     .request()
                     .accept(MediaType.APPLICATION_XML)
                     .header(ConcurConstants.AUTHORIZATION_PROPERTY,
-                            ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken())
+                            BEARER_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + accessToken)
                     .post(Entity.xml(workflowUpdateXml));
 
             response.bufferEntity();
@@ -330,12 +372,12 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
         return ConcurUtils.isExpenseReportURI(workflowURI)? concurExpenseWorkflowUpdateNamespace: concurRequestWorkflowUpdateNamespace;
     }
     
-    public ConcurAccessTokenService getConcurAccessTokenService() {
-        return concurAccessTokenService;
+    public ConcurAccessTokenV2Service getConcurAccessTokenV2Service() {
+        return concurAccessTokenV2Service;
     }
 
-    public void setConcurAccessTokenService(ConcurAccessTokenService concurAccessTokenService) {
-        this.concurAccessTokenService = concurAccessTokenService;
+    public void setConcurAccessTokenV2Service(ConcurAccessTokenV2Service concurAccessTokenV2Service) {
+        this.concurAccessTokenV2Service = concurAccessTokenV2Service;
     }
 
     public ParameterService getParameterService() {
