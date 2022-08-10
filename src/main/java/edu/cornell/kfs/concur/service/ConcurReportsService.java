@@ -6,6 +6,10 @@ import edu.cornell.kfs.concur.eventnotification.rest.xmlObjects.ConcurEventNotif
 
 public interface ConcurReportsService {
     
+    void initializeTemporaryAccessToken();
+    
+    void clearTemporaryAccessToken();
+    
     ConcurReport extractConcurReport(String reportURI);
 
     void updateExpenseReportStatusInConcur(String workflowURI, ValidationResult validationResult);

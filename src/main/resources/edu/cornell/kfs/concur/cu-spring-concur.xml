@@ -280,7 +280,7 @@
 
 	<bean id="concurEventNotificationProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationProcessingStep">
 		<property name="concurEventNotificationProcessingService" ref="concurEventNotificationProcessingService" />
-		<property name="concurAccessTokenService" ref="concurAccessTokenService" />
+		<property name="concurReportsService" ref="concurReportsService" />
 	</bean>
 	
 	<bean id="concurEventNotificationProcessingService" parent="concurEventNotificationProcessingService-parentBean" />
@@ -323,7 +323,7 @@
     
     <bean id="concurReportsService" parent="concurReportsService-parentBean" />
 	<bean id="concurReportsService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurReportsServiceImpl" abstract="true">
-		<property name="concurAccessTokenService" ref="concurAccessTokenService" />
+		<property name="concurAccessTokenV2Service" ref="concurAccessTokenV2Service" />
 		<property name="parameterService" ref="parameterService" />
 		<property name="concurExpenseWorkflowUpdateNamespace">
 			<value>${concur.expense.workflow.update.namespace}</value>
