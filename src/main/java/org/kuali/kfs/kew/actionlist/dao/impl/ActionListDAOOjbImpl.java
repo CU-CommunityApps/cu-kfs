@@ -269,12 +269,12 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 && StringUtils.isBlank(filter.getDelegatorId())) {
             criteria.addEqualTo("principalId", principalId);
             addedDelegationCriteria = true;
-        } else if ((StringUtils.isNotBlank(filter.getDelegationType())
-                        && DelegationType.PRIMARY.getCode().equals(filter.getDelegationType()))
-                || StringUtils.isNotBlank(filter.getPrimaryDelegateId())) {
+        } else if (StringUtils.isNotBlank(filter.getDelegationType())
+                   && DelegationType.PRIMARY.getCode().equals(filter.getDelegationType())
+                   || StringUtils.isNotBlank(filter.getPrimaryDelegateId())) {
             // using a primary delegation
-            if ((StringUtils.isBlank(filter.getPrimaryDelegateId()))
-                    || (filter.getPrimaryDelegateId().trim().equals(KewApiConstants.ALL_CODE))) {
+            if (StringUtils.isBlank(filter.getPrimaryDelegateId())
+                || filter.getPrimaryDelegateId().trim().equals(KewApiConstants.ALL_CODE)) {
                 // user wishes to see all primary delegations
                 Criteria userCrit = new Criteria();
                 Criteria groupCrit = new Criteria();
@@ -318,9 +318,9 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             }
         }
         if (!addedDelegationCriteria
-                && ((StringUtils.isNotBlank(filter.getDelegationType())
-                    && DelegationType.SECONDARY.getCode().equals(filter.getDelegationType()))
-                || StringUtils.isNotBlank(filter.getDelegatorId()))) {
+                && (StringUtils.isNotBlank(filter.getDelegationType())
+                    && DelegationType.SECONDARY.getCode().equals(filter.getDelegationType())
+                    || StringUtils.isNotBlank(filter.getDelegatorId()))) {
             // using a secondary delegation
             criteria.addEqualTo("principalId", principalId);
             if (StringUtils.isBlank(filter.getDelegatorId())) {
@@ -450,7 +450,6 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             }
         });
     }
-
 
     /**
      * Creates an Action List from the given collection of Action Items.  The Action List should contain only one

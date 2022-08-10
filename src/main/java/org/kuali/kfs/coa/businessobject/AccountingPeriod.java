@@ -18,10 +18,10 @@
  */
 package org.kuali.kfs.coa.businessobject;
 
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.businessobject.FiscalYearBasedBusinessObject;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 
 import java.sql.Date;
 import java.util.Calendar;
@@ -39,6 +39,8 @@ public class AccountingPeriod extends PersistableBusinessObjectBase implements M
 
     private Date universityFiscalPeriodEndDate;
     private Date auxiliaryVoucherDefaultReversalDate;
+    private Date openDate;
+    private Date closeDate;
     private SystemOptions options;
 
     public AccountingPeriod() {
@@ -101,6 +103,22 @@ public class AccountingPeriod extends PersistableBusinessObjectBase implements M
         this.auxiliaryVoucherDefaultReversalDate = auxiliaryVoucherDefaultReversalDate;
     }
 
+    public Date getOpenDate() {
+        return openDate;
+    }
+
+    public void setOpenDate(Date openDate) {
+        this.openDate = openDate;
+    }
+
+    public Date getCloseDate() {
+        return closeDate;
+    }
+
+    public void setCloseDate(Date closeDate) {
+        this.closeDate = closeDate;
+    }
+
     /**
      * Determine if the current account period is open
      *
@@ -137,8 +155,8 @@ public class AccountingPeriod extends PersistableBusinessObjectBase implements M
     public int hashCode() {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ((universityFiscalPeriodCode == null) ? 0 : universityFiscalPeriodCode.hashCode());
-        result = PRIME * result + ((universityFiscalYear == null) ? 0 : universityFiscalYear.hashCode());
+        result = PRIME * result + (universityFiscalPeriodCode == null ? 0 : universityFiscalPeriodCode.hashCode());
+        result = PRIME * result + (universityFiscalYear == null ? 0 : universityFiscalYear.hashCode());
         return result;
     }
 

@@ -318,9 +318,9 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
                 for (CapitalAssetInformation capitalAsset : capitalAssetInformation) {
                     if (KFSConstants.CapitalAssets.CAPITAL_ASSET_MODIFY_ACTION_INDICATOR.equals(
                                     capitalAsset.getCapitalAssetActionIndicator())
-                            && (ObjectUtils.isNotNull(capitalAsset.getCapitalAssetNumber()))
-                            && (KFSConstants.CapitalAssets.DISTRIBUTE_COST_EQUALLY_CODE.equalsIgnoreCase(
-                                    capitalAsset.getDistributionAmountCode()))) {
+                        && ObjectUtils.isNotNull(capitalAsset.getCapitalAssetNumber())
+                        && KFSConstants.CapitalAssets.DISTRIBUTE_COST_EQUALLY_CODE.equalsIgnoreCase(
+                                capitalAsset.getDistributionAmountCode())) {
                         if (capitalAssetExists(selectedCapitalAccountingLines, capitalAsset,
                                 KFSConstants.CapitalAssets.CAPITAL_ASSET_MODIFY_ACTION_INDICATOR)) {
                             capitalAsset.setCapitalAssetQuantity(1);
@@ -369,8 +369,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
                                     && groupAccountLine.getAccountNumber().equals(capitalAccountLine.getAccountNumber())
                                     && groupAccountLine.getFinancialObjectCode().equals(capitalAccountLine.getFinancialObjectCode())) {
                                 //found the accounting line
-                                groupAccountLine.setAmount((capitalAsset.getCapitalAssetLineAmount()
-                                        .multiply(capitalAccountLine.getAccountLinePercent()))
+                                groupAccountLine.setAmount(capitalAsset.getCapitalAssetLineAmount()
+                                        .multiply(capitalAccountLine.getAccountLinePercent())
                                         .divide(new KualiDecimal(100)));
                             }
                         }
@@ -1173,7 +1173,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) calfb.getFinancialDocument();
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();
 
-        KualiDecimal totalCapitalLinesSelectedAmount = (calculateTotalCapitalLinesSelectedAmount(capitalAccountingLines)).abs();
+        KualiDecimal totalCapitalLinesSelectedAmount = calculateTotalCapitalLinesSelectedAmount(capitalAccountingLines)
+                .abs();
         if (totalCapitalLinesSelectedAmount.isNonZero()) {
             for (CapitalAccountingLines capitalAccountingLine : capitalAccountingLines) {
                 if (capitalAccountingLine.isSelectLine() && !capitalAccountingLine.isAmountDistributed()) {

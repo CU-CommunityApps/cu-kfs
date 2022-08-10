@@ -220,7 +220,7 @@ public class CopiedObject<T extends Serializable> {
         }
 
         public final int read() {
-            return (pos < count) ? (buf[pos++] & 0xff) : -1;
+            return pos < count ? buf[pos++] & 0xff : -1;
         }
 
         public final int read(byte[] b, int off, int len) {
@@ -228,7 +228,7 @@ public class CopiedObject<T extends Serializable> {
                 return -1;
             }
 
-            if ((pos + len) > count) {
+            if (pos + len > count) {
                 len = count - pos;
             }
 
@@ -238,7 +238,7 @@ public class CopiedObject<T extends Serializable> {
         }
 
         public final long skip(long n) {
-            if ((pos + n) > count) {
+            if (pos + n > count) {
                 n = count - pos;
             }
             if (n < 0) {

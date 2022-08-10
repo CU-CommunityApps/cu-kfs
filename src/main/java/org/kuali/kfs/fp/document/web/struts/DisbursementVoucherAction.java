@@ -212,10 +212,9 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                 DocumentService.class).getByDocumentHeaderId(
                 request.getParameter(KFSPropertyConstants.DOCUMENT_NUMBER));
         
-        // set workflow document back into form to prevent document authorizer "invalid (null)
-        // document.documentHeader.workflowDocument" since we are bypassing form submit and just linking directly to the action
-
-        dvForm.getDocument().getDocumentHeader().setWorkflowDocument(document.getDocumentHeader().getWorkflowDocument());
+        // set document back into form to prevent "java.lang.IllegalArgumentException: documentId was null or blank"
+        // error when checking permissions since we are bypassing form submit and just linking directly to the action
+        dvForm.setDocument(document);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DisbursementVoucherCoverSheetService coverSheetService = SpringContext.getBean(DisbursementVoucherCoverSheetService.class);

@@ -60,7 +60,8 @@ public class ExceptionRoutingServiceImpl implements WorkflowDocumentExceptionRou
     private static final Logger LOG = LogManager.getLogger();
 
     public void placeInExceptionRouting(String errorMessage, PersistedMessage persistedMessage,
-            String documentId) throws Exception {
+            String documentId) throws
+            Exception {
         RouteNodeInstance nodeInstance = null;
         KEWServiceLocator.getRouteHeaderService().lockRouteHeader(documentId, true);
         DocumentRouteHeaderValue document = KEWServiceLocator.getRouteHeaderService().getRouteHeader(documentId);
