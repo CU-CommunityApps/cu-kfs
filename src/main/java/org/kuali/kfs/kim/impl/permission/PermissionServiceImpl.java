@@ -119,7 +119,7 @@ public class PermissionServiceImpl implements PermissionService {
         incomingParamCheck(qualification, "qualification");
 
         if (LOG.isDebugEnabled()) {
-            logAuthorizationCheck("Permission", principalId, namespaceCode, permissionName, qualification);
+            logAuthorizationCheck(principalId, namespaceCode, permissionName, qualification);
         }
 
         List<String> roleIds = getRoleIdsForPermission(namespaceCode, permissionName);
@@ -160,7 +160,7 @@ public class PermissionServiceImpl implements PermissionService {
         incomingParamCheck(qualification, "qualification");
 
         if (LOG.isDebugEnabled()) {
-            logAuthorizationCheckByTemplate("Perm Templ", principalId, namespaceCode, permissionTemplateName,
+            logAuthorizationCheckByTemplate(principalId, namespaceCode, permissionTemplateName,
                     permissionDetails, qualification);
         }
 
@@ -609,11 +609,11 @@ public class PermissionServiceImpl implements PermissionService {
         this.cacheManager = cacheManager;
     }
 
-    protected void logAuthorizationCheck(String checkType, String principalId, String namespaceCode,
+    protected void logAuthorizationCheck(String principalId, String namespaceCode,
             String permissionName, Map<String, String> qualification) {
         StringBuilder sb = new StringBuilder();
         sb.append('\n');
-        sb.append("Is AuthZ for ").append(checkType).append(": ").append(namespaceCode).append("/")
+        sb.append("Is AuthZ for ").append("Permission").append(": ").append(namespaceCode).append("/")
                 .append(permissionName).append('\n');
         sb.append("             Principal:  ").append(principalId);
         if (principalId != null) {
@@ -636,12 +636,12 @@ public class PermissionServiceImpl implements PermissionService {
         }
     }
 
-    protected void logAuthorizationCheckByTemplate(String checkType, String principalId, String namespaceCode,
+    protected void logAuthorizationCheckByTemplate(String principalId, String namespaceCode,
             String permissionName,
             Map<String, String> permissionDetails, Map<String, String> qualification) {
         StringBuilder sb = new StringBuilder();
         sb.append('\n');
-        sb.append("Is AuthZ for ").append(checkType).append(": ").append(namespaceCode).append("/")
+        sb.append("Is AuthZ for ").append("Perm Templ").append(": ").append(namespaceCode).append("/")
                 .append(permissionName).append('\n');
         sb.append("             Principal:  ").append(principalId);
         if (principalId != null) {

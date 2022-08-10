@@ -27,7 +27,6 @@ import org.kuali.kfs.kim.impl.role.RoleResponsibility;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

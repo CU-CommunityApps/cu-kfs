@@ -118,10 +118,6 @@ public abstract class KimAttributeData extends PersistableBusinessObjectBase imp
         return kimTypeInfoService;
     }
 
-    public static void setKimTypeInfoService(KimTypeInfoService kimTypeInfoService) {
-        KimAttributeData.kimTypeInfoService = kimTypeInfoService;
-    }
-
     public abstract void setId(String id);
 
     public abstract void setAssignedToId(String assignedToId);

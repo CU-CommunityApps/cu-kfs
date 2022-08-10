@@ -18,14 +18,9 @@
  */
 package org.kuali.kfs.kim.document;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.api.responsibility.ResponsibilityService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.api.type.KimAttributeField;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleMember;
@@ -47,6 +42,10 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.util.AutoPopulatingList;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /*
  * CU Customization:
@@ -87,7 +86,6 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
     private List<RoleDocumentDelegationMember> delegationMembers =
             new AutoPopulatingList<>(RoleDocumentDelegationMember.class);
     private List<RoleDocumentDelegation> delegations = new AutoPopulatingList<>(RoleDocumentDelegation.class);
-    private transient ResponsibilityService responsibilityService;
     private transient ResponsibilityInternalService responsibilityInternalService;
 
     public IdentityManagementRoleDocument() {
@@ -190,12 +188,10 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
             case 1:
                 this.memberMetaDataType = RoleMemberMetaDataType.MEMBER_ID;
                 break;
-            case 2:
-                this.memberMetaDataType = RoleMemberMetaDataType.MEMBER_NAME;
-                break;
             case 3:
                 this.memberMetaDataType = RoleMemberMetaDataType.FULL_MEMBER_NAME;
                 break;
+            case 2:
             default:
                 this.memberMetaDataType = RoleMemberMetaDataType.MEMBER_NAME;
                 break;
@@ -488,13 +484,6 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
                 delegation.setRoleId(roleId);
             }
         }
-    }
-
-    public ResponsibilityService getResponsibilityService() {
-        if (responsibilityService == null) {
-            responsibilityService = KimApiServiceLocator.getResponsibilityService();
-        }
-        return responsibilityService;
     }
 
     public ResponsibilityInternalService getResponsibilityInternalService() {
