@@ -505,7 +505,7 @@ public class AccountingLineRuleHelperServiceImpl implements AccountingLineRuleHe
      */
     protected List<AccountingLineValidationError> getReferenceTypeCodeValidationErrors(String documentTypeCode, DocumentType referenceType,
                                                                                        String errorPropertyIdentifyingName, boolean useShortMessages) {
-        if (!StringUtils.isBlank(documentTypeCode)
+        if (StringUtils.isNotBlank(documentTypeCode)
                 && !financialSystemDocumentTypeService.isCurrentActiveAccountingDocumentType(documentTypeCode)) {
             AccountingLineValidationError validationError = new AccountingLineValidationError(KFSPropertyConstants.REFERENCE_TYPE_CODE);
             if (useShortMessages) {

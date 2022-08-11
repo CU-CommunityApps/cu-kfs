@@ -343,7 +343,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         filename = filename.replaceAll("\\\\", "/");
 
         int startingPointer = filename.length() - 1;
-        while ((startingPointer > 0) && (filename.charAt(startingPointer) != '/')) {
+        while (startingPointer > 0 && filename.charAt(startingPointer) != '/') {
             startingPointer--;
         }
 

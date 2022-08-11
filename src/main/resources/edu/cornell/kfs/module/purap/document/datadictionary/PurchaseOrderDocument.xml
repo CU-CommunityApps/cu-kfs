@@ -91,19 +91,7 @@
 				<entry>
 					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedImportPurchasingAccountsPayableItemEvent</value></key>
 					<value>PurchaseOrder-importPurchasingAccountsPayableItemValidation</value>				
-				</entry>						
-				<entry>
-					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedChangeSystemPurapEvent</value></key>
-					<value>PurchaseOrder-changeSystemPurapValidation</value>				
-				</entry>			
-				<entry>
-					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedSelectSystemPurapEvent</value></key>
-					<value>PurchaseOrder-selectSystemPurapValidation</value>				
-				</entry>			
-				<entry>
-					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedUpdateCamsViewPurapEvent</value></key>
-					<value>PurchaseOrder-updateCamsViewPurapValidation</value>				
-				</entry>			
+				</entry>														
 				<entry>
 					<key><value>org.kuali.kfs.module.purap.document.validation.event.AttributedAddPurchasingItemCapitalAssetEvent</value></key>
 					<value>PurchaseOrder-addPurchasingItemCapitalAssetValidation</value>				
