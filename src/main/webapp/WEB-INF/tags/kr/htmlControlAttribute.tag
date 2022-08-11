@@ -202,7 +202,7 @@ if (attributeEntry == null) {
 			   	      collection = (java.util.List) TagUtils.lookup(pageCtx, "org.apache.struts.taglib.html.BEAN", methodAndParms, null);
               } else {
                 collection = new ArrayList<org.kuali.kfs.core.api.util.KeyValue>();
-                for (Map.Entry<String, String> entry : ((java.util.Set<Map.Entry<String, String>>)keyLabelMapEntries)) {
+                for (Map.Entry<String, String> entry : (java.util.Set<Map.Entry<String, String>>)keyLabelMapEntries) {
                   collection.add(new org.kuali.kfs.core.api.util.ConcreteKeyValue(entry));
                 }
               }

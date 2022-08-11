@@ -1,4 +1,3 @@
-<%@ tag import="org.kuali.kfs.sys.util.Guid" %>
 <%--
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
@@ -19,6 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%@ tag import="org.kuali.kfs.sys.util.Guid" %>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <%@ attribute name="displayRequisitionFields" required="false" description="Boolean to indicate if REQ specific fields should be displayed"%>
