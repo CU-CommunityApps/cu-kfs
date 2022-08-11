@@ -397,5 +397,12 @@
           p:scheduler-ref="scheduler"
           p:schedulerService-ref="schedulerService"
           p:useQuartzScheduling="${use.quartz.scheduling}"/>
+          
+    <bean id="isoFipsCountryMapDao" parent="platformAwareDao"
+        class="edu.cornell.kfs.sys.dataaccess.impl.ISOFIPSCountryMapDaoOjb" />
+        
+    <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">
+        <property name="isoFipsCountryMapDao" ref="isoFipsCountryMapDao" />
+    </bean>
 
 </beans>

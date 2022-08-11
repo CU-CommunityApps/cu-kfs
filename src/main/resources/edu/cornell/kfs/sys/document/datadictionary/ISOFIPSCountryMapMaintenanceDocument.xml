@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="ISOFIPSCountryMapMaintenanceDocument" parent="ISOFIPSCountryMapMaintenanceDocument-parentBean"/>
+    <bean id="ISOFIPSCountryMapMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap"
+          p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"
+          p:documentTypeName="IFCM"
+          p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
+          p:workflowAttributes-ref="ISOFIPSCountryMapMaintenanceDocument-workflowAttributes">
+        <property name="maintainableSections">
+            <list>
+                <ref bean="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap"/>
+            </list>
+        </property>
+        <property name="lockingKeys">
+            <list>
+                <value>isoCountryCode</value>
+                <value>fipsCountryCode</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Maintenance Section Definitions -->
+
+    <bean id="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap" parent="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap-parentBean"/>
+    <bean id="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap-parentBean" abstract="true" parent="MaintainableSectionDefinition"
+          p:id="Edit ISO FIPS Country Map" p:title="Edit ISO FIPS Country Map">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="isoCountryCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="fipsCountryCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:defaultValue="true" p:name="active"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Exported Workflow Properties -->
+
+    <bean id="ISOFIPSCountryMapMaintenanceDocument-workflowAttributes"
+          parent="ISOFIPSCountryMapMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="ISOFIPSCountryMapMaintenanceDocument-workflowAttributes-parentBean"
+          class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+
+</beans>
