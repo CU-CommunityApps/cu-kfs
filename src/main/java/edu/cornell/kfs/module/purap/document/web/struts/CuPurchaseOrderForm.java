@@ -186,7 +186,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
                     .getRelatedViews(PaymentRequestView.class, getPurchaseOrderDocument().getAccountsPayablePurchasingDocumentLinkIdentifier());
             boolean hasPaymentRequest = preqViews != null && preqViews.size() > 0;
 
-            can = pendingPrint || (open && !hasPaymentRequest) || errorFax;
+            can = pendingPrint || open && !hasPaymentRequest || errorFax;
         }
 
         // check user authorization

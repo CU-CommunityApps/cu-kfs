@@ -184,7 +184,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     	   
        }
 
-        if ((KualiDecimal.ZERO.compareTo(poItem.getItemOutstandingEncumberedAmount())) >= 0) {
+       if (KualiDecimal.ZERO.compareTo(poItem.getItemOutstandingEncumberedAmount()) >= 0) {
             //we have no dollars left encumbered on the po item
             String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();
             ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.OUTSTANDING_ENCUMBERED_AMT_AVAILABLE,extraDescription,orderHolder.getFileName());
@@ -193,8 +193,8 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
         }else{
             //we have encumbered dollars left on PO
         	// KFSUPGRADE-485
-            if (((itemHolder.getInvoiceItemSubTotalAmount().setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue())) > 0
-            		|| ((getItemTotalAmount(itemHolder).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue())) > 0) {
+            if ((itemHolder.getInvoiceItemSubTotalAmount().setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue()) > 0
+            		|| (getItemTotalAmount(itemHolder).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue()) > 0) {
                 String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();
                 ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ITEM_AMT_LESSTHAN_INVOICE_ITEM_AMT,extraDescription,orderHolder.getFileName());
                 orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_POITEM_LESS_OUTSTANDING_EMCUMBERED_AMOUNT);
@@ -237,7 +237,8 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
             lowerPercentage = new BigDecimal(100);
         }
 
-        BigDecimal lowerAcceptableVariance = (lowerPercentage.divide(new BigDecimal(100))).multiply(poItem.getItemUnitPrice()).negate();
+        BigDecimal lowerAcceptableVariance = lowerPercentage.divide(new BigDecimal(100))
+                .multiply(poItem.getItemUnitPrice()).negate();
 
         // KFSUPGRADE-485
         if (!poItem.isNoQtyItem() && lowerAcceptableVariance.compareTo(actualVariance) > 0) {
@@ -255,7 +256,8 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
             //If the cost source itemUnitPriceLowerVariancePercent is null then we'll use the exact match (100%).
             upperPercentage = new BigDecimal(100);
         }
-        BigDecimal upperAcceptableVariance = (upperPercentage.divide(new BigDecimal(100))).multiply(poItem.getItemUnitPrice());
+        BigDecimal upperAcceptableVariance = upperPercentage.divide(new BigDecimal(100))
+                .multiply(poItem.getItemUnitPrice());
 
         if (upperAcceptableVariance.compareTo(actualVariance) < 0) {
             ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.INVOICE_AMT_GREATER_THAN_UPPER_VARIANCE, extraDescription, orderHolder.getFileName());

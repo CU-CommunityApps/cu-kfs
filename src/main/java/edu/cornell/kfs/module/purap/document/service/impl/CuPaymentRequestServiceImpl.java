@@ -241,10 +241,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         PurApItem taxItem;
 
         try {
-            taxItem = (PurApItem) preq.getItemClass().newInstance();
+        	taxItem = (PurApItem) preq.getItemClass().getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException e) {
             throw new InfrastructureException("Unable to access itemClass", e);
-        } catch (InstantiationException e) {
+        } catch (ReflectiveOperationException e) {
             throw new InfrastructureException("Unable to instantiate itemClass", e);
         }
 
@@ -387,7 +387,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation of it's use.
 		String payDateVariance = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
 				PurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
-        Integer payDateVarianceInt = Integer.valueOf(payDateVariance);
+		int payDateVarianceInt = Integer.parseInt(payDateVariance);
 
         Integer discountDueNumber = terms.getVendorDiscountDueNumber();
         Integer netDueNumber = terms.getVendorNetDueNumber();

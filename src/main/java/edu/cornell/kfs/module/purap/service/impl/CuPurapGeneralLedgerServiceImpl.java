@@ -230,7 +230,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
 
             // If there isn't a PO item or the total amount is 0, we don't need encumbrances
             final KualiDecimal preqItemTotalAmount = (payRequestItem.getTotalAmount() == null) ? KualiDecimal.ZERO : payRequestItem.getTotalAmount();
-            if ((poItem == null) || (preqItemTotalAmount.doubleValue() == 0)) {
+            if (poItem == null || preqItemTotalAmount.doubleValue() == 0) {
                 if (poItem != null) {
                     // KFSUPGRADE-893 recumber $0 item too
                     if (poItem.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
@@ -289,7 +289,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                     // this prevents negative encumbrance
                     if ((poItem.getTotalAmount() != null) && (poItem.getTotalAmount().bigDecimalValue().signum() < 0)) {
                         // po item extended cost is negative
-                        if ((poItem.getTotalAmount().compareTo(itemReEncumber)) > 0) {
+                    	if (poItem.getTotalAmount().compareTo(itemReEncumber) > 0) {
                             itemReEncumber = poItem.getTotalAmount();
                         }
                     }

@@ -33,9 +33,11 @@ public class CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation ex
             }
             else if(StringUtils.equals(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, preq.getApplicationDocumentStatus())) {
             		isTreasuryApproval = true;
-            } else if (StringUtils.equals(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED,
-                    preq.getApplicationDocumentStatus())
-                    && (ObjectUtils.isNotNull(item) && item.getItemType().getIsTaxCharge())) {
+            } else if (StringUtils.equals(
+                    PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED,
+                    preq.getApplicationDocumentStatus()
+            )
+                       && ObjectUtils.isNotNull(item) && item.getItemType().getIsTaxCharge()) {
                 isTaxApproval = true;
             }
         }

@@ -246,7 +246,8 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                 Map orgParamKeys = persistenceService.getPrimaryKeyFieldValues(organizationParameter);
                 orgParamKeys.put(KRADPropertyConstants.ACTIVE_INDICATOR, true);
                 organizationParameter = businessObjectService.findByPrimaryKey(OrganizationParameter.class, orgParamKeys);
-                purchaseOrderTotalLimit = (organizationParameter == null) ? null : organizationParameter.getOrganizationAutomaticPurchaseOrderLimit();
+                purchaseOrderTotalLimit = organizationParameter == null ? null :
+                    organizationParameter.getOrganizationAutomaticPurchaseOrderLimit();
             }
         }
 
