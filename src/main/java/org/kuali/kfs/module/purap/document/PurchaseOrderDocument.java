@@ -209,9 +209,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         String applicationDocumentStatus = getApplicationDocumentStatus();
 
         return !isPostingYearPrior()
-                || (!PurchaseOrderStatuses.APPDOC_CLOSED.equals(applicationDocumentStatus)
-                    && !PurchaseOrderStatuses.APPDOC_CANCELLED.equals(applicationDocumentStatus)
-                    && !PurchaseOrderStatuses.APPDOC_VOID.equals(applicationDocumentStatus));
+               || !PurchaseOrderStatuses.APPDOC_CLOSED.equals(applicationDocumentStatus)
+                 && !PurchaseOrderStatuses.APPDOC_CANCELLED.equals(applicationDocumentStatus)
+                 && !PurchaseOrderStatuses.APPDOC_VOID.equals(applicationDocumentStatus);
     }
 
     @Override
@@ -437,8 +437,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         WorkflowDocument workFlowDocument = this.getFinancialSystemDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentTypeName();
 
-        if ((documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT)) ||
-            (documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_SPLIT_DOCUMENT))) {
+        if (documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT) ||
+            documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_SPLIT_DOCUMENT)) {
             if (workFlowDocument.isCanceled()) {
                 // if doc is FINAL or canceled, saving should not be creating GL entries
                 setGeneralLedgerPendingEntries(new ArrayList<>());
@@ -774,8 +774,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 Note note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(this, errorText);
                 this.addNote(SpringContext.getBean(NoteService.class).save(note));
             } else {
-                String annotationNote = (ObjectUtils.isNull(annotation)) ? "" : annotation;
-                String responsibilityNote = (ObjectUtils.isNull(responsibility)) ? "" : responsibility;
+                String annotationNote = ObjectUtils.isNull(annotation) ? "" : annotation;
+                String responsibilityNote = ObjectUtils.isNull(responsibility) ? "" : responsibility;
                 String currentNodeName = getCurrentRouteNodeName(workflowDocument);
                 workflowDocument.adHocToPrincipal(ActionRequestType.FYI, currentNodeName, annotationNote,
                         routePrincipalId, responsibilityNote, true);
@@ -1271,7 +1271,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             if ((includeBelowTheLine || it.isLineItemIndicator()) && (includeInactive
                     || PurApItemUtils.checkItemActive(item))) {
                 KualiDecimal totalAmount = item.getTotalAmount();
-                KualiDecimal itemTotal = (totalAmount != null) ? totalAmount : KualiDecimal.ZERO;
+                KualiDecimal itemTotal = totalAmount != null ? totalAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -1303,7 +1303,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && (includeInactive || item.isItemActiveIndicator())) {
                 KualiDecimal extendedPrice = item.getExtendedPrice();
-                KualiDecimal itemTotal = (extendedPrice != null) ? extendedPrice : KualiDecimal.ZERO;
+                KualiDecimal itemTotal = extendedPrice != null ? extendedPrice : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -1335,7 +1335,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && (includeInactive || item.isItemActiveIndicator())) {
                 KualiDecimal taxAmount = item.getItemTaxAmount();
-                KualiDecimal itemTotal = (taxAmount != null) ? taxAmount : KualiDecimal.ZERO;
+                KualiDecimal itemTotal = taxAmount != null ? taxAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }

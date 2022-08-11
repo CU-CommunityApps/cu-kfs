@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class PaymentRequestStatuses {
@@ -83,8 +84,8 @@ public final class PaymentRequestStatuses {
     private PaymentRequestStatuses() {
     }
 
-    public static HashMap<String, String> getAllAppDocStatuses() {
-        HashMap<String, String> appDocStatusMap = new HashMap<>();
+    public static Map<String, String> getAllAppDocStatuses() {
+        Map<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(APPDOC_INITIATE, APPDOC_INITIATE);
         appDocStatusMap.put(APPDOC_IN_PROCESS, APPDOC_IN_PROCESS);
@@ -203,8 +204,8 @@ public final class PaymentRequestStatuses {
         STATUSES_POSTROUTE.add(APPDOC_AUTO_APPROVED);
     }
 
-    public static HashMap<String, String> getPaymentRequestAppDocDisapproveStatuses() {
-        HashMap<String, String> appDocStatusMap = new HashMap<>();
+    public static Map<String, String> getPaymentRequestAppDocDisapproveStatuses() {
+        Map<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(NODE_ADHOC_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS);
         appDocStatusMap.put(PurapConstants.AccountsPayableStatuses.NODE_ACCOUNT_PAYABLE_REVIEW,

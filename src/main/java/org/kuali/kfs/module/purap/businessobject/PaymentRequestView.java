@@ -46,7 +46,7 @@ public class PaymentRequestView extends AbstractRelatedView {
     private Timestamp paymentPaidTimestamp;
 
     public Object getTotalAmount() {
-        return (new CurrencyFormatter()).format(documentHeader.getFinancialDocumentTotalAmount());
+        return new CurrencyFormatter().format(documentHeader.getFinancialDocumentTotalAmount());
     }
 
     public String getInvoiceNumber() {

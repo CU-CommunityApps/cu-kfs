@@ -334,7 +334,7 @@ public class AssetGlobalServiceImpl implements AssetGlobalService {
             separateSourceCapitalAsset.setReplacementAmount(KualiDecimal.ZERO);
             separateSourceCapitalAsset.setFabricationEstimatedTotalAmount(KualiDecimal.ZERO);
         } else {
-            double separateRatio = 1 - (assetGlobal.getSeparateSourceTotalAmount().doubleValue() / divisor.doubleValue());
+            double separateRatio = 1 - assetGlobal.getSeparateSourceTotalAmount().doubleValue() / divisor.doubleValue();
             separateSourceCapitalAsset.setSalvageAmount(KualiDecimalUtils
                     .safeMultiply(assetGlobal.getSeparateSourceCapitalAsset().getSalvageAmount(), separateRatio));
             separateSourceCapitalAsset.setReplacementAmount(KualiDecimalUtils

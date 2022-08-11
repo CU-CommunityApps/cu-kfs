@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-202 Kuali, Inc.
+ * Copyright 2005-2021 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -317,9 +317,6 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         this.generateEncumbranceEntries = generateEncumbranceEntries;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.AccountsPayableDocument#getPurchaseOrderDocument()
-     */
     @Override
     public PurchaseOrderDocument getPurchaseOrderDocument() {
         if ((ObjectUtils.isNull(purchaseOrderDocument)
@@ -467,9 +464,6 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return null;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getItemClass()
-     */
     @Override
     public Class getItemClass() {
         return null;
@@ -504,7 +498,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     @Override
     public KualiDecimal getTotalRemitTax() {
         if (!this.isUseTaxIndicator()) {
-            return (KualiDecimal.ZERO.equals(this.getTotalTaxAmount())) ? null : this.getTotalTaxAmount();
+            return KualiDecimal.ZERO.equals(this.getTotalTaxAmount()) ? null : this.getTotalTaxAmount();
         }
         return null;
     }
