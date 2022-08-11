@@ -34,7 +34,7 @@
                 <bean parent="FieldOverrideForListElementInsert"
                       p:propertyName="sections[0].fields"
                       p:propertyNameForElementCompare="name"
-                      p:element-ref="HigherEducationFunction-financialFederalFunctionCode"
+                      p:element-ref="HigherEducationFunction-financialHigherEdFunctionNm"
                       p:insertAfter-ref="HigherEducationFunction-extension-financialHigherEdFunctionDescription"/>
                       
                 <!-- Bean override for legacy modal style presentation -->
@@ -42,7 +42,7 @@
                     <property name="propertyName" value="inquirySections[0].inquiryFields" />
                     <property name="propertyNameForElementCompare" value="attributeName" />
                     <property name="element">
-                        <bean parent="FieldDefinition" p:attributeName="financialFederalFunctionCode"/>
+                        <bean parent="FieldDefinition" p:attributeName="financialHigherEdFunctionNm"/>
                     </property>
                     <property name="insertAfter">
                         <list>
