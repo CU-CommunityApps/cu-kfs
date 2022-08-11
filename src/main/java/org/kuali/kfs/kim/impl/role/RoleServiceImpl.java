@@ -27,7 +27,6 @@ import org.joda.time.DateTime;
 import org.kuali.kfs.core.api.cache.CacheKeyUtils;
 import org.kuali.kfs.core.api.criteria.GenericQueryResults;
 import org.kuali.kfs.core.api.criteria.LookupCustomizer;
-import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.core.api.membership.MemberType;
@@ -40,8 +39,8 @@ import org.kuali.kfs.kim.framework.role.RoleTypeService;
 import org.kuali.kfs.kim.framework.services.KimFrameworkServiceLocator;
 import org.kuali.kfs.kim.framework.type.KimTypeService;
 import org.kuali.kfs.kim.impl.common.attribute.KimAttributeData;
-import org.kuali.kfs.kim.impl.common.delegate.DelegateMemberAttributeData;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
+import org.kuali.kfs.kim.impl.common.delegate.DelegateMemberAttributeData;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.impl.permission.Permission;
@@ -101,9 +100,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         );
     }
 
-    @CacheEvict(value = {Permission.CACHE_NAME, Responsibility.CACHE_NAME, Role.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                Role.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleLite createRole(final RoleLite role) throws IllegalArgumentException, IllegalStateException {
         incomingParamCheck(role, "role");
@@ -114,9 +123,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getBusinessObjectService().save(role);
     }
 
-    @CacheEvict(value = {Permission.CACHE_NAME, Responsibility.CACHE_NAME, Role.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                Role.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleLite updateRole(final RoleLite role) throws IllegalArgumentException, IllegalStateException {
         incomingParamCheck(role, "role");
@@ -146,15 +165,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         // get all nested role members that are of type role
         Set<String> newRoleMemberIds = getRoleTypeRoleMemberIds(newMemberId);
         return !newRoleMemberIds.contains(role.getId());
-    }
-
-    protected RoleMember findRoleMember(String roleMemberId) {
-        final List<RoleMember> roleMembers = findRoleMembers(QueryByCriteria.Builder.fromPredicates(
-                PredicateFactory.equal(KimConstants.PrimaryKeyConstants.ID, roleMemberId))).getResults();
-        if (roleMembers != null && !roleMembers.isEmpty()) {
-            return roleMembers.get(0);
-        }
-        return null;
     }
 
     @Override
@@ -1441,29 +1451,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     /**
-     * Helper method used by principalHasRole to build the role ID -> list of members map.
-     *
-     * @return <b>true</b> if no further checks are needed because no role service is defined
-     */
-    protected boolean getRoleIdToMembershipMap(Map<String, List<RoleMembership>> roleIdToMembershipMap,
-            List<RoleMember> roleMembers) {
-        for (RoleMember roleMember : roleMembers) {
-            RoleMembership roleMembership = RoleMembership.Builder.create(roleMember.getRoleId(),
-                    roleMember.getId(), roleMember.getMemberId(), roleMember.getType(),
-                    roleMember.getAttributes()).build();
-
-            // if the role type service is null, assume that all qualifiers match
-            if (getRoleTypeService(roleMember.getRoleId()) == null) {
-                return true;
-            }
-            List<RoleMembership> lrmi =
-                    roleIdToMembershipMap.computeIfAbsent(roleMembership.getRoleId(), k -> new ArrayList<>());
-            lrmi.add(roleMembership);
-        }
-        return false;
-    }
-
-    /**
      * @return a KimDelegationImpl object by its ID. If the delegateType already exists in the cache, this method will
      *         return the cached version; otherwise, it will retrieve the uncached version from the database and then
      *         cache it before returning it.
@@ -1591,9 +1578,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return roleMembers;
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleMember assignPrincipalToRole(String principalId, String namespaceCode, String roleName,
                                             Map<String, String> qualifier) throws IllegalArgumentException {
@@ -1636,9 +1633,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getResponsibilityInternalService().saveRoleMember(newRoleMember);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleMember assignGroupToRole(String groupId, String namespaceCode, String roleName,
                                         Map<String, String> qualifier) throws IllegalStateException {
@@ -1675,9 +1682,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getResponsibilityInternalService().saveRoleMember(newRoleMember);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleMember assignRoleToRole(String roleId, String namespaceCode, String roleName,
                                        Map<String, String> qualifier) throws IllegalStateException {
@@ -1717,9 +1734,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getResponsibilityInternalService().saveRoleMember(newRoleMember);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleMember createRoleMember(RoleMember roleMember) throws IllegalStateException {
         incomingParamCheck(roleMember, "roleMember");
@@ -1736,9 +1763,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getResponsibilityInternalService().saveRoleMember(roleMember);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleMember updateRoleMember(RoleMember roleMember) throws IllegalArgumentException, IllegalStateException {
         incomingParamCheck(roleMember, "roleMember");
@@ -1783,8 +1820,17 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getResponsibilityInternalService().saveRoleMember(roleMember);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, RoleMembership.CACHE_NAME, RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME,
-            RoleResponsibility.CACHE_NAME, DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public DelegateMember updateDelegateMember(DelegateMember delegateMember) throws IllegalArgumentException,
             IllegalStateException {
@@ -1840,8 +1886,17 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getResponsibilityInternalService().saveDelegateMember(delegateMember);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, RoleMembership.CACHE_NAME, RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME,
-            RoleResponsibility.CACHE_NAME, DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public DelegateMember createDelegateMember(DelegateMember delegateMember) throws IllegalArgumentException,
             IllegalStateException {
@@ -1878,8 +1933,17 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getResponsibilityInternalService().saveDelegateMember(delegateMember);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, RoleMembership.CACHE_NAME, RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME,
-            RoleResponsibility.CACHE_NAME, DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public void removeDelegateMembers(List<DelegateMember> delegateMembers) throws IllegalArgumentException,
             IllegalStateException {
@@ -1887,9 +1951,18 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         delegateMembers.forEach(this::updateDelegateMember);
     }
 
-    @CacheEvict(value = {Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleResponsibilityAction createRoleResponsibilityAction(
             RoleResponsibilityAction roleResponsibilityAction) throws IllegalArgumentException,
@@ -1918,9 +1991,18 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
     }
 
-    @CacheEvict(value = {Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public RoleResponsibilityAction updateRoleResponsibilityAction(RoleResponsibilityAction roleResponsibilityAction)
             throws IllegalArgumentException, IllegalStateException {
@@ -1940,9 +2022,18 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return roleResponsibilityAction;
     }
 
-    @CacheEvict(value = {Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public DelegateType createDelegateType(DelegateType delegateType) throws IllegalArgumentException,
             IllegalStateException {
@@ -1979,9 +2070,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return rms;
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public void removePrincipalFromRole(String principalId, String namespaceCode, String roleName,
             Map<String, String> qualifier) throws IllegalArgumentException {
@@ -2012,9 +2113,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         removeRoleMembers(rms);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public void removeRoleFromRole(String roleId, String namespaceCode, String roleName,
             Map<String, String> qualifier) throws IllegalArgumentException {
@@ -2035,9 +2146,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         removeRoleMembers(rms);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public void assignPermissionToRole(String permissionId, String roleId) throws IllegalArgumentException {
         incomingParamCheck(permissionId, "permissionId");
@@ -2063,9 +2184,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         getBusinessObjectService().save(newRolePermission);
     }
 
-    @CacheEvict(value = {Role.CACHE_NAME, Permission.CACHE_NAME, Responsibility.CACHE_NAME, RoleMembership.CACHE_NAME,
-            RoleMember.CACHE_NAME, DelegateMember.CACHE_NAME, RoleResponsibility.CACHE_NAME,
-            DelegateType.CACHE_NAME}, allEntries = true)
+    @CacheEvict(
+            allEntries = true,
+            value = {
+                Role.CACHE_NAME,
+                Permission.CACHE_NAME,
+                Responsibility.CACHE_NAME,
+                RoleMembership.CACHE_NAME,
+                RoleMember.CACHE_NAME,
+                DelegateMember.CACHE_NAME,
+                RoleResponsibility.CACHE_NAME,
+                DelegateType.CACHE_NAME
+            }
+    )
     @Override
     public void revokePermissionFromRole(String permissionId, String roleId) throws IllegalArgumentException {
         incomingParamCheck(permissionId, "permissionId");
@@ -2105,7 +2236,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                     (List<RoleMemberAttributeData>) getBusinessObjectService()
                             .findMatching(RoleMemberAttributeData.class, criteria);
             RoleMemberAttributeData origRoleMemberAttribute =
-                    (origRoleMemberAttributes != null && !origRoleMemberAttributes.isEmpty())
+                    origRoleMemberAttributes != null && !origRoleMemberAttributes.isEmpty()
                             ? origRoleMemberAttributes.get(0) : null;
             if (origRoleMemberAttribute != null) {
                 roleMemberAttrBo.setId(origRoleMemberAttribute.getId());
@@ -2193,10 +2324,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
      */
     private final class Context {
 
-        private String principalId;
+        private final String principalId;
         private List<String> principalGroupIds;
-        private Map<String, RoleTypeService> roleTypeServiceCache;
-        private Map<String, Boolean> isDerivedRoleTypeCache;
+        private final Map<String, RoleTypeService> roleTypeServiceCache;
+        private final Map<String, Boolean> isDerivedRoleTypeCache;
 
         Context(String principalId) {
             this.principalId = principalId;
