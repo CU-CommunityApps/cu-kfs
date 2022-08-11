@@ -117,7 +117,6 @@
     </bean>
 
     <!-- Business Object Lookup Definition -->
-
     <bean id="ISOFIPSCountryMap-lookupDefinition" parent="ISOFIPSCountryMap-lookupDefinition-parentBean"/>
     <bean abstract="true"
           id="ISOFIPSCountryMap-lookupDefinition-parentBean"

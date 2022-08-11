@@ -83,6 +83,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
      *
      * Active status of the MAPPING IS USED for this data retrieval.
      */
+    @Override
     public String convertISOCountryCodeToActiveFIPSCountryCode(String isoCountryCode) {
         List<ISOFIPSCountryMap> mappingsFound = findManyActiveFIPSCountryCodesForISOCode(isoCountryCode);
 
@@ -104,6 +105,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
      *
      * Active status of the MAPPING IS USED for this data retrieval.
      */
+    @Override
     public String convertFIPSCountryCodeToActiveISOCountryCode(String fipsCountryCode) { 
         List<ISOFIPSCountryMap> mappingsFound = findManyActiveISOCountryCodesForFIPSCode(fipsCountryCode);
 
@@ -125,6 +127,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
      *
      * Active status of the MAPPING IS USED for this data retrieval.
      */
+    @Override
     public List<ISOFIPSCountryMap> findManyActiveISOCountryCodesForFIPSCode(String fipsCountryCode) {
         return isoFipsCountryMapDao.findActiveIsoCountryCodes(fipsCountryCode);
     }
@@ -135,6 +138,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
      *
      * Active status of the mapping IS USED for this data retrieval.
      */
+    @Override
     public List<ISOFIPSCountryMap> findManyActiveFIPSCountryCodesForISOCode(String isoCountryCode) {
         return isoFipsCountryMapDao.findActiveFipsCountryCodes(isoCountryCode);
     }
