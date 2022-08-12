@@ -112,10 +112,10 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 
                 noteLineCount = noteLineCount + paymentDetail.getNotes().size();
 
-                if ((paymentDetail.getNetPaymentAmount() == null) && (!paymentDetail.isDetailAmountProvided())) {
+                if (paymentDetail.getNetPaymentAmount() == null && !paymentDetail.isDetailAmountProvided()) {
                     paymentDetail.setNetPaymentAmount(paymentDetail.getAccountTotal());
                 }
-                else if ((paymentDetail.getNetPaymentAmount() == null) && (paymentDetail.isDetailAmountProvided())) {
+                else if (paymentDetail.getNetPaymentAmount() == null && paymentDetail.isDetailAmountProvided()) {
                     paymentDetail.setNetPaymentAmount(paymentDetail.getCalculatedPaymentAmount());
                 }
 

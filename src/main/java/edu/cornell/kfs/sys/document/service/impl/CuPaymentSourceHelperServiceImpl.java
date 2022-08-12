@@ -40,13 +40,13 @@ public class CuPaymentSourceHelperServiceImpl extends PaymentSourceHelperService
 
         // Loop through all the note lines.
         for (String noteLine : noteLines) {
-            if (previousLineCount < (maxNoteLines - 3) && !StringUtils.isEmpty(noteLine)) {
+            if (previousLineCount < maxNoteLines - 3 && !StringUtils.isEmpty(noteLine)) {
                 // This should only happen if we encounter a word that is greater than the max length.
                 // The only concern I have for this occurring is with URLs/email addresses.
                 if (noteLine.length() >CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
                     for (String choppedWord : chopWord(noteLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE)) {
                         // Make sure we're still under the maximum number of note lines.
-                        if (previousLineCount < (maxNoteLines - 3) && !StringUtils.isEmpty(choppedWord)) {
+                        if (previousLineCount < maxNoteLines - 3 && !StringUtils.isEmpty(choppedWord)) {
                             pnt = new PaymentNoteText();
                             pnt.setCustomerNoteLineNbr(new KualiInteger(previousLineCount++));
                             pnt.setCustomerNoteText(
