@@ -280,4 +280,40 @@ public class CUPurapConstants {
             this.linkMappingFieldName = linkMappingFieldName;
         }
     }
+    
+    public enum JaggaerContractPartyUploadRowType {
+        PARTY("PARTY"),
+        ADDRESS("ADDRESS");
+        
+        public final String rowType;
+        
+        private JaggaerContractPartyUploadRowType(String rowType) {
+            this.rowType = rowType;
+        }
+    }
+    
+    public enum JaggaerContractPartyType {
+        SUPPLIER("Supplier");
+        
+        public final String partyTypeName;
+        
+        private JaggaerContractPartyType(String partyTypeName) {
+            this.partyTypeName = partyTypeName;
+        }
+    }
+    
+    public enum JaggaerLegalStructure {
+        INDIVIDUAL("Individual/Sole Proprietor", ""),
+        PARTNERSHIP("Partnership", ""),
+        TRUST("Trust/Estate", "");
+    
+        
+        public final String jaggaerLegalStructureName;
+        public final String kfsOwnerShipTypeCode;
+        
+        private JaggaerLegalStructure(String jaggaerLegalStructureName, String kfsOwnerShipTypeCode) {
+            this.jaggaerLegalStructureName = jaggaerLegalStructureName;
+            this.kfsOwnerShipTypeCode = kfsOwnerShipTypeCode;
+        }
+    }
 }
