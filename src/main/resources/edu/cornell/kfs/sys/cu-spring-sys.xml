@@ -397,7 +397,7 @@
      -->
     <bean id="delayedAsyncCallJob" parent="unscheduledJobDescriptor"
           p:namespaceCode="KFS-SYS"
-          p:group="Delayed Asynchronous Call"/>
+          p:group="Delayed_Asynchronous_Call"/>
     <bean id="exceptionMessageJob" parent="unscheduledJobDescriptor"
           p:namespaceCode="KFS-SYS"
           p:group="Exception Messaging"/>

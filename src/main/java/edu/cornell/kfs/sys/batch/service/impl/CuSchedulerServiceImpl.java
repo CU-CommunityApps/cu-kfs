@@ -296,8 +296,8 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
             String requestorEmailAddress) {
         if (StringUtils.equals(groupName, CUKFSConstants.EXCEPTION_MESSAGING_GROUP)) {
             throw new IllegalArgumentException("This method cannot be used to execute Exception Messaging jobs");
-        } else if (StringUtils.equals(groupName, CUKFSConstants.DELAYED_ASYNCRONOUS_CALL_GROUP)) {
-            throw new IllegalArgumentException("This method cannot be used to execute Delayed Asyncronous Call jobs");
+        } else if (StringUtils.equals(groupName, CUKFSConstants.DELAYED_ASYNCHRONOUS_CALL_GROUP)) {
+            throw new IllegalArgumentException("This method cannot be used to execute Delayed Asynchronous Call jobs");
         } else if (!StringUtils.equals(groupName, UNSCHEDULED_GROUP)) {
             LOG.warn("runJob, Group name '" + groupName + "' will be overridden with '" + UNSCHEDULED_GROUP + "'");
         }
@@ -372,7 +372,7 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     }
     
     private JobDetail createDelayedAsyncCallJobDetail(PersistedMessage message, String description) {
-        String jobName = "Delayed_Asynchronous_Call-" + Math.random();
+        String jobName = CUKFSConstants.DELAYED_ASYNCHRONOUS_CALL_JOB_NAME_PREFIX + Math.random();
         
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(MessageServiceExecutorJob.MESSAGE_KEY, message);
@@ -381,7 +381,7 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
         if (StringUtils.isNotBlank(description)) {
             jobBuilder = jobBuilder.withDescription(description);
         }
-        return jobBuilder.withIdentity(jobName, "Delayed Asynchronous Call")
+        return jobBuilder.withIdentity(jobName, CUKFSConstants.DELAYED_ASYNCHRONOUS_CALL_GROUP)
                 .ofType(MessageServiceExecutorJob.class)
                 .setJobData(jobDataMap)
                 .build();
@@ -458,9 +458,9 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
                     }
                     jobs.remove(jobKey);
                 }
-                if (StringUtils.equals(jobKey.getGroup(), CUKFSConstants.DELAYED_ASYNCRONOUS_CALL_GROUP)) {
+                if (StringUtils.equals(jobKey.getGroup(), CUKFSConstants.DELAYED_ASYNCHRONOUS_CALL_GROUP)) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("runJobWithoutQuartz, Removing temporary delayed asyncronous call job: "
+                        LOG.debug("runJobWithoutQuartz, Removing temporary delayed asynchronous call job: "
                                 + jobKey.getName());
                     }
                     jobs.remove(jobKey);
@@ -520,8 +520,8 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
 		String groupName = UNSCHEDULED_GROUP;
 		if (StringUtils.startsWithIgnoreCase(jobName, CUKFSConstants.EXCEPTION_MESSAGE_JOB_NAME_PREFIX)) {
 			groupName = CUKFSConstants.EXCEPTION_MESSAGING_GROUP;
-		} else if (StringUtils.startsWithIgnoreCase(jobName, CUKFSConstants.DELAYED_ASYNCRONOUS_CALL_JOB_NAME_PREFIX)) {
-			groupName = CUKFSConstants.DELAYED_ASYNCRONOUS_CALL_GROUP;
+		} else if (StringUtils.startsWithIgnoreCase(jobName, CUKFSConstants.DELAYED_ASYNCHRONOUS_CALL_JOB_NAME_PREFIX)) {
+			groupName = CUKFSConstants.DELAYED_ASYNCHRONOUS_CALL_GROUP;
 		}
         JobKey jobKey = new JobKey(jobName, groupName);
         return jobs.get(jobKey);
