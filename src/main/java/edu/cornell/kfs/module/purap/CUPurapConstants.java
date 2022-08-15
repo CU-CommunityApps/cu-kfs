@@ -303,10 +303,13 @@ public class CUPurapConstants {
     }
     
     public enum JaggaerLegalStructure {
-        INDIVIDUAL("Individual/Sole Proprietor", ""),
-        PARTNERSHIP("Partnership", ""),
-        TRUST("Trust/Estate", "");
-    
+        INDIVIDUAL("Individual/Sole Proprietor", "ID"),
+        C_CORPORATION("C Corporation", "CP"),
+        S_CORPORATION("S Corporation", "SC"),
+        PARTNERSHIP("Partnership", "PT"),
+        TRUST("Trust/Estate", "ET"),
+        OTHER("Other", "OT"),
+        NON_US_COMPANY("Non-US Based Company", "IO");
         
         public final String jaggaerLegalStructureName;
         public final String kfsOwnerShipTypeCode;
@@ -314,6 +317,38 @@ public class CUPurapConstants {
         private JaggaerLegalStructure(String jaggaerLegalStructureName, String kfsOwnerShipTypeCode) {
             this.jaggaerLegalStructureName = jaggaerLegalStructureName;
             this.kfsOwnerShipTypeCode = kfsOwnerShipTypeCode;
+        }
+        
+        public static JaggaerLegalStructure findJaggaerLegalStructureByKFSOwnershipCode(String ownerShipCode) {
+            for (JaggaerLegalStructure struct : JaggaerLegalStructure.values()) {
+                if (StringUtils.equalsAnyIgnoreCase(struct.kfsOwnerShipTypeCode, ownerShipCode)) {
+                    return struct;
+                }
+            }
+            return OTHER;
+        }
+    }
+    
+    public enum JaggaerAddressType {
+        FULFILLMENT("Fulfillment", "PO"),
+        REMIT("Remittance", "RM"),
+        OTHER(StringUtils.EMPTY, StringUtils.EMPTY);
+        
+        public final String jaggaerAddressType;
+        public final String kfsAddressTypeCode;
+
+        private JaggaerAddressType(String jaggaerAddressType, String kfsAddressTypeCode) {
+            this.jaggaerAddressType = jaggaerAddressType;
+            this.kfsAddressTypeCode = kfsAddressTypeCode;
+        }
+        
+        public static JaggaerAddressType findJaggaerAddressTypeFromKfsAddressTypeCode(String kfsAddressTypeCode) {
+            for (JaggaerAddressType addressType : JaggaerAddressType.values()) {
+                if (StringUtils.equalsIgnoreCase(addressType.kfsAddressTypeCode, kfsAddressTypeCode)) {
+                    return addressType;
+                }
+            }
+            return OTHER;
         }
     }
 }
