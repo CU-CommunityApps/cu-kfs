@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateContractPartyCsvService;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
@@ -21,9 +22,9 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     protected JaggaerUploadDao jaggaerUploadDao;
 
     @Override
-    public List<JaggaerContractUploadBaseDto> getJaggerContractsDto() {
-        List<JaggaerContractPartyUploadDto> vendors = jaggaerUploadDao.findJaggaerContractParty();
-        List<JaggaerContractAddressUploadDto> addresses = jaggaerUploadDao.findJaggaerContractAddress();
+    public List<JaggaerContractUploadBaseDto> getJaggerContractsDto(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+        List<JaggaerContractPartyUploadDto> vendors = jaggaerUploadDao.findJaggaerContractParty(processingMode, processingDate);
+        List<JaggaerContractAddressUploadDto> addresses = jaggaerUploadDao.findJaggaerContractAddress(processingMode, processingDate);
         
         List<JaggaerContractUploadBaseDto> uploadDtos = new ArrayList<>();
         

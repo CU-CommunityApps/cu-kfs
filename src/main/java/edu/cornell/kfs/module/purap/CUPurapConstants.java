@@ -351,4 +351,24 @@ public class CUPurapConstants {
             return OTHER;
         }
     }
+    
+    public enum JaggaerContractUploadProcessingMode {
+        PO("PO"),
+        VENDOR("V");
+        
+        public final String modeCode;
+        
+        private JaggaerContractUploadProcessingMode(String modeCode) {
+            this.modeCode = modeCode;
+        }
+        
+        public static JaggaerContractUploadProcessingMode findJaggaerContractUploadProcessingModeByModeCode(String modeCode) {
+            for (JaggaerContractUploadProcessingMode mode : JaggaerContractUploadProcessingMode.values()) {
+                if (StringUtils.equalsIgnoreCase(modeCode, mode.modeCode)) {
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("Invalid mode code provided: " + modeCode);
+        }
+    }
 }

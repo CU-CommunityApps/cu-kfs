@@ -305,11 +305,10 @@
   
   <bean id="jaggaerGenerateContractPartyCsvStep" class="edu.cornell.kfs.module.purap.batch.JaggaerGenerateContractPartyCsvStep" parent="step">
     <property name="jaggaerGenerateContractPartyCsvService" ref="jaggaerGenerateContractPartyCsvService"/>
+    <property name="parameterService" ref="parameterService"/>
   </bean>
   
-  <bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc">
-    
-  </bean>
+  <bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc"/>
   
   <bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean"/>
     <bean id="jaggaerGenerateContractPartyCsvService-parentBean" abstract="true" class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateContractPartyCsvServiceImpl">
