@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.businessobject.lookup;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 
 public abstract class JaggaerContractUploadBaseDto {
@@ -40,12 +38,6 @@ public abstract class JaggaerContractUploadBaseDto {
 
     public void setActive(String active) {
         this.active = active;
-    }
-    
-    @Override
-    public String toString() {
-        ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this);
-        return builder.build();
     }
 
 }

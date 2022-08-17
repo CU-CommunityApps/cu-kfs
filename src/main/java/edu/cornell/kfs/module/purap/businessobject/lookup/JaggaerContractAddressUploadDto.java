@@ -1,6 +1,9 @@
 package edu.cornell.kfs.module.purap.businessobject.lookup;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 
@@ -141,11 +144,21 @@ public class JaggaerContractAddressUploadDto extends JaggaerContractUploadBaseDt
     public void setNotes(String notes) {
         this.notes = notes;
     }
-    
+
     @Override
     public String toString() {
-        ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this);
+        ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         return builder.build();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+      return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
 }

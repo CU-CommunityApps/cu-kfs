@@ -93,10 +93,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 dto.setTollFreeNumber(StringUtils.EMPTY);
                 dto.setFax(StringUtils.EMPTY);
                 dto.setNotes(StringUtils.EMPTY);
-                
-                
                 dto.setERPNumber(buildVendorNumber(resultSet.getString(VNDR_HDR_GNRTD_ID), resultSet.getString(VNDR_DTL_ASND_ID)));
-                
                 
                 return dto;
             };
