@@ -1,0 +1,530 @@
+/**
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
+ *
+ * Copyright 2005-2022 Kuali, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+body {
+    font-family: Roboto, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #fff;
+}
+
+a {
+    color: #06c;
+}
+
+p {
+    margin: 10px;
+}
+
+table.fixed {
+    table-layout: fixed;
+}
+
+.datatable-100 {
+    width: 100%;
+}
+
+.datatable-80 {
+    width: 80%;
+}
+
+.close {
+    font-size: 28px;
+    font-weight: 400;
+}
+
+h3 .btn.small {
+    font-size: 14px;
+    line-height: 20px;
+    color: #333;
+}
+
+input.searchicon {
+    height: 18px;
+    width: 18px;
+    vertical-align: middle;
+}
+
+input.searchicon.embed {
+    margin-left: -27px;
+}
+
+input.editicon.embed {
+    margin-left: -30px;
+    margin-bottom: 3px;
+}
+
+input.embed.textarea {
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+}
+
+textarea.fullwidth {
+    width: 100%;
+}
+
+.relative {
+    position: relative;
+}
+
+div.fineprint {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 11px;
+}
+
+div.fineprint.maxwidth {
+    max-width: 70px;
+}
+
+.dropdown-menu > li {
+    padding: 3px 20px;
+    line-height: 30px;
+    color: #333;
+}
+
+.body {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: #f7f7f7;
+}
+
+.body.test-env {
+    margin-top: 40px;
+}
+
+.content {
+    background-color: #f7f7f7;
+    position: relative;
+    z-index: 0;
+    margin-left: 256px;
+    transition: 500ms all;
+}
+
+.content.fullwidth {
+    margin-left: 56px;
+}
+
+.content.about {
+    text-align: left;
+    margin-left: calc(50% - 250px);
+    margin-top: 200px;
+    width: 500px;
+    background-color: #ffffff;
+}
+
+.content.about .modal-header {
+    background-color: #ffffff;
+    padding: 5px 15px;
+}
+
+.content.about .modal-header h2 {
+    margin: 0px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    color: #767676;
+    float: left;
+    text-transform: uppercase;
+    padding-left: 10px;
+}
+
+.content.about ul.versions {
+    list-style: none;
+    padding: 30px 30px 30px 30px;
+}
+.content.about ul.versions li {
+    color: #555;
+}
+
+#content-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: none;
+    z-index: 1;
+}
+
+#content-overlay.visible {
+    display: inherit;
+}
+
+#headerarea {
+    position: relative;
+}
+
+nav {
+    background-color: #fff;
+    color: #707070;
+}
+
+nav ul.nav li a {
+    line-height: 30px;
+}
+
+nav ul.nav li {
+    list-style: none;
+}
+
+.nav a:link,
+.header a:link {
+    text-decoration: none;
+}
+
+#main {
+    padding: 0;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-top: 60px;
+}
+
+#main .page-header {
+    padding-top: 9px;
+}
+
+.glyphicon {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.center {
+    text-align: center;
+}
+
+.heavy {
+    font-weight: 700;
+}
+
+.infoline a:not(:last-child),
+.btn:not(:last-child) {
+    margin-right: 7px;
+}
+
+.btn {
+    padding: 5px 15px 7px 15px;
+    border: none;
+    box-shadow: inset 0 -2px 0 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn.small {
+    padding: 0px 7px 2px 7px;
+}
+
+.btn.uppercase {
+    text-transform: uppercase;
+}
+
+.btn.skinny {
+    padding: 5px 12px 7px 12px;
+    font-size: 16px;
+}
+
+.btn.clean {
+    box-shadow: none;
+    background-color: transparent;
+    padding: 5px;
+    font-size: inherit;
+}
+
+.btn.clean .fa {
+    font-size: 18px;
+    vertical-align: bottom;
+}
+
+.btn.clean:hover {
+    color: inherit;
+}
+
+.btn.clean.move {
+    color: rgba(215, 215, 215, 0.7);
+    font-size: 18px;
+    margin: 0;
+}
+
+.btn.clean.move .fa {
+    font-weight: 700;
+}
+
+.btn.clean.rotated .fa {
+    transform: rotate(90deg);
+}
+
+.btn-default:hover {
+    border: none;
+}
+
+.btn-default,
+.btn-default:focus {
+    background-color: #e7e7e7;
+    color: #333;
+}
+
+.btn-default:hover {
+    background-color: #efefef;
+}
+
+.btn-default:active {
+    background-color: #e3e3e3;
+}
+
+.btn-primary,
+.btn-primary:focus {
+    background-color: #5F7D8C;
+    text-transform: uppercase;
+}
+
+.btn-primary:hover {
+    background-color: #658595;
+}
+
+.btn-primary:active {
+    background-color: #567280 !important;
+}
+
+.btn-green,
+.btn-green:focus {
+    background-color: #6DA487;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.btn-green:hover {
+    background-color: #79B797;
+    color: #ffffff;
+}
+
+.btn-green:active {
+    background-color: #648A77 !important;
+    color: #ffffff;
+}
+
+.btn-red,
+.btn-red:focus {
+    background-color: #dc5f59;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.btn-red:hover {
+    background-color: #b53f3a;
+    color: #ffffff;
+}
+
+.btn-red:active {
+    background-color: #b33630 !important;
+    color: #ffffff;
+}
+
+.btn.disabled,
+.btn[disabled],
+.btn[disabled]:hover,
+.btn[disabled]:focus,
+.btn[disabled]:active {
+    color: #bbb;
+    background-color: #eee;
+    box-shadow: none;
+}
+
+/* Remodal overrides */
+
+.remodal {
+    text-align: center;
+    vertical-align: top;
+    width: 100%;
+}
+
+.remodal-content {
+    max-width: 90%;
+    position: relative;
+    margin: auto;
+}
+
+.remodal-wrapper {
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5)
+}
+
+.remodal-content .content.fullwidth {
+    margin-left: 0;
+}
+
+.remodal #breadcrumbs,
+.kModal #breadcrumbs {
+    float: left;
+    color: #767676;
+    font-size: 16px;
+    margin-left: 20px;
+    text-transform: uppercase;
+    width: calc(100% - 315px);
+    text-align: left;
+}
+
+.modal-header {
+    background-color: #f7f7f7;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    overflow: auto;
+    padding: 15px 15px 5px 15px;
+}
+
+.remodal .confirm-dialog {
+    text-align: left;
+    background-color: #fff;
+    padding: 20px;
+    margin: 200px calc(50% - 250px);
+    width: 400px;
+    border-radius: 6px;
+}
+
+.remodal .confirm-dialog .message {
+    margin-bottom: 28px;
+}
+
+.remodal .confirm-dialog .button-row {
+    text-align: right;
+}
+
+.remodal .confirm-dialog .button-row button {
+    text-transform: none;
+}
+
+.copy-down-dialog {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0px 1px 18px rgba(0, 0, 0, 0.12), 0px 6px 10px rgba(0, 0, 0, 0.14), 0px 4px 4px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    padding: 0px 21px 0px 21px;
+    position: absolute;
+    width: 235px;
+    z-index: 1;
+}
+
+.copy-down-dialog .copy-down-title {
+    border: none;
+    color: #000;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    padding: 0;
+}
+
+.copy-down-dialog .copy-down-description {
+    color: #767676;
+    font-family: 'Roboto', sans-serif;
+    margin: 16px 0;
+    white-space: normal;
+}
+
+.copy-down-dialog ul {
+    list-style-type: none;
+    margin-bottom: 24px;
+    padding: 0;
+}
+
+.copy-down-dialog li input {
+    margin-right: 10px;
+}
+
+.copy-down-dialog .copy-down-buttons {
+    display: flex;
+    height: 32px;
+    justify-content: space-between;
+}
+
+.copy-down-dialog .copy-down-buttons button {
+    border-radius: 2px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.copy-down-dialog .copy-down-buttons .copy-down-btn:focus,
+.copy-down-dialog .copy-down-buttons .cancel-btn:focus {
+    border: 4px solid rgba(122, 206, 241, 0.48);
+}
+
+.copy-down-dialog .copy-down-buttons .copy-down-btn {
+    background: #346Ba7;
+    color: #fff;
+    width: 104px;
+}
+
+.copy-down-dialog .copy-down-buttons .cancel-btn {
+    background: #fff;
+    border: 1px solid #bebebe;
+    box-sizing: border-box;
+    color: #346Ba7;
+    width: 75px;
+}
+
+.copy-down-dialog .indicator-bottom,
+.copy-down-dialog .indicator-top{
+    background-color: inherit;
+    height: 16px;
+    left: 172px;
+    position: relative;
+    transform: matrix(0.71, 0.72, -0.69, 0.71, 0, 0);
+    width: 16px;
+}
+
+.copy-down-dialog .indicator-bottom {
+    box-shadow: 0px 0px 0px 0px, 10px 6px 10px 0px rgba(0, 0, 0, 0.14), 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    top: 15px;
+}
+
+.copy-down-dialog .indicator-top {
+    box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.05);
+    top: -8px;
+}
+
+@media print {
+    a[href]:after {
+        content: none;
+    }
+    .toggle-show-tab, .help-link, .searchicon, #sidebar, input[type="button"], input[type="submit"] {
+        display: none;
+    }
+    #kualiFormModal table.acct-lines {
+        min-width: unset;
+    }
+    #kualiFormModal table.acct-lines td {
+        word-wrap: break-word;
+        font-size: 12px;
+    }
+    #kualiFormModal table.acct-lines td .fineprint {
+        font-size: 10px;
+    }
+    .content.fullwidth {
+        margin-left: 0;
+    }
+    #view_div {
+        padding: 10px;
+    }
+}
+
+/* KFSPTS- prevent long description overflow (Cornell customization) */
+.r3eT5kjcRPI47GrH-1GV9 {
+    border-bottom: 1px solid #AAAAAA;
+    height: fit-content !important;
+    margin-bottom: 16px;
+    padding-bottom: 4px;
+}
