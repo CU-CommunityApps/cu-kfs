@@ -168,7 +168,5 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
          * @TODO use generic mapping framework
          */
         return fIPSCountry;
-                
     }
-
 }
