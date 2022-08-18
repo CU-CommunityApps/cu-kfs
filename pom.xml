@@ -2526,6 +2526,10 @@
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2583,6 +2587,10 @@
                 <exclusion>
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
