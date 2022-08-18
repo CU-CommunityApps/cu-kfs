@@ -3,6 +3,9 @@ package edu.cornell.kfs.sys.businessobject;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
+/**
+ * CU Generic ISO-FIPS Country modification
+ */
 public class ISOCountry extends PersistableBusinessObjectBase implements MutableInactivatable {
     
     private static final long serialVersionUID = -8693365503723440174L;

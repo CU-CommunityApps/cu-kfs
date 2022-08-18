@@ -1,6 +1,8 @@
 package edu.cornell.kfs.sys.exception;
 
 /**
+ * CU Generic ISO-FIPS Country modification
+ *
  * Helper exception class for handling when there is
  * more than one ISO-to-FIPS Country mapping found for an ISO Country code.
  */

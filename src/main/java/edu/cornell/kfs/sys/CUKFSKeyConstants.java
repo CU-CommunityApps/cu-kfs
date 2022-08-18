@@ -240,4 +240,10 @@ public class CUKFSKeyConstants {
     public static final String ERROR_UPLOADFILE_EMPTY = "error.uploadFile.empty";
     public static final String ERROR_DOCUMENT_INVALID_VALUE_ALLOWED_VALUES_PARAMETER =
             "error.document.invalid.value.allowedValuesParameter";
+
+    //CU Generic ISO-FIPS Country modification
+    public static class ISOFIPSCountryMapConstants {
+        public static final String ACTIVE_MAP_ERROR_COUNTRY_INACTIVE = "active.map.error.country.inactive";
+    }
+
 }

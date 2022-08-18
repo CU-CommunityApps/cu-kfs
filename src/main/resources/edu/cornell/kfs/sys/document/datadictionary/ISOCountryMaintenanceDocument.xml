@@ -6,6 +6,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+    <!-- CU Generic ISO-FIPS Country modification -->
+
     <bean id="ISOCountryMaintenanceDocument" parent="ISOCountryMaintenanceDocument-parentBean"/>
     <bean id="ISOCountryMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
           p:businessObjectClass="edu.cornell.kfs.sys.businessobject.ISOCountry"

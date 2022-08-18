@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.service.impl;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -15,6 +16,8 @@ import edu.cornell.kfs.sys.exception.NoISOtoFIPSMappingException;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 
 /*****************************************************************************
+ * CU Generic ISO-FIPS Country modification
+ *
  * This is the GENERIC solution created by Cornell to address converting
  * between ISO standard country codes and FIPS country codes currently
  * used by the rest of the KFS system.
@@ -74,6 +77,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
     private static final String NO_FIPS_TO_ISO_MAPPINGS_ERROR_MESSAGE = "No FIPS-to-ISO Country generic mapping found for FIPS Country code : {0}";
     private static final String MANY_FIPS_TO_ISO_MAPPINGS_ERROR_MESSAGE = "More than one FIPS-to-ISO Country generic mapping found for FIPS Country code : {0}";
     private static final String ONE_TO_ONE_FIPS_TO_ISO_MAPPING_MESSAGE = "One FIPS-to-ISO Country generic mapping found FIPS Country code : {0} mapped to ISO Country code : {1}";
+    private static final String AT_LEAST_ONE_FIPS_ISO_MAPPING_MESSAGE = "At least one FIPS-to-ISO Country generic mapping found for {0} Country code : {1} with Active Indicator : {2}";
 
     private ISOFIPSCountryMapDao isoFipsCountryMapDao;
     
@@ -141,6 +145,36 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
     @Override
     public List<ISOFIPSCountryMap> findManyActiveFIPSCountryCodesForISOCode(String isoCountryCode) {
         return isoFipsCountryMapDao.findActiveFipsCountryCodes(isoCountryCode);
+    }
+
+    @Override
+    public boolean activeFIPSCountryMapExists(String fipsCountryCode) {
+        boolean activeMapExists = false;
+        try {
+            String activeISOCountryCodeFound = convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
+            activeMapExists = StringUtils.isNotBlank(activeISOCountryCodeFound) ? true : false;
+        } catch (NoFIPStoISOMappingException noMap) {
+            //noop
+        } catch (ManyFIPStoISOMappingException manyMap) {
+            activeMapExists = true;
+        }
+        LOG.info("activeFIPSCountryMapExists: " + MessageFormat.format(AT_LEAST_ONE_FIPS_ISO_MAPPING_MESSAGE, "FIPS", fipsCountryCode, activeMapExists));
+        return activeMapExists;
+    }
+
+    @Override
+    public boolean activeISOCountryMapExists(String isoCountryCode) {
+        boolean activeMapExists = false;
+        try {
+            String activeFISPCountryCodeFound = convertISOCountryCodeToActiveFIPSCountryCode(isoCountryCode);
+            activeMapExists = StringUtils.isNotBlank(activeFISPCountryCodeFound) ? true : false;
+        } catch (NoFIPStoISOMappingException noMap) {
+            //noop
+        } catch (ManyFIPStoISOMappingException manyMap) {
+            activeMapExists = true;
+        }
+        LOG.info("activeFIPSCountryMapExists: " + MessageFormat.format(AT_LEAST_ONE_FIPS_ISO_MAPPING_MESSAGE, "ISO", isoCountryCode, activeMapExists));
+        return activeMapExists;
     }
 
     public ISOFIPSCountryMapDao getIsoFipsCountryMapDao() {

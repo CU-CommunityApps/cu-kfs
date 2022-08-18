@@ -12,7 +12,9 @@ import edu.cornell.kfs.sys.dataaccess.ISOFIPSCountryMapDao;
 import edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
-
+/**
+ * CU Generic ISO-FIPS Country modification
+ */
 public class ISOFIPSCountryMapDaoOjb extends PlatformAwareDaoBaseOjb implements ISOFIPSCountryMapDao {
     
     private static final Logger LOG = LogManager.getLogger(ISOFIPSCountryMapDaoOjb.class);
