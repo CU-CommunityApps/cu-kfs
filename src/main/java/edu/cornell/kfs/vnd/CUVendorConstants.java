@@ -92,7 +92,7 @@ public class CUVendorConstants {
         public static final String VNDR_ADDR_GNRTD_ID = "VNDR_ADDR_GNRTD_ID";
         public static final String VNDR_ADDR_TYP_CD = "VNDR_ADDR_TYP_CD";
         public static final String VNDR_DFLT_ADDR_IND = "VNDR_DFLT_ADDR_IND";
-        public static final String VNDR_CNTRY_CD = "VNDR_CNTRY_CD";
+        public static final String VNDR_ADDRESS_CNTRY_CD = "VNDR_CNTRY_CD";
         public static final String VNDR_LN1_ADDR = "VNDR_LN1_ADDR";
         public static final String VNDR_LN2_ADDR = "VNDR_LN2_ADDR";
         public static final String VNDR_CTY_NM = "VNDR_CTY_NM";

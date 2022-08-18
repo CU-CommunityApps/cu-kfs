@@ -64,7 +64,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 dto.setAddressType(JaggaerAddressType.findJaggaerAddressTypeFromKfsAddressTypeCode(resultSet.getString(FIELD_NAMES.VNDR_ADDR_TYP_CD)));
                 dto.setPrimaryType(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND));
                 dto.setActive(StringUtils.EMPTY);
-                dto.setCountry(convertToISOCountry(resultSet.getString(FIELD_NAMES.VNDR_CNTRY_CD)));
+                dto.setCountry(convertToISOCountry(resultSet.getString(FIELD_NAMES.VNDR_ADDRESS_CNTRY_CD)));
                 dto.setStreetLine1(resultSet.getString(FIELD_NAMES.VNDR_LN1_ADDR));
                 dto.setStreetLine2(resultSet.getString(FIELD_NAMES.VNDR_LN2_ADDR));
                 dto.setStreetLine3(StringUtils.EMPTY);
@@ -73,7 +73,6 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 String state = resultSet.getString(FIELD_NAMES.VNDR_ST_CD);
                 if (StringUtils.isBlank(state)) {
                     state = resultSet.getString(FIELD_NAMES.VNDR_ADDR_INTL_PROV_NM);
-                    LOG.info("findJaggaerContractAddress, found an international province (REMOVE this log statement): " + state);
                 }
                 dto.setState(state);
                 
