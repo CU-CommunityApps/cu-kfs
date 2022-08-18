@@ -521,7 +521,7 @@ nav ul.nav li {
     }
 }
 
-/* KFSPTS- prevent long description overflow (Cornell customization) */
+/* KFSPTS-25538 prevent long description overflow (Cornell customization) */
 .r3eT5kjcRPI47GrH-1GV9 {
     border-bottom: 1px solid #AAAAAA;
     height: fit-content !important;
