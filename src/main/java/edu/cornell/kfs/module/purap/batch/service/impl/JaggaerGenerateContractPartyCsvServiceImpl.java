@@ -37,7 +37,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
                     uploadDtos.add(vendorAddress);
                 }
             } else {
-                LOG.error("getJaggerContractsDto, no address for vendor " + vendor.getERPNumber());
+                LOG.warn("getJaggerContractsDto, no address for vendor " + vendor.getERPNumber());
             }
         }
         return uploadDtos;
@@ -51,7 +51,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
 
     @Override
     public void generateCsvFile(List<JaggaerContractUploadBaseDto> jaggaerUploadDtos) {
-        LOG.warn("generateCsvFile, no implemented yet");
+        LOG.warn("generateCsvFile, not implemented yet");
         
         for (JaggaerContractUploadBaseDto dto : jaggaerUploadDtos) {
             LOG.info("generateCsvFile, dto: " + dto.toString());

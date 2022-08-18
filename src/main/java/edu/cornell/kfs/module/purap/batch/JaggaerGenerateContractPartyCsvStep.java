@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.sys.batch.AbstractStep;
-import org.springframework.web.servlet.tags.ParamAware;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
@@ -32,9 +31,7 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
         LOG.info("execute, processing mode: " + processingMode + " processing date: " + processingDate);
         
         List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvService.getJaggerContractsDto(processingMode, processingDate);
-        LOG.info("execute, completed getting DTOs");
         jaggaerGenerateContractPartyCsvService.generateCsvFile(jaggaerUploadDtos);
-        LOG.info("execute, generated CSV file");
         if (processingMode == JaggaerContractUploadProcessingMode.VENDOR) {
             updateVendorProcessingDate();
         }

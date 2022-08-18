@@ -25,7 +25,7 @@ import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddress
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractUploadBaseDto;
 
-class JaggaerGenerateContractPartyCsvServiceImplTest {
+public class JaggaerGenerateContractPartyCsvServiceImplTest {
     
     private JaggaerGenerateContractPartyCsvServiceImpl jaggaerGenerateContractPartyCsvServiceImpl;
     
@@ -120,7 +120,7 @@ class JaggaerGenerateContractPartyCsvServiceImplTest {
         dto.setAddressType(JaggaerAddressType.FULFILLMENT);
         dto.setCountry(VENDOR1_VENDOR_COUNTRY);
         dto.setStreetLine1(VENDOR1_ADDRESS1_LN1);
-        dto.setStreetLine2(VENDOR1_ADDRESS1_LN1);
+        dto.setStreetLine2(VENDOR1_ADDRESS1_LN2);
         dto.setCity(VENDOR1_ADDRESS1_CITY);
         dto.setState(VENDOR1_ADDRESS1_STATE);
         dto.setPostalCode(VENDOR1_ADDRESS1_ZIP);
