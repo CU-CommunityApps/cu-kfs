@@ -369,7 +369,7 @@
 
 					<c:choose>
 						<c:when test="${itemLine.objectId == null}">
-							<c:set var="newObjectId" value="<%= (new Guid()).toString()%>" />
+							<c:set var="newObjectId" value="<%= new Guid().toString()%>" />
 							<c:set var="tabKey" value="Item-${newObjectId}" />
 						</c:when>
 						<c:when test="${itemLine.objectId != null}">

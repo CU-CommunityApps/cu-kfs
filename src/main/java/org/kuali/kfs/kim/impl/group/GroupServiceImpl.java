@@ -223,7 +223,7 @@ public class GroupServiceImpl implements GroupService {
         return Collections.unmodifiableList(result);
     }
 
-    @Cacheable(value = GroupMember.CACHE_NAME,
+    @Cacheable(cacheNames = GroupMember.CACHE_NAME,
             key = "'groupIds=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0)")
     @Override
     public List<GroupMember> getMembers(List<String> groupIds) throws IllegalArgumentException {

@@ -147,9 +147,9 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
         String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
         if (!PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
-            if (((PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus))
-                    && (ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())))
-                    || (PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus))) {
+            if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
+                    && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())
+                    || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("cancelReissueDisbursement() Payment status is " + paymentStatus +
                             "; continue with cancel.");

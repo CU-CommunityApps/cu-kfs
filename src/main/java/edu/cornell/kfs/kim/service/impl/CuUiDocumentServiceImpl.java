@@ -12,9 +12,10 @@ import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.KRADServiceLocator;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
+
+    private BusinessObjectService businessObjectService;
 
     /**
      * Overridden to allow for loading unmodified role members even when there are no delegations,
@@ -24,7 +25,7 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
     public void setMembersInDocument(IdentityManagementRoleDocument identityManagementRoleDocument) {
         Map<String, String> criteria = new HashMap<>();
         criteria.put(KimConstants.PrimaryKeyConstants.ROLE_ID, identityManagementRoleDocument.getRoleId());
-        Role roleBo = getBusinessObjectService().findByPrimaryKey(Role.class, criteria);
+        Role roleBo = businessObjectService.findByPrimaryKey(Role.class, criteria);
         List<RoleMember> members = new ArrayList<>(roleBo.getMembers());
         List<RoleMember> membersToRemove = new ArrayList<>();
         boolean found = false;
@@ -46,9 +47,11 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
         identityManagementRoleDocument.setMembers(loadRoleMembers(identityManagementRoleDocument, members));
         loadMemberRoleRspActions(identityManagementRoleDocument);
     }
-    
-    public BusinessObjectService getBusinessObjectService() {
-        return KRADServiceLocator.getBusinessObjectService();
+
+    @Override
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        super.setBusinessObjectService(businessObjectService);
+        this.businessObjectService = businessObjectService;
     }
 
 }

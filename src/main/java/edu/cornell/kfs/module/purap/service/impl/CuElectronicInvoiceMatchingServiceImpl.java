@@ -193,8 +193,10 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
         }else{
             //we have encumbered dollars left on PO
         	// KFSUPGRADE-485
-            if ((itemHolder.getInvoiceItemSubTotalAmount().setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue()) > 0
-            		|| (getItemTotalAmount(itemHolder).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)).compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue()) > 0) {
+            if (itemHolder.getInvoiceItemSubTotalAmount().setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)
+                    .compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue()) > 0
+            		|| getItemTotalAmount(itemHolder).setScale(KualiDecimal.SCALE, KualiDecimal.ROUND_BEHAVIOR)
+            		        .compareTo(poItem.getItemOutstandingEncumberedAmount().bigDecimalValue()) > 0) {
                 String extraDescription = "Invoice Item Line Number:" + itemHolder.getInvoiceItemLineNumber();
                 ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_ITEM_AMT_LESSTHAN_INVOICE_ITEM_AMT,extraDescription,orderHolder.getFileName());
                 orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_POITEM_LESS_OUTSTANDING_EMCUMBERED_AMOUNT);

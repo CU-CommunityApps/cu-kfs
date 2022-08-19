@@ -117,12 +117,12 @@ public class ChartServiceImpl implements ChartService {
     @Override
     @Cacheable(cacheNames = Chart.CACHE_NAME, key = "'{isParentChart?}'+#p0+'-->'+#p1")
     public boolean isParentChart(String potentialChildChartCode, String potentialParentChartCode) {
-        if ((potentialChildChartCode == null) || (potentialParentChartCode == null)) {
+        if (potentialChildChartCode == null || potentialParentChartCode == null) {
             throw new IllegalArgumentException("The isParentChartCode method requires a non-null potentialChildChartCode " +
                     "and potentialParentChartCode");
         }
         Chart thisChart = getByPrimaryId(potentialChildChartCode);
-        if ((thisChart == null) || StringUtils.isBlank(thisChart.getChartOfAccountsCode())) {
+        if (thisChart == null || StringUtils.isBlank(thisChart.getChartOfAccountsCode())) {
             throw new IllegalArgumentException("The isParentChartCode method requires a valid potentialChildChartCode");
         }
         if (thisChart.getCode().equals(thisChart.getReportsToChartOfAccountsCode())) {

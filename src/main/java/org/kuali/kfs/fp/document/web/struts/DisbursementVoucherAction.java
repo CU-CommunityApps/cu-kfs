@@ -102,14 +102,17 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
         // do not execute the further refreshing logic if a payee is not selected
         String payeeIdNumber = dvDoc.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
-        // KFSCNTRB-1735: no need to check for identity and issue a message per KFSMI-8935 if there's no payeeId and the document is saved. On other statuses (e.g. enroute) throw exception if there's no payee
+        // KFSCNTRB-1735: no need to check for identity and issue a message per KFSMI-8935 if there's no payeeId and the
+        // document is saved. On other statuses (e.g. enroute) throw exception if there's no payee
         // ==== CU Customization: Updated condition to prevent errors when opening no-payee, non-SAVED DV docs that are at the initial AdHoc node. ====
-        if( (payeeIdNumber != null && !payeeIdNumber.isEmpty()) || (!dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED)
-                && !dvDoc.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().contains(DV_ADHOC_NODE)) ){
+        if (payeeIdNumber != null && !payeeIdNumber.isEmpty()
+            || !dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED)
+                && !dvDoc.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().contains(DV_ADHOC_NODE)) {
             
             Entity entity = KimApiServiceLocator.getIdentityService().getEntityByEmployeeId(payeeIdNumber);
 
-            //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the message "Is this payee an employee" = No
+            //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the
+            // message "Is this payee an employee" = No
             if (entity != null && entity.isActive()) {
                 dvDoc.getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(true);
             } else {
