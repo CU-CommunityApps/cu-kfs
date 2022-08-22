@@ -19,9 +19,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
-
-
 /**
  * Holds constants for Vendor.
  */
@@ -82,7 +79,7 @@ public class CUVendorConstants {
     
     public static final int MAX_VENDOR_CONTACT_NAME_LENGTH = 45;
     
-    public final class FIELD_NAMES {
+    public static final class FIELD_NAMES {
         public static final String VNDR_HDR_GNRTD_ID = "VNDR_HDR_GNRTD_ID";
         public static final String VNDR_DTL_ASND_ID = "VNDR_DTL_ASND_ID";
         public static final String VNDR_NM = "VNDR_NM";

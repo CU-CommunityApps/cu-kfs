@@ -43,9 +43,9 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
         return uploadDtos;
     }
     
-    protected List<JaggaerContractAddressUploadDto> findVendorAddresses(List<JaggaerContractAddressUploadDto> allAddresses, String erpNymber) {
+    protected List<JaggaerContractAddressUploadDto> findVendorAddresses(List<JaggaerContractAddressUploadDto> allAddresses, String erpNumber) {
         return allAddresses.stream()
-                .filter(address -> StringUtils.equalsIgnoreCase(address.getERPNumber(), erpNymber))
+                .filter(address -> StringUtils.equalsIgnoreCase(address.getERPNumber(), erpNumber))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

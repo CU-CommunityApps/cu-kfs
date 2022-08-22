@@ -157,21 +157,21 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvServiceImpl.getJaggerContractsDto(JaggaerContractUploadProcessingMode.VENDOR, PROCESS_DATE);
         assertEquals(4, jaggaerUploadDtos.size());
         
-        JaggaerContractPartyUploadDto actualFirstELement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(0);
-        assertEquals(buildVendor1Dto(), actualFirstELement, "The first element shound be vendor 1");
+        JaggaerContractPartyUploadDto actualFirstElement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(0);
+        assertEquals(buildVendor1Dto(), actualFirstElement, "The first element should be vendor 1");
         
         JaggaerContractAddressUploadDto actualSecondElement = (JaggaerContractAddressUploadDto) jaggaerUploadDtos.get(1);
         JaggaerContractAddressUploadDto expectedAddress1 = buildVendor1Address1Dto();
-        expectedAddress1.setName(actualFirstELement.getContractPartyName());
+        expectedAddress1.setName(actualFirstElement.getContractPartyName());
         assertEquals(expectedAddress1, actualSecondElement, "The second element should be vendor 1 address 1");
         
         JaggaerContractAddressUploadDto actualThirdElement = (JaggaerContractAddressUploadDto) jaggaerUploadDtos.get(2);
         JaggaerContractAddressUploadDto expectedAddress2 = buildVendor1Address2Dto();
-        expectedAddress2.setName(actualFirstELement.getContractPartyName());
+        expectedAddress2.setName(actualFirstElement.getContractPartyName());
         assertEquals(expectedAddress2, actualThirdElement, "The third element should be vendor 1 address 2");
         
-        JaggaerContractPartyUploadDto actualFourthELement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(3);
-        assertEquals(buildVendor2WithTaxIdDto(), actualFourthELement, "THe fourth elemeent should be vendor 2");
+        JaggaerContractPartyUploadDto actualFourthElement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(3);
+        assertEquals(buildVendor2WithTaxIdDto(), actualFourthElement, "THe fourth element should be vendor 2");
     }
     
     @ParameterizedTest
@@ -183,7 +183,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     
     static Stream<Arguments> jaggaerContractPartyUploadDtoToStringParameters() {
         return Stream.of(
-                Arguments.of(buildVendor2WithTaxIdDto(), "taxIdentificationNumber=restrctived tax id number"),
+                Arguments.of(buildVendor2WithTaxIdDto(), "taxIdentificationNumber=restricted tax id number"),
                 Arguments.of(buildVendor1Dto(),  "taxIdentificationNumber=,")
                 );
     }

@@ -38,7 +38,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 dto.setCountryOfOrigin(convertToISOCountry(resultSet.getString(FIELD_NAMES.VNDR_CORP_CTZN_CNTRY_CD)));
                 dto.setActive(StringUtils.EMPTY);
                 dto.setContractPartyType(JaggaerContractPartyType.SUPPLIER);
-                dto.setPprimary(StringUtils.EMPTY);
+                dto.setPrimary(StringUtils.EMPTY);
                 dto.setLegalStructure(JaggaerLegalStructure.findJaggaerLegalStructureByKFSOwnershipCode(resultSet.getString(FIELD_NAMES.VNDR_OWNR_CD)));
                 dto.setTaxIDType(StringUtils.EMPTY);
                 dto.setTaxIdentificationNumber(StringUtils.EMPTY);
@@ -48,7 +48,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
             };
             return this.getJdbcTemplate().query(buildVendorSql(processingMode, processingDate), rowMapper);
         } catch (Exception e) {
-            LOG.error("findJaggaerContractParty, had an error finding jaggaer contract partiess: ", e);
+            LOG.error("findJaggaerContractParty, had an error finding jaggaer contract parties: ", e);
             throw new RuntimeException(e);
         }
     }
@@ -100,7 +100,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         sb.append("AND VH.VNDR_TYP_CD = 'PO' ");
         sb.append("AND VD.DOBJ_MAINT_CD_ACTV_IND = 'Y' ");
         if (processingMode == JaggaerContractUploadProcessingMode.PO) {
-            sb.append("AND VH.VNDR_HDR_GNRTD_ID IN (").append(buildPurchasOrderLimitSubQuery(processingDate)).append(") ");
+            sb.append("AND VH.VNDR_HDR_GNRTD_ID IN (").append(buildPurchaseOrderLimitSubQuery(processingDate)).append(") ");
         } else {
             sb.append("AND VD.LAST_UPDT_TS > TO_DATE('").append(processingDate).append("', 'YYYY-MM-DD') ");
         }
@@ -120,7 +120,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         }
         sb.append(StringUtils.SPACE).append("WHERE VA.DOBJ_MAINT_CD_ACTV_IND = 'Y' ");
         if (processingMode == JaggaerContractUploadProcessingMode.PO) {
-            sb.append("AND VA.VNDR_HDR_GNRTD_ID IN (").append(buildPurchasOrderLimitSubQuery(processingDate)).append(") ");
+            sb.append("AND VA.VNDR_HDR_GNRTD_ID IN (").append(buildPurchaseOrderLimitSubQuery(processingDate)).append(") ");
         } else {
             sb.append("AND VA.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
             sb.append("AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
@@ -133,7 +133,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         return sql;
     }
     
-    private String buildPurchasOrderLimitSubQuery(String processingDate) {
+    private String buildPurchaseOrderLimitSubQuery(String processingDate) {
         StringBuilder sb = new StringBuilder("SELECT VNDR_HDR_GNRTD_ID FROM (");
         sb.append("SELECT VNDR_HDR_GNRTD_ID, COUNT(1) ");
         sb.append("FROM KFS.PUR_PO_T ");
@@ -143,8 +143,8 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         return sb.toString();
     }
     
-    private String buildVendorNumber(String vendorHeaderId, String venderDetailId) {
-        return vendorHeaderId + KFSConstants.DASH + venderDetailId;
+    private String buildVendorNumber(String vendorHeaderId, String vendorDetailId) {
+        return vendorHeaderId + KFSConstants.DASH + vendorDetailId;
     }
     
     private String convertToISOCountry(String fIPSCountry) {

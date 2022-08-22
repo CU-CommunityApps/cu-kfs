@@ -25,7 +25,7 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
     protected ParameterService parameterService;
     
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+    public boolean execute(String jobName, Date jobRunDate) {
         JaggaerContractUploadProcessingMode processingMode = findJaggaerContractUploadProcessingMode();
         String processingDate = findProcessingDate(processingMode);
         LOG.info("execute, processing mode: " + processingMode + " processing date: " + processingDate);
@@ -61,8 +61,8 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
         return getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_VENDOR_DATE);
     }
     
-    protected String getParameterValueString(String paramterName) {
-        return parameterService.getParameterValueAsString(this.getClass(), paramterName);
+    protected String getParameterValueString(String parameterName) {
+        return parameterService.getParameterValueAsString(this.getClass(), parameterName);
     }
     
     protected void  updateVendorProcessingDate() {

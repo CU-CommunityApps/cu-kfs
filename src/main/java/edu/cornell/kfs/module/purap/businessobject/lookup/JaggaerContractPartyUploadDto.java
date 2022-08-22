@@ -17,7 +17,7 @@ public class JaggaerContractPartyUploadDto extends JaggaerContractUploadBaseDto 
     private String otherNames;
     private String countryOfOrigin;
     private JaggaerContractPartyType contractPartyType;
-    private String Pprimary;
+    private String primary;
     private JaggaerLegalStructure legalStructure;
     private String taxIDType;
     private String taxIdentificationNumber;
@@ -72,12 +72,12 @@ public class JaggaerContractPartyUploadDto extends JaggaerContractUploadBaseDto 
         this.contractPartyType = contractPartyType;
     }
 
-    public String getPprimary() {
-        return Pprimary;
+    public String getPrimary() {
+        return primary;
     }
 
-    public void setPprimary(String pprimary) {
-        Pprimary = pprimary;
+    public void setPrimary(String primary) {
+        this.primary = primary;
     }
 
     public JaggaerLegalStructure getLegalStructure() {
@@ -124,7 +124,7 @@ public class JaggaerContractPartyUploadDto extends JaggaerContractUploadBaseDto 
     public String toString() {
         ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         builder.setExcludeFieldNames("taxIdentificationNumber");
-        builder.append("taxIdentificationNumber", StringUtils.isBlank(taxIdentificationNumber) ? StringUtils.EMPTY : "restrctived tax id number");
+        builder.append("taxIdentificationNumber", StringUtils.isBlank(taxIdentificationNumber) ? StringUtils.EMPTY : "restricted tax id number");
         return builder.build();
     }
     
