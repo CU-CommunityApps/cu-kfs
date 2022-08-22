@@ -24,7 +24,9 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     @Override
     public List<JaggaerContractUploadBaseDto> getJaggerContractsDto(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         List<JaggaerContractPartyUploadDto> vendors = jaggaerUploadDao.findJaggaerContractParty(processingMode, processingDate);
+        int numberOfVendors = vendors.size();
         List<JaggaerContractAddressUploadDto> addresses = jaggaerUploadDao.findJaggaerContractAddress(processingMode, processingDate);
+        int numberOfAddresses = addresses.size();
         
         List<JaggaerContractUploadBaseDto> uploadDtos = new ArrayList<>();
         
@@ -39,6 +41,11 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
             } else {
                 LOG.warn("getJaggerContractsDto, no address for vendor " + vendor.getERPNumber());
             }
+        }
+        int totalNumberOfDetails = uploadDtos.size();
+        LOG.info("getJaggerContractsDto, numberOfVendors: " + numberOfVendors + ",  numberOfAddresses: " + numberOfAddresses + ", totalNumberOfDetails: " + totalNumberOfDetails);
+        if (totalNumberOfDetails != numberOfVendors + numberOfAddresses) {
+            LOG.warn("getJaggerContractsDto, ALERT!, the total number of details is not the sum of number of vendors and number of addresses");
         }
         return uploadDtos;
     }

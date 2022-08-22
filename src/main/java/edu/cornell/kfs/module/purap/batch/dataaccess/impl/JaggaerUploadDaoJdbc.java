@@ -95,16 +95,12 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     private String buildVendorSql(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT VH.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID, VD.VNDR_NM, VH.VNDR_CORP_CTZN_CNTRY_CD, VH.VNDR_OWNR_CD, VD.VNDR_URL_ADDR ");
-        sb.append("FROM KFS.PUR_VNDR_HDR_T VH, KFS.PUR_VNDR_DTL_T VD ");
-        sb.append("WHERE VH.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
-        sb.append("AND VH.VNDR_TYP_CD = 'PO' ");
-        sb.append("AND VD.DOBJ_MAINT_CD_ACTV_IND = 'Y' ");
-        if (processingMode == JaggaerContractUploadProcessingMode.PO) {
-            sb.append("AND VH.VNDR_HDR_GNRTD_ID IN (").append(buildPurchaseOrderLimitSubQuery(processingDate)).append(") ");
-        } else {
-            sb.append("AND VD.LAST_UPDT_TS > TO_DATE('").append(processingDate).append("', 'YYYY-MM-DD') ");
-        }
-        sb.append("ORDER BY VD.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID");
+        sb.append(buildFromClause(false));
+        sb.append(buildJoinClauseWithPOVendors(false));
+        sb.append(buildRestrictActiveRows(false));
+        sb.append(buildTimeFrameRestrictionClause(processingMode, processingDate));
+        sb.append(buildOrderByClause());
+        
         String sql = sb.toString();
         LOG.info("buildVendorSql, SQL: " + sql);
         return sql;
@@ -114,23 +110,52 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT VA.VNDR_ADDR_GNRTD_ID, VA.VNDR_ADDR_TYP_CD, VA.VNDR_DFLT_ADDR_IND, VA.VNDR_CNTRY_CD, VA.VNDR_LN1_ADDR, ");
         sb.append("VA.VNDR_LN2_ADDR, VA.VNDR_CTY_NM, VA.VNDR_ST_CD, VA.VNDR_ADDR_INTL_PROV_NM, VA.VNDR_ZIP_CD, VA.VNDR_HDR_GNRTD_ID, VA.VNDR_DTL_ASND_ID ");
-        sb.append("FROM KFS.PUR_VNDR_ADDR_T VA");
-        if (processingMode == JaggaerContractUploadProcessingMode.VENDOR) {
-            sb.append(", KFS.PUR_VNDR_DTL_T VD");
-        }
-        sb.append(StringUtils.SPACE).append("WHERE VA.DOBJ_MAINT_CD_ACTV_IND = 'Y' ");
-        if (processingMode == JaggaerContractUploadProcessingMode.PO) {
-            sb.append("AND VA.VNDR_HDR_GNRTD_ID IN (").append(buildPurchaseOrderLimitSubQuery(processingDate)).append(") ");
-        } else {
-            sb.append("AND VA.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
-            sb.append("AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
-            sb.append("AND VD.LAST_UPDT_TS > TO_DATE('").append(processingDate).append("', 'YYYY-MM-DD') ");
-        }
-        sb.append("ORDER BY VA.VNDR_HDR_GNRTD_ID, VA.VNDR_DTL_ASND_ID");
+        sb.append(buildFromClause(true));
+        sb.append(buildJoinClauseWithPOVendors(true));
+        sb.append(buildRestrictActiveRows(true));
+        sb.append(buildTimeFrameRestrictionClause(processingMode, processingDate));
+        sb.append(buildOrderByClause());
         
         String sql = sb.toString();
         LOG.info("buildVendorAddressSql, SQL: " + sql);
         return sql;
+    }
+    
+    private String buildFromClause(boolean includeVendorAddress) {
+        StringBuilder sb = new StringBuilder("FROM KFS.PUR_VNDR_HDR_T VH, KFS.PUR_VNDR_DTL_T VD");
+        if (includeVendorAddress) {
+            sb.append(", KFS.PUR_VNDR_ADDR_T VA");
+        }
+        sb.append(StringUtils.SPACE);
+        return sb.toString();
+    }
+    
+    private String buildJoinClauseWithPOVendors(boolean includeVendorAddress) {
+        StringBuilder sb = new StringBuilder("WHERE VH.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
+        if (includeVendorAddress) {
+            sb.append("AND VA.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
+            sb.append("AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
+        }
+        sb.append("AND VH.VNDR_TYP_CD = 'PO' ");
+        return sb.toString();
+    }
+    
+    private String buildRestrictActiveRows(boolean includeVendorAddress) {
+        StringBuilder sb = new StringBuilder("AND VD.DOBJ_MAINT_CD_ACTV_IND = 'Y' ");
+        if (includeVendorAddress) {
+            sb.append("AND VA.DOBJ_MAINT_CD_ACTV_IND = 'Y' ");
+        }
+        return sb.toString();
+    }
+    
+    private String buildTimeFrameRestrictionClause(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+        StringBuilder sb = new StringBuilder();
+        if (processingMode == JaggaerContractUploadProcessingMode.PO) {
+            sb.append("AND VH.VNDR_HDR_GNRTD_ID IN (").append(buildPurchaseOrderLimitSubQuery(processingDate)).append(") ");
+        } else {
+            sb.append("AND VD.LAST_UPDT_TS > TO_DATE('").append(processingDate).append("', 'YYYY-MM-DD') ");
+        }
+        return sb.toString();
     }
     
     private String buildPurchaseOrderLimitSubQuery(String processingDate) {
@@ -141,6 +166,10 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         sb.append("GROUP BY VNDR_HDR_GNRTD_ID ");
         sb.append("HAVING COUNT(1) > 1)");
         return sb.toString();
+    }
+    
+    private String buildOrderByClause() {
+        return "ORDER BY VD.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID";
     }
     
     private String buildVendorNumber(String vendorHeaderId, String vendorDetailId) {
