@@ -79,4 +79,23 @@ public class CUVendorConstants {
     }
     
     public static final int MAX_VENDOR_CONTACT_NAME_LENGTH = 45;
+    
+    public static final class FIELD_NAMES {
+        public static final String VNDR_HDR_GNRTD_ID = "VNDR_HDR_GNRTD_ID";
+        public static final String VNDR_DTL_ASND_ID = "VNDR_DTL_ASND_ID";
+        public static final String VNDR_NM = "VNDR_NM";
+        public static final String VNDR_CORP_CTZN_CNTRY_CD = "VNDR_CORP_CTZN_CNTRY_CD";
+        public static final String VNDR_OWNR_CD = "VNDR_OWNR_CD";
+        public static final String VNDR_URL_ADDR = "VNDR_URL_ADDR";
+        public static final String VNDR_ADDR_GNRTD_ID = "VNDR_ADDR_GNRTD_ID";
+        public static final String VNDR_ADDR_TYP_CD = "VNDR_ADDR_TYP_CD";
+        public static final String VNDR_DFLT_ADDR_IND = "VNDR_DFLT_ADDR_IND";
+        public static final String VNDR_ADDRESS_CNTRY_CD = "VNDR_CNTRY_CD";
+        public static final String VNDR_LN1_ADDR = "VNDR_LN1_ADDR";
+        public static final String VNDR_LN2_ADDR = "VNDR_LN2_ADDR";
+        public static final String VNDR_CTY_NM = "VNDR_CTY_NM";
+        public static final String VNDR_ST_CD = "VNDR_ST_CD";
+        public static final String VNDR_ADDR_INTL_PROV_NM = "VNDR_ADDR_INTL_PROV_NM";
+        public static final String VNDR_ZIP_CD = "VNDR_ZIP_CD";
+    }
 }

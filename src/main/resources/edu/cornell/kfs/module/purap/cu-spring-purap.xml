@@ -34,6 +34,7 @@
         <property name="jobNames">
 			<list merge ="true">
 				<value>iWantDocumentBatchFeedJob</value>
+				<value>jaggaerGenerateContractPartyCsvJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
@@ -293,5 +294,26 @@
       <property name="jaggaerRoleLinkMappingService" ref="jaggaerRoleLinkMappingService"/>
       <property name="permissionService" ref="permissionService"/>
     </bean>
+
+	<bean id="jaggaerGenerateContractPartyCsvJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="jaggaerGenerateContractPartyCsvStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jaggaerGenerateContractPartyCsvStep" class="edu.cornell.kfs.module.purap.batch.JaggaerGenerateContractPartyCsvStep" parent="step">
+		<property name="jaggaerGenerateContractPartyCsvService"
+			ref="jaggaerGenerateContractPartyCsvService" />
+		<property name="parameterService" ref="parameterService" />
+	</bean>
+
+	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc" />
+
+	<bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean" />
+	<bean id="jaggaerGenerateContractPartyCsvService-parentBean" abstract="true" class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateContractPartyCsvServiceImpl">
+		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
+	</bean>
 
 </beans>
