@@ -280,4 +280,95 @@ public class CUPurapConstants {
             this.linkMappingFieldName = linkMappingFieldName;
         }
     }
+    
+    public enum JaggaerContractPartyUploadRowType {
+        PARTY("PARTY"),
+        ADDRESS("ADDRESS");
+        
+        public final String rowType;
+        
+        private JaggaerContractPartyUploadRowType(String rowType) {
+            this.rowType = rowType;
+        }
+    }
+    
+    public enum JaggaerContractPartyType {
+        SUPPLIER("Supplier");
+        
+        public final String partyTypeName;
+        
+        private JaggaerContractPartyType(String partyTypeName) {
+            this.partyTypeName = partyTypeName;
+        }
+    }
+    
+    public enum JaggaerLegalStructure {
+        INDIVIDUAL("Individual/Sole Proprietor", "ID"),
+        C_CORPORATION("C Corporation", "CP"),
+        S_CORPORATION("S Corporation", "SC"),
+        PARTNERSHIP("Partnership", "PT"),
+        TRUST("Trust/Estate", "ET"),
+        OTHER("Other", "OT"),
+        NON_US_COMPANY("Non-US Based Company", "IO");
+        
+        public final String jaggaerLegalStructureName;
+        public final String kfsOwnerShipTypeCode;
+        
+        private JaggaerLegalStructure(String jaggaerLegalStructureName, String kfsOwnerShipTypeCode) {
+            this.jaggaerLegalStructureName = jaggaerLegalStructureName;
+            this.kfsOwnerShipTypeCode = kfsOwnerShipTypeCode;
+        }
+        
+        public static JaggaerLegalStructure findJaggaerLegalStructureByKFSOwnershipCode(String ownerShipCode) {
+            for (JaggaerLegalStructure struct : JaggaerLegalStructure.values()) {
+                if (StringUtils.equalsAnyIgnoreCase(struct.kfsOwnerShipTypeCode, ownerShipCode)) {
+                    return struct;
+                }
+            }
+            return OTHER;
+        }
+    }
+    
+    public enum JaggaerAddressType {
+        FULFILLMENT("Fulfillment", "PO"),
+        REMIT("Remittance", "RM"),
+        OTHER(StringUtils.EMPTY, StringUtils.EMPTY);
+        
+        public final String jaggaerAddressType;
+        public final String kfsAddressTypeCode;
+
+        private JaggaerAddressType(String jaggaerAddressType, String kfsAddressTypeCode) {
+            this.jaggaerAddressType = jaggaerAddressType;
+            this.kfsAddressTypeCode = kfsAddressTypeCode;
+        }
+        
+        public static JaggaerAddressType findJaggaerAddressTypeFromKfsAddressTypeCode(String kfsAddressTypeCode) {
+            for (JaggaerAddressType addressType : JaggaerAddressType.values()) {
+                if (StringUtils.equalsIgnoreCase(addressType.kfsAddressTypeCode, kfsAddressTypeCode)) {
+                    return addressType;
+                }
+            }
+            return OTHER;
+        }
+    }
+    
+    public enum JaggaerContractUploadProcessingMode {
+        PO("PO"),
+        VENDOR("V");
+        
+        public final String modeCode;
+        
+        private JaggaerContractUploadProcessingMode(String modeCode) {
+            this.modeCode = modeCode;
+        }
+        
+        public static JaggaerContractUploadProcessingMode findJaggaerContractUploadProcessingModeByModeCode(String modeCode) {
+            for (JaggaerContractUploadProcessingMode mode : JaggaerContractUploadProcessingMode.values()) {
+                if (StringUtils.equalsIgnoreCase(modeCode, mode.modeCode)) {
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("Invalid mode code provided: " + modeCode);
+        }
+    }
 }
