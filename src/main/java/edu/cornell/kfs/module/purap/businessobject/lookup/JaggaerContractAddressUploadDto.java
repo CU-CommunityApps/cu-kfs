@@ -40,6 +40,10 @@ public class JaggaerContractAddressUploadDto extends JaggaerContractUploadBaseDt
     public void setName(String name) {
         this.name = name;
     }
+    
+    public String getAddressTypeName() {
+        return addressType.jaggaerAddressType;
+    }
 
     public JaggaerAddressType getAddressType() {
         return addressType;

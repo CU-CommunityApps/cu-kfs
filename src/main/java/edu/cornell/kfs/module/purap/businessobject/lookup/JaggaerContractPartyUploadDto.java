@@ -63,6 +63,10 @@ public class JaggaerContractPartyUploadDto extends JaggaerContractUploadBaseDto 
     public void setCountryOfOrigin(String countryOfOrigin) {
         this.countryOfOrigin = countryOfOrigin;
     }
+    
+    public String getContractPartyTypeName() {
+        return contractPartyType.partyTypeName;
+    }
 
     public JaggaerContractPartyType getContractPartyType() {
         return contractPartyType;
@@ -78,6 +82,10 @@ public class JaggaerContractPartyUploadDto extends JaggaerContractUploadBaseDto 
 
     public void setPrimary(String primary) {
         this.primary = primary;
+    }
+    
+    public String getLegalStructureName() {
+        return legalStructure.jaggaerLegalStructureName;
     }
 
     public JaggaerLegalStructure getLegalStructure() {
