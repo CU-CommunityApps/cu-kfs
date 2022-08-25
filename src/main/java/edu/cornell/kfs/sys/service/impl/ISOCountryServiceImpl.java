@@ -29,7 +29,8 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
 
         if (ObjectUtils.isNotNull(isoCountryFound)) {
-            LOG.info("isISOCountryActive: " + MessageFormat.format(ISO_COUNTRY_CODE_INDICATOR_MESSAGE, isoCountryCode, isoCountryFound.isActive()));
+            LOG.info("isISOCountryActive: " + 
+                    MessageFormat.format(ISO_COUNTRY_CODE_INDICATOR_MESSAGE, isoCountryCode, (isoCountryFound.isActive() ? "Active" : "Inactive")));
             return isoCountryFound.isActive();
         } else {
             LOG.error("isISOCountryActive: " + MessageFormat.format(NO_ISO_COUNTRY_FOUND_FOR_CODE, isoCountryCode));

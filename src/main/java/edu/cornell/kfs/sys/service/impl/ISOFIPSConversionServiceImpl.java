@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap;
 import edu.cornell.kfs.sys.dataaccess.ISOFIPSCountryMapDao;
 import edu.cornell.kfs.sys.exception.ManyFIPStoISOMappingException;
@@ -152,13 +153,13 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
         boolean activeMapExists = false;
         try {
             String activeISOCountryCodeFound = convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
-            activeMapExists = StringUtils.isNotBlank(activeISOCountryCodeFound) ? true : false;
+            activeMapExists = StringUtils.isNotBlank(activeISOCountryCodeFound);
         } catch (NoFIPStoISOMappingException noMap) {
             //noop
         } catch (ManyFIPStoISOMappingException manyMap) {
             activeMapExists = true;
         }
-        LOG.info("activeFIPSCountryMapExists: " + MessageFormat.format(AT_LEAST_ONE_FIPS_ISO_MAPPING_MESSAGE, "FIPS", fipsCountryCode, activeMapExists));
+        LOG.info("activeFIPSCountryMapExists: " + MessageFormat.format(AT_LEAST_ONE_FIPS_ISO_MAPPING_MESSAGE, CUKFSConstants.FIPS, fipsCountryCode, activeMapExists));
         return activeMapExists;
     }
 
@@ -166,14 +167,14 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
     public boolean activeISOCountryMapExists(String isoCountryCode) {
         boolean activeMapExists = false;
         try {
-            String activeFISPCountryCodeFound = convertISOCountryCodeToActiveFIPSCountryCode(isoCountryCode);
-            activeMapExists = StringUtils.isNotBlank(activeFISPCountryCodeFound) ? true : false;
-        } catch (NoFIPStoISOMappingException noMap) {
+            String activeFIPSCountryCodeFound = convertISOCountryCodeToActiveFIPSCountryCode(isoCountryCode);
+            activeMapExists = StringUtils.isNotBlank(activeFIPSCountryCodeFound);
+        } catch (NoISOtoFIPSMappingException noMap) {
             //noop
-        } catch (ManyFIPStoISOMappingException manyMap) {
+        } catch (ManyISOtoFIPSMappingException manyMap) {
             activeMapExists = true;
         }
-        LOG.info("activeFIPSCountryMapExists: " + MessageFormat.format(AT_LEAST_ONE_FIPS_ISO_MAPPING_MESSAGE, "ISO", isoCountryCode, activeMapExists));
+        LOG.info("activeISOCountryMapExists: " + MessageFormat.format(AT_LEAST_ONE_FIPS_ISO_MAPPING_MESSAGE, CUKFSConstants.ISO, isoCountryCode, activeMapExists));
         return activeMapExists;
     }
 

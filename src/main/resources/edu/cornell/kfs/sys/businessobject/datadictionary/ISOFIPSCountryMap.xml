@@ -53,7 +53,7 @@
                                   p:sourceName="isoCountryCode"
                                   p:targetName="code"
                             />
-                            <bean parent="PrimitiveAttributeDefinition"
+                            <bean parent="SupportAttributeDefinition"
                                   p:sourceName="isoCountry.name"
                                   p:targetName="name"
                             />
@@ -71,7 +71,7 @@
                                   p:sourceName="fipsCountryCode"
                                   p:targetName="code"
                             />
-                            <bean parent="PrimitiveAttributeDefinition"
+                            <bean parent="SupportAttributeDefinition"
                                   p:sourceName="fipsCountry.name"
                                   p:targetName="name"
                             />

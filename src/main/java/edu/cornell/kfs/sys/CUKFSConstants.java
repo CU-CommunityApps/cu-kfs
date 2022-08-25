@@ -206,4 +206,7 @@ public class CUKFSConstants {
     
     public static final String RESTRICTED_DATA_PLACEHOLDER = "RestrictedData";
 
+    //** CU Generic ISO-FIPS Country modification items **
+    public static final String ISO = "ISO";
+    public static final String FIPS = "FIPS";
 }

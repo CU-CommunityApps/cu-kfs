@@ -167,22 +167,5 @@
                 <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
-        <!-- nkk4 to see if links work -->
-        <property name="lookupFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="code"/>
-                <bean parent="FieldDefinition" p:attributeName="name"/>
-                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
-        <property name="resultFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="code"/>
-                <bean parent="FieldDefinition" p:attributeName="name"/>
-                <bean parent="FieldDefinition" p:attributeName="alternateCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
     </bean>
 </beans>

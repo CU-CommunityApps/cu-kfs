@@ -408,9 +408,11 @@
     </bean>
 
     <bean id="countryService" class="edu.cornell.kfs.sys.service.impl.CountryServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
     </bean>
 
     <bean id="isoCountryService" class="edu.cornell.kfs.sys.service.impl.ISOCountryServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
     </bean>
     <!-- CU Generic ISO-FIPS Country modification beans -->
 

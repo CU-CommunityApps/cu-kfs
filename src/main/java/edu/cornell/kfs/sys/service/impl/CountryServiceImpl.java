@@ -29,11 +29,11 @@ public class CountryServiceImpl implements CountryService {
         Country countryFound = getByPrimaryId(countryCode);
 
         if (ObjectUtils.isNotNull(countryFound)) {
-            LOG.info("isISOCountryActive: " +
+            LOG.info("isCountryActive: " +
                     MessageFormat.format(COUNTRY_CODE_INDICATOR_MESSAGE, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return countryFound.isActive();
         } else {
-            LOG.error("isISOCountryActive: " + MessageFormat.format(NO_COUNTRY_FOUND_FOR_CODE, countryCode));
+            LOG.error("isCountryActive: " + MessageFormat.format(NO_COUNTRY_FOUND_FOR_CODE, countryCode));
             return false;
         }
     }    
