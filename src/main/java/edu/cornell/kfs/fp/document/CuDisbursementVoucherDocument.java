@@ -197,10 +197,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
 
         boolean w9AndW8Checked = false;
-        if ((ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())
-                && vendor.getVendorHeader().getVendorW9ReceivedIndicator())
-                || (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())
-                && vendor.getVendorHeader().getVendorW8BenReceivedIndicator())) {
+        if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())
+            && vendor.getVendorHeader().getVendorW9ReceivedIndicator()
+            || ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())
+            && vendor.getVendorHeader().getVendorW8BenReceivedIndicator()) {
             w9AndW8Checked = true;
         }
 
@@ -209,8 +209,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         Date vendorFederalWithholdingTaxBeginDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxBeginningDate();
         Date vendorFederalWithholdingTaxEndDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
         java.util.Date today = getDateTimeService().getCurrentDate();
-        if ((vendorFederalWithholdingTaxBeginDate != null && vendorFederalWithholdingTaxBeginDate.before(today))
-                && (vendorFederalWithholdingTaxEndDate == null || vendorFederalWithholdingTaxEndDate.after(today))) {
+        if (vendorFederalWithholdingTaxBeginDate != null && vendorFederalWithholdingTaxBeginDate
+                .before(today) && (vendorFederalWithholdingTaxEndDate == null || vendorFederalWithholdingTaxEndDate
+                .after(today))) {
             this.disbVchrPayeeTaxControlCode = DisbursementVoucherConstants.TAX_CONTROL_CODE_BEGIN_WITHHOLDING;
         }
 

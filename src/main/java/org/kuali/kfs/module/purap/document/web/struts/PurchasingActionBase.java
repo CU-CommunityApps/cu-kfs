@@ -941,9 +941,9 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 }
             }
 
-            if ((needToDistributeCommodityCode && performedCommodityCodeDistribution
-                    && !foundCommodityCodeDistributionError)
-                    || (needToDistributeAccount && performedAccountDistribution && !foundAccountDistributionError)) {
+            if (needToDistributeCommodityCode && performedCommodityCodeDistribution
+            	&& !foundCommodityCodeDistributionError
+            	|| needToDistributeAccount && performedAccountDistribution && !foundAccountDistributionError) {
                 if (needToDistributeCommodityCode && !foundCommodityCodeDistributionError
                         && performedCommodityCodeDistribution) {
                     KNSGlobalVariables.getMessageList().add(PurapKeyConstants.PUR_COMMODITY_CODE_DISTRIBUTED);

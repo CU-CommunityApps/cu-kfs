@@ -123,9 +123,9 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     /**
      * A Payment Application document can be adjusted if:
      * - The user has permission to initiate an APPA document.
+     * - AND the PaymentApplication is Approved (i.e. Final or Processed)
      * - AND the PaymentApplication document does not have any previous OR pending adjustments
-     * - AND all of the following are Processed or Final:
-     *    - the PaymentApplication document
+     * - AND all of the following are Approved (i.e. Final or Processed) or Canceled:
      *    - the CashControl document associated with the PaymentApplication document, if any
      *    - other PaymentApplication documents associated with the CashControl document, if any
      * - AND the PaymentApplicationAdjustment document has a non-zero amount applied to invoices and/or unapplied
@@ -133,42 +133,51 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
      * @return {@code true} if the document can be adjusted; otherwise, {@code false}.
      */
     protected boolean canAdjust() {
-        if (!userCanInitiateAppAdjustment()) {
-            LOG.debug("canAdjust() - Exit; User does not have permission");
-            return false;
-        }
-        final boolean canAdjust = noPreviousOrPendingAdjustments() && isFinalOrProcessed() && hasInvoiceAppliedsOrNonApplieds();
+        final boolean canAdjust =
+                userCanInitiateAppAdjustment()
+                && appIsApproved()
+                && appHasNoPreviousOrPendingAdjustments()
+                && cashControlAssociatedWithAppIsApprovedOrCanceled()
+                && otherAppsAssociatedWithTheCashControlAssociatedWithTheAppAreApprovedOrCanceled()
+                && appHasInvoiceAppliedsOrNonApplieds();
         LOG.debug("canAdjust() - Exit : canAdjust={}", canAdjust);
         return canAdjust;
     }
 
-    protected boolean noPreviousOrPendingAdjustments() {
+    protected boolean appHasNoPreviousOrPendingAdjustments() {
         return getPaymentApplicationDocument().getAdjusterDocumentNumber() == null;
     }
 
-    private boolean hasInvoiceAppliedsOrNonApplieds() {
+    private boolean appHasInvoiceAppliedsOrNonApplieds() {
         List<InvoicePaidApplied> invoicePaidApplieds = getPaymentApplicationDocument().getInvoicePaidApplieds();
         List<NonAppliedHolding> nonAppliedHoldings = getPaymentApplicationDocument().getNonAppliedHoldings();
         return !(invoicePaidApplieds.isEmpty() && nonAppliedHoldings.isEmpty());
     }
 
-    private boolean isFinalOrProcessed() {
+    private boolean appIsApproved() {
+        final PaymentApplicationDocument appDocument = getPaymentApplicationDocument();
+        final WorkflowDocument appWorkflowDocument = extractWorkFlowDocument(appDocument);
+        return appWorkflowDocument.isApproved();
+    }
+
+    private boolean cashControlAssociatedWithAppIsApprovedOrCanceled() {
+        final PaymentApplicationDocument appDocument = getPaymentApplicationDocument();
+        if (appDocument.hasCashControlDetail()) {
+            final CashControlDocument cashControlDocument = appDocument.getCashControlDocument();
+            final WorkflowDocument ccWorkflowDocument = extractWorkFlowDocument(cashControlDocument);
+            return ccWorkflowDocument.isApproved() || ccWorkflowDocument.isCanceled();
+        }
+
+        return true;
+    }
+
+    private boolean otherAppsAssociatedWithTheCashControlAssociatedWithTheAppAreApprovedOrCanceled() {
         final Collection<WorkflowDocument> workflowDocuments = new LinkedList<>();
 
         final PaymentApplicationDocument appDocument = getPaymentApplicationDocument();
 
-        // Include this APP
-        final WorkflowDocument appWorkflowDocument = extractWorkFlowDocument(appDocument);
-        workflowDocuments.add(appWorkflowDocument);
-
         if (appDocument.hasCashControlDetail()) {
             final CashControlDocument cashControlDocument = appDocument.getCashControlDocument();
-
-            // Include this APP's CashControl
-            final WorkflowDocument ccWorkflowDocument = extractWorkFlowDocument(cashControlDocument);
-            workflowDocuments.add(ccWorkflowDocument);
-
-            // Include any other APPs associated with the CashControl
             final List<CashControlDetail> cashControlDetails = cashControlDocument.getCashControlDetails();
             for (final CashControlDetail cashControlDetail : cashControlDetails) {
                 final PaymentApplicationDocument otherAppDocument = cashControlDetail.getReferenceFinancialDocument();
@@ -185,7 +194,7 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
 
         return workflowDocuments
                 .stream()
-                .allMatch(wfDocument -> wfDocument.isFinal() || wfDocument.isProcessed());
+                .allMatch(wfDocument -> wfDocument.isApproved() || wfDocument.isCanceled());
     }
 
     private static WorkflowDocument extractWorkFlowDocument(final Document document) {
@@ -198,7 +207,12 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         final DocumentAuthorizer documentAuthorizer =
                 SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(document);
         final Person person = GlobalVariables.getUserSession().getPerson();
-        return documentAuthorizer.canInitiate(ArConstants.ArDocumentTypeCodes.PAYMENT_APPLICATION_ADJUSTMENT_DOCUMENT_TYPE_CODE, person);
+        final boolean userCanInitiate = documentAuthorizer.canInitiate(
+                ArConstants.ArDocumentTypeCodes.PAYMENT_APPLICATION_ADJUSTMENT_DOCUMENT_TYPE_CODE,
+                person
+        );
+        LOG.debug("userCanInitiateAppAdjustment() - Exit : userCanInitiate={}", userCanInitiate);
+        return userCanInitiate;
     }
 
     @Override

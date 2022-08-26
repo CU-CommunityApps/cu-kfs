@@ -73,13 +73,6 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
     protected String name = "";
     // address data
     protected EntityAddress address;
-    /*protected String addressLine1 = "";
-    protected String addressLine2 = "";
-    protected String addressLine3 = "";
-    protected String addressCity = "";
-    protected String addressStateProvinceCode = "";
-    protected String addressPostalCode = "";
-    protected String addressCountryCode = "";*/
     // email data
     protected String emailAddress = "";
     // phone data
@@ -366,7 +359,7 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
     private void populateGroupMembers() {
         Map<String, String> criteria = new HashMap<>(2);
         criteria.put(KIMPropertyConstants.GroupMember.MEMBER_ID, principalId);
-        criteria.put(KIMPropertyConstants.GroupMember.MEMBER_TYPE_CODE,
+        criteria.put(KIMPropertyConstants.KimMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.getCode());
         groupMembers = (List<GroupMember>) getBusinessObjectService().findMatching(GroupMember.class, criteria);
     }
@@ -550,25 +543,6 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
 
     public void setAffiliations(List<EntityAffiliation> affiliations) {
         this.affiliations = affiliations;
-    }
-
-    @Override
-    public boolean hasAffiliationOfType(String affiliationTypeCode) {
-        return getCampusCodesForAffiliationOfType(affiliationTypeCode).size() > 0;
-    }
-
-    @Override
-    public List<String> getCampusCodesForAffiliationOfType(String affiliationTypeCode) {
-        ArrayList<String> campusCodes = new ArrayList<>(3);
-        if (affiliationTypeCode == null) {
-            return campusCodes;
-        }
-        for (EntityAffiliation a : getAffiliations()) {
-            if (a.getAffiliationType().getCode().equals(affiliationTypeCode)) {
-                campusCodes.add(a.getCampusCode());
-            }
-        }
-        return campusCodes;
     }
 
     @Override

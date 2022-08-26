@@ -19,8 +19,6 @@
 package org.kuali.kfs.kim.document;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
@@ -35,9 +33,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.util.AutoPopulatingList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /*
  * CU Customization:
@@ -45,7 +41,6 @@ import java.util.Map;
  */
 public class IdentityManagementGroupDocument extends IdentityManagementTypeAttributeTransactionalDocument {
 
-    private static final Logger LOG = LogManager.getLogger();
     private static final long serialVersionUID = 1L;
 
     // principal data
@@ -249,20 +244,6 @@ public class IdentityManagementGroupDocument extends IdentityManagementTypeAttri
             }
         }
         return null;
-    }
-
-    public Map<String, String> getQualifiersAsAttributes() {
-        Map<String, String> attributes = new HashMap<>();
-        for (GroupDocumentQualifier qualifier : qualifiers) {
-            if (qualifier.getKimAttribute() != null) {
-                attributes.put(qualifier.getKimAttribute().getAttributeName(), qualifier.getAttrVal());
-            } else {
-                LOG.warn("Unknown attribute ID on group: " + qualifier.getKimAttrDefnId() + " / value=" +
-                        qualifier.getAttrVal());
-                attributes.put("Unknown Attribute ID: " + qualifier.getKimAttrDefnId(), qualifier.getAttrVal());
-            }
-        }
-        return attributes;
     }
 
     public void setDefinitions(List<KimAttributeField> definitions) {

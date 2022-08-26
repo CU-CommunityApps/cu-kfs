@@ -465,7 +465,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         boolean valid = true;
         boolean isParent = vendorDetail.isVendorParentIndicator();
         if (StringUtils.isNotBlank(vendorDetail.getVendorHeader().getVendorTaxNumber())
-                && (StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxTypeCode()))) {
+            && StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxTypeCode())) {
             if (isParent) {
                 putFieldError(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE,
                         VendorKeyConstants.ERROR_VENDOR_TAX_TYPE_CANNOT_BE_BLANK);
@@ -628,8 +628,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             KualiDecimal VENDOR_MIN_ORDER_AMOUNT = new KualiDecimal(SpringContext.getBean(ParameterService.class)
                     .getParameterValueAsString(VendorDetail.class, VendorParameterConstants.VENDOR_MIN_ORDER_AMOUNT));
             if (ObjectUtils.isNotNull(VENDOR_MIN_ORDER_AMOUNT)
-                    && (VENDOR_MIN_ORDER_AMOUNT.compareTo(minimumOrderAmount) < 1)
-                    || (minimumOrderAmount.isNegative())) {
+                && VENDOR_MIN_ORDER_AMOUNT.compareTo(minimumOrderAmount) < 1
+                || minimumOrderAmount.isNegative()) {
                 putFieldError(VendorPropertyConstants.VENDOR_MIN_ORDER_AMOUNT,
                         VendorKeyConstants.ERROR_VENDOR_MAX_MIN_ORDER_AMOUNT, VENDOR_MIN_ORDER_AMOUNT.toString());
                 valid = false;

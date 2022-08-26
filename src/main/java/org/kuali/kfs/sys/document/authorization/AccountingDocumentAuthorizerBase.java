@@ -23,7 +23,7 @@ import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.kim.api.identity.Person;
 
 import java.util.Map;
@@ -63,10 +63,10 @@ public class AccountingDocumentAuthorizerBase extends FinancialSystemTransaction
         // add the document amount
         // CU customization: this line is a modified version of the FINP-8249 fix; it adds the cast to FinancialSystemDocumentHeader
         if (((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentTotalAmount() != null) {
-            attributes.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
+            attributes.put(KimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
                     ((FinancialSystemDocumentHeader) document.getDocumentHeader()).getFinancialDocumentTotalAmount().toString());
         } else {
-            attributes.put(KfsKimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, "0");
+            attributes.put(KimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, "0");
         }
     }
 }

@@ -62,7 +62,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         this.businessObjectService.save(formatProcess);
 
 
-        Timestamp now = new Timestamp((new Date()).getTime());
+        Timestamp now = new Timestamp(new Date().getTime());
         java.sql.Date sqlDate = new java.sql.Date(paydate.getTime());
         Calendar c = Calendar.getInstance();
         c.setTime(sqlDate);

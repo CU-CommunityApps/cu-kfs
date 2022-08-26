@@ -120,7 +120,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
             boolean salesTaxInd = parameterService.getParameterValueAsBoolean( KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
             boolean useTaxIndicator = purDoc.isUseTaxIndicator();
 
-            if(salesTaxInd == true && (ObjectUtils.isNull(fullOrderDiscount.getItemTaxAmount()) && useTaxIndicator == false)){
+            if (salesTaxInd && ObjectUtils.isNull(fullOrderDiscount.getItemTaxAmount()) && !useTaxIndicator) {
                 KualiDecimal discountAmount = fullOrderDiscount.getExtendedPrice();
                 KualiDecimal discountTaxAmount = discountAmount.divide(totalAmount).multiply(totalTaxAmount);
 
@@ -246,7 +246,8 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                 Map orgParamKeys = persistenceService.getPrimaryKeyFieldValues(organizationParameter);
                 orgParamKeys.put(KRADPropertyConstants.ACTIVE_INDICATOR, true);
                 organizationParameter = businessObjectService.findByPrimaryKey(OrganizationParameter.class, orgParamKeys);
-                purchaseOrderTotalLimit = (organizationParameter == null) ? null : organizationParameter.getOrganizationAutomaticPurchaseOrderLimit();
+                purchaseOrderTotalLimit = organizationParameter == null ? null :
+                    organizationParameter.getOrganizationAutomaticPurchaseOrderLimit();
             }
         }
 

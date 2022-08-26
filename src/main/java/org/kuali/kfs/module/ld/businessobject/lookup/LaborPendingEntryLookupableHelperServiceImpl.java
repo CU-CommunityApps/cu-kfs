@@ -79,7 +79,7 @@ public class LaborPendingEntryLookupableHelperServiceImpl extends AbstractLookup
             // an inquiry url for a doc type just fine.
             return new EntryInquirableImpl().getInquiryUrl(businessObject, propertyName);
         }
-        return (new LedgerPendingEntryInquirableImpl()).getInquiryUrl(businessObject, propertyName);
+        return new LedgerPendingEntryInquirableImpl().getInquiryUrl(businessObject, propertyName);
     }
 
     @Override

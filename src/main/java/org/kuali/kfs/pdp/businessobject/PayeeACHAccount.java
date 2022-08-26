@@ -18,14 +18,19 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.kuali.kfs.core.api.criteria.PredicateFactory;
+import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kim.impl.identity.entity.Entity;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -37,9 +42,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-
-import java.lang.reflect.Field;
-import java.util.List;
 
 public class PayeeACHAccount extends PersistableBusinessObjectBase implements MutableInactivatable {
 
@@ -188,7 +190,10 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
             // For an entity, find all principals with the given entity ID.
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                List<Principal> principals = KimApiServiceLocator.getIdentityService().getPrincipalsByEntityId(payeeIdNumber);
+                QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
+                        PredicateFactory.equal(KIMPropertyConstants.Person.ENTITY_ID, payeeIdNumber));
+                List<Principal> principals = KimApiServiceLocator.getIdentityService().findPrincipals(criteria)
+                        .getResults();
                 if (CollectionUtils.isNotEmpty(principals)) {
                     // It is possible for KIM entities to have multiple principals, so return a list of all of their principal names.
                     if (principals.size() > 1) {

@@ -60,6 +60,20 @@ public class PersonInquirableImpl extends KualiInquirableImpl {
 
     PersonService personService;
 
+    public PersonInquirableImpl() {
+        super();
+        initiateInactiveRecordsDisplay();
+    }
+
+    /**
+     * By default, the children record collections will hide inactive records
+     */
+    private void initiateInactiveRecordsDisplay() {
+        inactiveRecordDisplay.put("groupMembers", Boolean.FALSE);
+        inactiveRecordDisplay.put("roleMembers", Boolean.FALSE);
+        inactiveRecordDisplay.put("delegateMembers", Boolean.FALSE);
+    }
+
     @Override
     public BusinessObject getBusinessObject(Map fieldValues) {
         // KFSPTS-19308 CU customization to allow inquiry by principalName

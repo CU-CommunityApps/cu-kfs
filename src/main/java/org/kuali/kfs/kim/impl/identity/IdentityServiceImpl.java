@@ -176,8 +176,7 @@ public class IdentityServiceImpl implements IdentityService {
         return null;
     }
 
-    @Override
-    public List<Principal> getPrincipalsByEntityId(String entityId) throws IllegalArgumentException {
+    private List<Principal> getPrincipalsByEntityId(String entityId) throws IllegalArgumentException {
         incomingParamCheck(entityId, "entityId");
 
         Map<String, Object> criteria = new HashMap<>(2);

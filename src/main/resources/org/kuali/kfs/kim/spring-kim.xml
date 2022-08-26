@@ -23,13 +23,14 @@
     This overlay should be removed when we upgrade to the 2021-11-17 financials patch or later.
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="kfsKimModuleConfiguration" parent="kfsKimModuleConfiguration-parentBean"/>
-    <bean id="kfsKimModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true"
+    <bean id="kimModuleConfiguration" parent="kimModuleConfiguration-parentBean"/>
+    <bean id="kimModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true"
           p:namespaceCode="KFS-IDM"
           p:initializeDataDictionary="true"
           p:dataDictionaryService-ref="dataDictionaryService"
@@ -85,7 +86,7 @@
 
     <bean id="kimModule" parent="kimModule-parentBean"/>
     <bean id="kimModule-parentBean" class="org.kuali.kfs.kim.service.impl.KimModuleService" abstract="true"
-          p:moduleConfiguration-ref="kfsKimModuleConfiguration"
+          p:moduleConfiguration-ref="kimModuleConfiguration"
           p:kualiModuleService-ref="kualiModuleService"/>
 
     <bean id="kimDataIntegrityService" class="org.kuali.kfs.kim.impl.data.DataIntegrityServiceImpl"
@@ -147,7 +148,10 @@
     </bean>
 
     <bean id="activePrincipalRoleTypeService"
-          class="org.kuali.kfs.kns.kim.role.PrincipalDerivedRoleTypeServiceImpl" parent="kimNoMembersRoleTypeService"/>
+          class="org.kuali.kfs.kns.kim.role.PrincipalDerivedRoleTypeServiceImpl"
+          parent="kimNoMembersRoleTypeService"
+          c:identityService-ref="identityService"
+    />
 
     <bean id="groupInternalService" class="org.kuali.kfs.kim.impl.group.GroupInternalServiceImpl"/>
 
@@ -362,9 +366,25 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"/>
-    <bean id="kimUiDocumentService-parentBean" class="org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl"
-          abstract="true"/>
+    <bean id="kimUiDocumentService"
+          parent="kimUiDocumentService-parentBean"
+    />
+    <bean id="kimUiDocumentService-parentBean"
+          abstract="true"
+          class="org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"
+          p:documentHelperService-ref="documentHelperService"
+          p:groupInternalService-ref="groupInternalService"
+          p:groupService-ref="kimGroupService"
+          p:identityService-ref="identityService"
+          p:kimTypeInfoService-ref="kimTypeInfoService"
+          p:permissionService-ref="permissionService"
+          p:parameterService-ref="parameterService"
+          p:responsibilityInternalService-ref="responsibilityInternalService"
+          p:roleInternalService-ref="kimRoleInternalService"
+          p:roleService-ref="roleService"
+    />
 
     <bean id="groupLookupable" class="org.kuali.kfs.kim.lookup.GroupLookupableImpl" parent="kualiLookupable"
           scope="prototype" p:configurationService-ref="configurationService">

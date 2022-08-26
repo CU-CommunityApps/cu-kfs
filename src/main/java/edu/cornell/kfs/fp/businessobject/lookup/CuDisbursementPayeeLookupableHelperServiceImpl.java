@@ -44,7 +44,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
                 || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))) {
             searchResults.addAll(this.getVendorsAsPayees(fieldValues));
         } else if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID)) 
-                || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME))) {
+                || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME))) {
             searchResults.addAll(this.getPersonAsPayees(fieldValues));
         } else {
             searchResults.addAll(this.getVendorsAsPayees(fieldValues));
@@ -70,7 +70,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
     
     @Deprecated
     public boolean checkMinimumFieldsFilled(Map fieldValues) {
-        final String principalName = (String) fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME);  
+        final String principalName = (String) fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME);  
         
         if (StringUtils.isBlank((String) fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER))
                 && StringUtils.isBlank((String) fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID))
@@ -82,7 +82,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
             final String firstNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
             final String lastNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
             final String employeeIdLabel = this.getAttributeLabel(KIMPropertyConstants.Person.EMPLOYEE_ID);
-            final String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.PRINCIPAL_NAME);
+            final String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Principal.PRINCIPAL_NAME);
 
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NUMBER,
                     FPKeyConstants.ERROR_DV_LOOKUP_NEEDS_SOME_FIELD, vendorNumberLabel, employeeIdLabel,
@@ -98,7 +98,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         final String vendorName = (String) fieldValues.get(KFSPropertyConstants.VENDOR_NAME);
         final String vendorNumber = (String) fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER);
         final String employeeId = (String) fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID);
-        final String principalName = (String) fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME);  
+        final String principalName = (String) fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME);  
    
         final boolean isVendorInfoEntered = StringUtils.isNotBlank(vendorName) || StringUtils.isNotBlank(vendorNumber);
         final boolean isEmployeeInfoEntered = StringUtils.isNotBlank(employeeId) 
@@ -109,7 +109,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
             String messageKey = FPKeyConstants.ERROR_DV_VENDOR_EMPLOYEE_CONFUSION;
             String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
             String vendorNumberLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NUMBER);
-            String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.PRINCIPAL_NAME); 
+            String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Principal.PRINCIPAL_NAME); 
             
 
             GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.EMPLOYEE_ID, messageKey, 
@@ -132,7 +132,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         final String vendorName = (String) fieldValues.get(KFSPropertyConstants.VENDOR_NAME);
         final String employeeId = (String) fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID);
         final boolean isPersonNameEntered = StringUtils.isNotBlank(firstName) || StringUtils.isNotBlank(lastName);
-        final String principalName = (String) fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME);  
+        final String principalName = (String) fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME);  
         
 
         if (isPersonNameEntered && StringUtils.isNotBlank(vendorName)) {
@@ -235,7 +235,7 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
                 fieldValues.get(KFSPropertyConstants.PERSON_LAST_NAME));
         personFieldValues.put(KFSPropertyConstants.EMPLOYEE_ID, fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID));       
         personFieldValues.put(KFSPropertyConstants.ACTIVE, fieldValues.get(KFSPropertyConstants.ACTIVE));
-        personFieldValues.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME));
+        personFieldValues.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME));
         
         Map<String, String> fieldConversionMap =
                 disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndPerson();

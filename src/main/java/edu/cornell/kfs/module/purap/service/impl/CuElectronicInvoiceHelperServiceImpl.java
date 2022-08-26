@@ -333,7 +333,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
 			PaymentRequestItem preqItem = preqItems.get(i);
 
-			hasKualiPaymentTermsDiscountItem = hasKualiPaymentTermsDiscountItem || (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE, preqItem.getItemTypeCode()));
+			hasKualiPaymentTermsDiscountItem = hasKualiPaymentTermsDiscountItem || StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE, preqItem.getItemTypeCode());
 
 			if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT,orderHolder)) {
 
@@ -345,7 +345,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 					LOG.info("Discount Check - E-Invoice matches PREQ item type '" + preqItem.getItemTypeCode() + "'... now checking for amount");
 
 					KualiDecimal preqExtendedPrice = preqItem.getExtendedPrice() == null ? KualiDecimal.ZERO : preqItem.getExtendedPrice();
-					if ((discountValueToUse.compareTo(preqExtendedPrice)) < 0) {
+					if (discountValueToUse.compareTo(preqExtendedPrice) < 0) {
 						LOG.info("Discount Check - Using E-Invoice amount (" + discountValueToUse + ") as it is more discount than current payment terms amount " + preqExtendedPrice);
 						preqItem.setItemUnitPrice(discountValueToUse.bigDecimalValue());
 						preqItem.setExtendedPrice(discountValueToUse);

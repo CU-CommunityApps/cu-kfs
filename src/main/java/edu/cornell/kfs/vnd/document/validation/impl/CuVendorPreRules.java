@@ -29,11 +29,11 @@ public class CuVendorPreRules extends VendorPreRules {
         setupConvenienceObjects(document);
         setVendorNamesAndIndicator(document);
         setVendorRestriction(document);
-        if (StringUtils.isBlank(question) || (question.equals(VendorConstants.CHANGE_TO_PARENT_QUESTION_ID))) {
+        if (StringUtils.isBlank(question) || question.equals(VendorConstants.CHANGE_TO_PARENT_QUESTION_ID)) {
             detectAndConfirmChangeToParent(document);
         }
         if(!document.isNew()) {
-            if (StringUtils.isBlank(question) || (question.equals(CUVendorConstants.EXPIRED_DATE_QUESTION_ID))) {
+            if (StringUtils.isBlank(question) || question.equals(CUVendorConstants.EXPIRED_DATE_QUESTION_ID)) {
             	detectAndConfirmExpirationDates(document);
             }
         }

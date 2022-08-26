@@ -95,8 +95,8 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
 
         if (ObjectUtils.isNotNull(item.getItemUnitPrice())) {
             if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) > 0)
-                    && ((!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE))
-                    && (!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
+                 && !item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE)
+            	 && !item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)) {
                 // If the item type is not full order discount or trade in items, don't allow negative unit price.
                 GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
                         PurapKeyConstants.ERROR_ITEM_AMOUNT_BELOW_ZERO, ItemFields.UNIT_COST,

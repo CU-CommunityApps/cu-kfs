@@ -48,7 +48,7 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
         // add entity
         personFieldValues.put(KIMPropertyConstants.Person.ENTITY_ID, fieldValues.get(KIMPropertyConstants.Person.ENTITY_ID));
         // add principal name
-        personFieldValues.put(KIMPropertyConstants.Person.PRINCIPAL_NAME, fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME));
+        personFieldValues.put(KIMPropertyConstants.Principal.PRINCIPAL_NAME, fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME));
 
         return personFieldValues;
     }
@@ -76,14 +76,15 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
         // CU Customization: Updated "else if" to restrict results to people if principal name is given.
         if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER))
                 || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))
-                || (StringUtils.isNotBlank(payeeTypeCode) && PdpConstants.PayeeIdTypeCodes.VENDOR_ID.equals(payeeTypeCode))) {
+                || StringUtils.isNotBlank(payeeTypeCode)
+                        && PdpConstants.PayeeIdTypeCodes.VENDOR_ID.equals(payeeTypeCode)) {
             searchResults.addAll(this.getVendorsAsPayees(fieldValues));
         } else if (StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID))
                 || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.ENTITY_ID))
-                || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME))
-                || (StringUtils.isNotBlank(payeeTypeCode)
+                || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME))
+                || StringUtils.isNotBlank(payeeTypeCode)
                         && (PdpConstants.PayeeIdTypeCodes.EMPLOYEE.equals(payeeTypeCode)
-                                || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(payeeTypeCode)))) {
+                                || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(payeeTypeCode))) {
             searchResults.addAll(this.getPersonAsPayees(fieldValues));
         } else {
             searchResults.addAll(this.getVendorsAsPayees(fieldValues));

@@ -157,8 +157,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     /**
      * Dummy value used to facilitate lookups
      */
-    private transient String lookupPersonUniversalIdentifier;
-    private transient PersonImpl lookupPerson;
+    private transient String lookupProjectDirectorUniversalIdentifier;
+    private transient PersonImpl lookupProjectDirector;
 
     private final String userLookupRoleNamespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
     private final String userLookupRoleName = KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR;
@@ -895,12 +895,12 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public PersonImpl getLookupPerson() {
-        return lookupPerson;
+    public PersonImpl getLookupProjectDirector() {
+        return lookupProjectDirector;
     }
 
-    public void setLookupPerson(PersonImpl lookupPerson) {
-        this.lookupPerson = lookupPerson;
+    public void setLookupProjectDirector(PersonImpl lookupProjectDirector) {
+        this.lookupProjectDirector = lookupProjectDirector;
     }
 
     @Override
@@ -913,14 +913,14 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public String getLookupPersonUniversalIdentifier() {
-        lookupPerson = (PersonImpl) SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
-                lookupPersonUniversalIdentifier, lookupPerson);
-        return lookupPersonUniversalIdentifier;
+    public String getLookupProjectDirectorUniversalIdentifier() {
+        lookupProjectDirector = (PersonImpl) SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
+                lookupProjectDirectorUniversalIdentifier, lookupProjectDirector);
+        return lookupProjectDirectorUniversalIdentifier;
     }
 
-    public void setLookupPersonUniversalIdentifier(String lookupPersonId) {
-        this.lookupPersonUniversalIdentifier = lookupPersonId;
+    public void setLookupProjectDirectorUniversalIdentifier(String lookupPersonId) {
+        this.lookupProjectDirectorUniversalIdentifier = lookupPersonId;
     }
 
     @Override
@@ -1065,8 +1065,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     public AccountsReceivableCustomerAddress getCustomerAddress() {
         if (customerAddress == null || !StringUtils.equals(customerAddress.getCustomerNumber(), customerNumber)
-                || (customerAddressIdentifier != null
-                && customerAddressIdentifier.intValue() != customerAddress.getCustomerAddressIdentifier().intValue())) {
+            || customerAddressIdentifier != null
+            && customerAddressIdentifier.intValue() != customerAddress.getCustomerAddressIdentifier().intValue()) {
             customerAddress = SpringContext.getBean(KualiModuleService.class)
                     .getResponsibleModuleService(AccountsReceivableCustomer.class)
                     .retrieveExternalizableBusinessObjectIfNecessary(this, customerAddress, "customerAddress");

@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.criteria.PredicateFactory;
+import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.IdentityService;
@@ -110,7 +112,10 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
     private List<Principal> getPrincipalsForPersonObjectOrSubObject(BusinessObject businessObject) {
         String entityId = getEntityIdFromPersonObjectOrSubObject(businessObject);
         if (StringUtils.isNotBlank(entityId)) {
-            return getIdentityService().getPrincipalsByEntityId(entityId);
+            QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
+                    PredicateFactory.equal(KIMPropertyConstants.Person.ENTITY_ID, entityId));
+            return getIdentityService().findPrincipals(criteria)
+                    .getResults();
         } else {
             return Collections.emptyList();
         }

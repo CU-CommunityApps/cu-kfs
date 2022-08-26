@@ -204,16 +204,6 @@ public class ConcurTestablePerson implements Person {
     }
 
     @Override
-    public boolean hasAffiliationOfType(String affiliationTypeCode) {
-        return false;
-    }
-
-    @Override
-    public List<String> getCampusCodesForAffiliationOfType(String affiliationTypeCode) {
-        return null;
-    }
-
-    @Override
     public String getEmployeeStatusCode() {
         return null;
     }

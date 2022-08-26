@@ -160,22 +160,20 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             Note cancelNote = documentService.createNoteFromDocument(paymentRequest, note);
             paymentRequest.addNote(cancelNote);
             noteService.save(cancelNote);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE, e);
         }
 
         // cancel extracted should not reopen PO
         paymentRequest.setReopenPurchaseOrderIndicator(false);
 
-        accountsPayableService.cancelAccountsPayableDocument(paymentRequest, ""); // Performs save, so
-        // no explicit save
-        // is necessary
-        if (LOG.isDebugEnabled()) {
-			LOG.debug("cancelExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() + 
-					" Cancelled Without Workflow");
-            LOG.debug("cancelExtractedPaymentRequest() ended");
-        }
+        // Performs save, so no explicit save is necessary
+        accountsPayableService.cancelAccountsPayableDocument(paymentRequest, ""); 
+
+        LOG.debug("cancelExtractedPaymentRequest() PREQ {} Cancelled Without Workflow",
+                paymentRequest.getPurapDocumentIdentifier());
+        LOG.debug("cancelExtractedPaymentRequest() ended");
+
         //force reindexing
         reIndexDocument(paymentRequest);
    }
@@ -198,14 +196,12 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             Note resetNote = documentService.createNoteFromDocument(paymentRequest, noteText);
             paymentRequest.addNote(resetNote);
             noteService.save(resetNote);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
         }
         purapService.saveDocumentNoValidation(paymentRequest);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("resetExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() + " Reset from Extracted status");
-        }
+        LOG.debug("resetExtractedPaymentRequest() PREQ {} Reset from Extracted status",
+                paymentRequest.getPurapDocumentIdentifier());
         //force reindexing
         reIndexDocument(paymentRequest);
     }
@@ -241,10 +237,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         PurApItem taxItem;
 
         try {
-            taxItem = (PurApItem) preq.getItemClass().newInstance();
+        	taxItem = (PurApItem) preq.getItemClass().getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException e) {
             throw new InfrastructureException("Unable to access itemClass", e);
-        } catch (InstantiationException e) {
+        } catch (ReflectiveOperationException e) {
             throw new InfrastructureException("Unable to instantiate itemClass", e);
         }
 
@@ -384,10 +380,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             return returnLaterDate(invoicedDateCalendar, processedDateCalendar);
         }
 
-        // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation of it's use.
+        // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation
+        // of it's use.
 		String payDateVariance = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
 				PurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
-        Integer payDateVarianceInt = Integer.valueOf(payDateVariance);
+		int payDateVarianceInt = Integer.parseInt(payDateVariance);
 
         Integer discountDueNumber = terms.getVendorDiscountDueNumber();
         Integer netDueNumber = terms.getVendorNetDueNumber();
@@ -400,8 +397,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             }
             String discountDueTypeDescription = terms.getVendorDiscountDueTypeDescription();
             paymentTermsDateCalculation(discountDueTypeDescription, invoicedDateCalendar, discountDueNumber);
-        }
-        else if (ObjectUtils.isNotNull(netDueNumber)) {
+        } else if (ObjectUtils.isNotNull(netDueNumber)) {
             // Decrease net due number by the pay date variance
             netDueNumber -= payDateVarianceInt;
             if (netDueNumber < 0) {

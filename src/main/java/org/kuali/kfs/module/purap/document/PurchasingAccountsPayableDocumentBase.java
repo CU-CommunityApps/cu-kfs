@@ -421,7 +421,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @Override
     public void itemSwap(int positionFrom, int positionTo) {
         // if out of range do nothing
-        if ((positionTo < 0) || (positionTo >= getItemLinePosition())) {
+        if (positionTo < 0 || positionTo >= getItemLinePosition()) {
             return;
         }
         PurApItem item1 = this.getItem(positionFrom);
@@ -571,7 +571,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
                 KualiDecimal totalAmount = item.getTotalAmount();
-                KualiDecimal itemTotal = (totalAmount != null) ? totalAmount : KualiDecimal.ZERO;
+                KualiDecimal itemTotal = totalAmount != null ? totalAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -646,7 +646,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
                 KualiDecimal extendedPrice = item.getExtendedPrice();
-                KualiDecimal itemTotal = (extendedPrice != null) ? extendedPrice : KualiDecimal.ZERO;
+                KualiDecimal itemTotal = extendedPrice != null ? extendedPrice : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -691,7 +691,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
                 KualiDecimal taxAmount = item.getItemTaxAmount();
-                KualiDecimal itemTotal = (taxAmount != null) ? taxAmount : KualiDecimal.ZERO;
+                KualiDecimal itemTotal = taxAmount != null ? taxAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -1030,7 +1030,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     @Override
     public boolean getIsPODoc() {
-        return (this instanceof PurchaseOrderDocument)
+        return this instanceof PurchaseOrderDocument
                 && !(this instanceof PurchaseOrderAmendmentDocument)
                 && !(this instanceof PurchaseOrderCloseDocument)
                 && !(this instanceof PurchaseOrderPaymentHoldDocument)
@@ -1184,8 +1184,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             // only check items that already have been persisted since last save
             if (ObjectUtils.isNotNull(item.getItemIdentifier())) {
                 // Disable validation if the item is read-only
-                final boolean isNotReadOnly = !((restrictedItemTypesList != null)
-                        && restrictedItemTypesList.contains(item.getItemTypeCode()));
+                final boolean isNotReadOnly = !(restrictedItemTypesList != null
+                                                && restrictedItemTypesList.contains(item.getItemTypeCode()));
                 if (isNotReadOnly) {
                     persistedSourceLines.addAll(purApAccountingService.getAccountsFromItem(item));
                 }

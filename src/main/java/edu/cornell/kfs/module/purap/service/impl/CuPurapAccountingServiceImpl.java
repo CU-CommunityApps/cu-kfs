@@ -150,7 +150,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl {
      * Then this calculated percentage is used to update each accounting line amount accordingly.
      */
     private <T extends PurApAccountingLine> void updatePreqAccountAmountsOnly(List<T> sourceAccountingLines, KualiDecimal totalAmount) {
-        if ((totalAmount != null) && KualiDecimal.ZERO.compareTo(totalAmount) != 0) {
+    	if (totalAmount != null && KualiDecimal.ZERO.compareTo(totalAmount) != 0) {
             KualiDecimal accountTotal = getItemAccountTotal((List<PurApAccountingLine>)sourceAccountingLines);
             if ((!accountTotal.equals(totalAmount)  || isAnyAccountLinePercentEmpty((List<PurApAccountingLine>)sourceAccountingLines)) && !accountTotal.equals(KualiDecimal.ZERO)) {
                 BigDecimal tmpPercent = totalAmount.bigDecimalValue().divide(accountTotal.bigDecimalValue(), PurapConstants.CREDITMEMO_PRORATION_SCALE.intValue(), KualiDecimal.ROUND_BEHAVIOR);

@@ -7,5 +7,8 @@ public final class CuKimConstants {
     private CuKimConstants() {
         throw new UnsupportedOperationException("do not call");
     }
+    	
+    public static final String KIM_PERSON_INQUIRY_ACTION = "identityManagementPersonInquiry.do";
+    public static final String KIM_ROLE_INQUIRY_ACTION = "identityManagementRoleInquiry.do";
 
 }

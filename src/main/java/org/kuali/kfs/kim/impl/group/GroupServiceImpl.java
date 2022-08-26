@@ -54,7 +54,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /* Cornell Customization: backport redis */
-public class GroupServiceImpl extends GroupServiceBase implements GroupService {
+public class GroupServiceImpl implements GroupService {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -73,16 +73,6 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
     public List<Group> getGroupsByPrincipalId(String principalId) throws IllegalArgumentException {
         incomingParamCheck(principalId, "principalId");
         return getGroupsByPrincipalIdAndNamespaceCodeInternal(principalId, null);
-    }
-
-    @Cacheable(value = GroupMember.CACHE_NAME, key = "'principalId=' + #p0 + '|' + 'namespaceCode=' + #p1")
-    @Override
-    public List<Group> getGroupsByPrincipalIdAndNamespaceCode(String principalId, String namespaceCode) throws
-            IllegalArgumentException {
-        incomingParamCheck(principalId, "principalId");
-        incomingParamCheck(namespaceCode, "namespaceCode");
-
-        return getGroupsByPrincipalIdAndNamespaceCodeInternal(principalId, namespaceCode);
     }
 
     protected List<Group> getGroupsByPrincipalIdAndNamespaceCodeInternal(String principalId, String namespaceCode)
@@ -119,7 +109,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
 
         Map<String, String> criteria = new HashMap<>();
         criteria.put(KIMPropertyConstants.GroupMember.MEMBER_ID, principalId);
-        criteria.put(KIMPropertyConstants.GroupMember.MEMBER_TYPE_CODE,
+        criteria.put(KIMPropertyConstants.KimMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.getCode());
         criteria.put(KIMPropertyConstants.GroupMember.GROUP_ID, groupId);
 
@@ -161,12 +151,10 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
 
         List<String> result = new ArrayList<>();
 
-        if (principalId != null) {
-            Collection<Group> groupList = getDirectGroupsForPrincipal(principalId);
+        Collection<Group> groupList = getDirectGroupsForPrincipal(principalId);
 
-            for (Group g : groupList) {
-                result.add(g.getId());
-            }
+        for (Group g : groupList) {
+            result.add(g.getId());
         }
 
         return Collections.unmodifiableList(result);
@@ -233,18 +221,6 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
         }
 
         return Collections.unmodifiableList(result);
-    }
-
-    @Cacheable(value = Group.CACHE_NAME, key = "'{getAttributes}' + 'groupId=' + #p0")
-    @Override
-    public Map<String, String> getAttributes(String groupId) throws IllegalArgumentException {
-        incomingParamCheck(groupId, "groupId");
-
-        Group group = getGroup(groupId);
-        if (group != null) {
-            return group.getAttributes();
-        }
-        return Collections.emptyMap();
     }
 
     @Cacheable(cacheNames = GroupMember.CACHE_NAME,
@@ -355,7 +331,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
         }
         Map<String, String> criteria = new HashMap<>();
         criteria.put(KIMPropertyConstants.GroupMember.MEMBER_ID, groupId);
-        criteria.put(KIMPropertyConstants.GroupMember.MEMBER_TYPE_CODE,
+        criteria.put(KIMPropertyConstants.KimMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.GROUP_MEMBER_TYPE.getCode());
 
         List<GroupMember> groupMembers = (List<GroupMember>) businessObjectService.findMatching(
@@ -443,7 +419,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
         }
         Map<String, Object> criteria = new HashMap<>();
         criteria.put(KIMPropertyConstants.GroupMember.MEMBER_ID, principalId);
-        criteria.put(KIMPropertyConstants.GroupMember.MEMBER_TYPE_CODE,
+        criteria.put(KIMPropertyConstants.KimMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.getCode());
         Collection<GroupMember> groupMembers = businessObjectService.findMatching(GroupMember.class, criteria);
         Set<String> groupIds = new HashSet<>(groupMembers.size());
@@ -525,9 +501,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
         return saveGroup(group);
     }
 
-    @CacheEvict(value = {Group.CACHE_NAME, GroupMember.CACHE_NAME}, allEntries = true)
-    @Override
-    public Group updateGroup(Group group) throws IllegalArgumentException {
+    private Group updateGroup(Group group) throws IllegalArgumentException {
         incomingParamCheck(group, "group");
         Group origGroup = getGroupUncached(group.getId());
         if (StringUtils.isBlank(group.getId()) || origGroup == null) {
@@ -585,7 +559,7 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
         GroupService groupService = KimApiServiceLocator.getGroupService();
         List<String> memberPrincipalsBefore = groupService.getMemberPrincipalIds(groupId);
 
-        Collection<GroupMember> toDeactivate = getActiveGroupMembers(groupId, null, null);
+        Collection<GroupMember> toDeactivate = getActiveGroupMembers(groupId);
         Timestamp today = new Timestamp(System.currentTimeMillis());
 
         // Set principals as inactive
@@ -655,26 +629,13 @@ public class GroupServiceImpl extends GroupServiceBase implements GroupService {
      * members for the specified group regardless of type.
      *
      * @param parentId
-     * @param childId    optional, but if provided then memberType must be too
-     * @param memberType optional, but must be provided if childId is
      * @return a list of group members
      */
-    private List<GroupMember> getActiveGroupMembers(String parentId, String childId, MemberType memberType) {
+    private List<GroupMember> getActiveGroupMembers(String parentId) {
         final Date today = new Date(System.currentTimeMillis());
 
-        if (childId != null && memberType == null) {
-            throw new RuntimeException("memberType must be non-null if childId is non-null");
-        }
-
-        Map<String, Object> criteria = new HashMap<>(4);
-        criteria.put(KIMPropertyConstants.GroupMember.GROUP_ID, parentId);
-
-        if (childId != null) {
-            criteria.put(KIMPropertyConstants.GroupMember.MEMBER_ID, childId);
-            criteria.put(KIMPropertyConstants.GroupMember.MEMBER_TYPE_CODE, memberType.getCode());
-        }
-
-        Collection<GroupMember> groupMembers = this.businessObjectService.findMatching(GroupMember.class, criteria);
+        Collection<GroupMember> groupMembers = this.businessObjectService.findMatching(GroupMember.class,
+                Map.of(KIMPropertyConstants.GroupMember.GROUP_ID, parentId));
 
         CollectionUtils.filter(groupMembers, (Predicate) object -> {
             GroupMember member = (GroupMember) object;

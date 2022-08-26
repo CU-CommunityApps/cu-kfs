@@ -56,10 +56,10 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
         
         String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
-        if (!(PdpConstants.PaymentStatusCodes.CANCEL_DISBURSEMENT.equals(paymentStatus))) {
-            if (((PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus))
-                    && (ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())))
-                    || (PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus))) {
+        if (!PdpConstants.PaymentStatusCodes.CANCEL_DISBURSEMENT.equals(paymentStatus)) {
+            if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
+                && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())
+                || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
                 LOG.debug("cancelDisbursement() Payment status is " + paymentStatus + "; continue with cancel.");
 
                 List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(
@@ -80,8 +80,8 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                                 "This should not happen unless user is URL spoofing.");
                     }
 
-                    if ((ObjectUtils.isNotNull(element.getDisbursementType()))
-                            && (element.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK))) {
+                    if (ObjectUtils.isNotNull(element.getDisbursementType())
+                            && element.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
                         pgh.setPmtCancelExtractStat(Boolean.FALSE);
                     }
 
@@ -146,10 +146,10 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
 
         String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
-        if (!(PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus))) {
-            if (((PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus))
-                    && (ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())))
-                    || (PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus))) {
+        if (!PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
+            if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
+                    && ObjectUtils.isNotNull(paymentGroup.getDisbursementDate())
+                    || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("cancelReissueDisbursement() Payment status is " + paymentStatus +
                             "; continue with cancel.");
@@ -168,7 +168,8 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                                 "action. This should not happen unless user is URL spoofing.");
                     }
 
-                    if ((ObjectUtils.isNotNull(pg.getDisbursementType())) && (pg.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK))) {
+                    if (ObjectUtils.isNotNull(pg.getDisbursementType())
+                            && pg.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
                         pgh.setPmtCancelExtractStat(Boolean.FALSE);
                     }
 

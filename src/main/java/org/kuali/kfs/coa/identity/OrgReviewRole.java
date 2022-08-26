@@ -41,12 +41,14 @@ import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.group.Group;
 import org.kuali.kfs.kim.impl.identity.PersonImpl;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kim.impl.role.RoleMember;
+import org.kuali.kfs.kim.impl.role.RoleMemberAttributeData;
 import org.kuali.kfs.kim.impl.role.RoleResponsibilityAction;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
@@ -56,7 +58,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,7 +123,7 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
     protected Group group;
     protected PersonImpl person;
 
-    protected List<KfsKimDocumentAttributeData> attributes = new ArrayList<>();
+    protected List<RoleMemberAttributeData> attributes = new ArrayList<>();
     protected List<RoleResponsibilityAction> roleRspActions = new ArrayList<>();
 
     //Identifying information for the 3 kinds of role members this document caters to
@@ -446,22 +447,22 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
         this.memberTypeCode = memberTypeCode;
     }
 
-    public void setAttributes(List<KfsKimDocumentAttributeData> attributes) {
+    public void setAttributes(List<RoleMemberAttributeData> attributes) {
         this.attributes = attributes;
     }
 
-    public List<KfsKimDocumentAttributeData> getAttributes() {
+    public List<RoleMemberAttributeData> getAttributes() {
         return attributes;
     }
 
     public String getAttributeValue(String attributeName) {
-        KfsKimDocumentAttributeData attributeData = getAttribute(attributeName);
-        return attributeData == null ? "" : attributeData.getAttrVal();
+        RoleMemberAttributeData attributeData = getAttribute(attributeName);
+        return attributeData == null ? "" : attributeData.getAttributeValue();
     }
 
-    protected KfsKimDocumentAttributeData getAttribute(String attributeName) {
+    protected RoleMemberAttributeData getAttribute(String attributeName) {
         if (StringUtils.isNotBlank(attributeName)) {
-            for (KfsKimDocumentAttributeData attribute : attributes) {
+            for (RoleMemberAttributeData attribute : attributes) {
                 if (attribute.getKimAttribute() != null
                     && StringUtils.equals(attribute.getKimAttribute().getAttributeName(), attributeName)) {
                     return attribute;
@@ -531,7 +532,7 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
 
     public String getActionTypeCodeDescription() {
         WorkflowAction workflowAction = WorkflowAction.fromCode(getActionTypeCodeToDisplay(), true);
-        return (workflowAction == null) ? "" : workflowAction.getLabel();
+        return workflowAction == null ? "" : workflowAction.getLabel();
     }
 
     public void setActionTypeCode(String actionTypeCode) {
@@ -653,11 +654,11 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
     public void extractAttributesFromMap(Map<String, String> attributes) {
         setAttributes(getAttributeSetAsQualifierList(attributes));
 
-        setChartOfAccountsCode(getAttributeValue(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE));
-        setOrganizationCode(getAttributeValue(KfsKimAttributes.ORGANIZATION_CODE));
-        setOverrideCode(getAttributeValue(KfsKimAttributes.ACCOUNTING_LINE_OVERRIDE_CODE));
-        setFromAmount(getAttributeValue(KfsKimAttributes.FROM_AMOUNT));
-        setToAmount(getAttributeValue(KfsKimAttributes.TO_AMOUNT));
+        setChartOfAccountsCode(getAttributeValue(KimAttributes.CHART_OF_ACCOUNTS_CODE));
+        setOrganizationCode(getAttributeValue(KimAttributes.ORGANIZATION_CODE));
+        setOverrideCode(getAttributeValue(KimAttributes.ACCOUNTING_LINE_OVERRIDE_CODE));
+        setFromAmount(getAttributeValue(KimAttributes.FROM_AMOUNT));
+        setToAmount(getAttributeValue(KimAttributes.TO_AMOUNT));
         setFinancialSystemDocumentTypeCode(getAttributeValue(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME));
     }
 
@@ -990,8 +991,8 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
     }
 
     public boolean isCreateDelegation() {
-        return NEW_DELEGATION_ID_KEY_VALUE.equals(getODelMId()) || (isEditDelegation()
-                && StringUtils.isBlank(getDelegationMemberId()));
+        return NEW_DELEGATION_ID_KEY_VALUE.equals(getODelMId()) || isEditDelegation()
+                                                                   && StringUtils.isBlank(getDelegationMemberId());
     }
 
     public boolean isCreateRoleMember() {
@@ -1035,18 +1036,10 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
         this.kimTypeId = kimTypeId;
     }
 
-    public Map<String, String> getQualifierAsAttributeSet(List<KfsKimDocumentAttributeData> qualifiers) {
-        Map<String, String> m = new HashMap<>();
-        for (KfsKimDocumentAttributeData data : qualifiers) {
-            m.put(data.getKimAttribute().getAttributeName(), data.getAttrVal());
-        }
-        return m;
-    }
-
-    public List<KfsKimDocumentAttributeData> getAttributeSetAsQualifierList(Map<String, String> qualifiers) {
+    public List<RoleMemberAttributeData> getAttributeSetAsQualifierList(Map<String, String> qualifiers) {
         KimType kimTypeInfo = KimApiServiceLocator.getKimTypeInfoService().getKimType(kimTypeId);
-        List<KfsKimDocumentAttributeData> attributesList = new ArrayList<>();
-        KfsKimDocumentAttributeData attribData;
+        List<RoleMemberAttributeData> attributesList = new ArrayList<>();
+        RoleMemberAttributeData attribData;
         if (LOG.isDebugEnabled()) {
             LOG.debug("passed qualifiers: " + StringUtils.join(qualifiers.keySet(), ", "));
         }
@@ -1055,12 +1048,11 @@ public class OrgReviewRole extends PersistableBusinessObjectBase implements Muta
             if (attribInfo == null) {
                 LOG.debug("attribute info for qualifier " + key + " is null");
             }
-            attribData = new KfsKimDocumentAttributeData();
+            attribData = new RoleMemberAttributeData();
             attribData.setKimAttribute(attribInfo.getKimAttribute());
-            attribData.setKimTypId(kimTypeInfo.getId());
-            attribData.setKimAttrDefnId(attribInfo.getId());
-            //attribData.setAttrDataId(attrDataId) - Not Available
-            attribData.setAttrVal(qualifiers.get(key));
+            attribData.setKimTypeId(kimTypeInfo.getId());
+            attribData.setKimAttributeId(attribInfo.getId());
+            attribData.setAttributeValue(qualifiers.get(key));
             attributesList.add(attribData);
         }
         return attributesList;

@@ -226,7 +226,7 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
         
         String subTotal = StringUtils.EMPTY;
         if (item.getItemUnitPrice() != null && item.getItemQuantity() != null){
-            subTotal = (item.getItemUnitPrice().multiply(item.getItemQuantity().bigDecimalValue())).toString();    
+        	subTotal = item.getItemUnitPrice().multiply(item.getItemQuantity().bigDecimalValue()).toString();    
         } else if (item.getItemUnitPrice() != null){
         	// KFSPTS-1719, KFSUPGRADE-485 : for non-qty
             subTotal = item.getItemUnitPrice().toString();  

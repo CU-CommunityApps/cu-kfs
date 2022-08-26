@@ -32,6 +32,7 @@ import org.kuali.kfs.krad.service.impl.ModuleServiceBase;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.kim.CuKimConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 /*
@@ -91,9 +92,9 @@ public class KimModuleService extends ModuleServiceBase {
     @Override
     public String getInquiryUrl(Class inquiryBusinessObjectClass) {
         if (Person.class.isAssignableFrom(inquiryBusinessObjectClass)) {
-            return getCustomKimInquiryBaseUrl() + KimConstants.KimUIConstants.KIM_PERSON_INQUIRY_ACTION;
+            return getCustomKimInquiryBaseUrl() + CuKimConstants.KIM_PERSON_INQUIRY_ACTION;
         } else if (RoleContract.class.isAssignableFrom(inquiryBusinessObjectClass)) {
-            return getCustomKimInquiryBaseUrl() + KimConstants.KimUIConstants.KIM_ROLE_INQUIRY_ACTION;
+            return getCustomKimInquiryBaseUrl() + CuKimConstants.KIM_ROLE_INQUIRY_ACTION;
         } else {
             return super.getInquiryUrl(inquiryBusinessObjectClass);
         }
