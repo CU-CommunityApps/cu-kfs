@@ -226,9 +226,9 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                     // on the above criteria
                     boolean isDebitEntry = hasRevisionWithMixedLines ?
                             // case 2.2
-                            (usuallyNegative ? !isPositive : isPositive) :
+                            usuallyNegative ? !isPositive : isPositive :
                             // case 1.1/1.2/2.1
-                            (isPREQ ? isPositive : !isPositive); 
+                            isPREQ ? isPositive : !isPositive;
                     GeneralLedgerEntry currentEntry = isDebitEntry ? debitEntry : creditEntry;
                     
                     if (ObjectUtils.isNull(generalLedgerAccountIdentifier)) {

@@ -26,10 +26,10 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coa.service.ChartService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.identity.KfsKimAttributes;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.role.RoleService;
@@ -117,12 +117,12 @@ public class ChartServiceImpl implements ChartService {
     @Override
     @Cacheable(cacheNames = Chart.CACHE_NAME, key = "'{isParentChart?}'+#p0+'-->'+#p1")
     public boolean isParentChart(String potentialChildChartCode, String potentialParentChartCode) {
-        if ((potentialChildChartCode == null) || (potentialParentChartCode == null)) {
+        if (potentialChildChartCode == null || potentialParentChartCode == null) {
             throw new IllegalArgumentException("The isParentChartCode method requires a non-null potentialChildChartCode " +
                     "and potentialParentChartCode");
         }
         Chart thisChart = getByPrimaryId(potentialChildChartCode);
-        if ((thisChart == null) || StringUtils.isBlank(thisChart.getChartOfAccountsCode())) {
+        if (thisChart == null || StringUtils.isBlank(thisChart.getChartOfAccountsCode())) {
             throw new IllegalArgumentException("The isParentChartCode method requires a valid potentialChildChartCode");
         }
         if (thisChart.getCode().equals(thisChart.getReportsToChartOfAccountsCode())) {
@@ -140,7 +140,7 @@ public class ChartServiceImpl implements ChartService {
         Person chartManager = null;
 
         Map<String, String> qualification = new HashMap<>();
-        qualification.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
+        qualification.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
 
         Collection<String> chartManagerList = roleService.getRoleMemberPrincipalIds(
                 KFSConstants.CoreModuleNamespaces.KFS, KFSConstants.SysKimApiConstants.CHART_MANAGER_KIM_ROLE_NAME,

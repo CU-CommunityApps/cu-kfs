@@ -942,8 +942,8 @@ public class KualiDocumentActionBase extends KualiAction {
                     KRADConstants.MAPPING_CANCEL, "");
         } else {
             Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
-            if ((KRADConstants.DOCUMENT_CANCEL_QUESTION.equals(question))
-                    && ConfirmationQuestion.NO.equals(buttonClicked)) {
+            if (KRADConstants.DOCUMENT_CANCEL_QUESTION.equals(question)
+                && ConfirmationQuestion.NO.equals(buttonClicked)) {
                 // if no button clicked just reload the doc
                 return mapping.findForward(KFSConstants.MAPPING_BASIC);
             }
@@ -983,8 +983,8 @@ public class KualiDocumentActionBase extends KualiAction {
             return resp.forward;
         }
 
-        boolean cancel = !((KRADConstants.DOCUMENT_RECALL_QUESTION.equals(resp.question))
-                && RecallQuestion.RECALL_TO_ACTIONLIST.equals(resp.button));
+        boolean cancel = !(KRADConstants.DOCUMENT_RECALL_QUESTION.equals(resp.question)
+                           && RecallQuestion.RECALL_TO_ACTIONLIST.equals(resp.button));
 
         KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
@@ -1036,8 +1036,8 @@ public class KualiDocumentActionBase extends KualiAction {
                 // Side effecting in that it clears the session attribute that holds the unconverted values.
                 Map<String, Object> unconvertedValues = restoreUnconvertedValuesFromSession(request, docForm);
 
-                if ((KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION.equals(question))
-                        && ConfirmationQuestion.YES.equals(buttonClicked)) {
+                if (KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION.equals(question)
+                    && ConfirmationQuestion.YES.equals(buttonClicked)) {
                     // if yes button clicked - save the doc
 
                     // KULRICE-7306: Unconverted Values not carried through during a saveOnClose action.
@@ -2464,7 +2464,7 @@ public class KualiDocumentActionBase extends KualiAction {
             int noteTextMaxLength = getDataDictionaryService().getAttributeMaxLength(Note.class,
                     KRADConstants.NOTE_TEXT_PROPERTY_NAME);
 
-            if (StringUtils.isBlank(reason) || (disapprovalNoteTextLength > noteTextMaxLength)) {
+            if (StringUtils.isBlank(reason) || disapprovalNoteTextLength > noteTextMaxLength) {
 
                 if (reason == null) {
                     // prevent a NPE by setting the reason to a blank string
@@ -2504,3 +2504,4 @@ public class KualiDocumentActionBase extends KualiAction {
         }
     }
 }
+

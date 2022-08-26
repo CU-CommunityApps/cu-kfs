@@ -325,7 +325,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                 pd.addNote(pnt);
 
                 for (DisbursementVoucherNonEmployeeExpense exp : (List<DisbursementVoucherNonEmployeeExpense>)dvnet.getDvNonEmployeeExpenses()) {
-                    if (line < (maxNoteLines - 8)) {
+                    if (line < maxNoteLines - 8) {
                         pnt = new PaymentNoteText();
                         pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
                         pnt.setCustomerNoteText(exp.getDisbVchrExpenseCompanyName() + " " + exp.getDisbVchrExpenseAmount());
@@ -350,7 +350,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
             for (DisbursementVoucherPreConferenceRegistrant dvpcr : 
                     (List<DisbursementVoucherPreConferenceRegistrant>)dvpcd.getDvPreConferenceRegistrants()) {
-                if (line < (maxNoteLines - 8)) {
+                if (line < maxNoteLines - 8) {
                     pnt = new PaymentNoteText();
                     pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
                     pnt.setCustomerNoteText(dvpcr.getDvConferenceRegistrantName() + " " + dvpcr.getDisbVchrExpenseAmount());

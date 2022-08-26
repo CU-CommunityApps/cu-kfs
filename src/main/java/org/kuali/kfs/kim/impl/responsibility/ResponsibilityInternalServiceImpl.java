@@ -27,7 +27,6 @@ import org.kuali.kfs.kim.impl.role.RoleResponsibility;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,13 +81,6 @@ public class ResponsibilityInternalServiceImpl implements ResponsibilityInternal
     }
 
     @Override
-    public void updateActionRequestsForRoleChange(String roleId) {
-        List<RoleResponsibility> newRoleResp = getRoleResponsibilities(roleId);
-
-        updateActionRequestsForResponsibilityChange(getChangedRoleResponsibilityIds(Collections.EMPTY_LIST, newRoleResp));
-    }
-
-    @Override
     public void updateActionRequestsForResponsibilityChange(Set<String> responsibilityIds) {
         responsibilityChangeQueue.responsibilitiesChanged(responsibilityIds);
     }
@@ -121,8 +113,7 @@ public class ResponsibilityInternalServiceImpl implements ResponsibilityInternal
         return lRet;
     }
 
-    @Override
-    public boolean areActionsAtAssignmentLevel(Responsibility responsibility) {
+    private boolean areActionsAtAssignmentLevel(Responsibility responsibility) {
         Map<String, String> details = responsibility.getAttributes();
         if (details == null) {
             return false;

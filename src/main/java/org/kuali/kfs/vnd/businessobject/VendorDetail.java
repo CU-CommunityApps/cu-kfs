@@ -104,18 +104,18 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     private ShippingPaymentTerms vendorShippingPaymentTerms;
     private VendorDetail soldToVendorDetail;
     private Person vendorRestrictedPerson;
-    
+
     // these nine are not persisted in the db
     private String vendorParentName;
     private String defaultAddressLine1;
-    private String defaultAddressLine2; 
-    private String defaultAddressCity; 
-    private String defaultAddressStateCode; 
-    private String defaultAddressInternationalProvince; 
-    private String defaultAddressPostalCode; 
-    private String defaultAddressCountryCode; 
+    private String defaultAddressLine2;
+    private String defaultAddressCity;
+    private String defaultAddressStateCode;
+    private String defaultAddressInternationalProvince;
+    private String defaultAddressPostalCode;
+    private String defaultAddressCountryCode;
     private String defaultFaxNumber;
-    
+
     private List boNotes;
 
     public VendorDetail() {
@@ -542,6 +542,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
             } else {
                 first = false;
             }
+            // CU customization KFSPTS-3487
             sb.append(vcc.getCommodityCode().getCommodityDescription());
         }
         sb.append(']');
@@ -689,7 +690,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     @Override
     public boolean isEqualForRouting(Object toCompare) {
         LOG.debug("Entering isEqualForRouting.");
-        if ((ObjectUtils.isNull(toCompare)) || !(toCompare instanceof VendorDetail)) {
+        if (ObjectUtils.isNull(toCompare) || !(toCompare instanceof VendorDetail)) {
             return false;
         } else {
             VendorDetail detail = (VendorDetail) toCompare;
@@ -754,7 +755,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         }
         return false;
     }
-    
+
     @JsonIgnore
     public VendorDetail getVendorParent() {
         Map<String, String> tmpValues = new HashMap<>();

@@ -48,7 +48,6 @@ import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.ArKeyConstants;
@@ -301,7 +300,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         List<Account> controlAccountsTemp = getContractsGrantsInvoiceDocumentService().getContractControlAccounts(awd);
 
         // to check if the number of contract control accounts is same as the number of accounts
-        if (controlAccounts == null || (controlAccounts.size() != awd.getActiveAwardAccounts().size())) {
+        if (controlAccounts == null || controlAccounts.size() != awd.getActiveAwardAccounts().size()) {
             final ErrorMessage errorMessage = new ErrorMessage(
                     ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NO_CONTROL_ACCOUNT,
                     awd.getProposalNumber());
@@ -422,10 +421,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 accountDetails, locCreationType, creationProcessType);
         if (ObjectUtils.isNotNull(cgInvoiceDocument)) {
             if (cgInvoiceDocument.getTotalInvoiceAmount().isPositive()
-                    || getContractsGrantsInvoiceDocumentService().getInvoiceMilestoneTotal(cgInvoiceDocument).isPositive()
-                    || getContractsGrantsInvoiceDocumentService().getBillAmountTotal(cgInvoiceDocument).isPositive()
-                    || (ArConstants.BillingFrequencyValues.isTimeBased(awd)
-                            && ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.equals(creationProcessType))) {
+                || getContractsGrantsInvoiceDocumentService().getInvoiceMilestoneTotal(cgInvoiceDocument).isPositive()
+                || getContractsGrantsInvoiceDocumentService().getBillAmountTotal(cgInvoiceDocument).isPositive()
+                || ArConstants.BillingFrequencyValues.isTimeBased(awd)
+                && ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL.equals(creationProcessType)) {
                 documentService.saveDocument(cgInvoiceDocument, DocumentSystemSaveEvent.class);
             } else {
                 ErrorMessage errorMessage;

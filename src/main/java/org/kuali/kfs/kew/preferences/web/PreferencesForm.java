@@ -181,47 +181,47 @@ public class PreferencesForm extends KualiForm {
             throw new RuntimeException("Invalid value found for checkbox \"Receive Secondary Delegate Email\"");
         }
 
-        if ((StringUtils.isNotBlank(preferences.getShowDocType())) &&
-                (!PreferencesConstants.CheckBoxValues.getCheckBoxValues().contains(preferences.getShowDocType())) ||
-                (StringUtils.isNotBlank(preferences.getShowDocTitle())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowDocTitle())) ||
-                (StringUtils.isNotBlank(preferences.getShowActionRequested())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowActionRequested())) ||
-                (StringUtils.isNotBlank(preferences.getShowInitiator())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowInitiator())) ||
-                (StringUtils.isNotBlank(preferences.getShowDelegator())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowDelegator())) ||
-                (StringUtils.isNotBlank(preferences.getShowDateCreated())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowDateCreated())) ||
-                (StringUtils.isNotBlank(preferences.getShowDateApproved())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowDateApproved())) ||
-                (StringUtils.isNotBlank(preferences.getShowLastModifiedDate())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowLastModifiedDate())) ||
-                (StringUtils.isNotBlank(preferences.getShowCurrentNode())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowCurrentNode())) ||
-                (StringUtils.isNotBlank(preferences.getShowWorkgroupRequest())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowWorkgroupRequest())) ||
-                (StringUtils.isNotBlank(preferences.getShowDocumentStatus())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowDocumentStatus())) ||
-                (StringUtils.isNotBlank(preferences.getShowClearFyi())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowClearFyi())) ||
-                (StringUtils.isNotBlank(preferences.getShowNotes())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getShowNotes())) ||
-                (StringUtils.isNotBlank(preferences.getUseOutbox())) &&
-                        (!PreferencesConstants.CheckBoxValues.getCheckBoxValues()
-                                .contains(preferences.getUseOutbox()))) {
+        if (StringUtils.isNotBlank(preferences.getShowDocType()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues().contains(preferences.getShowDocType()) ||
+                StringUtils.isNotBlank(preferences.getShowDocTitle()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowDocTitle()) ||
+                StringUtils.isNotBlank(preferences.getShowActionRequested()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowActionRequested()) ||
+                StringUtils.isNotBlank(preferences.getShowInitiator()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowInitiator()) ||
+                StringUtils.isNotBlank(preferences.getShowDelegator()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowDelegator()) ||
+                StringUtils.isNotBlank(preferences.getShowDateCreated()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowDateCreated()) ||
+                StringUtils.isNotBlank(preferences.getShowDateApproved()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowDateApproved()) ||
+                StringUtils.isNotBlank(preferences.getShowLastModifiedDate()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowLastModifiedDate()) ||
+                StringUtils.isNotBlank(preferences.getShowCurrentNode()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                        .contains(preferences.getShowCurrentNode()) ||
+                StringUtils.isNotBlank(preferences.getShowWorkgroupRequest()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                         .contains(preferences.getShowWorkgroupRequest()) ||
+                StringUtils.isNotBlank(preferences.getShowDocumentStatus()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                         .contains(preferences.getShowDocumentStatus()) ||
+                StringUtils.isNotBlank(preferences.getShowClearFyi()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                         .contains(preferences.getShowClearFyi()) ||
+                StringUtils.isNotBlank(preferences.getShowNotes()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                         .contains(preferences.getShowNotes()) ||
+                StringUtils.isNotBlank(preferences.getUseOutbox()) &&
+                !PreferencesConstants.CheckBoxValues.getCheckBoxValues()
+                         .contains(preferences.getUseOutbox())) {
             throw new RuntimeException("Preferences for fields displayed in action list cannot be saved since " +
                     "they have in tampered with. Please refresh the page and try again");
         }

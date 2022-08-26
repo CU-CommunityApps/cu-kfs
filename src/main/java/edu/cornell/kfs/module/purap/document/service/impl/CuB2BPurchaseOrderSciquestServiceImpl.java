@@ -141,7 +141,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             if (LOG.isDebugEnabled()) {
                 LOG.debug("sendPurchaseOrder(): statusText is " + statusText);
             }
-            if (ObjectUtils.isNull(statusText) || (!"success".equalsIgnoreCase(statusText.trim()))) {
+            if (ObjectUtils.isNull(statusText) || !"success".equalsIgnoreCase(statusText.trim())) {
                 LOG.error("sendPurchaseOrder(): PO cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + " failed sending to SciQuest:\n" + statusText);
                 transmitErrors.append("Unable to send Purchase Order: " + statusText);
 
@@ -649,7 +649,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         List detailList = purchaseOrder.getItems();
         for (Iterator iter = detailList.iterator(); iter.hasNext();) {
             PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
-            if ((ObjectUtils.isNotNull(poi.getItemType())) && poi.getItemType().isLineItemIndicator()) {
+            if (ObjectUtils.isNotNull(poi.getItemType()) && poi.getItemType().isLineItemIndicator()) {
             	//KFSUPGRADE-406
                 String uom = poi.getItemUnitOfMeasureCode();
                 KualiDecimal quantity = poi.getItemQuantity();

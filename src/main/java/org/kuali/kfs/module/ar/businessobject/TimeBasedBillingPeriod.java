@@ -48,7 +48,8 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
 
     protected Integer calculatePreviousPeriodByFrequency(Integer currentAccountingPeriodCode, int periodsInBillingFrequency) {
         Integer previousAccountingPeriodCode;
-        final int subAmt = (currentAccountingPeriodCode % periodsInBillingFrequency) == 0 ? periodsInBillingFrequency : currentAccountingPeriodCode % periodsInBillingFrequency;
+        final int subAmt = currentAccountingPeriodCode % periodsInBillingFrequency
+                           == 0 ? periodsInBillingFrequency : currentAccountingPeriodCode % periodsInBillingFrequency;
 
         previousAccountingPeriodCode = currentAccountingPeriodCode - subAmt;
         return previousAccountingPeriodCode;

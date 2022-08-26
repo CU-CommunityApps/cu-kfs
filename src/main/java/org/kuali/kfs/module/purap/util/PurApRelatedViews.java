@@ -136,7 +136,7 @@ public class PurApRelatedViews {
         if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT.equals(view.getDocumentTypeName())) {
             DocumentStatus documentStatus = KewApiServiceLocator.getWorkflowDocumentService().getDocumentStatus(
                     view.getDocumentNumber());
-            if (!(StringUtils.equals(documentStatus.getCode(), DocumentStatus.FINAL.getCode()))) {
+            if (!StringUtils.equals(documentStatus.getCode(), DocumentStatus.FINAL.getCode())) {
                 String principalId = GlobalVariables.getUserSession().getPrincipalId();
 
                 String namespaceCode = KFSConstants.CoreModuleNamespaces.KFS;

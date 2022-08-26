@@ -228,7 +228,7 @@ public class ResponsibilityServiceImpl implements ResponsibilityService {
             // only add them to the list if the member ID has been populated
             if (StringUtils.isNotBlank(rm.getMemberId())) {
                 final ResponsibilityAction.Builder rai = ResponsibilityAction.Builder.create();
-                rai.setMemberRoleId((rm.getEmbeddedRoleId() == null) ? rm.getRoleId() : rm.getEmbeddedRoleId());
+                rai.setMemberRoleId(rm.getEmbeddedRoleId() == null ? rm.getRoleId() : rm.getEmbeddedRoleId());
                 rai.setRoleId(rm.getRoleId());
                 rai.setQualifier(rm.getQualifier());
                 rai.setDelegates(rm.getDelegates());
@@ -256,7 +256,7 @@ public class ResponsibilityServiceImpl implements ResponsibilityService {
                 rai.setPriorityNumber(action.getPriorityNumber() == null ? DEFAULT_PRIORITY_NUMBER :
                         action.getPriorityNumber());
                 rai.setForceAction(action.isForceAction());
-                rai.setParallelRoutingGroupingCode((rm.getRoleSortingCode() == null) ? "" : rm.getRoleSortingCode());
+                rai.setParallelRoutingGroupingCode(rm.getRoleSortingCode() == null ? "" : rm.getRoleSortingCode());
                 rai.setRoleResponsibilityActionId(action.getId());
                 results.add(rai.build());
             }
@@ -339,10 +339,8 @@ public class ResponsibilityServiceImpl implements ResponsibilityService {
     public List<String> getRoleIdsForResponsibility(String id) throws IllegalArgumentException {
         incomingParamCheck(id, "id");
 
-        final List<String> roleIds = getRoleIdsForPredicate(PredicateFactory.and(
-                PredicateFactory.equal("responsibilityId", id), PredicateFactory.equal("active", "Y")));
-
-        return Collections.unmodifiableList(roleIds);
+        return getRoleIdsForPredicate(PredicateFactory.and(PredicateFactory.equal("responsibilityId", id),
+                PredicateFactory.equal("active", "Y")));
     }
 
     @Override

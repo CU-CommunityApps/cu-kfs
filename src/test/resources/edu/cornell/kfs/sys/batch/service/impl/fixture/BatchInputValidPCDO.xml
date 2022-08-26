@@ -19,9 +19,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<transactions xmlns="http://www.kuali.org/modules/financial/procurementCard"
+<transactions xmlns="http://www.kuali.org/kfs/fp/procurementCard"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.kuali.org/modules/financial/procurementCard
+              xsi:schemaLocation="http://www.kuali.org/kfs/fp/procurementCard
                       http://localhost:8080/kuali-dev/xml/procurementCard-1.0.xsd">
 
     <transaction>

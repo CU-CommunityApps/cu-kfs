@@ -76,26 +76,37 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
                 if (poaItem.getItemAssignedToTradeInIndicator() != poItem.getItemAssignedToTradeInIndicator()) {
                     changed = true;
                 }
-                if ((poaItem.getItemCatalogNumber() != null && !poaItem.getItemCatalogNumber().equals(poItem.getItemCatalogNumber()))
-                        || (poItem.getItemCatalogNumber() != null && !poItem.getItemCatalogNumber().equals(poaItem.getItemCatalogNumber()))) {
-                    changed = true;
+                if (poaItem.getItemCatalogNumber() != null
+                        && !poaItem.getItemCatalogNumber().equals(poItem.getItemCatalogNumber())
+                        || poItem.getItemCatalogNumber() != null
+                        && !poItem.getItemCatalogNumber().equals(poaItem.getItemCatalogNumber())) {
+                        changed = true;
                 }
-                if ((poaItem.getItemDescription() != null && !poaItem.getItemDescription().equals(poItem.getItemDescription()))
-                        || (poItem.getItemDescription() != null && !poItem.getItemDescription().equals(poaItem.getItemDescription()))) {
-                    changed = true;
+                if (poaItem.getItemDescription() != null
+                        && !poaItem.getItemDescription().equals(poItem.getItemDescription())
+                        || poItem.getItemDescription() != null
+                        && !poItem.getItemDescription().equals(poaItem.getItemDescription())) {
+                        changed = true;
                 }
-                if ((poaItem.getExtendedPrice() != null && poItem.getExtendedPrice() != null
-                        && poaItem.getExtendedPrice().floatValue() != poItem.getExtendedPrice().floatValue())
-                        || (poaItem.getExtendedPrice() != null && poaItem.getExtendedPrice().floatValue() != 0 && poItem.getExtendedPrice() == null)
-                        || (poaItem.getExtendedPrice() == null && poItem.getExtendedPrice() != null && poItem.getExtendedPrice().floatValue() != 0)) {
-                    changed = true;
+                if (poaItem.getExtendedPrice() != null && poItem.getExtendedPrice() != null
+                        && poaItem.getExtendedPrice().floatValue() != poItem.getExtendedPrice().floatValue()
+                        || poaItem.getExtendedPrice() != null
+                        && poaItem.getExtendedPrice().floatValue() != 0
+                        && poItem.getExtendedPrice() == null
+                        || poaItem.getExtendedPrice() == null
+                        && poItem.getExtendedPrice() != null && poItem.getExtendedPrice().floatValue() != 0) {
+                        changed = true;
                 }
-                if ((poaItem.getItemTaxAmount() != null && poItem.getItemTaxAmount() != null
-                        && poaItem.getItemTaxAmount().floatValue() != poItem.getItemTaxAmount().floatValue())
-                        || (poaItem.getItemTaxAmount() != null && poaItem.getItemTaxAmount().floatValue() != 0 && poItem.getItemTaxAmount() != null)
-                        || (poaItem.getItemTaxAmount() == null && poItem.getItemTaxAmount() != null && poItem.getItemTaxAmount().floatValue() != 0)) {
-                    changed = true;
+                if (poaItem.getItemTaxAmount() != null
+                        && poItem.getItemTaxAmount() != null
+                        && poaItem.getItemTaxAmount().floatValue() != poItem.getItemTaxAmount().floatValue()
+                        || poaItem.getItemTaxAmount() != null
+                        && poaItem.getItemTaxAmount().floatValue() != 0 && poItem.getItemTaxAmount() != null
+                        || poaItem.getItemTaxAmount() == null
+                        && poItem.getItemTaxAmount() != null && poItem.getItemTaxAmount().floatValue() != 0) {
+                        changed = true;
                 }
+
 
                 break;
             }
