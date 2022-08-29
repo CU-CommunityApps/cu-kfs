@@ -9,6 +9,6 @@ public interface JaggaerGenerateContractPartyCsvService {
     
     public List<JaggaerContractUploadBaseDto> getJaggerContractsDto(JaggaerContractUploadProcessingMode processingMode, String processingDate);
     
-    public void generateCsvFile(List<JaggaerContractUploadBaseDto> jaggaerUploadDtos);
+    public void generateCsvFile(List<JaggaerContractUploadBaseDto> jaggaerUploadDtos, JaggaerContractUploadProcessingMode processingMode);
 
 }
