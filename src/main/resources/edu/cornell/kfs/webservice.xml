@@ -9,11 +9,6 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
     <jaxws:endpoint
-            id="accountVerification"
-            implementor="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl"
-            address="/AccountVerificationWebService"/>
-
-    <jaxws:endpoint
             id="submitTrip"
             implementor="edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl"
             address="/SubmitTripWebService"/>
