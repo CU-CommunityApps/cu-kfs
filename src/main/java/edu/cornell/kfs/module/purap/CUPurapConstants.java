@@ -8,8 +8,6 @@ import java.util.HashSet;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 
-import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
-
 /**
  * Cornell University specific constants class for holding and defining constants necessary for Cornell's implementation of the Kuali Financial System.
  *
@@ -374,87 +372,5 @@ public class CUPurapConstants {
             }
             throw new IllegalArgumentException("Invalid mode code provided: " + modeCode);
         }
-    }
-    
-    public enum JaggaerContractPartyUploadDtoCsvColumn {
-        ROWT_YPE("RowType", "rowTypeDescription"),
-        OVERRIDE_DUP_ERROR("overrideDupError"),
-        ERP_NUMBER("ERPNumber"),
-        SCIQUEST_ID("sciQuestID"),
-        CONTRACT_PARTY_NAME("contractPartyName"),
-        DOING_USINESS_AS("doingBusinessAs"),
-        OTHER_NAMES("otherNames"),
-        COUNTRY_OF_ORIGIN("countryOfOrigin"),
-        ACTIVE("active"),
-        CONTRACT_PARTY_TYPE("ContractPartyType", "contractPartyTypeName"),
-        PRIMARY("primary"),
-        LEGALST_RUCTURE("LegalStructure", "legalStructureName"),
-        TAX_ID_TYPE("taxIDType"),
-        TAX_IDENTIFICATION_NUMBER("taxIdentificationNumber"),
-        VAT_REGISTRATION_NUMBER("VATRegistrationNumber"),
-        WEBSITE_URL("websiteURL");
-        
-        public final String headerLabel;
-        public final String jaggaerContractPartyUploadDtoPropertyName;
-        
-        private JaggaerContractPartyUploadDtoCsvColumn(String headerLabel) {
-            this(headerLabel, headerLabel);
-        }
-        
-        private JaggaerContractPartyUploadDtoCsvColumn(String headerLabel, String jaggaerContractPartyUploadDtoPropertyName) {
-            this.headerLabel = headerLabel;
-            this.jaggaerContractPartyUploadDtoPropertyName = jaggaerContractPartyUploadDtoPropertyName;
-        }
-        
-        public String getHeaderLabel() {
-            return headerLabel;
-        }
-
-        public String getJaggaerContractPartyUploadDtoPropertyNamePropertyName() {
-            return jaggaerContractPartyUploadDtoPropertyName;
-        }
-        
-    }
-    
-    public enum JaggaerContractAddressUploadDtoCsvColumn {
-        ROWT_YPE("RowType", "rowTypeDescription"),
-        ADDRESS_ID("addressID"),
-        SCIQUEST_ID("sciQuestID"),
-        NNAME("name"),
-        ADDRESS_TYPE("addressTypeName"),
-        PRIMARY_TYPE("primaryType"),
-        ACTIVE("active"),
-        COUNTRY("country"),
-        STREET_LINE_1("streetLine1"),
-        STREET_LINE_2("streetLine2"),
-        STREET_LINE_3("streetLine3"),
-        CITY_TOWN("City/Town", "city"),
-        STATE_PROVINCE("State/Province", "state"),
-        POSTAL_CODE("postalCode"),
-        PHONE("phone"),
-        TOLL_FREE_NUMBER("tollFreeNumber"),
-        FAX("fax"),
-        NOTES("notes");
-        
-        public final String headerLabel;
-        public final String jaggaerContractAddressUploadDtoPropertyName;
-        
-        private JaggaerContractAddressUploadDtoCsvColumn(String headerLabel) {
-            this(headerLabel, headerLabel);
-        }
-        
-        private JaggaerContractAddressUploadDtoCsvColumn(String headerLabel, String jaggaerContractAddressUploadDtoPropertyName) {
-            this.headerLabel = headerLabel;
-            this.jaggaerContractAddressUploadDtoPropertyName = jaggaerContractAddressUploadDtoPropertyName;
-        }
-        
-        public String getHeaderLabel() {
-            return headerLabel;
-        }
-
-        public String getJaggaerAddressUploadDtoPropertyNamePropertyName() {
-            return jaggaerContractAddressUploadDtoPropertyName;
-        }
-        
     }
 }

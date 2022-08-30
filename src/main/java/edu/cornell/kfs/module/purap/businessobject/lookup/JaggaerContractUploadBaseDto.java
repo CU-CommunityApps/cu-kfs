@@ -16,7 +16,7 @@ public abstract class JaggaerContractUploadBaseDto {
         ERPNumber = eRPNumber;
     }
     
-    private String getRowTypeDescription() {
+    public String getRowTypeDescription() {
         return rowType.rowType;
     }
 
