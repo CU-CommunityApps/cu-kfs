@@ -17,11 +17,9 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
-import edu.cornell.kfs.fp.service.SubmitTripWebServiceImpl;
 
 @ConfigureContext(session = ccs1)
 public class DebitDeterminerServiceImplTest extends KualiIntegTestBase {
-	private SubmitTripWebServiceImpl submitTripWebService;
 	private DocumentService documentService;
 	private DebitDeterminerServiceImpl debitDeterminerService;
 	
