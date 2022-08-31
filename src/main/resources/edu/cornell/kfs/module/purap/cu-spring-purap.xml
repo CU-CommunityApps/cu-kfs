@@ -320,6 +320,7 @@
 		</property>
 		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
 		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="isoFipsConversionService" ref="isoFipsConversionService" />
 	</bean>
     
 </beans>

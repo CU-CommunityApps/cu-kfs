@@ -116,23 +116,50 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
         return list;
     }
 
-    public String[] builderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {
-        String[] record = { vendorDto.getRowTypeDescription(), String.valueOf(vendorDto.isOverrideDupError()),
-                vendorDto.getERPNumber(), vendorDto.getSciQuestID(), vendorDto.getContractPartyName(),
-                vendorDto.getDoingBusinessAs(), vendorDto.getCountryOfOrigin(), vendorDto.getActive(),
-                vendorDto.getContractPartyTypeName(), vendorDto.getPrimary(), vendorDto.getLegalStructureName(),
-                vendorDto.getTaxIDType(), vendorDto.getTaxIdentificationNumber(), vendorDto.getVATRegistrationNumber(),
-                vendorDto.getWebsiteURL() };
+    protected String[] builderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {
+        String[] record = { cleanString(vendorDto.getRowTypeDescription()), 
+                cleanString(String.valueOf(vendorDto.isOverrideDupError())),
+                cleanString(vendorDto.getERPNumber()),
+                cleanString(vendorDto.getSciQuestID()), 
+                cleanString(vendorDto.getContractPartyName()),
+                cleanString(vendorDto.getDoingBusinessAs()),
+                cleanString(vendorDto.getOtherNames()),
+                cleanString(vendorDto.getCountryOfOrigin()), 
+                cleanString(vendorDto.getActive()),
+                cleanString(vendorDto.getContractPartyTypeName()), 
+                cleanString(vendorDto.getPrimary()),
+                cleanString(vendorDto.getLegalStructureName()),
+                cleanString(vendorDto.getTaxIDType()),
+                cleanString(vendorDto.getTaxIdentificationNumber()),
+                cleanString(vendorDto.getVATRegistrationNumber()),
+                cleanString(vendorDto.getWebsiteURL()) };
         return record;
     }
     
-    public String[] builderAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto) {
-        String[] record = { addressDto.getRowTypeDescription(), addressDto.getAddressID(), addressDto.getSciQuestID(),
-                addressDto.getName(), addressDto.getAddressTypeName(), addressDto.getPrimaryType(), addressDto.getActive(),
-                addressDto.getCountry(), addressDto.getStreetLine1(), addressDto.getStreetLine2(), addressDto.getStreetLine3(),
-                addressDto.getCity(), addressDto.getState(), addressDto.getPostalCode(), addressDto.getPhone(),
-                addressDto.getTollFreeNumber(), addressDto.getFax(), addressDto.getNotes() };
+    protected String[] builderAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto) {
+        String[] record = { cleanString(addressDto.getRowTypeDescription()), 
+                cleanString(addressDto.getAddressID()),
+                cleanString(addressDto.getSciQuestID()),
+                cleanString(addressDto.getName()),
+                cleanString(addressDto.getAddressTypeName()), 
+                cleanString(addressDto.getPrimaryType()),
+                cleanString(addressDto.getActive()),
+                cleanString(addressDto.getCountry()), 
+                cleanString(addressDto.getStreetLine1()), 
+                cleanString(addressDto.getStreetLine2()),
+                cleanString(addressDto.getStreetLine3()),
+                cleanString(addressDto.getCity()),
+                cleanString(addressDto.getState()), 
+                cleanString(addressDto.getPostalCode()), 
+                cleanString(addressDto.getPhone()),
+                cleanString(addressDto.getTollFreeNumber()), 
+                cleanString(addressDto.getFax()),
+                cleanString(addressDto.getNotes()) };
         return record;
+    }
+    
+    private String cleanString(String stringValue) {
+        return StringUtils.isBlank(stringValue) ? StringUtils.EMPTY : stringValue;
     }
 
     public void setJaggaerUploadCreationDriectory(String jaggaerUploadCreationDriectory) {
