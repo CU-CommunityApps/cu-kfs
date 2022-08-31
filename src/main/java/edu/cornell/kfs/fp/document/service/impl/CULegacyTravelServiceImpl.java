@@ -20,15 +20,6 @@ import java.net.URL;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.cxf.binding.soap.SoapFault;
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
-import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
-import org.kuali.kfs.core.api.util.ClassLoaderUtils;
-import org.kuali.kfs.core.api.util.ContextClassLoaderBinder;
-import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 
@@ -56,101 +47,7 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
     private String travelUrl;
     private String updateTripWsdl;
     private String updateTripEndpoint;
-   
-    
-	
-	
-	/**
-	 * @param docID the KFS e-doc id that will be used to try and find an associated trip in the DFA Travel application
-	 * @return If a corresponding trip can be found in the DFA travel application, the Trip ID will be returned, if no corresponding trip can be found, an empty string is returned.
-	 * 
-	 * NOTE : If the call fails to successfully retrieve a value or a blank string from the DFA Travel application, a null value is returned to indicate the call failed.
-	 */
-    //@Cached
-	public String getLegacyTripID(String docID) {
-        Client client = null;
-        // Need to grab copy of current class loader because call to web services wrecks class loader, so we want to restore it following call.
-        ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
-        try {
-			URL wsdlUrl = new URL(updateTripWsdl);
-			
-			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-			client = dcf.createClient(wsdlUrl);
-			//client = dcf.createClient(wsdlUrl);
-			
-			configureWebServiceClient(client);
-			  
-			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.GET_TRIP_ID, docID);
-			String tripID = (String)results1[0];
-			return tripID;
-        } catch (SoapFault sf) {
-        	LOG.error(sf.getMessage());
-        	sf.printStackTrace();
-        	return null; // Returning null is used as an indicator that the call might have failed
-        } catch (Exception ex) {
-        	LOG.error("Exception occurred while trying to retrieve Trip ID.", ex);
-      	  	ex.printStackTrace();
-      	  	return null; // Returning null is used as an indicator that the call might have failed
-        } finally {
-        	if(client != null) {
-        		client.destroy();
-        	}
-        	// Restore class loader that was grabbed before call to web service
-        	ContextClassLoaderBinder.bind(classLoader);
-        }
-	}
-	
-    /**
-	 * @param dvID
-	 * @return
-     */
-	public boolean reopenLegacyTrip(String docID) {
-		return reopenLegacyTrip(docID, "");
-	}
-	
-	/**
-	 * 
-	 * @param dvID
-	 * @param disapproveReason
-	 * @return
-	 */
-	public boolean reopenLegacyTrip(String docID, String disapproveReason) {
-        Client client = null;
-        // Need to grab copy of current class loader because call to web services wrecks class loader, so we want to restore it following call.
-        ClassLoader classLoader = ClassLoaderUtils.getDefaultClassLoader();
-        try {
-			URL wsdlUrl = new URL(updateTripWsdl);
-	     
-			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-			
-		
-			client = dcf.createClient(wsdlUrl);
-			
-			  
-			configureWebServiceClient(client);
-			  
-			// Method signature on Travel side:  updateTrip(String status, String updaterNetID, String dvID, String voidReason) 
-			Object[] results1 = client.invoke(DFA_TRAVEL_WS_METHODS.UPDATE_TRIP, KFS_DOC_VOIDED, GlobalVariables.getUserSession().getPrincipalName(), docID, disapproveReason);
-			Boolean tripReopened = (Boolean)results1[0];
-			return tripReopened;
-        } catch (SoapFault sf) {
-        	LOG.error(sf.getMessage());
-        	sf.printStackTrace();
-        	return false;
-        } catch (Exception ex) {
-        	LOG.info("Exception occurred while trying to cancel a trip.");
-      	  	ex.printStackTrace();
-      	  	return false;
-        } finally {
-        	if(client != null) {
-        		client.destroy();
-        	}
-        	// Restore class loader that was grabbed before call to web service
-        	ContextClassLoaderBinder.bind(classLoader);
-        }
-	}
-	
-	
+
 	
     /**
 	 * @return the updateTripWsdl
@@ -193,41 +90,13 @@ public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.se
 	public void setTravelUrl(String travelUrl) {
 		this.travelUrl = travelUrl;
 	}
-
-	
-	/**
-	 * @param client
-	 */
-	private void configureWebServiceClient(Client client) {
-		Endpoint endpoint = client.getConduitSelector().getEndpoint();
-	    endpoint.getEndpointInfo().setAddress(updateTripEndpoint);
-	    client.getConduitSelector().setEndpoint(endpoint);
-
-	    HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
-	    HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
-	    httpClientPolicy.setConnectionTimeout(36000);
-	    httpClientPolicy.setAllowChunking(false);
-	    httpConduit.setClient(httpClientPolicy);	
-	}
 	
 	/**
      * Determines if the passed in CULegacyTravelIntegrationInterface (Disbursement Voucher Document, or Distribution of Incum Document
      * is associated with a trip.  Either way, this function sets internval of document for the trip association status code and the trip ID.
      */
     public boolean isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(CULegacyTravelIntegrationInterface cuLegacyTravelIntegrationInterace) {
-        if (StringUtils.isBlank(cuLegacyTravelIntegrationInterace.getTripAssociationStatusCode())) {
-            String tripId = getLegacyTripID(cuLegacyTravelIntegrationInterace.getDocumentNumber());
-            if (StringUtils.isBlank(tripId)) {
-                cuLegacyTravelIntegrationInterace.setTripAssociationStatusCode(TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
-                cuLegacyTravelIntegrationInterace.setTripId(StringUtils.EMPTY);
-            } else {
-                cuLegacyTravelIntegrationInterace.setTripAssociationStatusCode(TRIP_ASSOCIATIONS.IS_TRIP_DOC);
-                cuLegacyTravelIntegrationInterace.setTripId(tripId);
-            }
-        }
-        boolean retVal = StringUtils.equals(TRIP_ASSOCIATIONS.IS_TRIP_DOC, 
-                cuLegacyTravelIntegrationInterace.getTripAssociationStatusCode());
-        return retVal;
+        return false;
     }
     
     /**

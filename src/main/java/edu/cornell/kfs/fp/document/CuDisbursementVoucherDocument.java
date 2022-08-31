@@ -105,36 +105,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         tripAssociationStatusCode = CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC;
     }
 
-    /**
-     * Overridden to interact with the Legacy Travel service
-     * @see <a href="https://jira.cornell.edu/browse/KFSPTS-2715">https://jira.cornell.edu/browse/KFSPTS-2715</a>
-     */
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
-      // If the DV is Canceled or Disapproved, we need to reopen the trip in the Legacy Travel service.
-      if (getDocumentHeader().getWorkflowDocument().isCanceled() ||
-          getDocumentHeader().getWorkflowDocument().isDisapproved()) {        
-        boolean tripReOpened = false;
-        boolean isTravelDoc = false;
-        List<ActionTaken> actionsTaken = this.getDocumentHeader().getWorkflowDocument().getActionsTaken();
-        String disapprovalReason = findDissapprovalReason(actionsTaken);
-
-        try {
-          CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-          isTravelDoc = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(this);
-          if(isTravelDoc) {
-            // This means the DV is a Travel DV
-            tripReOpened = cuLegacyTravelService.reopenLegacyTrip(this.getDocumentNumber(), disapprovalReason);
-            LOG.info("Trip successfully reopened : "+ tripReOpened);
-          } else {
-            LOG.info("DV is not a travel DV");
-          }
-        } catch (Exception ex) {
-          LOG.error("Exception occurred while trying to cancel a trip.", ex);
-        }
-        
-      }
-
       super.doRouteStatusChange(statusChangeEvent);
     }
 

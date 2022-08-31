@@ -35,44 +35,9 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
         tripAssociationStatusCode = CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC;
     }
 
-    /**
-     * Overridden to interact with the Legacy Travel service
-     * @see https://jira.cornell.edu/browse/KFSPTS-2715
-     */
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
-      // If the DI is Cancelled or Disapproved, we need to reopen the trip in the Legacy Travel service.
-      if (getDocumentHeader().getWorkflowDocument().isCanceled() ||
-          getDocumentHeader().getWorkflowDocument().isDisapproved()) {        
-        boolean tripReOpened = false;
-        boolean isTravelDoc = false;
-        List<ActionTaken> actionsTaken = this.getDocumentHeader().getWorkflowDocument().getActionsTaken();
-        String disapprovalReason = "";
-
-        if(actionsTaken.size() > 0) {
-          String annotation = actionsTaken.get(actionsTaken.size() - 1).getAnnotation();
-          if(StringUtils.isNotEmpty(annotation)) {
-            disapprovalReason = annotation.substring("Disapproval reason - ".length());
-          }
-        }
-
-        try {
-          CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-          isTravelDoc = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(this);
-          if(isTravelDoc) {
-            // This means the DI is a Travel DI
-            tripReOpened = cuLegacyTravelService.reopenLegacyTrip(this.getDocumentNumber(), disapprovalReason);
-            LOG.info("Trip successfully reopened : " + tripReOpened);
-          } else {
-            LOG.info("DI is not a travel DI");
-          }
-        } catch (Exception ex) {
-          LOG.error("Exception occurred while trying to cancel a trip.", ex);
-        }
-        
-      }
-
-      super.doRouteStatusChange(statusChangeEvent);
+        super.doRouteStatusChange(statusChangeEvent);
     }
 
     @Override

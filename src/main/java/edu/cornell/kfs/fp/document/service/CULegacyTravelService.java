@@ -25,16 +25,8 @@ import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface
  */
 public interface CULegacyTravelService {
 
-	public String getLegacyTripID(String docID);
-	
 	public String getTravelUrl();
-	
-	public boolean reopenLegacyTrip(String docID);
 
-	public boolean reopenLegacyTrip(String docID, String disapproveReason);
-	
 	public boolean isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(CULegacyTravelIntegrationInterface cuLegacyTravelIntegrationInterace);
-	
-	public String getLegacyTripIDFromCULegacyTravelIntegrationInterface(CULegacyTravelIntegrationInterface cuLegacyTravelIntegrationInterace);
-	
+
 }
