@@ -26,35 +26,59 @@ import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUp
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractUploadBaseDto;
 
 public class JaggaerGenerateContractPartyCsvServiceImplTest {
-    
     private JaggaerGenerateContractPartyCsvServiceImpl jaggaerGenerateContractPartyCsvServiceImpl;
     
+    private static final String COUNTRY_US = "US";
+    private static final String STATE_NY = "NY";
     private static final String PROCESS_DATE = "2022-08-16";
     
     private static final String VENDOR1_VENDOR_NUMBER = "12345-0";
     private static final String VENDOR1_VENDOR_NAME = "Acme Testing Company";
-    private static final String VENDOR1_VENDOR_COUNTRY = "US";
+    private static final String VENDOR1_VENDOR_COUNTRY = COUNTRY_US;
     private static final String VENDOR1_VENDOR_URL = "http://www.google.com";
     
     private static final String VENDOR1_ADDRESS1_ID = "12342";
     private static final String VENDOR1_ADDRESS1_LN1 = "123 Main Street";
     private static final String VENDOR1_ADDRESS1_LN2 = "Apartment 666";
     private static final String VENDOR1_ADDRESS1_CITY = "Freeville";
-    private static final String VENDOR1_ADDRESS1_STATE = "NY";
+    private static final String VENDOR1_ADDRESS1_STATE = STATE_NY;
     private static final String VENDOR1_ADDRESS1_ZIP = "13068";
     
     private static final String VENDOR1_ADDRESS2_ID = "98765";
     private static final String VENDOR1_ADDRESS2_LN1 = "45 Palm Street";
     private static final String VENDOR1_ADDRESS2_LN2 = "Apartment 1F";
     private static final String VENDOR1_ADDRESS2_CITY = "Ithaca";
-    private static final String VENDOR1_ADDRESS2_STATE = "NY";
+    private static final String VENDOR1_ADDRESS2_STATE = STATE_NY;
     private static final String VENDOR1_ADDRESS2_ZIP = "14850";
     
     private static final String VENDOR2_VENDOR_NUMBER = "98765-0";
     private static final String VENDOR2_VENDOR_NAME = "Jane Doe Paint Services";
-    private static final String VENDOR2_VENDOR_COUNTRY = "US";
+    private static final String VENDOR2_VENDOR_COUNTRY = COUNTRY_US;
     private static final String VENDOR2_VENDOR_URL = "http://www.yahoo.com";
     private static final String VENDOR2_TAX_ID  = "65479";
+    
+    private static final String VENDOR3_ADDRESS1_FAX = "fax";
+    private static final String VENDOR3_ADDRESS1_TOLL_FREE_NUMBER = "18002809900";
+    private static final String VENDOR3_ADDRESS1_PHONE = "6072559900";
+    private static final String VENDOR3_ADDRESS1_ZIP = "14850";
+    private static final String VENDOR3_ADDRESS1_CITY = "city";
+    private static final String VENDOR3_ADDRESS1_STREET_LINE_3 = "street line 3";
+    private static final String VENDOR3_ADDRESS1_STREET_LINE_2 = "street line 2";
+    private static final String VENDOR3_ADDRESS1_STREET_LINE_1 = "street line 1";
+    private static final String VENDOR3_ADDRESS1_PRIMARY_TYPE = "primary type";
+    private static final String VENDOR3_ADDRESS1_NAME = "name";
+    private static final String VENDOR3_ADDRESS1_SCIQUEST_ID = "ABCD";
+    private static final String VENDOR3_ADDRESS1_ADDRESS_ID = "addressId";
+    private static final String VENDOR3_URL = "www.google.com";
+    private static final String VENDOR3_VAT = "vat number";
+    private static final String VENDOR3_TAX_ID = "369852";
+    private static final String VENDOR3_TAX_TYPE = "foo type";
+    private static final String VENDOR3_PRIMARY = "primary";
+    private static final String VENDOR3_ACTIVE = "active";
+    private static final String VENDOR3_OTHER_NAME = "other name";
+    private static final String VENDOR3_DBA = "Acme";
+    private static final String VENDOR3_CONTRACT_PARTY_NAME = "Acme Inc";
+    private static final String VENDOR3_ERP_NUMBER = "123456-0";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -195,117 +219,110 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.builderVendorCSVRowArray(vendorDto);
         assertEquals(16, expectedCsvData.length);
         assertEquals(16, actualCsvData.length);
-        for (int i=0; i<expectedCsvData.length; i++) {
+        validateCsvRowArray(expectedCsvData, actualCsvData);
+    }
+
+    public void validateCsvRowArray(String[] expectedCsvData, String[] actualCsvData) {
+        for (int i = 0; i < expectedCsvData.length; i++) {
             String actualDatum = actualCsvData[i];
             String expectedDataum = expectedCsvData[i];
             assertEquals(expectedDataum, actualDatum);
         }
-        
     }
-    
+
     static Stream<Arguments> builderVendorCSVRowArrayParameters() {
         return Stream.of(
-                Arguments.of(buildJaggaerContractPartyUploadDto("ABCD"), buildJaggaerContractPartyUploadDtoCsvData("ABCD")),
-                Arguments.of(buildJaggaerContractPartyUploadDto(StringUtils.EMPTY), buildJaggaerContractPartyUploadDtoCsvData(StringUtils.EMPTY)),
-                Arguments.of(buildJaggaerContractPartyUploadDto(null), buildJaggaerContractPartyUploadDtoCsvData(StringUtils.EMPTY)),
-                Arguments.of(buildJaggaerContractPartyUploadDto(StringUtils.SPACE), buildJaggaerContractPartyUploadDtoCsvData(StringUtils.EMPTY))
-                );
+                Arguments.of(buildJaggaerContractPartyUploadDto(VENDOR3_ADDRESS1_SCIQUEST_ID),
+                        buildJaggaerContractPartyUploadDtoCsvData(VENDOR3_ADDRESS1_SCIQUEST_ID)),
+                Arguments.of(buildJaggaerContractPartyUploadDto(StringUtils.EMPTY),
+                        buildJaggaerContractPartyUploadDtoCsvData(StringUtils.EMPTY)),
+                Arguments.of(buildJaggaerContractPartyUploadDto(null),
+                        buildJaggaerContractPartyUploadDtoCsvData(StringUtils.EMPTY)),
+                Arguments.of(buildJaggaerContractPartyUploadDto(StringUtils.SPACE),
+                        buildJaggaerContractPartyUploadDtoCsvData(StringUtils.EMPTY)));
     }
-    
+
     private static JaggaerContractPartyUploadDto buildJaggaerContractPartyUploadDto(String sciQuestId) {
         JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
         dto.setRowType(JaggaerContractPartyUploadRowType.PARTY);
         dto.setOverrideDupError(false);
-        dto.setERPNumber("123456-0");
+        dto.setERPNumber(VENDOR3_ERP_NUMBER);
         dto.setSciQuestID(sciQuestId);
-        dto.setContractPartyName("Acme Inc");
-        dto.setDoingBusinessAs("Acme");
-        dto.setOtherNames("other name");
-        dto.setCountryOfOrigin("US");
-        dto.setActive("active");
+        dto.setContractPartyName(VENDOR3_CONTRACT_PARTY_NAME);
+        dto.setDoingBusinessAs(VENDOR3_DBA);
+        dto.setOtherNames(VENDOR3_OTHER_NAME);
+        dto.setCountryOfOrigin(COUNTRY_US);
+        dto.setActive(VENDOR3_ACTIVE);
         dto.setContractPartyType(JaggaerContractPartyType.SUPPLIER);
-        dto.setPrimary("primary");
+        dto.setPrimary(VENDOR3_PRIMARY);
         dto.setLegalStructure(JaggaerLegalStructure.C_CORPORATION);
-        dto.setTaxIDType("foo type");
-        dto.setTaxIdentificationNumber("369852");
-        dto.setVATRegistrationNumber("vat number");
-        dto.setWebsiteURL("www.google.com");
+        dto.setTaxIDType(VENDOR3_TAX_TYPE);
+        dto.setTaxIdentificationNumber(VENDOR3_TAX_ID);
+        dto.setVATRegistrationNumber(VENDOR3_VAT);
+        dto.setWebsiteURL(VENDOR3_URL);
         return dto;
     }
-    
+
     private static String[] buildJaggaerContractPartyUploadDtoCsvData(String sciQuestId) {
-        String[] record = { JaggaerContractPartyUploadRowType.PARTY.rowType, "false", "123456-0", sciQuestId,  "Acme Inc",
-                "Acme", "other name", "US", "active", JaggaerContractPartyType.SUPPLIER.partyTypeName, "primary",
-                JaggaerLegalStructure.C_CORPORATION.jaggaerLegalStructureName, "foo type", "369852", "vat number",
-                "www.google.com" };
+        String[] record = { JaggaerContractPartyUploadRowType.PARTY.rowType, "false", VENDOR3_ERP_NUMBER, sciQuestId,
+                VENDOR3_CONTRACT_PARTY_NAME, VENDOR3_DBA, VENDOR3_OTHER_NAME, COUNTRY_US, VENDOR3_ACTIVE,
+                JaggaerContractPartyType.SUPPLIER.partyTypeName, VENDOR3_PRIMARY,
+                JaggaerLegalStructure.C_CORPORATION.jaggaerLegalStructureName, VENDOR3_TAX_TYPE, VENDOR3_TAX_ID,
+                VENDOR3_VAT, VENDOR3_URL };
         return record;
     }
-    
+
     @ParameterizedTest
     @MethodSource("builderAddressCSVRowArrayParameters")
     void testBuilderAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto, String[] expectedCsvData) {
         String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.builderAddressCSVRowArray(addressDto);
         assertEquals(18, actualCsvData.length);
         assertEquals(18, expectedCsvData.length);
-        for (int i=0; i<expectedCsvData.length; i++) {
-            String actualDatum = actualCsvData[i];
-            String expectedDataum = expectedCsvData[i];
-            assertEquals(expectedDataum, actualDatum);
-        }
+        validateCsvRowArray(expectedCsvData, actualCsvData);
     }
-    
+
     static Stream<Arguments> builderAddressCSVRowArrayParameters() {
         return Stream.of(
-                Arguments.of(buildJaggaerContractAddressUploadDto("cool note"), buildJaggaerContractAddressUploadDtoData("cool note")),
-                Arguments.of(buildJaggaerContractAddressUploadDto(StringUtils.EMPTY), buildJaggaerContractAddressUploadDtoData(StringUtils.EMPTY)),
-                Arguments.of(buildJaggaerContractAddressUploadDto(null), buildJaggaerContractAddressUploadDtoData(StringUtils.EMPTY)),
-                Arguments.of(buildJaggaerContractAddressUploadDto(StringUtils.SPACE), buildJaggaerContractAddressUploadDtoData(StringUtils.EMPTY))
-                );
+                Arguments.of(buildJaggaerContractAddressUploadDto("cool note"),
+                        buildJaggaerContractAddressUploadDtoData("cool note")),
+                Arguments.of(buildJaggaerContractAddressUploadDto(StringUtils.EMPTY),
+                        buildJaggaerContractAddressUploadDtoData(StringUtils.EMPTY)),
+                Arguments.of(buildJaggaerContractAddressUploadDto(null),
+                        buildJaggaerContractAddressUploadDtoData(StringUtils.EMPTY)),
+                Arguments.of(buildJaggaerContractAddressUploadDto(StringUtils.SPACE),
+                        buildJaggaerContractAddressUploadDtoData(StringUtils.EMPTY)));
     }
-    
+
     static JaggaerContractAddressUploadDto buildJaggaerContractAddressUploadDto(String notes) {
         JaggaerContractAddressUploadDto dto = new JaggaerContractAddressUploadDto();
         dto.setRowType(JaggaerContractPartyUploadRowType.ADDRESS);
-        dto.setAddressID("addressId");
-        dto.setSciQuestID("ABCD");
-        dto.setName("name");
+        dto.setAddressID(VENDOR3_ADDRESS1_ADDRESS_ID);
+        dto.setSciQuestID(VENDOR3_ADDRESS1_SCIQUEST_ID);
+        dto.setName(VENDOR3_ADDRESS1_NAME);
         dto.setAddressType(JaggaerAddressType.FULFILLMENT);
-        dto.setPrimaryType("primary type");
-        dto.setActive("active");
-        dto.setCountry("US");
-        dto.setStreetLine1("street line 1");
-        dto.setStreetLine2("street line 2");
-        dto.setStreetLine3("street line 3");
-        dto.setCity("city");
-        dto.setState("NY");
-        dto.setPostalCode("14850");
-        dto.setPhone("6072559900");
-        dto.setTollFreeNumber("18002809900");
-        dto.setFax("fax");
+        dto.setPrimaryType(VENDOR3_ADDRESS1_PRIMARY_TYPE);
+        dto.setActive(VENDOR3_ACTIVE);
+        dto.setCountry(COUNTRY_US);
+        dto.setStreetLine1(VENDOR3_ADDRESS1_STREET_LINE_1);
+        dto.setStreetLine2(VENDOR3_ADDRESS1_STREET_LINE_2);
+        dto.setStreetLine3(VENDOR3_ADDRESS1_STREET_LINE_3);
+        dto.setCity(VENDOR3_ADDRESS1_CITY);
+        dto.setState(STATE_NY);
+        dto.setPostalCode(VENDOR3_ADDRESS1_ZIP);
+        dto.setPhone(VENDOR3_ADDRESS1_PHONE);
+        dto.setTollFreeNumber(VENDOR3_ADDRESS1_TOLL_FREE_NUMBER);
+        dto.setFax(VENDOR3_ADDRESS1_FAX);
         dto.setNotes(notes);
         return dto;
     }
-    
+
     static String[] buildJaggaerContractAddressUploadDtoData(String notes) {
-        String[] record = { JaggaerContractPartyUploadRowType.ADDRESS.rowType,
-                "addressId",
-                "ABCD",
-                "name",
-                JaggaerAddressType.FULFILLMENT.jaggaerAddressType,
-                "primary type",
-                "active",
-                "US",
-                "street line 1",
-                "street line 2",
-                "street line 3",
-                "city",
-                "NY",
-                "14850",
-                "6072559900",
-                "18002809900",
-                "fax",
-                notes
-                };
+        String[] record = { JaggaerContractPartyUploadRowType.ADDRESS.rowType, VENDOR3_ADDRESS1_ADDRESS_ID,
+                VENDOR3_ADDRESS1_SCIQUEST_ID, VENDOR3_ADDRESS1_NAME, JaggaerAddressType.FULFILLMENT.jaggaerAddressType,
+                VENDOR3_ADDRESS1_PRIMARY_TYPE, VENDOR3_ACTIVE, COUNTRY_US, VENDOR3_ADDRESS1_STREET_LINE_1,
+                VENDOR3_ADDRESS1_STREET_LINE_2, VENDOR3_ADDRESS1_STREET_LINE_3, VENDOR3_ADDRESS1_CITY, STATE_NY,
+                VENDOR3_ADDRESS1_ZIP, VENDOR3_ADDRESS1_PHONE, VENDOR3_ADDRESS1_TOLL_FREE_NUMBER, VENDOR3_ADDRESS1_FAX,
+                notes };
         return record;
     }
 
