@@ -15,10 +15,6 @@ public abstract class JaggaerContractUploadBaseDto {
     public void setERPNumber(String eRPNumber) {
         ERPNumber = eRPNumber;
     }
-    
-    public String getRowTypeDescription() {
-        return rowType.rowType;
-    }
 
     public JaggaerContractPartyUploadRowType getRowType() {
         return rowType;

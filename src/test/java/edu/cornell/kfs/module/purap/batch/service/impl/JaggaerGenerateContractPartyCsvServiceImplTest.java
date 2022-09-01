@@ -3,7 +3,6 @@ package edu.cornell.kfs.module.purap.batch.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -334,25 +333,25 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         String actualPartyHeader = printArrayCommaDelim(jaggaerGenerateContractPartyCsvServiceImpl.buildPartyHeader());
         assertEquals(expectedPartyHeader, actualPartyHeader);
     }
-    
+
     @Test
     void testBuildAddressHeader() {
         String expectedAddressHeader = "ADDRESS,AddressID,SciQuestID,Name,AddressType,PrimaryType,Active,Country,StreetLine1,StreetLine2,StreetLine3,City/Town,State/Province,PostalCode,Phone,TollFreeNumber,Fax,Notes";
         String actualAddressHeader = printArrayCommaDelim(jaggaerGenerateContractPartyCsvServiceImpl.buildAddressHeader());
         assertEquals(expectedAddressHeader, actualAddressHeader);
     }
-    
+
     @Test
     void testBuildContactHeader() {
         String expectedContactHeader = "CONTACT,ContactID,SciQuestID,Name,FirstName,LastName,ContactType,PrimaryType,Active,Title,Email,Phone,MobilePhone,TollFreeNumber,Fax,Notes";
         String actualContactHeader = printArrayCommaDelim(jaggaerGenerateContractPartyCsvServiceImpl.buildContactHeader());
         assertEquals(expectedContactHeader, actualContactHeader);
     }
-    
+
     private String printArrayCommaDelim(String[] data) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<data.length; i++) {
-            if (i > 0 ) {
+        for (int i = 0; i < data.length; i++) {
+            if (i > 0) {
                 sb.append(KFSConstants.COMMA);
             }
             sb.append(data[i]);

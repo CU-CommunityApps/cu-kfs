@@ -16,10 +16,7 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import com.opencsv.CSVWriter;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyType;
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateContractPartyCsvService;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
@@ -146,7 +143,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     }
 
     protected String[] builderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {
-        String[] record = { cleanString(vendorDto.getRowTypeDescription()), 
+        String[] record = { vendorDto.getRowType().rowType, 
                 cleanString(String.valueOf(vendorDto.isOverrideDupError())),
                 cleanString(vendorDto.getERPNumber()),
                 cleanString(vendorDto.getSciQuestID()), 
@@ -155,9 +152,9 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
                 cleanString(vendorDto.getOtherNames()),
                 cleanString(vendorDto.getCountryOfOrigin()), 
                 cleanString(vendorDto.getActive()),
-                cleanString(vendorDto.getContractPartyTypeName()), 
+                vendorDto.getContractPartyType().partyTypeName, 
                 cleanString(vendorDto.getPrimary()),
-                cleanString(vendorDto.getLegalStructureName()),
+                vendorDto.getLegalStructure().jaggaerLegalStructureName,
                 cleanString(vendorDto.getTaxIDType()),
                 cleanString(vendorDto.getTaxIdentificationNumber()),
                 cleanString(vendorDto.getVATRegistrationNumber()),
@@ -166,11 +163,11 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     }
     
     protected String[] builderAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto) {
-        String[] record = { cleanString(addressDto.getRowTypeDescription()), 
+        String[] record = { addressDto.getRowType().rowType, 
                 cleanString(addressDto.getAddressID()),
                 cleanString(addressDto.getSciQuestID()),
                 cleanString(addressDto.getName()),
-                cleanString(addressDto.getAddressTypeName()), 
+                addressDto.getAddressType().jaggaerAddressType, 
                 cleanString(addressDto.getPrimaryType()),
                 cleanString(addressDto.getActive()),
                 cleanString(addressDto.getCountry()), 

@@ -63,7 +63,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 dto.setSciQuestID(StringUtils.EMPTY);
                 dto.setAddressType(JaggaerAddressType.findJaggaerAddressTypeFromKfsAddressTypeCode(resultSet.getString(FIELD_NAMES.VNDR_ADDR_TYP_CD)));
                 if (StringUtils.equals(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND), "Y")) {
-                    dto.setPrimaryType(dto.getAddressTypeName());
+                    dto.setPrimaryType(dto.getAddressType().jaggaerAddressType);
                 } else {
                     dto.setPrimaryType(StringUtils.EMPTY);
                 }
