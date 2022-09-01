@@ -511,7 +511,7 @@ public class AssetGlobalServiceImpl implements AssetGlobalService {
 
     @Override
     public String getFiscalYearEndDayAndMonth() {
-        String yearEndDateAndMonth = parameterService.getParameterValueAsString(KfsParameterConstants.CAPITAL_ASSETS_ALL.class, CamsParameterConstants.FISCAL_YEAR_END_MONTH_AND_DAY);
+        String yearEndDateAndMonth = parameterService.getParameterValueAsString(KfsParameterConstants.CAPITAL_ASSETS_ALL.class, CamsParameterConstants.FISCAL_YEAR_END);
         return yearEndDateAndMonth.substring(0, 2).concat("/").concat(yearEndDateAndMonth.substring(2, 4));
     }
 

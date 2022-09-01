@@ -283,7 +283,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         sb.append(sortGroupId);
 
         CustomerProfile cp = this.getBatch().getCustomerProfile();
-        sb.append(cp.getChartCode());
+        sb.append(cp.getCampusCode());
         sb.append(getWidthString(4, cp.getUnitCode()));
         sb.append(getWidthString(4, cp.getSubUnitCode()));
 
@@ -632,9 +632,9 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         StringBuffer buffer = new StringBuffer();
         CustomerProfile customerProfile = batch.getCustomerProfile();
 
-        buffer.append(PdpPropertyConstants.CustomerProfile.CUSTOMER_PROFILE_CHART_CODE);
+        buffer.append(PdpPropertyConstants.CustomerProfile.CUSTOMER_PROFILE_CAMPUS_CODE);
         buffer.append("=");
-        buffer.append(customerProfile.getChartCode());
+        buffer.append(customerProfile.getCampusCode());
         buffer.append(PdpPropertyConstants.CustomerProfile.CUSTOMER_PROFILE_UNIT_CODE);
         buffer.append("=");
         buffer.append(customerProfile.getUnitCode());

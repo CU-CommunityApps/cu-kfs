@@ -11,7 +11,7 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -60,7 +60,7 @@ public final class MockDocumentUtils {
     }
 
     private static void performInitializationFromSkippedConstructor(Document document) {
-        document.setDocumentHeader(new FinancialSystemDocumentHeader());
+        document.setDocumentHeader(new DocumentHeader());
         document.setAdHocRoutePersons(new ArrayList<>());
         document.setAdHocRouteWorkgroups(new ArrayList<>());
         document.setNotes(new ArrayList<>());

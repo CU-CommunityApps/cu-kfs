@@ -83,7 +83,7 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
         assertNull(cuDisbursementVoucherDocument.getExtractDate());
         assertNull(cuDisbursementVoucherDocument.getPaidDate());
         assertNull(cuDisbursementVoucherDocument.getCancelDate());
-        assertEquals(KFSConstants.DocumentStatusCodes.INITIATED, cuDisbursementVoucherDocument.getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode());
+        assertEquals(KFSConstants.DocumentStatusCodes.INITIATED, cuDisbursementVoucherDocument.getDocumentHeader().getFinancialDocumentStatusCode());
 
         assertEquals(0, KNSGlobalVariables.getMessageList().size());
         assertEquals(payeeidNumber, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());

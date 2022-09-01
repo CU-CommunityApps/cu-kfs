@@ -36,7 +36,7 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
 import org.kuali.kfs.fp.document.dataaccess.CapitalAssetInformationDao;
 import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentHeaderService;
@@ -60,7 +60,7 @@ import org.kuali.kfs.module.cam.document.service.GlLineService;
 import org.kuali.kfs.module.cam.util.ObjectValueUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.springframework.transaction.annotation.Transactional;
@@ -708,7 +708,7 @@ public class GlLineServiceImpl implements GlLineService {
      */
     protected boolean isDocumentAnErrorCorrection(GeneralLedgerEntry entry) {
         DocumentHeader docHeader = documentHeaderService.getDocumentHeaderById(entry.getDocumentNumber());
-        FinancialSystemDocumentHeader fsDocumentHeader = (FinancialSystemDocumentHeader) docHeader;
+        DocumentHeader fsDocumentHeader = (DocumentHeader) docHeader;
 
         return fsDocumentHeader != null && StringUtils.isNotBlank(fsDocumentHeader.getFinancialDocumentInErrorNumber());
     }

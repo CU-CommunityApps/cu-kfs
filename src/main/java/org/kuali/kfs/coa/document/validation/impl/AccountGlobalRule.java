@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.COAConstants;
 import org.kuali.kfs.coa.COAKeyConstants;
 import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -547,7 +548,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
             if (ObjectUtils.isNull(oldExpDate) || !oldExpDate.equals(newExpDate)) {
             	// KFSUPGRADE-925 check parameter to see if back date is allowed
-            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, COAParameterConstants.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
+            	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(COAConstants.COA_NAMESPACE_CODE, COAParameterConstants.Components.ACCOUNT_CMPNT, COAParameterConstants.EXPIRATION_BACKDATING_FUNDS);
                 if (fundGroups == null || (ObjectUtils.isNotNull(newAccountGlobal.getSubFundGroup()) && !fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode()))) {
                 	if (!newExpDate.after(today) && !newExpDate.equals(today)) {
                 		putFieldError("accountExpirationDate", COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
@@ -678,7 +679,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 
         // KFSUPGRADE-925
-        Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(Account.class, COAParameterConstants.EXPIRATION_DATE_BACKDATING_FUND_GROUPS);
+        Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(COAConstants.COA_NAMESPACE_CODE, COAParameterConstants.Components.ACCOUNT_CMPNT,COAParameterConstants.EXPIRATION_BACKDATING_FUNDS);
         if (fundGroups != null && !ObjectUtils.isNull(newAccountGlobal.getSubFundGroup()) && fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode())) {
         		return false;
         }
@@ -924,8 +925,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		boolean required = false;
 
 		if (StringUtils.isNotBlank(fundGroupCode) && StringUtils.isNotBlank(subFundGroupCode)) {
-			if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_ACCOUNT_REQUIRING_FUND_GROUPS, fundGroupCode).evaluationSucceeds()) {
-				if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_ACCOUNT_REQUIRING_SUB_FUND_GROUPS, subFundGroupCode).evaluationSucceeds()) {
+			if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_FUNDS, fundGroupCode).evaluationSucceeds()) {
+				if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_FUNDS, subFundGroupCode).evaluationSucceeds()) {
 					required = true;
 				}
 			}

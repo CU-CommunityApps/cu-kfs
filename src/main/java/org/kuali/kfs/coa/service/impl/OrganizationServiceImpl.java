@@ -258,7 +258,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     public String[] getRootOrganizationCode() {
         String rootChart = chartService.getUniversityChart().getChartOfAccountsCode();
         String selfReportsOrgType = parameterService.getParameterValueAsString(Organization.class,
-                COAParameterConstants.ORG_MUST_REPORT_TO_SELF_ORG_TYPES);
+                COAParameterConstants.REPORT_TO_SELF);
         String[] returnValues = {null, null};
 
         Map<String, Object> criteria = new HashMap<>();

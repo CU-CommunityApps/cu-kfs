@@ -32,7 +32,7 @@ import org.kuali.kfs.kim.service.UiDocumentService;
 import org.kuali.kfs.kns.inquiry.InquiryRestrictions;
 import org.kuali.kfs.kns.service.impl.BusinessObjectAuthorizationServiceImpl;
 import org.kuali.kfs.krad.bo.BusinessObject;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.document.DocumentAuthorizer;

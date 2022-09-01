@@ -54,7 +54,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     
     @Override
     public void loadPayments(PaymentFileLoad paymentFile, LoadPaymentStatus status, String incomingFileName) {
-        status.setChart(paymentFile.getChart());
+        status.setChart(paymentFile.getCampus());
         status.setUnit(paymentFile.getUnit());
         status.setSubUnit(paymentFile.getSubUnit());
         status.setCreationDate(paymentFile.getCreationDate());
@@ -228,7 +228,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                     if(ObjectUtils.isNull(paymentFile)) {
                         paymentFile = new PaymentFileLoad();
                     }
-                    paymentFile.setChart(chartVal);
+                    paymentFile.setCampus(chartVal);
                     paymentFile.setUnit(unitVal);
                     paymentFile.setSubUnit(subUnitVal);
                     paymentFile.setCustomer(customer);

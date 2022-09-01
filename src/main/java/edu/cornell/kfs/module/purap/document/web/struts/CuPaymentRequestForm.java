@@ -44,8 +44,8 @@ public class CuPaymentRequestForm extends PaymentRequestForm {
     public List<ExtraButton> getExtraButtons() {
         super.getExtraButtons();
         PaymentRequestDocument paymentRequestDocument = this.getPaymentRequestDocument();
-        if (StringUtils.equalsIgnoreCase(paymentRequestDocument.getFinancialSystemDocumentHeader().getApplicationDocumentStatus(),
-                PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED) && paymentRequestDocument.getFinancialSystemDocumentHeader().getWorkflowDocument().isFinal()
+        if (StringUtils.equalsIgnoreCase(paymentRequestDocument.getDocumentHeader().getApplicationDocumentStatus(),
+                PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED) && paymentRequestDocument.getDocumentHeader().getWorkflowDocument().isFinal()
                         && !SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class).isPaymentMethodProcessedUsingPdp(
                                 ((CuPaymentRequestDocument) paymentRequestDocument).getPaymentMethodCode())) {
             ExtraButton cancelButton = null;

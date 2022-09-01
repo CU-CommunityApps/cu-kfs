@@ -441,7 +441,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         String amountParameterValue = parameterService.getParameterValueAsString(
                 PaymentRequestDocument.class, CUPurapParameterConstants.DEFAULT_PURCHASE_ORDER_POS_APRVL_LMT_FOR_PREQ);
         KualiDecimal amountLimit = new KualiDecimal(amountParameterValue);
-        boolean withinLimit = po.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(amountLimit);
+        boolean withinLimit = po.getDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(amountLimit);
         String messagePattern = createLogMessagePatternForPOAmountLimitResult(withinLimit);
         LOG.info(MessageFormat.format(messagePattern, document.getDocumentNumber(), amountLimit.toString()));
         return withinLimit;

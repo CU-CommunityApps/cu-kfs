@@ -32,7 +32,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Primaryable;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
@@ -522,7 +522,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     }
 
     protected int getDocumentDescriptionMaxLength() {
-        return dataDictionaryService.getAttributeMaxLength(FinancialSystemDocumentHeader.class, KFSPropertyConstants.DOCUMENT_DESCRIPTION).intValue();
+        return dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KFSPropertyConstants.DOCUMENT_DESCRIPTION).intValue();
     }
 
     public void setMaintenanceDocumentService(MaintenanceDocumentService maintenanceDocumentService) {

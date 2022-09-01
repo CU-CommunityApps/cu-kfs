@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.krad.document.Document;
@@ -24,7 +23,7 @@ import org.kuali.kfs.module.purap.document.AccountsPayableDocumentBase;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
 import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -221,7 +220,7 @@ public class CuCreditMemoServiceImplTest {
         }
     }
 
-    private class MockFinancialSystemDocumentHeader extends FinancialSystemDocumentHeader {
+    private class MockFinancialSystemDocumentHeader extends DocumentHeader {
         private static final long serialVersionUID = 1L;
 
         @Override
