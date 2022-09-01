@@ -246,7 +246,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     private static JaggaerContractPartyUploadDto buildJaggaerContractPartyUploadDto(String sciQuestId) {
         JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
         dto.setRowType(JaggaerContractPartyUploadRowType.PARTY);
-        dto.setOverrideDupError(false);
+        dto.setOverrideDupError("False");
         dto.setERPNumber(VENDOR3_ERP_NUMBER);
         dto.setSciQuestID(sciQuestId);
         dto.setContractPartyName(VENDOR3_CONTRACT_PARTY_NAME);

@@ -29,7 +29,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
             RowMapper<JaggaerContractPartyUploadDto> rowMapper = (resultSet, rowNumber) -> {
                 JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
                 dto.setRowType(JaggaerContractPartyUploadRowType.PARTY);
-                dto.setOverrideDupError(false);
+                dto.setOverrideDupError("False");
                 dto.setERPNumber(buildVendorNumber(resultSet.getString(FIELD_NAMES.VNDR_HDR_GNRTD_ID), resultSet.getString(FIELD_NAMES.VNDR_DTL_ASND_ID)));
                 dto.setSciQuestID(StringUtils.EMPTY);
                 dto.setContractPartyName(resultSet.getString(FIELD_NAMES.VNDR_NM));
@@ -67,7 +67,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 } else {
                     dto.setPrimaryType(StringUtils.EMPTY);
                 }
-                dto.setActive(StringUtils.EMPTY);
+                dto.setActive("True");
                 dto.setCountry(convertToISOCountry(resultSet.getString(FIELD_NAMES.VNDR_ADDRESS_CNTRY_CD)));
                 dto.setStreetLine1(resultSet.getString(FIELD_NAMES.VNDR_LN1_ADDR));
                 dto.setStreetLine2(resultSet.getString(FIELD_NAMES.VNDR_LN2_ADDR));

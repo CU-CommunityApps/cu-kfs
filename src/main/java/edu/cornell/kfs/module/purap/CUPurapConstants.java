@@ -312,6 +312,8 @@ public class CUPurapConstants {
         PARTNERSHIP("Partnership", "PT"),
         TRUST("Trust/Estate", "ET"),
         OTHER("Other", "OT"),
+        GOVERNMENT(OTHER.jaggaerLegalStructureName, "GT"),
+        NON_PROFIT(OTHER.jaggaerLegalStructureName, "NP"),
         NON_US_COMPANY("Non-US Based Company", "IO");
         
         public final String jaggaerLegalStructureName;

@@ -144,7 +144,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
 
     protected String[] builderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {
         String[] record = { vendorDto.getRowType().rowType, 
-                cleanString(String.valueOf(vendorDto.isOverrideDupError())),
+                cleanString(vendorDto.getOverrideDupError()),
                 cleanString(vendorDto.getERPNumber()),
                 cleanString(vendorDto.getSciQuestID()), 
                 cleanString(vendorDto.getContractPartyName()),
