@@ -13,10 +13,6 @@
             <list merge="true">
                 <value>classpath:edu/cornell/kfs/kim/bo/datadictionary/*.xml</value>
                 <value>classpath:edu/cornell/kfs/kim/impl/identity/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/address/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/email/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/name/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/phone/*.xml</value>
             </list>
         </property>
         <property name="packagePrefixes">
