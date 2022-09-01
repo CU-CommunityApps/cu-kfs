@@ -31,7 +31,7 @@ import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
@@ -158,7 +158,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
 	    String docNum = item.getPurapDocument().getDocumentNumber();
 		PurchasingAccountsPayableDocument purapDoc = item.getPurapDocument();		
         	// Ran into issues with workflow doc not being populated in doc header for some PURAP docs, so needed to add check and retrieval.
-        	FinancialSystemDocumentHeader docHdr = (FinancialSystemDocumentHeader)purapDoc.getDocumentHeader();
+        	DocumentHeader docHdr = (DocumentHeader)purapDoc.getDocumentHeader();
         	WorkflowDocument kwd = null;
  			
 		    kwd = WorkflowDocumentFactory.loadDocument(GlobalVariables.getUserSession().getPrincipalId(), docNum);

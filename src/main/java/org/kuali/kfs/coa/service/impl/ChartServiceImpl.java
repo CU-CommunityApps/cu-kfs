@@ -62,7 +62,7 @@ public class ChartServiceImpl implements ChartService {
     public Chart getUniversityChart() {
         // 1. find the organization with the type which reports to itself
         String organizationReportsToSelfParameterValue = parameterService.getParameterValueAsString(Organization.class,
-                COAParameterConstants.ORG_MUST_REPORT_TO_SELF_ORG_TYPES);
+                COAParameterConstants.REPORT_TO_SELF);
 
         Map<String, String> orgCriteria = new HashMap<>(2);
         orgCriteria.put(KFSPropertyConstants.ORGANIZATION_TYPE_CODE, organizationReportsToSelfParameterValue);

@@ -23,7 +23,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -36,7 +36,6 @@ import org.kuali.kfs.module.cam.document.service.AssetPaymentService;
 import org.kuali.kfs.module.cam.document.service.AssetRetirementService;
 import org.kuali.kfs.module.cam.document.service.PaymentSummaryService;
 import org.kuali.kfs.sys.businessobject.Country;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.PostalCode;
 import org.kuali.kfs.sys.businessobject.State;
@@ -84,7 +83,7 @@ public class AssetRetirementGlobal extends PersistableBusinessObjectBase impleme
     protected Date retirementDate;
     protected Asset mergedTargetCapitalAsset;
     protected AssetRetirementReason retirementReason;
-    protected FinancialSystemDocumentHeader documentHeader;
+    protected DocumentHeader documentHeader;
     protected List<AssetRetirementGlobalDetail> assetRetirementGlobalDetails;
     protected Account retirementAccount;
     protected Chart retirementChartOfAccounts;
@@ -323,11 +322,11 @@ public class AssetRetirementGlobal extends PersistableBusinessObjectBase impleme
         this.retirementReason = retirementReason;
     }
 
-    public FinancialSystemDocumentHeader getDocumentHeader() {
+    public DocumentHeader getDocumentHeader() {
         return documentHeader;
     }
 
-    public void setDocumentHeader(FinancialSystemDocumentHeader documentHeader) {
+    public void setDocumentHeader(DocumentHeader documentHeader) {
         this.documentHeader = documentHeader;
     }
 

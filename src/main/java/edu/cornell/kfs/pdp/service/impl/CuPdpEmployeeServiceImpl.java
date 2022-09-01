@@ -20,7 +20,7 @@ public class CuPdpEmployeeServiceImpl implements CuPdpEmployeeService {
         String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
         return StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
                 StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode);
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getCampusCode(), chartCode);
     }
     
     public String getConcurParameterValue(String parameterName) {

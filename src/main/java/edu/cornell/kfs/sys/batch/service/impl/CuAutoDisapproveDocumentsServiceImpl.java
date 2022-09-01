@@ -20,7 +20,7 @@ import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.krad.UserSessionUtils;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.kuali.kfs.krad.document.Document;
@@ -31,7 +31,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
 import org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
@@ -46,14 +46,14 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
     @Override
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
-        Collection<FinancialSystemDocumentHeader> documentList = getDocumentsToDisapprove();
+        Collection<DocumentHeader> documentList = getDocumentsToDisapprove();
         LOG.info("Total documents to process " + documentList.size());
         String documentHeaderId = null;
 
         // CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
         documentList = getDocumentsWithActualWorkflowStatus(documentList, DocumentStatus.ENROUTE);
 
-        for (FinancialSystemDocumentHeader result : documentList) {
+        for (DocumentHeader result : documentList) {
             documentHeaderId = result.getDocumentNumber();
             Document document = findDocumentForAutoDisapproval(documentHeaderId);
 
@@ -320,7 +320,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
    }
 
     /**
-     * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.kfs.krad.bo.DocumentHeader)
+     * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.kfs.sys.businessobject.DocumentHeader)
      */
     @Override
     protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {
@@ -359,14 +359,14 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
      * @param workflowStatus The workflow status that the documents are expected to have; cannot be null.
      * @return A new collection containing only the KFS doc headers whose matching route headers actually have the given workflow status.
      */
-    protected Collection<FinancialSystemDocumentHeader> getDocumentsWithActualWorkflowStatus(
-            Collection<FinancialSystemDocumentHeader> documentList, DocumentStatus status) {
+    protected Collection<DocumentHeader> getDocumentsWithActualWorkflowStatus(
+            Collection<DocumentHeader> documentList, DocumentStatus status) {
         final int SCALED_SET_SIZE = (int) (documentList.size() * 1.4);
         Set<String> documentIds = new HashSet<String>(SCALED_SET_SIZE);
-        Collection<FinancialSystemDocumentHeader> finalList = new ArrayList<FinancialSystemDocumentHeader>(documentList.size());
+        Collection<DocumentHeader> finalList = new ArrayList<DocumentHeader>(documentList.size());
         
         // Assemble document IDs, then search for workflow headers.
-        for (FinancialSystemDocumentHeader docHeader : documentList) {
+        for (DocumentHeader docHeader : documentList) {
         	DocumentRouteHeaderValue routeHeader = routeHeaderService.getRouteHeader(docHeader.getDocumentNumber());
         	if (status.equals(routeHeader.getStatus())) {
                 documentIds.add(routeHeader.getDocumentId());
@@ -374,7 +374,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         }
         
         // Update final-headers collection with any doc headers that actually have the given workflow status in KEW.
-        for (FinancialSystemDocumentHeader docHeader : documentList) {
+        for (DocumentHeader docHeader : documentList) {
             if (documentIds.contains(docHeader.getDocumentNumber())) {
                 finalList.add(docHeader);
             }

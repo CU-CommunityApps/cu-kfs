@@ -270,10 +270,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String getDefaultLaborBenefitRateCategoryCodeForAccountType(String accountTypeCode) {
         String benefitRateCategory = parameterService.getSubParameterValueAsString(Account.class,
-                COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE, accountTypeCode);
+                COAParameterConstants.ACCOUNT_TYPE_BENEFIT_RATE, accountTypeCode);
         if (StringUtils.isBlank(benefitRateCategory)) {
             benefitRateCategory = parameterService.getParameterValueAsString(Account.class,
-                    COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE);
+                    COAParameterConstants.BENEFIT_RATE);
         }
         return StringUtils.trimToEmpty(benefitRateCategory);
     }

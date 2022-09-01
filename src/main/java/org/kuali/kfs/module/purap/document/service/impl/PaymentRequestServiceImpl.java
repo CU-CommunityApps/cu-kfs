@@ -30,7 +30,7 @@ import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherValidationService;
 import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.InfrastructureException;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -82,7 +82,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
@@ -195,22 +195,22 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     }
 
     @Override
-    public Collection<PaymentRequestDocument> getImmediatePaymentRequestsToExtract(String chartCode) {
+    public Collection<PaymentRequestDocument> getImmediatePaymentRequestsToExtract(String campusCode) {
         LOG.debug("getImmediatePaymentRequestsToExtract() started");
 
         Collection<PaymentRequestDocument> paymentRequestIterator =
-                paymentRequestDao.getImmediatePaymentRequestsToExtract(chartCode);
+                paymentRequestDao.getImmediatePaymentRequestsToExtract(campusCode);
         return filterPaymentRequestByAppDocStatus(paymentRequestIterator,
             PaymentRequestStatuses.STATUSES_ALLOWED_FOR_EXTRACTION);
     }
 
     @Override
-    public Collection<PaymentRequestDocument> getPaymentRequestToExtractByChart(String chartCode,
+    public Collection<PaymentRequestDocument> getPaymentRequestToExtractByCampus(String campusCode,
             Date onOrBeforePaymentRequestPayDate) {
-        LOG.debug("getPaymentRequestToExtractByChart() started");
+        LOG.debug("getPaymentRequestToExtractByCampus() started");
 
         Collection<PaymentRequestDocument> paymentRequestIterator =
-                paymentRequestDao.getPaymentRequestsToExtract(false, chartCode,
+                paymentRequestDao.getPaymentRequestsToExtract(false, campusCode,
                         onOrBeforePaymentRequestPayDate);
         return filterPaymentRequestByAppDocStatus(paymentRequestIterator,
             PaymentRequestStatuses.STATUSES_ALLOWED_FOR_EXTRACTION);
@@ -386,18 +386,18 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
         // The document is eligible for auto-approval if the document total is below the limit.
         final String autoApprovalLimitLabel = minimumAmount.equals(defaultMinimumLimit) ? "Default" : "Configured";
-        if (document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(minimumAmount)) {
+        if (document.getDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(minimumAmount)) {
             LOG.info(" -- PayReq [{}] auto-approved due to document Total [{}] being less than {} Auto-Approval Limit" +
                             " of {}.",
                     document.getDocumentNumber(),
-                    document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount(),
+                    document.getDocumentHeader().getFinancialDocumentTotalAmount(),
                     autoApprovalLimitLabel,
                     minimumAmount);
             return true;
         }
         LOG.info(" -- PayReq [{}] skipped due to document Total [{}] being greater than {} Auto-Approval Limit of {}.",
                 document.getDocumentNumber(),
-                document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount(),
+                document.getDocumentHeader().getFinancialDocumentTotalAmount(),
                 autoApprovalLimitLabel,
                 minimumAmount);
 
@@ -1701,7 +1701,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         boolean checkInProcess = false;
 
         for (String docId : lookupDocNumbers) {
-            FinancialSystemDocumentHeader hdr = financialSystemDocumentService.findByDocumentNumber(docId);
+            DocumentHeader hdr = financialSystemDocumentService.findByDocumentNumber(docId);
             if (Arrays.asList(applicationDocumentStatus).contains(hdr.getApplicationDocumentStatus())) {
                 hasInProcess = true;
             } else {

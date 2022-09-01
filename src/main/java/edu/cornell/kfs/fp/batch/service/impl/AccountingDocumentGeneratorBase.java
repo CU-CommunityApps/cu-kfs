@@ -14,7 +14,7 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -66,7 +66,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected void populateDocumentHeader(T document, AccountingXmlDocumentEntry documentEntry) {
-        FinancialSystemDocumentHeader documentHeader = (FinancialSystemDocumentHeader) document.getDocumentHeader();
+        DocumentHeader documentHeader = (DocumentHeader) document.getDocumentHeader();
         documentHeader.setDocumentDescription(documentEntry.getDescription());
         documentHeader.setExplanation(documentEntry.getExplanation());
         documentHeader.setOrganizationDocumentNumber(documentEntry.getOrganizationDocumentNumber());

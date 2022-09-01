@@ -22,7 +22,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
@@ -83,7 +83,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
                 transactionLineNumber++;
             }
             
-            pcardDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(documentTotalAmount);
+            pcardDocument.getDocumentHeader().setFinancialDocumentTotalAmount(documentTotalAmount);
 //            pcardDocument.getDocumentHeader().setDocumentDescription("SYSTEM Generated");
 
             transaction = (ProcurementCardTransaction) transactions.get(0);

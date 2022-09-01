@@ -6,7 +6,7 @@ import java.util.Date;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
-import org.kuali.kfs.module.purap.service.impl.PdpExtractServiceImpl;
+import org.kuali.kfs.module.purap.service.PdpExtractService;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -21,7 +21,7 @@ import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
-public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
+public class CuPdpExtractServiceImpl extends PdpExtractService {
     private DocumentTypeService documentTypeService;
     
     @Override

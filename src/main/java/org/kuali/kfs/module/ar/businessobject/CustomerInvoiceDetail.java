@@ -108,7 +108,7 @@ public class CustomerInvoiceDetail extends SourceAccountingLine implements Appli
         if (getCustomerInvoiceDocument() == null) {
             return false;
         }
-        return KFSConstants.DocumentStatusCodes.APPROVED.equalsIgnoreCase(getCustomerInvoiceDocument().getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode());
+        return KFSConstants.DocumentStatusCodes.APPROVED.equalsIgnoreCase(getCustomerInvoiceDocument().getDocumentHeader().getFinancialDocumentStatusCode());
     }
 
     /**

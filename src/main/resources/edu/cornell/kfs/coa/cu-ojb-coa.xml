@@ -641,7 +641,7 @@
 			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 
 		<reference-descriptor name="financialDocument"
-			class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader"
+			class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader"
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="documentNumber" />
 		</reference-descriptor>
@@ -1148,7 +1148,7 @@
 			jdbc-type="VARCHAR" />
 
 		<reference-descriptor name="financialDocument"
-			class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader"
+			class-ref="org.kuali.kfs.sys.businessobject.DocumentHeaderx"
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="documentNumber" />
 		</reference-descriptor>
@@ -1925,7 +1925,7 @@
 		<field-descriptor name="active" column="FIN_SUBOBJ_ACTV_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
-		<reference-descriptor name="financialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
+		<reference-descriptor name="financialDocument" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
 			<foreignkey field-ref="documentNumber" />
 		</reference-descriptor>
 		<reference-descriptor name="universityFiscal" class-ref="org.kuali.kfs.sys.businessobject.SystemOptions" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >

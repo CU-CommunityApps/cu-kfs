@@ -34,7 +34,7 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
         PurchaseOrderDocument poDocument = (PurchaseOrderDocument) document;
 
         if (PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(poDocument.getApplicationDocumentStatus())) {
-            WorkflowDocument workflowDocument = poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument();
+            WorkflowDocument workflowDocument = poDocument.getDocumentHeader().getWorkflowDocument();
             //  amendment doc needs to lock its field for initiator while enroute
             if (workflowDocument.isInitiated() || workflowDocument.isSaved()
                     || workflowDocument.isCompletionRequested()) {

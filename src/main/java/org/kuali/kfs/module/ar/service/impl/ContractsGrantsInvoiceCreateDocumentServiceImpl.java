@@ -41,7 +41,7 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleBillingService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsOrganization;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KualiModuleService;
@@ -86,7 +86,7 @@ import org.kuali.kfs.module.ar.service.CostCategoryService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
@@ -2045,10 +2045,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 ArConstants.ArDocumentTypeCodes.CONTRACTS_GRANTS_INVOICE);
         fieldValues.put(KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE, statusCode.getCode());
         fieldValues.put(KFSPropertyConstants.INITIATOR_PRINCIPAL_ID, initiatorPrincipalId);
-        Collection<FinancialSystemDocumentHeader> docHeaders = businessObjectService.findMatching(
-                FinancialSystemDocumentHeader.class, fieldValues);
+        Collection<DocumentHeader> docHeaders = businessObjectService.findMatching(
+                DocumentHeader.class, fieldValues);
 
-        for (FinancialSystemDocumentHeader docHeader : docHeaders) {
+        for (DocumentHeader docHeader : docHeaders) {
             documentIds.add(docHeader.getDocumentNumber());
         }
         return documentIds;

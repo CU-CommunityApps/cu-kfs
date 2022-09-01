@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;

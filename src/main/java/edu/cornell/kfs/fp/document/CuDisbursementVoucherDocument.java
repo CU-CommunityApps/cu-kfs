@@ -481,19 +481,19 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     @Override
     public void prepareForSave() {
 
-		if (getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode()
+		if (getDocumentHeader().getFinancialDocumentStatusCode()
 				.equals(KFSConstants.DocumentStatusCodes.ENROUTE)
-				&& !getFinancialSystemDocumentHeader().getWorkflowDocument().isCompletionRequested()) {
+				&& !getDocumentHeader().getWorkflowDocument().isCompletionRequested()) {
 			if (getParameterService().parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
 					UPDATE_TOTAL_AMOUNT_IN_POST_PROCESSING_PARAMETER_NAME)
 					&& getParameterService().getParameterValueAsBoolean(
 							KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
 							UPDATE_TOTAL_AMOUNT_IN_POST_PROCESSING_PARAMETER_NAME)) {
-				getFinancialSystemDocumentHeader()
+				getDocumentHeader()
 						.setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
 			}
 		} else {
-			getFinancialSystemDocumentHeader()
+			getDocumentHeader()
 					.setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
 		}
 
