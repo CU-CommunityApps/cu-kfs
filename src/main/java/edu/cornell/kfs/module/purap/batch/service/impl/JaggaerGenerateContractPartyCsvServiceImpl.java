@@ -16,7 +16,10 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import com.opencsv.CSVWriter;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyType;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateContractPartyCsvService;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
@@ -68,8 +71,6 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
 
     @Override
     public void generateCsvFile(List<JaggaerContractUploadBaseDto> jaggaerUploadDtos, JaggaerContractUploadProcessingMode processingMode) {
-        LOG.warn("generateCsvFile, not implemented yet");
-        
         String csvFileName = generateCsvOutputFileName(processingMode);
         String fullyQualifiedCreationDirectoryFileName = fullyQualifyFileNameToCreationDirectory(csvFileName);
         LOG.info("generateCsvFile: fullyQualifiedOutputFile = " + fullyQualifiedCreationDirectoryFileName);
@@ -100,20 +101,48 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     }
     
     private List<String[]> buildDataToPrint(List<JaggaerContractUploadBaseDto> jaggaerUploadDtos) {
-        List<String[]> list = new ArrayList<>();
+        List<String[]> csvDataRows = new ArrayList<>();
+        addHeaderRows(csvDataRows);
         
         for (JaggaerContractUploadBaseDto dto : jaggaerUploadDtos) {
             if (dto instanceof JaggaerContractPartyUploadDto) {
                 JaggaerContractPartyUploadDto vendorDto = (JaggaerContractPartyUploadDto) dto;
-                list.add(builderVendorCSVRowArray(vendorDto));
+                csvDataRows.add(builderVendorCSVRowArray(vendorDto));
             } else if (dto instanceof JaggaerContractAddressUploadDto) {
                 JaggaerContractAddressUploadDto addressDto = (JaggaerContractAddressUploadDto) dto;
-                list.add(builderAddressCSVRowArray(addressDto));
+                csvDataRows.add(builderAddressCSVRowArray(addressDto));
             } else {
                 throw new IllegalArgumentException("Unexpected DTO class found: " + dto.getClass());
             }
         }
-        return list;
+        return csvDataRows;
+    }
+    
+    protected void addHeaderRows(List<String[]> csvDataRows) {
+        csvDataRows.add(buildPartyHeader());
+        csvDataRows.add(buildAddressHeader());
+        csvDataRows.add(buildContactHeader());
+    }
+    
+    protected String[] buildPartyHeader() {
+        String[] record = { "PARTY", "OverrideDupError", "ERPNumber", "SciQuestID", "ContractPartyName", "DoingBusinessAs",
+                "OtherNames", "CountryOfOrigin", "Active", "ContractPartyType", "Primary", "LegalStructure", "TaxIDType",
+                "TaxIdentificationNumber", "VATRegistrationNumber", "WebsiteURL"};
+        return record;
+    }
+    
+    protected String[] buildAddressHeader() {
+        String[] record = { "ADDRESS", "AddressID", "SciQuestID", "Name", "AddressType", "PrimaryType",
+                "Active", "Country", "StreetLine1", "StreetLine2", "StreetLine3", "City/Town", "State/Province",
+                "PostalCode", "Phone", "TollFreeNumber", "Fax", "Notes"};
+        return record;
+    }
+    
+    protected String[] buildContactHeader() {
+        String[] record = { "CONTACT", "ContactID", "SciQuestID", "Name", "FirstName", "LastName",
+                "ContactType", "PrimaryType", "Active", "Title", "Email", "Phone", "MobilePhone",
+                "TollFreeNumber", "Fax", "Notes"};
+        return record;
     }
 
     protected String[] builderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {

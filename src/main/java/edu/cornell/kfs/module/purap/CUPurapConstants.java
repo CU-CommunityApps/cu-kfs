@@ -6,6 +6,8 @@ package edu.cornell.kfs.module.purap;
 import java.util.HashSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 
 /**
@@ -13,6 +15,7 @@ import org.kuali.kfs.module.purap.PaymentRequestStatuses;
  *
  */
 public class CUPurapConstants {
+    private static final Logger LOG = LogManager.getLogger();
     
     public static final String SPECIAL_HANDLING_NOTE_LINE_1_NAME = "Send Check To:";
     public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";
@@ -325,6 +328,7 @@ public class CUPurapConstants {
                     return struct;
                 }
             }
+            LOG.error("findJaggaerLegalStructureByKFSOwnershipCode, could not find a Jaggaer legal structure for kfs ownership code " + ownerShipCode);
             return OTHER;
         }
     }
@@ -348,6 +352,7 @@ public class CUPurapConstants {
                     return addressType;
                 }
             }
+            LOG.error("findJaggaerAddressTypeFromKfsAddressTypeCode, could not find a Jaggaer address type for kfs address type " + kfsAddressTypeCode);
             return OTHER;
         }
     }

@@ -16,7 +16,6 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
-import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
 
 import org.springframework.jdbc.core.RowMapper;
@@ -24,8 +23,6 @@ import org.springframework.jdbc.core.RowMapper;
 public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements JaggaerUploadDao {
     private static final Logger LOG = LogManager.getLogger();
     
-    protected ISOFIPSConversionService isoFIPSConversionService;
-
     @Override
     public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         try {
@@ -65,7 +62,11 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 dto.setAddressID(resultSet.getString(FIELD_NAMES.VNDR_ADDR_GNRTD_ID));
                 dto.setSciQuestID(StringUtils.EMPTY);
                 dto.setAddressType(JaggaerAddressType.findJaggaerAddressTypeFromKfsAddressTypeCode(resultSet.getString(FIELD_NAMES.VNDR_ADDR_TYP_CD)));
-                dto.setPrimaryType(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND));
+                if (StringUtils.equals(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND), "Y")) {
+                    dto.setPrimaryType(dto.getAddressTypeName());
+                } else {
+                    dto.setPrimaryType(StringUtils.EMPTY);
+                }
                 dto.setActive(StringUtils.EMPTY);
                 dto.setCountry(convertToISOCountry(resultSet.getString(FIELD_NAMES.VNDR_ADDRESS_CNTRY_CD)));
                 dto.setStreetLine1(resultSet.getString(FIELD_NAMES.VNDR_LN1_ADDR));
@@ -117,6 +118,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         sb.append(buildJoinClauseWithPOVendors(true));
         sb.append(buildRestrictActiveRows(true));
         sb.append(buildTimeFrameRestrictionClause(processingMode, processingDate));
+        sb.append("AND VA.VNDR_ADDR_TYP_CD in ('RM', 'PO') ");
         sb.append(buildOrderByClause());
         
         String sql = sb.toString();
@@ -187,11 +189,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         /*
          * @TODO use generic mapping framework
          */
-        //isoFIPSConversionService.convertFIPSCountryCodeToActiveISOCountryCode(fIPSCountry);
         return fIPSCountry;
     }
 
-    public void setIsoFIPSConversionService(ISOFIPSConversionService isoFIPSConversionService) {
-        this.isoFIPSConversionService = isoFIPSConversionService;
-    }
 }

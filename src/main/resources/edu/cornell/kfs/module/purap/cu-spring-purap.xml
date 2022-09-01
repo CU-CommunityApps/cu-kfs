@@ -310,7 +310,8 @@
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 
-	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc" />
+	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc">
+	</bean>
 	
 	<bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean" />
 	<bean id="jaggaerGenerateContractPartyCsvService-parentBean" abstract="true"
@@ -320,7 +321,6 @@
 		</property>
 		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
 		<property name="dateTimeService" ref="dateTimeService" />
-		<property name="isoFipsConversionService" ref="isoFipsConversionService" />
 	</bean>
     
 </beans>
