@@ -18,6 +18,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.client.ClientConfiguration;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
@@ -400,6 +404,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         
         WebTarget target = client.target(uri);
         Invocation.Builder requestBuilder = target.request();
+        disableRequestChunkingIfNecessary(client,requestBuilder);
         
         return requestBuilder
                 .accept(MediaType.APPLICATION_JSON_TYPE)
@@ -407,6 +412,21 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
                              PaymentWorksWebServiceConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getPaymentWorksAuthorizationToken())
                 .buildPost(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA_TYPE));
     }
+
+    private void disableRequestChunkingIfNecessary(Client client, Invocation.Builder requestBuilder) {
+        if (client instanceof org.apache.cxf.jaxrs.client.spec.ClientImpl) {
+            LOG.info("disableRequestChunkingIfNecessary: Explicitly disabling chunking because KFS is using a JAX-RS client of CXF type "
+                    + client.getClass().getName());
+            ClientConfiguration cxfConfig = WebClient.getConfig(requestBuilder);
+            HTTPConduit conduit = cxfConfig.getHttpConduit();
+            HTTPClientPolicy clientPolicy = conduit.getClient();
+            clientPolicy.setAllowChunking(false);
+        } else {
+            LOG.info("disableRequestChunkingIfNecessary: There is no need to explicitly disable chunking for a JAX-RS client of type "
+                    + client.getClass().getName());
+        }
+    }
+
 
     private int getReceivedSuppliersCountIfSupplierUploadSucceeded(String uploadResponse) {
         if (StringUtils.isBlank(uploadResponse)) {
