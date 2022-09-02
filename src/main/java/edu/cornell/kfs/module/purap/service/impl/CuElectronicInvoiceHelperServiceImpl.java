@@ -112,6 +112,7 @@ import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension
 import edu.cornell.kfs.module.purap.document.CuElectronicInvoiceRejectDocument;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.service.CuElectronicInvoiceHelperService;
+import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelperServiceImpl implements CuElectronicInvoiceHelperService {
@@ -129,7 +130,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
 	
 	private WorkflowDocumentService workflowDocumentService;
-	private FinancialSystemDocumentService financialSystemDocumentService;
+	private CUFinancialSystemDocumentService financialSystemDocumentService;
 	private CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService;
 
 	@Override
@@ -1755,7 +1756,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         this.workflowDocumentService = workflowDocumentService;
     }
 
-    public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
+    public void setFinancialSystemDocumentService(CUFinancialSystemDocumentService financialSystemDocumentService) {
         this.financialSystemDocumentService = financialSystemDocumentService;
     }
 
