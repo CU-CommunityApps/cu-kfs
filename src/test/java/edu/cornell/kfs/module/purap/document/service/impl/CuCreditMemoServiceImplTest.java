@@ -225,7 +225,7 @@ public class CuCreditMemoServiceImplTest {
 
         @Override
         public void setApplicationDocumentStatus(String applicationDocumentStatus) {
-            this.applicationDocumentStatus = applicationDocumentStatus;
+            this.setApplicationDocumentStatus(applicationDocumentStatus);
         }
 
     }

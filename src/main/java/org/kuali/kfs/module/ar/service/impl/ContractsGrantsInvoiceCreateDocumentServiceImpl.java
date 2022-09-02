@@ -1522,7 +1522,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      */
     protected boolean includePeriod13InPeriod01Calculations() {
         return getParameterService().getParameterValueAsBoolean(ContractsGrantsInvoiceDocument.class,
-                ArParameterConstants.INCLUDE_PERIOD_13_IN_BUDGET_AND_CURRENT_IND_PARM_NM, Boolean.FALSE);
+                ArParameterConstants.INCLUDE_PERIOD_13_IND, Boolean.FALSE);
     }
 
     /**

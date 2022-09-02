@@ -50,10 +50,11 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         po.setPurchaseOrderLastTransmitTimestamp(currentDate);
         po.setOverrideWorkflowButtons(Boolean.FALSE);
         // KFSUPGRADE-336
-        boolean performedAction = purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission", CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, GlobalVariables.getUserSession().getPerson(), null);
-        if (!performedAction) {
+        try {
+        	purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission", CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, GlobalVariables.getUserSession().getPerson());
+        } catch(Exception exception) {
             Person systemUserPerson = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
-            purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission by user " + GlobalVariables.getUserSession().getPerson().getName(), CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, systemUserPerson, KFSConstants.SYSTEM_USER);
+            purapWorkflowIntegrationService.takeAllActionsForGivenCriteria(po, "Action taken automatically as part of document initial print transmission by user " + GlobalVariables.getUserSession().getPerson().getName(), CUPurapConstants.PurchaseOrderStatuses.NODE_DOCUMENT_TRANSMISSION, systemUserPerson);
         }
         po.setOverrideWorkflowButtons(Boolean.TRUE);
         if (!po.getApplicationDocumentStatus().equals(PurchaseOrderStatuses.APPDOC_OPEN)) {
