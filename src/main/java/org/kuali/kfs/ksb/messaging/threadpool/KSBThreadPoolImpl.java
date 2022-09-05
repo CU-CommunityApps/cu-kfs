@@ -44,7 +44,7 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
 
     public KSBThreadPoolImpl() {
         super(DEFAULT_POOL_SIZE, DEFAULT_POOL_SIZE, 60, TimeUnit.SECONDS,
-                new PriorityBlockingQueue(1, new PriorityBlockingQueuePersistedMessageComparator()),
+        		new PriorityBlockingQueue<>(1, new PriorityBlockingQueuePersistedMessageComparator()),
                 new KSBThreadFactory(
                         ClassLoaderUtils.getDefaultClassLoader()), new ThreadPoolExecutor.AbortPolicy());
     }
@@ -63,7 +63,7 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
         return this.started;
     }
 
-    public void start() throws Exception {
+    public void start() {
         LOG.info("Starting the KSB thread pool...");
         loadSettings();
         this.started = true;
@@ -91,7 +91,7 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
         if (!this.poolSizeSet) {
             int poolSize = DEFAULT_POOL_SIZE;
             try {
-                poolSize = new Integer(threadPoolSizeStr);
+                poolSize = Integer.parseInt(threadPoolSizeStr);
             } catch (NumberFormatException nfe) {
                 LOG.error("loadSettings(): Unable to parse the pool size: '" + threadPoolSizeStr + "'");
             }
@@ -123,9 +123,9 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
 
         private static int threadSequence = 0;
 
-        private ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
+        private final ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
 
-        private ClassLoader contextClassLoader;
+        private final ClassLoader contextClassLoader;
 
         KSBThreadFactory(ClassLoader contextClassLoader) {
             this.contextClassLoader = contextClassLoader;

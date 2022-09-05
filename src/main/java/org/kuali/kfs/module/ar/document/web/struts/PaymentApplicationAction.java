@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.module.ar.document.web.struts;
 
+import static java.util.Map.entry;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +29,6 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -60,6 +61,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -69,8 +71,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static java.util.Map.entry;
-
 /*
  * CU Customization (KFSPTS-13246): Added the ability to delete lines
  * from the "Summary of Applied Funds" section.
@@ -79,7 +79,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private BusinessObjectService businessObjectService;
     private PaymentApplicationDocumentService paymentApplicationDocumentService;
     private CustomerInvoiceDocumentService customerInvoiceDocumentService;
     private CustomerInvoiceDetailService customerInvoiceDetailService;
@@ -202,6 +201,22 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     public ActionForward applyAllAmounts(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         doApplicationOfFunds((PaymentApplicationForm) form);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    public ActionForward clearUnapplied(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
+        PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
+        NonAppliedHolding nonAppliedHolding = payAppDoc.getNonAppliedHolding();
+        if (ObjectUtils.isNotNull(nonAppliedHolding)) {
+            if (getBusinessObjectService().retrieve(nonAppliedHolding) != null) {
+                getBusinessObjectService().delete(nonAppliedHolding);
+            }
+            payAppDoc.setNonAppliedHolding(null);
+            payAppForm.setNonAppliedHoldingAmount(null);
+            payAppForm.setNonAppliedHoldingCustomerNumber(null);
+        }
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 

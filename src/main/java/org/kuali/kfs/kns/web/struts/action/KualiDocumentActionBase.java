@@ -1204,11 +1204,10 @@ public class KualiDocumentActionBase extends KualiAction {
         for (Enumeration<String> i = request.getParameterNames(); i.hasMoreElements(); ) {
             String parameterName = i.nextElement();
             if ("newAdHocRouteWorkgroup.recipientName".equals(parameterName)
-                    && !"".equals(request.getParameter(parameterName))) {
+            		&& StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 //check for namespace
                 String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                if (request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode") != null
-                        && !"".equals(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim())) {
+                if (StringUtils.isNotEmpty(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim())) {
                     namespace = request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim();
                 }
                 Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
@@ -1223,14 +1222,13 @@ public class KualiDocumentActionBase extends KualiAction {
                     return;
                 }
             }
-            if (parameterName.startsWith("adHocRouteWorkgroup[") && !"".equals(request.getParameter(parameterName))) {
+            if (parameterName.startsWith("adHocRouteWorkgroup[") && StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 if (parameterName.endsWith(".recipientName")) {
                     int lineNumber = Integer.parseInt(StringUtils.substringBetween(parameterName, "[", "]"));
                     //check for namespace
                     String namespaceParam = "adHocRouteWorkgroup[" + lineNumber + "].recipientNamespaceCode";
                     String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                    if (request.getParameter(namespaceParam) != null
-                            && !"".equals(request.getParameter(namespaceParam).trim())) {
+                    if (StringUtils.isNotEmpty(request.getParameter(namespaceParam).trim())) {
                         namespace = request.getParameter(namespaceParam).trim();
                     }
                     Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
