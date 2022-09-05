@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/* Cornell Customization: backport redis; backport redis fix on FINP-8169*/
+/* Cornell Customization: backport redis fix on FINP-8169*/
 public class OrganizationServiceImpl implements OrganizationService {
     private static final Logger LOG = LogManager.getLogger();
 
