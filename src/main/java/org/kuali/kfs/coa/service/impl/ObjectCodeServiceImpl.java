@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-/* Cornell Customization: backport redis; backport redis fix on FINP-8169*/
+/* Cornell Customization: backport redis fix on FINP-8169*/
 public class ObjectCodeServiceImpl implements ObjectCodeService {
 
     protected ObjectCodeDao objectCodeDao;
