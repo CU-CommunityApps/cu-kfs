@@ -35,7 +35,7 @@
     </xsd:simpleType>
 
     <!-- definition of simple type elements -->
-    <xsd:element name="chart" type="xsd:normalizedString"/>
+    <xsd:element name="campus" type="xsd:normalizedString"/>
     <xsd:element name="unit" type="xsd:normalizedString"/>
     <xsd:element name="sub_unit" type="xsd:normalizedString"/>
     <xsd:element name="creation_date" type="xsd:normalizedString"/>
@@ -117,7 +117,7 @@
     <xsd:element name="header">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="chart"/>
+                <xsd:element ref="campus"/>
                 <xsd:element ref="unit"/>
                 <xsd:element ref="sub_unit"/>
                 <xsd:element ref="creation_date"/>

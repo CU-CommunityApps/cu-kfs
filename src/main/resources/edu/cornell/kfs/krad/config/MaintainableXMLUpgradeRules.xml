@@ -456,6 +456,28 @@
             </pattern>
         </pattern>
         <pattern>
+            <class>org.kuali.kfs.module.cg.businessobject.Proposal</class>
+            <pattern>
+                <match>userLookupRoleNamespaceCode</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>userLookupRoleName</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.pdp.businessobject.CustomerProfile</class>
+            <pattern>
+                <match>chartCode</match>
+                <replacement>campusCode</replacement>
+            </pattern>
+            <pattern>
+                <match>defaultPhysicalCampusProcessingCode</match>
+                <replacement>formatCampusCode</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute</class>
             <pattern>
                 <match>laborBenefitRateCategoryCode</match>
