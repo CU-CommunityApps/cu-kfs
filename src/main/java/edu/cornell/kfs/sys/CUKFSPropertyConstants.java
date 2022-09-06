@@ -94,9 +94,26 @@ public class CUKFSPropertyConstants {
     public static final String DOCUMENT_ID = "documentId";
     public static final String FINALIZED_DATE = "finalizedDate";
 
+    //** CU Generic ISO-FIPS Country modification items **
     public static class ISOFIPSCountryMap {
         public static final String ISO_COUNTRY_CODE = "isoCountryCode";
         public static final String FIPS_COUNTRY_CODE = "fipsCountryCode";
         public static final String ACTIVE = KFSPropertyConstants.ACTIVE;
     }
+    public static final String NAME = "name";
+    public static final String CODE = "code";
+    public static final String ALTERNATE_CODE = "alternateCode";
+    public static class ISOCountry {
+        public static final String NAME = CUKFSPropertyConstants.NAME;
+        public static final String CODE = CUKFSPropertyConstants.CODE;
+        public static final String ALTERNATE_CODE = CUKFSPropertyConstants.ALTERNATE_CODE;
+        public static final String ACTIVE = KFSPropertyConstants.ACTIVE;
+    }
+    public static class Country {
+        public static final String NAME = CUKFSPropertyConstants.NAME;
+        public static final String CODE = CUKFSPropertyConstants.CODE;
+        public static final String ALTERNATE_CODE = CUKFSPropertyConstants.ALTERNATE_CODE;
+        public static final String ACTIVE = KFSPropertyConstants.ACTIVE;
+    }
+    //** CU Generic ISO-FIPS Country modification items **
 }
