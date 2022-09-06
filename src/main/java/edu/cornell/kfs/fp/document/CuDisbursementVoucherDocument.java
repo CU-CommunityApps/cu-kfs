@@ -489,12 +489,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 					&& getParameterService().getParameterValueAsBoolean(
 							KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
 							UPDATE_TOTAL_AMOUNT_IN_POST_PROCESSING_PARAMETER_NAME)) {
-				getDocumentHeader()
-						.setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
+				getDocumentHeader().setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
 			}
 		} else {
-			getDocumentHeader()
-					.setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
+			getDocumentHeader().setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
 		}
 
         captureWorkflowHeaderInformation();
