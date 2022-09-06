@@ -315,7 +315,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
         // update the doc total
         AccountingDocument tdoc = (AccountingDocument) financialDocumentForm.getDocument();
         if (tdoc instanceof AmountTotaling) {
-            ((DocumentHeader) financialDocumentForm.getDocument().getDocumentHeader())
+            financialDocumentForm.getDocument().getDocumentHeader()
                     .setFinancialDocumentTotalAmount(((AmountTotaling) tdoc).getTotalDollarAmount());
         }
     }
@@ -515,7 +515,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
 
             // Update the doc total
             if (tdoc instanceof AmountTotaling) {
-                ((DocumentHeader) financialDocumentForm.getDocument().getDocumentHeader())
+                financialDocumentForm.getDocument().getDocumentHeader()
                         .setFinancialDocumentTotalAmount(((AmountTotaling) tdoc).getTotalDollarAmount());
             }
         } else {

@@ -708,9 +708,8 @@ public class GlLineServiceImpl implements GlLineService {
      */
     protected boolean isDocumentAnErrorCorrection(GeneralLedgerEntry entry) {
         DocumentHeader docHeader = documentHeaderService.getDocumentHeaderById(entry.getDocumentNumber());
-        DocumentHeader fsDocumentHeader = (DocumentHeader) docHeader;
 
-        return fsDocumentHeader != null && StringUtils.isNotBlank(fsDocumentHeader.getFinancialDocumentInErrorNumber());
+        return docHeader != null && StringUtils.isNotBlank(docHeader.getFinancialDocumentInErrorNumber());
     }
 
     /**

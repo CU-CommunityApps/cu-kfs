@@ -58,22 +58,6 @@ public final class CreditMemoStatuses {
     private CreditMemoStatuses() {
     }
 
-    public static HashMap<String, String> getAllAppDocStatuses() {
-        HashMap<String, String> appDocStatusMap = new HashMap<>();
-
-        appDocStatusMap.put(APPDOC_INITIATE, APPDOC_INITIATE);
-        appDocStatusMap.put(APPDOC_IN_PROCESS, APPDOC_IN_PROCESS);
-        appDocStatusMap.put(APPDOC_CANCELLED_IN_PROCESS, APPDOC_CANCELLED_IN_PROCESS);
-        appDocStatusMap.put(APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL, APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL);
-        appDocStatusMap.put(APPDOC_CANCELLED_POST_AP_APPROVE, APPDOC_CANCELLED_POST_AP_APPROVE);
-        appDocStatusMap.put(APPDOC_COMPLETE, APPDOC_COMPLETE);
-        appDocStatusMap.put(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
-        // CU Customization: Added mapping for APPDOC_PAYMENT_METHOD_REVIEW
-        appDocStatusMap.put(APPDOC_PAYMENT_METHOD_REVIEW, APPDOC_PAYMENT_METHOD_REVIEW);
-
-        return appDocStatusMap;
-    }
-
     public enum STATUS_ORDER {
         CANCELLED_IN_PROCESS(CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS, false),
         CANCELLED_PRIOR_TO_AP_APPROVAL(CreditMemoStatuses.APPDOC_CANCELLED_PRIOR_TO_AP_APPROVAL, false),
