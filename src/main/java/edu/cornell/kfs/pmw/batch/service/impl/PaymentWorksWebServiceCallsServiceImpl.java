@@ -360,15 +360,13 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     @Override
     public int uploadVendorsToPaymentWorks(InputStream vendorCsvDataStream) {
         Response response = null;
-        int ret = -1;
+        int ret = 0;
         
         try {
             response = performSupplierUpload(vendorCsvDataStream);
             response.bufferEntity();
             String responseContent = response.readEntity(String.class);
             ret = getReceivedSuppliersCountIfSupplierUploadSucceeded(responseContent);
-        } catch (Exception e) {
-            LOG.error("uploadVendorsToPaymentWorks", e);
         } finally {
             CURestClientUtils.closeQuietly(response);
         }
