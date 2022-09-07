@@ -27,7 +27,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
 
         if (ObjectUtils.isNotNull(isoCountryFound)) {
-            LOG.info("isISOCountryActive: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR, isoCountryCode, isoCountryFound.isActive()));
+            LOG.debug("isISOCountryActive: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR, isoCountryCode, isoCountryFound.isActive()));
             return isoCountryFound.isActive();
         } else {
             LOG.error("isISOCountryActive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_COUNTRY_FOUND_FOR_CODE, isoCountryCode));
@@ -39,7 +39,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
 
         if (ObjectUtils.isNotNull(isoCountryFound)) {
-            LOG.info("isISOCountryInactive: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR, isoCountryCode, isoCountryFound.isActive()));
+            LOG.debug("isISOCountryInactive: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR, isoCountryCode, isoCountryFound.isActive()));
             return !isoCountryFound.isActive();
         } else {
             LOG.error("isISOCountryInactive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_COUNTRY_FOUND_FOR_CODE, isoCountryCode));

@@ -27,7 +27,7 @@ public class CountryServiceImpl implements CountryService {
         Country countryFound = getByPrimaryId(countryCode);
 
         if (ObjectUtils.isNotNull(countryFound)) {
-            LOG.info("isCountryActive: " +
+            LOG.debug("isCountryActive: " +
                     MessageFormat.format(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return countryFound.isActive();
         } else {
@@ -40,7 +40,7 @@ public class CountryServiceImpl implements CountryService {
         Country countryFound = getByPrimaryId(countryCode);
 
         if (ObjectUtils.isNotNull(countryFound)) {
-            LOG.info("isCountryInactive: " +
+            LOG.debug("isCountryInactive: " +
                     MessageFormat.format(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return !countryFound.isActive();
         } else {

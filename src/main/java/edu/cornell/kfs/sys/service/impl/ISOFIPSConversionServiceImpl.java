@@ -107,7 +107,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
             throw new ManyISOtoFIPSMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_MANY_ISO_TO_FIPS_MAPPINGS, isoCountryCode));
         } 
         String fipsCountryCodeFound = (mappingsFound.get(0)).getFipsCountryCode();
-        LOG.info("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_ISO_TO_FIPS_MAPPING, isoCountryCode, fipsCountryCodeFound));
+        LOG.debug("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_ISO_TO_FIPS_MAPPING, isoCountryCode, fipsCountryCodeFound));
         return fipsCountryCodeFound;
     }
 
@@ -139,7 +139,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
             throw new ManyFIPStoISOMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_MANY_FIPS_TO_ISO_MAPPINGS, fipsCountryCode));
         } 
         String isoCountryCodeFound = (mappingsFound.get(0)).getIsoCountryCode();
-        LOG.info("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_FIPS_TO_ISO_MAPPING, fipsCountryCode, isoCountryCodeFound));
+        LOG.debug("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_FIPS_TO_ISO_MAPPING, fipsCountryCode, isoCountryCodeFound));
         return isoCountryCodeFound;
     }
 
