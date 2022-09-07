@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -45,7 +46,6 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestsRootDTO
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
-import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 
 public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebServiceCallsService, Serializable {
     private static final long serialVersionUID = -4282596886353845280L;
@@ -373,7 +373,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         
         try {
             ClientConfig clientConfig = new ClientConfig();
-            clientConfig.register(CuMultiPartWriter.class);
+            clientConfig.register(MultiPartFeature.class);
             client = JerseyClientBuilder.createClient(clientConfig);
             
             Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), vendorCsvDataStream);
