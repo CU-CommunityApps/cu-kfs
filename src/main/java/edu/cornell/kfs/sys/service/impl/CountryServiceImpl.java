@@ -10,6 +10,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.Country;
 
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.service.CountryService;
 
@@ -19,9 +20,6 @@ import edu.cornell.kfs.sys.service.CountryService;
 public class CountryServiceImpl implements CountryService {
 
     private static final Logger LOG = LogManager.getLogger(CountryServiceImpl.class);
-
-    private static final String NO_COUNTRY_FOUND_FOR_CODE = "No Country found for code : {0}";
-    private static final String COUNTRY_CODE_INDICATOR_MESSAGE = "Country code : {0} has status of {1}";
  
     protected BusinessObjectService businessObjectService;
     
@@ -30,10 +28,10 @@ public class CountryServiceImpl implements CountryService {
 
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.info("isCountryActive: " +
-                    MessageFormat.format(COUNTRY_CODE_INDICATOR_MESSAGE, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return countryFound.isActive();
         } else {
-            LOG.error("isCountryActive: " + MessageFormat.format(NO_COUNTRY_FOUND_FOR_CODE, countryCode));
+            LOG.error("isCountryActive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE, countryCode));
             return false;
         }
     }
@@ -43,10 +41,10 @@ public class CountryServiceImpl implements CountryService {
 
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.info("isCountryInactive: " +
-                    MessageFormat.format(COUNTRY_CODE_INDICATOR_MESSAGE, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return !countryFound.isActive();
         } else {
-            LOG.error("isCountryInactive: " + MessageFormat.format(NO_COUNTRY_FOUND_FOR_CODE, countryCode));
+            LOG.error("isCountryInactive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE, countryCode));
             return false;
         }
     }

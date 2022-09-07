@@ -100,9 +100,9 @@ public class CUKFSPropertyConstants {
         public static final String FIPS_COUNTRY_CODE = "fipsCountryCode";
         public static final String ACTIVE = KFSPropertyConstants.ACTIVE;
     }
-    public static final String NAME = "name";
-    public static final String CODE = "code";
-    public static final String ALTERNATE_CODE = "alternateCode";
+    private static final String NAME = "name";
+    private static final String CODE = "code";
+    private static final String ALTERNATE_CODE = "alternateCode";
     public static class ISOCountry {
         public static final String NAME = CUKFSPropertyConstants.NAME;
         public static final String CODE = CUKFSPropertyConstants.CODE;
@@ -115,5 +115,6 @@ public class CUKFSPropertyConstants {
         public static final String ALTERNATE_CODE = CUKFSPropertyConstants.ALTERNATE_CODE;
         public static final String ACTIVE = KFSPropertyConstants.ACTIVE;
     }
-    //** CU Generic ISO-FIPS Country modification items **
+
+    
 }

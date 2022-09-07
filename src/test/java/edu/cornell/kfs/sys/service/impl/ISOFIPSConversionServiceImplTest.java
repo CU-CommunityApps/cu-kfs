@@ -54,7 +54,12 @@ public class ISOFIPSConversionServiceImplTest {
             if (countriesFound.isEmpty()) {
                 return null;
             } else {
-                return new Country(countriesFound.get(0).name, countriesFound.get(0).code, countriesFound.get(0).alternateCode, countriesFound.get(0).active);
+                Country countryFound = new Country();
+                countryFound.setName(countriesFound.get(0).name);
+                countryFound.setCode(countriesFound.get(0).code);
+                countryFound.setAlternateCode(countriesFound.get(0).alternateCode);
+                countryFound.setActive(countriesFound.get(0).active);
+                return countryFound;
             }
         }
     }
@@ -81,19 +86,7 @@ public class ISOFIPSConversionServiceImplTest {
           if (activeMappingsFoundMatchingCode.isEmpty()) {
               return null;
           } else {
-              List<ISOFIPSCountryMap> activeMapList = new ArrayList<ISOFIPSCountryMap>();
-              activeMapList.add(new ISOFIPSCountryMap(activeMappingsFoundMatchingCode.get(0).isoCountryCode, 
-                      activeMappingsFoundMatchingCode.get(0).fipsCountryCode, 
-                      activeMappingsFoundMatchingCode.get(0).active, 
-                      new Country(activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.name,
-                              activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.code,
-                              activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.alternateCode,
-                              activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.active),
-                      new ISOCountry(activeMappingsFoundMatchingCode.get(0).isoCountryFixture.name,
-                              activeMappingsFoundMatchingCode.get(0).isoCountryFixture.code,
-                              activeMappingsFoundMatchingCode.get(0).isoCountryFixture.alternateCode,
-                              activeMappingsFoundMatchingCode.get(0).isoCountryFixture.active)));
-              return activeMapList;
+              return createISOFIPSCountryMapObjectFromFixture(activeMappingsFoundMatchingCode);
           }
         }
       
@@ -104,21 +97,27 @@ public class ISOFIPSConversionServiceImplTest {
           if (activeMappingsFoundMatchingCode.isEmpty()) {
               return null;
           } else {
-              List<ISOFIPSCountryMap> activeMapList = new ArrayList<ISOFIPSCountryMap>();
-              activeMapList.add(new ISOFIPSCountryMap(activeMappingsFoundMatchingCode.get(0).isoCountryCode, 
-                      activeMappingsFoundMatchingCode.get(0).fipsCountryCode, 
-                      activeMappingsFoundMatchingCode.get(0).active, 
-                      new Country(activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.name,
-                              activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.code,
-                              activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.alternateCode,
-                              activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.active),
-                      new ISOCountry(activeMappingsFoundMatchingCode.get(0).isoCountryFixture.name,
-                              activeMappingsFoundMatchingCode.get(0).isoCountryFixture.code,
-                              activeMappingsFoundMatchingCode.get(0).isoCountryFixture.alternateCode,
-                              activeMappingsFoundMatchingCode.get(0).isoCountryFixture.active)));
-              return activeMapList;
+              return createISOFIPSCountryMapObjectFromFixture(activeMappingsFoundMatchingCode);
           }
-        } 
+        }
+        
+        private List<ISOFIPSCountryMap> createISOFIPSCountryMapObjectFromFixture(List<ISOFIPSCountryMapFixture> activeMappingsFoundMatchingCode) {
+            List<ISOFIPSCountryMap> activeMapList = new ArrayList<ISOFIPSCountryMap>();
+            Country countryFound = new Country();
+            countryFound.setName(activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.name);
+            countryFound.setCode(activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.code);
+            countryFound.setAlternateCode(activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.alternateCode);
+            countryFound.setActive(activeMappingsFoundMatchingCode.get(0).fipsCountryFixture.active);
+            activeMapList.add(new ISOFIPSCountryMap(activeMappingsFoundMatchingCode.get(0).isoCountryCode, 
+                    activeMappingsFoundMatchingCode.get(0).fipsCountryCode, 
+                    activeMappingsFoundMatchingCode.get(0).active, 
+                    countryFound,
+                    new ISOCountry(activeMappingsFoundMatchingCode.get(0).isoCountryFixture.name,
+                            activeMappingsFoundMatchingCode.get(0).isoCountryFixture.code,
+                            activeMappingsFoundMatchingCode.get(0).isoCountryFixture.alternateCode,
+                            activeMappingsFoundMatchingCode.get(0).isoCountryFixture.active)));
+            return activeMapList;
+        }
     }
        
     private static class TestISOFIPSConversionServiceImpl extends ISOFIPSConversionServiceImpl {
