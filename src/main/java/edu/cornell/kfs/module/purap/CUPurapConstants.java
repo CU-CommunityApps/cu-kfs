@@ -272,6 +272,9 @@ public class CUPurapConstants {
         public static final String VENDORS = "vendors";
     }
     
+    public static final String TRUE_STRING = "True";
+    public static final String FALSE_STRING = "False";
+    
     public enum JaggaerRoleSet {
         ESHOP(CUPurapPropertyConstants.ESHOP_LINK),
         CONTRACTS_PLUS(CUPurapPropertyConstants.CONTRACTS_PLUS_LINK),
@@ -379,5 +382,97 @@ public class CUPurapConstants {
             }
             throw new IllegalArgumentException("Invalid mode code provided: " + modeCode);
         }
+    }
+    
+    public enum JaggaerPartyHeader {
+        PARTY("PARTY"),
+        OVERRIDE_DUP_ERROR("OverrideDupError"),
+        ERP_NUMBER("ERPNumber"),
+        SCIQUEST_ID("SciQuestID"),
+        CONTRACT_PARTY_NAME("ContractPartyName"),
+        DOING_BUSINESS_AS("DoingBusinessAs"),
+        OTHER_NAMES("OtherNames"),
+        COUNTRY_OF_ORIGIN("CountryOfOrigin"),
+        ACTIVE("Active"),
+        CONTRACT_PARTY_TYPE("ContractPartyType"),
+        PRIMARY("Primary"),
+        LEGALS_TRUCTURE("LegalStructure"),
+        TAX_ID_TYPE("TaxIDType"),
+        TAX_IDENTIFICATION_NUMBER("TaxIdentificationNumber"),
+        VAT_REGISTRATION_NUMBER("VATRegistrationNumber"),
+        WEBSITE_URL("WebsiteURL");
+        
+        public final String headerName;
+        
+        private JaggaerPartyHeader(String headerName) {
+            this.headerName = headerName;
+        }
+        
+        public String getHeaderName() {
+            return headerName;
+        }
+        
+    }
+    
+    public enum JaggaerAddressHeader {
+        ADDRESS("ADDRESS"),
+        ADDRESS_ID("AddressID"),
+        SCIQUEST_ID(JaggaerPartyHeader.SCIQUEST_ID.headerName),
+        NAME("Name"),
+        ADDRESS_TYPE("AddressType"),
+        PRIMARY_TYPE("PrimaryType"),
+        ACTIVE(JaggaerPartyHeader.ACTIVE.headerName),
+        COUNTRY("Country"),
+        STREET_LINE_1("StreetLine1"),
+        STREET_LINE_2("StreetLine2"),
+        STREET_LINE_3("StreetLine3"),
+        CITY("City/Town"),
+        STATE("State/Province"),
+        POSTAL_CODE("PostalCode"),
+        PHONE("Phone"),
+        TOLL_FREE_NUMBER("TollFreeNumber"),
+        FAX("Fax"),
+        NOTES("Notes");
+        
+        public final String headerName;
+        
+        private JaggaerAddressHeader(String headerName) {
+            this.headerName = headerName;
+        }
+        
+        public String getHeaderName() {
+            return headerName;
+        }
+        
+    }
+    
+    public enum JaggaerContactHeader {
+        CONTACT("CONTACT"),
+        CONTACT_ID("ContactID"),
+        SCIQUEST_ID(JaggaerPartyHeader.SCIQUEST_ID.headerName),
+        NAME("Name"),
+        FIRST_NAME("FirstName"),
+        LAST_NAME("LastName"),
+        CONTACT_TYPE("ContactType"),
+        PRIMARY_TYPE("PrimaryType"),
+        ACTIVE(JaggaerPartyHeader.ACTIVE.headerName),
+        TITLE("Title"),
+        EMAIL("Email"),
+        PHONE("Phone"),
+        MOBILE_PHONE("MobilePhone"),
+        TOLL_FREE_NUMBER(JaggaerAddressHeader.TOLL_FREE_NUMBER.headerName),
+        FAX(JaggaerAddressHeader.FAX.headerName),
+        NOTES(JaggaerAddressHeader.NOTES.headerName);
+        
+        public final String headerName;
+        
+        private JaggaerContactHeader(String headerName) {
+            this.headerName = headerName;
+        }
+        
+        public String getHeaderName() {
+            return headerName;
+        }
+        
     }
 }

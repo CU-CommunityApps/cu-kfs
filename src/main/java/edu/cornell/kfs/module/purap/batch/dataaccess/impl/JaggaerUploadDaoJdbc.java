@@ -6,8 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
@@ -29,7 +31,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
             RowMapper<JaggaerContractPartyUploadDto> rowMapper = (resultSet, rowNumber) -> {
                 JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
                 dto.setRowType(JaggaerContractPartyUploadRowType.PARTY);
-                dto.setOverrideDupError("False");
+                dto.setOverrideDupError(CUPurapConstants.FALSE_STRING);
                 dto.setERPNumber(buildVendorNumber(resultSet.getString(FIELD_NAMES.VNDR_HDR_GNRTD_ID), resultSet.getString(FIELD_NAMES.VNDR_DTL_ASND_ID)));
                 dto.setSciQuestID(StringUtils.EMPTY);
                 dto.setContractPartyName(resultSet.getString(FIELD_NAMES.VNDR_NM));
@@ -62,12 +64,12 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
                 dto.setAddressID(resultSet.getString(FIELD_NAMES.VNDR_ADDR_GNRTD_ID));
                 dto.setSciQuestID(StringUtils.EMPTY);
                 dto.setAddressType(JaggaerAddressType.findJaggaerAddressTypeFromKfsAddressTypeCode(resultSet.getString(FIELD_NAMES.VNDR_ADDR_TYP_CD)));
-                if (StringUtils.equals(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND), "Y")) {
+                if (StringUtils.equals(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND), KRADConstants.YES_INDICATOR_VALUE)) {
                     dto.setPrimaryType(dto.getAddressType().jaggaerAddressType);
                 } else {
                     dto.setPrimaryType(StringUtils.EMPTY);
                 }
-                dto.setActive("True");
+                dto.setActive(CUPurapConstants.TRUE_STRING);
                 dto.setCountry(convertToISOCountry(resultSet.getString(FIELD_NAMES.VNDR_ADDRESS_CNTRY_CD)));
                 dto.setStreetLine1(resultSet.getString(FIELD_NAMES.VNDR_LN1_ADDR));
                 dto.setStreetLine2(resultSet.getString(FIELD_NAMES.VNDR_LN2_ADDR));

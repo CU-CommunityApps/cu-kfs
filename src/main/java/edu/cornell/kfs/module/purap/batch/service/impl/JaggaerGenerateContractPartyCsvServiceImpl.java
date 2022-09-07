@@ -2,8 +2,10 @@ package edu.cornell.kfs.module.purap.batch.service.impl;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -16,7 +18,10 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import com.opencsv.CSVWriter;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressHeader;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContactHeader;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerPartyHeader;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateContractPartyCsvService;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
@@ -27,7 +32,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenerateContractPartyCsvService {
     private static final Logger LOG = LogManager.getLogger();
     
-    private String jaggaerUploadCreationDriectory;
+    private String jaggaerUploadCreationDirectory;
     private JaggaerUploadDao jaggaerUploadDao;
     private DateTimeService dateTimeService;
 
@@ -74,7 +79,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
         
         List<String[]> csvData = buildDataToPrint(jaggaerUploadDtos);
 
-        try (FileWriter fileWriter = new FileWriter(fullyQualifiedCreationDirectoryFileName);
+        try (FileWriter fileWriter = new FileWriter(fullyQualifiedCreationDirectoryFileName, StandardCharsets.UTF_8);
                 CSVWriter writer = new CSVWriter(fileWriter);) {
             writer.writeAll(csvData);
         } catch (IOException e) {
@@ -85,14 +90,14 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     }
     
     private String generateCsvOutputFileName(JaggaerContractUploadProcessingMode processingMode) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
         StringBuilder filename = new StringBuilder(processingMode.csvFileName);
         filename.append("_").append(sdf.format(dateTimeService.getCurrentDate())).append(CUKFSConstants.FILE_EXTENSIONS.CSV_FILE_EXTENSION);
         return filename.toString();
     }
     
     private String fullyQualifyFileNameToCreationDirectory(String csvFileName) {
-        StringBuilder filename = new StringBuilder(jaggaerUploadCreationDriectory);
+        StringBuilder filename = new StringBuilder(jaggaerUploadCreationDirectory);
         filename.append(csvFileName);
         return filename.toString();
     }
@@ -122,24 +127,21 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     }
     
     protected String[] buildPartyHeader() {
-        String[] record = { "PARTY", "OverrideDupError", "ERPNumber", "SciQuestID", "ContractPartyName", "DoingBusinessAs",
-                "OtherNames", "CountryOfOrigin", "Active", "ContractPartyType", "Primary", "LegalStructure", "TaxIDType",
-                "TaxIdentificationNumber", "VATRegistrationNumber", "WebsiteURL"};
-        return record;
+        return Arrays.stream(JaggaerPartyHeader.values())
+                .map(JaggaerPartyHeader::getHeaderName)
+                .toArray(String[]::new);
     }
     
     protected String[] buildAddressHeader() {
-        String[] record = { "ADDRESS", "AddressID", "SciQuestID", "Name", "AddressType", "PrimaryType",
-                "Active", "Country", "StreetLine1", "StreetLine2", "StreetLine3", "City/Town", "State/Province",
-                "PostalCode", "Phone", "TollFreeNumber", "Fax", "Notes"};
-        return record;
+        return Arrays.stream(JaggaerAddressHeader.values())
+                .map(JaggaerAddressHeader::getHeaderName)
+                .toArray(String[]::new);
     }
     
     protected String[] buildContactHeader() {
-        String[] record = { "CONTACT", "ContactID", "SciQuestID", "Name", "FirstName", "LastName",
-                "ContactType", "PrimaryType", "Active", "Title", "Email", "Phone", "MobilePhone",
-                "TollFreeNumber", "Fax", "Notes"};
-        return record;
+        return Arrays.stream(JaggaerContactHeader.values())
+                .map(JaggaerContactHeader::getHeaderName)
+                .toArray(String[]::new);
     }
 
     protected String[] builderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {
@@ -188,8 +190,8 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
         return StringUtils.isBlank(stringValue) ? StringUtils.EMPTY : stringValue;
     }
 
-    public void setJaggaerUploadCreationDriectory(String jaggaerUploadCreationDriectory) {
-        this.jaggaerUploadCreationDriectory = jaggaerUploadCreationDriectory;
+    public void setJaggaerUploadCreationDirectory(String jaggaerUploadCreationDirectory) {
+        this.jaggaerUploadCreationDirectory = jaggaerUploadCreationDirectory;
     }
 
     public void setJaggaerUploadDao(JaggaerUploadDao jaggaerUploadDao) {

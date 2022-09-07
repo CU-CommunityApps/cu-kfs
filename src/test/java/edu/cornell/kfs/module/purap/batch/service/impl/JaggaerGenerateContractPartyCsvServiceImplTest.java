@@ -16,11 +16,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressHeader;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerPartyHeader;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
@@ -200,13 +203,13 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
     
     @ParameterizedTest
-    @MethodSource("jaggaerContractPartyUploadDtoToStringParameters")
+    @MethodSource("buildJaggaerContractPartyUploadDtoToStringParameters")
     void testJaggaerContractPartyUploadDtoToString(JaggaerContractPartyUploadDto contractPartyDto, String searchString) {
         String actualToString = contractPartyDto.toString();
         assertTrue(StringUtils.contains(actualToString, searchString));
     }
     
-    static Stream<Arguments> jaggaerContractPartyUploadDtoToStringParameters() {
+    static Stream<Arguments> buildJaggaerContractPartyUploadDtoToStringParameters() {
         return Stream.of(
                 Arguments.of(buildVendor2WithTaxIdDto(), "taxIdentificationNumber=restricted tax id number"),
                 Arguments.of(buildVendor1Dto(),  "taxIdentificationNumber=,")
@@ -214,12 +217,13 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
     
     @ParameterizedTest
-    @MethodSource("builderVendorCSVRowArrayParameters")
+    @MethodSource("buildVendorCSVRowArrayParameters")
     void testBuilderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto, String[] expectedCsvData) {
 
         String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.builderVendorCSVRowArray(vendorDto);
-        assertEquals(16, expectedCsvData.length);
-        assertEquals(16, actualCsvData.length);
+        int expectedNumberOfArrayElements = JaggaerPartyHeader.values().length;
+        assertEquals(expectedNumberOfArrayElements, expectedCsvData.length);
+        assertEquals(expectedNumberOfArrayElements, actualCsvData.length);
         validateCsvRowArray(expectedCsvData, actualCsvData);
     }
 
@@ -231,7 +235,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         }
     }
 
-    static Stream<Arguments> builderVendorCSVRowArrayParameters() {
+    static Stream<Arguments> buildVendorCSVRowArrayParameters() {
         return Stream.of(
                 Arguments.of(buildJaggaerContractPartyUploadDto(VENDOR3_ADDRESS1_SCIQUEST_ID),
                         buildJaggaerContractPartyUploadDtoCsvData(VENDOR3_ADDRESS1_SCIQUEST_ID)),
@@ -246,7 +250,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     private static JaggaerContractPartyUploadDto buildJaggaerContractPartyUploadDto(String sciQuestId) {
         JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
         dto.setRowType(JaggaerContractPartyUploadRowType.PARTY);
-        dto.setOverrideDupError("False");
+        dto.setOverrideDupError(CUPurapConstants.FALSE_STRING);
         dto.setERPNumber(VENDOR3_ERP_NUMBER);
         dto.setSciQuestID(sciQuestId);
         dto.setContractPartyName(VENDOR3_CONTRACT_PARTY_NAME);
@@ -265,7 +269,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     private static String[] buildJaggaerContractPartyUploadDtoCsvData(String sciQuestId) {
-        String[] record = { JaggaerContractPartyUploadRowType.PARTY.rowType, "false", VENDOR3_ERP_NUMBER, sciQuestId,
+        String[] record = { JaggaerContractPartyUploadRowType.PARTY.rowType, CUPurapConstants.FALSE_STRING, VENDOR3_ERP_NUMBER, sciQuestId,
                 VENDOR3_CONTRACT_PARTY_NAME, VENDOR3_DBA, VENDOR3_OTHER_NAME, COUNTRY_US, VENDOR3_ACTIVE,
                 JaggaerContractPartyType.SUPPLIER.partyTypeName, VENDOR3_PRIMARY,
                 JaggaerLegalStructure.C_CORPORATION.jaggaerLegalStructureName, VENDOR3_TAX_TYPE, VENDOR3_TAX_ID,
@@ -274,15 +278,16 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     @ParameterizedTest
-    @MethodSource("builderAddressCSVRowArrayParameters")
+    @MethodSource("buildAddressCSVRowArrayParameters")
     void testBuilderAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto, String[] expectedCsvData) {
         String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.builderAddressCSVRowArray(addressDto);
-        assertEquals(18, actualCsvData.length);
-        assertEquals(18, expectedCsvData.length);
+        int expectedNumberOfArrayElements = JaggaerAddressHeader.values().length;
+        assertEquals(expectedNumberOfArrayElements, actualCsvData.length);
+        assertEquals(expectedNumberOfArrayElements, expectedCsvData.length);
         validateCsvRowArray(expectedCsvData, actualCsvData);
     }
 
-    static Stream<Arguments> builderAddressCSVRowArrayParameters() {
+    static Stream<Arguments> buildAddressCSVRowArrayParameters() {
         return Stream.of(
                 Arguments.of(buildJaggaerContractAddressUploadDto("cool note"),
                         buildJaggaerContractAddressUploadDtoData("cool note")),
@@ -349,14 +354,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     private String printArrayCommaDelim(String[] data) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < data.length; i++) {
-            if (i > 0) {
-                sb.append(KFSConstants.COMMA);
-            }
-            sb.append(data[i]);
-        }
-        return sb.toString();
+        return StringUtils.join(data, KFSConstants.COMMA);
     }
 
 }

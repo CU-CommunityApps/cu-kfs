@@ -316,7 +316,7 @@
 	<bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean" />
 	<bean id="jaggaerGenerateContractPartyCsvService-parentBean" abstract="true"
 		class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateContractPartyCsvServiceImpl">
-		<property name="jaggaerUploadCreationDriectory">
+		<property name="jaggaerUploadCreationDirectory">
 			<value>${staging.directory}/purap/jaggaer/</value>
 		</property>
 		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
