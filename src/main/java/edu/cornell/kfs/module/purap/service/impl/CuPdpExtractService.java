@@ -21,7 +21,7 @@ import org.kuali.kfs.kim.api.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
-public class CuPdpExtractServiceImpl extends PdpExtractService {
+public class CuPdpExtractService extends PdpExtractService {
     private DocumentTypeService documentTypeService;
     
     @Override

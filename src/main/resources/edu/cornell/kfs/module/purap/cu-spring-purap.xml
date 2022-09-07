@@ -253,7 +253,7 @@
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
     <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
 
-    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl">
+    <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractService">
         <property name="documentTypeService" ref="documentTypeService"/>
     </bean>
 

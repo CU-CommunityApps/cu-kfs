@@ -18,11 +18,11 @@ public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-	public List<VendorCreditMemoDocument> getCreditMemosToExtract(String chartCode) {
+	public List<VendorCreditMemoDocument> getCreditMemosToExtract(String campusCode) {
         LOG.debug("getCreditMemosToExtract() started");
 
         Criteria criteria = new Criteria();
-        criteria.addEqualTo("processingCampusCode", chartCode);
+        criteria.addEqualTo("processingCampusCode", campusCode);
         criteria.addIsNull("extractedTimestamp");
         criteria.addEqualTo("holdIndicator", Boolean.FALSE);
         criteria.addEqualTo("paymentMethodCode", "P");
@@ -31,11 +31,11 @@ public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
     }
 
     @Override
-    public Collection<VendorCreditMemoDocument> getCreditMemosToExtractByVendor(String chartCode, VendorGroupingHelper vendor ) {
+    public Collection<VendorCreditMemoDocument> getCreditMemosToExtractByVendor(String campusCode, VendorGroupingHelper vendor ) {
         LOG.debug("getCreditMemosToExtractByVendor() started");
 
         Criteria criteria = new Criteria();
-        criteria.addEqualTo( "processingCampusCode", chartCode );
+        criteria.addEqualTo( "processingCampusCode", campusCode );
         criteria.addIsNull( "extractedTimestamp" );
         criteria.addEqualTo( "holdIndicator", Boolean.FALSE );
         criteria.addEqualTo("paymentMethodCode", "P");
