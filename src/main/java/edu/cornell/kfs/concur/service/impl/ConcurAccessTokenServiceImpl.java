@@ -18,14 +18,19 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
@@ -205,12 +210,20 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     protected CloseableHttpClient buildSecureHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContexts.custom()
-                .useProtocol(ConcurConstants.TLS_V1_2_PROTOCOL)
+                .setProtocol(ConcurConstants.TLS_V1_2_PROTOCOL)
                 .build();
-        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext, new String[] {ConcurConstants.TLS_V1_2_PROTOCOL}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
-        return HttpClients.custom()
+        SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+        .setSslContext(sslContext)
+        .setTlsVersions(new String[] {ConcurConstants.TLS_V1_2_PROTOCOL})
+        .setHostnameVerifier(new DefaultHostnameVerifier())
+        .build();
+        
+        final HttpClientConnectionManager cm = PoolingHttpClientConnectionManagerBuilder.create()
                 .setSSLSocketFactory(sslSocketFactory)
+                .build();
+        
+        return HttpClients.custom()
+                .setConnectionManager(cm)
                 .build();
     }
 
@@ -232,10 +245,10 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
 
     protected Boolean checkForRevokeTokenSuccess(HttpResponse response) throws IOException {
-        StatusLine statusLine = response.getStatusLine();
-        int statusCode = statusLine.getStatusCode();
-        String reasonPhrase = statusLine.getReasonPhrase();
-        String responseContent = getEntityContentAsString(response.getEntity());
+        int statusCode = response.getCode();
+        String reasonPhrase = response.getReasonPhrase();
+        ClassicHttpResponse classicResponse = (ClassicHttpResponse) response;
+        String responseContent = getEntityContentAsString(classicResponse.getEntity());
         
         LOG.info("checkForRevokeTokenSuccess(): Response status code: " + statusCode + ", reason phrase: " + reasonPhrase);
         if (StringUtils.isNotBlank(responseContent)) {

@@ -185,7 +185,7 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     }
 
     @Override
-    public Date getNextStartTime(BatchJobStatus job) {
+    public Date getNextStartTime(final BatchJobStatus job) {
         LOG.warn("getNextStartTime, This class does not support scheduled jobs");
         return null;
     }

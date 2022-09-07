@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
                            http://www.springframework.org/schema/aop
@@ -358,14 +358,6 @@
           abstract="true" class="edu.cornell.kfs.sys.service.impl.CuGeneralLedgerPendingEntryServiceImpl"/>
 
 	<bean id="cuApiJsonWebRequestReader" class="edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl" />
-    
-    <!-- backport changes for redis -->
-    <bean id="menuService-parentBean" class="org.kuali.kfs.sys.service.MenuService" abstract="true" p:dao-ref="menuDao"
-          p:permissionService-ref="permissionService" p:documentDictionaryService-ref="documentDictionaryService"
-          p:documentTypeService-ref="documentTypeService" p:cacheManagerRegistry-ref="cacheManagerRegistry"
-          p:configurationService-ref="configurationService" p:institutionLogoDao-ref="logoDao"
-          p:reportsService-ref="reportsService"/>
-    <!-- end changes for redis -->
 
     <!--
         Complete overhaul of SchedulerService to allow it to be used without Quartz.
@@ -406,5 +398,8 @@
     <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">
         <property name="isoFipsCountryMapDao" ref="isoFipsCountryMapDao" />
     </bean>
+    
+    <bean id="rice.ksb.scheduledThreadPool"
+         class="org.kuali.kfs.ksb.messaging.threadpool.KSBScheduledThreadPoolExecutor" lazy-init="true"/>
 
 </beans>
