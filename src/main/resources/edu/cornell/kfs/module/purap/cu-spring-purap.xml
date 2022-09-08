@@ -311,6 +311,7 @@
 	</bean>
 
 	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc">
+	 <property name="isoFipsConversionService" ref="isoFipsConversionService" />
 	</bean>
 	
 	<bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean" />

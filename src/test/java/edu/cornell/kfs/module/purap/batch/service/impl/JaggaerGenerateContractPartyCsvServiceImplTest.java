@@ -41,8 +41,6 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     
     private static final String PROCESS_DATE = "2022-08-16";
     private static final String BASE_CSV_DIRECTORY = "src/test/resources/edu/cornell/kfs/module/purap/batch/service/impl/fixture/";
-    //private static final String EXPECTED_JAGGAER_FILENAME = "expectedJaggaerUpload.csv";
-    //private static final String ACTUAL_JAGGAER_FILENAME = "testJaggaerUploadFile.csv";;
 
     @BeforeEach
     void setUp() throws Exception {

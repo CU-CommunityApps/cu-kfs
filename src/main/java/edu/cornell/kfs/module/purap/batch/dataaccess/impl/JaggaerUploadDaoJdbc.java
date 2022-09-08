@@ -18,12 +18,15 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
+import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
 
 import org.springframework.jdbc.core.RowMapper;
 
 public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements JaggaerUploadDao {
     private static final Logger LOG = LogManager.getLogger();
+    
+    protected ISOFIPSConversionService isoFipsConversionService;
     
     @Override
     public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
@@ -183,15 +186,24 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         return vendorHeaderId + KFSConstants.DASH + vendorDetailId;
     }
     
-    private String convertToISOCountry(String fIPSCountry) {
-        if (StringUtils.isBlank(fIPSCountry)) {
+    private String convertToISOCountry(String fipsCountryCode) {
+        if (StringUtils.isBlank(fipsCountryCode)) {
             LOG.debug("convertToISOCountry, empty FIPS country found returning US as default");
-            fIPSCountry = "US";
+            fipsCountryCode = "US";
         }
-        /*
-         * @TODO use generic mapping framework
-         */
-        return fIPSCountry;
+        String isoCountry = StringUtils.EMPTY;
+        
+        try {
+            isoCountry = isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
+        } catch (RuntimeException runtimeException) {
+            LOG.error("convertToISOCountry, unable to get ISO country for FIPS country " + fipsCountryCode, runtimeException);
+        }
+        
+        return isoCountry;
+    }
+
+    public void setIsoFipsConversionService(ISOFIPSConversionService isoFipsConversionService) {
+        this.isoFipsConversionService = isoFipsConversionService;
     }
 
 }
