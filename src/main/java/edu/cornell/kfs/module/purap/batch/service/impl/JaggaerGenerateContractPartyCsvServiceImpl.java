@@ -89,14 +89,14 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
 
     }
     
-    private String generateCsvOutputFileName(JaggaerContractUploadProcessingMode processingMode) {
+    protected String generateCsvOutputFileName(JaggaerContractUploadProcessingMode processingMode) {
         SimpleDateFormat sdf = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
         StringBuilder filename = new StringBuilder(processingMode.csvFileName);
         filename.append("_").append(sdf.format(dateTimeService.getCurrentDate())).append(CUKFSConstants.FILE_EXTENSIONS.CSV_FILE_EXTENSION);
         return filename.toString();
     }
     
-    private String fullyQualifyFileNameToCreationDirectory(String csvFileName) {
+    protected String fullyQualifyFileNameToCreationDirectory(String csvFileName) {
         StringBuilder filename = new StringBuilder(jaggaerUploadCreationDirectory);
         filename.append(csvFileName);
         return filename.toString();

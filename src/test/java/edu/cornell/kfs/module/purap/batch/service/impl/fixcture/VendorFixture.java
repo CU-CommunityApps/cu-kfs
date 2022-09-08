@@ -9,11 +9,14 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
 
 public enum VendorFixture {
-    VENDOR1("12345-0", "Acme Testing Company", "US", "http://www.google.com"),
-    VENDOR2("98765-0", "Jane Doe Paint Services", "US", "65479", "http://www.yahoo.com"),
-    VENDOR3(JaggaerContractPartyUploadRowType.PARTY, StringUtils.EMPTY, "active", "123456-0",
+    BASIC_VENDOR("12345-0", "Acme Testing Company", "US", "http://www.google.com"),
+    BASIC_VENDOR_WITH_TAX_ID("98765-0", "Jane Doe Paint Services", "US", "65479", "http://www.yahoo.com"),
+    FULL_VENOOR(JaggaerContractPartyUploadRowType.PARTY, StringUtils.EMPTY, "active", "123456-0",
             CUPurapConstants.FALSE_STRING, "Acme Inc", "Acme", "other name", "US", JaggaerContractPartyType.SUPPLIER,
-            "primary", JaggaerLegalStructure.C_CORPORATION, "foo type", "369852", "vat number", "www.google.com");
+            "primary", JaggaerLegalStructure.C_CORPORATION, "foo type", "369852", "vat number", "www.google.com"),
+    FULL_VENOOR_FOR_CSV(JaggaerContractPartyUploadRowType.PARTY, "vendor SciQuest-id", "active", "66666-0",
+            CUPurapConstants.FALSE_STRING, "Yankee Fan Company", "Yankees", "Babe Ruth's Team", "US", JaggaerContractPartyType.SUPPLIER,
+            "primary", JaggaerLegalStructure.NON_PROFIT, "test tax type", "353454", "vat number", "www.yankees.com");
 
     public final JaggaerContractPartyUploadRowType rowType;
     public final String sciQuestID;

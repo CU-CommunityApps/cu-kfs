@@ -2,10 +2,16 @@ package edu.cornell.kfs.module.purap.batch.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
@@ -30,12 +37,29 @@ import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractUploadB
 
 public class JaggaerGenerateContractPartyCsvServiceImplTest {
     private JaggaerGenerateContractPartyCsvServiceImpl jaggaerGenerateContractPartyCsvServiceImpl;
+    private Date csvTestDate;
     
     private static final String PROCESS_DATE = "2022-08-16";
+    private static final String BASE_CSV_DIRECTORY = "src/test/resources/edu/cornell/kfs/module/purap/batch/service/impl/fixture/";
+    //private static final String EXPECTED_JAGGAER_FILENAME = "expectedJaggaerUpload.csv";
+    //private static final String ACTUAL_JAGGAER_FILENAME = "testJaggaerUploadFile.csv";;
 
     @BeforeEach
     void setUp() throws Exception {
         jaggaerGenerateContractPartyCsvServiceImpl = new JaggaerGenerateContractPartyCsvServiceImpl();
+        jaggaerGenerateContractPartyCsvServiceImpl.setJaggaerUploadCreationDirectory(BASE_CSV_DIRECTORY);
+        
+        Calendar cal = Calendar.getInstance();
+        cal.set(1996, 10, 30, 23, 31, 0);
+        csvTestDate = cal.getTime();
+        jaggaerGenerateContractPartyCsvServiceImpl.setDateTimeService(buildMockDateTimeService());
+        
+    }
+    
+    private DateTimeService buildMockDateTimeService() {
+        DateTimeService service = Mockito.mock(DateTimeService.class);
+        Mockito.when(service.getCurrentDate()).thenReturn(csvTestDate);
+        return service;
     }
 
     @AfterEach
@@ -52,15 +76,15 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     
     private List<JaggaerContractPartyUploadDto> getMockVendorDtos() {
         List<JaggaerContractPartyUploadDto> dtos = new ArrayList<>();
-        dtos.add(VendorFixture.VENDOR1.toJaggaerContractPartyUploadDto());
-        dtos.add(VendorFixture.VENDOR2.toJaggaerContractPartyUploadDto());
+        dtos.add(VendorFixture.BASIC_VENDOR.toJaggaerContractPartyUploadDto());
+        dtos.add(VendorFixture.BASIC_VENDOR_WITH_TAX_ID.toJaggaerContractPartyUploadDto());
         return dtos;
     }
     
     private List<JaggaerContractAddressUploadDto> buildMockAddressDtos() {
         List<JaggaerContractAddressUploadDto> dtos = new ArrayList<>();
-        dtos.add(VendorAddressFixture.VENDOR1_ADDRESS1.toJaggaerContractAddressUploadDto());
-        dtos.add(VendorAddressFixture.VENDOR1_ADDRESS2.toJaggaerContractAddressUploadDto());
+        dtos.add(VendorAddressFixture.BASIC_VENDOR_ADDRESS_1.toJaggaerContractAddressUploadDto());
+        dtos.add(VendorAddressFixture.BASIC_VENDOR_ADDRESS_2.toJaggaerContractAddressUploadDto());
         dtos.add(buildNoVendorAddressDto());
         return dtos;
     }
@@ -80,20 +104,20 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         assertEquals(4, jaggaerUploadDtos.size());
         
         JaggaerContractPartyUploadDto actualFirstElement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(0);
-        assertEquals(VendorFixture.VENDOR1.toJaggaerContractPartyUploadDto(), actualFirstElement, "The first element should be vendor 1");
+        assertEquals(VendorFixture.BASIC_VENDOR.toJaggaerContractPartyUploadDto(), actualFirstElement, "The first element should be vendor 1");
         
         JaggaerContractAddressUploadDto actualSecondElement = (JaggaerContractAddressUploadDto) jaggaerUploadDtos.get(1);
-        JaggaerContractAddressUploadDto expectedAddress1 = VendorAddressFixture.VENDOR1_ADDRESS1.toJaggaerContractAddressUploadDto();
+        JaggaerContractAddressUploadDto expectedAddress1 = VendorAddressFixture.BASIC_VENDOR_ADDRESS_1.toJaggaerContractAddressUploadDto();
         expectedAddress1.setName(actualFirstElement.getContractPartyName());
         assertEquals(expectedAddress1, actualSecondElement, "The second element should be vendor 1 address 1");
         
         JaggaerContractAddressUploadDto actualThirdElement = (JaggaerContractAddressUploadDto) jaggaerUploadDtos.get(2);
-        JaggaerContractAddressUploadDto expectedAddress2 = VendorAddressFixture.VENDOR1_ADDRESS2.toJaggaerContractAddressUploadDto();
+        JaggaerContractAddressUploadDto expectedAddress2 = VendorAddressFixture.BASIC_VENDOR_ADDRESS_2.toJaggaerContractAddressUploadDto();
         expectedAddress2.setName(actualFirstElement.getContractPartyName());
         assertEquals(expectedAddress2, actualThirdElement, "The third element should be vendor 1 address 2");
         
         JaggaerContractPartyUploadDto actualFourthElement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(3);
-        assertEquals(VendorFixture.VENDOR2.toJaggaerContractPartyUploadDto(), actualFourthElement, "THe fourth element should be vendor 2");
+        assertEquals(VendorFixture.BASIC_VENDOR_WITH_TAX_ID.toJaggaerContractPartyUploadDto(), actualFourthElement, "THe fourth element should be vendor 2");
     }
     
     @ParameterizedTest
@@ -105,8 +129,8 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     
     static Stream<Arguments> buildJaggaerContractPartyUploadDtoToStringParameters() {
         return Stream.of(
-                Arguments.of(VendorFixture.VENDOR2.toJaggaerContractPartyUploadDto(), "taxIdentificationNumber=restricted tax id number"),
-                Arguments.of(VendorFixture.VENDOR1.toJaggaerContractPartyUploadDto(),  "taxIdentificationNumber=,")
+                Arguments.of(VendorFixture.BASIC_VENDOR_WITH_TAX_ID.toJaggaerContractPartyUploadDto(), "taxIdentificationNumber=restricted tax id number"),
+                Arguments.of(VendorFixture.BASIC_VENDOR.toJaggaerContractPartyUploadDto(),  "taxIdentificationNumber=,")
                 );
     }
     
@@ -142,13 +166,13 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     private static JaggaerContractPartyUploadDto buildJaggaerContractPartyUploadDto(String sciQuestId) {
-        JaggaerContractPartyUploadDto dto = VendorFixture.VENDOR3.toJaggaerContractPartyUploadDto();
+        JaggaerContractPartyUploadDto dto = VendorFixture.FULL_VENOOR.toJaggaerContractPartyUploadDto();
         dto.setSciQuestID(sciQuestId);
         return dto;
     }
 
     private static String[] buildJaggaerContractPartyUploadDtoCsvData(String sciQuestId) {
-        VendorFixture vendor = VendorFixture.VENDOR3;
+        VendorFixture vendor = VendorFixture.FULL_VENOOR;
         String[] record = { vendor.rowType.rowType, vendor.overrideDupError, vendor.ERPNumber, sciQuestId,
                 vendor.contractPartyName, vendor.doingBusinessAs, vendor.otherNames, vendor.countryOfOrigin, vendor.active,
                 vendor.contractPartyType.partyTypeName, vendor.primary,
@@ -180,13 +204,13 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     static JaggaerContractAddressUploadDto buildJaggaerContractAddressUploadDto(String notes) {
-        JaggaerContractAddressUploadDto dto = VendorAddressFixture.VENDOR3_ADDRESS1.toJaggaerContractAddressUploadDto();
+        JaggaerContractAddressUploadDto dto = VendorAddressFixture.FULL_VENDOR_FULL_ADDRSS.toJaggaerContractAddressUploadDto();
         dto.setNotes(notes);
         return dto;
     }
 
     static String[] buildJaggaerContractAddressUploadDtoData(String notes) {
-        VendorAddressFixture address = VendorAddressFixture.VENDOR3_ADDRESS1;
+        VendorAddressFixture address = VendorAddressFixture.FULL_VENDOR_FULL_ADDRSS;
         String[] record = { address.rowType.name(), address.addressID,
                 address.sciQuestID, address.name, address.addressType.jaggaerAddressType, address.primaryType, 
                 address.active, address.country, address.streetLine1,
@@ -219,6 +243,26 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
 
     private String printArrayCommaDelim(String[] data) {
         return StringUtils.join(data, KFSConstants.COMMA);
+    }
+    
+    @Test
+    void testGenerateCsvFile() throws IOException {
+        List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = new ArrayList<>();
+        jaggaerUploadDtos.add(VendorFixture.FULL_VENOOR_FOR_CSV.toJaggaerContractPartyUploadDto());
+        jaggaerUploadDtos.add(VendorAddressFixture.FULL_VENDOR_FULL_ADDRSS_FOR_CSV.toJaggaerContractAddressUploadDto());
+        
+        jaggaerGenerateContractPartyCsvServiceImpl.generateCsvFile(jaggaerUploadDtos, JaggaerContractUploadProcessingMode.PO);
+        
+        
+        File expectedJaggaerFile = new File(BASE_CSV_DIRECTORY + "expectedJaggaerUpload.csv");
+        File actualJaggaerFile = new File(BASE_CSV_DIRECTORY + "JaggaerUpload_found_by_PO_search_19961130_233100.csv");
+        
+        FileUtils.readFileToString(expectedJaggaerFile, StandardCharsets.UTF_8);
+        assertEquals(FileUtils.readFileToString(expectedJaggaerFile, StandardCharsets.UTF_8), 
+                FileUtils.readFileToString(actualJaggaerFile, StandardCharsets.UTF_8));
+        
+        FileUtils.forceDelete(actualJaggaerFile);
+        
     }
 
 }

@@ -7,13 +7,16 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadR
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 
 public enum VendorAddressFixture {
-    VENDOR1_ADDRESS1(VendorFixture.VENDOR1.ERPNumber, "12342", JaggaerAddressType.FULFILLMENT, "123 Main Street",
+    BASIC_VENDOR_ADDRESS_1(VendorFixture.BASIC_VENDOR.ERPNumber, "12342", JaggaerAddressType.FULFILLMENT, "123 Main Street",
             "Apartment 666", "Freeville", "NY", "13068"),
-    VENDOR1_ADDRESS2(VendorFixture.VENDOR1.ERPNumber, "98765", JaggaerAddressType.REMIT, "45 Palm Street",
+    BASIC_VENDOR_ADDRESS_2(VendorFixture.BASIC_VENDOR.ERPNumber, "98765", JaggaerAddressType.REMIT, "45 Palm Street",
             "Apartment 1F", "Ithaca", "NY", "14850"),
-    VENDOR3_ADDRESS1(JaggaerContractPartyUploadRowType.ADDRESS, StringUtils.EMPTY, "Active", VendorFixture.VENDOR3.ERPNumber,
+    FULL_VENDOR_FULL_ADDRSS(JaggaerContractPartyUploadRowType.ADDRESS, StringUtils.EMPTY, "Active", VendorFixture.FULL_VENOOR.ERPNumber,
             "addressId", "ABCD", JaggaerAddressType.FULFILLMENT, "primary type", "US", "street line 1", "street line 2", "street line 3",
-            "city", "NY", "14850", "6072559900", "18002809900", "fax", StringUtils.EMPTY);
+            "city", "NY", "14850", "6072559900", "18002809900", "fax", StringUtils.EMPTY),
+    FULL_VENDOR_FULL_ADDRSS_FOR_CSV(JaggaerContractPartyUploadRowType.ADDRESS, "vendor address sciquest id", "Active", VendorFixture.FULL_VENOOR_FOR_CSV.ERPNumber,
+            "666666666", "Yankees Fan Company", JaggaerAddressType.FULFILLMENT, "primary type", "US", "street line 1", "street line 2", "street line 3",
+            "city", "NY", "14850", "6072559900", "18002809900", "fax", "super awesome cool note");
 
     public final JaggaerContractPartyUploadRowType rowType;
     public final String sciQuestID;
