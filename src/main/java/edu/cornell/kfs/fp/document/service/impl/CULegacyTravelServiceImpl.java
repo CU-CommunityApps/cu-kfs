@@ -15,11 +15,7 @@
  */
 package edu.cornell.kfs.fp.document.service.impl;
 
-import java.net.URL;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 
@@ -28,7 +24,6 @@ import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface
  * 
  */
 public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.service.CULegacyTravelService {
-	private static final Logger LOG = LogManager.getLogger(CULegacyTravelServiceImpl.class);
 
     public static final class DFA_TRAVEL_WS_METHODS {
     	public static final String GET_TRIP_ID = "getTripID";
