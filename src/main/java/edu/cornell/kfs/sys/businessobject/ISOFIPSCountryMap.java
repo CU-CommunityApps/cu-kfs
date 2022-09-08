@@ -2,11 +2,7 @@ package edu.cornell.kfs.sys.businessobject;
 
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.sys.businessobject.Country;
 
-/**
- * CU Generic ISO-FIPS Country modification
- */
 public class ISOFIPSCountryMap extends PersistableBusinessObjectBase implements MutableInactivatable {
 	
 	private static final long serialVersionUID = -225492256254471124L;
@@ -14,24 +10,11 @@ public class ISOFIPSCountryMap extends PersistableBusinessObjectBase implements 
 	private String isoCountryCode;
 	private String fipsCountryCode;
 	private boolean active;
-	private Country fipsCountry;
-    private ISOCountry isoCountry;
 	
 	public ISOFIPSCountryMap() {
-	    super();
 	}
 	
-	public ISOFIPSCountryMap(String isoCountryCode, String fipsCountryCode, boolean active, Country fipsCountry,
-            ISOCountry isoCountry) {
-        super();
-        this.isoCountryCode = isoCountryCode;
-        this.fipsCountryCode = fipsCountryCode;
-        this.active = active;
-        this.fipsCountry = fipsCountry;
-        this.isoCountry = isoCountry;
-    }
-
-    public String getIsoCountryCode() {
+	public String getIsoCountryCode() {
 		return isoCountryCode;
 	}
 	
@@ -55,22 +38,6 @@ public class ISOFIPSCountryMap extends PersistableBusinessObjectBase implements 
 	@Override
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public Country getFipsCountry() {
-        return fipsCountry;
-    }
-
-    public void setFipsCountry(Country fipsCountry) {
-        this.fipsCountry = fipsCountry;
-    }
-
-    public ISOCountry getIsoCountry() {
-        return isoCountry;
-    }
-
-    public void setIsoCountry(ISOCountry isoCountry) {
-        this.isoCountry = isoCountry;
     }
 	
 }

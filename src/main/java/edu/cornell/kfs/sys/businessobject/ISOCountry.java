@@ -3,9 +3,6 @@ package edu.cornell.kfs.sys.businessobject;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
-/**
- * CU Generic ISO-FIPS Country modification
- */
 public class ISOCountry extends PersistableBusinessObjectBase implements MutableInactivatable {
     
     private static final long serialVersionUID = -8693365503723440174L;
@@ -16,15 +13,6 @@ public class ISOCountry extends PersistableBusinessObjectBase implements Mutable
     private boolean active;
     
     public ISOCountry() {
-        super();
-    }
-    
-    public ISOCountry(String name, String code, String alternateCode, boolean active) {
-        super();
-        this.name = name;
-        this.code = code;
-        this.alternateCode = alternateCode;
-        this.active = active;
     }
     
     public String getName() {
