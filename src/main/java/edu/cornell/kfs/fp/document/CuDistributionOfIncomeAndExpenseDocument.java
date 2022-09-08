@@ -4,7 +4,6 @@ import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
-import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
@@ -22,11 +21,6 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
     public CuDistributionOfIncomeAndExpenseDocument() {
         super();
         tripAssociationStatusCode = CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC;
-    }
-
-    @Override
-    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
-        super.doRouteStatusChange(statusChangeEvent);
     }
 
     @Override
