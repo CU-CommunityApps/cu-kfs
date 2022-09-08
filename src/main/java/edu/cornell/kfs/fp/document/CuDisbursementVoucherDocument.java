@@ -104,26 +104,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     }
 
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
-      super.doRouteStatusChange(statusChangeEvent);
-    }
-
-    private String findDissapprovalReason(List<ActionTaken> actionsTaken) {
-        String disapprovalReason = "";
-        if(actionsTaken.size() > 0) {
-          String annotation = actionsTaken.get(actionsTaken.size() - 1).getAnnotation();
-          if(StringUtils.isNotEmpty(annotation)) {
-              if(StringUtils.contains(annotation, DISAPPROVE_ANNOTATION_REASON_STARTER)) {
-                  disapprovalReason = annotation.substring(DISAPPROVE_ANNOTATION_REASON_STARTER.length());  
-              } else {
-                  disapprovalReason = annotation;
-              }
-          }
-        }
-        return disapprovalReason;
-    }
-
-    @Override
     public void templateVendor(VendorDetail vendor, VendorAddress vendorAddress) {
         if (vendor == null) {
             return;
