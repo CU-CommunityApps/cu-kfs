@@ -1,28 +1,17 @@
 package edu.cornell.kfs.fp.document;
 
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
-import org.kuali.kfs.kew.actiontaken.ActionTaken;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
-import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
-
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "DistributionOfIncomeAndExpense")
-public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfIncomeAndExpenseDocument implements CULegacyTravelIntegrationInterface{
-	private static final Logger LOG = LogManager.getLogger(CuDistributionOfIncomeAndExpenseDocument.class);
+public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfIncomeAndExpenseDocument implements CULegacyTravelIntegrationInterface {
 	
     private static final long serialVersionUID = 1L;
 
