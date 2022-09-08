@@ -22,14 +22,14 @@ public class ISOFIPSCountryMapServiceImpl implements ISOFIPSCountryMapService {
     protected BusinessObjectService businessObjectService;
            
     public List<ISOFIPSCountryMap> findActiveMapsByISOCountryId(String isoCountryCode) {
-        return (List<ISOFIPSCountryMap>) getBusinessObjectService().findMatching(ISOFIPSCountryMap.class, mapPartialPrimaryKeys(CUKFSPropertyConstants.ISOFIPSCountryMap.ISO_COUNTRY_CODE, isoCountryCode));
+        return (List<ISOFIPSCountryMap>) getBusinessObjectService().findMatching(ISOFIPSCountryMap.class, mapPartialPrimaryKeysAndActiveStatus(CUKFSPropertyConstants.ISOFIPSCountryMap.ISO_COUNTRY_CODE, isoCountryCode));
     }
     
     public List<ISOFIPSCountryMap> findActiveMapsByFIPSCountryId(String fipsCountryCode) {
-        return (List<ISOFIPSCountryMap>) getBusinessObjectService().findMatching(ISOFIPSCountryMap.class, mapPartialPrimaryKeys(CUKFSPropertyConstants.ISOFIPSCountryMap.FIPS_COUNTRY_CODE, fipsCountryCode));
+        return (List<ISOFIPSCountryMap>) getBusinessObjectService().findMatching(ISOFIPSCountryMap.class, mapPartialPrimaryKeysAndActiveStatus(CUKFSPropertyConstants.ISOFIPSCountryMap.FIPS_COUNTRY_CODE, fipsCountryCode));
     }
     
-    protected Map<String, Object> mapPartialPrimaryKeys(String key, String value) {
+    protected Map<String, Object> mapPartialPrimaryKeysAndActiveStatus(String key, String value) {
         Map<String, Object> partialKeys = new HashMap<>();
         partialKeys.put(key, value);
         partialKeys.put(CUKFSPropertyConstants.ISOFIPSCountryMap.ACTIVE, true);
