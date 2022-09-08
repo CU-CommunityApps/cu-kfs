@@ -1,12 +1,17 @@
 package edu.cornell.kfs.sys.service;
 
-/**
- * CU Generic ISO-FIPS Country modification
- */
+import java.util.List;
+
+import edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap;
+
 public interface ISOFIPSConversionService {
 
     public String convertISOCountryCodeToActiveFIPSCountryCode(String isoCountryCode);
 
     public String convertFIPSCountryCodeToActiveISOCountryCode(String fipsCountryCode);
+
+    public List<ISOFIPSCountryMap> findManyActiveISOCountryCodesForFIPSCode(String fipsCountryCode);
+
+    public List<ISOFIPSCountryMap> findManyActiveFIPSCountryCodesForISOCode(String isoCountryCode);
 
 }
