@@ -354,35 +354,35 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     @Override
     public int uploadVendorsToPaymentWorks(InputStream vendorCsvDataStream) {
         Response response = null;
-        int ret = 0;
+        int receivedSuppliersCount = 0;
         
         try {
             response = performSupplierUpload(vendorCsvDataStream);
             response.bufferEntity();
             String responseContent = response.readEntity(String.class);
-            ret = getReceivedSuppliersCountIfSupplierUploadSucceeded(responseContent);
+            receivedSuppliersCount = getReceivedSuppliersCountIfSupplierUploadSucceeded(responseContent);
         } finally {
             CURestClientUtils.closeQuietly(response);
         }
-        return ret;
+
+        return receivedSuppliersCount;
     }
 
     private Response performSupplierUpload(InputStream vendorCsvDataStream) {
-        Client client = null;
-        Response ret = null;
+        Response response = null;
         
         try {
             ClientConfig clientConfig = new ClientConfig();
             clientConfig.register(MultiPartFeature.class);
-            client = JerseyClientBuilder.createClient(clientConfig);
+            Client client = JerseyClientBuilder.createClient(clientConfig);
             
             Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), vendorCsvDataStream);
-            ret = request.invoke();
+            response = request.invoke();
         } catch (Exception e) {
             LOG.error("performSupplierUpload", e);
         }
 
-        return ret;
+        return response;
     }
 
     private URI buildSupplierUploadURI() {
