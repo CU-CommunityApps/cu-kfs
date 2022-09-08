@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.Country;
@@ -22,16 +23,17 @@ public class CountryServiceImpl implements CountryService {
     private static final Logger LOG = LogManager.getLogger(CountryServiceImpl.class);
  
     protected BusinessObjectService businessObjectService;
+    protected ConfigurationService configurationService;
     
     public boolean isCountryActive(String countryCode) {
         Country countryFound = getByPrimaryId(countryCode);
 
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryActive: " +
-                    MessageFormat.format(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return countryFound.isActive();
         } else {
-            LOG.error("isCountryActive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE, countryCode));
+            LOG.error("isCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), countryCode));
             return false;
         }
     }
@@ -41,10 +43,10 @@ public class CountryServiceImpl implements CountryService {
 
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryInactive: " +
-                    MessageFormat.format(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return !countryFound.isActive();
         } else {
-            LOG.error("isCountryInactive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE, countryCode));
+            LOG.error("isCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), countryCode));
             return false;
         }
     }
@@ -65,6 +67,14 @@ public class CountryServiceImpl implements CountryService {
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

@@ -4,9 +4,9 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap;
@@ -78,6 +78,7 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
     private ISOCountryService isoCountryService;
     private CountryService countryService;
     private ISOFIPSCountryMapService isoFipsCountryMapService;
+    private ConfigurationService configurationService;
     
     /**
      * Return the single ACTIVE FIPS country code mapped to the ISO country code input parameter when the
@@ -88,8 +89,8 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
     @Override
     public String convertISOCountryCodeToActiveFIPSCountryCode(String isoCountryCode) {
         if (getIsoCountryService().isISOCountryInactive(isoCountryCode)) {
-            LOG.error("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS, isoCountryCode));
-            throw new NoISOtoFIPSMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS, isoCountryCode));
+            LOG.error("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS), isoCountryCode));
+            throw new NoISOtoFIPSMappingException(MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS), isoCountryCode));
         }
         
         List<ISOFIPSCountryMap> mappingsFound = findManyActiveFIPSCountryMapsForISOCode(isoCountryCode);
@@ -100,14 +101,14 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
                 .collect(Collectors.toList());
 
         if (mappingsFound.isEmpty()) {
-            LOG.error("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS, isoCountryCode));
-            throw new NoISOtoFIPSMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS, isoCountryCode));
+            LOG.error("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS), isoCountryCode));
+            throw new NoISOtoFIPSMappingException(MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_ISO_TO_FIPS_MAPPINGS), isoCountryCode));
         } else if (mappingsFound.size() > 1) {
-            LOG.error("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(CUKFSKeyConstants.ERROR_MANY_ISO_TO_FIPS_MAPPINGS, isoCountryCode));
-            throw new ManyISOtoFIPSMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_MANY_ISO_TO_FIPS_MAPPINGS, isoCountryCode));
+            LOG.error("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_MANY_ISO_TO_FIPS_MAPPINGS), isoCountryCode));
+            throw new ManyISOtoFIPSMappingException(MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_MANY_ISO_TO_FIPS_MAPPINGS), isoCountryCode));
         } 
         String fipsCountryCodeFound = (mappingsFound.get(0)).getFipsCountryCode();
-        LOG.debug("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_ISO_TO_FIPS_MAPPING, isoCountryCode, fipsCountryCodeFound));
+        LOG.debug("convertISOCountryCodeToActiveFIPSCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_ISO_TO_FIPS_MAPPING), isoCountryCode, fipsCountryCodeFound));
         return fipsCountryCodeFound;
     }
 
@@ -120,8 +121,8 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
     @Override
     public String convertFIPSCountryCodeToActiveISOCountryCode(String fipsCountryCode) {
         if (getCountryService().isCountryInactive(fipsCountryCode)) {
-            LOG.error("convertFIPSCountryCodeToISOCountryCode: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS, fipsCountryCode));
-            throw new NoFIPStoISOMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS, fipsCountryCode));
+            LOG.error("convertFIPSCountryCodeToISOCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS), fipsCountryCode));
+            throw new NoFIPStoISOMappingException(MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS), fipsCountryCode));
         }
         
         List<ISOFIPSCountryMap> mappingsFound = findManyActiveISOCountryMapsForFIPSCode(fipsCountryCode);
@@ -132,14 +133,14 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
                 .collect(Collectors.toList());
 
         if (mappingsFound.isEmpty()) {
-            LOG.error("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS, fipsCountryCode));
-            throw new NoFIPStoISOMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS, fipsCountryCode));
+            LOG.error("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS), fipsCountryCode));
+            throw new NoFIPStoISOMappingException(MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_FIPS_TO_ISO_MAPPINGS), fipsCountryCode));
         } else if (mappingsFound.size() > 1) {
-            LOG.error("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(CUKFSKeyConstants.ERROR_MANY_FIPS_TO_ISO_MAPPINGS, fipsCountryCode));
-            throw new ManyFIPStoISOMappingException(MessageFormat.format(CUKFSKeyConstants.ERROR_MANY_FIPS_TO_ISO_MAPPINGS, fipsCountryCode));
+            LOG.error("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_MANY_FIPS_TO_ISO_MAPPINGS), fipsCountryCode));
+            throw new ManyFIPStoISOMappingException(MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_MANY_FIPS_TO_ISO_MAPPINGS), fipsCountryCode));
         } 
         String isoCountryCodeFound = (mappingsFound.get(0)).getIsoCountryCode();
-        LOG.debug("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_FIPS_TO_ISO_MAPPING, fipsCountryCode, isoCountryCodeFound));
+        LOG.debug("convertFIPSCountryCodeToActiveISOCountryCode: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_ONE_TO_ONE_FIPS_TO_ISO_MAPPING), fipsCountryCode, isoCountryCodeFound));
         return isoCountryCodeFound;
     }
 
@@ -183,6 +184,14 @@ public class ISOFIPSConversionServiceImpl implements ISOFIPSConversionService {
 
     public void setIsoFipsCountryMapService(ISOFIPSCountryMapService isoFipsCountryMapService) {
         this.isoFipsCountryMapService = isoFipsCountryMapService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
    
 }

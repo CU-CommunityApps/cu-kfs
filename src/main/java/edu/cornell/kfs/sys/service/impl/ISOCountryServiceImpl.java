@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -22,15 +23,16 @@ public class ISOCountryServiceImpl implements ISOCountryService {
     private static final Logger LOG = LogManager.getLogger(ISOCountryServiceImpl.class);
     
     protected BusinessObjectService businessObjectService;
+    protected ConfigurationService configurationService;
     
     public boolean isISOCountryActive(String isoCountryCode) {
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
 
         if (ObjectUtils.isNotNull(isoCountryFound)) {
-            LOG.debug("isISOCountryActive: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR, isoCountryCode, isoCountryFound.isActive()));
+            LOG.debug("isISOCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR), isoCountryCode, isoCountryFound.isActive()));
             return isoCountryFound.isActive();
         } else {
-            LOG.error("isISOCountryActive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_COUNTRY_FOUND_FOR_CODE, isoCountryCode));
+            LOG.error("isISOCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_ISO_COUNTRY_FOUND_FOR_CODE), isoCountryCode));
             return false;
         }
     }
@@ -39,10 +41,10 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
 
         if (ObjectUtils.isNotNull(isoCountryFound)) {
-            LOG.debug("isISOCountryInactive: " + MessageFormat.format(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR, isoCountryCode, isoCountryFound.isActive()));
+            LOG.debug("isISOCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR), isoCountryCode, isoCountryFound.isActive()));
             return !isoCountryFound.isActive();
         } else {
-            LOG.error("isISOCountryInactive: " + MessageFormat.format(CUKFSKeyConstants.ERROR_NO_ISO_COUNTRY_FOUND_FOR_CODE, isoCountryCode));
+            LOG.error("isISOCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_ISO_COUNTRY_FOUND_FOR_CODE), isoCountryCode));
             return false;
         }
     }
@@ -63,6 +65,14 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }
