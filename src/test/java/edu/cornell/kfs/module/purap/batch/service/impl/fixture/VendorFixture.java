@@ -10,8 +10,8 @@ import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUp
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public enum VendorFixture {
-    BASIC_VENDOR("12345-0", "Acme Testing Company", "US", "http://www.google.com"),
-    BASIC_VENDOR_WITH_TAX_ID("98765-0", "Jane Doe Paint Services", "US", "65479", "http://www.yahoo.com"),
+    BASIC_VENDOR("12345-0", "Acme Testing Company", CUKFSConstants.COUNTRY_CODE_US, "http://www.google.com"),
+    BASIC_VENDOR_WITH_TAX_ID("98765-0", "Jane Doe Paint Services", CUKFSConstants.COUNTRY_CODE_US, "65479", "http://www.yahoo.com"),
     FULL_VENDOR(JaggaerContractPartyUploadRowType.PARTY, StringUtils.EMPTY, "active", "123456-0",
             CUPurapConstants.FALSE_STRING, "Acme Inc", "Acme", "other name", CUKFSConstants.COUNTRY_CODE_US, JaggaerContractPartyType.SUPPLIER,
             "primary", JaggaerLegalStructure.C_CORPORATION, "foo type", "369852", "vat number", "www.google.com"),

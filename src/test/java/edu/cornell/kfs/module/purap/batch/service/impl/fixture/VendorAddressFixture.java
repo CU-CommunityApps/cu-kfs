@@ -42,7 +42,7 @@ public enum VendorAddressFixture {
     private VendorAddressFixture(String eRPNumber, String addressID, JaggaerAddressType addressType, String streetLine1,
             String streetLine2, String city, String state, String postalCode) {
         this(JaggaerContractPartyUploadRowType.ADDRESS, StringUtils.EMPTY, StringUtils.EMPTY, eRPNumber, addressID,
-                StringUtils.EMPTY, addressType, StringUtils.EMPTY, "US", streetLine1, streetLine2, StringUtils.EMPTY,
+                StringUtils.EMPTY, addressType, StringUtils.EMPTY, CUKFSConstants.COUNTRY_CODE_US, streetLine1, streetLine2, StringUtils.EMPTY,
                 city, state, postalCode, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
 
     }
