@@ -18,6 +18,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
 
@@ -189,7 +190,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     private String convertToISOCountry(String fipsCountryCode) {
         if (StringUtils.isBlank(fipsCountryCode)) {
             LOG.debug("convertToISOCountry, empty FIPS country found returning US as default");
-            fipsCountryCode = "US";
+            fipsCountryCode = CUKFSConstants.COUNTRY_CODE_US;
         }
         String isoCountry = StringUtils.EMPTY;
         

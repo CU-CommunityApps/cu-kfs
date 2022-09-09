@@ -1,21 +1,22 @@
-package edu.cornell.kfs.module.purap.batch.service.impl.fixcture;
+package edu.cornell.kfs.module.purap.batch.service.impl.fixture;
 
 import org.apache.commons.lang.StringUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public enum VendorAddressFixture {
     BASIC_VENDOR_ADDRESS_1(VendorFixture.BASIC_VENDOR.ERPNumber, "12342", JaggaerAddressType.FULFILLMENT, "123 Main Street",
             "Apartment 666", "Freeville", "NY", "13068"),
     BASIC_VENDOR_ADDRESS_2(VendorFixture.BASIC_VENDOR.ERPNumber, "98765", JaggaerAddressType.REMIT, "45 Palm Street",
             "Apartment 1F", "Ithaca", "NY", "14850"),
-    FULL_VENDOR_FULL_ADDRSS(JaggaerContractPartyUploadRowType.ADDRESS, StringUtils.EMPTY, "Active", VendorFixture.FULL_VENOOR.ERPNumber,
-            "addressId", "ABCD", JaggaerAddressType.FULFILLMENT, "primary type", "US", "street line 1", "street line 2", "street line 3",
+    FULL_VENDOR_FULL_ADDRESS(JaggaerContractPartyUploadRowType.ADDRESS, StringUtils.EMPTY, "Active", VendorFixture.FULL_VENDOR.ERPNumber,
+            "addressId", "ABCD", JaggaerAddressType.FULFILLMENT, "primary type", CUKFSConstants.COUNTRY_CODE_US, "street line 1", "street line 2", "street line 3",
             "city", "NY", "14850", "6072559900", "18002809900", "fax", StringUtils.EMPTY),
-    FULL_VENDOR_FULL_ADDRSS_FOR_CSV(JaggaerContractPartyUploadRowType.ADDRESS, "vendor address sciquest id", "Active", VendorFixture.FULL_VENOOR_FOR_CSV.ERPNumber,
-            "666666666", "Yankees Fan Company", JaggaerAddressType.FULFILLMENT, "primary type", "US", "street line 1", "street line 2", "street line 3",
+    FULL_VENDOR_FULL_ADDRESS_FOR_CSV(JaggaerContractPartyUploadRowType.ADDRESS, "vendor address sciquest id", "Active", VendorFixture.FULL_VENDOR_FOR_CSV.ERPNumber,
+            "666666666", "Yankees Fan Company", JaggaerAddressType.FULFILLMENT, "primary type", CUKFSConstants.COUNTRY_CODE_US, "street line 1", "street line 2", "street line 3",
             "city", "NY", "14850", "6072559900", "18002809900", "fax", "super awesome cool note");
 
     public final JaggaerContractPartyUploadRowType rowType;

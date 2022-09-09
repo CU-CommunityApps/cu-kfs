@@ -109,10 +109,10 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
         for (JaggaerContractUploadBaseDto dto : jaggaerUploadDtos) {
             if (dto instanceof JaggaerContractPartyUploadDto) {
                 JaggaerContractPartyUploadDto vendorDto = (JaggaerContractPartyUploadDto) dto;
-                csvDataRows.add(builderVendorCSVRowArray(vendorDto));
+                csvDataRows.add(buildVendorCSVRowArray(vendorDto));
             } else if (dto instanceof JaggaerContractAddressUploadDto) {
                 JaggaerContractAddressUploadDto addressDto = (JaggaerContractAddressUploadDto) dto;
-                csvDataRows.add(builderAddressCSVRowArray(addressDto));
+                csvDataRows.add(buildAddressCSVRowArray(addressDto));
             } else {
                 throw new IllegalArgumentException("Unexpected DTO class found: " + dto.getClass());
             }
@@ -144,7 +144,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
                 .toArray(String[]::new);
     }
 
-    protected String[] builderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {
+    protected String[] buildVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto) {
         String[] record = { vendorDto.getRowType().rowType, 
                 cleanString(vendorDto.getOverrideDupError()),
                 cleanString(vendorDto.getERPNumber()),
@@ -164,7 +164,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
         return record;
     }
     
-    protected String[] builderAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto) {
+    protected String[] buildAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto) {
         String[] record = { addressDto.getRowType().rowType, 
                 cleanString(addressDto.getAddressID()),
                 cleanString(addressDto.getSciQuestID()),

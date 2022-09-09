@@ -396,7 +396,7 @@ public class CUPurapConstants {
         ACTIVE("Active"),
         CONTRACT_PARTY_TYPE("ContractPartyType"),
         PRIMARY("Primary"),
-        LEGALS_TRUCTURE("LegalStructure"),
+        LEGAL_STRUCTURE("LegalStructure"),
         TAX_ID_TYPE("TaxIDType"),
         TAX_IDENTIFICATION_NUMBER("TaxIdentificationNumber"),
         VAT_REGISTRATION_NUMBER("VATRegistrationNumber"),

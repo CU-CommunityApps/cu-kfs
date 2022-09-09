@@ -29,8 +29,8 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadR
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerPartyHeader;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
-import edu.cornell.kfs.module.purap.batch.service.impl.fixcture.VendorAddressFixture;
-import edu.cornell.kfs.module.purap.batch.service.impl.fixcture.VendorFixture;
+import edu.cornell.kfs.module.purap.batch.service.impl.fixture.VendorAddressFixture;
+import edu.cornell.kfs.module.purap.batch.service.impl.fixture.VendorFixture;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractUploadBaseDto;
@@ -40,12 +40,13 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     private Date csvTestDate;
     
     private static final String PROCESS_DATE = "2022-08-16";
-    private static final String BASE_CSV_DIRECTORY = "src/test/resources/edu/cornell/kfs/module/purap/batch/service/impl/fixture/";
+    private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/batch/service/impl/fixture/";
+    private static final String TARGET_TEST_FILE_PATH = "test/jaggaer/";
 
     @BeforeEach
     void setUp() throws Exception {
         jaggaerGenerateContractPartyCsvServiceImpl = new JaggaerGenerateContractPartyCsvServiceImpl();
-        jaggaerGenerateContractPartyCsvServiceImpl.setJaggaerUploadCreationDirectory(BASE_CSV_DIRECTORY);
+        jaggaerGenerateContractPartyCsvServiceImpl.setJaggaerUploadCreationDirectory(TARGET_TEST_FILE_PATH);
         
         Calendar cal = Calendar.getInstance();
         cal.set(1996, 10, 30, 23, 31, 0);
@@ -136,7 +137,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     @MethodSource("buildVendorCSVRowArrayParameters")
     void testBuilderVendorCSVRowArray(JaggaerContractPartyUploadDto vendorDto, String[] expectedCsvData) {
 
-        String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.builderVendorCSVRowArray(vendorDto);
+        String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.buildVendorCSVRowArray(vendorDto);
         int expectedNumberOfArrayElements = JaggaerPartyHeader.values().length;
         assertEquals(expectedNumberOfArrayElements, expectedCsvData.length);
         assertEquals(expectedNumberOfArrayElements, actualCsvData.length);
@@ -146,8 +147,8 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     public void validateCsvRowArray(String[] expectedCsvData, String[] actualCsvData) {
         for (int i = 0; i < expectedCsvData.length; i++) {
             String actualDatum = actualCsvData[i];
-            String expectedDataum = expectedCsvData[i];
-            assertEquals(expectedDataum, actualDatum);
+            String expectedDatum = expectedCsvData[i];
+            assertEquals(expectedDatum, actualDatum);
         }
     }
 
@@ -164,13 +165,13 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     private static JaggaerContractPartyUploadDto buildJaggaerContractPartyUploadDto(String sciQuestId) {
-        JaggaerContractPartyUploadDto dto = VendorFixture.FULL_VENOOR.toJaggaerContractPartyUploadDto();
+        JaggaerContractPartyUploadDto dto = VendorFixture.FULL_VENDOR.toJaggaerContractPartyUploadDto();
         dto.setSciQuestID(sciQuestId);
         return dto;
     }
 
     private static String[] buildJaggaerContractPartyUploadDtoCsvData(String sciQuestId) {
-        VendorFixture vendor = VendorFixture.FULL_VENOOR;
+        VendorFixture vendor = VendorFixture.FULL_VENDOR;
         String[] record = { vendor.rowType.rowType, vendor.overrideDupError, vendor.ERPNumber, sciQuestId,
                 vendor.contractPartyName, vendor.doingBusinessAs, vendor.otherNames, vendor.countryOfOrigin, vendor.active,
                 vendor.contractPartyType.partyTypeName, vendor.primary,
@@ -182,7 +183,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     @ParameterizedTest
     @MethodSource("buildAddressCSVRowArrayParameters")
     void testBuilderAddressCSVRowArray(JaggaerContractAddressUploadDto addressDto, String[] expectedCsvData) {
-        String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.builderAddressCSVRowArray(addressDto);
+        String[] actualCsvData = jaggaerGenerateContractPartyCsvServiceImpl.buildAddressCSVRowArray(addressDto);
         int expectedNumberOfArrayElements = JaggaerAddressHeader.values().length;
         assertEquals(expectedNumberOfArrayElements, actualCsvData.length);
         assertEquals(expectedNumberOfArrayElements, expectedCsvData.length);
@@ -202,13 +203,13 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     static JaggaerContractAddressUploadDto buildJaggaerContractAddressUploadDto(String notes) {
-        JaggaerContractAddressUploadDto dto = VendorAddressFixture.FULL_VENDOR_FULL_ADDRSS.toJaggaerContractAddressUploadDto();
+        JaggaerContractAddressUploadDto dto = VendorAddressFixture.FULL_VENDOR_FULL_ADDRESS.toJaggaerContractAddressUploadDto();
         dto.setNotes(notes);
         return dto;
     }
 
     static String[] buildJaggaerContractAddressUploadDtoData(String notes) {
-        VendorAddressFixture address = VendorAddressFixture.FULL_VENDOR_FULL_ADDRSS;
+        VendorAddressFixture address = VendorAddressFixture.FULL_VENDOR_FULL_ADDRESS;
         String[] record = { address.rowType.name(), address.addressID,
                 address.sciQuestID, address.name, address.addressType.jaggaerAddressType, address.primaryType, 
                 address.active, address.country, address.streetLine1,
@@ -246,21 +247,35 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     @Test
     void testGenerateCsvFile() throws IOException {
         List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = new ArrayList<>();
-        jaggaerUploadDtos.add(VendorFixture.FULL_VENOOR_FOR_CSV.toJaggaerContractPartyUploadDto());
-        jaggaerUploadDtos.add(VendorAddressFixture.FULL_VENDOR_FULL_ADDRSS_FOR_CSV.toJaggaerContractAddressUploadDto());
+        jaggaerUploadDtos.add(VendorFixture.FULL_VENDOR_FOR_CSV.toJaggaerContractPartyUploadDto());
+        jaggaerUploadDtos.add(VendorAddressFixture.FULL_VENDOR_FULL_ADDRESS_FOR_CSV.toJaggaerContractAddressUploadDto());
+        
+        createTargetTestDirectory();
         
         jaggaerGenerateContractPartyCsvServiceImpl.generateCsvFile(jaggaerUploadDtos, JaggaerContractUploadProcessingMode.PO);
         
-        
-        File expectedJaggaerFile = new File(BASE_CSV_DIRECTORY + "expectedJaggaerUpload.csv");
-        File actualJaggaerFile = new File(BASE_CSV_DIRECTORY + "JaggaerUpload_found_by_PO_search_19961130_233100.csv");
-        
-        FileUtils.readFileToString(expectedJaggaerFile, StandardCharsets.UTF_8);
-        assertEquals(FileUtils.readFileToString(expectedJaggaerFile, StandardCharsets.UTF_8), 
-                FileUtils.readFileToString(actualJaggaerFile, StandardCharsets.UTF_8));
-        
-        FileUtils.forceDelete(actualJaggaerFile);
-        
+        try {
+            File expectedJaggaerFile = new File(SOURCE_TEST_FILE_PATH + "expectedJaggaerUpload.csv");
+            File actualJaggaerFile = new File(TARGET_TEST_FILE_PATH + "JaggaerUpload_found_by_PO_search_19961130_233100.csv");
+            
+            String expectedCsvString = FileUtils.readFileToString(expectedJaggaerFile, StandardCharsets.UTF_8);
+            String actualCsvString = FileUtils.readFileToString(actualJaggaerFile, StandardCharsets.UTF_8);
+            assertEquals(expectedCsvString, actualCsvString);
+        } finally {
+            deleteTargetTestDirectory();
+        }
+    }
+    
+    private void createTargetTestDirectory() throws IOException {
+        File jaggaerOutputDirectory = new File(TARGET_TEST_FILE_PATH);
+        FileUtils.forceMkdir(jaggaerOutputDirectory);
+    }
+    
+    private void deleteTargetTestDirectory() throws IOException {
+        File jaggaerOutputDirectory = new File(TARGET_TEST_FILE_PATH);
+        if (jaggaerOutputDirectory.exists() && jaggaerOutputDirectory.isDirectory()) {
+            FileUtils.forceDelete(jaggaerOutputDirectory.getAbsoluteFile());
+        }
     }
 
 }
