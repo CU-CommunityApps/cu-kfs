@@ -188,10 +188,14 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     }
     
     private String convertToISOCountry(String fipsCountryCode) {
+        
         if (StringUtils.isBlank(fipsCountryCode)) {
             LOG.debug("convertToISOCountry, empty FIPS country found returning US as default");
             fipsCountryCode = CUKFSConstants.COUNTRY_CODE_US;
         }
+        
+        /*
+         * @todo re-enable this once the conversion service is done
         String isoCountry = StringUtils.EMPTY;
         
         try {
@@ -201,6 +205,8 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         }
         
         return isoCountry;
+        */
+        return fipsCountryCode;
     }
 
     public void setIsoFipsConversionService(ISOFIPSConversionService isoFipsConversionService) {
