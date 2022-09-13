@@ -908,13 +908,20 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         if (customerAddress == null) {
             customerAddress = customerAddressService.getPrimaryAddress(award.getCustomerNumber());
         }
+        
+        if (customerAddress == null) {
+            LOG.error("buildInvoiceAddressDetails, unable to build customer address, award: " + 
+                    award.getProposalNumber() + " award.getCustomerNumber(): " + award.getCustomerNumber() + 
+                    " award.getCustomerAddressIdentifier(): " + award.getCustomerAddressIdentifier());
+        }
 
         String documentNumber = document.getDocumentNumber();
 
         List<InvoiceAddressDetail> invoiceAddressDetails = new ArrayList<>();
         AtomicInteger detailNumber = new AtomicInteger(1);
+        String customerAddressTypeCode = customerAddress.getCustomerAddressTypeCode();
         if (StringUtils.equalsIgnoreCase(ArKeyConstants.CustomerConstants.CUSTOMER_ADDRESS_TYPE_CODE_PRIMARY,
-                customerAddress.getCustomerAddressTypeCode())) {
+                customerAddressTypeCode)) {
             document.setCustomerBillToAddressOnInvoice(customerAddress);
         }
         InvoiceAddressDetail invoiceAddressDetail = new InvoiceAddressDetail();
@@ -922,7 +929,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         invoiceAddressDetail.setDocumentNumber(documentNumber);
         invoiceAddressDetail.setCustomerAddressIdentifier(customerAddress.getCustomerAddressIdentifier());
         invoiceAddressDetail.setDetailNumber(detailNumber.getAndIncrement());
-        invoiceAddressDetail.setCustomerAddressTypeCode(customerAddress.getCustomerAddressTypeCode());
+        invoiceAddressDetail.setCustomerAddressTypeCode(customerAddressTypeCode);
         invoiceAddressDetail.setCustomerAddressName(customerAddress.getCustomerAddressName());
         invoiceAddressDetail.setInvoiceTransmissionMethodCode(ArConstants.InvoiceTransmissionMethod.MAIL);
         invoiceAddressDetail.setCustomerLine1StreetAddress(customerAddress.getCustomerLine1StreetAddress());
