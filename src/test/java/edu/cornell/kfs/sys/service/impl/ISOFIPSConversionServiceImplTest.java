@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -75,7 +76,7 @@ public class ISOFIPSConversionServiceImplTest {
         @Override
         public Country getByPrimaryId(String countryCode) {
             List<CountryFixture> countriesFound = CountryFixture.mockCountryTable().filter(row -> row.code.equalsIgnoreCase(countryCode)).collect(Collectors.toList());
-            if (countriesFound.isEmpty()) {
+            if (CollectionUtils.isEmpty(countriesFound)) {
                 return null;
             } else {
                 Country countryFound = new Country();
@@ -92,7 +93,7 @@ public class ISOFIPSConversionServiceImplTest {
         @Override
         public ISOCountry getByPrimaryId(String isoCountryCode) {
             List<ISOCountryFixture> countriesFound = ISOCountryFixture.mockISOCountryTable().filter(row -> row.code.equalsIgnoreCase(isoCountryCode)).collect(Collectors.toList());
-            if (countriesFound.isEmpty()) {
+            if (CollectionUtils.isEmpty(countriesFound)) {
                 return null;
             } else {
                 return new ISOCountry(countriesFound.get(0).name, countriesFound.get(0).code, countriesFound.get(0).alternateCode, countriesFound.get(0).active);
@@ -106,7 +107,7 @@ public class ISOFIPSConversionServiceImplTest {
 
           List<ISOFIPSCountryMapFixture> mappingsFoundMatchingCode = ISOFIPSCountryMapFixture.mockISOFIPSCountryMapTable().filter(row -> row.isoCountryCode.equalsIgnoreCase(isoCountryCode)).collect(Collectors.toList());
           List<ISOFIPSCountryMapFixture> activeMappingsFoundMatchingCode = mappingsFoundMatchingCode.stream().filter(row -> row.isActive()).collect(Collectors.toList());
-          if (activeMappingsFoundMatchingCode.isEmpty()) {
+          if (CollectionUtils.isEmpty(activeMappingsFoundMatchingCode)) {
               return null;
           } else {
               return createISOFIPSCountryMapObjectFromFixture(activeMappingsFoundMatchingCode);
@@ -118,7 +119,7 @@ public class ISOFIPSConversionServiceImplTest {
           List<ISOFIPSCountryMapFixture> mappingsFoundMatchingCode = ISOFIPSCountryMapFixture.mockISOFIPSCountryMapTable().filter(row -> row.fipsCountryCode.equalsIgnoreCase(fipsCountryCode)).collect(Collectors.toList());
           List<ISOFIPSCountryMapFixture> activeMappingsFoundMatchingCode = mappingsFoundMatchingCode.stream().filter(mapping -> mapping.isActive()).collect(Collectors.toList());
 
-          if (activeMappingsFoundMatchingCode.isEmpty()) {
+          if (CollectionUtils.isEmpty(activeMappingsFoundMatchingCode)) {
               return null;
           } else {
               return createISOFIPSCountryMapObjectFromFixture(activeMappingsFoundMatchingCode);

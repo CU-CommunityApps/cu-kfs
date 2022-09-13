@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -33,18 +34,17 @@ public class ISOFIPSCountryMapServiceImpl implements ISOFIPSCountryMapService {
     }
 
     private List<ISOFIPSCountryMap> performMappingConversion(String key, String value) {
-        Collection<ISOFIPSCountryMap> mappingsFoundCollection = getBusinessObjectService().findMatching(ISOFIPSCountryMap.class, mapPartialPrimaryKeysAndActiveStatus(key, value));
-        List<ISOFIPSCountryMap> mappingsFound = new ArrayList<ISOFIPSCountryMap>(mappingsFoundCollection);
-        if (!mappingsFound.isEmpty()) {
+        Collection<ISOFIPSCountryMap> mappingsFound = getBusinessObjectService().findMatching(ISOFIPSCountryMap.class, mapPartialPrimaryKeysAndActiveStatus(key, value));
+        if (CollectionUtils.isNotEmpty(mappingsFound)) {
             mappingsFound = mappingsFound
                     .stream()
                     .filter(mapping -> mapping.isActive())
                     .collect(Collectors.toList());
         }
-        if (mappingsFound.isEmpty()) {
+        if (CollectionUtils.isEmpty(mappingsFound)) {
             return new ArrayList<ISOFIPSCountryMap>();
         } else {
-            return mappingsFound;
+            return new ArrayList<ISOFIPSCountryMap>(mappingsFound);
         }
     }
     
