@@ -30,7 +30,6 @@ import java.util.Date;
 
 public class BatchFile extends TransientBusinessObjectBase {
     private static final Logger LOG = LogManager.getLogger();
-    // backport redis changes
     public static final String CACHE_NAME = "BatchFile";
 
     private File file;

@@ -43,21 +43,6 @@
     <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"
           class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"/>
     
-    <!-- backport changes for redis -->
-    <bean id="roleService" class="org.kuali.kfs.kim.impl.role.RoleServiceImpl"
-          p:roleDao-ref="kimRoleDao"
-          p:criteriaLookupService-ref="criteriaLookupService"
-          p:cacheManager-ref="cacheManager"/>
-          
-    <bean id="permissionService" class="org.kuali.kfs.kim.impl.permission.PermissionServiceImpl"
-          p:businessObjectService-ref="businessObjectService"
-          p:criteriaLookupService-ref="criteriaLookupService"
-          p:kimTypeInfoService-ref="kimTypeInfoService"
-          p:roleService-ref="roleService"
-          p:cacheManager-ref="cacheManager"
-          p:defaultPermissionTypeService-ref="kimPermissionTypeService"/>
-    <!-- end changes for redis -->
-    
     <!-- KFSPTS-22142 Add local customization to fix Role lookup from a child/collection object on a maintenance doc -->
     <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
