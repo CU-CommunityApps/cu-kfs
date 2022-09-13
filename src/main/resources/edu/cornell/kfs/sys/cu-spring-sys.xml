@@ -435,7 +435,6 @@
     <bean id="testConvertingFIPStoISOStep-parentBean" parent="step"
           class="edu.cornell.kfs.sys.batch.TestConvertingFIPStoISOStep" abstract="true"
           p:businessObjectService-ref="businessObjectService"
-          p:countryService-ref="countryService"
           p:isoFipsConversionService-ref="isoFipsConversionService"
     />
     
@@ -443,7 +442,6 @@
     <bean id="testConvertingISOtoFIPSStep-parentBean" parent="step"
           class="edu.cornell.kfs.sys.batch.TestConvertingISOtoFIPSStep" abstract="true"
           p:businessObjectService-ref="businessObjectService"
-          p:isoCountryService-ref="isoCountryService"
           p:isoFipsConversionService-ref="isoFipsConversionService"
     />
     <!-- CU Generic ISO-FIPS Country modification beans -->
