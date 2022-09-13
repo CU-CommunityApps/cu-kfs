@@ -32,6 +32,7 @@
 				<value>autoCancelBatchJob</value>
 				<value>kimFeedJob</value>
 				<value>awsSecretValidationJob</value>
+                <value>testISOFIPSConversionMappingsJob</value>
             </list>
         </property>
 		<property name="batchFileDirectories">
@@ -397,12 +398,52 @@
           p:scheduler-ref="scheduler"
           p:schedulerService-ref="schedulerService"
           p:useQuartzScheduling="${use.quartz.scheduling}"/>
-          
-    <bean id="isoFipsCountryMapDao" parent="platformAwareDao"
-        class="edu.cornell.kfs.sys.dataaccess.impl.ISOFIPSCountryMapDaoOjb" />
-        
-    <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">
-        <property name="isoFipsCountryMapDao" ref="isoFipsCountryMapDao" />
+                   
+    <!-- CU Generic ISO-FIPS Country modification beans -->
+    <bean id="countryService" class="edu.cornell.kfs.sys.service.impl.CountryServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
+ 
+    <bean id="isoCountryService" class="edu.cornell.kfs.sys.service.impl.ISOCountryServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
+    </bean>
+
+    <bean id="isoFipsCountryMapService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSCountryMapServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+    </bean>
+
+    <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">
+        <property name="isoFipsCountryMapService" ref="isoFipsCountryMapService" />
+        <property name="countryService" ref="countryService" />
+        <property name="isoCountryService" ref="isoCountryService" />
+        <property name="configurationService" ref="configurationService" />
+    </bean>
+
+    <bean id="testISOFIPSConversionMappingsJob" parent="testISOFIPSConversionMappingsJob-parentBean"/>
+    <bean id="testISOFIPSConversionMappingsJob-parentBean" parent="scheduledJobDescriptor" abstract="true">
+        <property name="steps">
+            <list>
+                <ref bean="testConvertingFIPStoISOStep"/>
+                <ref bean="testConvertingISOtoFIPSStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="testConvertingFIPStoISOStep" parent="testConvertingFIPStoISOStep-parentBean"/>
+    <bean id="testConvertingFIPStoISOStep-parentBean" parent="step"
+          class="edu.cornell.kfs.sys.batch.TestConvertingFIPStoISOStep" abstract="true"
+          p:businessObjectService-ref="businessObjectService"
+          p:isoFipsConversionService-ref="isoFipsConversionService"
+    />
+    
+    <bean id="testConvertingISOtoFIPSStep" parent="testConvertingISOtoFIPSStep-parentBean"/>
+    <bean id="testConvertingISOtoFIPSStep-parentBean" parent="step"
+          class="edu.cornell.kfs.sys.batch.TestConvertingISOtoFIPSStep" abstract="true"
+          p:businessObjectService-ref="businessObjectService"
+          p:isoFipsConversionService-ref="isoFipsConversionService"
+    />
+    <!-- CU Generic ISO-FIPS Country modification beans -->
 
 </beans>

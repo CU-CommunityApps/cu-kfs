@@ -206,4 +206,8 @@ public class CUKFSConstants {
     
     public static final String RESTRICTED_DATA_PLACEHOLDER = "RestrictedData";
 
+    //** CU Generic ISO-FIPS Country modification items **
+    public final static boolean MAPPING_ACTIVE = true;
+    public final static boolean MAPPING_INACTIVE = false;
+
 }
