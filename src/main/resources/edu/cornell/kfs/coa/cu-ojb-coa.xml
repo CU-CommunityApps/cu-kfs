@@ -1148,7 +1148,7 @@
 			jdbc-type="VARCHAR" />
 
 		<reference-descriptor name="financialDocument"
-			class-ref="org.kuali.kfs.sys.businessobject.DocumentHeaderx"
+			class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader"
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="documentNumber" />
 		</reference-descriptor>
