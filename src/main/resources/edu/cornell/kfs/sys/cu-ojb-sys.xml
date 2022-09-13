@@ -274,16 +274,6 @@
         <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
     </class-descriptor>
     
-    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap" table="CU_ISO_FIPS_CNTRY_MAP_T">
-        <field-descriptor name="isoCountryCode" column="ISO_POSTAL_CNTRY_CD" jdbc-type="VARCHAR" primarykey="true" indexed="true"/>
-        <field-descriptor name="fipsCountryCode" column="FIPS_POSTAL_CNTRY_CD" jdbc-type="VARCHAR" primarykey="true" indexed="true" />
-        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
-        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR"
-                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
-    </class-descriptor>
-    
     <class-descriptor class="edu.cornell.kfs.sys.businessobject.ISOCountry" table="CU_ISO_SH_CNTRY_T">
         <field-descriptor name="code" column="POSTAL_CNTRY_CD" jdbc-type="VARCHAR" primarykey="true" indexed="true" />
         <field-descriptor name="alternateCode" column="ALT_POSTAL_CNTRY_CD" jdbc-type="VARCHAR" />
@@ -293,6 +283,26 @@
         <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
         <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    </class-descriptor>
+    
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap" table="CU_ISO_FIPS_CNTRY_MAP_T">
+        <field-descriptor name="isoCountryCode" column="ISO_POSTAL_CNTRY_CD" jdbc-type="VARCHAR" primarykey="true" indexed="true"/>
+        <field-descriptor name="fipsCountryCode" column="FIPS_POSTAL_CNTRY_CD" jdbc-type="VARCHAR" primarykey="true" indexed="true" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+        <reference-descriptor name="fipsCountry"
+            class-ref="org.kuali.kfs.sys.businessobject.Country"
+            auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="fipsCountryCode" />
+        </reference-descriptor>
+                <reference-descriptor name="isoCountry"
+            class-ref="edu.cornell.kfs.sys.businessobject.ISOCountry"
+            auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="isoCountryCode" />
+        </reference-descriptor>
     </class-descriptor>
     
 </descriptor-repository>
