@@ -56,8 +56,8 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
 
     @Override
     public boolean isDocumentAttributesValid(Document document, boolean validateRequired) {
-        boolean success = true;
         SecurityRequestDocument securityRequestDocument = (SecurityRequestDocument) document;
+        boolean success = validateDepartmentCode(securityRequestDocument);
 
         for (int i = 0; i < securityRequestDocument.getSecurityRequestRoles().size(); i++) {
             SecurityRequestRole securityRequestRole = securityRequestDocument.getSecurityRequestRoles().get(i);
@@ -110,7 +110,7 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
 
         return super.isDocumentAttributesValid(document, validateRequired)  && success;
     }
-    
+
     protected boolean validateQualification(KimType typeInfo, SecurityRequestRoleQualification requestRoleQualification, String fieldKeyPrefix) {
         boolean success = true;
         
@@ -142,6 +142,27 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
                     new String[]{"SOME FILLER TEXT"});
         }
         
+        return success;
+    }
+
+    protected boolean validateDepartmentCode(SecurityRequestDocument securityRequestDocument) {
+        boolean success = true;
+
+        try {
+            String primaryDepartmentCode = securityRequestDocument.getPrimaryDepartmentCode();
+
+            if (StringUtils.isBlank(primaryDepartmentCode) || StringUtils.contains(primaryDepartmentCode, " ")) {
+                GlobalVariables.getMessageMap().putError("document.primaryDepartmentCode", "Invalid Primary Department"); //todo cleanup
+                return false;
+            }
+
+            //todo check for valid department
+        }
+        catch (Exception e) {
+            String documentFieldName = KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "primaryDepartmentCode";
+            GlobalVariables.getMessageMap().putInfo(documentFieldName, KSRKeyConstants.ERROR_SECURITY_REQUEST_DOC_SERVICE_EXCEPTION, new String[]{"SOME FILLER TEXT"});
+        }
+
         return success;
     }
     

@@ -23,6 +23,7 @@ public class KSRKeyConstants {
     public static final String ERROR_SECURITY_REQUEST_DOC_DEPENDENT_ROLE_MISSING = "error.ksr.securityrequestdocument.dependentRole.missing";
     public static final String ERROR_SECURITY_REQUEST_DOC_CHANGE_MISSING = "error.ksr.securityrequestdocument.change.missing";
     public static final String ERROR_SECURITY_REQUEST_DOC_SERVICE_EXCEPTION = "error.ksr.securityrequestdocument.service.exception";
+    public static final String ERROR_SECURITY_REQUEST_DOC_PRIMARY_DEPARTMENT = "error.ksr.securityrequestdocument.service.primary.department";
     public static final String ERROR_SECURITY_REQUEST_DOC_QUALIFIER_MULTI_MISSING = "error.ksr.securityrequestdocument.qualifier.multi.missing";
     public static final String ERROR_SECURITY_REQUEST_DOC_QUALIFIER_EXCEPTION = "error.ksr.securityrequestdocument.qualifier.exception";
 }
