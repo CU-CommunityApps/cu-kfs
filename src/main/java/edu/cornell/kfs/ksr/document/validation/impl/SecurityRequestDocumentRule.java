@@ -156,7 +156,7 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
                 return false;
             }
 
-            //todo check for valid department
+            //todo check for valid department (see regex property ksr.securityrequestdocument.primaryDeptCode.regex)
         }
         catch (Exception e) {
             String documentFieldName = KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "primaryDepartmentCode";
