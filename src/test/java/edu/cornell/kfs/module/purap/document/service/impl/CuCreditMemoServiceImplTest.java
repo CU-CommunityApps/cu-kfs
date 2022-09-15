@@ -48,7 +48,7 @@ import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
+@PrepareForTest({CuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
 @PowerMockIgnore("javax.management.*")
 public class CuCreditMemoServiceImplTest {
 
