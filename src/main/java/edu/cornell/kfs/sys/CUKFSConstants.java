@@ -209,5 +209,5 @@ public class CUKFSConstants {
     //** CU Generic ISO-FIPS Country modification items **
     public final static boolean MAPPING_ACTIVE = true;
     public final static boolean MAPPING_INACTIVE = false;
-    
+
 }
