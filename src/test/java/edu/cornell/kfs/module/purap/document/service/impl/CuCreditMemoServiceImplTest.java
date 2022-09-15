@@ -48,7 +48,7 @@ import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
+@PrepareForTest({CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
 @PowerMockIgnore("javax.management.*")
 public class CuCreditMemoServiceImplTest {
 
@@ -224,10 +224,16 @@ public class CuCreditMemoServiceImplTest {
 
     private class MockFinancialSystemDocumentHeader extends DocumentHeader {
         private static final long serialVersionUID = 1L;
+        private String applicationDocumentStatus;
 
         @Override
         public void setApplicationDocumentStatus(String applicationDocumentStatus) {
-            this.setApplicationDocumentStatus(applicationDocumentStatus);
+            this.applicationDocumentStatus = applicationDocumentStatus;
+        }
+        
+        @Override
+        public String getApplicationDocumentStatus() {
+            return this.applicationDocumentStatus;
         }
 
     }
