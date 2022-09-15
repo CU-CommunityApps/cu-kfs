@@ -210,6 +210,4 @@ public class CUKFSConstants {
     public final static boolean MAPPING_ACTIVE = true;
     public final static boolean MAPPING_INACTIVE = false;
     
-    public static final String COUNTRY_CODE_US = "US";
-
 }

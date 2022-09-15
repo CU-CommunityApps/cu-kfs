@@ -18,7 +18,6 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
 
@@ -33,7 +32,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         try {
             RowMapper<JaggaerContractPartyUploadDto> rowMapper = (resultSet, rowNumber) -> {
-                if (rowNumber == 0 || rowNumber % 100 == 0) {
+                if (rowNumber % 100 == 0) {
                     LOG.info("findJaggaerContractParty, processing row number " + rowNumber);
                 }
                 JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
@@ -66,7 +65,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     public List<JaggaerContractAddressUploadDto> findJaggaerContractAddress(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         try {
             RowMapper<JaggaerContractAddressUploadDto> rowMapper = (resultSet, rowNumber) -> {
-                if (rowNumber == 0 || rowNumber % 100 == 0) {
+                if (rowNumber % 100 == 0) {
                     LOG.info("findJaggaerContractAddress, processing row number " + rowNumber);
                 }
                 JaggaerContractAddressUploadDto dto = new JaggaerContractAddressUploadDto();
@@ -196,7 +195,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     private String convertToISOCountry(String fipsCountryCode) {
         if (StringUtils.isBlank(fipsCountryCode)) {
             LOG.debug("convertToISOCountry, empty FIPS country found returning US as default");
-            fipsCountryCode = CUKFSConstants.COUNTRY_CODE_US;
+            fipsCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         }
         
         String isoCountry = StringUtils.EMPTY;

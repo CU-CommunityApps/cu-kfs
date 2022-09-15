@@ -252,9 +252,8 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         
         createTargetTestDirectory();
         
-        jaggaerGenerateContractPartyCsvServiceImpl.generateCsvFile(jaggaerUploadDtos, JaggaerContractUploadProcessingMode.PO);
-        
         try {
+            jaggaerGenerateContractPartyCsvServiceImpl.generateCsvFile(jaggaerUploadDtos, JaggaerContractUploadProcessingMode.PO);
             File expectedJaggaerFile = new File(SOURCE_TEST_FILE_PATH + "expectedJaggaerUpload.csv");
             File actualJaggaerFile = new File(TARGET_TEST_FILE_PATH + "JaggaerUpload_found_by_PO_search_19961130_233100.csv");
             
