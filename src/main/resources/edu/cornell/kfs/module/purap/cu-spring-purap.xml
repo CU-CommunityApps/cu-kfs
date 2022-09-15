@@ -40,6 +40,7 @@
 		<property name="batchFileDirectories">
 			<list merge="true">
 				<value>${staging.directory}/purap</value>
+				<value>${staging.directory}/purap/jaggaer</value>
 			</list>
 		</property>
 	</bean>
@@ -309,11 +310,18 @@
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 
-	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc" />
-
-	<bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean" />
-	<bean id="jaggaerGenerateContractPartyCsvService-parentBean" abstract="true" class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateContractPartyCsvServiceImpl">
-		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
+	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc">
+	 <property name="isoFipsConversionService" ref="isoFipsConversionService" />
 	</bean>
-
+	
+	<bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean" />
+	<bean id="jaggaerGenerateContractPartyCsvService-parentBean" abstract="true"
+		class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateContractPartyCsvServiceImpl">
+		<property name="jaggaerUploadCreationDirectory">
+			<value>${staging.directory}/purap/jaggaer/</value>
+		</property>
+		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
+		<property name="dateTimeService" ref="dateTimeService" />
+	</bean>
+    
 </beans>
