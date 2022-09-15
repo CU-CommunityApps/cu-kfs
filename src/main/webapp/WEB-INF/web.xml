@@ -339,17 +339,6 @@
         <auth-constraint/>
     </security-constraint>
 
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>WEB-INF/classes/edu/cornell/kfs/webservice.xml</param-value>
-    </context-param>
-
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
-
     <servlet>
         <servlet-name>dataobjects</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
