@@ -33,6 +33,9 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         try {
             RowMapper<JaggaerContractPartyUploadDto> rowMapper = (resultSet, rowNumber) -> {
+                if (rowNumber == 0 || rowNumber % 100 == 0) {
+                    LOG.info("findJaggaerContractParty, processing row number " + rowNumber);
+                }
                 JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
                 dto.setRowType(JaggaerContractPartyUploadRowType.PARTY);
                 dto.setOverrideDupError(CUPurapConstants.FALSE_STRING);
@@ -63,6 +66,9 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     public List<JaggaerContractAddressUploadDto> findJaggaerContractAddress(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         try {
             RowMapper<JaggaerContractAddressUploadDto> rowMapper = (resultSet, rowNumber) -> {
+                if (rowNumber == 0 || rowNumber % 100 == 0) {
+                    LOG.info("findJaggaerContractAddress, processing row number " + rowNumber);
+                }
                 JaggaerContractAddressUploadDto dto = new JaggaerContractAddressUploadDto();
                 dto.setRowType(JaggaerContractPartyUploadRowType.ADDRESS);
                 dto.setAddressID(resultSet.getString(FIELD_NAMES.VNDR_ADDR_GNRTD_ID));
@@ -188,25 +194,20 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     }
     
     private String convertToISOCountry(String fipsCountryCode) {
-        
         if (StringUtils.isBlank(fipsCountryCode)) {
             LOG.debug("convertToISOCountry, empty FIPS country found returning US as default");
             fipsCountryCode = CUKFSConstants.COUNTRY_CODE_US;
         }
         
-        /*
-         * @todo re-enable this once the conversion service is done
         String isoCountry = StringUtils.EMPTY;
         
         try {
             isoCountry = isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
         } catch (RuntimeException runtimeException) {
-            LOG.error("convertToISOCountry, unable to get ISO country for FIPS country " + fipsCountryCode, runtimeException);
+            LOG.error("convertToISOCountry, returning empty string, unable to get ISO country for FIPS country " + fipsCountryCode, runtimeException);
         }
         
         return isoCountry;
-        */
-        return fipsCountryCode;
     }
 
     public void setIsoFipsConversionService(ISOFIPSConversionService isoFipsConversionService) {

@@ -317,7 +317,7 @@ public class CUPurapConstants {
         OTHER("Other", "OT"),
         GOVERNMENT(OTHER.jaggaerLegalStructureName, "GV"),
         NON_PROFIT(OTHER.jaggaerLegalStructureName, "NP"),
-        NON_US_COMPANY("Non-US Based Company", "IO");
+        NON_US_ENTITY("Non-US Based Entity", "IO");
         
         public final String jaggaerLegalStructureName;
         public final String kfsOwnerShipTypeCode;
