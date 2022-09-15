@@ -39,6 +39,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
@@ -48,6 +49,7 @@ import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
+@PowerMockIgnore("javax.management.*")
 public class CuCreditMemoServiceImplTest {
 
     private AccountsPayableService accountsPayableService;
