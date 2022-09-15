@@ -6,8 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
@@ -16,20 +18,26 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
+import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
 
 import org.springframework.jdbc.core.RowMapper;
 
 public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements JaggaerUploadDao {
     private static final Logger LOG = LogManager.getLogger();
-
+    
+    protected ISOFIPSConversionService isoFipsConversionService;
+    
     @Override
     public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         try {
             RowMapper<JaggaerContractPartyUploadDto> rowMapper = (resultSet, rowNumber) -> {
+                if (rowNumber % 100 == 0) {
+                    LOG.info("findJaggaerContractParty, processing row number " + rowNumber);
+                }
                 JaggaerContractPartyUploadDto dto = new JaggaerContractPartyUploadDto();
                 dto.setRowType(JaggaerContractPartyUploadRowType.PARTY);
-                dto.setOverrideDupError(false);
+                dto.setOverrideDupError(CUPurapConstants.FALSE_STRING);
                 dto.setERPNumber(buildVendorNumber(resultSet.getString(FIELD_NAMES.VNDR_HDR_GNRTD_ID), resultSet.getString(FIELD_NAMES.VNDR_DTL_ASND_ID)));
                 dto.setSciQuestID(StringUtils.EMPTY);
                 dto.setContractPartyName(resultSet.getString(FIELD_NAMES.VNDR_NM));
@@ -57,13 +65,20 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
     public List<JaggaerContractAddressUploadDto> findJaggaerContractAddress(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         try {
             RowMapper<JaggaerContractAddressUploadDto> rowMapper = (resultSet, rowNumber) -> {
+                if (rowNumber % 100 == 0) {
+                    LOG.info("findJaggaerContractAddress, processing row number " + rowNumber);
+                }
                 JaggaerContractAddressUploadDto dto = new JaggaerContractAddressUploadDto();
                 dto.setRowType(JaggaerContractPartyUploadRowType.ADDRESS);
                 dto.setAddressID(resultSet.getString(FIELD_NAMES.VNDR_ADDR_GNRTD_ID));
                 dto.setSciQuestID(StringUtils.EMPTY);
                 dto.setAddressType(JaggaerAddressType.findJaggaerAddressTypeFromKfsAddressTypeCode(resultSet.getString(FIELD_NAMES.VNDR_ADDR_TYP_CD)));
-                dto.setPrimaryType(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND));
-                dto.setActive(StringUtils.EMPTY);
+                if (StringUtils.equals(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND), KRADConstants.YES_INDICATOR_VALUE)) {
+                    dto.setPrimaryType(dto.getAddressType().jaggaerAddressType);
+                } else {
+                    dto.setPrimaryType(StringUtils.EMPTY);
+                }
+                dto.setActive(CUPurapConstants.TRUE_STRING);
                 dto.setCountry(convertToISOCountry(resultSet.getString(FIELD_NAMES.VNDR_ADDRESS_CNTRY_CD)));
                 dto.setStreetLine1(resultSet.getString(FIELD_NAMES.VNDR_LN1_ADDR));
                 dto.setStreetLine2(resultSet.getString(FIELD_NAMES.VNDR_LN2_ADDR));
@@ -114,6 +129,7 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         sb.append(buildJoinClauseWithPOVendors(true));
         sb.append(buildRestrictActiveRows(true));
         sb.append(buildTimeFrameRestrictionClause(processingMode, processingDate));
+        sb.append("AND VA.VNDR_ADDR_TYP_CD in ('RM', 'PO') ");
         sb.append(buildOrderByClause());
         
         String sql = sb.toString();
@@ -176,14 +192,25 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         return vendorHeaderId + KFSConstants.DASH + vendorDetailId;
     }
     
-    private String convertToISOCountry(String fIPSCountry) {
-        if (StringUtils.isBlank(fIPSCountry)) {
+    private String convertToISOCountry(String fipsCountryCode) {
+        if (StringUtils.isBlank(fipsCountryCode)) {
             LOG.debug("convertToISOCountry, empty FIPS country found returning US as default");
-            fIPSCountry = "US";
+            fipsCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         }
-        /*
-         * @TODO use generic mapping framework
-         */
-        return fIPSCountry;
+        
+        String isoCountry = StringUtils.EMPTY;
+        
+        try {
+            isoCountry = isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
+        } catch (RuntimeException runtimeException) {
+            LOG.error("convertToISOCountry, returning empty string, unable to get ISO country for FIPS country " + fipsCountryCode, runtimeException);
+        }
+        
+        return isoCountry;
     }
+
+    public void setIsoFipsConversionService(ISOFIPSConversionService isoFipsConversionService) {
+        this.isoFipsConversionService = isoFipsConversionService;
+    }
+
 }

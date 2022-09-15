@@ -11,7 +11,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 
 public class JaggaerContractPartyUploadDto extends JaggaerContractUploadBaseDto {
 
-    private boolean overrideDupError;
+    private String overrideDupError;
     private String contractPartyName;
     private String doingBusinessAs;
     private String otherNames;
@@ -24,11 +24,11 @@ public class JaggaerContractPartyUploadDto extends JaggaerContractUploadBaseDto 
     private String VATRegistrationNumber;
     private String websiteURL;
 
-    public boolean isOverrideDupError() {
+    public String getOverrideDupError() {
         return overrideDupError;
     }
 
-    public void setOverrideDupError(boolean overrideDupError) {
+    public void setOverrideDupError(String overrideDupError) {
         this.overrideDupError = overrideDupError;
     }
 
