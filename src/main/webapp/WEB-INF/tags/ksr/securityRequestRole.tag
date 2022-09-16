@@ -6,16 +6,21 @@
               description="Whether the Security Request Role data should be read-only" %>
 
 <c:set var="genericAttributes" value="${DataDictionary.AttributeReferenceDummy.attributes}" />
-
 <c:set var="securityRequestRole" value="${KualiForm.document.securityRequestRoles[securityRequestRoleIndex]}" />
+<c:set var="roleTitle" value="${securityRequestRole.roleInfo.id} : ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.name}"/>
 
-<h3>${securityRequestRole.roleInfo.id} : ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.name}</h3>
+<h3>&nbsp;</h3>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="datatable">
+  <tr>
+    <th colspan="2" width="100%">
+      <b><c:out value="${roleTitle}"/></b>
+    </th>
+  </tr>
     <tr>     
-        <th class="right">
+        <th width="20%" class="right">
             <kul:htmlAttributeLabel attributeEntry="${genericAttributes.activeIndicator}"/>
         </th>
-        <td width="50%">
+        <td width="80%">
           <kul:htmlControlAttribute property="document.securityRequestRoles[${securityRequestRoleIndex}].active"
                 attributeEntry="${genericAttributes.activeIndicator}" readOnly="${readOnly}"/> 
           <c:if test="${securityRequestRole.currentActive != securityRequestRole.active}">
@@ -36,8 +41,8 @@
     <c:if test="${securityRequestRole.qualifiedRole && ( (!empty securityRequestRole.requestRoleQualifications)
                 || (!empty securityRequestRole.currentQualifications) || !readOnly )}">
       <tr>
-          <kul:htmlAttributeHeaderCell literalLabel="Qualifications:" align="right" horizontal="true" addClass="right"/>
-          <td style="padding: 5px;">
+          <kul:htmlAttributeHeaderCell literalLabel="Qualifications:" align="right" horizontal="true" width="20%" addClass="right"/>
+          <td style="padding: 5px; border-top-width: 1px; border-top-style: dashed;" width="80%">
              <c:if test="${!empty securityRequestRole.requestRoleQualifications || !readOnly}">
                <ksr:securityRequestRoleQualifications securityRequestRoleIndex="${securityRequestRoleIndex}"
                       readOnly="${readOnly}" />

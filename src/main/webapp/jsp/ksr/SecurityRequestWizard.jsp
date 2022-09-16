@@ -39,7 +39,7 @@
 			<tr>
 				<td colspan="4" align="center">
 					<div>
-						<html:submit property="methodToCall.processWizard" styleClass="btn btn-default" value="Submit" />
+						<html:submit property="methodToCall.processWizard" styleClass="btn btn-default" value="Continue" />
 					</div>
 				</div>
                </td>
