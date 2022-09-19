@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
@@ -42,6 +44,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     public File generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         initializeReportTitleAndFileName(processingResults);
         buildSummarySeciton(processingResults);
+        buildDetailSections(processingResults);
         reportWriterService.destroy();
         return reportWriterService.getReportFile();
     }
@@ -53,7 +56,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
         reportWriterService.writeNewLines(2);
     }
     
-    protected void buildSummarySeciton(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+    private void buildSummarySeciton(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         String sectionOpening = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_OPENING);
         reportWriterService.writeFormattedMessageLine(MessageFormat.format(sectionOpening, "Summary"));
 
@@ -71,7 +74,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
                 .getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_CLOSING));
     }
     
-    protected List<ConcurEventNotificationProcessingResultsDTO> filterResultsDto(
+    private List<ConcurEventNotificationProcessingResultsDTO> filterResultsDto(
             List<ConcurEventNotificationProcessingResultsDTO> processingResults,
             ConcurEventNoticationVersion2EventType eventType,
             ConcurEventNotificationVersion2ProcessingResults resultsType) {
@@ -80,31 +83,49 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
                 .collect(Collectors.toCollection(ArrayList::new));
     }
     
-    protected void buildDetailSections(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        /**
-         ************ Expense Reports with Valid Accounts ****************
-         *Report Number: XX-
-         *Messages: Foo
-         *          Bar
-         *          Foo Bar
-         *          
-         *          
-         *Report Nymber: YY
-         *Messages:
-         *
-         *          
-         *Report NUmber: ZZ
-         *Messages: Tada
-         ************************************* 
-         */
-    }
-    
     private String buildConcurReportFileName() {
         StringBuilder sb = new StringBuilder("Concurn_Event_Notification_V2_Processing_Results_");
         Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
         SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
         sb.append(formatter.format(currentTimestamp)).append(CUKFSConstants.TEXT_FILE_EXTENSION);
         return sb.toString();
+    }
+    
+    private void buildDetailSections(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+        String detailSummaryFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_SUMMARY);
+        for (ConcurEventNoticationVersion2EventType eventType : ConcurEventNoticationVersion2EventType.values()) {
+            for (ConcurEventNotificationVersion2ProcessingResults resultsType : ConcurEventNotificationVersion2ProcessingResults.values()) {
+                List<ConcurEventNotificationProcessingResultsDTO> filteredDtos = filterResultsDto(processingResults,
+                        eventType, resultsType);
+                if (CollectionUtils.isNotEmpty(filteredDtos)) {
+                    String sectionTitle = MessageFormat.format(detailSummaryFormat, eventType.eventType, resultsType.statusForReport);
+                    buildDetailSection(filteredDtos, sectionTitle);
+                    
+                }
+            }
+        }
+    }
+    
+    private void buildDetailSection(List<ConcurEventNotificationProcessingResultsDTO> filteredDtos, String sectionTitle) {
+        String detailItemFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_ITEM);
+        
+        reportWriterService.writeFormattedMessageLine(MessageFormat.format(configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_OPENING), sectionTitle));
+        int reportIndex = 0;
+        for (ConcurEventNotificationProcessingResultsDTO dto : filteredDtos) {
+            if (reportIndex > 0 ) {
+                reportWriterService.writeNewLines(2);
+            }
+            
+            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, "Report Number: ", dto.getReportNumber()));
+            String messageListHeader = "Messages: ";
+            String messageListHeaderBlank = KFSConstants.NEWLINE + "          ";
+            String messageOutput = StringUtils.join(dto.getMessages(), messageListHeaderBlank);
+            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, messageListHeader, messageOutput));
+            
+            reportIndex++;
+        }
+        reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_CLOSING));
+        reportWriterService.writeNewLines(2);
     }
 
     @Override

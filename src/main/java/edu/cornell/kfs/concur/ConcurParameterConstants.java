@@ -59,5 +59,7 @@ public class ConcurParameterConstants {
     public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_OPENING = "concur.event.v2.processing.report.section.opening";
     public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_CLOSING = "concur.event.v2.processing.report.section.closing";
     public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_SUMMARY_LINE = "concur.event.v2.processing.report.summary.line";
+    public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_SUMMARY = "concur.event.v2.processing.report.detail.summary";
+    public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_ITEM = "concur.event.v2.processing.report.detail.item";
 
 }
