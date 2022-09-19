@@ -1,12 +1,12 @@
 package edu.cornell.kfs.fp.document;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "DistributionOfIncomeAndExpense")
@@ -20,13 +20,13 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
     
     public CuDistributionOfIncomeAndExpenseDocument() {
         super();
-        tripAssociationStatusCode = CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC;
+        tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
     }
 
     @Override
     public void toCopy() {
         super.toCopy();
-        setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
+        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
         setTripId(null);
     }
 

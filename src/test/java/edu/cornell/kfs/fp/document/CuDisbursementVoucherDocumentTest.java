@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -62,7 +63,6 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 @RunWith(PowerMockRunner.class)
@@ -169,7 +169,7 @@ public class CuDisbursementVoucherDocumentTest {
         cuDisbursementVoucherDocument.setDisbVchrContactPhoneNumber("123-456-7890");
         cuDisbursementVoucherDocument.setDisbVchrContactEmailId("joe@msn.com");
         cuDisbursementVoucherDocument.setDisbVchrPayeeTaxControlCode("123456789");
-        cuDisbursementVoucherDocument.setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_TRIP_DOC);
+        cuDisbursementVoucherDocument.setTripAssociationStatusCode(CuFPConstants.IS_TRIP_DOC);
         cuDisbursementVoucherDocument.setTripId("12345");
 
         cuDisbursementVoucherDocument.clearFieldsThatShouldNotBeCopied();
@@ -177,7 +177,7 @@ public class CuDisbursementVoucherDocumentTest {
         assertEquals("DV Contact Phone Number should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactPhoneNumber());
         assertEquals("DV Contact Email ID should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactEmailId());
         assertEquals("DV Payee Tax Control Code should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrPayeeTaxControlCode());
-        assertEquals("Trip Association Status Code should be NOT Associated value.", CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC, cuDisbursementVoucherDocument.getTripAssociationStatusCode());
+        assertEquals("Trip Association Status Code should be NOT Associated value.", CuFPConstants.IS_NOT_TRIP_DOC, cuDisbursementVoucherDocument.getTripAssociationStatusCode());
         assertNull("Trip ID should be null", cuDisbursementVoucherDocument.getTripId());
     }
 

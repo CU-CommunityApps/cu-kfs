@@ -122,4 +122,7 @@ public class CuFPConstants {
         public static final String REPORT_EMAIL = "ReportEmail";
         public static final String PAYEE_NAME = "payee_name";
     }
+
+    public static final String IS_NOT_TRIP_DOC = "0";
+    public static final String IS_TRIP_DOC = "1";
 }

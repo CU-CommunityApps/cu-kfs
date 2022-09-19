@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,7 +59,6 @@ import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtended
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -99,7 +99,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     public CuDisbursementVoucherDocument() {
         super();
         dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
-        tripAssociationStatusCode = CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC;
+        tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
     }
 
     @Override
@@ -615,7 +615,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     @Override
     protected void clearFieldsThatShouldNotBeCopied() {
         super.clearFieldsThatShouldNotBeCopied();
-        setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
+        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
         setTripId(null);
     }
 
