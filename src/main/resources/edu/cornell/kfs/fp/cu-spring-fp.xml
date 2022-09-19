@@ -244,18 +244,6 @@
             <ref bean="accountingDocumentRuleHelperService"/>
         </property>
     </bean>
-
-    <bean id="cuLegacyTravelService" class="edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl">
-        <property name="updateTripWsdl">
-            <value>${cu.legacy.travel.wsdl}</value>
-        </property>
-        <property name="updateTripEndpoint">
-            <value>${cu.legacy.travel.endpoint}</value>
-        </property>        
-        <property name="travelUrl">
-            <value>${cu.legacy.travel.url}</value>
-        </property>
-    </bean>
     
     <bean id="disbursementVoucherPayeeService" parent="disbursementVoucherPayeeService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl" />
      	
