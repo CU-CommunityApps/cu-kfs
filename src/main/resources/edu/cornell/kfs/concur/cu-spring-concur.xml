@@ -673,6 +673,7 @@
    <property name="concurAccessTokenV2Service" ref="concurAccessTokenV2Service" />
    <property name="concurExpenseV3Service" ref="concurExpenseV3Service" />
    <property name="concurRequestV4Service" ref="concurRequestV4Service" />
+   <property name="concurEventNotificationV2ReportService" ref="concurEventNotificationV2ReportService" />
   </bean>
   
   <bean id="concurAccessTokenV2Service" parent="concurAccessTokenV2Service-parentBean" />
@@ -702,5 +703,18 @@
   <bean id="concurEventNotificationV2WebserviceService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationV2WebserviceServiceImpl" abstract="true">
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
   </bean>
+  
+  <bean id="concurEventNotificationV2ReportService" parent="concurEventNotificationV2ReportService-parentBean" />
+  <bean id="concurEventNotificationV2ReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationV2ReportServiceImpl" abstract="true">
+      <property name="reportWriterService" ref="concurEventNotificationV2ReportWriterService"/>
+      <property name="configurationService" ref="configurationService"/>
+      <property name="emailService" ref="emailService"/>
+      <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+      <property name="dateTimeService" ref="dateTimeService"/>
+  </bean>
+  
+  <bean id="concurEventNotificationV2ReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+        <property name="filePath" value="${reports.directory}/cncr"/>
+    </bean>
     
 </beans>

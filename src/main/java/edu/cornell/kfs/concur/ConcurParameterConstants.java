@@ -55,5 +55,9 @@ public class ConcurParameterConstants {
     public static final String REQUEST_V4_QUERY_PAGE_SIZE = "REQUEST_V4_QUERY_PAGE_SIZE";
     public static final String REQUEST_V4_NUMBER_OF_DAYS_OLD = "REQUEST_V4_NUMBER_OF_DAYS_OLD";
     public static final String REQUEST_V4_TEST_USERS = "REQUEST_V4_TEST_USERS";
+    
+    public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_OPENING = "concur.event.v2.processing.report.section.opening";
+    public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_CLOSING = "concur.event.v2.processing.report.section.closing";
+    public static final String CONCUR_EVENT_V2_PROCESSING_REPORT_SUMMARY_LINE = "concur.event.v2.processing.report.summary.line";
 
 }
