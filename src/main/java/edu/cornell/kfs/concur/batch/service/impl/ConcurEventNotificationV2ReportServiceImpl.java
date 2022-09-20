@@ -63,6 +63,8 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
 
         reportWriterService.writeFormattedMessageLine(configurationService
                 .getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_CLOSING));
+        
+        reportWriterService.writeNewLines(2);
     }
     
     private List<ConcurEventNotificationProcessingResultsDTO> filterResultsDto(
