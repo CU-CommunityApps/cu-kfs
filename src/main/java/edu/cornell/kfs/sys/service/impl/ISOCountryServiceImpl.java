@@ -10,6 +10,7 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.businessobject.ISOCountry;
@@ -25,6 +26,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
     
+    @Override
     public boolean isISOCountryActive(String isoCountryCode) {
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
 
@@ -37,6 +39,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         }
     }
 
+    @Override
     public boolean isISOCountryInactive(String isoCountryCode) {
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
 
@@ -51,6 +54,26 @@ public class ISOCountryServiceImpl implements ISOCountryService {
     
     public ISOCountry getByPrimaryId(String isoCountryCode) {
         return getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode));
+    }
+    
+    @Override
+    public String findISOCountryNameByCountryCode(String isoCountryCode) {
+        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
+        if (ObjectUtils.isNotNull(isoCountryFound)) {
+            return isoCountryFound.getName();
+        } else {
+            return MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NAME_NOT_FOUND_FOR_COUNTRY_CODE), CUKFSConstants.ISO, isoCountryCode);
+        }
+    }
+
+    @Override
+    public boolean isoCountryExists(String isoCountryCode) {
+        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
+        if (ObjectUtils.isNotNull(isoCountryFound)) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     protected Map<String, Object> mapPrimaryKeys(String isoCountryCode) {

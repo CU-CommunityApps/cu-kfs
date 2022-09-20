@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.businessobject;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.businessobject.Country;
+import edu.cornell.kfs.sys.businessobject.ISOCountry;
 
 /**
  * CU Generic ISO-FIPS Country modification
@@ -15,7 +16,7 @@ public class ISOFIPSCountryMap extends PersistableBusinessObjectBase implements 
 	private String fipsCountryCode;
 	private boolean active;
 	private Country fipsCountry;
-    private ISOCountry isoCountry;
+	private ISOCountry isoCountry;
 	
 	public ISOFIPSCountryMap() {
 	    super();

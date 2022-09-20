@@ -11,6 +11,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.Country;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.service.CountryService;
@@ -25,6 +26,7 @@ public class CountryServiceImpl implements CountryService {
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
     
+    @Override
     public boolean isCountryActive(String countryCode) {
         Country countryFound = getByPrimaryId(countryCode);
 
@@ -38,6 +40,7 @@ public class CountryServiceImpl implements CountryService {
         }
     }
     
+    @Override
     public boolean isCountryInactive(String countryCode) {
         Country countryFound = getByPrimaryId(countryCode);
 
@@ -53,6 +56,26 @@ public class CountryServiceImpl implements CountryService {
     
     public Country getByPrimaryId(String countryCode) {
         return getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode));
+    }
+    
+    @Override
+    public String findCountryNameByCountryCode(String countryCode) {
+        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
+        if (ObjectUtils.isNotNull(countryFound)) {
+            return countryFound.getName();
+        } else {
+            return MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NAME_NOT_FOUND_FOR_COUNTRY_CODE), CUKFSConstants.FIPS, countryCode);
+        }
+    }
+    
+    @Override
+    public boolean countryExists(String countryCode) {
+        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
+        if (ObjectUtils.isNotNull(countryFound)) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     protected Map<String, Object> mapPrimaryKeys(String countryCode) {

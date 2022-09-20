@@ -14,6 +14,11 @@
                 <value>edu.cornell.kfs.sys</value>
             </list>
         </property>
+        <property name="scriptConfigurationFilePaths">
+            <list>
+                <value>edu/cornell/kfs/sys/cu-dwr-sys.xml</value>
+            </list>
+        </property>
 		<property name="dataDictionaryPackages">
 			<list merge="true">
                 <value>classpath:edu/cornell/kfs/sys/businessobject/datadictionary/*.xml</value>

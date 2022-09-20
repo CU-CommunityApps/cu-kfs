@@ -9,4 +9,7 @@ public interface CountryService {
 
     public boolean isCountryInactive(String countryCode);
 
+    public String findCountryNameByCountryCode(String countryCode);
+
+    public boolean countryExists(String countryCode);
 }

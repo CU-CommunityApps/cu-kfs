@@ -252,5 +252,7 @@ public class CUKFSKeyConstants {
     public static final String ERROR_NO_FIPS_TO_ISO_MAPPINGS = "error.no.fips.to.iso.mappings";
     public static final String ERROR_MANY_FIPS_TO_ISO_MAPPINGS = "error.many.fips.to.iso.mappings";
     public static final String MESSAGE_ONE_TO_ONE_FIPS_TO_ISO_MAPPING = "message.one.to.one.fips.to.iso.mapping";
-
+    public static final String ACTIVE_MAP_ERROR_COUNTRY_INACTIVE = "active.map.error.country.inactive";
+    public static final String ACTIVE_MAP_ERROR_COUNTRY_DOES_NOT_EXIST = "active.map.error.country.does.not.exist";
+    public static final String NAME_NOT_FOUND_FOR_COUNTRY_CODE = "name.not.found.for.country.code";
 }
