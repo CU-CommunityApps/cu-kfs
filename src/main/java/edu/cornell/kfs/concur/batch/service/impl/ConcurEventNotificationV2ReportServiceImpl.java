@@ -1,12 +1,9 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,17 +11,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
-import edu.cornell.kfs.concur.ConcurPropertyConstants;
-import edu.cornell.kfs.concur.batch.report.ConcurEmailableReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2ReportService;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
@@ -38,7 +31,6 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     private ConfigurationService configurationService;
     private EmailService emailService;
     private ConcurBatchUtilityService concurBatchUtilityService;
-    private DateTimeService dateTimeService;
 
     @Override
     public File generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
@@ -50,7 +42,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     }
     
     protected void initializeReportTitleAndFileName(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        reportWriterService.setFileNamePrefix(buildConcurReportFileName());
+        reportWriterService.setFileNamePrefix(configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_FILE_NAME));
         reportWriterService.setTitle(configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_TITLE));
         reportWriterService.initialize();
         reportWriterService.writeNewLines(2);
@@ -81,13 +73,6 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
         return processingResults.stream()
                 .filter(result -> result.getEventType() == eventType && result.getProcessingResults() == resultsType)
                 .collect(Collectors.toCollection(ArrayList::new));
-    }
-    
-    private String buildConcurReportFileName() {
-        Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
-        SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
-        String fileNameFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_FILE_NAME);
-        return MessageFormat.format(fileNameFormat, formatter.format(currentTimestamp));
     }
     
     private void buildDetailSections(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
@@ -185,10 +170,6 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
-    }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
     }
 
 }

@@ -710,7 +710,6 @@
       <property name="configurationService" ref="configurationService"/>
       <property name="emailService" ref="emailService"/>
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-      <property name="dateTimeService" ref="dateTimeService"/>
   </bean>
   
   <bean id="concurEventNotificationV2ReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
