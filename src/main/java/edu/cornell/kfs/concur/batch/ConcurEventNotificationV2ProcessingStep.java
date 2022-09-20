@@ -48,14 +48,9 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
         if (processingResults.isEmpty()) {
             LOG.info("generateReport, no reports nor travel requests were validated");
         } else {
-            processingResults.stream().forEach(result -> logIndividualResult(result));
             File reportFile = concurEventNotificationV2ReportService.generateReport(processingResults);
             concurEventNotificationV2ReportService.sendResultsEmail(processingResults, reportFile);
         }
-    }
-    
-    private void logIndividualResult(ConcurEventNotificationProcessingResultsDTO result) {
-        LOG.info("logIndividualResult, " + result.toString());
     }
 
     public void setConcurAccessTokenV2Service(ConcurAccessTokenV2Service concurAccessTokenV2Service) {
