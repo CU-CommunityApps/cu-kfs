@@ -51,7 +51,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     
     protected void initializeReportTitleAndFileName(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         reportWriterService.setFileNamePrefix(buildConcurReportFileName());
-        reportWriterService.setTitle("Concur Event Notification V2. Processing Report");
+        reportWriterService.setTitle(configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_TITLE));
         reportWriterService.initialize();
         reportWriterService.writeNewLines(2);
     }
@@ -84,11 +84,10 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     }
     
     private String buildConcurReportFileName() {
-        StringBuilder sb = new StringBuilder("Concurn_Event_Notification_V2_Processing_Results_");
         Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
         SimpleDateFormat formatter = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
-        sb.append(formatter.format(currentTimestamp)).append(CUKFSConstants.TEXT_FILE_EXTENSION);
-        return sb.toString();
+        String fileNameFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_FILE_NAME);
+        return MessageFormat.format(fileNameFormat, formatter.format(currentTimestamp));
     }
     
     private void buildDetailSections(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
@@ -99,14 +98,15 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
                         eventType, resultsType);
                 if (CollectionUtils.isNotEmpty(filteredDtos)) {
                     String sectionTitle = MessageFormat.format(detailSummaryFormat, eventType.eventType, resultsType.statusForReport);
-                    buildDetailSection(filteredDtos, sectionTitle);
+                    String reportNumberDescription = eventType.reportNumberDescription;
+                    buildDetailSection(filteredDtos, sectionTitle, reportNumberDescription);
                     
                 }
             }
         }
     }
     
-    private void buildDetailSection(List<ConcurEventNotificationProcessingResultsDTO> filteredDtos, String sectionTitle) {
+    private void buildDetailSection(List<ConcurEventNotificationProcessingResultsDTO> filteredDtos, String sectionTitle, String reportNumberDescription) {
         String detailItemFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_ITEM);
         
         reportWriterService.writeFormattedMessageLine(MessageFormat.format(configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_OPENING), sectionTitle));
@@ -116,8 +116,8 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
                 reportWriterService.writeNewLines(2);
             }
             
-            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, "Report Number: ", dto.getReportNumber()));
-            String messageListHeader = "Messages: ";
+            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, reportNumberDescription, dto.getReportNumber()));
+            String messageListHeader = "Messages";
             String messageListHeaderBlank = KFSConstants.NEWLINE + "          ";
             String messageOutput = StringUtils.join(dto.getMessages(), messageListHeaderBlank);
             reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, messageListHeader, messageOutput));
@@ -131,7 +131,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     @Override
     public void sendResultsEmail(List<ConcurEventNotificationProcessingResultsDTO> processingResults, File reportFile) {
         String body = readReportFileToString(reportFile);
-        String subject = "Concur Event Notification Processing Results";
+        String subject = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_EMAIL_SUBJECT);
         sendEmail(subject, body);
 
     }

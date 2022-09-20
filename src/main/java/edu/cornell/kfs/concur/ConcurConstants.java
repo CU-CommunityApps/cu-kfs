@@ -181,13 +181,15 @@ public class ConcurConstants {
     }
     
     public enum ConcurEventNoticationVersion2EventType {
-        ExpenseReport("Expense Report"),
-        TravelRequest("Travel Request");
+        ExpenseReport("Expense Report", "Report ID"),
+        TravelRequest("Travel Request", "Travel Request ID");
         
         public final String eventType;
+        public final String reportNumberDescription;
         
-        private ConcurEventNoticationVersion2EventType(String eventType) {
+        private ConcurEventNoticationVersion2EventType(String eventType, String reportNumberDescription) {
             this.eventType = eventType;
+            this.reportNumberDescription = reportNumberDescription;
         }
     }
     
