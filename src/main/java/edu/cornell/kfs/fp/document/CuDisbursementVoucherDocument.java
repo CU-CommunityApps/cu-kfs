@@ -56,7 +56,6 @@ import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
-import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
@@ -65,7 +64,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "DisbursementVoucher")
-public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument implements CULegacyTravelIntegrationInterface {
+public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LogManager.getLogger();
@@ -99,7 +98,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     public CuDisbursementVoucherDocument() {
         super();
         dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
-        tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
     }
 
     @Override
@@ -610,16 +608,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     }
 
     /**
-     * Clear fields that shouldn't be copied to to the new DV.
-     */
-    @Override
-    protected void clearFieldsThatShouldNotBeCopied() {
-        super.clearFieldsThatShouldNotBeCopied();
-        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
-        setTripId(null);
-    }
-
-    /**
      * This overrides the code in the parent base class because of an issue where vendorDetail is null when it shouldn't be.
      * Might be related to OJB and proxy objects or something like that.
      * Hopefully we can contribute a fix to base code and eliminate this duplicate method in the future.
@@ -917,11 +905,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     public void setDvPayeeDetail(DisbursementVoucherPayeeDetail dvPayeeDetail) {
         this.dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) dvPayeeDetail;
     }
-
-    public String getTripAssociationStatusCode() {
-        return tripAssociationStatusCode;
-    }
-
 
     public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
         this.tripAssociationStatusCode = tripAssociationStatusCode;

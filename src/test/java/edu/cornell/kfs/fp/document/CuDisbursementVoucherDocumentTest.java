@@ -169,16 +169,10 @@ public class CuDisbursementVoucherDocumentTest {
         cuDisbursementVoucherDocument.setDisbVchrContactPhoneNumber("123-456-7890");
         cuDisbursementVoucherDocument.setDisbVchrContactEmailId("joe@msn.com");
         cuDisbursementVoucherDocument.setDisbVchrPayeeTaxControlCode("123456789");
-        cuDisbursementVoucherDocument.setTripAssociationStatusCode(CuFPConstants.IS_TRIP_DOC);
-        cuDisbursementVoucherDocument.setTripId("12345");
-
-        cuDisbursementVoucherDocument.clearFieldsThatShouldNotBeCopied();
 
         assertEquals("DV Contact Phone Number should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactPhoneNumber());
         assertEquals("DV Contact Email ID should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactEmailId());
         assertEquals("DV Payee Tax Control Code should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrPayeeTaxControlCode());
-        assertEquals("Trip Association Status Code should be NOT Associated value.", CuFPConstants.IS_NOT_TRIP_DOC, cuDisbursementVoucherDocument.getTripAssociationStatusCode());
-        assertNull("Trip ID should be null", cuDisbursementVoucherDocument.getTripId());
     }
 
     @Test

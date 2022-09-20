@@ -6,11 +6,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 
-import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
-
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "DistributionOfIncomeAndExpense")
-public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfIncomeAndExpenseDocument implements CULegacyTravelIntegrationInterface {
+public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfIncomeAndExpenseDocument {
 	
     private static final long serialVersionUID = 1L;
 
@@ -22,23 +20,6 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
         super();
         tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
     }
-
-    @Override
-    public void toCopy() {
-        super.toCopy();
-        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
-        setTripId(null);
-    }
-
-    public String getTripAssociationStatusCode() {
-        return this.tripAssociationStatusCode;
-    }
-
-
-    public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
-        this.tripAssociationStatusCode = tripAssociationStatusCode;
-    }
-
 
     public String getTripId() {
         return this.tripId;
