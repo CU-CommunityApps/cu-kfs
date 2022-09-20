@@ -3,7 +3,6 @@ package edu.cornell.kfs.fp.document;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.cornell.kfs.fp.CuFPConstants;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -39,7 +37,6 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
@@ -162,17 +159,6 @@ public class CuDisbursementVoucherDocumentTest {
         assertTrue("Should be valid and have one error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 1);
         assertEquals("The error message isn't what we expected.", FPKeyConstants.WARNING_DV_PAYEE_NON_EXISTENT_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
         assertEquals("DV Payee ID Number should be cleared", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
-    }
-
-    @Test
-    public void testClearFields() throws Exception {
-        cuDisbursementVoucherDocument.setDisbVchrContactPhoneNumber("123-456-7890");
-        cuDisbursementVoucherDocument.setDisbVchrContactEmailId("joe@msn.com");
-        cuDisbursementVoucherDocument.setDisbVchrPayeeTaxControlCode("123456789");
-
-        assertEquals("DV Contact Phone Number should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactPhoneNumber());
-        assertEquals("DV Contact Email ID should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactEmailId());
-        assertEquals("DV Payee Tax Control Code should be empty.", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrPayeeTaxControlCode());
     }
 
     @Test
