@@ -199,12 +199,11 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     
     private Response buildJsonResponse(URI uri, String jsonString) {
         Client client = null;
-        Response response = null;
         try {
             ClientConfig clientConfig = new ClientConfig();
             client = ClientBuilder.newClient(clientConfig);
             Invocation request = buildJsonClientRequest(client, uri, jsonString);
-            response = request.invoke();
+            Response response = request.invoke();
             response.bufferEntity();
             return response;
         } finally {
