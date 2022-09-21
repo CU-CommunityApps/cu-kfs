@@ -11,6 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap;
@@ -26,10 +27,16 @@ public class ISOFIPSCountryMapServiceImpl implements ISOFIPSCountryMapService {
     protected BusinessObjectService businessObjectService;
            
     public List<ISOFIPSCountryMap> findActiveMapsByISOCountryId(String isoCountryCode) {
+        if (ObjectUtils.isNull(isoCountryCode)) {
+            return new ArrayList<ISOFIPSCountryMap>(); 
+        }
         return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.ISO_COUNTRY_CODE, isoCountryCode);
     }
     
     public List<ISOFIPSCountryMap> findActiveMapsByFIPSCountryId(String fipsCountryCode) {
+        if (ObjectUtils.isNull(fipsCountryCode)) {
+            return new ArrayList<ISOFIPSCountryMap>(); 
+        } 
         return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.FIPS_COUNTRY_CODE, fipsCountryCode);
     }
 

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Country;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -28,8 +29,10 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean isCountryActive(String countryCode) {
+        if (ObjectUtils.isNull(countryCode)) {
+            return false;
+        }
         Country countryFound = getByPrimaryId(countryCode);
-
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryActive: " +
                     MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
@@ -42,8 +45,10 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean isCountryInactive(String countryCode) {
+        if (ObjectUtils.isNull(countryCode)) {
+            return false;
+        }
         Country countryFound = getByPrimaryId(countryCode);
-
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryInactive: " +
                     MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
@@ -54,12 +59,18 @@ public class CountryServiceImpl implements CountryService {
         }
     }
     
-    public Country getByPrimaryId(String countryCode) {
+    protected Country getByPrimaryId(String countryCode) {
+        if (ObjectUtils.isNull(countryCode)) {
+            return null;
+        }
         return getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode));
     }
     
     @Override
     public String findCountryNameByCountryCode(String countryCode) {
+        if (ObjectUtils.isNull(countryCode)) {
+            return KFSConstants.EMPTY_STRING;
+        }
         Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
         if (ObjectUtils.isNotNull(countryFound)) {
             return countryFound.getName();
@@ -70,12 +81,11 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean countryExists(String countryCode) {
-        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
-        if (ObjectUtils.isNotNull(countryFound)) {
-            return true;
-        } else {
+        if (ObjectUtils.isNull(countryCode)) {
             return false;
         }
+        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
+        return ObjectUtils.isNotNull(countryFound);
     }
     
     protected Map<String, Object> mapPrimaryKeys(String countryCode) {

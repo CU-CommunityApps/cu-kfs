@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -28,8 +29,10 @@ public class ISOCountryServiceImpl implements ISOCountryService {
     
     @Override
     public boolean isISOCountryActive(String isoCountryCode) {
+        if (ObjectUtils.isNull(isoCountryCode)) {
+            return false;
+        }
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
-
         if (ObjectUtils.isNotNull(isoCountryFound)) {
             LOG.debug("isISOCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR), isoCountryCode, isoCountryFound.isActive()));
             return isoCountryFound.isActive();
@@ -41,8 +44,10 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     @Override
     public boolean isISOCountryInactive(String isoCountryCode) {
+        if (ObjectUtils.isNull(isoCountryCode)) {
+            return false;
+        }
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
-
         if (ObjectUtils.isNotNull(isoCountryFound)) {
             LOG.debug("isISOCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_ISO_COUNTRY_CODE_INDICATOR), isoCountryCode, isoCountryFound.isActive()));
             return !isoCountryFound.isActive();
@@ -52,12 +57,18 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         }
     }
     
-    public ISOCountry getByPrimaryId(String isoCountryCode) {
+    protected ISOCountry getByPrimaryId(String isoCountryCode) {
+        if (ObjectUtils.isNull(isoCountryCode)) {
+            return null;
+        }
         return getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode));
     }
     
     @Override
     public String findISOCountryNameByCountryCode(String isoCountryCode) {
+        if (ObjectUtils.isNull(isoCountryCode)) {
+            return KFSConstants.EMPTY_STRING;
+        }
         ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
         if (ObjectUtils.isNotNull(isoCountryFound)) {
             return isoCountryFound.getName();
@@ -68,12 +79,11 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     @Override
     public boolean isoCountryExists(String isoCountryCode) {
-        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
-        if (ObjectUtils.isNotNull(isoCountryFound)) {
-            return true;
-        } else {
+        if (ObjectUtils.isNull(isoCountryCode)) {
             return false;
         }
+        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
+        return ObjectUtils.isNotNull(isoCountryFound);
     }
     
     protected Map<String, Object> mapPrimaryKeys(String isoCountryCode) {

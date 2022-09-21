@@ -15,7 +15,7 @@
             </list>
         </property>
         <property name="scriptConfigurationFilePaths">
-            <list>
+            <list merge="true">
                 <value>edu/cornell/kfs/sys/cu-dwr-sys.xml</value>
             </list>
         </property>

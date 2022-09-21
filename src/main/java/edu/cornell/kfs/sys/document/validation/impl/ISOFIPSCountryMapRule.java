@@ -4,6 +4,7 @@ import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -21,6 +22,8 @@ public class ISOFIPSCountryMapRule extends MaintenanceDocumentRuleBase {
 
     protected ISOFIPSCountryMap oldISOFIPSCountryMap;
     protected ISOFIPSCountryMap newISOFIPSCountryMap;
+    private ISOCountryService isoCountryService = null;
+    private CountryService countryService = null;
 
     @Override
     public void setupConvenienceObjects() {
@@ -46,12 +49,12 @@ public class ISOFIPSCountryMapRule extends MaintenanceDocumentRuleBase {
         boolean isValid = true;
         boolean requestToMakeMapActive = newISOFIPSCountryMap.isActive();
 
-        boolean isoCountryDoesNotExist = !SpringContext.getBean(ISOCountryService.class).isoCountryExists(newISOFIPSCountryMap.getIsoCountryCode());
-        boolean fipsCountryDoesNotExist = !SpringContext.getBean(CountryService.class).countryExists(newISOFIPSCountryMap.getFipsCountryCode());
+        boolean isoCountryDoesNotExist = !getIsoCountryService().isoCountryExists(newISOFIPSCountryMap.getIsoCountryCode());
+        boolean fipsCountryDoesNotExist = !getCountryService().countryExists(newISOFIPSCountryMap.getFipsCountryCode());
  
         
-        boolean isoCountryIsNotActive = !SpringContext.getBean(ISOCountryService.class).isISOCountryActive(newISOFIPSCountryMap.getIsoCountryCode());
-        boolean fipsCountryIsNotActive = !SpringContext.getBean(CountryService.class).isCountryActive(newISOFIPSCountryMap.getFipsCountryCode());
+        boolean isoCountryIsNotActive = !getIsoCountryService().isISOCountryActive(newISOFIPSCountryMap.getIsoCountryCode());
+        boolean fipsCountryIsNotActive = !getCountryService().isCountryActive(newISOFIPSCountryMap.getFipsCountryCode());
 
         if (requestToMakeMapActive) {
             if (isoCountryDoesNotExist) {
@@ -78,6 +81,20 @@ public class ISOFIPSCountryMapRule extends MaintenanceDocumentRuleBase {
             }
         }
         return isValid;
+    }
+
+    public ISOCountryService getIsoCountryService() {
+        if (ObjectUtils.isNull(isoCountryService)) {
+            this.isoCountryService = SpringContext.getBean(ISOCountryService.class);
+        } 
+        return isoCountryService;
+    }
+
+    public CountryService getCountryService() {
+        if (ObjectUtils.isNull(countryService)) {
+            this.countryService = SpringContext.getBean(CountryService.class);
+        } 
+        return countryService;
     }
 
 }
