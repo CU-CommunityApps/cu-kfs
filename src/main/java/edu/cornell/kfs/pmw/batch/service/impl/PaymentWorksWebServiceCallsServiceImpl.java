@@ -222,12 +222,11 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     
     private Response buildXmlOutput(URI uri) {
         Client client = null;
-        Response response = null;
         try {
             ClientConfig clientConfig = new ClientConfig();
             client = ClientBuilder.newClient(clientConfig);
             Invocation request = buildXmlClientRequest(client, uri);
-            response = request.invoke();
+            Response response = request.invoke();
             response.bufferEntity();
             return response;
         } finally {
