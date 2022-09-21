@@ -195,18 +195,12 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
     
     private Response buildJsonResponse(URI uri, String jsonString) {
-        Client client = null;
-
-        try {
-            ClientConfig clientConfig = new ClientConfig();
-            client = ClientBuilder.newClient(clientConfig);
-            Invocation request = buildJsonClientRequest(client, uri, jsonString);
-            Response response = request.invoke();
-            response.bufferEntity();
-            return response;
-        } finally {
-            CURestClientUtils.closeQuietly(client);
-        }
+        ClientConfig clientConfig = new ClientConfig();
+        Client client = ClientBuilder.newClient(clientConfig);
+        Invocation request = buildJsonClientRequest(client, uri, jsonString);
+        Response response = request.invoke();
+        response.bufferEntity();
+        return response;
     }
     
     private Invocation buildJsonClientRequest(Client client, URI uri, String jsonString) {
@@ -219,12 +213,17 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
     
     private Response buildXmlOutput(URI uri) {
-        ClientConfig clientConfig = new ClientConfig();
-        Client client = ClientBuilder.newClient(clientConfig);
-        Invocation request = buildXmlClientRequest(client, uri);
-        Response response = request.invoke();
-        response.bufferEntity();
-        return response;
+        Client client = null;
+        try {
+            ClientConfig clientConfig = new ClientConfig();
+            client = ClientBuilder.newClient(clientConfig);
+            Invocation request = buildXmlClientRequest(client, uri);
+            Response response = request.invoke();
+            response.bufferEntity();
+            return response;
+        } finally {
+            CURestClientUtils.closeQuietly(client);
+        }
     }
     
     private Client constructClientToUseForPagedResponses() {
@@ -366,20 +365,18 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
 
     private Response performSupplierUpload(InputStream vendorCsvDataStream) {
-        Response response = null;
-        
+        Client client = null;
+
         try {
             ClientConfig clientConfig = new ClientConfig();
             clientConfig.register(MultiPartFeature.class);
-            Client client = JerseyClientBuilder.createClient(clientConfig);
+            client = JerseyClientBuilder.createClient(clientConfig);
             
             Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), vendorCsvDataStream);
-            response = request.invoke();
-        } catch (Exception e) {
-            LOG.error("performSupplierUpload", e);
+            return request.invoke();
+        } finally {
+            CURestClientUtils.closeQuietly(client);
         }
-
-        return response;
     }
 
     private URI buildSupplierUploadURI() {
