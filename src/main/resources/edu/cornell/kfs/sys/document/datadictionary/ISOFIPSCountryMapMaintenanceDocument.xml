@@ -6,16 +6,32 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+    <!-- CU Generic ISO-FIPS Country modification -->
+
     <bean id="ISOFIPSCountryMapMaintenanceDocument" parent="ISOFIPSCountryMapMaintenanceDocument-parentBean"/>
     <bean id="ISOFIPSCountryMapMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
           p:businessObjectClass="edu.cornell.kfs.sys.businessobject.ISOFIPSCountryMap"
           p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable"
           p:documentTypeName="IFCM"
+          p:businessRulesClass="edu.cornell.kfs.sys.document.validation.impl.ISOFIPSCountryMapRule"
           p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
           p:workflowAttributes-ref="ISOFIPSCountryMapMaintenanceDocument-workflowAttributes">
         <property name="maintainableSections">
             <list>
                 <ref bean="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap"/>
+            </list>
+        </property>
+        <property name="defaultExistenceChecks">
+            <list>
+                <bean parent="ReferenceDefinition" p:attributeName="fipsCountry" p:attributeToHighlightOnFail="fipsCountryCode"/>
+                <bean parent="ReferenceDefinition" p:attributeName="isoCountry" p:attributeToHighlightOnFail="isoCountryCode"/>
+            </list>
+        </property>
+        <property name="webScriptFiles">
+            <list>
+                <value>dwr/interface/CountryService.js</value>
+                <value>dwr/interface/ISOCountryService.js</value>
+                <value>scripts/sys/isoFipsCountryMapScript.js</value>
             </list>
         </property>
         <property name="lockingKeys">
@@ -30,11 +46,15 @@
 
     <bean id="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap" parent="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap-parentBean"/>
     <bean id="ISOFIPSCountryMapMaintenanceDocument-EditISOFIPSMap-parentBean" abstract="true" parent="MaintainableSectionDefinition"
-          p:id="Edit ISO FIPS Country Map" p:title="Edit ISO FIPS Country Map">
+          p:id="Edit ISO FIPS Country Map" p:title="Edit ISO FIPS Country Mapping">
         <property name="maintainableItems">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="isoCountryCode" p:required="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="fipsCountryCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="isoCountryCode" p:newLookup="true" p:required="true"
+                      p:webUILeaveFieldFunction="onblur_lookupIsoCountry"/>
+                <bean parent="MaintainableFieldDefinition" p:name="isoCountry.name" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="fipsCountryCode" p:newLookup="true" p:required="true"
+                      p:webUILeaveFieldFunction="onblur_lookupFipsCountry"/>
+                <bean parent="MaintainableFieldDefinition" p:name="fipsCountry.name" p:unconditionallyReadOnly="true"/>
                 <bean parent="MaintainableFieldDefinition" p:defaultValue="true" p:name="active"/>
             </list>
         </property>

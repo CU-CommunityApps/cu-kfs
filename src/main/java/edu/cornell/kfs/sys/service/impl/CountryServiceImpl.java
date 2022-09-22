@@ -4,13 +4,16 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Country;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.service.CountryService;
@@ -25,34 +28,75 @@ public class CountryServiceImpl implements CountryService {
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
     
+    @Override
     public boolean isCountryActive(String countryCode) {
+        if (isBlank(countryCode)) {
+            return false;
+        }
         Country countryFound = getByPrimaryId(countryCode);
-
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryActive: " +
-                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR),
+                            CUKFSConstants.FIPS, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return countryFound.isActive();
         } else {
-            LOG.error("isCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), countryCode));
+            LOG.error("isCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), CUKFSConstants.FIPS, countryCode));
             return false;
         }
     }
     
+    @Override
     public boolean isCountryInactive(String countryCode) {
+        if (isBlank(countryCode)) {
+            return false;
+        }
         Country countryFound = getByPrimaryId(countryCode);
-
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryInactive: " +
-                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), 
+                            CUKFSConstants.FIPS, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return !countryFound.isActive();
         } else {
-            LOG.error("isCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), countryCode));
+            LOG.error("isCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), CUKFSConstants.FIPS, countryCode));
             return false;
         }
     }
     
-    public Country getByPrimaryId(String countryCode) {
+    private boolean isBlank(String countryCode) {
+        if (StringUtils.isBlank(countryCode)) {
+            LOG.debug("isBlank: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), "countryCode"));
+            return true;
+        }
+        return false;
+    }
+    
+    protected Country getByPrimaryId(String countryCode) {
+        if (isBlank(countryCode)) {
+            return null;
+        }
         return getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode));
+    }
+    
+    @Override
+    public String findCountryNameByCountryCode(String countryCode) {
+        if (isBlank(countryCode)) {
+            return KFSConstants.EMPTY_STRING;
+        }
+        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
+        if (ObjectUtils.isNotNull(countryFound)) {
+            return countryFound.getName();
+        } else {
+            return MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NAME_NOT_FOUND_FOR_COUNTRY_CODE), CUKFSConstants.FIPS, countryCode);
+        }
+    }
+    
+    @Override
+    public boolean countryExists(String countryCode) {
+        if (isBlank(countryCode)) {
+            return false;
+        }
+        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
+        return ObjectUtils.isNotNull(countryFound);
     }
     
     protected Map<String, Object> mapPrimaryKeys(String countryCode) {
