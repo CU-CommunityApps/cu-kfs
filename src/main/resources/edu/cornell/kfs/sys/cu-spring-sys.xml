@@ -14,6 +14,11 @@
                 <value>edu.cornell.kfs.sys</value>
             </list>
         </property>
+        <property name="scriptConfigurationFilePaths">
+            <list merge="true">
+                <value>edu/cornell/kfs/sys/cu-dwr-sys.xml</value>
+            </list>
+        </property>
 		<property name="dataDictionaryPackages">
 			<list merge="true">
                 <value>classpath:edu/cornell/kfs/sys/businessobject/datadictionary/*.xml</value>
@@ -412,6 +417,7 @@
 
     <bean id="isoFipsCountryMapService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSCountryMapServiceImpl">
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
 
     <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">
